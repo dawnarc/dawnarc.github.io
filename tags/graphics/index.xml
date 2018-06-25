@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Graphics on 玄冬Wong</title>
+    <link>http://www.dawnarc.com/tags/graphics/</link>
+    <description>Recent content in Graphics on 玄冬Wong</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 29 Sep 2017 18:04:28 +0800</lastBuildDate>
+    
+	<atom:link href="http://www.dawnarc.com/tags/graphics/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>[OpenGL]Shader编译流程示例</title>
+      <link>http://www.dawnarc.com/2017/09/openglshader%E7%BC%96%E8%AF%91%E6%B5%81%E7%A8%8B%E7%A4%BA%E4%BE%8B/</link>
+      <pubDate>Fri, 29 Sep 2017 18:04:28 +0800</pubDate>
+      
+      <guid>http://www.dawnarc.com/2017/09/openglshader%E7%BC%96%E8%AF%91%E6%B5%81%E7%A8%8B%E7%A4%BA%E4%BE%8B/</guid>
+      <description>这里以演示如何编译Vertex Shader为例，其他类型的Shader类似。
+1，先用io流读取shader文件
+std::stringstream code; code &amp;lt;&amp;lt; inFile.rdbuf(); inFile.close(); string codeStr(code.str());  2，创建空白Shader对象
+GLuint vertShader = glCreateShader( GL_VERTEX_SHADER );  3，编译Shader代码到Shader对象中
+// Load the source code into the shader object const GLchar* codeArray[] = {codeStr.c_str()}; glShaderSource(vertShader, 1, codeArray, NULL); // Compile the shader glCompileShader( fragShader );  4，Shader链接
+4.1 创建program对象
+// Create the program object GLuint programHandle = glCreateProgram();  4.2 附加Shader对象到program对象中
+// Attach the shaders to the program object glAttachShader( programHandle, vertShader ); glAttachShader( programHandle, fragShader );  4.</description>
+    </item>
+    
+    <item>
+      <title>[OpenGL]GLSHCookbook源码编译步骤流程</title>
+      <link>http://www.dawnarc.com/2017/09/openglglshcookbook%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91%E6%AD%A5%E9%AA%A4%E6%B5%81%E7%A8%8B/</link>
+      <pubDate>Wed, 06 Sep 2017 22:38:28 +0800</pubDate>
+      
+      <guid>http://www.dawnarc.com/2017/09/openglglshcookbook%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91%E6%AD%A5%E9%AA%A4%E6%B5%81%E7%A8%8B/</guid>
+      <description>这里讲解《OpenGL 4 Shading Language Cookbook, Second Edition》 这本书的示例代码如何编译。
+编译步骤 1，下载glm的源码，并用cmake-gui生成出VisualStudio的工程文件。
+https://github.com/g-truc/glm/releases
+2，下载glfw。
+https://github.com/glfw/glfw/releases
+注意是下载bin文件不是src源码。（如果你想用src编译lib，则无视）
+3，下载glslcookbook源码，这是《OpenGL 4 Shading Language Cookbook, Second Edition》的书籍源码，下载后同样用cmake-gui生成vs工程文件： https://github.com/daw42/glslcookbook
+4，cmake-gui首次生成glshcookbook源码时会报错   这时需要指定GLM的依赖库位置，这个位置就是步骤1中的生成的GLM库的bin目录。注意这个bin目录不是GLM自带的，是通过cmake-gui指定生成的。
+在指定GLM_INCLUDE_DIR之后，再点击Generate，又会出现新的错误，提示GLFW找不到，这时需要再指定GLFW的相关目录，即步骤2中下载的GLFW lib和头文件。   参数解释：
+ CMAKE_BUILD_TYPE ：默认，不做修改 CMAKE_CONFIGURATION_TYPES ：默认，不做修改 CMAKE_INSTALL_PREFIX ：不清楚，删掉也不影响 GLFW3_INCLUDE_DIR ：GLFW的头文件目录 GLFW3_LIBRARY ：GLFW的静态库目录 GLM_INCLUDE_DIR ：GLM的头文件目录  最后生成成功的提示为：   打开VS工程，可以看到每一章的示例代码并可编译。（这里看不到.sln的图标是因为我电脑之前卸载了旧版本的vs，导致新版本vs的图标显示不正常，可以无视）     运行程序 每个章节的exe无法双击运行，需要命令输入相关参数。 以章节5为例，先CD到exe所在目录：
+cd /d D:\glslcookbook\bin\chapter05\Debug&amp;gt;  然后输入：
+chapter05.exe  则会提示：
+Recipe names: blur : Gaussian blur deferred : deferred rendering edge : edge detection filter gamma : gamma correction msaa : multisample anti-aliasing tone-map : tone mapping example.</description>
+    </item>
+    
+    <item>
+      <title>[OpenGL]Windows上OpenGL开发环境搭建</title>
+      <link>http://www.dawnarc.com/2017/09/openglwindows%E4%B8%8Aopengl%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/</link>
+      <pubDate>Tue, 05 Sep 2017 16:38:28 +0800</pubDate>
+      
+      <guid>http://www.dawnarc.com/2017/09/openglwindows%E4%B8%8Aopengl%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/</guid>
+      <description>转载请注明出处：http://www.dawnarc.com/
+网上资料很多都是基于Cygwin来搭建的环境，这里介绍一种非Cygwin搭建Windows上的OpenGL开发环境。
+1，OpenGL Loader Generator下载安装
+OpenGL Loader是一个标准规范，定义了如何在运行时期间加载OpenGL相关函数的指针。 这是windows上开发OpenGL程序才需要的lib，因为从1.1版本开始，windows不在对OpenGL 后续版本的 ABI(application binary interface)提供支持（可能是微软的DX出来后与OGL商业竞争吧），所以开发者无法直接获取OGL新版本的相关函数，不过有好心人写了工具，在运行时期间获取OGL的新版函数，这里介绍两个开源库：
+glad
+https://github.com/Dav1dde/glad
+glloadgen
+https://bitbucket.org/alfonse/glloadgen/wiki/Home
+我是用的是glad，这个开源库的开发者还提供了在线生成工具，可以不用下载安装Load Generator，直接在线生成指定版本的OpenGL Loader： http://glad.dav1d.de/
+2，编译OpenGL Loader的静态库
+通过glad生成的代码，编译一个lib， 以便后面的的示例工程调用。因为这些代码开发者不用做修改，只是调用，所以最好编译成lib，而不要直接加到自己的项目代码中。
+3，下载GLM（OpenGL Mathematics）
+这是OpenGL的数学库
+https://github.com/g-truc/glm/releases
+4，下载GLFW
+这是一个提供了OpenGL, OpenGL ES和Vulkan相关接口的跨平台的开源库，有这个库你就可以访问他们的最新API。 https://github.com/glfw/glfw/releases
+5，新建一个C++工程并设置OpenGL相关的头文件和静态库
+指定头文件的目录   指定静态库的目录   在代码需要包含的头文件以及lib：
+#include &amp;lt;KHR/khrplatform.h&amp;gt; #include &amp;lt;glad/glad.h&amp;gt; #include &amp;lt;GLFW/glfw3.h&amp;gt; #pragma comment(lib, &amp;quot;opengl32.lib&amp;quot;) #pragma comment(lib, &amp;quot;glad.lib&amp;quot;) #pragma comment(lib, &amp;quot;glfw3.lib&amp;quot;)  新建的测试工程叫GLTest，目录结构如下： 新加了两个分别叫include和lib的目录，用于存放第三方库的头文件和库文件   完整的测试的代码：
+#pragma once #include &amp;lt;iostream&amp;gt; #include &amp;lt;windows.h&amp;gt; #include &amp;lt;fstream&amp;gt; #include &amp;lt;sstream&amp;gt; #include &amp;lt;string&amp;gt; #include &amp;lt;KHR/khrplatform.</description>
+    </item>
+    
+    <item>
+      <title>[OpenGL]OpenGL4.3获取debug信息的方式</title>
+      <link>http://www.dawnarc.com/2017/02/openglopengl4.3%E8%8E%B7%E5%8F%96debug%E4%BF%A1%E6%81%AF%E7%9A%84%E6%96%B9%E5%BC%8F/</link>
+      <pubDate>Sat, 04 Feb 2017 15:54:40 +0800</pubDate>
+      
+      <guid>http://www.dawnarc.com/2017/02/openglopengl4.3%E8%8E%B7%E5%8F%96debug%E4%BF%A1%E6%81%AF%E7%9A%84%E6%96%B9%E5%BC%8F/</guid>
+      <description>Keywords：debug、opengl、调试、message
+4.3之前的版本，如果要打印debug信息，通常是调用glGetError()函数，从4.3开始，提供了注册回调函数来获取debug message。
+示例： 1.Create a callback function to receive the debug messages. The function must conform to a specific prototype described in the OpenGL documentation. For this example, we&amp;rsquo;ll use the following one:
+void debugCallback(GLenum source, GLenum type, GLuint id,GLenum severity, GLsizei length,const GLchar * message, void * param) { // Convert GLenum parameters to strings printf(&amp;quot;%s:%s[%s](%d): %s\n&amp;quot;, sourceStr, typeStr, severityStr, id, message); }  2.Register our callback with OpenGL using glDebugMessageCallback:</description>
+    </item>
+    
+    <item>
+      <title>[Shading]学习笔记</title>
+      <link>http://www.dawnarc.com/2017/01/shading%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</link>
+      <pubDate>Fri, 13 Jan 2017 14:28:40 +0800</pubDate>
+      
+      <guid>http://www.dawnarc.com/2017/01/shading%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</guid>
+      <description>《OpenGL 4 Shading Language Cookbook, Second Edition》 书中的代码： https://github.com/daw42/glslcookbook
+术语解释：  GLEW (OpenGL Extension Wrangler). GLM (OpenGL Mathematics) GLFW is an Open Source, multi-platform library for OpenGL, OpenGL ES and Vulkan development on the desktop. It provides a simple API for creating windows, contexts and surfaces, receiving input and events.  Shader类型  vertex shader fragment shader geometry shader tess_control shader tess_evaluation shader compute shader  Uniform blocks意义和作用 If your program involves multiple shader programs that use the same uniform variables, one has to manage the variables separately for each program.</description>
+    </item>
+    
+  </channel>
+</rss>

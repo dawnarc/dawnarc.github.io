@@ -1,0 +1,871 @@
+
+
+  
+    
+  
+
+
+  
+
+
+
+
+  
+
+
+  
+
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Hugo 0.38 with theme Tranquilpeak 0.4.3-BETA">
+    <title>[UE4]Shadows</title>
+    <meta name="author" content="Neil Wang">
+    <meta name="keywords" content="UE4, Scene Optimization">
+
+    <link rel="icon" href="http://www.dawnarc.com/favicon.png">
+    
+
+    
+    <meta name="description" content="keywords：UE4、Shadows、Scene Optimization、阴影、场景优化
+Dynamic Scene Shadows https://docs.unrealengine.com/en-us/Resources/ContentExamples/DynamicSceneShadows
+Cascaded Shadows https://docs.unrealengine.com/en-us/Platforms/Mobile/Lighting/HowTo/CascadedShadow
+人会长大三次。第一次是在发现自己不是世界中心的时候。第二次是在发现即使再怎么努力，终究还是有些事令人无能为力的时候。第三次是在，明知道有些事可能会无能为力，但还是会尽力争取的时候。">
+    <meta property="og:description" content="keywords：UE4、Shadows、Scene Optimization、阴影、场景优化
+Dynamic Scene Shadows https://docs.unrealengine.com/en-us/Resources/ContentExamples/DynamicSceneShadows
+Cascaded Shadows https://docs.unrealengine.com/en-us/Platforms/Mobile/Lighting/HowTo/CascadedShadow
+人会长大三次。第一次是在发现自己不是世界中心的时候。第二次是在发现即使再怎么努力，终究还是有些事令人无能为力的时候。第三次是在，明知道有些事可能会无能为力，但还是会尽力争取的时候。">
+    <meta property="og:type" content="blog">
+    <meta property="og:title" content="[UE4]Shadows">
+    <meta property="og:url" content="/2018/04/ue4shadows/">
+    <meta property="og:site_name" content="玄冬Wong">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="玄冬Wong">
+    <meta name="twitter:description" content="keywords：UE4、Shadows、Scene Optimization、阴影、场景优化
+Dynamic Scene Shadows https://docs.unrealengine.com/en-us/Resources/ContentExamples/DynamicSceneShadows
+Cascaded Shadows https://docs.unrealengine.com/en-us/Platforms/Mobile/Lighting/HowTo/CascadedShadow
+人会长大三次。第一次是在发现自己不是世界中心的时候。第二次是在发现即使再怎么努力，终究还是有些事令人无能为力的时候。第三次是在，明知道有些事可能会无能为力，但还是会尽力争取的时候。">
+    
+      <meta name="twitter:creator" content="@idealsland">
+    
+    
+
+    
+    
+
+    
+      <meta property="og:image" content="//www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=640">
+    
+
+    
+    
+    
+
+    
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/jquery.fancybox.min.css" integrity="sha256-vuXZ9LGmmwtjqFX1F+EKin1ThZMub58gKULUyf0qECk=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/helpers/jquery.fancybox-thumbs.min.css" integrity="sha256-SEa4XYAHihTcEP1f5gARTB2K26Uk8PsndQYHQC1f4jU=" crossorigin="anonymous" />
+    
+    
+    <link rel="stylesheet" href="http://www.dawnarc.com/css/style-jsjn0006wyhpyzivf6yceb31gvpjatbcs3qzjvlumobfnugccvobqwxnnaj8.min.css" />
+    
+    
+      
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/solarized-light.min.css">
+      
+    
+
+    
+      
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-78064851-2', 'auto');
+ga('send', 'pageview');
+</script>
+
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="4">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="http://www.dawnarc.com/">玄冬Wong</a>
+  </div>
+  
+    
+      <a class="header-right-picture "
+         href="http://www.dawnarc.com/#about">
+    
+    
+    
+      
+        <img class="header-picture" src="//www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=90" alt="Author&#39;s picture" />
+      
+    
+    </a>
+  
+</header>
+
+      <nav id="sidebar" data-behavior="4">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="http://www.dawnarc.com/#about">
+          <img class="sidebar-profile-picture" src="//www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=110" alt="Author&#39;s picture" />
+        </a>
+        <h4 class="sidebar-profile-name">Neil Wang</h4>
+        
+          <h5 class="sidebar-profile-bio">久长唯有品格</h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="http://www.dawnarc.com/categories">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+      
+      <span class="sidebar-button-desc">Categories</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="http://www.dawnarc.com/tags">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+      
+      <span class="sidebar-button-desc">Tags</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="http://www.dawnarc.com/archives">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+      
+      <span class="sidebar-button-desc">Archives</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="http://www.dawnarc.com/#about">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+      
+      <span class="sidebar-button-desc">About</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="http://www.dawnarc.com/">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+      
+      <span class="sidebar-button-desc">Home</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="http://www.dawnarc.com/index.xml">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="http://stackoverflow.com/users/1645289/protoss" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-stack-overflow"></i>
+      
+      <span class="sidebar-button-desc">Stack Overflow</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://www.artstation.com/artist/dawnarc" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-artstation"></i>
+      
+      <span class="sidebar-button-desc">ArtStation</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://www.facebook.com/koanland" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-facebook"></i>
+      
+      <span class="sidebar-button-desc">Facebook</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/dawnarc/CV" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="http://www.linkedin.com/in/dawnarc/" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-linkedin"></i>
+      
+      <span class="sidebar-button-desc">Linkedin</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://www.pinterest.com/wangaiguo/" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-pinterest"></i>
+      
+      <span class="sidebar-button-desc">Pinterest</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="http://steamcommunity.com/id/dawnarc" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-steam"></i>
+      
+      <span class="sidebar-button-desc">Steam</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://twitter.com/idealsland" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-twitter"></i>
+      
+      <span class="sidebar-button-desc">Twitter</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="http://weibo.com/koanland" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-weibo"></i>
+      
+      <span class="sidebar-button-desc">Weibo</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+
+    </ul>
+  </div>
+</nav>
+
+      
+
+      <div id="main" data-behavior="4"
+        class="
+               hasCoverMetaIn
+               ">
+        <article class="post" itemscope itemType="http://schema.org/BlogPosting">
+          
+          
+            <div class="post-header main-content-wrap text-left">
+  
+    <h1 class="post-title" itemprop="headline">
+      [UE4]Shadows
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2018-04-27T14:14:02&#43;08:00">
+        
+  April 27, 2018
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="http://www.dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+</div>
+          
+          <div class="post-content markdown" itemprop="articleBody">
+            <div class="main-content-wrap">
+              
+
+<p>keywords：UE4、Shadows、Scene Optimization、阴影、场景优化</p>
+
+<h5 id="dynamic-scene-shadows">Dynamic Scene Shadows</h5>
+
+<p><a href="https://docs.unrealengine.com/en-us/Resources/ContentExamples/DynamicSceneShadows">https://docs.unrealengine.com/en-us/Resources/ContentExamples/DynamicSceneShadows</a></p>
+
+<h5 id="cascaded-shadows">Cascaded Shadows</h5>
+
+<p><a href="https://docs.unrealengine.com/en-us/Platforms/Mobile/Lighting/HowTo/CascadedShadow">https://docs.unrealengine.com/en-us/Platforms/Mobile/Lighting/HowTo/CascadedShadow</a></p>
+
+<hr />
+
+<p><code>人会长大三次。第一次是在发现自己不是世界中心的时候。第二次是在发现即使再怎么努力，终究还是有些事令人无能为力的时候。第三次是在，明知道有些事可能会无能为力，但还是会尽力争取的时候。</code></p>
+
+              
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+                
+                
+                  <div class="post-footer-tags">
+                    <span class="text-color-light text-small">TAGGED IN</span><br/>
+                    
+  <a class="tag tag--primary tag--small" href="http://www.dawnarc.com/tags/ue4/">UE4</a>
+
+                  </div>
+                
+              
+            
+            
+  <div class="post-actions-wrap">
+      <nav >
+        <ul class="post-actions post-action-nav">
+          
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="http://www.dawnarc.com/2018/04/ue4post-process%E5%90%8E%E5%A4%84%E7%90%86/" data-tooltip="[UE4]Post Process(后处理)">
+              
+                  <i class="fa fa-angle-left"></i>
+                  <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+                </a>
+            </li>
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="http://www.dawnarc.com/2018/04/ue4android-ndk%E6%89%93%E5%8C%85%E7%89%88%E6%9C%AC%E6%89%A7%E8%A1%8Cprotobuf%E7%9A%84parsefromarray%E5%87%BD%E6%95%B0%E5%B4%A9%E6%BA%83/" data-tooltip="[UE4]Android NDK打包版本执行protobuf的ParseFromArray函数崩溃">
+              
+                  <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+                  <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+          
+        </ul>
+      </nav>
+    <ul class="post-actions post-action-share" >
+      
+        <li class="post-action hide-lg hide-md hide-sm">
+          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
+            <i class="fa fa-share-alt"></i>
+          </a>
+        </li>
+        
+      
+      
+        <li class="post-action">
+          <a class="post-action-btn btn btn--default" href="#disqus_thread">
+            <i class="fa fa-comment-o"></i>
+          </a>
+        </li>
+      
+      <li class="post-action">
+        
+          <a class="post-action-btn btn btn--default" href="#">
+        
+          <i class="fa fa-list"></i>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+
+            
+              
+                <div id="disqus_thread">
+  <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+              
+            
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2018 Neil Wang. All Rights Reserved. Powered by <a href="https://gohugo.io/">Hugo</a>
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+        
+  <div class="post-actions-wrap">
+      <nav >
+        <ul class="post-actions post-action-nav">
+          
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="http://www.dawnarc.com/2018/04/ue4post-process%E5%90%8E%E5%A4%84%E7%90%86/" data-tooltip="[UE4]Post Process(后处理)">
+              
+                  <i class="fa fa-angle-left"></i>
+                  <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+                </a>
+            </li>
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="http://www.dawnarc.com/2018/04/ue4android-ndk%E6%89%93%E5%8C%85%E7%89%88%E6%9C%AC%E6%89%A7%E8%A1%8Cprotobuf%E7%9A%84parsefromarray%E5%87%BD%E6%95%B0%E5%B4%A9%E6%BA%83/" data-tooltip="[UE4]Android NDK打包版本执行protobuf的ParseFromArray函数崩溃">
+              
+                  <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+                  <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+          
+        </ul>
+      </nav>
+    <ul class="post-actions post-action-share" >
+      
+        <li class="post-action hide-lg hide-md hide-sm">
+          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
+            <i class="fa fa-share-alt"></i>
+          </a>
+        </li>
+        
+      
+      
+        <li class="post-action">
+          <a class="post-action-btn btn btn--default" href="#disqus_thread">
+            <i class="fa fa-comment-o"></i>
+          </a>
+        </li>
+      
+      <li class="post-action">
+        
+          <a class="post-action-btn btn btn--default" href="#">
+        
+          <i class="fa fa-list"></i>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+
+      </div>
+      <div id="share-options-bar" class="share-options-bar" data-behavior="4">
+  <i id="btn-close-shareoptions" class="fa fa-close"></i>
+  <ul class="share-options">
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-remove"></i>
+    </div>
+    
+      <img id="about-card-picture" src="//www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=110" alt="Author&#39;s picture" />
+    
+    <h4 id="about-card-name">Neil Wang</h4>
+    
+      <div id="about-card-bio">久长唯有品格</div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        TechArtist
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker"></i>
+        <br/>
+        Yichang·Hubei
+      </div>
+    
+  </div>
+</div>
+
+    <div id="algolia-search-modal" class="modal-container">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="close-button"><i class="fa fa-close"></i></span>
+      <a href="https://algolia.com" target="_blank" rel="noopener" class="searchby-algolia text-color-light link-unstyled">
+        <span class="searchby-algolia-text text-color-light text-small">by</span>
+        <img class="searchby-algolia-logo" src="https://www.algolia.com/static_assets/images/press/downloads/algolia-light.svg">
+      </a>
+      <i class="search-icon fa fa-search"></i>
+      <form id="algolia-search-form">
+        <input type="text" id="algolia-search-input" name="search"
+          class="form-control input--large search-input" placeholder="Search" />
+      </form>
+    </div>
+    <div class="modal-body">
+      <div class="no-result text-color-light text-center">no post found</div>
+      <div class="results">
+        
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="http://www.dawnarc.com/2018/05/ue4animationik%E5%8A%A8%E7%94%BB.md/">
+                <h3 class="media-heading">[UE4][Animation]IK动画.md</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  May 5, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">工程1 在油管上看到一个UE4 IK动画的demo工程示例
+该示例作者的主页：https://www.patreon.com/unrealcg
+       演示视频：Advanced foot IK for Unreal Engine 4 - (100% Free)
+https://www.youtube.com/watch?v=XetC9ivIXFc
+demo工程下载地址(4.19)：
+https://pan.baidu.com/s/1mlcM0cseKWpprnISVM0P5Q
+工程2 该工程除了IK，还包括动画融合、物理等功能
+演示视频：UE4 - Advanced Locomotion System V3 - Features
+https://www.youtube.com/watch?v=yTniZCOCY7o
+下载地址：Unreal商城，60刀
+Advanced Locomotion System V3
+https://www.unrealengine.com/marketplace/advanced-locomotion-system-v1
+认识自己的无知是认识世界的最可靠的方法。---米歇尔·蒙田《随笔集》</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="http://www.dawnarc.com/2018/05/ue4animationmaster-pose-copy-pose-mesh-merge%E5%8C%BA%E5%88%AB/">
+                <h3 class="media-heading">[UE4][Animation]Master Pose, Copy Pose, Mesh merge区别</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  May 5, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">参考自：Master pose vs copy pose vs mesh merge in UE4
+https://iluvanimation.blogspot.tw/2017/04/master-pose-vs-copy-pose-vs-mesh-merge.html
+Since I get this question so often, I&rsquo;m just writing quick summary for each.
+When you have different parts of bodies, and you want to allow players to pick which part they want, we have multiple choices, and people are wondering what are the main differences.
+Say you have head, upper body, lower body, and how do you allow them to pick and what are the differences?</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="http://www.dawnarc.com/2018/05/ue4animationanimation-blueprint-inherit%E5%8A%A8%E7%94%BB%E8%93%9D%E5%9B%BE%E7%BB%A7%E6%89%BF%E4%B8%8E%E5%A4%8D%E7%94%A8/">
+                <h3 class="media-heading">[UE4][Animation]Animation Blueprint Inherit(动画蓝图继承与复用)</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  May 5, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">keyworks：Animation Blueprint Inherit、Animation Blueprint Reuse、蓝图继承、蓝图重用、蓝图复用
+三种方式可以重用动画蓝图逻辑：
+ Blueprint Inherit（蓝图继承） Sub Animation Blueprint Instances Post Process Animation Blueprints  Animation Blueprint Inherit（动画蓝图继承） 角色蓝图继承和动画蓝图继承有部分相似，这里先说下角色蓝图继承
+右键角色蓝图 -》 Create Child Blueprint Class   这样创建出来的子蓝图，其构造函数中会自动生成一个执行父级蓝图构造函数的节点   其他的Event事件中，如果也需要调用父级蓝图的函数，可以右键对应节点 -》 Add call to parent function     动画蓝图也可以使用上述角色蓝图继承的方式。
+但直接右键生成子蓝图的方式创建出来的动画蓝图，无法选择其他骨骼，只能保持和父级动画蓝图的骨骼一样   如果要创建一个与父级动画蓝图骨骼不同的子动画蓝图，可以先新建一个普通的动画蓝图   然后选择需要继承的父级动画蓝图，以及子动画蓝图的骨骼   这样生成出来的子动画蓝图，其Event Graph中，会自动生成一个执行调用父级蓝图的节点：Parent: Blueprint Update Animation   Sub Animation Blueprint Instance   Using Sub Anim Instances</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="http://www.dawnarc.com/2018/05/ue4animationmultiple-skeleton-meshes-sharing-same-skeleton%E5%A4%9A%E4%B8%AAskeletonmesh%E5%85%B1%E7%94%A8%E4%B8%80%E5%A5%97%E9%AA%A8%E9%AA%BC/">
+                <h3 class="media-heading">[UE4][Animation]Multiple skeleton meshes sharing same skeleton(多个SkeletonMesh共用一套骨骼)</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  May 5, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">keywords：UE4 Animation、Set Master Pose Component、customizable character、动画蓝图、换装
+美术资源制作  每个身体部件（帽子、鞋子等）蒙皮时需要使用同一套骨骼(all pieces need to be skinned to the same skeleton) 每个身体部件导出时，该部件的关节与根关节之间的所有关节都需要选中导出。例如：假设盆骨为根关节（root joint），现在要导出手臂，那么手臂、肩膀、脊椎、盆骨的关节都需要选中导出。  角色蓝图中设置Master Pose 身体各个部件导入UE4之后，打开角色蓝图，为每个部件Add一个Skeleton Mesh Component，并将其Skeleton Mesh属性设置为对应的资源文件。
+      最后再在角色蓝图的Construction Script中Set Master Pose Component
+  这样，角色在播放动画时，每个部件就会跟随角色一起播放，而不会固定不动。
+参考自：How to Setup &ldquo;Master Pose Component&rdquo;
+https://answers.unrealengine.com/questions/228601/how-to-setup-master-pose-component.html
+C++接口 Set Master Pose Component蓝图节点对应的C++ API：
+Child-&gt;SetMaseterPoseComponent(Body);  有一个传说，说的是有那么一只鸟儿，它一生只唱一次，那歌声比世上所有一切生灵的歌声都更加优美动听。---《荆棘鸟》</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="http://www.dawnarc.com/2018/05/ue4sharp-temporal-aa/">
+                <h3 class="media-heading">[UE4]Sharp Temporal AA</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  May 5, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">PC端开启Temporal AA 参考： https://forums.unrealengine.com/development-discussion/rendering/106829-sharp-temporal-aa/page2?134157-Sharp-Temporal-AA=&amp;viewfull=1
+移动端开启Temporal AA Project Settings -》 Engine -》 Rendering -》 Default Settings -》 Anti-Aliasing Method 选择 TemporalAA；
+Project Settings -》 Engine -》 Rendering -》 Mobile -》 Mobile MSAA 选择 NO MSAA，并确保配置DefaultEngine.ini中r.MobileMSAA=0。
+4.19版本有bug，移动端无法开启Temporal AA，4.18没有问题。启用TemporalAA后，在Android设备上容易产生残影（转动屏幕或角色跑动时）。
+ 我希望有个如你一般的人
+如山间清爽的风
+如古城温暖的光
+从清晨到夜晚
+由山野到书房
+只要最后是你
+就好
+——张嘉佳 《从你的全世界路过》</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="http://www.dawnarc.com/2018/05/c--%E6%AD%A3%E7%A1%AE%E4%BD%BF%E7%94%A8stl-map%E4%B8%ADerase%E5%87%BD%E6%95%B0/">
+                <h3 class="media-heading">[C&#43;&#43;]正确使用STL-MAP中Erase函数</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  May 5, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">原文：http://www.cnblogs.com/graphics/archive/2010/07/05/1771110.html
+#include &lt;iostream&gt; #include &lt;map&gt; #include &lt;string&gt; using namespace std ; int main(void) { map&lt;int, string&gt; m ; m.insert(pair&lt;int, string&gt;(1, &quot;abc&quot;)) ; m.insert(pair&lt;int, string&gt;(2, &quot;def&quot;)) ; m.insert(pair&lt;int, string&gt;(3, &quot;def&quot;)) ; m.insert(pair&lt;int, string&gt;(4, &quot;ghi&quot;)) ; map&lt;int, string&gt;::iterator itor ; // 错误的写法 for (itor = m.begin(); itor != m.end(); ++itor) { if (itor-&gt;second == &quot;def&quot;) { m.erase(itor) ; // map是关联式容器，调用erase后，当前迭代器已经失效 } } // 正确的写法 for (itor = m.begin(); itor != m.end();) { if (itor-&gt;second == &quot;def&quot;) { m.</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="http://www.dawnarc.com/2018/05/ue44.19%E7%BC%96%E8%AF%91substance-plugin%E6%8A%A5%E9%94%99/">
+                <h3 class="media-heading">[UE4]4.19编译Substance Plugin报错</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  May 5, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">问题现象 4.19版本启用Substance Plugin后，Generate Visual Studio Project Files时报错：
+Exception while generating include data for UE4Editor: Unable to instantiate module 'SubstanceCore': System.NullReferenceException: La référence d'objet n'est pas définie à une instance d'un objet. à UnrealBuildTool.Rules.SubstanceCore..ctor(ReadOnlyTargetRules Target) dans d:\3D\UE4.19\UnrealEngine-release\Engine\Plugins\Substance\Source\SubstanceCore\SubstanceCore.Build.cs:ligne 116 (referenced via UE4Editor.Target.cs -&gt; Substance.uplugin)  解决办法 修改：UE_4.19\Engine\Plugins\Marketplace\Substance\Source\SubstanceCore\SubstanceCore.Build.cs
+将116行到124行注掉，并追加一行：
+IncludePS4Files = false;  参考自：https://forum.allegorithmic.com/index.php?topic=23285.0
+你简单，世界就是童话；心复杂，世界就是迷宫。</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="http://www.dawnarc.com/2018/05/ue4steam-sdk%E6%8E%A5%E5%85%A5%E7%9B%B8%E5%85%B3/">
+                <h3 class="media-heading">[UE4]Steam SDK接入相关</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  May 5, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">Advanced Sessions Plugin
+https://forums.unrealengine.com/community/community-content-tools-and-tutorials/41043-advanced-sessions-plugin
+Online Subsystem Steam
+https://docs.unrealengine.com/en-us/Programming/Online/Steam
+Steam, Using the Steam SDK During Development
+https://wiki.unrealengine.com/Steam,_Using_the_Steam_SDK_During_Development
+Integrating Steam SDK – Part 1
+http://orfeasel.com/steam_integration_p1/
+Handling Steam Achievements – Steam Integration Part 2
+http://orfeasel.com/handling-steam-achievements-steam-integration-part-2/
+中文翻译：
+集成 Steam SDK（一）
+http://gad.qq.com/program/translateview/7191581
+处理Steam成就系统——接入Steam SDK（二）
+http://gad.qq.com/program/translateview/7191582
+Shipping模式下steam集成无效的问题 在打包输出目录下，例如：\WindowsNoEditor\MyProj\Binaries\Win64\，新建一个文本文件：steam_appid.txt，并且内容为“480”。480表示steam测试使用的app id。
+参考自：Steam integration not working on a Shipping Build
+https://answers.unrealengine.com/questions/474029/steam-integration-not-working-on-a-shipping-build.html
+人生没有彩排，每天都是直播。阳光，源自你内心的澄澈！</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="http://www.dawnarc.com/2018/04/ue4lightings/">
+                <h3 class="media-heading">[UE4]Lightings</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Apr 4, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">keywords：UE4、Lighting、灯光
+Lighting Content Examples https://docs.unrealengine.com/en-us/Resources/ContentExamples/Lighting
+Light Propagation Volumes Light Propagation Volumes
+https://docs.unrealengine.com/en-us/Engine/Rendering/LightingAndShadows/LightPropagationVolumes
+Dynamic GI : Getting the Most out of LPV ( Light Propagation Volume )
+https://forums.unrealengine.com/community/community-content-tools-and-tutorials/103572-dynamic-gi-getting-the-most-out-of-lpv-light-propagation-volume
+Lighting Channels https://docs.unrealengine.com/en-us/Engine/Rendering/LightingAndShadows/LightingChannels
+注意事项：
+ Lighting Channels是动态的，意思是：静态光(Static Lights)或者Mobility为Static的Static Mesh Actor不受Lighting Channels影响。要使用Lighting Channels，Static Mesh Actor和Lights的Mobility必须设置为Stationary或者Movable。 材质类型影响：Lighting Channels只影响直接光照(direct lighting)下Opaque类型材质，Translucent或者Masked类型材质没有效果。 Lighting Channels对性能开销不大，可以忽略不计。  移动端的Lighting Channels：
+ 4.13版本开始，才支持移动端的Lighting Channel。 移动端多个Directional Light支持不同Lighting Channels。 一个Primitives只受一个Directional Light影响，如果primitves勾选了多个Lighting Channel，那么只会启用第一个。 CSM Shadows只会投射到与光源Lighting Channels相同的primitives上。 动态点光源在移动端支持Lighting Channels的所有特性，与桌面级特性相同。  Occlusion Culling 光源距离裁剪 Project Settings -》 Engine -》 Rendering -》 Culling</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="http://www.dawnarc.com/2018/04/ue4post-process%E5%90%8E%E5%A4%84%E7%90%86/">
+                <h3 class="media-heading">[UE4]Post Process(后处理)</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Apr 4, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">Post Process Materials
+https://docs.unrealengine.com/en-us/Engine/Rendering/PostProcessEffects/PostProcessMaterials
+Stylized Rendering Post Processing
+https://docs.unrealengine.com/en-us/Resources/Showcases/Stylized/PostProcessing
+Post Processing Content Examples
+https://docs.unrealengine.com/en-us/Resources/ContentExamples/PostProcessing
+1.2 - ShadingModel
+https://docs.unrealengine.com/en-us/Resources/ContentExamples/MaterialProperties/1_2
+抱必死的心，走永远的路。</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+      </div>
+    </div>
+    <div class="modal-footer">
+      <p class="results-count text-medium"
+         data-message-zero="no post found"
+         data-message-one="1 post found"
+         data-message-other="{n} posts found">
+         391 posts found
+      </p>
+    </div>
+  </div>
+</div>
+    
+  
+    
+    <div id="cover" style="background-image:url('http://www.dawnarc.com/images/cover-v1.2.0.jpg');"></div>
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.7/js/jquery.fancybox.min.js" integrity="sha256-GEAnjcTqVP+vBp3SSc8bEDQqvWAZMiHyUSIorrWwH50=" crossorigin="anonymous"></script>
+
+
+<script src="http://www.dawnarc.com/js/script-qi9wbxp2ya2j6p7wx1i6tgavftewndznf4v0hy2gvivk1rxgc3lm7njqb6bz.min.js"></script>
+
+
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+  
+    
+      <script>
+        var disqus_config = function () {
+          this.page.url = 'http:\/\/www.dawnarc.com\/2018\/04\/ue4shadows\/';
+          
+            this.page.identifier = '\/2018\/04\/ue4shadows\/'
+          
+        };
+        (function() {
+          
+          
+          if (window.location.hostname == "localhost") {
+            return;
+          }
+          var d = document, s = d.createElement('script');
+          var disqus_shortname = 'dawnarc';
+          s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+          s.setAttribute('data-timestamp', +new Date());
+          (d.head || d.body).appendChild(s);
+        })();
+      </script>
+    
+  
+
+
+
+    
+  </body>
+</html>
+
