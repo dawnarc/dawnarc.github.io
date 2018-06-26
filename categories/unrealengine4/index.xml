@@ -6,10 +6,22 @@
     <description>Recent content in Unrealengine4 on 玄冬Wong</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 30 May 2018 13:41:02 +0800</lastBuildDate>
+    <lastBuildDate>Fri, 22 Jun 2018 12:23:02 +0800</lastBuildDate>
     
 	<atom:link href="http://www.dawnarc.com/categories/unrealengine4/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>[UE4]UFunction-ProcessEvent返回值与输出参数获取</title>
+      <link>http://www.dawnarc.com/2018/06/ue4ufunction-processevent%E8%BF%94%E5%9B%9E%E5%80%BC%E4%B8%8E%E8%BE%93%E5%87%BA%E5%8F%82%E6%95%B0%E8%8E%B7%E5%8F%96/</link>
+      <pubDate>Fri, 22 Jun 2018 12:23:02 +0800</pubDate>
+      
+      <guid>http://www.dawnarc.com/2018/06/ue4ufunction-processevent%E8%BF%94%E5%9B%9E%E5%80%BC%E4%B8%8E%E8%BE%93%E5%87%BA%E5%8F%82%E6%95%B0%E8%8E%B7%E5%8F%96/</guid>
+      <description>如果不需要返回值也不需要输出参数，那么只需调用 ProcessEvent ：
+UFunction* Fun = Actor-&amp;gt;FindFunction(TEXT(&amp;quot;TestFun&amp;quot;)); if(Fun) { Actor-&amp;gt;ProcessEvent(Fun, Buffer); }  获取返回值：
+UFunction* Fun = Actor-&amp;gt;FindFunction(TEXT(&amp;quot;TestFun&amp;quot;)); if(Fun) { FFrame frame = FFrame(Actor, Fun, Buffer, NULL, Fun-&amp;gt;Children); uint8* ReturnValueAdress = Buffer + Fun-&amp;gt;ReturnValueOffset; int* intp = (int*)ReturnValueAdress; //hardcoded exemple for a int return Fun-&amp;gt;Invoke(Actor, frame, intp); }  获取输出参数：
+if(UFunction* Fun = Actor-&amp;gt;FindFunction(TEXT(&amp;quot;TestFun&amp;quot;))) { if(uint8* Buffer = (uint8*)FMemory_Alloca(Fun-&amp;gt;ParmsSize)) { for (TFieldIterator&amp;lt;UProperty&amp;gt; PropIt(Fun, EFieldIteratorFlags::ExcludeSuper); PropIt; ++PropIt) { UProperty* Property = *PropIt; bool isOut = Property-&amp;gt;HasAnyPropertyFlags(CPF_OutParm); if (!</description>
+    </item>
     
     <item>
       <title>[UE4][Animation]IK动画.md</title>
@@ -113,9 +125,16 @@ IncludePS4Files = false;  参考自：https://forum.allegorithmic.com/index.php?
       <pubDate>Wed, 09 May 2018 15:11:02 +0800</pubDate>
       
       <guid>http://www.dawnarc.com/2018/05/ue4steam-sdk%E6%8E%A5%E5%85%A5%E7%9B%B8%E5%85%B3/</guid>
-      <description>Advanced Sessions Plugin
+      <description>使用第三方plugin Advanced Sessions Plugin
 https://forums.unrealengine.com/community/community-content-tools-and-tutorials/41043-advanced-sessions-plugin
-Online Subsystem Steam
+将该plugin加入工程后，再做以下修改：
+在DefaultEngine.ini的[/Script/Engine.Engine]下添加：
++NetDriverDefinitions=(DefName=&amp;quot;GameNetDriver&amp;quot;,DriverClassName=&amp;quot;OnlineSubsystemSteam.SteamNetDriver&amp;quot;,DriverClassNameFallback=&amp;quot;OnlineSubsystemUtils.IpNetDriver&amp;quot;)  再增加：
+[OnlineSubsystem] DefaultPlatformService=Steam [OnlineSubsystemSteam] bEnabled=true SteamDevAppId=480 [/Script/OnlineSubsystemSteam.SteamNetDriver] NetConnectionClassName=&amp;quot;OnlineSubsystemSteam.SteamNetConnection&amp;quot;  然后启动编辑器后，以Standalone模式运行，且保证电脑上启动了Steam客户端，则启动游戏后会，在游戏屏幕右下角会自动弹出Steam相关菜单。
+如果不使用该plugin，手动编写接入代码，则还需要添加以下配置：
+ 工程名.Build.cs构造函数中添加：
+PublicDependencyModuleNames.AddRange(new string[] { &amp;quot;OnlineSubsystem&amp;quot;, &amp;quot;OnlineSubsystemUtils&amp;quot; }); DynamicallyLoadedModuleNames.Add(&amp;quot;OnlineSubsystemSteam&amp;quot;);  工程名.Target.cs构造函数中添加：
+bUsesSteam = true;   手动接入steam SDK Online Subsystem Steam
 https://docs.unrealengine.com/en-us/Programming/Online/Steam
 Steam, Using the Steam SDK During Development
 https://wiki.unrealengine.com/Steam,_Using_the_Steam_SDK_During_Development
@@ -124,14 +143,7 @@ http://orfeasel.com/steam_integration_p1/
 Handling Steam Achievements – Steam Integration Part 2
 http://orfeasel.com/handling-steam-achievements-steam-integration-part-2/
 中文翻译：
-集成 Steam SDK（一）
-http://gad.qq.com/program/translateview/7191581
-处理Steam成就系统——接入Steam SDK（二）
-http://gad.qq.com/program/translateview/7191582
-Shipping模式下steam集成无效的问题 在打包输出目录下，例如：\WindowsNoEditor\MyProj\Binaries\Win64\，新建一个文本文件：steam_appid.txt，并且内容为“480”。480表示steam测试使用的app id。
-参考自：Steam integration not working on a Shipping Build
-https://answers.unrealengine.com/questions/474029/steam-integration-not-working-on-a-shipping-build.html
-人生没有彩排，每天都是直播。阳光，源自你内心的澄澈！</description>
+集成 Steam SDK（一）</description>
     </item>
     
     <item>
@@ -141,6 +153,7 @@ https://answers.unrealengine.com/questions/474029/steam-integration-not-working-
       
       <guid>http://www.dawnarc.com/2018/04/ue4lightings/</guid>
       <description>keywords：UE4、Lighting、灯光
+以下问题都是基于4.18，不排除后续新版本变动。
 Lighting Content Examples https://docs.unrealengine.com/en-us/Resources/ContentExamples/Lighting
 Light Propagation Volumes Light Propagation Volumes
 https://docs.unrealengine.com/en-us/Engine/Rendering/LightingAndShadows/LightPropagationVolumes
@@ -149,7 +162,8 @@ https://forums.unrealengine.com/community/community-content-tools-and-tutorials/
 Lighting Channels https://docs.unrealengine.com/en-us/Engine/Rendering/LightingAndShadows/LightingChannels
 注意事项：
  Lighting Channels是动态的，意思是：静态光(Static Lights)或者Mobility为Static的Static Mesh Actor不受Lighting Channels影响。要使用Lighting Channels，Static Mesh Actor和Lights的Mobility必须设置为Stationary或者Movable。 材质类型影响：Lighting Channels只影响直接光照(direct lighting)下Opaque类型材质，Translucent或者Masked类型材质没有效果。 Lighting Channels对性能开销不大，可以忽略不计。  移动端的Lighting Channels：
- 4.13版本开始，才支持移动端的Lighting Channel。 移动端多个Directional Light支持不同Lighting Channels。 一个Primitives只受一个Directional Light影响，如果primitves勾选了多个Lighting Channel，那么只会启用第一个。 CSM Shadows只会投射到与光源Lighting Channels相同的primitives上。 动态点光源在移动端支持Lighting Channels的所有特性，与桌面级特性相同。  Occlusion Culling 光源距离裁剪 Project Settings -》 Engine -》 Rendering -》 Culling</description>
+ 4.13版本开始，才支持移动端的Lighting Channel。 移动端多个Directional Light支持不同Lighting Channels。 一个Primitives只受一个Directional Light影响，如果primitves勾选了多个Lighting Channel，那么只会启用第一个。 CSM Shadows只会投射到与光源Lighting Channels相同的primitives上。 动态点光源在移动端支持Lighting Channels的所有特性，与桌面级特性相同。  另外：Lighting Channels不支持运行时修改，就是说Lighting Channels在Actor创建时(比如BeginPlay)设置好以后，之后就无法再修改。
+Occlusion Culling 光源距离裁剪 Project Settings -》 Engine -》 Rendering -》 Culling</description>
     </item>
     
     <item>
@@ -438,6 +452,8 @@ iOS版本材质丢失或马赛克的问题(Material Mosaic) 问题现象：
 解决办法：
 打开材质蓝图，勾选Use Full Precision。   参考自：
 https://answers.unrealengine.com/questions/211323/layered-landscape-material-on-mobile.html
+移动端无法run-time修改Instanced Static Mesh的问题 解决办法：
+InstancedStaticMeshComponent::UseDynamicInstanceBuffer 设置为true，默认为false。
 相关文档 Scalability Reference https://docs.unrealengine.com/latest/INT/Engine/Performance/Scalability/ScalabilityReference/
 Performance Guidelines for Mobile Devices
 https://docs.unrealengine.com/latest/INT/Platforms/Mobile/Performance/
@@ -513,7 +529,7 @@ https://answers.unrealengine.com/questions/450714/how-to-setup-remote-build.html
 https://www.jianshu.com/p/8770044771e3
 Building iOS game in Unreal Engine 4 via remote machine
 http://zompi.pl/building-ios-game-in-unreal-engine-4-via-remote-machine/
-如果，你的身后如果中了一个冷箭，说明你走在了他们的前面；如果，你会被他们伤到，说明你走得不够远，还在他们的射程以内。。。。</description>
+如果一切看起来尽在掌控之中，那说明你跑得不够快；如果你身高会中冷箭，说明你走在他们面前；如果你会被他们伤到，说明你走得不够远，还在他们的射程以内。不要停下来解释，只需要继续前进，把他们远远甩在后面。</description>
     </item>
     
     <item>
@@ -724,8 +740,10 @@ State作用是用来收集性能分析相关的数据，命令行执行的stat�
       <description>keywords：Cel Shading、Cartoon Shader、卡通渲染、无主之地风格
 Cel Shading Post Process
 https://wiki.unrealengine.com/Cel_Shading_Post_Process
-UE4 Tutorial: Toon Shader (Borderlands/Jet Set Radio) https://www.youtube.com/watch?v=0UBNXneL1oo
-UE4 - Tutorial - Cel Shading! https://www.youtube.com/watch?v=_bpQoI5Xrx8
+UE4 Tutorial: Toon Shader (Borderlands/Jet Set Radio)
+https://www.youtube.com/watch?v=0UBNXneL1oo
+UE4 - Tutorial - Cel Shading!
+https://www.youtube.com/watch?v=_bpQoI5Xrx8
 Stylized Rendering Post Processing
 https://docs.unrealengine.com/en-us/Resources/Showcases/Stylized/PostProcessing
 所谓自由，不是随心所欲，而是自我主宰。</description>
@@ -837,7 +855,8 @@ http://www.tomlooman.com/multi-color-outline-post-process-in-unreal-engine-4/
       <description>keywords：DecalComponent、贴花、C++
 使用的贴花材质是UE4模版工程TopDown中的贴花材质：M_Cursor_Decal。
 if (!FootRingComponent) { FootRingComponent = NewObject&amp;lt;UDecalComponent&amp;gt;(MyCharacter-&amp;gt;GetRootComponent()); if (FootRingComponent) { FootRingComponent-&amp;gt;RegisterComponent(); FootRingComponent-&amp;gt;AttachToComponent(MyCharacter-&amp;gt;GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform); UMaterial* Material = LoadObject&amp;lt;UMaterial&amp;gt;(NULL, TEXT(&amp;quot;Material&#39;/Game/Materials/Decal/M_Cursor_Decal.M_Cursor_Decal&#39;&amp;quot;)); if (Material) { FootRingComponent-&amp;gt;SetDecalMaterial(Material); FootRingComponent-&amp;gt;DecalSize = FVector(16.f, 128.f, 128.f); FootRingComponent-&amp;gt;SetRelativeRotation(FRotator(-90.f, 0.f, 0.f)); FootRingComponent-&amp;gt;SetRelativeLocation(FVector(0.f, 0.f, -90.f)); } } }  RelativeRotation一定要设置为FRotator(-90.f, 0.f, 0.f)或者FRotator(90.f, 90.f, 90.f)，否则贴花的无法正常显示；前者表示正向显示，后者表示反向显示。DecalSize的X表示贴花作用高度：比如一面墙高500，X设置为200，那么贴花在墙面上的显示高度只到200高度；Y、Z表示长和宽。
- 我只是个戏子，在别人的故事里，流着自己的泪。----席慕蓉《戏子》</description>
+ 贴花影响物体过滤 默认所有PrimitiveComponent都接受贴花，也可以让指定物体不显示贴花：
+void UPrimitiveComponent::SetReceivesDecals(bool bNewReceivesDecals);  我只是个戏子，在别人的故事里，流着自己的泪。----席慕蓉《戏子》</description>
     </item>
     
     <item>
@@ -1569,16 +1588,14 @@ BoxComponent的Overlap事件 1，C++中的代码编写 这里我们演示的例�
       <guid>http://www.dawnarc.com/2017/04/ue4%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E4%B8%8E%E5%86%85%E5%AD%98%E5%B8%B8%E9%A9%BB/</guid>
       <description>keywords：UE4, Memory Persist, GC, 垃圾回收, 内存管理
 一个UObject类型的变量，即使是static，默认也会被GC掉。
- 要防止该对象被GC，有三种方式：
- 作为成员变量并标记为UPROPERTY()； 创建对象后AddToRoot()；（退出游戏时需要RemoveFromRoot()） FGCObjectScopeGuard在指定代码区域内保持对象；  FGCObjectScopeGuard的用法：
-{ FGCObjectScopeGuard(UObject* GladOS = NewObject&amp;lt;...&amp;gt;(...)); GladOS-&amp;gt;SpawnCell(); RunGC(); GladOS-&amp;gt;IsStillAlive(); // Object will not be removed by GC }  参考资料 虚幻4垃圾回收剖析
+ 要防止该对象被GC，有4种方式：
+ 作为成员变量并标记为UPROPERTY()； 创建对象后AddToRoot()；（退出游戏时需要RemoveFromRoot()） FGCObjectScopeGuard在指定代码区域内保持对象； FStreamableManager Load资源时，bManageActiveHandle设置为true；  FGCObjectScopeGuard的用法：
+{ FGCObjectScopeGuard(UObject* GladOS = NewObject&amp;lt;...&amp;gt;(...)); GladOS-&amp;gt;SpawnCell(); RunGC(); GladOS-&amp;gt;IsStillAlive(); // Object will not be removed by GC }  FStreamableManager用法：
+FSoftObjectPath AssetPath(TEXT(&amp;quot;/Game/Mannequin/Animations/ThirdPersonWalk.ThirdPersonWalk&amp;quot;)); FStreamableManager&amp;amp; AssetLoader = UAssetManager::GetStreamableManager(); //hold object in memory. TSharedPtr&amp;lt;FStreamableHandle&amp;gt; Handle = AssetLoader.RequestSyncLoad(AssetPath, true); UObject* Obj = Handle-&amp;gt;GetLoadedAsset(); //free memory of object. Handle-&amp;gt;ReleaseHandle();  参考资料 虚幻4垃圾回收剖析
 http://www.cnblogs.com/ghl_carmack/p/6112118.html
 转载：UE4内存管理 – 实践
 http://blog.csdn.net/yangxuan0261/article/details/52075581
-原文内容如下：
-UObject gc机制  通过 UPROPERTY() 去保持引用
-UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = &amp;quot;MyChar&amp;quot;) class UBehavData* mBehavData; mBehavData = NewObject&amp;lt;UBehavData&amp;gt;(this, UBehavData::StaticClass()); bh-&amp;gt;mId = 111;  TArray保持引用如果有个 TArray 容器，则这个TArray需要用一个UPROPERTY() 去保持容器的引用，然后里面的UObject就不需要再去AddToRoot去阻止被gc了。
-UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = &amp;quot;UCoolDownComponent&amp;quot;) TArray&amp;lt;UCoolDown*&amp;gt; mCDArr; UCoolDown* cd = NewObject&amp;lt;UCoolDown&amp;gt;(_class); cd-&amp;gt;SetSkillId(_skillId); mCDArr.</description>
+原文内容如下：</description>
     </item>
     
     <item>
@@ -1607,8 +1624,9 @@ UFUNCTION(Exec) void TestFun(FString Str);  按下波浪键后，则输入：
 TestFun HelloWorld   注意事项 只有以下类的方法可以支持Exec标签：
  APawn APlayerController UPlayerInput UCheatManager AGameMode UGameInstance AHUD  参考资料 Using Cheat Manager in Unreal Engine 4
 http://zompi.pl/using-cheat-manager-in-unreal-engine-4/
-泪水背着光安静而悲伤
-肩上剩下的能量 还能撑到什么地方
+泪水背着光，安静而悲伤
+肩上剩下的能量，
+还能撑到什么地方。
 ----《三国恋》</description>
     </item>
     
@@ -2534,13 +2552,13 @@ MyCharacter-&amp;gt;GetCharacterMovement()-&amp;gt;GravityScale = 100.f   </desc
     </item>
     
     <item>
-      <title>[UE4]PlayerController获取当前的Pawn</title>
-      <link>http://www.dawnarc.com/2016/06/ue4playercontroller%E8%8E%B7%E5%8F%96%E5%BD%93%E5%89%8D%E7%9A%84pawn/</link>
+      <title>[UE4]PlayerController常用API</title>
+      <link>http://www.dawnarc.com/2016/06/ue4playercontroller%E5%B8%B8%E7%94%A8api/</link>
       <pubDate>Sun, 19 Jun 2016 10:31:02 +0800</pubDate>
       
-      <guid>http://www.dawnarc.com/2016/06/ue4playercontroller%E8%8E%B7%E5%8F%96%E5%BD%93%E5%89%8D%E7%9A%84pawn/</guid>
-      <description>一个Controller（包括AIController）只能同时possess一个Pawn。所以GetPawn()返回的就是当前控制的Pawn：
-APawn* Pawn = PC-&amp;gt;GetPawn();  </description>
+      <guid>http://www.dawnarc.com/2016/06/ue4playercontroller%E5%B8%B8%E7%94%A8api/</guid>
+      <description>获取当前的Pawn 一个Controller（包括AIController）只能同时possess一个Pawn。所以GetPawn()返回的就是当前控制的Pawn：
+APawn* Pawn = PC-&amp;gt;GetPawn();  Screen相关 //Convert 2D screen position to World Space 3D position and direction. Returns false if unable to determine value. bool DeprojectScreenPositionToWorld(float ScreenX, float ScreenY, FVector&amp;amp; WorldLocation, FVector&amp;amp; WorldDirection) const; /** Returns hit results from doing a collision query at a certain location on the screen */ bool GetHitResultAtScreenPosition(const FVector2D ScreenPosition, const ECollisionChannel TraceChannel, const FCollisionQueryParams&amp;amp; CollisionQueryParams, FHitResult&amp;amp; HitResult) const; /** * Returns the PlayerState associated with the player at the specified index.</description>
     </item>
     
     <item>
@@ -2718,7 +2736,7 @@ stat scenerendering  显示三角面数量
 stat Engine  显示单帧信息：总时长、Game耗时、Draw耗时、GPU耗时
 stat unit  显示当前帧的时间信息（各种Tick, GC Mark，Update Overlaps等）：
 stat game  设置渲染分辨率为默认大小的50%
-r.ScreenPercentage 50  使用stat相关命令检测性能时，需要关闭Smooth Frame Rate来保证检测结果更精准：Project Settings -》 Engine -》 General Settings -》 Framerate -》 Smooth Frame Rate。</description>
+r.ScreenPercentage 50  记录卡顿时间（通过t.</description>
     </item>
     
     <item>
