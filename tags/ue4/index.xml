@@ -6,10 +6,40 @@
     <description>Recent content in Ue4 on 玄冬Wong</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 22 Jun 2018 12:23:02 +0800</lastBuildDate>
+    <lastBuildDate>Wed, 04 Jul 2018 16:44:02 +0800</lastBuildDate>
     
 	<atom:link href="http://www.dawnarc.com/tags/ue4/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>[UE4] TSharedPtr 与 TWeakObjectPtr 区别</title>
+      <link>http://www.dawnarc.com/2018/07/ue4-tsharedptr-%E4%B8%8E-tweakobjectptr-%E5%8C%BA%E5%88%AB/</link>
+      <pubDate>Wed, 04 Jul 2018 16:44:02 +0800</pubDate>
+      
+      <guid>http://www.dawnarc.com/2018/07/ue4-tsharedptr-%E4%B8%8E-tweakobjectptr-%E5%8C%BA%E5%88%AB/</guid>
+      <description>UE4 的 TSharedPtr、TWeakObjectPtr 模仿自 C++11 的 shared_ptr 、 weak_ptr 。
+TSharedPtr TSharedPtr 相当于对象的引用计数器。每当对 TSharedPtr 赋值一次，该 TSharedPtr 引用对象计数加一，当引用计数为0时，则该对象被自动销毁。TSharedPtr 可以防止对象被垃圾回收，等价于 UPROPERTY() （前提是 TSharedPtr 成员变量所属的对象没有被销毁，如果被销毁，则 TSharedPtr 成员变量的计数不再有效）。
+用法：
+ TSharedPtr&amp;lt;MyUObject&amp;gt; ObjPtr = MakeShareable(NewObject&amp;lt;MyUObject&amp;gt;());  如果两个 TSharedPtr 相互赋值，则会导致对象永不释放，导致内存泄漏。
+ TWeakObjectPtr TWeakObjectPtr 保持的对象不能防止被垃圾回收。若引用的对象在其他地方被销毁，则 TWeakObjectPtr 内部的指针自动将被置为NULL，TWeakObjectPtr::IsValid()会返回false。TSharedPtr 则没有这个作用。
+用法：
+ TWeakObjectPtr&amp;lt;MyUObject&amp;gt; ObjPtr = NewObject&amp;lt;MyUObject&amp;gt;();  参考资料：
+There&amp;rsquo;s a Huge Difference, One Will Always Crash
+https://answers.unrealengine.com/questions/48818/whats-the-difference-between-using-tweakobjectptr.html
+what is a &amp;ldquo;weak object pointer&amp;rdquo;?
+https://answers.unrealengine.com/questions/201186/what-is-a-weak-object-pointer.html</description>
+    </item>
+    
+    <item>
+      <title>[UE4]error C3668: &#39;UTextureCube::UpdateResourceW&#39;</title>
+      <link>http://www.dawnarc.com/2018/07/ue4error-c3668-utexturecubeupdateresourcew/</link>
+      <pubDate>Mon, 02 Jul 2018 20:04:02 +0800</pubDate>
+      
+      <guid>http://www.dawnarc.com/2018/07/ue4error-c3668-utexturecubeupdateresourcew/</guid>
+      <description>4.19 编译错误：
+2&amp;gt;F:\EpicGames\UE_4.19\Engine\Source\Runtime\Engine\Classes\Engine/TextureCube.h(69): error C3668: &#39;UTextureCube::UpdateResourceW&#39;: method with override specifier &#39;override&#39; did not override any base class methods 2&amp;gt;F:\EpicGames\UE_4.19\Engine\Source\Runtime\Engine\Classes\Engine/CanvasRenderTarget2D.h(43): error C3668: &#39;UCanvasRenderTarget2D::UpdateResourceW&#39;: method with override specifier &#39;override&#39; did not override any base class methods  4.18 编译错误：
+2&amp;gt;f:\epicgames\ue_4.18\engine\source\runtime\core\public\HAL/ThreadSafeCounter64.h(67): error C2039: &#39;_InterlockedIncrement&#39;: is not a member of &#39;FWindowsPlatformAtomics&#39; 2&amp;gt;F:\EpicGames\UE_4.18\Engine\Source\Runtime\Core\Public\Windows/WindowsPlatformAtomics.h(14): note: see declaration of &#39;FWindowsPlatformAtomics&#39; 2&amp;gt;f:\epicgames\ue_4.18\engine\source\runtime\core\public\HAL/ThreadSafeCounter64.h(67): error C2665: &#39;_InterlockedIncrement&#39;: none of the 4 overloads could convert all the argument types 2&amp;gt;C:\Program Files (x86)\Windows Kits\8.</description>
+    </item>
     
     <item>
       <title>[UE4]UFunction-ProcessEvent返回值与输出参数获取</title>
@@ -17,8 +47,8 @@
       <pubDate>Fri, 22 Jun 2018 12:23:02 +0800</pubDate>
       
       <guid>http://www.dawnarc.com/2018/06/ue4ufunction-processevent%E8%BF%94%E5%9B%9E%E5%80%BC%E4%B8%8E%E8%BE%93%E5%87%BA%E5%8F%82%E6%95%B0%E8%8E%B7%E5%8F%96/</guid>
-      <description>如果不需要返回值也不需要输出参数，那么只需调用 ProcessEvent ：
-UFunction* Fun = Actor-&amp;gt;FindFunction(TEXT(&amp;quot;TestFun&amp;quot;)); if(Fun) { Actor-&amp;gt;ProcessEvent(Fun, Buffer); }  获取返回值：
+      <description>调用UFunction 执行UFuncion，使用 ProcessEvent ：
+UFunction* Fun = Actor-&amp;gt;FindFunction(TEXT(&amp;quot;TestFun&amp;quot;)); if(Fun) { Actor-&amp;gt;ProcessEvent(Fun, Buffer); }  查询UFunction信息 获取返回值：
 UFunction* Fun = Actor-&amp;gt;FindFunction(TEXT(&amp;quot;TestFun&amp;quot;)); if(Fun) { FFrame frame = FFrame(Actor, Fun, Buffer, NULL, Fun-&amp;gt;Children); uint8* ReturnValueAdress = Buffer + Fun-&amp;gt;ReturnValueOffset; int* intp = (int*)ReturnValueAdress; //hardcoded exemple for a int return Fun-&amp;gt;Invoke(Actor, frame, intp); }  获取输出参数：
 if(UFunction* Fun = Actor-&amp;gt;FindFunction(TEXT(&amp;quot;TestFun&amp;quot;))) { if(uint8* Buffer = (uint8*)FMemory_Alloca(Fun-&amp;gt;ParmsSize)) { for (TFieldIterator&amp;lt;UProperty&amp;gt; PropIt(Fun, EFieldIteratorFlags::ExcludeSuper); PropIt; ++PropIt) { UProperty* Property = *PropIt; bool isOut = Property-&amp;gt;HasAnyPropertyFlags(CPF_OutParm); if (!</description>
     </item>
@@ -560,7 +590,8 @@ http://zompi.pl/building-ios-game-in-unreal-engine-4-via-remote-machine/
       
       <guid>http://www.dawnarc.com/2018/03/ue4cull-distance-volume%E8%B7%9D%E7%A6%BB%E8%A3%81%E5%89%AA%E7%94%A8%E6%B3%95/</guid>
       <description>keywords：UE4、Cull Distance Volume、距离裁剪、遮挡剔除
-排除物体 打开编辑器，在World Outline（不是Content Browser中的static mesh双击后的编辑面板，而是static mesh拖拽到场景中之后的实例对象的属性面板）。选中要排除的物体，打开Show All Advanced Details，找到LOD -》 去掉勾选 All Cull Distance Volume。   常用的Distance级别设置   识不足则多虑；威不足则多怒；信不足则多言。----弘一法师</description>
+排除物体 打开编辑器，在World Outline（不是Content Browser中的static mesh双击后的编辑面板，而是static mesh拖拽到场景中之后的实例对象的属性面板）。选中要排除的物体，打开Show All Advanced Details，找到LOD -》 去掉勾选 All Cull Distance Volume。   常用的Distance级别设置   Cull Distance Volume在游戏运行时才有效，在编辑器非运行期间拖拉摄像机无效。
+ 识不足则多虑；威不足则多怒；信不足则多言。----弘一法师</description>
     </item>
     
     <item>
@@ -570,6 +601,7 @@ http://zompi.pl/building-ios-game-in-unreal-engine-4-via-remote-machine/
       
       <guid>http://www.dawnarc.com/2018/03/ue4%E7%89%A9%E4%BD%93%E8%B7%9F%E9%9A%8Fspline%E8%B7%AF%E5%BE%84%E7%A7%BB%E5%8A%A8move-along-spline-path/</guid>
       <description>先建一个普通的Actor蓝图，然后再蓝图中添加Spline Component（注意：不是Spline Mesh Component）   然后编辑路径，如果要添加新节点，右键路径 -》 Add Spline Point Here。   然后把该Actor蓝图拖到场景中，然后在相应蓝图（比如角色蓝图）中编辑移动逻辑：   (图片放大：复制图片地址单独打开)
+将Spline 曲线打直（Turn Splines curves into straight Spline paths） 选中需要打直的曲线，在Detail面板中找到：Selected Points -》 Type，修改为Linear，默认为Curve。
 君子和而不同，小人同而不和。 ----《论语》</description>
     </item>
     
@@ -1598,15 +1630,10 @@ BoxComponent的Overlap事件 1，C++中的代码编写 这里我们演示的例�
       
       <guid>http://www.dawnarc.com/2017/04/ue4%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E4%B8%8E%E5%86%85%E5%AD%98%E5%B8%B8%E9%A9%BB/</guid>
       <description>keywords：UE4, Memory Persist, GC, 垃圾回收, 内存管理
-一个UObject类型的变量，即使是static，默认也会被GC掉。
- 要防止该对象被GC，有4种方式：
- 作为成员变量并标记为UPROPERTY()； 创建对象后AddToRoot()；（退出游戏时需要RemoveFromRoot()） FGCObjectScopeGuard在指定代码区域内保持对象； FStreamableManager Load资源时，bManageActiveHandle设置为true；  FGCObjectScopeGuard的用法：
-{ FGCObjectScopeGuard(UObject* GladOS = NewObject&amp;lt;...&amp;gt;(...)); GladOS-&amp;gt;SpawnCell(); RunGC(); GladOS-&amp;gt;IsStillAlive(); // Object will not be removed by GC }  FStreamableManager用法：
-FSoftObjectPath AssetPath(TEXT(&amp;quot;/Game/Mannequin/Animations/ThirdPersonWalk.ThirdPersonWalk&amp;quot;)); FStreamableManager&amp;amp; AssetLoader = UAssetManager::GetStreamableManager(); //hold object in memory. TSharedPtr&amp;lt;FStreamableHandle&amp;gt; Handle = AssetLoader.RequestSyncLoad(AssetPath, true); UObject* Obj = Handle-&amp;gt;GetLoadedAsset(); //free memory of object. Handle-&amp;gt;ReleaseHandle();  参考资料 虚幻4垃圾回收剖析
-http://www.cnblogs.com/ghl_carmack/p/6112118.html
-转载：UE4内存管理 – 实践
-http://blog.csdn.net/yangxuan0261/article/details/52075581
-原文内容如下：</description>
+防止GC的办法 一个UObject类型的变量，即使是static，默认也会被GC掉。
+ 要防止该对象被GC，有5种方式：
+ 作为成员变量并标记为UPROPERTY()； 创建对象后 AddToRoot() ；（退出游戏时需要RemoveFromRoot()） UObject对象创建出来后用TSharedPtr保存，作用等价于UPROPERTY()； FStreamableManager Load资源时，bManageActiveHandle 设置为true； FGCObjectScopeGuard 在指定代码区域内保持对象；  TSharedPtr 用法 TSharedPtr&amp;lt;MyUObject&amp;gt; ObjPtr = MakeShareable(NewObject&amp;lt;MyUObject&amp;gt;());  TSharedPtr 每赋值一次，引用计数器就会加一。但如果 TSharedPtr 成员变量所属的对象被销毁，则计数失效；如果想让某对象在游戏运行过程中一直不销毁，则可以在 GameInstance 中定义一个 TSharedPtr 对象并对其赋值。
+FGCObjectScopeGuard 用法 { FGCObjectScopeGuard(UObject* GladOS = NewObject&amp;lt;...&amp;gt;(...)); GladOS-&amp;gt;SpawnCell(); RunGC(); GladOS-&amp;gt;IsStillAlive(); // Object will not be removed by GC }  FStreamableManager 用法 FSoftObjectPath AssetPath(TEXT(&amp;quot;/Game/Mannequin/Animations/ThirdPersonWalk.ThirdPersonWalk&amp;quot;)); FStreamableManager&amp;amp; AssetLoader = UAssetManager::GetStreamableManager(); //hold object in memory. TSharedPtr&amp;lt;FStreamableHandle&amp;gt; Handle = AssetLoader.</description>
     </item>
     
     <item>
@@ -2059,8 +2086,8 @@ UParticleSystemComponent* PSC = UGameplayStatics::SpawnEmitterAttached(ParticleT
       <guid>http://www.dawnarc.com/2016/10/ue4%E5%A6%82%E4%BD%95%E7%A6%81%E7%94%A8%E8%A7%92%E8%89%B2%E7%9A%84%E5%88%9A%E4%BD%93%E7%A2%B0%E6%92%9E%E6%A3%80%E6%B5%8Bcollision/</guid>
       <description>通常的做法是：
 MyCharacter-&amp;gt;SetActorEnableCollision(false);  这样设置以后，角色就可以忽视一切障碍物或者刚体来进行移动了。
-另外Mesh也提供了接口来禁用刚体，但是一般情况都是将刚体加到角色蓝图中，而不是加载角色的Mesh上，所以这种不适用常规情况。
-MyCharacter-&amp;gt;GetMesh()-&amp;gt;SetCollisionEnabled(ECollisionEnabled::NoCollision);  </description>
+另外一种方式：
+MyCharacter-&amp;gt;GetMesh()-&amp;gt;SetCollisionEnabled(ECollisionEnabled::NoCollision);  这种第二种方式，不会禁用CollisionComponent的碰撞（个人理解，具体未测试）。</description>
     </item>
     
     <item>
@@ -2651,7 +2678,8 @@ GetWorld()-&amp;gt;GetNavigationSystem()-&amp;gt;SimpleMoveToLocation(Controller
  5，APawn-&amp;gt;AddMovementInput
 APawn-&amp;gt;AddMovementInput(FVector WorldDirection, float ScaleValue = 1.0f, bool bForce = false);  其中WorldDirection是方向，ScaleValue是速率倍速，bForce表示是否忽略Controller中的IgnoreMoveInput属性值，强制移动。
 6，UCharacterMovementComponent::AddImpulse
-void UCharacterMovementComponent::AddImpulse( FVector Impulse, bool bVelocityChange )  AddImpulse一般用来做投掷、爆炸、击飞等物理效果。添加的是一个瞬间的力，之后就不需要每帧做处理了。
+void UCharacterMovementComponent::AddImpulse( FVector Impulse, bool bVelocityChange )  AddImpulse一般用来做投掷、爆炸、击飞等物理效果。添加的是一个瞬间的力，之后就不需要每帧做处理了。 以实现一个击飞效果为例，要有明显击飞效果，Impulse 值要1000以上，且 bVelocityChange 设置为 true 。
+
 7，UCharacterMovementComponent::AddForce
 void UCharacterMovementComponent::AddForce( FVector Force )  如果想让物体保持移动，需要每帧都执行AddForce()函数，也就说如果加速度是实时变化的，那么就可以用AddForce。 两者的区别可以参考：
 https://forums.unrealengine.com/showthread.php?29496-Addforce-and-addimpulse
@@ -2763,7 +2791,7 @@ UE4Editor-Core.dll!rml::internal::ExtMemoryPool::initTLS(void) UE4Editor-Core.dl
       <pubDate>Sat, 28 May 2016 21:42:02 +0800</pubDate>
       
       <guid>http://www.dawnarc.com/2016/05/ue4spawn%E5%87%BA%E6%9D%A5%E7%9A%84actor%E5%9B%BA%E5%AE%9A%E5%9C%A8%E7%A9%BA%E4%B8%AD%E6%B2%A1%E6%9C%89%E8%87%AA%E7%94%B1%E8%90%BD%E4%BD%93%E7%9A%84%E9%97%AE%E9%A2%98/</guid>
-      <description>spawn出来的actor如果没有给人controller（AIController或者PlayerController），则初始的坐标是哪个位置就会固定在这个位置，即使悬浮在空中也不会自由落体，只要给他possess一个controller就可以自由落体了。</description>
+      <description>spawn出来的actor如果没有 possess controller（AIController或者PlayerController），则初始的坐标是哪个位置就会固定在这个位置，即使悬浮在空中也不会自由落体，只要给他possess一个controller就可以自由落体了。</description>
     </item>
     
     <item>

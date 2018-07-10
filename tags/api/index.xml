@@ -78,8 +78,8 @@ Assertion failed: !IsRooted() [File:d:\build\++ue4+release-4.13+compile\sync\eng
       <guid>http://www.dawnarc.com/2016/10/ue4%E5%A6%82%E4%BD%95%E7%A6%81%E7%94%A8%E8%A7%92%E8%89%B2%E7%9A%84%E5%88%9A%E4%BD%93%E7%A2%B0%E6%92%9E%E6%A3%80%E6%B5%8Bcollision/</guid>
       <description>通常的做法是：
 MyCharacter-&amp;gt;SetActorEnableCollision(false);  这样设置以后，角色就可以忽视一切障碍物或者刚体来进行移动了。
-另外Mesh也提供了接口来禁用刚体，但是一般情况都是将刚体加到角色蓝图中，而不是加载角色的Mesh上，所以这种不适用常规情况。
-MyCharacter-&amp;gt;GetMesh()-&amp;gt;SetCollisionEnabled(ECollisionEnabled::NoCollision);  </description>
+另外一种方式：
+MyCharacter-&amp;gt;GetMesh()-&amp;gt;SetCollisionEnabled(ECollisionEnabled::NoCollision);  这种第二种方式，不会禁用CollisionComponent的碰撞（个人理解，具体未测试）。</description>
     </item>
     
     <item>
@@ -250,7 +250,8 @@ GetWorld()-&amp;gt;GetNavigationSystem()-&amp;gt;SimpleMoveToLocation(Controller
  5，APawn-&amp;gt;AddMovementInput
 APawn-&amp;gt;AddMovementInput(FVector WorldDirection, float ScaleValue = 1.0f, bool bForce = false);  其中WorldDirection是方向，ScaleValue是速率倍速，bForce表示是否忽略Controller中的IgnoreMoveInput属性值，强制移动。
 6，UCharacterMovementComponent::AddImpulse
-void UCharacterMovementComponent::AddImpulse( FVector Impulse, bool bVelocityChange )  AddImpulse一般用来做投掷、爆炸、击飞等物理效果。添加的是一个瞬间的力，之后就不需要每帧做处理了。
+void UCharacterMovementComponent::AddImpulse( FVector Impulse, bool bVelocityChange )  AddImpulse一般用来做投掷、爆炸、击飞等物理效果。添加的是一个瞬间的力，之后就不需要每帧做处理了。 以实现一个击飞效果为例，要有明显击飞效果，Impulse 值要1000以上，且 bVelocityChange 设置为 true 。
+
 7，UCharacterMovementComponent::AddForce
 void UCharacterMovementComponent::AddForce( FVector Force )  如果想让物体保持移动，需要每帧都执行AddForce()函数，也就说如果加速度是实时变化的，那么就可以用AddForce。 两者的区别可以参考：
 https://forums.unrealengine.com/showthread.php?29496-Addforce-and-addimpulse
