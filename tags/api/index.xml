@@ -71,15 +71,16 @@ Assertion failed: !IsRooted() [File:d:\build\++ue4+release-4.13+compile\sync\eng
     </item>
     
     <item>
-      <title>[UE4]如何禁用角色的刚体碰撞检测Collision</title>
-      <link>https://dawnarc.com/2016/10/ue4%E5%A6%82%E4%BD%95%E7%A6%81%E7%94%A8%E8%A7%92%E8%89%B2%E7%9A%84%E5%88%9A%E4%BD%93%E7%A2%B0%E6%92%9E%E6%A3%80%E6%B5%8Bcollision/</link>
+      <title>[UE4]Collision碰撞相关</title>
+      <link>https://dawnarc.com/2016/10/ue4collision%E7%A2%B0%E6%92%9E%E7%9B%B8%E5%85%B3/</link>
       <pubDate>Wed, 12 Oct 2016 20:15:40 +0800</pubDate>
       
-      <guid>https://dawnarc.com/2016/10/ue4%E5%A6%82%E4%BD%95%E7%A6%81%E7%94%A8%E8%A7%92%E8%89%B2%E7%9A%84%E5%88%9A%E4%BD%93%E7%A2%B0%E6%92%9E%E6%A3%80%E6%B5%8Bcollision/</guid>
-      <description>通常的做法是：
+      <guid>https://dawnarc.com/2016/10/ue4collision%E7%A2%B0%E6%92%9E%E7%9B%B8%E5%85%B3/</guid>
+      <description>如何禁用角色的刚体碰撞检测Collision 通常的做法是：
 MyCharacter-&amp;gt;SetActorEnableCollision(false);  这样设置以后，角色就可以忽视一切障碍物或者刚体来进行移动了。
 另外一种方式：
-MyCharacter-&amp;gt;GetMesh()-&amp;gt;SetCollisionEnabled(ECollisionEnabled::NoCollision);  这种第二种方式，不会禁用CollisionComponent的碰撞（个人理解，具体未测试）。</description>
+MyCharacter-&amp;gt;GetMesh()-&amp;gt;SetCollisionEnabled(ECollisionEnabled::NoCollision);  这种第二种方式，不会禁用CollisionComponent的碰撞（个人理解，具体未测试）。
+GetOverlappingActors() 注意事项 GetOverlappingActors() 是获取与当前 Collision 相碰撞的 Actor ，如果一个角色身上有两个 CollisionComponent ，且这两个 CollisionComponent 之间有重叠，即使这两个 CollisionComponent没有和其他 Actor碰撞， GetOverlappingActors() 也会返回当前角色 Actor 。</description>
     </item>
     
     <item>
@@ -157,14 +158,18 @@ FTCHARToANSI Convert(*String); Ar-&amp;gt;Serialize((ANSICHAR*)Convert, Convert.
       <pubDate>Wed, 27 Jul 2016 19:39:02 +0800</pubDate>
       
       <guid>https://dawnarc.com/2016/07/ue4%E5%A6%82%E4%BD%95%E5%90%AF%E7%94%A8detour-crowd-ai-controller%E7%BE%A4%E7%BB%84%E7%A7%BB%E5%8A%A8%E6%97%B6%E7%9A%84%E7%BB%95%E8%B7%AF%E9%97%AE%E9%A2%98/</guid>
-      <description> 老版本中需要手动写C++来设置CrowManagerClass，新版本中只需要在Project Settings中设置。
-老版本 蓝图中叫做：Detour Crowd AI Controller C++代码中叫做：UCrowdFollowingComponent，在AIController的构造函数中设置即可
+      <description>keywords：UE4、AI、群体移动、闪避、避让、回避
+Detour Crowd AI Controller 蓝图方式
+打开ControllerBP，在 Class Settings 中设置 Parent Class 为：Detour Crowd AI Controller。
+C++方式
+引擎的C++代码有个叫 ADetourCrowdAIController 的class，但是这个class无法继承；
+要在C++中使用Detour Crowd AI，需要借助 UCrowdFollowingComponent，在AIController的构造函数中设置即可
 头文件：
 MyAIController(const FObjectInitializer&amp;amp; ObjectInitializer = FObjectInitializer::Get());  cpp：
-MyAIController::MyAIController(const FObjectInitializer&amp;amp; ObjectInitializer) : Super(ObjectInitializer.SetDefaultSubobjectClass&amp;lt;UCrowdFollowingComponent&amp;gt;(TEXT(&amp;quot;PathFollowingComponent&amp;quot;))) { }  新版本 Project Settings -》Engine -》 Navigation System -》 Crow Manager Class
-  官方doc： FCrowdAvoidanceConfig https://docs.unrealengine.com/latest/INT/API/Runtime/AIModule/Navigation/FCrowdAvoidanceConfig/index.html
-注意事项： 使用UCrowdFollowingComponent时必须禁用RVO避让模式，否则无法生效：
-//默认是关闭的 GetCharacterMovement()-&amp;gt;bUseRVOAvoidance = false;  </description>
+MyAIController::MyAIController(const FObjectInitializer&amp;amp; ObjectInitializer) : Super(ObjectInitializer.SetDefaultSubobjectClass&amp;lt;UCrowdFollowingComponent&amp;gt;(TEXT(&amp;quot;PathFollowingComponent&amp;quot;))) { }  Crowd Manager 配置 Project Settings -》Engine -》 Navigation System -》 Crowd Manager Class
+  并可以在 Project Settings -》 Engine -》 Crowd Manager 编辑各种参数。
+官方doc： FCrowdAvoidanceConfig https://docs.unrealengine.com/latest/INT/API/Runtime/AIModule/Navigation/FCrowdAvoidanceConfig/index.html
+注意事项 1，使用UCrowdFollowingComponent时必须禁用RVO避让模式，否则无法生效：</description>
     </item>
     
     <item>
@@ -241,7 +246,6 @@ MyCharacter-&amp;gt;GetCharacterMovement()-&amp;gt;GravityScale = 100.f   </desc
       
       <guid>https://dawnarc.com/2016/06/ue4%E7%A7%BB%E5%8A%A8%E7%89%A9%E4%BD%93%E7%9A%84%E5%87%A0%E7%A7%8D%E6%96%B9%E6%B3%95/</guid>
       <description>keywords: UE4、Movement
-作者：@玄冬Wong
 1，Actor-&amp;gt;SetActorLocation
 Actor-&amp;gt;SetActorLocation()  2，Velocity
 ACharacter-&amp;gt;GetCharacterMovement()-&amp;gt;Velocity += FVector(5.f, 5.f, 0.f);  3，将一个Controller（PlayerController或者AIController）possess到一个Actor上，然后调用：
@@ -250,7 +254,7 @@ GetWorld()-&amp;gt;GetNavigationSystem()-&amp;gt;SimpleMoveToLocation(Controller
  5，APawn-&amp;gt;AddMovementInput
 APawn-&amp;gt;AddMovementInput(FVector WorldDirection, float ScaleValue = 1.0f, bool bForce = false);  其中WorldDirection是方向，ScaleValue是速率倍速，bForce表示是否忽略Controller中的IgnoreMoveInput属性值，强制移动。
 6，UCharacterMovementComponent::AddImpulse
-void UCharacterMovementComponent::AddImpulse( FVector Impulse, bool bVelocityChange )  AddImpulse一般用来做投掷、爆炸、击飞等物理效果。添加的是一个瞬间的力，之后就不需要每帧做处理了。 以实现一个击飞效果为例，要有明显击飞效果，Impulse 值要1000以上，且 bVelocityChange 设置为 true 。
+void UCharacterMovementComponent::AddImpulse( FVector Impulse, bool bVelocityChange )  AddImpulse 一般用来做投掷、爆炸、击飞等物理效果。添加的是一个瞬间的力，之后就不需要每帧做处理了。 注意：AddImpulse 作用对象一般都是 StaticMeshComponent ，而不能是 CollisionComponent，否则无效。且 StaticMeshComponent 要开启物理：SetSimulatePhysics(true) ，否则也无效。
 
 7，UCharacterMovementComponent::AddForce
 void UCharacterMovementComponent::AddForce( FVector Force )  如果想让物体保持移动，需要每帧都执行AddForce()函数，也就说如果加速度是实时变化的，那么就可以用AddForce。 两者的区别可以参考：
@@ -309,7 +313,7 @@ FString Path = FString::Printf(TEXT(&amp;quot;StaticMesh&#39;/Game/Shapes/ground
       <description>假设是在Character内执行，其中MontagePtr为Montage指针：
 float DeathAnimDuration = PlayAnimMontage(MontagePtr) / (GetMesh() &amp;amp;&amp;amp; GetMesh()-&amp;gt;GlobalAnimRateScale &amp;gt; 0 ? GetMesh()-&amp;gt;GlobalAnimRateScale : 1);  如果只是播放Animation Sequence，可以使用 PlayAnimation()
 if (USkeletalMeshComponent *Mesh = GetMesh()) { Mesh-&amp;gt;PlayAnimation(AnimSequence, false); }  注意：PlayAnimation可以直接来播放AnimSequence，但是不能混合动作。比如当播放完攻击动作后，无法自动回到空闲状态，但是通过Montage的Slot可以完成自动切换动作。
- C++动态播放Montage（通过AnimSequence创建） http://www.dawnarc.com/2017/12/ue4c--%E5%8A%A8%E6%80%81%E5%88%9B%E5%BB%BAmontage%E5%B9%B6%E6%92%AD%E6%94%BE%E5%8A%A8%E7%94%BB/
+ C++动态播放Montage（通过AnimSequence创建） https://dawnarc.com/2017/12/ue4c--%E5%8A%A8%E6%80%81%E5%88%9B%E5%BB%BAmontage%E5%B9%B6%E6%92%AD%E6%94%BE%E5%8A%A8%E7%94%BB/
 其他参考： How can I play animations strictly from C++?
 https://answers.unrealengine.com/questions/292345/how-can-i-play-animations-strictly-from-c.html</description>
     </item>
