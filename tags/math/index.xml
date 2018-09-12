@@ -6,10 +6,22 @@
     <description>Recent content in Math on 玄冬Wong</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 30 Jul 2018 16:58:02 +0800</lastBuildDate>
+    <lastBuildDate>Wed, 29 Aug 2018 11:58:02 +0800</lastBuildDate>
     
 	<atom:link href="https://dawnarc.com/tags/math/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>[Math]Parabola movement</title>
+      <link>https://dawnarc.com/2018/08/mathparabola-movement/</link>
+      <pubDate>Wed, 29 Aug 2018 11:58:02 +0800</pubDate>
+      
+      <guid>https://dawnarc.com/2018/08/mathparabola-movement/</guid>
+      <description>keywords：抛物运动、Parabola、重力加速度、Gravitational Speed 、UE4 implement.
+header
+AStaticMeshActor* TestCube = nullptr; //throw speed UPROPERTY(EditDefaultsOnly) FVector StartForce = FVector(100.f, 100.f, 2000.f); //gravitational acceleration float GravityAcclerator = -980.f; //accumulated movtion time float AccumulateTime = 0.f;  cpp
+void ATestTPGameMode::StartPlay() { Super::StartPlay(); //finding the Actor in scene. for (TActorIterator&amp;lt;AStaticMeshActor&amp;gt; Iter(GetWorld()); Iter; ++Iter) { if (Iter-&amp;gt;GetName() == TEXT(&amp;quot;Cube_2&amp;quot;)) { TestCube = *Iter; break; } } } void ATestTPGameMode::Tick(float DeltaSeconds) { Super::Tick(DeltaSeconds); AccumulateTime += DeltaSeconds; //calculate gravitational speed in real time.</description>
+    </item>
     
     <item>
       <title>[Math]Orthogonalize(正交化)</title>
@@ -62,11 +74,12 @@ LogUObjectGlobals:Warning: Failed to find object &#39;AnimBlueprint /Game/ThirdP
       <pubDate>Fri, 13 Apr 2018 15:59:02 +0800</pubDate>
       
       <guid>https://dawnarc.com/2018/04/ue4%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0%E4%B8%96%E7%95%8C%E5%9D%90%E6%A0%87%E8%BD%AC%E5%B1%80%E9%83%A8%E5%9D%90%E6%A0%87world-space-to-local-space/</guid>
-      <description>keywords：UE4、InverseTransformVector、InverseTransformVector、InverseTransformPosition
+      <description>keywords：UE4、InverseTransformVector、InverseTransformPosition
 实例代码：
 //返回摄像机Rotation相对角色Rotation的偏移量Offset FRotator ASBaseCharacter::GetAimOffsets() const { const FVector AimDirWS = GetBaseAimRotation().Vector(); const FVector AimDirLS = ActorToWorld().InverseTransformVectorNoScale(AimDirWS); const FRotator AimRotLS = AimDirLS.Rotation(); return AimRotLS; }  https://github.com/tomlooman/EpicSurvivalGameSeries/blob/4a6ee9a6081529fadbe0f693b2e4e6729d5ec08d/SurvivalGame/Source/SurvivalGame/Private/Player/SBaseCharacter.cpp#L374
 如果只是想获取两个Rotation之间的Offset，更简单的办法：
-FRotator R1; FRotator R2; FRotator Offset = R2 - R1;  无欲则刚，关心则乱。----《论语》</description>
+FRotator R1; FRotator R2; FRotator Offset = R2 - R1;  但这种直接相减的方式，返回的结果Rotation，度数可能会小于-180 或 大于 180，需要手动处理范围限定，但是效率远高于 InverseTransformVector。
+无欲则刚，关心则乱。----《论语》</description>
     </item>
     
     <item>
@@ -107,8 +120,9 @@ http://www.cnblogs.com/DreamUp/archive/2010/07/27/1786225.html
 FRotator Rot1(0.f, 90.f, 0.f); FRotator Rot2(90.f,0.f, 0.f); FRotator Result = Rot1 + Rot2;  得到的结果FRotator Result(90.f, 90.f, 0.f)，其意义是： 物体相对空间坐标原点的Rotation为(90.f, 90.f, 0.f)，很好理解。
 如果两个Rotation转换为Martix并相乘，比如：
 FRotator Rot1(0.f, 90.f, 0.f); FRotator Rot2(90.f,0.f, 0.f); FRotator Result =( FRotationMatrix(Rot1) * FRotationMatrix(Rot2)).Rotator;  得到的结果FRotator Result(0.f, 90.f, 90.f)，其意义是： 先将物体作Rot1旋转，即：Yaw方向（水平平面）旋转90度，然后再假设该物体相对坐标轴原点的旋转量为(0, 0, 0)，即没有作任何旋转，但实际Rotation相对坐标轴原点为(0, 90, 0)；然后再将物体进行Rot2旋转，即Pitch方向（垂直于(90, 0, 0)方向的平面）侧翻90度，因为侧翻90度前假设物体的Rotation是(0, 0, 0)，所以侧翻时所在的平面不再是Yaw=90的平面（垂直于(0, 90, 0)方向），而是Yaw=0的平面（垂直于(90, 0, 0)方向）。没做相关配图，这段话理解起来有点绕，最好用空间思维想象下，可以用手掌比划。
-实际应用： 比如空间中有两个物体：A和B，现在要将A旋转至与B相同的朝向，目前只知道A的相对世界坐标的Rotation Ra(90.f,0.f, 0.f)、B相对A（将A的Rotation当做(0, 0, 0)）的Rotation Rb(0.f, 90.f, 0.f)，求A旋转后的世界坐标Rotation。 此时的计算公式就是： ( FRotationMatrix(Rb) * FRotationMatrix(Ra)).Rotator
-注意：矩阵相乘时，两个乘数的前后位置不同则计算的结果也不同，比如上面例子，如果是( FRotationMatrix(Rot2) * FRotationMatrix(Rot1)).</description>
+实际应用： 比如空间中有两个物体：A和B，现在要将A旋转至与B相同的朝向，目前只知道A的相对世界坐标的Rotation Rw(90.f,0.f, 0.f)、B相对A（将A的Rotation当做(0, 0, 0)）的Rotation Rr(0.f, 90.f, 0.f)，求A旋转后的世界坐标Rotation。
+此时的计算公式就是：
+(FRotationMatrix(Rr) * FRotationMatrix(Rw)).Rotator()  注意：矩阵相乘时，两个乘数的前后位置不同则计算的结果也不同，比如上面例子，如果是( FRotationMatrix(Rot2) * FRotationMatrix(Rot1)).</description>
     </item>
     
     <item>
@@ -188,7 +202,7 @@ float Len = FMath::Sqrt(100 * 100 + 100 * 100); FVector Loc1 = FVector(0.f, 0.f,
       
       <guid>https://dawnarc.com/2016/07/ue4%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0%E5%B7%B2%E7%9F%A5%E6%96%B9%E5%90%91%E5%90%91%E9%87%8F%E6%B1%82%E8%AF%A5%E5%90%91%E9%87%8F%E4%B8%8E%E7%A9%BA%E9%97%B4%E5%9D%90%E6%A0%87%E8%BD%B4%E7%9A%84%E5%A4%B9%E8%A7%92/</guid>
       <description>原始的数学公式不列举了，需要的话找个Math库看下源码。这里以UE4的API说明：
-情况一：已知两个空间向量的角角 已知空间中两个点FVector V1, V2，方向向量V3 = V2 - V1，求V3与空间坐标的夹角：
+情况一：已知两个坐标点，求连线与空间坐标的夹角 已知空间中两个点FVector V1, V2，方向向量V3 = V2 - V1，求V3与空间坐标的夹角：
 FRotator R = (V2 - V1).Rotation();  情况二：单个向量与世界坐标的夹角 已知方向向量Vector V1，求V1与空间坐标轴的夹角Rotator R1：即将Vector转换为Rotator
 FRotator R1 = FVector(100.f, 100.f, 0.f).Rotation(); FRotator R2 = FVector(-100.f, -100.f, 0.f).Rotation(); FRotator R3 = FVector(100.f, 0.f, 0.f).Rotation(); FRotator R4 = FVector(0.f, 100.f, 0.f).Rotation();  结果分别是：
 R1 = {Pitch=0.0 Yaw=45.0 Roll=0.0 } R2 = {Pitch=0.0 Yaw=-135.0 Roll=0.0 } R3 = {Pitch=0.0 Yaw=0.0 Roll=0.0 } R4 = {Pitch=0.0 Yaw=90.0 Roll=0.0 }  FVector::Rotation()函数的内部实现（局部）：</description>
@@ -221,9 +235,11 @@ FBox2D::IsInside(const FVector2D&amp;amp; TestPoint) FBox::IsInside(const FVecto
       <pubDate>Wed, 08 Jun 2016 18:15:02 +0800</pubDate>
       
       <guid>https://dawnarc.com/2016/06/ue4%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0%E7%89%A9%E4%BD%93%E5%9B%B4%E7%BB%95%E6%9F%90%E4%B8%AA%E7%82%B9%E6%97%8B%E8%BD%AC%E4%B8%80%E5%AE%9A%E8%A7%92%E5%BA%A6/</guid>
-      <description>2D上的点围绕某另一个点旋转： If you rotate point (px, py) around point (ox, oy) by angle theta you&amp;rsquo;ll get:
+      <description>三角函数公式 2D上的点围绕某另一个点旋转： If you rotate point (px, py) around point (ox, oy) by angle theta you&amp;rsquo;ll get:
 p&#39;x = cos(theta) * (px-ox) - sin(theta) * (py-oy) + ox p&#39;y = sin(theta) * (px-ox) + cos(theta) * (py-oy) + oy  this is an easy way to rotate a point in 2D.
-======================================= http://stackoverflow.com/questions/13275719/rotate-a-3d-point-around-another-one Try to use vector math. decide in which order you rotate, first along x, then along y perhaps.</description>
+3D上的点围绕某另一个点旋转
+http://stackoverflow.com/questions/13275719/rotate-a-3d-point-around-another-one
+Try to use vector math. decide in which order you rotate, first along x, then along y perhaps.</description>
     </item>
     
   </channel>

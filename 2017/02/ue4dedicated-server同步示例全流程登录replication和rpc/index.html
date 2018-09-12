@@ -1,0 +1,1299 @@
+
+
+  
+    
+  
+
+
+  
+
+
+
+
+  
+
+
+  
+
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Hugo 0.42.1 with theme Tranquilpeak 0.4.3-BETA">
+    <title>[UE4]Dedicated Server同步示例全流程(登录、Replication和RPC)</title>
+    <meta name="author" content="Neil Wang">
+    <meta name="keywords" content="">
+
+    <link rel="icon" href="https://dawnarc.com/favicon.png">
+    
+
+    
+    <meta name="description" content="转载请注明原文出处：https://dawnarc.com
+keywords：UE4、Replication、Relicate、reliable、RPC、RTS Movement、Dedicated Server、属性同步、位移同步、专用服务器、demo、example
+实例的完整工程下载地址见文章底部
+属性同步 步骤：
+1，对属性添加UPROPERTY(Replicated)宏：
+//Player display name UPROPERTY(Replicated) FString Alias_;  2，属性所在的class中重写函数GetLifetimeReplicatedProps：
+需要头文件：
+#include &quot;Net/UnrealNetwork.h&quot;  重写函数：
+void AReplTestCharacter::GetLifetimeReplicatedProps(TArray&lt; FLifetimeProperty &gt; &amp; OutLifetimeProps) const { Super::GetLifetimeReplicatedProps(OutLifetimeProps); DOREPLIFETIME(AReplTestCharacter, Alias_); }  RPC（远程执行调用） 步骤：
+1，对需要远程执行的函数添加宏UFUNCTION(Server, Reliable, WithValidation)或者UFUNCTION(Client, Reliable)。其中Server表示在客户端调用，在服务端执行；WithValidation表示是否需要验证函数，加上的画需要添加函数：bool MyFun_Validate()，函数提内容写在MyFun_Implementation函数内。cpp中不需要与函数名同名的函数体，只需要实现_Validate和_Implementation两个函数即可。 头文件：
+//移动角色(只在服务端执行的函数) UFUNCTION(Server, Reliable, WithValidation) void ServerMoveToDest(APawn* Panw, const FVector DestLocation); bool ServerMoveToDest_Validate(APawn* Panw, const FVector DestLocation); void ServerMoveToDest_Implementation(APawn* Panw, const FVector DestLocation);  CPP：
+bool AReplTestPlayerController::ServerMoveToDest_Validate(APawn* Panw, const FVector DestLocation) { return true; } void AReplTestPlayerController::ServerMoveToDest_Implementation(APawn* Pawn, const FVector DestLocation) { //logic.">
+    <meta property="og:description" content="转载请注明原文出处：https://dawnarc.com
+keywords：UE4、Replication、Relicate、reliable、RPC、RTS Movement、Dedicated Server、属性同步、位移同步、专用服务器、demo、example
+实例的完整工程下载地址见文章底部
+属性同步 步骤：
+1，对属性添加UPROPERTY(Replicated)宏：
+//Player display name UPROPERTY(Replicated) FString Alias_;  2，属性所在的class中重写函数GetLifetimeReplicatedProps：
+需要头文件：
+#include &quot;Net/UnrealNetwork.h&quot;  重写函数：
+void AReplTestCharacter::GetLifetimeReplicatedProps(TArray&lt; FLifetimeProperty &gt; &amp; OutLifetimeProps) const { Super::GetLifetimeReplicatedProps(OutLifetimeProps); DOREPLIFETIME(AReplTestCharacter, Alias_); }  RPC（远程执行调用） 步骤：
+1，对需要远程执行的函数添加宏UFUNCTION(Server, Reliable, WithValidation)或者UFUNCTION(Client, Reliable)。其中Server表示在客户端调用，在服务端执行；WithValidation表示是否需要验证函数，加上的画需要添加函数：bool MyFun_Validate()，函数提内容写在MyFun_Implementation函数内。cpp中不需要与函数名同名的函数体，只需要实现_Validate和_Implementation两个函数即可。 头文件：
+//移动角色(只在服务端执行的函数) UFUNCTION(Server, Reliable, WithValidation) void ServerMoveToDest(APawn* Panw, const FVector DestLocation); bool ServerMoveToDest_Validate(APawn* Panw, const FVector DestLocation); void ServerMoveToDest_Implementation(APawn* Panw, const FVector DestLocation);  CPP：
+bool AReplTestPlayerController::ServerMoveToDest_Validate(APawn* Panw, const FVector DestLocation) { return true; } void AReplTestPlayerController::ServerMoveToDest_Implementation(APawn* Pawn, const FVector DestLocation) { //logic.">
+    <meta property="og:type" content="blog">
+    <meta property="og:title" content="[UE4]Dedicated Server同步示例全流程(登录、Replication和RPC)">
+    <meta property="og:url" content="/2017/02/ue4dedicated-server%E5%90%8C%E6%AD%A5%E7%A4%BA%E4%BE%8B%E5%85%A8%E6%B5%81%E7%A8%8B%E7%99%BB%E5%BD%95replication%E5%92%8Crpc/">
+    <meta property="og:site_name" content="玄冬Wong">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="玄冬Wong">
+    <meta name="twitter:description" content="转载请注明原文出处：https://dawnarc.com
+keywords：UE4、Replication、Relicate、reliable、RPC、RTS Movement、Dedicated Server、属性同步、位移同步、专用服务器、demo、example
+实例的完整工程下载地址见文章底部
+属性同步 步骤：
+1，对属性添加UPROPERTY(Replicated)宏：
+//Player display name UPROPERTY(Replicated) FString Alias_;  2，属性所在的class中重写函数GetLifetimeReplicatedProps：
+需要头文件：
+#include &quot;Net/UnrealNetwork.h&quot;  重写函数：
+void AReplTestCharacter::GetLifetimeReplicatedProps(TArray&lt; FLifetimeProperty &gt; &amp; OutLifetimeProps) const { Super::GetLifetimeReplicatedProps(OutLifetimeProps); DOREPLIFETIME(AReplTestCharacter, Alias_); }  RPC（远程执行调用） 步骤：
+1，对需要远程执行的函数添加宏UFUNCTION(Server, Reliable, WithValidation)或者UFUNCTION(Client, Reliable)。其中Server表示在客户端调用，在服务端执行；WithValidation表示是否需要验证函数，加上的画需要添加函数：bool MyFun_Validate()，函数提内容写在MyFun_Implementation函数内。cpp中不需要与函数名同名的函数体，只需要实现_Validate和_Implementation两个函数即可。 头文件：
+//移动角色(只在服务端执行的函数) UFUNCTION(Server, Reliable, WithValidation) void ServerMoveToDest(APawn* Panw, const FVector DestLocation); bool ServerMoveToDest_Validate(APawn* Panw, const FVector DestLocation); void ServerMoveToDest_Implementation(APawn* Panw, const FVector DestLocation);  CPP：
+bool AReplTestPlayerController::ServerMoveToDest_Validate(APawn* Panw, const FVector DestLocation) { return true; } void AReplTestPlayerController::ServerMoveToDest_Implementation(APawn* Pawn, const FVector DestLocation) { //logic.">
+    
+      <meta name="twitter:creator" content="@idealsland">
+    
+    
+
+    
+    
+
+    
+      <meta property="og:image" content="//www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=640">
+    
+
+    
+    
+    
+
+    
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/jquery.fancybox.min.css" integrity="sha256-vuXZ9LGmmwtjqFX1F+EKin1ThZMub58gKULUyf0qECk=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/helpers/jquery.fancybox-thumbs.min.css" integrity="sha256-SEa4XYAHihTcEP1f5gARTB2K26Uk8PsndQYHQC1f4jU=" crossorigin="anonymous" />
+    
+    
+    <link rel="stylesheet" href="https://dawnarc.com/css/style-jsjn0006wyhpyzivf6yceb31gvpjatbcs3qzjvlumobfnugccvobqwxnnaj8.min.css" />
+    
+    
+      
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/solarized-light.min.css">
+      
+    
+
+    
+      
+<script>
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-78064851-2', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="4">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="https://dawnarc.com/">玄冬Wong</a>
+  </div>
+  
+    
+      <a class="header-right-picture "
+         href="https://dawnarc.com/#about">
+    
+    
+    
+      
+        <img class="header-picture" src="//www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=90" alt="Author&#39;s picture" />
+      
+    
+    </a>
+  
+  
+  
+
+</header>
+
+      <nav id="sidebar" data-behavior="4">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="https://dawnarc.com/#about">
+          <img class="sidebar-profile-picture" src="//www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=110" alt="Author&#39;s picture" />
+        </a>
+        <h4 class="sidebar-profile-name">Neil Wang</h4>
+        
+          <h5 class="sidebar-profile-bio">久长唯有品格</h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/categories">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+      
+      <span class="sidebar-button-desc">Categories</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/tags">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+      
+      <span class="sidebar-button-desc">Tags</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/archives">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+      
+      <span class="sidebar-button-desc">Archives</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/#about">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+      
+      <span class="sidebar-button-desc">About</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+      
+      <span class="sidebar-button-desc">Home</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/index.xml">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://stackoverflow.com/users/1645289/protoss" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-stack-overflow"></i>
+      
+      <span class="sidebar-button-desc">Stack Overflow</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://www.artstation.com/artist/dawnarc" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-artstation"></i>
+      
+      <span class="sidebar-button-desc">ArtStation</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://www.facebook.com/koanland" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-facebook"></i>
+      
+      <span class="sidebar-button-desc">Facebook</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/dawnarc" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://www.linkedin.com/in/dawnarc/" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-linkedin"></i>
+      
+      <span class="sidebar-button-desc">Linkedin</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://www.pinterest.com/wangaiguo/" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-pinterest"></i>
+      
+      <span class="sidebar-button-desc">Pinterest</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://steamcommunity.com/id/dawnarc" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-steam"></i>
+      
+      <span class="sidebar-button-desc">Steam</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://twitter.com/idealsland" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-twitter"></i>
+      
+      <span class="sidebar-button-desc">Twitter</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://weibo.com/koanland" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-weibo"></i>
+      
+      <span class="sidebar-button-desc">Weibo</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+
+    </ul>
+  </div>
+</nav>
+
+      
+
+      <div id="main" data-behavior="4"
+        class="
+               hasCoverMetaIn
+               ">
+        <article class="post" itemscope itemType="http://schema.org/BlogPosting">
+          
+          
+            <div class="post-header main-content-wrap text-left">
+  
+    <h1 class="post-title" itemprop="headline">
+      [UE4]Dedicated Server同步示例全流程(登录、Replication和RPC)
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2017-02-25T20:33:40&#43;08:00">
+        
+  February 25, 2017
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+</div>
+          
+          <div class="post-content markdown" itemprop="articleBody">
+            <div class="main-content-wrap">
+              
+
+<p>转载请注明原文出处：<a href="https://dawnarc.com">https://dawnarc.com</a></p>
+
+<p>keywords：UE4、Replication、Relicate、reliable、RPC、RTS Movement、Dedicated Server、属性同步、位移同步、专用服务器、demo、example</p>
+
+<p>实例的完整工程下载地址见文章底部</p>
+
+<h5 id="属性同步">属性同步</h5>
+
+<p>步骤：<br />
+1，对属性添加UPROPERTY(Replicated)宏：</p>
+
+<pre><code>//Player display name
+UPROPERTY(Replicated)
+    FString Alias_;
+</code></pre>
+
+<p>2，属性所在的class中重写函数GetLifetimeReplicatedProps：<br />
+需要头文件：</p>
+
+<pre><code>#include &quot;Net/UnrealNetwork.h&quot;
+</code></pre>
+
+<p>重写函数：</p>
+
+<pre><code>void AReplTestCharacter::GetLifetimeReplicatedProps(TArray&lt; FLifetimeProperty &gt; &amp; OutLifetimeProps) const
+{
+    Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+    DOREPLIFETIME(AReplTestCharacter, Alias_);
+}
+</code></pre>
+
+<h5 id="rpc-远程执行调用">RPC（远程执行调用）</h5>
+
+<p>步骤：<br />
+1，对需要远程执行的函数添加宏UFUNCTION(Server, Reliable, WithValidation)或者UFUNCTION(Client, Reliable)。其中Server表示在客户端调用，在服务端执行；WithValidation表示是否需要验证函数，加上的画需要添加函数：bool MyFun_Validate()，函数提内容写在MyFun_Implementation函数内。cpp中不需要与函数名同名的函数体，只需要实现_Validate和_Implementation两个函数即可。
+头文件：</p>
+
+<pre><code>//移动角色(只在服务端执行的函数)
+UFUNCTION(Server, Reliable, WithValidation)
+    void ServerMoveToDest(APawn* Panw, const FVector DestLocation);
+bool ServerMoveToDest_Validate(APawn* Panw, const FVector DestLocation);
+void ServerMoveToDest_Implementation(APawn* Panw, const FVector DestLocation);
+</code></pre>
+
+<p>CPP：</p>
+
+<pre><code>bool AReplTestPlayerController::ServerMoveToDest_Validate(APawn* Panw, const FVector DestLocation)
+{
+    return true;
+}
+
+void AReplTestPlayerController::ServerMoveToDest_Implementation(APawn* Pawn, const FVector DestLocation)
+{
+    //logic...
+}
+</code></pre>
+
+<p><strong>三种 RPC 函数区别</strong>：</p>
+
+<ul>
+<li>UFUNCTION(Server, Reliable, WithValidation) 客户端请求，服务端执行。<br />
+使用场景：涉及到数据安全的行为，比如：砍一刀扣血，扣血条件判定以及血量修改，都应该放在服务端执行。</li>
+<li>UFUNCTION(Client, Reliable) 服务端请求，客户端执行，<span class="highlight-text red">也可能是服务端执行</span>。<br />
+使用场景：只是表现相关，不涉及数据修改的行为，比如：装备升级，整备的属性修改发生在服务端，升级成功后的外观变化，服务端需要通知客户端替换武器 Mesh 和材质。</li>
+<li>UFUNCTION(NetMulticast, Reliable) 服务端先执行，然后所有连接的客户端再执行。<br />
+使用场景：当前客户端做的表现也希望其他客户端也看到，比如：播放攻击动作，客户端A控制的角色A播放攻击动作，希望所有其他客户端也能看见角色A播放了攻击动作。<br />
+NetMulticast一般可以设置为 Unreliable ，表示如果网络不通畅，不重新发送 UDP 消息，比如上述装备升级，如果网络问题导致客户端未能更新装备外观，影响也不大，Unreliable 可以节省带宽。
+<br /></li>
+</ul>
+
+<div class="alert warning ">
+  <p>UFUNCTION(Client, Unreliable) 并不表示是一定在客户端执行！！！也可能是服务端执行。官方文档：
+Since the server can own actors itself, a &ldquo;Run on Owning Client&rdquo; event may actually run on the server, despite its name.</p>
+</div>
+
+<p>什么时候 Client function 才会在 Client 执行？<br />
+<span class="highlight-text red">如果调用 Client function 的对象是在 Server (NM_DedicatedServer) 创建的，那么该对象上的 Client function 始终会在 Server 执行，且 Client (NM_Client) 不会触发。</span><br />
+<span class="highlight-text red">如果是非 Server 创建的对象，比如：PlayerController ，那么其内部的 Client function 会在客户端执行。</span><br />
+<span class="highlight-text red">如何在 Server 上获取这个 Client 的 PlayerController : 重写 AGameMode::InitNewPlayer() 或者 AGameMode::PostLogin() ，PlayerController 会作为参数传递进来，将这个 PlayerController 指针保存下来。</span></p>
+
+<p>NetMulticast function 没有在 Client 触发的问题<br />
+<span class="highlight-text red">并不是定义了 NetMulticast function ，就一定会在 Client 执行。</span><br />
+<span class="highlight-text red">比如，在服务端生成了一个 Actor ，且在服务端执行该 Actor 上的 Multicast function ，默认情况下该 Multicast function 只会在 Server 执行。</span><br />
+如果要使该 Actor 的 Multicast function 在客户端也执行，需要执行以下步骤（缺一不可。4.19开始，之前的版本不需要这样设置）：</p>
+
+<ul>
+<li>除了对该 Actor 执行 <code>bReplicates = true;</code> 外，还要执行 <code>bNetUseOwnerRelevancy = true;</code></li>
+<li>该 Actor Spawn 之后，需要执行 <code>Actor-&gt;SetOwner(NewOwner);</code>，这个 NewOwner 是一个 Replicated 对象，比如 Character 。</li>
+</ul>
+
+<p><a href="https://docs.unrealengine.com/latest/INT/Gameplay/Networking/Blueprints/index.html">https://docs.unrealengine.com/latest/INT/Gameplay/Networking/Blueprints/index.html</a></p>
+
+<h5 id="角色身上需要设置的属性">角色身上需要设置的属性</h5>
+
+<p>
+<figure>
+    
+        <img src="https://dawnarc.com/img/20170225-[UE4]RTS%e6%b8%b8%e6%88%8f%e7%9a%84%e4%bd%8d%e7%a7%bb%e5%90%8c%e6%ad%a5%e7%a4%ba%e4%be%8b%ef%bc%88Replication%e5%92%8cRPC%ef%bc%89/[UE4]RTS%e6%b8%b8%e6%88%8f%e7%9a%84%e4%bd%8d%e7%a7%bb%e5%90%8c%e6%ad%a5%e7%a4%ba%e4%be%8b%ef%bc%88Replication%e5%92%8cRPC%ef%bc%89-01.jpg" />
+    
+    
+</figure>
+
+角色蓝图上的这几个属性默认是勾选的。如果是C++，对应的属性名也是这几个。</p>
+
+<p>登陆界面：
+
+<figure>
+    
+        <img src="https://dawnarc.com/img/20170225-[UE4]RTS%e6%b8%b8%e6%88%8f%e7%9a%84%e4%bd%8d%e7%a7%bb%e5%90%8c%e6%ad%a5%e7%a4%ba%e4%be%8b%ef%bc%88Replication%e5%92%8cRPC%ef%bc%89/[UE4]RTS%e6%b8%b8%e6%88%8f%e7%9a%84%e4%bd%8d%e7%a7%bb%e5%90%8c%e6%ad%a5%e7%a4%ba%e4%be%8b%ef%bc%88Replication%e5%92%8cRPC%ef%bc%89-02.jpg" />
+    
+    
+</figure>
+</p>
+
+<p>多个客户端连上服务端的最终情景：
+
+<figure>
+    
+        <img src="https://dawnarc.com/img/20170225-[UE4]RTS%e6%b8%b8%e6%88%8f%e7%9a%84%e4%bd%8d%e7%a7%bb%e5%90%8c%e6%ad%a5%e7%a4%ba%e4%be%8b%ef%bc%88Replication%e5%92%8cRPC%ef%bc%89/[UE4]RTS%e6%b8%b8%e6%88%8f%e7%9a%84%e4%bd%8d%e7%a7%bb%e5%90%8c%e6%ad%a5%e7%a4%ba%e4%be%8b%ef%bc%88Replication%e5%92%8cRPC%ef%bc%89-03.jpg" />
+    
+    
+</figure>
+</p>
+
+<h4 id="同步相关的基础概念">同步相关的基础概念</h4>
+
+<h5 id="netmode">NetMode</h5>
+
+<p>每个Actor有个接口：AActor::GetNetMode()，返回值意思如下：</p>
+
+<ul>
+<li>NM_Standalone：表示当前Actor在独立服务器（单机模式），可以执行客户端、服务端的所有功能。</li>
+<li>NM_DedicatedServer：表示当前Actor在专用服务器上，只能执行服务端相关的功能。</li>
+<li>NM_ListenServer：官方文档上解释的很少，我在官方论坛上问了下得到的几个解释是，<font color=red>ListenServer可以被游戏内的某个玩家的机器当作服务器，该服务器拥有操作每个客户端角色的权利。这种模式下，更方便来创建服务器；缺点是承载人数较少。</font>个人理解是ListenServer可能更适合做局域网游戏，因为这种既不需要考虑外挂也不需要考虑承载压力。</li>
+<li>NM_Client：当客户端未连接 Dedicated Server 时，NetMode 为 NM_Standalone， 连接成功之后，客户端的 NetMode 就变成了 NM_Client 。</li>
+</ul>
+
+<p><font color=red>DedicatedServer没有客户端的相关功能，只接收远程客户端的网络请求，适合承载大规模玩家在线。</font>另外连接DedicatedServer的客户端，是没有权限直接修改其他玩家的数据，因为客户端上的大部分Object的Role枚举都是ROLE_AutonomousProxy（如果你逻辑有bug，也是可以被客户端发送非法请求串改其他角色的数据，所以这里所说的没有权限修改，不要以为DedicatedServer可以帮你反外挂），但是在ListenServer的玩家主机上可以，因为他拥有其他所有玩家的实例（Role枚都是ROLE_Authority类型）。UE4的一些API内部有权限检测的逻辑：判断当前Role类型是否为ROLE_Authority，这样避免非法修改数据。</p>
+
+<h5 id="role">Role</h5>
+
+<p>每个Actor有个公开属性：AActor::Role。表示当前Actor的作用权限，枚举值有：</p>
+
+<ul>
+<li>ROLE_SimulatedProxy：表示当前Actor是一个模拟服务端的Actor状态Object，无法修改服务端上的数据，也没有权限执行远程函数（Reliable标识的UFUNCTION）。DedicatedServer服务器中创建的对象，都是ROLE_Authority，这些对象映射在客户端上的对象则都是ROLE_SimulatedProxy。</li>
+<li>ROLE_AutonomousProxy：与ROLE_SimulatedProxy相似，区别是ROLE_AutonomousProxy有权限执行远程函数，但是远程函数必须是该Object身上的，其他Object上的远程函数没有权限执行。</li>
+<li>ROLE_Authority：最高权限，即可以修改Server上的属性，又可以执行任何Objecct身上的远程函数。Standalone服务器中，所有对象都是ROLE_Authority。</li>
+</ul>
+
+<h5 id="netmode-和-role-关系概述">NetMode 和 Role 关系概述</h5>
+
+<ul>
+<li>当 NetMode 为 NM_Standalone 或者 NM_DedicatedServer 时，所有对象的 Role 都为 ROLE_Authority 。</li>
+<li>当 NetMode 为 NM_Client 时，服务端 Spawn 出来的所有 Character 对象，在每个客户端的 Role 都为 ROLE_SimulatedProxy；当前客户端 PlayerController 对象的 Role 为 ROLE_AutonomousProxy ，当前客户端无法获取其他客户端的PlayerController，如果使用其他客户端的 Character 执行 Character::GetController()，则返回NULL。</li>
+</ul>
+
+<h5 id="关键函数">关键函数</h5>
+
+<p>1，客户端登陆</p>
+
+<pre><code>void UMyUserWidget::OnBtnLoginClick()
+{
+    if (APlayerController* PC = GetWorld()-&gt;GetFirstPlayerController())
+    {
+        FString URL = FString::Printf(TEXT(&quot;%s:%s?Alias=%s&quot;), *(TxtServerIP-&gt;GetText().ToString()), *(TxtServerPort-&gt;GetText().ToString()), *(TxtUsername-&gt;GetText().ToString()));
+        PC-&gt;ClientTravel(*URL, TRAVEL_Absolute);
+    }
+}
+</code></pre>
+
+<p>拒绝非法登陆请求（2018-08-05更新，未同步到文章末尾的demo工程）：</p>
+
+<pre><code>void AFPSGameMode::PreLogin(const FString&amp; Options, const FString&amp; Address, const FUniqueNetIdRepl&amp; UniqueId, FString&amp; ErrorMessage)
+{
+    Super::PreLogin(Options, Address, UniqueId, ErrorMessage);
+
+    FString UserName = UGameplayStatics::ParseOption(Options, TEXT(&quot;UserName&quot;)).TrimStart().TrimEnd();
+    if (UserName.Len() == 0 || UserMap.Find(UserName))
+    {
+        //deny client's login request.
+        ErrorMessage = TEXT(&quot;User login repeatly!&quot;);
+    }
+}
+</code></pre>
+
+<p>将<code>ErrorMessage</code>设置为非空字符串，就表示拒绝客户端的链接。</p>
+
+<p>2，GameMode::InitNewPlayer()，处理登陆请求时的自定义参数，比如账号名和密码。</p>
+
+<pre><code>FString AReplTestGameMode::InitNewPlayer(APlayerController* NewPlayerController, const FUniqueNetIdRepl&amp; UniqueId, const FString&amp; Options, const FString&amp; Portal)
+{
+    FString Rs = Super::InitNewPlayer(NewPlayerController, UniqueId, Options, Portal);
+    if (AReplTestPlayerController* RTPC = Cast&lt;AReplTestPlayerController&gt;(NewPlayerController))
+    {
+        FString Alias = UGameplayStatics::ParseOption(Options, TEXT(&quot;Alias&quot;)).Trim();
+        if (Alias.Len() == 0 || AliasMap.Find(Alias))
+        {
+            return Rs;
+        }
+
+        RTPC-&gt;SetPlayerAlias(Alias);
+
+        PlayerData Data;
+        Data.Alias = Alias;
+        AliasMap.Add(Alias, Data);
+    }
+
+    return Rs;
+}
+</code></pre>
+
+<p>3，GameMode::PostLogin()，登陆完成后的回调函数，创建角色可以放在这个函数中处理。</p>
+
+<pre><code>void AReplTestGameMode::PostLogin(APlayerController* NewPlayer)
+{
+    Super::PostLogin(NewPlayer);
+
+    if (GetNetMode() == NM_DedicatedServer)
+    {
+        PlayerCount++;
+        if (CharClass)
+        {
+            if (AReplTestCharacter* Player = GetWorld()-&gt;SpawnActor&lt;AReplTestCharacter&gt;(CharClass, SpawnLoc, SpawnRot))
+            {
+                PlayerList.Add(Player);
+
+                /*if (AMyAIController* AIC = GetWorld()-&gt;SpawnActor&lt;AMyAIController&gt;(SpawnLoc, SpawnRot))
+                {
+                    AIC-&gt;Possess(Player);
+                }*/
+
+                Player-&gt;SpawnDefaultController();
+
+                //设置角色的显示名称
+                if (AReplTestPlayerController* RTPC = Cast&lt;AReplTestPlayerController&gt;(NewPlayer))
+                {
+                    if (PlayerData* Data = AliasMap.Find(RTPC-&gt;PlayerAlias()))
+                    {
+                        Player-&gt;SetAlias(*(Data-&gt;Alias));
+                        Data-&gt;RTC = Player;
+
+                        if (AMyAIController* AIC = Cast&lt;AMyAIController&gt;(Player-&gt;GetController()))
+                        {
+                            AIC-&gt;SetPlayerAlias(Data-&gt;Alias);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+</code></pre>
+
+<p>4，Character::BeginPlay()，当创建的Character进入场景时的回调函数，绑定摄像机的逻辑可以放在这个函数中</p>
+
+<pre><code>void AReplTestCharacter::BeginPlay()
+{
+    Super::BeginPlay();
+    if (ROLE_SimulatedProxy == Role &amp;&amp; NM_Client == GetNetMode())
+    {
+        if (APlayerController* PC = GetWorld()-&gt;GetFirstPlayerController())
+        {
+            if (AReplTestPlayerController* RTPC = Cast&lt;AReplTestPlayerController&gt;(PC))
+            {
+                //因为一个客户端首次加载时会有多个玩家的角色进入场景，这里判断哪个角色才是当前客户端的
+                if (Alias_ == RTPC-&gt;PlayerAlias())
+                {
+                    PC-&gt;SetViewTarget(this);
+                    RTPC-&gt;SetSimulatedCharacter(this);
+                }
+            }
+        }
+    }
+}
+</code></pre>
+
+<p>5，客户端判断鼠标点击事件，这里加了一个保护，如果鼠标前后两次点击的坐标距离相差小于120，则不向服务端发送位移请求，防止频繁点击时发送消息太频繁。</p>
+
+<pre><code>void AReplTestPlayerController::MoveToMouseCursor()
+{
+    // Trace to see what is under the mouse cursor
+    FHitResult Hit;
+    GetHitResultUnderCursor(ECC_Visibility, false, Hit);
+
+    if (Hit.bBlockingHit)
+    {
+        if (FVector::Dist(LastDestLoc, Hit.ImpactPoint) &gt; 120)
+        {
+            LastDestLoc = Hit.ImpactPoint;
+            SetNewMoveDestination(Hit.ImpactPoint);
+        }
+    }
+}
+</code></pre>
+
+<p>6，服务端处理Move请求的函数，ServerMoveToDest_Validate判断请求的逻辑是否合法：Pawn是不是当前客户端操控的角色，防止操控其他玩家的角色。</p>
+
+<pre><code>bool AReplTestPlayerController::ServerMoveToDest_Validate(APawn* Pawn, const FVector DestLocation)
+{
+    //判断请求是否非法，不允许当前客户端操控其他客户端的角色
+    bool Rs = false;
+    if (AReplTestCharacter* RTC = Cast&lt;AReplTestCharacter&gt;(Pawn))
+    {
+        Rs = RTC-&gt;Alias() == PlayerAlias();
+    }
+    return Rs;
+}
+
+void AReplTestPlayerController::ServerMoveToDest_Implementation(APawn* Pawn, const FVector DestLocation)
+{
+    if (AMyAIController* AIC = Cast&lt;AMyAIController&gt;(Pawn-&gt;GetController()))
+    {
+        AIC-&gt;MoveToLocation(DestLocation);
+    }
+}
+</code></pre>
+
+<h5 id="注意事项">注意事项：</h5>
+
+<p>1，Replicated属性只能在服务端修改<br />
+Replicated属性只允许服务端修改后通知客户端，而不允许客户端修改Replicated属性后通知到服务端。
+参考：Only the server can replicate variables or multicast events to all clients<br />
+<a href="https://answers.unrealengine.com/questions/459423/change-variable-in-client-want-server-to-see-it-bu.html">https://answers.unrealengine.com/questions/459423/change-variable-in-client-want-server-to-see-it-bu.html</a></p>
+
+<p>2，Server或者Client函数参数只能时指针或者引用，而不能是对象<br />
+比如如果参数是FString，那么必须是引用：const FString&amp; Str，而不能是FString对象。</p>
+
+<p>3，HUD的构造函数在服务端也会执行，但是DrawHUD()函数不会在服务端执行。
+也就是说你要在HUD中判断当前程序是客户端还是服务端，可以不用考虑DrawHUD()函数。</p>
+
+<p>4，当客户端登陆成功后，客户端所有的对象都会被重置，登陆前设置的对数属性值将变为默认值。<br />
+比如在启动游戏后登陆之前，你给PlayerController上的string属性设置为&rdquo;abc&rdquo;，那么登陆成功后，这个属性值就变成了空字符串。</p>
+
+<p>5，GameMode、AIController是为服务端设计的，PlayerController是为客户端设计的。两者虽然在客户端和服务端都可访问，但是前者是在服务端创建的，后者是在客户端创建的，比如PlayerController::GetHitResultAtScreenPosition只在客户端生效，而GameMode::PostLogin()只在服务端生效。</p>
+
+<p>6，服务端的AIController::MoveToLocation()的效果相当于客户端UNavigationSystem::SimpleMoveToLocation()。AIController::MoveToLocation()内部有去调用NavigationSystem相关的接口。</p>
+
+<p>7，客户端的PlayerController可以不用Possess玩家角色，因为客户端相关数据都是以服务端为准，操作角色也是在服务端完成，一般只需要对该角色绑定摄像机即可。</p>
+
+<p>8，如果_Validate()函数返回false，则服务器会会认为客户端非法，并主动断开该客户端。断开客户端时服务端会打印：</p>
+
+<pre><code>LogRep: Error: ReceivedRPC: RPC_GetLastFailedReason: XXXX_Validate
+LogNet: Error: UActorChannel::ProcessBunch: Replicator.ReceivedBunch failed.  Closing connection. RepObj: ReplTestPlayerController /Game/TopDownCPP/Maps/TopDownExampleMap.TopDownExampleMap:PersistentLevel.ReplTestPlayerController_1, Channel: 2
+</code></pre>
+
+<p>9，当前客户端只能获取当前控制角色的Controller，无法获取其他客户端的Controller，比如玩家A在玩家B的角色为C1，那么调用C1-&gt;GetController()时返回NULL。</p>
+
+<p>10，动画同步<br />
+角色X在客户端A播放一个攻击动作，并且角色X在客户端B的视野内，此时需要客户端B也能同步看到角色X的动画，流程如下：<br />
+<span class="highlight-text primary">
+客户端发送请求 -》 服务端执行函数（假设叫ServerPlayAnim()） -》 ServerPlayAnim函数内调用NetMulticast函数 -》 NetMulticast函数内执行播放动画的逻辑。
+</span></p>
+
+<p>11，编辑器模式下，即使勾选了 <code>Run Dedicated Server</code>，默认是不会自动连接专用服务器的，如果希望游戏启动时就自动连接专用服务器，需要勾选：<code>Auto Connect to Server</code> （Project Settings -&gt; Level Editor -&gt; Play -&gt; Multiplayer Options），如果你自己实现了登陆逻辑，那么就不要勾选这个。如果是为了方便测试跳过登陆，可以勾选这个选项，并实现对应逻辑。</p>
+
+<h5 id="常见问题">常见问题：</h5>
+
+<ol>
+<li><p>如果出现以下错误，表示Reliable函数的参数名和引擎生成的代码有同名的情况，把参数名重新改一下即可。</p>
+
+<p>error : Function parameter: &lsquo;Pawn&rsquo; cannot be defined in &lsquo;ServerMoveToDest&rsquo; as it is already defined in scope &lsquo;Controller&rsquo; (shadowing is not allowed)</p></li>
+
+<li><p>如果服务端SpawnActor时返回NULL，且参数传递都正确，可能是服务端上的对应Actor未清理，比如客户端崩掉了，导致了服务端的Actor未即时清理。</p></li>
+
+<li><p>执行UNavigationSystem::SimpleMoveToLocation(MyCharacter()-&gt;GetController(), Location);时位移无效（假设已经生成了NavMesh）。原因是MyCharacter是在客户端生成的，客户端PlayerController传递给NavigationSystem()时执行无效，需要在服务端Spawn这个Character，然后再给其Spawn出一个AIController并Possess。官方模版项目，传递给NavigationSystem的是PlayerController且位移有效，是因为模版项目中设置的DefautlPawnClass，其实是服务端Spawn出来的Character，执行位置也是在服务端。</p></li>
+
+<li><p>在打包版本下，客户端的玩家行走时，摄像机有抖动和卡顿（编辑器模式下正常），原因是没有勾选SpringArmComponent的Lag属性：Enable Camera Lag、Enable Camera Rotation Lag
+
+<figure>
+    
+        <img src="https://dawnarc.com/img/20170225-[UE4]RTS%e6%b8%b8%e6%88%8f%e7%9a%84%e4%bd%8d%e7%a7%bb%e5%90%8c%e6%ad%a5%e7%a4%ba%e4%be%8b%ef%bc%88Replication%e5%92%8cRPC%ef%bc%89/[UE4]RTS%e6%b8%b8%e6%88%8f%e7%9a%84%e4%bd%8d%e7%a7%bb%e5%90%8c%e6%ad%a5%e7%a4%ba%e4%be%8b%ef%bc%88Replication%e5%92%8cRPC%ef%bc%89-04.jpg" />
+    
+    
+</figure>
+
+Dedicated Servers, Jitter, Matchmaking<br />
+<a href="https://forums.unrealengine.com/development-discussion/c-gameplay-programming/96598-dedicated-servers-jitter-matchmaking">https://forums.unrealengine.com/development-discussion/c-gameplay-programming/96598-dedicated-servers-jitter-matchmaking</a></p></li>
+
+<li><p>旋转视角时，NM_Standalone 模式下执行 <code>APlayerController::AddYawInput()</code> 或者 <code>APawn::AddControllerYawInput()</code> 没有问题，但是 NM_Client 模式下失效。<br />
+原因：<br />
+可能是Use Controller Rotation Yaw 设置为 false。<br />
+解决办法：<br />
+有些情况下，我们不希望使用 <code>Controller Rotation Yaw</code> 作为角色的朝向，那么此时想旋转角色方向，使用如下方式：</p>
+
+<pre><code>void AMyPlayerController::Turn(float Rate)
+{
+    // calculate delta for this frame from the rate information
+    if (Rate != 0.f)
+    {
+        if (AActor* Target = GetViewTarget())
+        {
+            Target-&gt;AddActorLocalRotation(FRotator(0.f, Rate * InputYawScale, 0.f));
+        }
+    }
+}
+</code></pre>
+
+<p><code>UCameraComponent::AddRelativeRotation()</code> 也可以旋转视角，但是其旋转速率是 <code>AActor::AddActorLocalRotation()</code> 的两倍。原因不清楚。。。</p></li>
+
+<li><p>假设角色蓝图中有两个Component：A 和 B，A 设置为 <code>A-&gt;SetOnlyOwnerSee(true)</code>，且 B 附加在 A 上： <code>B-&gt;SetupAttachment(A)</code>，那么只能第一个登陆的角色正常，之后登陆的角色会消失不见。<br />
+解决办法：<br />
+这种情况下，A 不要 Attach B，如果要 Attach，B 设置为 <code>SetOnlyOwnerSee(false)</code>（默认为false）；或者 A 也隐藏掉。</p></li>
+
+<li><p>如果角色身上 Attach 了一个 BoxComponent 或者 SphereComponent，那么这个Component的 <code>CollisionProfileName</code> 不要设置为 <code>Projectile</code>（First Person Shooter模版项目中的自定义 <code>Collision Channel</code>），（能否设置为其他没试过，最好默认），如果设置成 <code>Projectile</code>，那么角色在移动时会不停抖动（Standalone是否也有这种问题没试过）。</p></li>
+
+<li><p>DedicatedServer 模式下，<code>SpawnActor</code>生成出的 Actor，且这个Actor bReplicates 设置为true， 执行<code>ConditionalBeginDestroy()</code>时，一定时间后客户端会崩掉。<br />
+解决办法：<br />
+<code>SpawnActor</code>生成出的 Actor，且改 Actor 同步到远程机器，销毁时，不要用<code>ConditionalBeginDestroy()</code>，而要用<code>Destroy()</code>。Standalone 模式貌似没这种限制。<br />
+崩溃日志：</p>
+
+<pre><code>Assertion failed: Index &gt;= 0 [File:D:\Build\++UE4+Release-4.16+Compile\Sync\Engine\Source\Runtime\CoreUObject\Public\UObject/UObjectArray.h] [Line: 455] 
+
+UE4Editor_Core!FDebug::AssertFailed() [d:\build\++ue4+release-4.16+compile\sync\engine\source\runtime\core\private\misc\assertionmacros.cpp:349]
+UE4Editor_Engine!UNetDriver::ServerReplicateActors_BuildConsiderList() [d:\build\++ue4+release-4.16+compile\sync\engine\source\runtime\engine\private\networkdriver.cpp:2600]
+UE4Editor_Engine!UNetDriver::ServerReplicateActors() [d:\build\++ue4+release-4.16+compile\sync\engine\source\runtime\engine\private\networkdriver.cpp:3159]
+UE4Editor_Engine!UNetDriver::TickFlush() [d:\build\++ue4+release-4.16+compile\sync\engine\source\runtime\engine\private\networkdriver.cpp:355]
+UE4Editor_Engine!TBaseUObjectMethodDelegateInstance&lt;0,UNetDriver,void __cdecl(float)&gt;::ExecuteIfSafe() [d:\build\++ue4+release-4.16+compile\sync\engine\source\runtime\core\public\delegates\delegateinstancesimpl.h:858]
+UE4Editor_Engine!TBaseMulticastDelegate&lt;void,float&gt;::Broadcast() [d:\build\++ue4+release-4.16+compile\sync\engine\source\runtime\core\public\delegates\delegatesignatureimpl.inl:937]
+UE4Editor_Engine!UWorld::Tick() [d:\build\++ue4+release-4.16+compile\sync\engine\source\runtime\engine\private\leveltick.cpp:1506]
+UE4Editor_UnrealEd!UEditorEngine::Tick() [d:\build\++ue4+release-4.16+compile\sync\engine\source\editor\unrealed\private\editorengine.cpp:1633]
+UE4Editor_UnrealEd!UUnrealEdEngine::Tick() [d:\build\++ue4+release-4.16+compile\sync\engine\source\editor\unrealed\private\unrealedengine.cpp:386]
+UE4Editor!FEngineLoop::Tick() [d:\build\++ue4+release-4.16+compile\sync\engine\source\runtime\launch\private\launchengineloop.cpp:3119]
+UE4Editor!GuardedMain() [d:\build\++ue4+release-4.16+compile\sync\engine\source\runtime\launch\private\launch.cpp:166]
+UE4Editor!GuardedMainWrapper() [d:\build\++ue4+release-4.16+compile\sync\engine\source\runtime\launch\private\windows\launchwindows.cpp:134]
+UE4Editor!WinMain() [d:\build\++ue4+release-4.16+compile\sync\engine\source\runtime\launch\private\windows\launchwindows.cpp:210]
+UE4Editor!__scrt_common_main_seh() [f:\dd\vctools\crt\vcstartup\src\startup\exe_common.inl:253]
+kernel32
+ntdll
+</code></pre></li>
+</ol>
+
+<p>示例工程下载地址：<br />
+<a href="http://pan.baidu.com/s/1o7MzmRo">http://pan.baidu.com/s/1o7MzmRo</a></p>
+
+<h5 id="参考文章">参考文章</h5>
+
+<p>属性同步：<br />
+<a href="http://blog.csdn.net/yangxuan0261/article/details/54766955">http://blog.csdn.net/yangxuan0261/article/details/54766955</a><br />
+RPC：<br />
+<a href="http://blog.csdn.net/yangxuan0261/article/details/54766951">http://blog.csdn.net/yangxuan0261/article/details/54766951</a></p>
+
+<hr />
+
+<p><code>天下事，成于精而败于众，立于诚而倾于奢。</code></p>
+
+              
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+                
+                
+                  <div class="post-footer-tags">
+                    <span class="text-color-light text-small">TAGGED IN</span><br/>
+                    
+  <a class="tag tag--primary tag--small" href="https://dawnarc.com/tags/ue4/">UE4</a>
+
+                  </div>
+                
+              
+            
+            
+  <div class="post-actions-wrap">
+      <nav >
+        <ul class="post-actions post-action-nav">
+          
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2017/02/ue4%E6%89%93%E5%BC%80url%E9%93%BE%E6%8E%A5/" data-tooltip="[UE4]打开URL链接">
+              
+                  <i class="fa fa-angle-left"></i>
+                  <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+                </a>
+            </li>
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2017/02/ue4%E5%A6%82%E4%BD%95%E7%BC%96%E8%AF%91%E9%83%A8%E7%BD%B2%E7%8B%AC%E7%AB%8B%E4%B8%93%E7%94%A8%E6%9C%8D%E5%8A%A1%E7%AB%AFstandalone-dedicated-server/" data-tooltip="[UE4]如何编译部署独立专用服务端(Standalone Dedicated Server)">
+              
+                  <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+                  <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+          
+        </ul>
+      </nav>
+    <ul class="post-actions post-action-share" >
+      
+        <li class="post-action hide-lg hide-md hide-sm">
+          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
+            <i class="fa fa-share-alt"></i>
+          </a>
+        </li>
+        
+      
+      
+        <li class="post-action">
+          <a class="post-action-btn btn btn--default" href="#disqus_thread">
+            <i class="fa fa-comment-o"></i>
+          </a>
+        </li>
+      
+      <li class="post-action">
+        
+          <a class="post-action-btn btn btn--default" href="#">
+        
+          <i class="fa fa-list"></i>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+
+            
+              
+                <div id="disqus_thread">
+  <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+              
+            
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2018 Neil Wang. All Rights Reserved. Powered by <A href="https://gohugo.io/"> Hugo</A>.
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+        
+  <div class="post-actions-wrap">
+      <nav >
+        <ul class="post-actions post-action-nav">
+          
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2017/02/ue4%E6%89%93%E5%BC%80url%E9%93%BE%E6%8E%A5/" data-tooltip="[UE4]打开URL链接">
+              
+                  <i class="fa fa-angle-left"></i>
+                  <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+                </a>
+            </li>
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2017/02/ue4%E5%A6%82%E4%BD%95%E7%BC%96%E8%AF%91%E9%83%A8%E7%BD%B2%E7%8B%AC%E7%AB%8B%E4%B8%93%E7%94%A8%E6%9C%8D%E5%8A%A1%E7%AB%AFstandalone-dedicated-server/" data-tooltip="[UE4]如何编译部署独立专用服务端(Standalone Dedicated Server)">
+              
+                  <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+                  <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+          
+        </ul>
+      </nav>
+    <ul class="post-actions post-action-share" >
+      
+        <li class="post-action hide-lg hide-md hide-sm">
+          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
+            <i class="fa fa-share-alt"></i>
+          </a>
+        </li>
+        
+      
+      
+        <li class="post-action">
+          <a class="post-action-btn btn btn--default" href="#disqus_thread">
+            <i class="fa fa-comment-o"></i>
+          </a>
+        </li>
+      
+      <li class="post-action">
+        
+          <a class="post-action-btn btn btn--default" href="#">
+        
+          <i class="fa fa-list"></i>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+
+      </div>
+      <div id="share-options-bar" class="share-options-bar" data-behavior="4">
+  <i id="btn-close-shareoptions" class="fa fa-close"></i>
+  <ul class="share-options">
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-remove"></i>
+    </div>
+    
+      <img id="about-card-picture" src="//www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=110" alt="Author&#39;s picture" />
+    
+    <h4 id="about-card-name">Neil Wang</h4>
+    
+      <div id="about-card-bio">久长唯有品格</div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        To Be Marvelous
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker"></i>
+        <br/>
+        Yichang·Hubei
+      </div>
+    
+  </div>
+</div>
+
+    <div id="algolia-search-modal" class="modal-container">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="close-button"><i class="fa fa-close"></i></span>
+      <a href="https://algolia.com" target="_blank" rel="noopener" class="searchby-algolia text-color-light link-unstyled">
+        <span class="searchby-algolia-text text-color-light text-small">by</span>
+        <img class="searchby-algolia-logo" src="https://www.algolia.com/static_assets/images/press/downloads/algolia-light.svg">
+      </a>
+      <i class="search-icon fa fa-search"></i>
+      <form id="algolia-search-form">
+        <input type="text" id="algolia-search-input" name="search"
+          class="form-control input--large search-input" placeholder="Search" />
+      </form>
+    </div>
+    <div class="modal-body">
+      <div class="no-result text-color-light text-center">no post found</div>
+      <div class="results">
+        
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/09/shadingtutorials-and-documents-collections/">
+                <h3 class="media-heading">[Shading]Tutorials and Documents Collections</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Sep 9, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">The complete shader development course(Unity)
+https://shaderdev.com/</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/09/ue4materials-collections/">
+                <h3 class="media-heading">[UE4]Materials Collections</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Sep 9, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">Creating Interactive Grass in Unreal Engine 4
+https://www.raywenderlich.com/6314-creating-interactive-grass-in-unreal-engine-4
+Creating Snow Trails in Unreal Engine 4
+https://www.raywenderlich.com/5760-creating-snow-trails-in-unreal-engine-4</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/09/ue4android-building-error-could-not-resolve-all-files-for-configuration-classpath/">
+                <h3 class="media-heading">[UE4]Android Building Error-Could not resolve all files for configuration &#39;classpath&#39;</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Sep 9, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">Error 1 Error Log:
+A problem occurred configuring root project 'app'. &gt; Could not resolve all files for configuration ':classpath'. &gt; Could not download kotlin-reflect.jar (org.jetbrains.kotlin:kotlin-reflect:1.1.3-2) &gt; Could not get resource 'https://jcenter.bintray.com/org/jetbrains/kotlin/kotlin-reflect/1.1.3-2/kotlin-reflect-1.1.3-2.jar'. &gt; Could not GET 'https://jcenter.bintray.com/org/jetbrains/kotlin/kotlin-reflect/1.1.3-2/kotlin-reflect-1.1.3-2.jar'. &gt; Software caused connection abort: recv failed &gt; Could not download protobuf-java.jar (com.google.protobuf:protobuf-java:3.0.0) &gt; Could not get resource 'https://jcenter.bintray.com/com/google/protobuf/protobuf-java/3.0.0/protobuf-java-3.0.0.jar'. &gt; Could not GET 'https://jcenter.bintray.com/com/google/protobuf/protobuf-java/3.0.0/protobuf-java-3.0.0.jar'. &gt; Software caused connection abort: recv failed  Solution:</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/09/steamworks%E5%90%8E%E5%8F%B0%E9%85%8D%E7%BD%AE%E7%9B%B8%E5%85%B3/">
+                <h3 class="media-heading">Steamworks后台配置相关</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Sep 9, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">如何修改SteamWorks中游戏名称 改名需要改两个地方：一个是Application Name，一个是Package Name。
+修改Application Name 先打开SteamWork首页，点击App名称，进入App Admin页面   然后点击“Edit Steamworks Settings”   然后修改Application Name，并点击Save   修改Package Name 先打开SteamWork首页，点击App名称，进入App Admin页面   然后点击Package Title   然后点击Edit package name。   游戏包体构建与上传（SteamPipe Depot &amp; Build） 1，将游戏包体放在E:\SteamSdk\tools\ContentBuilder\content 目录下。一般为了区分windows / mac os，可以在 content 目录下见两个文件夹：windows 和 macos，然后将对应包体文件放在对应文件夹下。
+2， 编辑 E:\SteamSdk\tools\ContentBuilder\scripts\ 下的app_build_1000.vdf 和 depot_build_1001.vdf。
+将 app_build_1000.vdf 和 depot_build_1001.vdf 改名，分别改成自己项目的 appid 和 depotid，例如： app_build_2000.vdf、depot_build_2001.vdf。
+然后修改 app_build_2000.vdf 中的内容，改成正式的 appid 和 depotid   修改 depot_build_2001.</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/08/mathparabola-movement/">
+                <h3 class="media-heading">[Math]Parabola movement</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Aug 8, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">keywords：抛物运动、Parabola、重力加速度、Gravitational Speed 、UE4 implement.
+header
+AStaticMeshActor* TestCube = nullptr; //throw speed UPROPERTY(EditDefaultsOnly) FVector StartForce = FVector(100.f, 100.f, 2000.f); //gravitational acceleration float GravityAcclerator = -980.f; //accumulated movtion time float AccumulateTime = 0.f;  cpp
+void ATestTPGameMode::StartPlay() { Super::StartPlay(); //finding the Actor in scene. for (TActorIterator&lt;AStaticMeshActor&gt; Iter(GetWorld()); Iter; ++Iter) { if (Iter-&gt;GetName() == TEXT(&quot;Cube_2&quot;)) { TestCube = *Iter; break; } } } void ATestTPGameMode::Tick(float DeltaSeconds) { Super::Tick(DeltaSeconds); AccumulateTime += DeltaSeconds; //calculate gravitational speed in real time.</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/08/ue4actor-lifecycle/">
+                <h3 class="media-heading">[UE4]Actor Lifecycle</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Aug 8, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">EndPlay、BeginDestroy、Destroy 的调用时机  如果要获取 Actor 销毁时的准确时间点，建议重写 Destroy() 函数，而不是EndPlay()、BeginDestroy()。 官方文档上说 EndPlay 会在执行Destroy的时候触发，但实际上并不会（至少4.20版本中测试过不会），而是当 Actor 所在场景销毁时（比如退出编辑器）才会调用。 BeginDestroy()、IsReadyForFinishDestroy()、FinishDestroy() 是在执行垃圾回收时才会触发的函数，而不是对象被 Destroy 后立即执行的函数。  官方文档
+https://docs.unrealengine.com/en-us/Programming/UnrealArchitecture/Actors/ActorLifecycle</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/08/gitblit%E5%B9%B6%E5%8F%91%E8%AF%B7%E6%B1%82%E6%95%B0%E9%99%90%E5%88%B6%E7%9A%84%E9%97%AE%E9%A2%98concurrent-ssh-connection-limit/">
+                <h3 class="media-heading">[gitblit]并发请求数限制的问题(Concurrent SSH connection limit)</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Aug 8, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">问题现象：
+当同时 pull 或者 push 的人数较多时，只有第一个用户正常，其他用户会卡住。
+解决办法：
+修改配置文件data/gitblit.properties，添加：
+execution.defaultThreadPoolSize = 10  defaultThreadPoolSize 默认为0。
+参考自：
+Concurrent push not working
+https://github.com/gitblit/gitblit/issues/905</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/08/github%E8%A7%A3%E5%86%B3github%E4%B8%8B%E8%BD%BD%E9%80%9F%E5%BA%A6%E5%A4%AA%E6%85%A2%E7%9A%84%E9%97%AE%E9%A2%98/">
+                <h3 class="media-heading">[github]解决GitHub下载速度太慢的问题</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Aug 8, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">以下两步缺一不可
+步骤一 从GitHub下载文件一直非常慢，查看下载链接发现最终被指向了Amazon的服务器，下载地址是http://github-cloud.s3.amazonaws.com/，从国内访问Amazon非常慢，所以总是下载失败，解决方法时更改host文件，使该域名指向香港的服务器：
+更改hosts文件：
+Windows
+更改C:\Windows\System32\drivers\etc\hosts文件，在文件中追加219.76.4.4 github-cloud.s3.amazonaws.com, 将域名指向该IP即可
+Mac
+执行 sudo vi /etc/hosts 追加 219.76.4.4 github-cloud.s3.amazonaws.com
+最后执行ipconfig /flushdns命令，刷新 DNS 缓存。
+步骤二 https://www.ipaddress.com/ 使用 IP Lookup 工具获得下面这两个github域名的ip地址，该网站可能需要梯子，输入上述域名后，分别获得github.com和github.global.ssl.fastly.net对应的ip，比如 192.30.xx.xx 和 151.101.xx.xx 。准备工作做完之后，打开的hosts文件中添加如下格式，IP修改为自己查询到的IP：
+192.30.xx.xx github.com 151.101.xx.xx github.global.ssl.fastly.net  最后执行ipconfig /flushdns命令，刷新 DNS 缓存。修改后的下载速度能达到 2MB/S 以上。
+参考自：https://blog.csdn.net/qing666888/article/details/79123742</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/07/mathorthogonalize%E6%AD%A3%E4%BA%A4%E5%8C%96/">
+                <h3 class="media-heading">[Math]Orthogonalize(正交化)</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jul 7, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">格拉姆-施密特正交化
+https://zh.wikipedia.org/wiki/%E6%A0%BC%E6%8B%89%E5%A7%86-%E6%96%BD%E5%AF%86%E7%89%B9%E6%AD%A3%E4%BA%A4%E5%8C%96
+内积空间
+https://zh.wikipedia.org/wiki/%E5%86%85%E7%A7%AF%E7%A9%BA%E9%97%B4
+标准正交基
+https://zh.wikipedia.org/wiki/%E6%A0%87%E5%87%86%E6%AD%A3%E4%BA%A4%E5%9F%BA
+子空间
+https://zh.wikipedia.org/wiki/%E5%AD%90%E7%A9%BA%E9%96%93
+豪斯霍尔德变换
+https://zh.wikipedia.org/wiki/%E8%B1%AA%E6%96%AF%E9%9C%8D%E5%B0%94%E5%BE%B7%E5%8F%98%E6%8D%A2
+吉文斯旋转
+https://zh.wikipedia.org/wiki/%E5%90%89%E6%96%87%E6%96%AF%E6%97%8B%E8%BD%AC</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/07/mathprojectile-motion-finding-the-optimal-launch-angle/">
+                <h3 class="media-heading">[Math]Projectile Motion: Finding the Optimal Launch Angle</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jul 7, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">If we want to throw a projectile as far as possible, at what angle should it be launched? This paper focuses on how the answer to this question changes depending on the situation.
+如果你想尽可能远的抛掷物体，以多大的角度抛出最合适？这篇文章用于分析不同测试环境下而导致的不同答案。
+论文地址：Projectile Motion: Finding the Optimal Launch Angle
+https://www.whitman.edu/Documents/Academics/Mathematics/2016/Henelsmith.pdf</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+      </div>
+    </div>
+    <div class="modal-footer">
+      <p class="results-count text-medium"
+         data-message-zero="no post found"
+         data-message-one="1 post found"
+         data-message-other="{n} posts found">
+         421 posts found
+      </p>
+    </div>
+  </div>
+</div>
+    
+  
+    
+    <div id="cover" style="background-image:url('https://dawnarc.com/images/cover-v1.2.0.jpg');"></div>
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.7/js/jquery.fancybox.min.js" integrity="sha256-GEAnjcTqVP+vBp3SSc8bEDQqvWAZMiHyUSIorrWwH50=" crossorigin="anonymous"></script>
+
+
+<script src="https://dawnarc.com/js/script-qi9wbxp2ya2j6p7wx1i6tgavftewndznf4v0hy2gvivk1rxgc3lm7njqb6bz.min.js"></script>
+
+
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+  
+    
+      <script>
+        var disqus_config = function () {
+          this.page.url = 'https:\/\/dawnarc.com\/2017\/02\/ue4dedicated-server%E5%90%8C%E6%AD%A5%E7%A4%BA%E4%BE%8B%E5%85%A8%E6%B5%81%E7%A8%8B%E7%99%BB%E5%BD%95replication%E5%92%8Crpc\/';
+          
+            this.page.identifier = '\/2017\/02\/ue4dedicated-server%E5%90%8C%E6%AD%A5%E7%A4%BA%E4%BE%8B%E5%85%A8%E6%B5%81%E7%A8%8B%E7%99%BB%E5%BD%95replication%E5%92%8Crpc\/'
+          
+        };
+        (function() {
+          
+          
+          if (window.location.hostname == "localhost") {
+            return;
+          }
+          var d = document, s = d.createElement('script');
+          var disqus_shortname = 'dawnarc';
+          s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+          s.setAttribute('data-timestamp', +new Date());
+          (d.head || d.body).appendChild(s);
+        })();
+      </script>
+    
+  
+
+
+
+    
+  </body>
+</html>
+

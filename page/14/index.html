@@ -317,6 +317,431 @@ if (!doNotTrack) {
     
     <div class="postShorten-header">
       <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2017/09/openglglsl-cookbook%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91%E6%AD%A5%E9%AA%A4%E6%B5%81%E7%A8%8B/">
+          [OpenGL]GLSL Cookbook源码编译步骤流程
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2017-09-06T22:38:28&#43;08:00">
+        
+  September 6, 2017
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/opengl">OpenGL</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      以下文章内容是基于glslcookbook所在github上2017年8月份的提交版本，当前文章所述的配置glm和glfw的步骤与github上最新CMakeList.txt已不再适用！针对2018.06的github代码，我新增了文章《[OpenGL]GLSL Cookbook源码编译步骤流程(2018.06新版)》。如果是萌新，建议先把当前旧文章看完再看新文章。
+ 这里讲解《OpenGL 4 Shading Language Cookbook, Second Edition》 这本书的示例代码如何编译。
+编译步骤 1，下载glm的源码，并用cmake-gui生成出VisualStudio的工程文件。
+https://github.com/g-truc/glm/releases
+2，下载glfw。
+https://github.com/glfw/glfw/releases
+注意是下载bin文件不是src源码。（如果你想用src编译lib，则无视）
+3，下载glslcookbook源码，这是《OpenGL 4 Shading Language Cookbook, Second Edition》的书籍源码，下载后同样用cmake-gui生成vs工程文件： https://github.com/daw42/glslcookbook
+4，cmake-gui首次生成glshcookbook源码时会报错   这时需要指定GLM的依赖库位置，这个位置就是步骤1中的生成的GLM库的bin目录。注意这个bin目录不是GLM自带的，是通过cmake-gui指定生成的。
+在指定GLM_INCLUDE_DIR之后，再点击Generate，又会出现新的错误，提示GLFW找不到，这时需要再指定GLFW的相关目录，即步骤2中下载的GLFW lib和头文件。   参数解释：
+ CMAKE_BUILD_TYPE ：默认，不做修改 CMAKE_CONFIGURATION_TYPES ：默认，不做修改 CMAKE_INSTALL_PREFIX ：不清楚，删掉也不影响 GLFW3_INCLUDE_DIR ：GLFW的头文件目录 GLFW3_LIBRARY ：GLFW的静态库目录 GLM_INCLUDE_DIR ：GLM的头文件目录  最后生成成功的提示为：   打开VS工程，可以看到每一章的示例代码并可编译。（这里看不到.sln的图标是因为我电脑之前卸载了旧版本的vs，导致新版本vs的图标显示不正常，可以无视）     运行程序 每个章节的exe无法双击运行，需要命令输入相关参数。 以章节5为例，先CD到exe所在目录：
+cd /d D:\glslcookbook\bin\chapter05\Debug&gt;  然后输入：
+chapter05.exe  则会提示：
+Recipe names: blur : Gaussian blur deferred : deferred rendering edge : edge detection filter gamma : gamma correction msaa : multisample anti-aliasing tone-map : tone mapping example.
+      <p>
+        <a href="https://dawnarc.com/2017/09/openglglsl-cookbook%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91%E6%AD%A5%E9%AA%A4%E6%B5%81%E7%A8%8B/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2017/09/buildcmake-gui%E4%BD%BF%E7%94%A8/">
+          [Build]cmake-gui使用
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2017-09-06T14:50:28&#43;08:00">
+        
+  September 6, 2017
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/build">Build</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      要使用cmake-gui，请确保已经写好了CMakeLists.txt。 打开cmake-gui后，指定source目录和生成的bin目录。   再点击Configure，指定VS版本。然后就可以生成VS工程sln等文件了。   如果生成过程中有相关依赖库没有指定正确，输出窗口会给出提示，比如示例中有个glm库的没有指定，此时我们再重新指定下依赖库的位置。   配置后再点击Generate，直到没有错误信息提示。   CMAKE相关的配置说明  CMAKE_CONFIGURATION_TYPES
+表示VS上的Solution Configurations（Debug/Release等）选项    CMAKE_INSTALL_PREFIX
+表示编译后存放的目录，以方便FIND_XXX()方式来查找。
+  删除临时文件 如果要删除cache文件，点击：File -》 Delete Cache。   树德莫如滋，去疾莫如尽。----《左传》
+      <p>
+        <a href="https://dawnarc.com/2017/09/buildcmake-gui%E4%BD%BF%E7%94%A8/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2017/09/openglmesa3d%E4%B8%80%E4%B8%AAopengl%E8%A7%84%E8%8C%83%E7%9A%84%E5%BC%80%E6%BA%90%E5%BA%93/">
+          [OpenGL]Mesa3D，一个OpenGL规范的开源库
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2017-09-05T18:48:28&#43;08:00">
+        
+  September 5, 2017
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/opengl">OpenGL</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      官方：
+https://mesa3d.org/
+优点：开源
+缺点：硬件加速支持不够
+马上琵琶关塞黑。更长门、翠辇辞金阙。看燕燕，送归妾。---辛弃疾《贺新郎》
+      <p>
+        <a href="https://dawnarc.com/2017/09/openglmesa3d%E4%B8%80%E4%B8%AAopengl%E8%A7%84%E8%8C%83%E7%9A%84%E5%BC%80%E6%BA%90%E5%BA%93/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2017/09/openglwindows%E4%B8%8Aopengl%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">
+          [OpenGL]Windows上OpenGL开发环境搭建
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2017-09-05T16:38:28&#43;08:00">
+        
+  September 5, 2017
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/opengl">OpenGL</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      转载请注明出处：http://www.dawnarc.com/
+网上资料很多都是基于Cygwin来搭建的环境，这里介绍一种非Cygwin搭建Windows上的OpenGL开发环境。
+1，OpenGL Loader Generator下载安装
+OpenGL Loader是一个标准规范，定义了如何在运行时期间加载OpenGL相关函数的指针。 这是windows上开发OpenGL程序才需要的lib，因为从1.1版本开始，windows不在对OpenGL 后续版本的 ABI(application binary interface)提供支持（可能是微软的DX出来后与OGL商业竞争吧），所以开发者无法直接获取OGL新版本的相关函数，不过有好心人写了工具，在运行时期间获取OGL的新版函数，这里介绍两个开源库：
+glad
+https://github.com/Dav1dde/glad
+glloadgen
+https://bitbucket.org/alfonse/glloadgen/wiki/Home
+我是用的是glad，这个开源库的开发者还提供了在线生成工具，可以不用下载安装Load Generator，直接在线生成指定版本的OpenGL Loader： http://glad.dav1d.de/
+2，编译OpenGL Loader的静态库
+通过glad生成的代码，编译一个lib， 以便后面的的示例工程调用。因为这些代码开发者不用做修改，只是调用，所以最好编译成lib，而不要直接加到自己的项目代码中。
+3，下载GLM（OpenGL Mathematics）
+这是OpenGL的数学库
+https://github.com/g-truc/glm/releases
+4，下载GLFW
+这是一个提供了OpenGL, OpenGL ES和Vulkan相关接口的跨平台的开源库，有这个库你就可以访问他们的最新API。 https://github.com/glfw/glfw/releases
+5，新建一个C++工程并设置OpenGL相关的头文件和静态库
+指定头文件的目录   指定静态库的目录   在代码需要包含的头文件以及lib：
+#include &lt;KHR/khrplatform.h&gt; #include &lt;glad/glad.h&gt; #include &lt;GLFW/glfw3.h&gt; #pragma comment(lib, &quot;opengl32.lib&quot;) #pragma comment(lib, &quot;glad.lib&quot;) #pragma comment(lib, &quot;glfw3.lib&quot;)  新建的测试工程叫GLTest，目录结构如下： 新加了两个分别叫include和lib的目录，用于存放第三方库的头文件和库文件   完整的测试的代码：
+#pragma once #include &lt;iostream&gt; #include &lt;windows.h&gt; #include &lt;fstream&gt; #include &lt;sstream&gt; #include &lt;string&gt; #include &lt;KHR/khrplatform.
+      <p>
+        <a href="https://dawnarc.com/2017/09/openglwindows%E4%B8%8Aopengl%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2017/09/algorithms%E7%AE%97%E6%B3%95%E9%A2%98%E5%A4%9A%E4%B8%AA%E5%AD%97%E6%AF%8D%E4%BB%BB%E6%84%8F%E7%BB%84%E5%90%88%E5%A4%9A%E4%B8%AA%E6%96%B0%E5%AD%97%E7%AC%A6%E4%B8%B2/">
+          [Algorithms]算法题：多个字母任意组合多个新字符串
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2017-09-03T20:22:28&#43;08:00">
+        
+  September 3, 2017
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/algorithms">Algorithms</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      题目：
+比如一串字符，string s = &ldquo;abcd&rdquo;，假设里面的每个字符都不重复，求出这些字符任意组合后，形成的所有的新字符串。忽略掉顺序，比如ac和ca是同一种。 例子：
+abc的3个字符可以组合的情况为： a b c ab bc ac abc
+代码：
+#include &lt;iostream&gt; #include &lt;string&gt; #include &lt;vector&gt; int main(int argc, char* argv[]) { std::string s(&quot;abcd&quot;); std::vector&lt;std::string&gt; vec; for (size_t i = 0; i &lt; s.length(); i++) { std::string s1(1, s.at(i)); vec.push_back(s1); for (size_t j = i + 1; j &lt; s.length(); j++) { for (size_t k = 0; k &lt; s.length() - j; k++) { std::string s2 = s.
+      <p>
+        <a href="https://dawnarc.com/2017/09/algorithms%E7%AE%97%E6%B3%95%E9%A2%98%E5%A4%9A%E4%B8%AA%E5%AD%97%E6%AF%8D%E4%BB%BB%E6%84%8F%E7%BB%84%E5%90%88%E5%A4%9A%E4%B8%AA%E6%96%B0%E5%AD%97%E7%AC%A6%E4%B8%B2/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2017/09/algorithms%E7%AE%97%E6%B3%95%E9%A2%98%E5%AD%97%E7%AC%A6%E4%B8%B2%E8%BD%AC%E6%8D%A2%E4%B8%BA%E6%95%B4%E6%95%B0%E5%B9%B6%E6%8E%92%E5%BA%8F/">
+          [Algorithms]算法题：字符串转换为整数并排序
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2017-09-03T20:22:28&#43;08:00">
+        
+  September 3, 2017
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/algorithms">Algorithms</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      题目：
+给定一组字符串，字符串中的字符都是数字，比如：&rdquo;343&rdquo;、&rdquo;4521&rdquo;、&rdquo;3&rdquo;，将这些字符串转换为整数后并升序排序。
+代码：
+#include &lt;iostream&gt; #include &lt;string&gt; #include &lt;vector&gt; #include &lt;math.h&gt; int main(int argc, char* argv[]) { std::vector&lt;std::string&gt; StrArr; StrArr.push_back(std::string(&quot;563435&quot;)); StrArr.push_back(std::string(&quot;234234&quot;)); StrArr.push_back(std::string(&quot;454&quot;)); StrArr.push_back(std::string(&quot;5765&quot;)); StrArr.push_back(std::string(&quot;12&quot;)); StrArr.push_back(std::string(&quot;6&quot;)); //字符串转数字 std::vector&lt;int&gt; IntArr; for (std::string&amp; str : StrArr) { size_t len = str.length(); int val = 0; for (size_t i = 0; i &lt; len; i++) { char c = str.at(i); //判断是不是阿拉伯数字 if (c &lt; 48 || c &gt; 57) { continue; } int iv = c - 48; val += pow(10, (len - 1 - i)) * iv; } IntArr.
+      <p>
+        <a href="https://dawnarc.com/2017/09/algorithms%E7%AE%97%E6%B3%95%E9%A2%98%E5%AD%97%E7%AC%A6%E4%B8%B2%E8%BD%AC%E6%8D%A2%E4%B8%BA%E6%95%B4%E6%95%B0%E5%B9%B6%E6%8E%92%E5%BA%8F/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2017/09/mayapolygon%E5%BB%BA%E6%A8%A1%E7%9A%84%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C%E4%B8%8E%E5%91%BD%E4%BB%A4/">
+          [Maya]Polygon建模的常用操作与命令
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2017-09-02T18:00:40&#43;08:00">
+        
+  September 2, 2017
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/maya">Maya</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      Maya版本为2018
+Bevel Edge倒角        倒角的大小有参数Fraction控制，默认是0.5（边线的二分之一处），如果改成0.1（边线的十分之一处）则倒角会变小     也可以把Offset as Fraction关掉，通过Offset来设置倒角的大小，效果一样。     Insert Edge Loop插入环形边线 两种方式，一种是在Object Mode模式下，Shift + 鼠标右键 -》 Insert Edge Loop Tool，一种是点击菜单Mesh Tools-》 Insert Edge Loop。     然后在按住鼠标左键在需要插入的位置上拖动。     Edge Ring and Split 插入中线 先选中要插入中线的边   再按住Ctrl键+鼠标右键，选择Edge Ring Utilities，   再选择To Edge Ring and Split。   效果   Extrude Face挤压面 先选中面   然后按住shift+鼠标右键，选择Extrude Face   然后拖动坐标轴   默认是挤压出的面是黏在一起的，如果想让选中的面分开挤压，再按住Ctrl+Shift+鼠标右键，选择Toggle Keep Faces Together。   效果：   如果想合并，再执行一次Toggle Keep Faces Together。
+      <p>
+        <a href="https://dawnarc.com/2017/09/mayapolygon%E5%BB%BA%E6%A8%A1%E7%9A%84%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C%E4%B8%8E%E5%91%BD%E4%BB%A4/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
         <a class="link-unstyled" href="https://dawnarc.com/2017/09/mayaproject%E7%9B%B8%E5%85%B3/">
           [Maya]Project相关
         </a>
@@ -744,406 +1169,6 @@ https://answers.unrealengine.com/questions/688112/ue417-will-not-compile-with-ne
 </article>
 
           
-            
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2017/08/maya%E4%BF%AE%E6%94%B9%E5%9D%90%E6%A0%87%E8%BD%B4%E5%8E%9F%E7%82%B9/">
-          [Maya]修改坐标轴原点
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2017-08-29T20:21:40&#43;08:00">
-        
-  August 29, 2017
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/maya">Maya</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      方式一：Insert 默认坐标轴中间在模型底部的正中间位置，   如果想改变坐标轴原点位置，先把物体挪开，然后再按下insert键   此时就可以移动坐标轴   确定好新的坐标世界坐标原点后，再按一次insert键，即可完成修改。   技巧：如果移动过程中，希望坐标轴能一个网格一个网格的移动，而不是随意距离拖动，点击Snap to Grids（快捷键：按住X键不放）。   方式二：Reset Transformation 先将物体移动后，先执行：Modify -》 Freeze Transformations，再执行：Modify -》 Reset Transformations。   执行后坐标轴原点就会自动变为初始时的位置。   方式三：快捷键D 与Insert键一样，但是相对Insert键按起来更方便，因为Insert键离字母键区域较远。
-坐标轴相对物体居中   庭院深深深几许？杨柳堆烟，帘幕无重数。---欧阳修《蝶恋花》
-      <p>
-        <a href="https://dawnarc.com/2017/08/maya%E4%BF%AE%E6%94%B9%E5%9D%90%E6%A0%87%E8%BD%B4%E5%8E%9F%E7%82%B9/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-          
-            
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2017/08/mayaedit/">
-          [Maya]Edit
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2017-08-29T18:20:40&#43;08:00">
-        
-  August 29, 2017
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/maya">Maya</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      Repeat 上一次执行的操作（G键）   比如我们对某条边执行了Bevel操作，   相对另一条边也执行同样的操作，可以选择该边后，按G键，就会自动重复上次的操作。   Duplicate复制（Ctrl + D） 复制一个物体，快捷键Ctrl + D，相当于Ctrl + C再Ctrl + V的效果。   Duplicate with Transform 变换复制（Shift + D）   比如我们先按下Ctrl + D，复制出一个模型出来，然后再拖动一段距离：   然后再按shift + D，那么就会自动复制一个模型且复制上一次执行的Transform操作   注意，Duplicate With Transform不止对Move操作有效，对Rotate、Scale操作也有效。
- G键虽然也是重复上一次操作，但是它只会复制，不会进行执行移动。
-
-Duplicated Special 特殊复制（Ctrl + Shift + D）   打开其参数面板后，可以设置复制时旋转的角度和个数等信息，然后一次性生成。相当于Shift+D的批量执行。   Duplicated Special之Instance 假设我们有这个细分级别为20的圆柱   现在只保留一个细分段，其他都删掉   然后设置参数：
- Geometry type修改为Instance； 修改旋转角度，因为我们细分级别是20,360度除以20等于18； 复制一圈需要20个，所以还需要再复制19个。     这样复制出来的的每个小块，就可以同时编辑了   比如选中任意某个顶点，就会自动选中一圈的所有顶点   移动一个顶点，其他顶点也会做轴对称移动   操作面或线时也会有轴对称变化的效果   注意：复制出来的对象都是一个个独立的Object，如果要最终合并下，需要执行Combine。
-      <p>
-        <a href="https://dawnarc.com/2017/08/mayaedit/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-          
-            
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2017/08/mayawindows-preference%E9%A6%96%E9%80%89%E9%A1%B9%E8%AE%BE%E7%BD%AE/">
-          [Maya]Windows-Preference首选项设置
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2017-08-29T18:10:40&#43;08:00">
-        
-  August 29, 2017
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/maya">Maya</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      Undo 设置历史记录的最大条数 Windows -》 Settings/Preferences -》 Preferences     Plug-in Manager 插件管理器 Windows -》 Settings/Preferences -》 Plug-in Manager，打开之后就可以看到各种插件，比如Unfold3D。   东风似旧，向前度桃花，刘郎能记，花复认郎否？---刘辰翁《摸鱼儿》
-      <p>
-        <a href="https://dawnarc.com/2017/08/mayawindows-preference%E9%A6%96%E9%80%89%E9%A1%B9%E8%AE%BE%E7%BD%AE/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-          
-            
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2017/08/maya%E5%9F%BA%E7%A1%80%E6%93%8D%E4%BD%9C%E4%B9%8B%E9%80%89%E6%8B%A9%E7%A7%BB%E5%8A%A8%E6%97%8B%E8%BD%AC%E4%BC%B8%E7%BC%A9/">
-          [Maya]基础操作之：选择、移动、旋转、伸缩
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2017-08-28T16:44:40&#43;08:00">
-        
-  August 28, 2017
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/maya">Maya</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      Keywords：Maya、选择、移动、旋转、伸缩、Select、Move、Rotate、Scale、Lasso
-如下图所示，图标从上到下依次是： Select Tool（快捷键Q） Lasso Tool（套索工具） Paint Selection Tool（选择笔刷工具） Move Tool（快捷键W） Rotate Tool（快捷键E） Scale Tool（快捷键R）   Move Tool 点线面的移动 点移动   线移动   面移动   操作的历史记录 Shift+鼠标右键的命令，每次执行后，都会在Channel Box的Input下面生成一条历史记录。   比如执行一次Extrude Face后，就会多出一条历史记录   可以点击这条记录，展开相关参数，进行编辑   Select Tool 选择 以点选择为例，假设有个模型如下：   选择Select Tool（Q键），然后鼠标右键选择Vertex：   然后鼠标左键框选需要选中的顶点：   被选中的点为红色，未选中的为紫色：   如果需要加选，按住Ctrl + Shift键：     按住Shift键，表示反向选择。比如框选区域内，选中的取消选中，未被选中的变为选中：   Lasso Tool 套索 Lasso套索工具提供了任意选择方式，比如需要选中的点不在一个规则范围内，则可以使用lasso勾画出需要选中的点。     Move Tool 整个物体的移动   将鼠标放在某个箭头上，该箭头会变为金色，此时再拖动鼠标就可以在该坐标轴上移动。
-      <p>
-        <a href="https://dawnarc.com/2017/08/maya%E5%9F%BA%E7%A1%80%E6%93%8D%E4%BD%9C%E4%B9%8B%E9%80%89%E6%8B%A9%E7%A7%BB%E5%8A%A8%E6%97%8B%E8%BD%AC%E4%BC%B8%E7%BC%A9/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-          
-            
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2017/08/maya%E5%B8%B8%E7%94%A8%E5%BF%AB%E6%8D%B7%E9%94%AE%E5%92%8C%E5%9F%BA%E7%A1%80%E6%93%8D%E4%BD%9C/">
-          [Maya]常用快捷键和基础操作
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2017-08-27T16:27:40&#43;08:00">
-        
-  August 27, 2017
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/maya">Maya</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      注意，这里使用的maya版本是2017。
-菜单分类切换 Maya提供了很多功能，不同功能对应的菜单也不同，当切换到某一种功能时，则菜单也会随之改变。maya提供的功能有：
-Modeling（建模）
-Rigging（骨骼绑定）
-Animation（动画）
-FX（特效）
-Rendering（渲染）
-  编辑区视图的切换 将鼠标放在编辑区视图内（红框部分），然后点击下空格键，就会切换成4个小的视图，左上角是顶视角，左下是前视角，右下是右视角。     视图排版 启动Maya后默认显示的视图是一个透视图，如果希望显示两个视图或者4个视图，可以点击屏幕右侧的Panel Layout按钮     如果想选择更多的显示方案，可以右键点击Panel Layout按钮，比如选择3个视图     切换背景色 Alt + B，每按一次，背景色切换一次。   UI工具条的显示与隐藏 点击：Windows -》 UI Elements -》 勾选需要隐藏或者显示的菜单栏   编辑视图的旋转、缩放、平移 旋转：Alt + 鼠标左键。
-缩放：Alt + 鼠标右键；或者鼠标中间滚动。
-平移：Alt + 鼠标中键。
-摄像机视角的Undo和Redo 比如当你编辑视图中对摄像机进行旋转、缩放、平移后，你想回到上次的摄像机视角来查看物体，可以按Alt+Z，然后若想再回到最后一次摄像机视角，按Alt+Y。
-Alt + Z：回到上一次的视图。可多次执行
-Alt + Y： Alt+Z的倒序执行。可多次执行
-创建初始对象时的Interactive Creation 如果勾选了这个选项，那么在创建一个物体时，需要鼠标再编辑场景中手动拖拽出一个模型，并且大小会根据拖拽的距离自动拉伸；如果不勾选，就会在点击创建的时候自动的创建一个模型。   创建基础模型的3种方式 1，Create菜单栏   2，Shelf菜单栏   3，按住Shift + 鼠标右键   技巧：shift+右键时不用将鼠标放在菜单按钮内，只要灰色的连线朝向按钮或者划过按钮，都可以选中，这样你就可以快速拖拽，甚至可以不用等菜单弹出，只需要一个甩动手势，比如右键向上拖拽是选中Edge，那么按住右键朝上方甩一下就可以切换到Edge模式。
-      <p>
-        <a href="https://dawnarc.com/2017/08/maya%E5%B8%B8%E7%94%A8%E5%BF%AB%E6%8D%B7%E9%94%AE%E5%92%8C%E5%9F%BA%E7%A1%80%E6%93%8D%E4%BD%9C/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-          
-            
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2017/08/ue4vs2017%E7%BC%96%E8%AF%91%E6%9E%84%E5%BB%BA%E5%BC%95%E6%93%8E%E4%BB%A3%E7%A0%81could-not-load-file-or-assembly-system.threading.tasks.dataflow/">
-          [UE4]VS2017编译构建引擎代码：Could not load file or assembly &#39;System.Threading.Tasks.Dataflow
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2017-08-25T14:33:40&#43;08:00">
-        
-  August 25, 2017
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      如果用VS2017编译构建引擎代码，在双击GenerateProjectFiles.bat时出现以下错误：
-Setting up Unreal Engine 4 project files... MSBUILD : error MSB1025: An internal failure occurred while running MSBuild. Microsoft.Build.Shared.InternalErrorException: MSB0001: Internal MSBuild Error: Throwing from logger shutdown ============= System.IO.FileNotFoundException: Could not load file or assembly 'System.Threading.Tasks.Dataflow, Version=4.5.24.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a' or one of its dependencies. The system cannot find the file specified. File name: 'System.Threading.Tasks.Dataflow, Version=4.5.24.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a' at Microsoft.Build.BackEnd.Logging.LoggingService.ShutdownComponent() at Microsoft.Build.Evaluation.ProjectCollection.ShutDownLoggingService() WRN: Assembly binding logging is turned OFF. To enable assembly bind failure logging, set the registry value [HKLM\Software\Microsoft\Fusion!
-      <p>
-        <a href="https://dawnarc.com/2017/08/ue4vs2017%E7%BC%96%E8%AF%91%E6%9E%84%E5%BB%BA%E5%BC%95%E6%93%8E%E4%BB%A3%E7%A0%81could-not-load-file-or-assembly-system.threading.tasks.dataflow/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-          
-            
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2017/08/c--%E5%9F%BA%E7%A1%80%E5%A4%87%E5%BF%98%E6%98%BE%E5%BC%8F%E8%B0%83%E7%94%A8%E6%9E%84%E9%80%A0/">
-          [C&#43;&#43;]基础备忘：显式调用构造
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2017-08-24T16:51:40&#43;08:00">
-        
-  August 24, 2017
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/c&#43;&#43;">C&#43;&#43;</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      最近两年一直是在UE4的编译器下使用C++，标准C++的一些基础都快忘了。。。
-示例代码：
-#include &lt;iostream&gt; class CA { public: //两种初始化成员变量的方法 CA() : ia_(11) { fa_ = 0.f; } CA(int val) : ia_(val) { fa_ = 0.f; } //要想让子类能够访问，修饰符不可为private protected: int ia_; private: float fa_; }; class CB : public CA { public: //显示调用父类的有参构造函数 CB() : CA(33), ib_(22) { } int ib() { return ib_; } int ia() { return ia_; } private: int ib_; }; int main(int argc, char* argv[]) { CB b; std::cout &lt;&lt; b.
-      <p>
-        <a href="https://dawnarc.com/2017/08/c--%E5%9F%BA%E7%A1%80%E5%A4%87%E5%BF%98%E6%98%BE%E5%BC%8F%E8%B0%83%E7%94%A8%E6%9E%84%E9%80%A0/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-          
           
   <div class="pagination-bar">
     <ul class="pagination">
@@ -1165,7 +1190,7 @@ Setting up Unreal Engine 4 project files... MSBUILD : error MSB1025: An internal
           </li>
         
       
-      <li class="pagination-number">page 14 of 28</li>
+      <li class="pagination-number">page 14 of 29</li>
     </ul>
   </div>
 
@@ -1196,7 +1221,7 @@ Setting up Unreal Engine 4 project files... MSBUILD : error MSB1025: An internal
       <div id="about-card-job">
         <i class="fa fa-briefcase"></i>
         <br/>
-        Marvelous Developer
+        To Be Marvelous
       </div>
     
     
@@ -1227,6 +1252,172 @@ Setting up Unreal Engine 4 project files... MSBUILD : error MSB1025: An internal
       <div class="no-result text-color-light text-center">no post found</div>
       <div class="results">
         
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/09/shadingtutorials-and-documents-collections/">
+                <h3 class="media-heading">[Shading]Tutorials and Documents Collections</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Sep 9, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">The complete shader development course(Unity)
+https://shaderdev.com/</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/09/ue4materials-collections/">
+                <h3 class="media-heading">[UE4]Materials Collections</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Sep 9, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">Creating Interactive Grass in Unreal Engine 4
+https://www.raywenderlich.com/6314-creating-interactive-grass-in-unreal-engine-4
+Creating Snow Trails in Unreal Engine 4
+https://www.raywenderlich.com/5760-creating-snow-trails-in-unreal-engine-4</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/09/ue4android-building-error-could-not-resolve-all-files-for-configuration-classpath/">
+                <h3 class="media-heading">[UE4]Android Building Error-Could not resolve all files for configuration &#39;classpath&#39;</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Sep 9, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">Error 1 Error Log:
+A problem occurred configuring root project 'app'. &gt; Could not resolve all files for configuration ':classpath'. &gt; Could not download kotlin-reflect.jar (org.jetbrains.kotlin:kotlin-reflect:1.1.3-2) &gt; Could not get resource 'https://jcenter.bintray.com/org/jetbrains/kotlin/kotlin-reflect/1.1.3-2/kotlin-reflect-1.1.3-2.jar'. &gt; Could not GET 'https://jcenter.bintray.com/org/jetbrains/kotlin/kotlin-reflect/1.1.3-2/kotlin-reflect-1.1.3-2.jar'. &gt; Software caused connection abort: recv failed &gt; Could not download protobuf-java.jar (com.google.protobuf:protobuf-java:3.0.0) &gt; Could not get resource 'https://jcenter.bintray.com/com/google/protobuf/protobuf-java/3.0.0/protobuf-java-3.0.0.jar'. &gt; Could not GET 'https://jcenter.bintray.com/com/google/protobuf/protobuf-java/3.0.0/protobuf-java-3.0.0.jar'. &gt; Software caused connection abort: recv failed  Solution:</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/09/steamworks%E5%90%8E%E5%8F%B0%E9%85%8D%E7%BD%AE%E7%9B%B8%E5%85%B3/">
+                <h3 class="media-heading">Steamworks后台配置相关</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Sep 9, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">如何修改SteamWorks中游戏名称 改名需要改两个地方：一个是Application Name，一个是Package Name。
+修改Application Name 先打开SteamWork首页，点击App名称，进入App Admin页面   然后点击“Edit Steamworks Settings”   然后修改Application Name，并点击Save   修改Package Name 先打开SteamWork首页，点击App名称，进入App Admin页面   然后点击Package Title   然后点击Edit package name。   游戏包体构建与上传（SteamPipe Depot &amp; Build） 1，将游戏包体放在E:\SteamSdk\tools\ContentBuilder\content 目录下。一般为了区分windows / mac os，可以在 content 目录下见两个文件夹：windows 和 macos，然后将对应包体文件放在对应文件夹下。
+2， 编辑 E:\SteamSdk\tools\ContentBuilder\scripts\ 下的app_build_1000.vdf 和 depot_build_1001.vdf。
+将 app_build_1000.vdf 和 depot_build_1001.vdf 改名，分别改成自己项目的 appid 和 depotid，例如： app_build_2000.vdf、depot_build_2001.vdf。
+然后修改 app_build_2000.vdf 中的内容，改成正式的 appid 和 depotid   修改 depot_build_2001.</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/08/mathparabola-movement/">
+                <h3 class="media-heading">[Math]Parabola movement</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Aug 8, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">keywords：抛物运动、Parabola、重力加速度、Gravitational Speed 、UE4 implement.
+header
+AStaticMeshActor* TestCube = nullptr; //throw speed UPROPERTY(EditDefaultsOnly) FVector StartForce = FVector(100.f, 100.f, 2000.f); //gravitational acceleration float GravityAcclerator = -980.f; //accumulated movtion time float AccumulateTime = 0.f;  cpp
+void ATestTPGameMode::StartPlay() { Super::StartPlay(); //finding the Actor in scene. for (TActorIterator&lt;AStaticMeshActor&gt; Iter(GetWorld()); Iter; ++Iter) { if (Iter-&gt;GetName() == TEXT(&quot;Cube_2&quot;)) { TestCube = *Iter; break; } } } void ATestTPGameMode::Tick(float DeltaSeconds) { Super::Tick(DeltaSeconds); AccumulateTime += DeltaSeconds; //calculate gravitational speed in real time.</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/08/ue4actor-lifecycle/">
+                <h3 class="media-heading">[UE4]Actor Lifecycle</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Aug 8, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">EndPlay、BeginDestroy、Destroy 的调用时机  如果要获取 Actor 销毁时的准确时间点，建议重写 Destroy() 函数，而不是EndPlay()、BeginDestroy()。 官方文档上说 EndPlay 会在执行Destroy的时候触发，但实际上并不会（至少4.20版本中测试过不会），而是当 Actor 所在场景销毁时（比如退出编辑器）才会调用。 BeginDestroy()、IsReadyForFinishDestroy()、FinishDestroy() 是在执行垃圾回收时才会触发的函数，而不是对象被 Destroy 后立即执行的函数。  官方文档
+https://docs.unrealengine.com/en-us/Programming/UnrealArchitecture/Actors/ActorLifecycle</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/08/gitblit%E5%B9%B6%E5%8F%91%E8%AF%B7%E6%B1%82%E6%95%B0%E9%99%90%E5%88%B6%E7%9A%84%E9%97%AE%E9%A2%98concurrent-ssh-connection-limit/">
+                <h3 class="media-heading">[gitblit]并发请求数限制的问题(Concurrent SSH connection limit)</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Aug 8, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">问题现象：
+当同时 pull 或者 push 的人数较多时，只有第一个用户正常，其他用户会卡住。
+解决办法：
+修改配置文件data/gitblit.properties，添加：
+execution.defaultThreadPoolSize = 10  defaultThreadPoolSize 默认为0。
+参考自：
+Concurrent push not working
+https://github.com/gitblit/gitblit/issues/905</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/08/github%E8%A7%A3%E5%86%B3github%E4%B8%8B%E8%BD%BD%E9%80%9F%E5%BA%A6%E5%A4%AA%E6%85%A2%E7%9A%84%E9%97%AE%E9%A2%98/">
+                <h3 class="media-heading">[github]解决GitHub下载速度太慢的问题</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Aug 8, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">以下两步缺一不可
+步骤一 从GitHub下载文件一直非常慢，查看下载链接发现最终被指向了Amazon的服务器，下载地址是http://github-cloud.s3.amazonaws.com/，从国内访问Amazon非常慢，所以总是下载失败，解决方法时更改host文件，使该域名指向香港的服务器：
+更改hosts文件：
+Windows
+更改C:\Windows\System32\drivers\etc\hosts文件，在文件中追加219.76.4.4 github-cloud.s3.amazonaws.com, 将域名指向该IP即可
+Mac
+执行 sudo vi /etc/hosts 追加 219.76.4.4 github-cloud.s3.amazonaws.com
+最后执行ipconfig /flushdns命令，刷新 DNS 缓存。
+步骤二 https://www.ipaddress.com/ 使用 IP Lookup 工具获得下面这两个github域名的ip地址，该网站可能需要梯子，输入上述域名后，分别获得github.com和github.global.ssl.fastly.net对应的ip，比如 192.30.xx.xx 和 151.101.xx.xx 。准备工作做完之后，打开的hosts文件中添加如下格式，IP修改为自己查询到的IP：
+192.30.xx.xx github.com 151.101.xx.xx github.global.ssl.fastly.net  最后执行ipconfig /flushdns命令，刷新 DNS 缓存。修改后的下载速度能达到 2MB/S 以上。
+参考自：https://blog.csdn.net/qing666888/article/details/79123742</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
         
           <div class="media">
             
@@ -1276,210 +1467,6 @@ https://www.whitman.edu/Documents/Academics/Mathematics/2016/Henelsmith.pdf</div
             <hr>
           </div>
         
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2018/07/ue4%E7%89%A9%E7%90%86%E5%92%8C%E5%88%9A%E4%BD%93%E7%9B%B8%E5%85%B3%E7%9A%84%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9simulate-physics-and-collision/">
-                <h3 class="media-heading">[UE4]物理和刚体相关的注意事项(Simulate Physics and Collision)</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Jul 7, 2018
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather">UProjectileMovementComponent相关 官方第一人称射击模版项目中，是在构造函数中就设置好了速度：
-ProjectileMovement = CreateDefaultSubobject&lt;UProjectileMovementComponent&gt;(TEXT(&quot;ProjectileComp&quot;)); ProjectileMovement-&gt;UpdatedComponent = CollisionComp; ProjectileMovement-&gt;InitialSpeed = 3000.f; ProjectileMovement-&gt;MaxSpeed = 3000.f; ProjectileMovement-&gt;bRotationFollowsVelocity = true; ProjectileMovement-&gt;bShouldBounce = true;  两个问题：
- 如何停止移动； 如何在运行时期间修改速度；  问题1解决方法：
-如果情况下，Actor spawn之后，就会收到 ProjectileMovement 影响立即移动，如何在Spawn 之后马上停止移动：
-ProjectileMovement-&gt;Deactivate();  问题2解决方法：
-如何在 Spawn 之后修改 Speed，两种方式：
-UProjectileMovementComponent-&gt;SetVelocityInLocalSpace(FVector NewVelocity);  或者
-UProjectileMovementComponent-&gt;Velocity = NewVelocity;  前者速度方向是相对于 UProjectileMovementComponent本地坐标系 的相对Rotation，后者速度方向是相对于世界坐标系的绝对Rotation。 注意：当使用 UProjectileMovementComponent 后，UPrimitiveComponent::SetSimulatePhysics() 启用物理会与 ProjectileMovement 冲突。如果要使用物理，那么只能去掉 UProjectileMovementComponent ，使用 Add Impulse 来代替。
- 参考：
-Simulate Physics and Projectile Movement Component</div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2018/07/versioncontrolgiterror-unpack-failed-error-missing-commit-xxx/">
-                <h3 class="media-heading">[VersionControl][git]error unpack failed error Missing commit XXX</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Jul 7, 2018
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather">原文：https://blog.csdn.net/shuilengqingqiu/article/details/77945658
-git提交代码时出现错误：error : unpack failed : error Missing commit XXX，XXX代表提交的版本号。
-原因：本地索引出错。
-解决方法：
- git gc
- git pull &ndash;rebase（执行之前要先把本地的修改stash 或者commit。过程中遇到冲突需要先解决冲突，再git add .）
- git push
-  </div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2018/07/algorithmsstarcraft-2s-ai-algorithm/">
-                <h3 class="media-heading">[Algorithms]StarCraft 2&#39;s AI Algorithm</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Jul 7, 2018
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather">keywords：Pathfinding、Rush AI、Flocking AI、Swarm AI、Fish AI、
-相关博客 The StarCraft BroodWar Resource for custom AIs
-http://www.starcraftai.com/wiki/Main_Page
-How does StarCraft II&rsquo;s pathfinding algorithm work?
-https://www.quora.com/How-does-StarCraft-IIs-pathfinding-algorithm-work
-pathing 6 - flocking
-http://satirist.org/ai/starcraft/blog/archives/68-pathing-6-flocking.html
-STARCRAFT 1 PATHFINDING: A TECHNICAL ANALYSIS
-http://striketactics.net/devblog/starcraft-1-pathfinding-technical-analysis
-The StarCraft path-finding hack
-https://www.codeofhonor.com/blog/the-starcraft-path-finding-hack
-A* navigational mesh path finding
-https://gamedev.stackexchange.com/questions/20392/a-navigational-mesh-path-finding
-相关论文 A Q-Learning Algorithm for Adversarial Real-Time Strategy Games
-https://www.aaai.org/ocs/index.php/AIIDE/AIIDE12/paper/download/5515/5734
-StarCraft Unit Motion: Analysis and Search Enhancements
-https://www.aaai.org/ocs/index.php/AIIDE/AIIDE15/paper/download/11573/11384
-MCTS library for unit movement planning in real-time strategy game Starcraft</div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2018/07/github-pages-%E5%AF%B9%E8%87%AA%E5%AE%9A%E4%B9%89%E5%9F%9F%E5%90%8D%E6%94%AF%E6%8C%81-https/">
-                <h3 class="media-heading">GitHub Pages 对自定义域名支持 HTTPS</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Jul 7, 2018
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather">keywords：github pages、custom domain、https
-我的github pages的默认域名为：dawnarc.github.io，以修改该域名为自定义域名：dawnarc.com 为例
-1，域名解析设置 以美橙互联为例：
-   主机名 记录类型 记录值     @ A记录 github pages的ip地址   xxx CNAME记录 dawnarc.github.io.    2，CNAME文件修改 dawnarc.github.io仓库下的CNAME修改
-dawnarc.com  3，enforce HTTPS 勾选 上面第二步的CNAME文件修改以后，再刷新 dawnarc.github.io 的 GitHub Pages 设置，就可以勾选 Enforce HTTPS。稍等片刻，就可以以https打开自己的自定义域名。
-GitHub Pages 的CNAME如果设置为带 www 的域名，貌似无法使用 https，去掉 www 后才可以。
- 注意事项 如果使用 Chrome 访问 https 地址栏左侧仍未出现小绿锁，请检查自己的网站引用的资源文件有没有使用了 http 协议，请替换成相应的 https 资源。
-参考自：GitHub Pages 对自定义域名支持 HTTPS
-https://likfe.com/2018/05/03/github-pages-custom-domains-support-https/</div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2018/07/c--c--11-shared_ptr-%E4%B8%8E-weak_ptr-%E5%8C%BA%E5%88%AB/">
-                <h3 class="media-heading">[C&#43;&#43;]C&#43;&#43;11 shared_ptr 与 weak_ptr 区别</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Jul 7, 2018
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather">shared_ptr 语法：
-#include &lt;memory&gt; shared_ptr&lt;A&gt; x(new A);  shared_ptr 相当于 对象引用计数器。每当对 shared_ptr 赋值操作一次，则其引用对象的计数+1。当某对象的引用计数为0时，则该对象自动销毁。
-weak_ptr 语法：
-#include &lt;memory&gt; weak_ptr&lt;A&gt; x(new A);  weak_ptr 典型应用是缓存：例如我们在缓存中存放了一个 raw pointer 来指向某个对象，如果这个对象在其他地方被销毁了，那么缓存中的这个 raw pointer 指向的对象不存在。如果我们希望某个对象在其他地方被销毁时，缓存中指向该对象的指针也马上被置为 null，那么就可以使用 weak_ptr。
-参考自：
-shared_ptr and weak_ptr differences
-https://stackoverflow.com/questions/4984381/shared-ptr-and-weak-ptr-differences
-When is std::weak_ptr useful?
-https://stackoverflow.com/questions/12030650/when-is-stdweak-ptr-useful</div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2018/07/ue4-tsharedptr-%E4%B8%8E-tweakobjectptr-%E5%8C%BA%E5%88%AB/">
-                <h3 class="media-heading">[UE4] TSharedPtr 与 TWeakObjectPtr 区别</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Jul 7, 2018
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather">UE4 的 TSharedPtr、TWeakObjectPtr 模仿自 C++11 的 shared_ptr 、 weak_ptr 。
-TSharedPtr TSharedPtr 相当于对象的引用计数器。每当对 TSharedPtr 赋值一次，该 TSharedPtr 引用对象计数加一，当引用计数为0时，则该对象被自动销毁。TSharedPtr 可以防止 raw pointer 对象被垃圾回收，。
-用法：
- TSharedPtr&lt;MyUObject&gt; ObjPtr = MakeShareable(NewObject&lt;MyUObject&gt;());  如果两个 TSharedPtr 相互赋值，则会导致对象永不释放，导致内存泄漏。
- Uobject不能使用TSharedPtr进行引用计数，如果一个非UObject的类想加入GC，那么必须继承FGCObject类。
- TWeakObjectPtr TWeakObjectPtr 保持的对象不能防止被垃圾回收。若引用的对象在其他地方被销毁，则 TWeakObjectPtr 内部的指针自动将被置为NULL，TWeakObjectPtr::IsValid()会返回false。TSharedPtr 则没有这个作用。
-用法：
- TWeakObjectPtr&lt;MyUObject&gt; ObjPtr = NewObject&lt;MyUObject&gt;();  参考资料：
-UE4 TSharedPtr和UObject的垃圾回收
-http://www.v5xy.com/?p=808
-There&rsquo;s a Huge Difference, One Will Always Crash
-https://answers.unrealengine.com/questions/48818/whats-the-difference-between-using-tweakobjectptr.html
-what is a &ldquo;weak object pointer&rdquo;?
-https://answers.unrealengine.com/questions/201186/what-is-a-weak-object-pointer.html</div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2018/07/ue4error-c3668-utexturecubeupdateresourcew/">
-                <h3 class="media-heading">[UE4]error C3668: &#39;UTextureCube::UpdateResourceW&#39;</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Jul 7, 2018
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather">4.19 编译错误：
-2&gt;F:\EpicGames\UE_4.19\Engine\Source\Runtime\Engine\Classes\Engine/TextureCube.h(69): error C3668: 'UTextureCube::UpdateResourceW': method with override specifier 'override' did not override any base class methods 2&gt;F:\EpicGames\UE_4.19\Engine\Source\Runtime\Engine\Classes\Engine/CanvasRenderTarget2D.h(43): error C3668: 'UCanvasRenderTarget2D::UpdateResourceW': method with override specifier 'override' did not override any base class methods  4.18 编译错误：
-2&gt;f:\epicgames\ue_4.18\engine\source\runtime\core\public\HAL/ThreadSafeCounter64.h(67): error C2039: '_InterlockedIncrement': is not a member of 'FWindowsPlatformAtomics' 2&gt;F:\EpicGames\UE_4.18\Engine\Source\Runtime\Core\Public\Windows/WindowsPlatformAtomics.h(14): note: see declaration of 'FWindowsPlatformAtomics' 2&gt;f:\epicgames\ue_4.18\engine\source\runtime\core\public\HAL/ThreadSafeCounter64.h(67): error C2665: '_InterlockedIncrement': none of the 4 overloads could convert all the argument types 2&gt;C:\Program Files (x86)\Windows Kits\8.</div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2018/06/c--non-static-member-function-as-callback-function-and-achieve-inheritance/">
-                <h3 class="media-heading">[C&#43;&#43;]non-static member function as callback function and achieve inheritance</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Jun 6, 2018
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather">keywords：C++ 非静态成员函数作为回调函数并实现继承多态
-Base.hpp
-#pragma once class Base { public: virtual void TestFun1(int Param) {} virtual void TestFun2(int Param) {} };  Child.hpp
-#pragma once #include &lt;iostream&gt; #include &quot;Base.hpp&quot; class Child : public Base { public: void TestFun1(int Param) override { printf(&quot;Fun1 : %d\n&quot;, Param); } void TestFun2(int Param) override { printf(&quot;Fun2 : %d\n&quot;, Param); } };  EventManager.h
-// Fill out your copyright notice in the Description page of Project Settings.</div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
       </div>
     </div>
     <div class="modal-footer">
@@ -1487,7 +1474,7 @@ Base.hpp
          data-message-zero="no post found"
          data-message-one="1 post found"
          data-message-other="{n} posts found">
-         417 posts found
+         421 posts found
       </p>
     </div>
   </div>
