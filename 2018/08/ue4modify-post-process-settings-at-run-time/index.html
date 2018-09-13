@@ -1,0 +1,888 @@
+
+
+  
+    
+  
+
+
+  
+
+
+
+
+  
+
+
+  
+
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Hugo 0.42.1 with theme Tranquilpeak 0.4.3-BETA">
+    <title>[UE4]Modify Post Process Settings At Run-time</title>
+    <meta name="author" content="Neil Wang">
+    <meta name="keywords" content="UE4">
+
+    <link rel="icon" href="https://dawnarc.com/favicon.png">
+    
+
+    
+    <meta name="description" content="Keywords：运行时期间修改后处理设置, change post process settings when game is running.
+运行时修改Post Process 步骤 1，使用 Camera Component 拉出 Set members in PostProcessSettings 节点。 Get reference to Camera Component and drag out “Set members in PostProcessSettings” node.   2，选中 Set members in PostProcessSettings 节点，然后再在 Detail 面板中勾选需要修改的属性。比如我想修改曝光亮度。 select “Set members in PostProcessSettings” node, then checked properties which want to modify in Detail Panel. e.g. Brightness of Exposure.   3，将 Camera 组件的 属性” Post Process Blend Weight” 设置为1，表示完全启用摄像机的 Post Process Settings。0表示完全禁用，0到1的数值表示混合过渡“全完启用”到“完全禁用”之间的渐变效果。 Set “ Post Process Blend Weight” to 1 in Camera Component, which means fully enable Post Process Settings of Camera.">
+    <meta property="og:description" content="Keywords：运行时期间修改后处理设置, change post process settings when game is running.
+运行时修改Post Process 步骤 1，使用 Camera Component 拉出 Set members in PostProcessSettings 节点。 Get reference to Camera Component and drag out “Set members in PostProcessSettings” node.   2，选中 Set members in PostProcessSettings 节点，然后再在 Detail 面板中勾选需要修改的属性。比如我想修改曝光亮度。 select “Set members in PostProcessSettings” node, then checked properties which want to modify in Detail Panel. e.g. Brightness of Exposure.   3，将 Camera 组件的 属性” Post Process Blend Weight” 设置为1，表示完全启用摄像机的 Post Process Settings。0表示完全禁用，0到1的数值表示混合过渡“全完启用”到“完全禁用”之间的渐变效果。 Set “ Post Process Blend Weight” to 1 in Camera Component, which means fully enable Post Process Settings of Camera.">
+    <meta property="og:type" content="blog">
+    <meta property="og:title" content="[UE4]Modify Post Process Settings At Run-time">
+    <meta property="og:url" content="/2018/08/ue4modify-post-process-settings-at-run-time/">
+    <meta property="og:site_name" content="玄冬Wong">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="玄冬Wong">
+    <meta name="twitter:description" content="Keywords：运行时期间修改后处理设置, change post process settings when game is running.
+运行时修改Post Process 步骤 1，使用 Camera Component 拉出 Set members in PostProcessSettings 节点。 Get reference to Camera Component and drag out “Set members in PostProcessSettings” node.   2，选中 Set members in PostProcessSettings 节点，然后再在 Detail 面板中勾选需要修改的属性。比如我想修改曝光亮度。 select “Set members in PostProcessSettings” node, then checked properties which want to modify in Detail Panel. e.g. Brightness of Exposure.   3，将 Camera 组件的 属性” Post Process Blend Weight” 设置为1，表示完全启用摄像机的 Post Process Settings。0表示完全禁用，0到1的数值表示混合过渡“全完启用”到“完全禁用”之间的渐变效果。 Set “ Post Process Blend Weight” to 1 in Camera Component, which means fully enable Post Process Settings of Camera.">
+    
+      <meta name="twitter:creator" content="@idealsland">
+    
+    
+
+    
+    
+
+    
+      <meta property="og:image" content="//www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=640">
+    
+
+    
+    
+    
+
+    
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/jquery.fancybox.min.css" integrity="sha256-vuXZ9LGmmwtjqFX1F+EKin1ThZMub58gKULUyf0qECk=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/helpers/jquery.fancybox-thumbs.min.css" integrity="sha256-SEa4XYAHihTcEP1f5gARTB2K26Uk8PsndQYHQC1f4jU=" crossorigin="anonymous" />
+    
+    
+    <link rel="stylesheet" href="https://dawnarc.com/css/style-jsjn0006wyhpyzivf6yceb31gvpjatbcs3qzjvlumobfnugccvobqwxnnaj8.min.css" />
+    
+    
+      
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/solarized-light.min.css">
+      
+    
+
+    
+      
+<script>
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-78064851-2', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="4">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="https://dawnarc.com/">玄冬Wong</a>
+  </div>
+  
+    
+      <a class="header-right-picture "
+         href="https://dawnarc.com/#about">
+    
+    
+    
+      
+        <img class="header-picture" src="//www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=90" alt="Author&#39;s picture" />
+      
+    
+    </a>
+  
+  
+  
+
+</header>
+
+      <nav id="sidebar" data-behavior="4">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="https://dawnarc.com/#about">
+          <img class="sidebar-profile-picture" src="//www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=110" alt="Author&#39;s picture" />
+        </a>
+        <h4 class="sidebar-profile-name">Neil Wang</h4>
+        
+          <h5 class="sidebar-profile-bio">久长唯有品格</h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/categories">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+      
+      <span class="sidebar-button-desc">Categories</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/tags">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+      
+      <span class="sidebar-button-desc">Tags</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/archives">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+      
+      <span class="sidebar-button-desc">Archives</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/#about">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+      
+      <span class="sidebar-button-desc">About</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+      
+      <span class="sidebar-button-desc">Home</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/index.xml">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://stackoverflow.com/users/1645289/protoss" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-stack-overflow"></i>
+      
+      <span class="sidebar-button-desc">Stack Overflow</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://www.artstation.com/artist/dawnarc" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-artstation"></i>
+      
+      <span class="sidebar-button-desc">ArtStation</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://www.facebook.com/koanland" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-facebook"></i>
+      
+      <span class="sidebar-button-desc">Facebook</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/dawnarc" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://www.linkedin.com/in/dawnarc/" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-linkedin"></i>
+      
+      <span class="sidebar-button-desc">Linkedin</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://www.pinterest.com/wangaiguo/" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-pinterest"></i>
+      
+      <span class="sidebar-button-desc">Pinterest</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://steamcommunity.com/id/dawnarc" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-steam"></i>
+      
+      <span class="sidebar-button-desc">Steam</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://twitter.com/idealsland" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-twitter"></i>
+      
+      <span class="sidebar-button-desc">Twitter</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://weibo.com/koanland" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-weibo"></i>
+      
+      <span class="sidebar-button-desc">Weibo</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+
+    </ul>
+  </div>
+</nav>
+
+      
+
+      <div id="main" data-behavior="4"
+        class="
+               hasCoverMetaIn
+               ">
+        <article class="post" itemscope itemType="http://schema.org/BlogPosting">
+          
+          
+            <div class="post-header main-content-wrap text-left">
+  
+    <h1 class="post-title" itemprop="headline">
+      [UE4]Modify Post Process Settings At Run-time
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2018-08-31T14:47:02&#43;08:00">
+        
+  August 31, 2018
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+</div>
+          
+          <div class="post-content markdown" itemprop="articleBody">
+            <div class="main-content-wrap">
+              
+
+<p>Keywords：运行时期间修改后处理设置,  change post process settings when game is running.</p>
+
+<h5 id="运行时修改post-process-步骤">运行时修改Post Process 步骤</h5>
+
+<p>1，使用 Camera Component 拉出 Set members in PostProcessSettings 节点。
+Get reference to Camera Component and drag out “Set members in PostProcessSettings” node.
+
+<figure>
+    
+        <img src="https://dawnarc.com/img/20180831-[UE4]Modify%20Post%20Process%20Settings%20At%20Run-time/[UE4]Modify%20Post%20Process%20Settings%20At%20Run-time-01.jpg" />
+    
+    
+</figure>
+</p>
+
+<p>2，选中  Set members in PostProcessSettings 节点，然后再在 Detail 面板中勾选需要修改的属性。比如我想修改曝光亮度。
+select “Set members in PostProcessSettings” node, then checked properties which want to modify in Detail Panel. e.g. Brightness of Exposure.
+
+<figure>
+    
+        <img src="https://dawnarc.com/img/20180831-[UE4]Modify%20Post%20Process%20Settings%20At%20Run-time/[UE4]Modify%20Post%20Process%20Settings%20At%20Run-time-02.jpg" />
+    
+    
+</figure>
+</p>
+
+<p>3，将 Camera 组件的 属性” Post Process Blend Weight” 设置为1，表示完全启用摄像机的 Post Process Settings。0表示完全禁用，0到1的数值表示混合过渡“全完启用”到“完全禁用”之间的渐变效果。
+Set “ Post Process Blend Weight” to 1 in Camera Component, which means fully enable Post Process Settings of Camera. Fully disable Post Process Settings of Camera if set this value to 0, value between 0 and 1 means that using a more gradual blend between fully enabled and fully disabled.
+
+<figure>
+    
+        <img src="https://dawnarc.com/img/20180831-[UE4]Modify%20Post%20Process%20Settings%20At%20Run-time/[UE4]Modify%20Post%20Process%20Settings%20At%20Run-time-03.jpg" />
+    
+    
+</figure>
+</p>
+
+<p>4，禁用场景中的Post Process Volume（后处理体积），因为我们使用摄像机组件来接管后处理。
+Disable Post Process Volume in scene, because we would use Post Process Settings of Camera Component.
+
+<figure>
+    
+        <img src="https://dawnarc.com/img/20180831-[UE4]Modify%20Post%20Process%20Settings%20At%20Run-time/[UE4]Modify%20Post%20Process%20Settings%20At%20Run-time-04.jpg" />
+    
+    
+</figure>
+</p>
+
+<p>参考实例：游戏启动后，逐渐修改后处理的曝光亮度效果。
+Example: when game start, modify Exposure Brightness of Post Process gradually.
+
+<figure>
+    
+        <img src="https://dawnarc.com/img/20180831-[UE4]Modify%20Post%20Process%20Settings%20At%20Run-time/[UE4]Modify%20Post%20Process%20Settings%20At%20Run-time-05.jpg" />
+    
+    
+</figure>
+</p>
+
+<h5 id="post-process-volume-不支持动态修改且不支持代码控制-包括蓝图-c">Post Process Volume 不支持动态修改且不支持代码控制（包括蓝图、C++）</h5>
+
+<p>官方给出解释：
+因为 Volume 都是使用 BSP BrushComponent 创建的，这会导致很难使用代码去创建 Volume ，官方很难实现代码控制 Volume 。如果要用代码控制，目前只能使用 Camera Component 的 Post Process Settings。</p>
+
+<p>Creating a PostProcessVolume from C++, anyone done that yet?
+<a href="https://forums.unrealengine.com/development-discussion/c-gameplay-programming/6490-creating-a-postprocessvolume-from-c-anyone-done-that-yet">https://forums.unrealengine.com/development-discussion/c-gameplay-programming/6490-creating-a-postprocessvolume-from-c-anyone-done-that-yet</a></p>
+
+              
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+                
+                
+                  <div class="post-footer-tags">
+                    <span class="text-color-light text-small">TAGGED IN</span><br/>
+                    
+  <a class="tag tag--primary tag--small" href="https://dawnarc.com/tags/ue4/">UE4</a>
+
+                  </div>
+                
+              
+            
+            
+  <div class="post-actions-wrap">
+      <nav >
+        <ul class="post-actions post-action-nav">
+          
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2018/09/steamworks%E5%90%8E%E5%8F%B0%E9%85%8D%E7%BD%AE%E7%9B%B8%E5%85%B3/" data-tooltip="Steamworks后台配置相关">
+              
+                  <i class="fa fa-angle-left"></i>
+                  <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+                </a>
+            </li>
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2018/08/mathparabola-movement/" data-tooltip="[Math]Parabola movement">
+              
+                  <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+                  <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+          
+        </ul>
+      </nav>
+    <ul class="post-actions post-action-share" >
+      
+        <li class="post-action hide-lg hide-md hide-sm">
+          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
+            <i class="fa fa-share-alt"></i>
+          </a>
+        </li>
+        
+      
+      
+        <li class="post-action">
+          <a class="post-action-btn btn btn--default" href="#disqus_thread">
+            <i class="fa fa-comment-o"></i>
+          </a>
+        </li>
+      
+      <li class="post-action">
+        
+          <a class="post-action-btn btn btn--default" href="#">
+        
+          <i class="fa fa-list"></i>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+
+            
+              
+                <div id="disqus_thread">
+  <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+              
+            
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2018 Neil Wang. All Rights Reserved. Powered by <A href="https://gohugo.io/"> Hugo</A>.
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+        
+  <div class="post-actions-wrap">
+      <nav >
+        <ul class="post-actions post-action-nav">
+          
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2018/09/steamworks%E5%90%8E%E5%8F%B0%E9%85%8D%E7%BD%AE%E7%9B%B8%E5%85%B3/" data-tooltip="Steamworks后台配置相关">
+              
+                  <i class="fa fa-angle-left"></i>
+                  <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+                </a>
+            </li>
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2018/08/mathparabola-movement/" data-tooltip="[Math]Parabola movement">
+              
+                  <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+                  <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+          
+        </ul>
+      </nav>
+    <ul class="post-actions post-action-share" >
+      
+        <li class="post-action hide-lg hide-md hide-sm">
+          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
+            <i class="fa fa-share-alt"></i>
+          </a>
+        </li>
+        
+      
+      
+        <li class="post-action">
+          <a class="post-action-btn btn btn--default" href="#disqus_thread">
+            <i class="fa fa-comment-o"></i>
+          </a>
+        </li>
+      
+      <li class="post-action">
+        
+          <a class="post-action-btn btn btn--default" href="#">
+        
+          <i class="fa fa-list"></i>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+
+      </div>
+      <div id="share-options-bar" class="share-options-bar" data-behavior="4">
+  <i id="btn-close-shareoptions" class="fa fa-close"></i>
+  <ul class="share-options">
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-remove"></i>
+    </div>
+    
+      <img id="about-card-picture" src="//www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=110" alt="Author&#39;s picture" />
+    
+    <h4 id="about-card-name">Neil Wang</h4>
+    
+      <div id="about-card-bio">久长唯有品格</div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        To Be Marvelous
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker"></i>
+        <br/>
+        Yichang·Hubei
+      </div>
+    
+  </div>
+</div>
+
+    <div id="algolia-search-modal" class="modal-container">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="close-button"><i class="fa fa-close"></i></span>
+      <a href="https://algolia.com" target="_blank" rel="noopener" class="searchby-algolia text-color-light link-unstyled">
+        <span class="searchby-algolia-text text-color-light text-small">by</span>
+        <img class="searchby-algolia-logo" src="https://www.algolia.com/static_assets/images/press/downloads/algolia-light.svg">
+      </a>
+      <i class="search-icon fa fa-search"></i>
+      <form id="algolia-search-form">
+        <input type="text" id="algolia-search-input" name="search"
+          class="form-control input--large search-input" placeholder="Search" />
+      </form>
+    </div>
+    <div class="modal-body">
+      <div class="no-result text-color-light text-center">no post found</div>
+      <div class="results">
+        
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/09/shadingtutorials-and-documents-collections/">
+                <h3 class="media-heading">[Shading]Tutorials and Documents Collections</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Sep 9, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">The complete shader development course(Unity)
+https://shaderdev.com/</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/09/ue4materials-collections/">
+                <h3 class="media-heading">[UE4]Materials Collections</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Sep 9, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">Creating Interactive Grass in Unreal Engine 4
+https://www.raywenderlich.com/6314-creating-interactive-grass-in-unreal-engine-4
+Creating Snow Trails in Unreal Engine 4
+https://www.raywenderlich.com/5760-creating-snow-trails-in-unreal-engine-4</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/09/ue4android-building-error-could-not-resolve-all-files-for-configuration-classpath/">
+                <h3 class="media-heading">[UE4]Android Building Error-Could not resolve all files for configuration &#39;classpath&#39;</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Sep 9, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">Error 1 Error Log:
+A problem occurred configuring root project 'app'. &gt; Could not resolve all files for configuration ':classpath'. &gt; Could not download kotlin-reflect.jar (org.jetbrains.kotlin:kotlin-reflect:1.1.3-2) &gt; Could not get resource 'https://jcenter.bintray.com/org/jetbrains/kotlin/kotlin-reflect/1.1.3-2/kotlin-reflect-1.1.3-2.jar'. &gt; Could not GET 'https://jcenter.bintray.com/org/jetbrains/kotlin/kotlin-reflect/1.1.3-2/kotlin-reflect-1.1.3-2.jar'. &gt; Software caused connection abort: recv failed &gt; Could not download protobuf-java.jar (com.google.protobuf:protobuf-java:3.0.0) &gt; Could not get resource 'https://jcenter.bintray.com/com/google/protobuf/protobuf-java/3.0.0/protobuf-java-3.0.0.jar'. &gt; Could not GET 'https://jcenter.bintray.com/com/google/protobuf/protobuf-java/3.0.0/protobuf-java-3.0.0.jar'. &gt; Software caused connection abort: recv failed  Solution:</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/09/steamworks%E5%90%8E%E5%8F%B0%E9%85%8D%E7%BD%AE%E7%9B%B8%E5%85%B3/">
+                <h3 class="media-heading">Steamworks后台配置相关</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Sep 9, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">如何修改SteamWorks中游戏名称 改名需要改两个地方：一个是Application Name，一个是Package Name。
+修改Application Name 先打开SteamWork首页，点击App名称，进入App Admin页面   然后点击“Edit Steamworks Settings”   然后修改Application Name，并点击Save   修改Package Name 先打开SteamWork首页，点击App名称，进入App Admin页面   然后点击Package Title   然后点击Edit package name。   游戏包体构建与上传（SteamPipe Depot &amp; Build） 1，将游戏包体放在E:\SteamSdk\tools\ContentBuilder\content 目录下。一般为了区分windows / mac os，可以在 content 目录下见两个文件夹：windows 和 macos，然后将对应包体文件放在对应文件夹下。
+2， 编辑 E:\SteamSdk\tools\ContentBuilder\scripts\ 下的app_build_1000.vdf 和 depot_build_1001.vdf。
+将 app_build_1000.vdf 和 depot_build_1001.vdf 改名，分别改成自己项目的 appid 和 depotid，例如： app_build_2000.vdf、depot_build_2001.vdf。
+然后修改 app_build_2000.vdf 中的内容，改成正式的 appid 和 depotid   修改 depot_build_2001.</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/08/ue4modify-post-process-settings-at-run-time/">
+                <h3 class="media-heading">[UE4]Modify Post Process Settings At Run-time</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Aug 8, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">Keywords：运行时期间修改后处理设置, change post process settings when game is running.
+运行时修改Post Process 步骤 1，使用 Camera Component 拉出 Set members in PostProcessSettings 节点。 Get reference to Camera Component and drag out “Set members in PostProcessSettings” node.   2，选中 Set members in PostProcessSettings 节点，然后再在 Detail 面板中勾选需要修改的属性。比如我想修改曝光亮度。 select “Set members in PostProcessSettings” node, then checked properties which want to modify in Detail Panel. e.g. Brightness of Exposure.   3，将 Camera 组件的 属性” Post Process Blend Weight” 设置为1，表示完全启用摄像机的 Post Process Settings。0表示完全禁用，0到1的数值表示混合过渡“全完启用”到“完全禁用”之间的渐变效果。 Set “ Post Process Blend Weight” to 1 in Camera Component, which means fully enable Post Process Settings of Camera.</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/08/mathparabola-movement/">
+                <h3 class="media-heading">[Math]Parabola movement</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Aug 8, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">keywords：抛物运动、Parabola、重力加速度、Gravitational Speed 、UE4 implement.
+header
+AStaticMeshActor* TestCube = nullptr; //throw speed UPROPERTY(EditDefaultsOnly) FVector StartForce = FVector(100.f, 100.f, 2000.f); //gravitational acceleration float GravityAcclerator = -980.f; //accumulated movtion time float AccumulateTime = 0.f;  cpp
+void ATestTPGameMode::StartPlay() { Super::StartPlay(); //finding the Actor in scene. for (TActorIterator&lt;AStaticMeshActor&gt; Iter(GetWorld()); Iter; ++Iter) { if (Iter-&gt;GetName() == TEXT(&quot;Cube_2&quot;)) { TestCube = *Iter; break; } } } void ATestTPGameMode::Tick(float DeltaSeconds) { Super::Tick(DeltaSeconds); AccumulateTime += DeltaSeconds; //calculate gravitational speed in real time.</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/08/ue4actor-lifecycle/">
+                <h3 class="media-heading">[UE4]Actor Lifecycle</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Aug 8, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">EndPlay、BeginDestroy、Destroy 的调用时机  如果要获取 Actor 销毁时的准确时间点，建议重写 Destroy() 函数，而不是EndPlay()、BeginDestroy()。 官方文档上说 EndPlay 会在执行Destroy的时候触发，但实际上并不会（至少4.20版本中测试过不会），而是当 Actor 所在场景销毁时（比如退出编辑器）才会调用。 BeginDestroy()、IsReadyForFinishDestroy()、FinishDestroy() 是在执行垃圾回收时才会触发的函数，而不是对象被 Destroy 后立即执行的函数。  官方文档
+https://docs.unrealengine.com/en-us/Programming/UnrealArchitecture/Actors/ActorLifecycle</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/08/gitblit%E5%B9%B6%E5%8F%91%E8%AF%B7%E6%B1%82%E6%95%B0%E9%99%90%E5%88%B6%E7%9A%84%E9%97%AE%E9%A2%98concurrent-ssh-connection-limit/">
+                <h3 class="media-heading">[gitblit]并发请求数限制的问题(Concurrent SSH connection limit)</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Aug 8, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">问题现象：
+当同时 pull 或者 push 的人数较多时，只有第一个用户正常，其他用户会卡住。
+解决办法：
+修改配置文件data/gitblit.properties，添加：
+execution.defaultThreadPoolSize = 10  defaultThreadPoolSize 默认为0。
+参考自：
+Concurrent push not working
+https://github.com/gitblit/gitblit/issues/905</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/08/github%E8%A7%A3%E5%86%B3github%E4%B8%8B%E8%BD%BD%E9%80%9F%E5%BA%A6%E5%A4%AA%E6%85%A2%E7%9A%84%E9%97%AE%E9%A2%98/">
+                <h3 class="media-heading">[github]解决GitHub下载速度太慢的问题</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Aug 8, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">以下两步缺一不可
+步骤一 从GitHub下载文件一直非常慢，查看下载链接发现最终被指向了Amazon的服务器，下载地址是http://github-cloud.s3.amazonaws.com/，从国内访问Amazon非常慢，所以总是下载失败，解决方法时更改host文件，使该域名指向香港的服务器：
+更改hosts文件：
+Windows
+更改C:\Windows\System32\drivers\etc\hosts文件，在文件中追加219.76.4.4 github-cloud.s3.amazonaws.com, 将域名指向该IP即可
+Mac
+执行 sudo vi /etc/hosts 追加 219.76.4.4 github-cloud.s3.amazonaws.com
+最后执行ipconfig /flushdns命令，刷新 DNS 缓存。
+步骤二 https://www.ipaddress.com/ 使用 IP Lookup 工具获得下面这两个github域名的ip地址，该网站可能需要梯子，输入上述域名后，分别获得github.com和github.global.ssl.fastly.net对应的ip，比如 192.30.xx.xx 和 151.101.xx.xx 。准备工作做完之后，打开的hosts文件中添加如下格式，IP修改为自己查询到的IP：
+192.30.xx.xx github.com 151.101.xx.xx github.global.ssl.fastly.net  最后执行ipconfig /flushdns命令，刷新 DNS 缓存。修改后的下载速度能达到 2MB/S 以上。
+参考自：https://blog.csdn.net/qing666888/article/details/79123742</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/07/mathorthogonalize%E6%AD%A3%E4%BA%A4%E5%8C%96/">
+                <h3 class="media-heading">[Math]Orthogonalize(正交化)</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jul 7, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">格拉姆-施密特正交化
+https://zh.wikipedia.org/wiki/%E6%A0%BC%E6%8B%89%E5%A7%86-%E6%96%BD%E5%AF%86%E7%89%B9%E6%AD%A3%E4%BA%A4%E5%8C%96
+内积空间
+https://zh.wikipedia.org/wiki/%E5%86%85%E7%A7%AF%E7%A9%BA%E9%97%B4
+标准正交基
+https://zh.wikipedia.org/wiki/%E6%A0%87%E5%87%86%E6%AD%A3%E4%BA%A4%E5%9F%BA
+子空间
+https://zh.wikipedia.org/wiki/%E5%AD%90%E7%A9%BA%E9%96%93
+豪斯霍尔德变换
+https://zh.wikipedia.org/wiki/%E8%B1%AA%E6%96%AF%E9%9C%8D%E5%B0%94%E5%BE%B7%E5%8F%98%E6%8D%A2
+吉文斯旋转
+https://zh.wikipedia.org/wiki/%E5%90%89%E6%96%87%E6%96%AF%E6%97%8B%E8%BD%AC</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+      </div>
+    </div>
+    <div class="modal-footer">
+      <p class="results-count text-medium"
+         data-message-zero="no post found"
+         data-message-one="1 post found"
+         data-message-other="{n} posts found">
+         422 posts found
+      </p>
+    </div>
+  </div>
+</div>
+    
+  
+    
+    <div id="cover" style="background-image:url('https://dawnarc.com/images/cover-v1.2.0.jpg');"></div>
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.7/js/jquery.fancybox.min.js" integrity="sha256-GEAnjcTqVP+vBp3SSc8bEDQqvWAZMiHyUSIorrWwH50=" crossorigin="anonymous"></script>
+
+
+<script src="https://dawnarc.com/js/script-qi9wbxp2ya2j6p7wx1i6tgavftewndznf4v0hy2gvivk1rxgc3lm7njqb6bz.min.js"></script>
+
+
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+  
+    
+      <script>
+        var disqus_config = function () {
+          this.page.url = 'https:\/\/dawnarc.com\/2018\/08\/ue4modify-post-process-settings-at-run-time\/';
+          
+            this.page.identifier = '\/2018\/08\/ue4modify-post-process-settings-at-run-time\/'
+          
+        };
+        (function() {
+          
+          
+          if (window.location.hostname == "localhost") {
+            return;
+          }
+          var d = document, s = d.createElement('script');
+          var disqus_shortname = 'dawnarc';
+          s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+          s.setAttribute('data-timestamp', +new Date());
+          (d.head || d.body).appendChild(s);
+        })();
+      </script>
+    
+  
+
+
+
+    
+  </body>
+</html>
+
