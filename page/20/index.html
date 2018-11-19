@@ -317,6 +317,373 @@ if (!doNotTrack) {
     
     <div class="postShorten-header">
       <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2017/02/ue4dedicated-server%E5%90%8C%E6%AD%A5%E7%A4%BA%E4%BE%8B%E5%85%A8%E6%B5%81%E7%A8%8B%E7%99%BB%E5%BD%95replication%E5%92%8Crpc/">
+          [UE4]Dedicated Server同步示例全流程(登录、Replication和RPC)
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2017-02-25T20:33:40&#43;08:00">
+        
+  February 25, 2017
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      转载请注明原文出处：https://dawnarc.com
+keywords：UE4、Replication、Relicate、reliable、RPC、RTS Movement、Dedicated Server、属性同步、位移同步、专用服务器、demo、example
+实例的完整工程下载地址见文章底部
+属性同步 步骤：
+1，对属性添加UPROPERTY(Replicated)宏：
+//Player display name UPROPERTY(Replicated) FString Alias_;  2，属性所在的class中重写函数GetLifetimeReplicatedProps：
+需要头文件：
+#include &quot;Net/UnrealNetwork.h&quot;  重写函数：
+void AReplTestCharacter::GetLifetimeReplicatedProps(TArray&lt; FLifetimeProperty &gt; &amp; OutLifetimeProps) const { Super::GetLifetimeReplicatedProps(OutLifetimeProps); DOREPLIFETIME(AReplTestCharacter, Alias_); }  RPC（远程执行调用） 步骤：
+1，对需要远程执行的函数添加宏UFUNCTION(Server, Reliable, WithValidation)或者UFUNCTION(Client, Reliable)。其中Server表示在客户端调用，在服务端执行；WithValidation表示是否需要验证函数，加上的画需要添加函数：bool MyFun_Validate()，函数提内容写在MyFun_Implementation函数内。cpp中不需要与函数名同名的函数体，只需要实现_Validate和_Implementation两个函数即可。 头文件：
+//移动角色(只在服务端执行的函数) UFUNCTION(Server, Reliable, WithValidation) void ServerMoveToDest(APawn* Panw, const FVector DestLocation); bool ServerMoveToDest_Validate(APawn* Panw, const FVector DestLocation); void ServerMoveToDest_Implementation(APawn* Panw, const FVector DestLocation);  CPP：
+bool AReplTestPlayerController::ServerMoveToDest_Validate(APawn* Panw, const FVector DestLocation) { return true; } void AReplTestPlayerController::ServerMoveToDest_Implementation(APawn* Pawn, const FVector DestLocation) { //logic.
+      <p>
+        <a href="https://dawnarc.com/2017/02/ue4dedicated-server%E5%90%8C%E6%AD%A5%E7%A4%BA%E4%BE%8B%E5%85%A8%E6%B5%81%E7%A8%8B%E7%99%BB%E5%BD%95replication%E5%92%8Crpc/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2017/02/ue4%E5%A6%82%E4%BD%95%E7%BC%96%E8%AF%91%E9%83%A8%E7%BD%B2%E7%8B%AC%E7%AB%8B%E4%B8%93%E7%94%A8%E6%9C%8D%E5%8A%A1%E7%AB%AFstandalone-dedicated-server/">
+          [UE4]如何编译部署独立专用服务端(Standalone Dedicated Server)
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2017-02-25T20:33:40&#43;08:00">
+        
+  February 25, 2017
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      下面步骤假设是以development模式来构建，步骤和shipping模式没差异。
+下面步骤中假设我们自己的UE4工程名叫：MyProject
+1，下载源码及编译 需要现在unrealengine官网上注册并加入github开发组才有权限进入下面地址。
+https://github.com/EpicGames/UnrealEngine/tags
+注意：编译专用服务器，只能用源码编译版本的引擎，安装版本的引擎无法编译Server。
+ 打开页面后下载一个最新的release版本，解压出来后先运行Setup.bat，会自动下载资源文件，大概有几个G，下载完以后，然后再运行GenerateProjectFiles.bat，会生成VS工程文件，这里假设你已经安装好了VS，我用的vs2015旗舰版，生成完以后打开VS，build类型选择debuggame editor或者development editor，并编译。
+2，切换工程的UE4版本 右键点击你的UE4工程文件MyProject.uproject -》 Switch Unreal Engine version，选择刚刚编译出来的UE4，切换版本以后，再右击*.uproject并选择：Generate Visual Studio project files，最后启动VS，启动VS之后再选择一种build类型来编译工程并启动，这里测试用的是development editor类型。
+3，cook client content 上面第二步编译并启动运行工程后，这一步来打包客户端（官方文档上叫cook client content），方法和正常客户端版本打包的步骤一样：
+Package Project -》 Windows -》 Windows x64。   有人可能会问，安装版本的UE4为什么有没PS4、Xbox等打包选项？是的，只有源码编译的UE4才有这些选项。
+这里我们假设打包时选择的输出目录为：D:/PackageTest/，那么输出的客户端exe文件就在D:/PackageTest/WindowsNoEditor/MyProject/Binariesk/Win64/MyProject.exe
+这个目录位置会在后面步骤中用到。
+如果不cook client content，则后面启动服务端时会报错： Error: The global shader cache file &lsquo;F:/EpicGames/UnrealEngine/Engine/GlobalShaderCache-PCD3D_SM5.bin&rsquo; is missing.
+
+还有一个纯蓝图UE4工程的构建bug问题：
+这个问题v4.7版本时还存在，当前最新版本不知道解决没有。
+问题现象是：如果用VS构建之前不添加一个自定义的C++代码，那么构建出来的版本会有问题。
+解决办法：在VS构建server版本之前，在UE4 Editor中添加一个C++代码，这个代码随意，只要是C++代码就行（比如添加一个自定义HUD的class），内容默认，不需要编辑。
+添加C++方法是：File -》 Add Code to Project。
+由于我这里演示的是C++工程，所以不需要添加再添加C++ class。
+打包之前记得GameMode和Map是否设置正确了，如果不使用默认的话。   如果这里不设置，默认为空，则客户端进入服务端后会黑屏。
+      <p>
+        <a href="https://dawnarc.com/2017/02/ue4%E5%A6%82%E4%BD%95%E7%BC%96%E8%AF%91%E9%83%A8%E7%BD%B2%E7%8B%AC%E7%AB%8B%E4%B8%93%E7%94%A8%E6%9C%8D%E5%8A%A1%E7%AB%AFstandalone-dedicated-server/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2017/02/ue4overlap%E6%A3%80%E6%B5%8B%E7%9A%84%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7%E5%87%BD%E6%95%B0/">
+          [UE4]Overlap检测的常用工具函数
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2017-02-22T17:27:40&#43;08:00">
+        
+  February 22, 2017
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      keyword: Overlap、Test、Blocking
+World.h
+/** * Test the collision of a shape at the supplied location using a specific channel, and return if any blocking overlap is found * @param Pos Location of center of box to test against the world * @param TraceChannel The 'channel' that this query is in, used to determine which components to hit * @param CollisionShape CollisionShape - supports Box, Sphere, Capsule, Convex * @param Params Additional parameters used for the trace * @param ResponseParam ResponseContainer to be used for this trace * @return TRUE if any blocking results are found */ bool OverlapBlockingTestByChannel(const FVector&amp; Pos, const FQuat&amp; Rot, ECollisionChannel TraceChannel, const FCollisionShape&amp; CollisionShape, const FCollisionQueryParams&amp; Params = FCollisionQueryParams::DefaultQueryParam, const FCollisionResponseParams&amp; ResponseParam = FCollisionResponseParams::DefaultResponseParam) const; /** * Test the collision of a shape at the supplied location using a specific channel, and return if any blocking or overlapping shape is found * @param Pos Location of center of box to test against the world * @param TraceChannel The 'channel' that this query is in, used to determine which components to hit * @param CollisionShape CollisionShape - supports Box, Sphere, Capsule, Convex * @param Params Additional parameters used for the trace * @param ResponseParam ResponseContainer to be used for this trace * @return TRUE if any blocking or overlapping results are found */ bool OverlapAnyTestByChannel(const FVector&amp; Pos, const FQuat&amp; Rot, ECollisionChannel TraceChannel, const FCollisionShape&amp; CollisionShape, const FCollisionQueryParams&amp; Params = FCollisionQueryParams::DefaultQueryParam, const FCollisionResponseParams&amp; ResponseParam = FCollisionResponseParams::DefaultResponseParam) const; /** * Test the collision of a shape at the supplied location using object types, and return if any overlap is found * @param Pos Location of center of box to test against the world * @param ObjectQueryParams List of object types it's looking for * @param CollisionShape CollisionShape - supports Box, Sphere, Capsule, Convex * @param Params Additional parameters used for the trace * @return TRUE if any blocking results are found */ bool OverlapAnyTestByObjectType(const FVector&amp; Pos, const FQuat&amp; Rot, const FCollisionObjectQueryParams&amp; ObjectQueryParams, const FCollisionShape&amp; CollisionShape, const FCollisionQueryParams&amp; Params = FCollisionQueryParams::DefaultQueryParam) const; /** * Test the collision of a shape at the supplied location using a specific profile, and return if any blocking overlap is found * @param Pos Location of center of box to test against the world * @param ProfileName The 'profile' used to determine which components to hit * @param CollisionShape CollisionShape - supports Box, Sphere, Capsule * @param Params Additional parameters used for the trace * @return TRUE if any blocking results are found */ bool OverlapBlockingTestByProfile(const FVector&amp; Pos, const FQuat&amp; Rot, FName ProfileName, const FCollisionShape&amp; CollisionShape, const FCollisionQueryParams&amp; Params = FCollisionQueryParams::DefaultQueryParam) const; /** * Test the collision of a shape at the supplied location using a specific profile, and return if any blocking or overlap is found * @param Pos Location of center of box to test against the world * @param ProfileName The 'profile' used to determine which components to hit * @param CollisionShape CollisionShape - supports Box, Sphere, Capsule * @param Params Additional parameters used for the trace * @return TRUE if any blocking or overlapping results are found */ bool OverlapAnyTestByProfile(const FVector&amp; Pos, const FQuat&amp; Rot, FName ProfileName, const FCollisionShape&amp; CollisionShape, const FCollisionQueryParams&amp; Params = FCollisionQueryParams::DefaultQueryParam) const; /** * Test the collision of a shape at the supplied location using a specific channel, and determine the set of components that it overlaps * @param OutOverlaps Array of components found to overlap supplied box * @param Pos Location of center of shape to test against the world * @param TraceChannel The 'channel' that this query is in, used to determine which components to hit * @param CollisionShape CollisionShape - supports Box, Sphere, Capsule * @param Params Additional parameters used for the trace * @param ResponseParam ResponseContainer to be used for this trace * @return TRUE if OutOverlaps contains any blocking results */ bool OverlapMultiByChannel(TArray&lt;struct FOverlapResult&gt;&amp; OutOverlaps, const FVector&amp; Pos, const FQuat&amp; Rot, ECollisionChannel TraceChannel, const FCollisionShape&amp; CollisionShape, const FCollisionQueryParams&amp; Params = FCollisionQueryParams::DefaultQueryParam, const FCollisionResponseParams&amp; ResponseParam = FCollisionResponseParams::DefaultResponseParam) const; /** * Test the collision of a shape at the supplied location using object types, and determine the set of components that it overlaps * @param OutOverlaps Array of components found to overlap supplied box * @param Pos Location of center of shape to test against the world * @param ObjectQueryParams List of object types it's looking for * @param CollisionShape CollisionShape - supports Box, Sphere, Capsule * @param Params Additional parameters used for the trace * @return TRUE if any overlap is found */ bool OverlapMultiByObjectType(TArray&lt;struct FOverlapResult&gt;&amp; OutOverlaps, const FVector&amp; Pos, const FQuat&amp; Rot, const FCollisionObjectQueryParams&amp; ObjectQueryParams, const FCollisionShape&amp; CollisionShape, const FCollisionQueryParams&amp; Params = FCollisionQueryParams::DefaultQueryParam) const; /** * Test the collision of a shape at the supplied location using a specific profile, and determine the set of components that it overlaps * @param OutOverlaps Array of components found to overlap supplied box * @param Pos Location of center of shape to test against the world * @param ProfileName The 'profile' used to determine which components to hit * @param CollisionShape CollisionShape - supports Box, Sphere, Capsule * @param Params Additional parameters used for the trace * @return TRUE if OutOverlaps contains any blocking results */ bool OverlapMultiByProfile(TArray&lt;struct FOverlapResult&gt;&amp; OutOverlaps, const FVector&amp; Pos, const FQuat&amp; Rot, FName ProfileName, const FCollisionShape&amp; CollisionShape, const FCollisionQueryParams&amp; Params = FCollisionQueryParams::DefaultQueryParam) const;  今年花胜去年红。可惜明年花更好，知与谁同？—欧阳修《浪淘沙》
+      <p>
+        <a href="https://dawnarc.com/2017/02/ue4overlap%E6%A3%80%E6%B5%8B%E7%9A%84%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7%E5%87%BD%E6%95%B0/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2017/02/math%E5%85%B1%E8%BD%AD%E7%9F%A9%E9%98%B5%E9%80%86%E7%9F%A9%E9%98%B5%E5%A4%8D%E7%9F%A9%E9%98%B5/">
+          [Math]共轭矩阵、逆矩阵、复矩阵
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2017-02-22T14:32:02&#43;08:00">
+        
+  February 22, 2017
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/math">Math</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      共轭矩阵
+http://baike.baidu.com/item/%E5%85%B1%E8%BD%AD%E7%9F%A9%E9%98%B5
+逆矩阵
+http://baike.baidu.com/item/%E9%80%86%E7%9F%A9%E9%98%B5
+复矩阵
+http://baike.baidu.com/item/%E5%A4%8D%E7%9F%A9%E9%98%B5
+目察秋毫之末，耳不闻雷霆之声；耳调玉石之声，目不见太山之高。---《淮南子》
+      <p>
+        <a href="https://dawnarc.com/2017/02/math%E5%85%B1%E8%BD%AD%E7%9F%A9%E9%98%B5%E9%80%86%E7%9F%A9%E9%98%B5%E5%A4%8D%E7%9F%A9%E9%98%B5/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2017/02/math%E7%9F%A9%E9%98%B5%E4%B9%98%E6%B3%95/">
+          [Math]矩阵乘法
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2017-02-22T14:32:02&#43;08:00">
+        
+  February 22, 2017
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/math">Math</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      矩阵乘法
+http://baike.baidu.com/view/2455255.htm
+矩阵乘法
+http://www.cnblogs.com/DreamUp/archive/2010/07/27/1786225.html
+目察秋毫之末，耳不闻雷霆之声；耳调玉石之声，目不见太山之高。——《淮南子》
+      <p>
+        <a href="https://dawnarc.com/2017/02/math%E7%9F%A9%E9%98%B5%E4%B9%98%E6%B3%95/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2017/02/visualstudio%E5%A6%82%E4%BD%95%E8%AE%BE%E7%BD%AEvs%E7%9A%84%E7%B1%BB%E4%BC%BC%E7%9A%84sublime%E6%BB%9A%E5%8A%A8%E6%9D%A1%E6%95%88%E6%9E%9C/">
+          [VisualStudio]如何设置VS的类似的sublime滚动条效果
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2017-02-12T00:04:40&#43;08:00">
+        
+  February 12, 2017
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/visualstudio">VisualStudio</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      keywords：滚动条 插件 sublime
+Tools -&gt; Options -&gt; Text Editor -&gt; C++ -&gt; Scroll Bars，选中：Use map mode for vertical scroll bar   但梦想、一枝潇洒，黄昏斜照水。—周邦彦《花犯》
+      <p>
+        <a href="https://dawnarc.com/2017/02/visualstudio%E5%A6%82%E4%BD%95%E8%AE%BE%E7%BD%AEvs%E7%9A%84%E7%B1%BB%E4%BC%BC%E7%9A%84sublime%E6%BB%9A%E5%8A%A8%E6%9D%A1%E6%95%88%E6%9E%9C/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
         <a class="link-unstyled" href="https://dawnarc.com/2017/02/zbrushpolyframe%E5%85%B3%E9%97%AD%E5%92%8C%E6%98%BE%E7%A4%BA%E7%BD%91%E6%A0%BC%E7%BA%BF%E6%9D%A1/">
           [ZBrush]PolyFrame关闭和显示网格线条
         </a>
@@ -826,356 +1193,6 @@ zbrush 4r8 was not found and the installer will exit.  解决办法：将安装�
 </article>
 
           
-            
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2017/01/zbrushmasking%E4%BD%BF%E7%94%A8/">
-          [ZBrush]Masking使用
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2017-01-18T21:28:40&#43;08:00">
-        
-  January 18, 2017
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/zbrush">ZBrush</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      Keyword：Masking，MaskPen，蒙板
-mask笔刷有六种：   按住Crtl键，默认打开MashPen。 此时既可以在模型上直接画，也可以在空白区域拉出一个矩形，被框选的范围就成了蒙板。     画出蒙板后，再按Ctrl + W，可以将模版区域变成PolyGroups。
-Mask反选 Tool -》 Masking -》 Inverse。快捷键Ctrl + I。       取消mask 在模型之外的空白区域，点击：Ctrl + 鼠标左键
-抹掉Mask 如果想把Mask区域擦除一部分，可以按住Ctrl + Alt + 鼠标左键。     Mask区域精度 如果想让Mask的笔刷刷的时候，精度更精确，也就是说渐变效果不明显，笔刷size多大，mask范围就多大，则可以降低Focal Shift的值。   Mask的羽化与锐化 原始mask：   羽化：按住Ctrl键，在模型上点击一下鼠标左键。可以多次点击，点击的次数越多，羽化效果越微弱   锐化：按住Ctrl + Alt，再在模型上点击一下鼠标左键。 可以多次点击，点击次数越多，锐化越强烈。   Auto Masking 当模型有PolyGroup后，再点击Brush -》 Auto Making -》 Mask By Polygroups的值改大一些，之后在使用普通brush时，就可以过滤Polygroups的范围区域。     当笔刷从哪个蒙板开始画时，那么该笔刷的所有区域只能限定在改蒙板内。   结合Polygroups中的用法 假如有4个分组过的模型，在Move模式下移动时，默认是4个模型一起移动的。   如果将Mask By Polygroups改成100，那么move时，move线是从哪个模型中拉出来的，那么该move线只对该模型进行移动。
-      <p>
-        <a href="https://dawnarc.com/2017/01/zbrushmasking%E4%BD%BF%E7%94%A8/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-          
-            
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2017/01/zbrushzsphere%E4%BD%BF%E7%94%A8/">
-          [ZBrush]ZSphere使用
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2017-01-17T23:30:40&#43;08:00">
-        
-  January 17, 2017
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/zbrush">ZBrush</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      Z球使用步骤 新建Z球： Tool -》 Tool -》 ZSphere   新建后默认是Draw模式（快捷键Q），这个模式下只能新建z球的节点：   如果想拉伸两个节点之间的距离，需要切换到Move模式下（快捷键W）   打开Tool -》 Unified Skin -》 Preview（快捷键A）可以打开和关闭预览，如果觉得预览的分辨率太低，可以增大Resolution参数来预览高分级别的效果。     如果打开Tool -》 Sketch -》 EditSketch（快捷键Shift + A），则会切换到另外一种状态，且此时的笔刷变成了Sketch   如果用Sketch笔刷画，则会产生像泥条一样的形状。     这个功能的作用是：先给模型建立骨骼，然后在骨骼上途泥条建立肌肉，之后就可以移动骨骼的同时来移动肌肉。如果想还原到Z球状态，在按下Shift + A。
-EditSketch 打开Tool -》 Sketch，取消EditSketch之后，就可以以X光显示出之前的Z球骨架     此时再切换到Z球的Move模式下，并选中Sketch下的Bind，就可以调整再次调整骨架，此时Z球上的泥条，也会跟着一起移动。     这个功能可以很方便的来调整造型，因为只需要移动骨架就可以让表面形状一起移动。
-在EditSketch模式下，再点击预览Adaptive Skin（快捷键也是A），则会显示模型的低分级别（Lower Subdiv Resolution）效果     注意事项： 1，在途泥条的时候，可以经常点击Optimize来优化泥条的覆盖问题：可以自动删除掉泥条堆叠时的被覆盖掉的部分。   2，途泥条时，如果想抹掉一部分，可以按住Alt键+鼠标左键。注意，涂抹泥条或擦掉泥条时，笔刷模式一定要是Draw模式，Z球移动时的Move模式无法修改泥条。   3，Z球转换PolyMesh3D 在Preview模式下（Unified Skin或Adaptive Skin下的Preview），点击Make PolyMesh3D，就可以创建一个PolyMesh对象   然后再点击Tool -》 Geometry -》 Higher Res（快捷键D），就可以获得高分级别的模型   如果觉得细分还不够高，可以再点击Divide（快捷键Ctrl + D）   暴风雨将要在那一天，甚至把一些槲树吹倒，一些教堂的高塔要倒塌，一些宫殿也将要动摇！---《海涅诗选》
-      <p>
-        <a href="https://dawnarc.com/2017/01/zbrushzsphere%E4%BD%BF%E7%94%A8/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-          
-            
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2017/01/zbrush%E5%A6%82%E4%BD%95%E6%97%8B%E8%BD%AC%E6%8B%89%E4%BC%B8%E7%A7%BB%E5%8A%A8%E6%A8%A1%E5%9E%8B/">
-          [ZBrush]如何旋转、拉伸、移动模型
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2017-01-14T04:08:40&#43;08:00">
-        
-  January 14, 2017
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/zbrush">ZBrush</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      Keywords: ZBrush、Rotate、Scale、Move
-Transpose控制线 注意：要使用Transpose，必须将模型转换为PolyMesh3D。   大多数3D软件，包括游戏引擎，都有提供物体的Transform操作：旋转(path，yaw，roll)，大小伸缩（scale）、位置移动（x、y、z）。这个功能4R8才提供，4R8之前的版本，要实现transform操作，使用的是Transpose，它是笔刷的个种类。具体用法是： 按下w键（或者点击菜单面板上Move图标），然后点击鼠标左键拖动，就可以拉出一根行动线，如果想让拉出的行动线与坐标轴保持平行或垂直，再按住shift键。     将鼠标悬停在黄色圆框内时，其内部会显示一个小圆框   3个圆框均可以按住来拖拽，拖拽的作用分别是：
- 左边圆框是伸缩物体； 中间红框是移动物体； 左边红框是切削物体（比如把一个球切掉一半）；  复制 在Transpose笔刷下，除了拖拽中间的圆圈来实现移动外，也可以使用按住Alt键、通过拖拽鼠标来移动物体。
-如果要复制一个物体，可以按住Ctrl键，然后鼠标按住中间的圆圈进行拖拽，来复制一个物体。
-注意：复制的操作，必须是在删掉Lower Subdiv Level请的情况下，否则无法通过上面两种方式来移动和复制。   移动 点击Transform –》 Move， 或者按W键   然后拉出一条Transpose，再按住3个圆圈之一，进行拖拽，来实现不同方向上的移动。   伸缩 点击Transform –》 Scale，或者按E键
-旋转 点击Transform –》 Rotate，或者按R键
-Transform的另外一种方式是，去掉Edit模式   然后按住其中一个圆圈不放（一共三个，分别代表Pitch、Roll、Yaw），然后拖动鼠标或压感笔，就可以实现移动、伸缩或旋转。注意，当圆圈被选中时会变宽。   注意： 移动、旋转、伸缩时一定要关闭Transform下面的对称，否则旋转就会出现变形。   Transpose控制线拉伸/伸缩 模型伸缩的规则，有两种方式：
- Scale模式下的伸缩（快捷键E）
-  假如在一个立方体模型的某一个面上，拉出一条从左到右（绿色圆圈和蓝色圆圈的那一头表示线条起点）的水平Transpose控制线。   然后按住中间的黄色圆圈，沿着控制线终点方向（红色箭头方向，此例子中的从左往右）拖动，那么当前面的上下两侧就会往外拉伸。   如果逆着控制线的方向，按住中间的黄色圆圈拖动，那么当前面的上下两侧就会往内压缩。   以正方体为例，这种模式下，控制线所在的一面的高度可以增加或减小，但是左右的两个面的长和宽会保持比例缩放    Move模式下的伸缩（快捷键W）
-      <p>
-        <a href="https://dawnarc.com/2017/01/zbrush%E5%A6%82%E4%BD%95%E6%97%8B%E8%BD%AC%E6%8B%89%E4%BC%B8%E7%A7%BB%E5%8A%A8%E6%A8%A1%E5%9E%8B/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-          
-            
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2017/01/zbrush%E5%85%B3%E4%BA%8E%E7%BC%A9%E6%94%BE%E7%9A%84%E4%B8%89%E7%A7%8D%E6%96%B9%E5%BC%8F/">
-          [ZBrush]关于缩放的三种方式
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2017-01-14T01:50:40&#43;08:00">
-        
-  January 14, 2017
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/zbrush">ZBrush</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      原文：http://www.zbrushcn.com/jichu/Zb-suofang.html
-ZBrush因为自己独特的界面和操方式经常会有朋友感到困惑，缩放就是其中一个，在ZBrush®中缩放有三种方式，文本将逐一介绍。还让朋友们纠结的是，在ZBrush中怎样用快捷键放大缩小画面，因为缩放的快捷键和移动画面的快捷键有些相像，所以有不少朋友迷糊了一下，本文小编也为大家详细比较一下。
-缩放的三种方式
-一、画布缩放 画布的缩放快捷键是-/+,作用是缩放整个画布，表现是模型画布同时在缩小或放大。
-二、视角缩放 视角缩放实际上是把模型拉远或放近，这个操作相当于使用放大镜，模型其实没有真的放大，可以使用右侧常用工具栏中的“Scale”按钮进行缩放。方法：将鼠标放在“Scale”按钮上上下左右拖动鼠标。
-这里还需要说明一下怎么用快捷键放大缩小画面。
-因为这个快捷键和移动画面有些相似，所以有不少朋友迷糊了一下。呵呵，这里给大家详细比较一下。
-平移视角：alt建＋左键在空白处单击并拖动 。
-缩放视角：alt键＋左键然后放开alt键在空白处拖动并平移鼠标。
-三、缩放模型 模型缩放就是真的将模型本身放大或缩小了，快捷键是E，然后拖动行动线的两端。
-  历史喜爱英勇豪迈的事迹，同时也谴责这种事迹所造成的后果。---《神秘岛》
-      <p>
-        <a href="https://dawnarc.com/2017/01/zbrush%E5%85%B3%E4%BA%8E%E7%BC%A9%E6%94%BE%E7%9A%84%E4%B8%89%E7%A7%8D%E6%96%B9%E5%BC%8F/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-          
-            
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2017/01/shadingopengl%E5%B8%B8%E7%94%A8%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E4%B8%AA%E4%BA%BA%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">
-          [Shading]OpenGL常用基础知识(个人学习笔记)
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2017-01-13T14:28:40&#43;08:00">
-        
-  January 13, 2017
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/shading">Shading</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      文章内容大部分参考自《OpenGL 4 Shading Language Cookbook, Second Edition》书中的代码：
-https://github.com/daw42/glslcookbook
-术语解释：  GLEW (OpenGL Extension Wrangler). GLM (OpenGL Mathematics) GLFW is an Open Source, multi-platform library for OpenGL, OpenGL ES and Vulkan development on the desktop. It provides a simple API for creating windows, contexts and surfaces, receiving input and events.  Shader类型  vertex shader fragment shader geometry shader tess_control shader tess_evaluation shader compute shader  OpenGL版本查询与设置 查询版本（使用glad的API）：
-GLint major, minor; glGetIntegerv(GL_MAJOR_VERSION, &amp;major); glGetIntegerv(GL_MINOR_VERSION, &amp;minor);  选择版本（使用glfw的API）：
-      <p>
-        <a href="https://dawnarc.com/2017/01/shadingopengl%E5%B8%B8%E7%94%A8%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E4%B8%AA%E4%BA%BA%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-          
-            
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2017/01/zbrush%E5%B8%B8%E7%94%A8%E7%AC%94%E5%88%B7brush/">
-          [ZBrush]常用笔刷(brush)
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2017-01-02T21:46:40&#43;08:00">
-        
-  January 2, 2017
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/zbrush">ZBrush</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      Stand。默认笔刷，表面突起，按住Alt则是凹陷，反向操作。   Dam_Standard。Standard的加强版，且与Standard方向相反，默认是凹陷操作，如果想突起按住Alt键。同样参数下，Dam_Standard突起或者开挖的强度更大。   Move。讲表面隆起或下压，或者拖动某个局部位置。   Smooth。适用场景：进行局部的光滑。默认快捷键是按住shift键不放。   Clay。适用场景：填充和堆叠表面。   ClayBuildup。适用场景：方块状的填充和堆叠表面   ClayTubes。和ClayBuildup类似，但是不会累计堆叠起来，连续在一个位置刷多次，只会堆叠一层，而ClayBuildup没刷一次就会叠加一层。   TrimDynamic。适用场景：对大块的凹凸表面进行抹平   Polish。适用场景：希望抹平的同时，把凹下去的地方填充起来   hPolish。适用场景：大面积的抹平   Pinch。适用场景：将表面聚拢起来   SnakeHook。使用场景：比如想拉出尖刺或鱼鳍状的形状时，用此笔刷。   Inflat 膨胀笔刷   Clip 剪切删除选定的部位。一个使用曲线框选，一个是用矩形框框选，如果两者的Stroke如果选一样的，那么两者就没有区别，提供两种Clip笔刷主要是为了方便快速切换（比如用一个快捷键快速切换在另外一种Clip笔刷，而不需要在同一个Clip笔刷下切换Stroke）   Move Topological ：Move笔刷的变种，如果有两根须状物，且彼此相隔非常近，那么用Move笔刷对某个须状物移动时，会影响到相邻的须状物，使其一起移动，而Move Topological可以只移动一个须状物，可以通过参数设置影响的范围，只对影响范围内的部位进行移动。当然也可以用Mask蒙板来实现这种效果，根据需求看那种更方便。   Slash笔刷。不在默认的笔刷面板中，打开位置：LightBox -》 Brush -》 Slash，里面有3个ZB自带的Slash笔刷。Slash2笔刷可以用来做层叠效果，比如衣服褶皱、石头层级等。   每种笔刷，还有一个选项：Brush -》 Depth，可以设置笔刷的深度、重力影响等等。     Brush -》 Modifiers也有一些调整笔刷效果的选项   官方提供的自定义UI模版中，列出了一组常用的笔刷   我设置的常用笔刷快捷键（Alt+字母键）：
-      <p>
-        <a href="https://dawnarc.com/2017/01/zbrush%E5%B8%B8%E7%94%A8%E7%AC%94%E5%88%B7brush/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-          
           
   <div class="pagination-bar">
     <ul class="pagination">
@@ -1263,6 +1280,192 @@ GLint major, minor; glGetIntegerv(GL_MAJOR_VERSION, &amp;major); glGetIntegerv(G
           <div class="media">
             
             <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/11/ue4destructible-mesh-workflow/">
+                <h3 class="media-heading">[UE4]Destructible Mesh Workflow</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Nov 11, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">Take damage, destruct mesh if damage is enough:
+// Take damage UFUNCTION(BlueprintCallable, Category=&quot;Components|Destructible&quot;) virtual void UDestructibleComponent::ApplyDamage(float DamageAmount, const FVector&amp; HitLocation, const FVector&amp; ImpulseDir, float ImpulseStrength) override; // Take radius damage UFUNCTION(BlueprintCallable, Category=&quot;Components|Destructible&quot;) virtual void UDestructibleComponent::ApplyRadiusDamage(float BaseDamage, const FVector&amp; HurtOrigin, float DamageRadius, float ImpulseStrength, bool bFullDamage) override;  </div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/11/versioncontrolgit-auto-packing-the-repository-in-background-for-optimum-performance/">
+                <h3 class="media-heading">[VersionControl]git Auto packing the repository in background for optimum performance</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Nov 11, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">原文：https://blog.csdn.net/xyznol/article/details/51261692
+git运行突然提示
+Auto packing the repository in background for optimum performance  查资料，原来是自己本地一些 “悬空对象”太多(git删除分支或者清空stash的时候，这些其实还没有真正删除，成为悬空对象，我们可以使用merge命令可以从中恢复一些文件)
+解决：
+1.输入命令：git fsck --lost-found，可以看到好多“dangling commit”。
+2.清空他们：git gc --prune=now，完成。</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/11/versioncontrol%E8%BD%AC%E8%BD%BD%E7%AE%80%E5%8D%95%E5%AF%B9%E6%AF%94git-pull%E5%92%8Cgit-pull---rebase%E7%9A%84%E4%BD%BF%E7%94%A8/">
+                <h3 class="media-heading">[VersionControl]转载：简单对比git pull和git pull --rebase的使用</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Nov 11, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">原文：https://www.cnblogs.com/kevingrace/p/5896706.html
+使用下面的关系区别这两个操作：
+git pull = git fetch + git merge
+git pull --rebase = git fetch + git rebase
+现在来看看git merge和git rebase的区别。
+假设有3次提交A,B,C。   在远程分支origin的基础上创建一个名为&rdquo;mywork&rdquo;的分支并提交了，同时有其他人在&rdquo;origin&rdquo;上做了一些修改并提交了。   其实这个时候E不应该提交，因为提交后会发生冲突。如何解决这些冲突呢？有以下两种方法：
+ git merge
+用git pull命令把&rdquo;origin&rdquo;分支上的修改pull下来与本地提交合并（merge）成版本M，但这样会形成图中的菱形，让人很困惑。    git rebase
+创建一个新的提交R，R的文件内容和上面M的一样，但我们将E提交废除，当它不存在（图中用虚线表示）。由于这种删除，小李不应该push其他的repository.rebase的好处是避免了菱形的产生，保持提交曲线为直线，让大家易于理解。     在rebase的过程中，有时也会有conflict，这时Git会停止rebase并让用户去解决冲突，解决完冲突后，用git add命令去更新这些内容，然后不用执行git-commit,直接执行git rebase &ndash;continue,这样git会继续apply余下的补丁。 在任何时候，都可以用git rebase &ndash;abort参数来终止rebase的行动，并且mywork分支会回到rebase开始前的状态。</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/11/ue4particle-emitter-%E7%B2%92%E5%AD%90%E7%89%B9%E6%95%88%E7%9B%B8%E5%85%B3/">
+                <h3 class="media-heading">[UE4]Particle Emitter 粒子特效相关</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Nov 11, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"> C++获取特效实例中的单个Emitter对象 UParticleSystemComponent 有个EmitterInstances属性，里面包含了特效中每个Emitter的相关信息：
+TArray&lt;struct FParticleEmitterInstance*&gt; EmitterInstances;  </div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/10/ue4destructiblecomponent-doesnt-respect-to-collision-change/">
+                <h3 class="media-heading">[UE4]DestructibleComponent doesn&#39;t respect to Collision change</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Oct 10, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">Problem:
+There&rsquo;s a bug that DestructibleComponent isn&rsquo;t affectd by SetActorEnableCollision or SetCollisionEnabled.
+Solution:
+Add a custom Component inherit from DestructibleComponent, then override two functions: OnActorEnableCollisionChanged, SetCollisionEnabled
+// Copyright 2015 inbetweengames #include &quot;ProjectDisco.h&quot; #include &quot;DADestructibleComponent.h&quot; void UDADestructibleComponent::OnActorEnableCollisionChanged() { // Update physical properties of the chunks in the mesh if the body instance is valid FBodyInstance* BodyInst = GetBodyInstance(); if (BodyInst) { BodyInst-&gt;UpdatePhysicsFilterData(); } // Update physical properties for individual bone instances as well if (SkeletalMesh) { int32 NumBones = SkeletalMesh-&gt;RefSkeleton.</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/10/mayaplugins-collections/">
+                <h3 class="media-heading">[Maya]Plugins Collections</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Oct 10, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">A search engine for Maya for all its tools and your own scripts.
+http://cosmos.toolsfrom.space/
+Workflow Toolkit: Shader, UV, Curve, Selection, Renamer.
+https://gumroad.com/eriklehmann</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/10/ue4scene-assets-collections/">
+                <h3 class="media-heading">[UE4]Scene Assets Collections</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Oct 10, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">Futuristic modular top-down rooftop
+https://cubebrush.co/matima-studio/products/cdfga-vJET/futuristic-modular-top-down-rooftop
+Overgrown Ruins
+https://cubebrush.co/matima-studio/products/txm3yg-vfju/overgrown-ruins
+https://www.mawiunited.com/
+https://www.matima-studio.com/assets</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/10/ue4lnk2019-unresolved-external-symbol---getprivatestaticclass/">
+                <h3 class="media-heading">[UE4]LNK2019 unresolved external symbol - GetPrivateStaticClass</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Oct 10, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">UE4 Plugin Link Error:
+Error LNK2019 unresolved external symbol &quot;private: static class UClass * __cdecl UMyComponent::GetPrivateStaticClass(void)&quot; (?GetPrivateStaticClass@UMyComponent@@CAPEAVUClass@@XZ) referenced in function &quot;class UMyComponent * __cdecl NewObject&lt;class UMyComponent&gt;(class UObject *)&quot; (??$NewObject@VUMyComponent@@@@YAPEAVUMyComponent@@PEAVUObject@@@Z) ClimbWall  Reason:
+Maybe you removed UE4&rsquo;s macro in your header.
+Solution:
+Add UE4 stylized macro in header, e.g.:
+UCLASS() class TESTPLUGIN_API UMyComponent : public UActorComponent { GENERATED_BODY() }  </div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/10/algorithmscalculator-stack/">
+                <h3 class="media-heading">[Algorithms]Calculator Stack</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Oct 10, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">keywords：计算器代码、Calculator
+#include &quot;stdio.h&quot; #include &quot;string.h&quot; #define MAX 1001 double stack[MAX]; int tail; int main(){ int a; while(scanf(&quot;%d &quot;,&amp;a)&amp;&amp;a!=0){ tail=0; stack[++tail]=1.0*a;//tail始终指向末尾数字位置 //1.入栈所有数据（如果遇到*/号，只更新栈尾） char ch1,ch2; while(scanf(&quot;%c %d%c&quot;,&amp;ch1,&amp;a,&amp;ch2)!=EOF){ if(ch1=='+'){ stack[++tail]=1.0*a;//push }else if(ch1=='-'){ stack[++tail]=-1.0*a;//push neg }else if(ch1=='*'){ stack[tail]=stack[tail]*a;//update tail }else if(ch1=='/'){ stack[tail]=stack[tail]/(double)a;//updata tail } if(ch2!=' ') break; } //2.把栈里头的东西全部加起来，求和 double result=0; for(int i=1;i&lt;=tail;i++) result+=stack[i]; printf(&quot;%.2lf\n&quot;,result); } return 1; }  原文：https://blog.csdn.net/JIEJINQUANIL/article/details/51405381</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
               <a class="link-unstyled" href="https://dawnarc.com/2018/10/matharithmetic-formula-collections/">
                 <h3 class="media-heading">[Math]Arithmetic Formula Collections</h3>
               </a>
@@ -1271,191 +1474,18 @@ GLint major, minor; glGetIntegerv(GL_MAJOR_VERSION, &amp;major); glGetIntegerv(G
                   Oct 10, 2018
                 </span>
               </span>
-              <div class="media-content hide-xs font-merryweather">Calcuate distance from foot of perpendicular to line
-https://math.stackexchange.com/questions/33868/foot-of-perpendicular-to-line</div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2018/10/math%E8%BD%AC%E8%BD%BD%E5%B7%B2%E7%9F%A5%E4%B8%89%E7%82%B9%E6%B1%82%E5%B9%B3%E9%9D%A2%E6%96%B9%E7%A8%8B%E5%B9%B3%E9%9D%A2%E6%B3%95%E5%90%91%E9%87%8F%E5%92%8C%E7%82%B9%E5%88%B0%E5%B9%B3%E9%9D%A2%E7%9A%84%E8%B7%9D%E7%A6%BB/">
-                <h3 class="media-heading">[Math]转载：已知三点求平面方程、平面法向量和点到平面的距离</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Oct 10, 2018
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather">原文：https://blog.csdn.net/zhouschina/article/details/8784908
-已知三点p1（x1,y1,z1），p2(x2,y2,z2)，p3(x3,y3,z3)，要求确定的平面方程。
-关键在于求出平面的一个法向量，为此做向量p1p2（x2-x1,y2-y1,z2-z1), p1p3(x3-x1,y3-y1,z3-z1),平面法线和这两个向量垂直，因此法向量n：   平面方程：
-a * (x - x1) + b * (y - y1) + c * (z - z1) = 0; d = -a * x1 - b * y1 - c * z1;  平面方程2:
-a * x + b * y + c * z + d=0;  代码：
-//已知3点坐标，求平面ax+by+cz+d=0; void get_panel(Point p1, Point p2, Point p3, double &amp;a, double &amp;b, double &amp;c, double &amp;d) { a = ( (p2.</div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2018/10/math%E7%A9%BA%E9%97%B4%E7%82%B9%E5%88%B0%E7%9B%B4%E7%BA%BF%E5%9E%82%E8%B6%B3%E5%9D%90%E6%A0%87%E7%9A%84%E8%A7%A3%E7%AE%97%E6%96%B9%E6%B3%95/">
-                <h3 class="media-heading">[Math]空间点到直线垂足坐标的解算方法</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Oct 10, 2018
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather">算法1 原文：https://blog.csdn.net/zhouschina/article/details/14647587
-假设空间某点O的坐标为（Xo，Yo，Zo）,空间某条直线上两点A和B的坐标为：(X1,Y1,Z1),(X2，Y2，Z2),设点O在直线AB上的垂足为点N，坐标为(Xn，Yn，Zn)。点N坐标解算过程如下： 首先求出下列向量：   由向量垂直关系（公式1）：   点N在直线AB上，根据向量共线（公式2）：   由公式2得（公式3）：   把公式3式代入公式1式，式中只有一个未知数k，整理化简解出k（公式4）：   把公式4式代入公式3式即得到垂足N的坐标。
-二维空间
-// 二维空间点到直线的垂足 struct Point { double x,y; } Point GetFootOfPerpendicular( const Point &amp;pt, // 直线外一点 const Point &amp;begin, // 直线开始点 const Point &amp;end) // 直线结束点 { Point retVal; double dx = begin.x - end.x; double dy = begin.y - end.y; if(abs(dx) &lt; 0.00000001 &amp;&amp; abs(dy) &lt; 0.00000001 ) { retVal = begin; return retVal; } double u = (pt.</div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2018/09/ue4root-motion/">
-                <h3 class="media-heading">[UE4]Root Motion</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Sep 9, 2018
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather">Root Motion 设置步骤：
- 先在 AnimSequence 的Asset Detail面板中勾选EnableRootMotion和Force Root Lock`。 然后基于该 AnimSequence 新建一个 AnimMontage。 然后再在 AnimationBluerpint 中设置Root Motion Mode为 Root Motion From Montages Only（Class Defaults 面板下，不是Class Settings）。  如果你没有使用UE4的服务器、或者使用了UE4服务器但是没有对动画启用Replication（服务端通过 NetMulticast 播放动画），设置为Root Motion from Enerything没有问题，如果使用了UE4的Replication，且这些动画文件（AnimSequence, Blendspace, AnimMontage, etc.）勾选了EnableRootMotion，那么 Root Motion 也会被同步，影响性能。所以官方文档上的建议是使用默认设置，即：Root Motion Mode设置为Root Motion From Montages Only，只对Montage的Root Motion进行Replication。
- Root Motion
-https://docs.unrealengine.com/en-US/Engine/Animation/RootMotion</div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2018/09/ue4ue4-stylized-enum-and-struct-in-c--/">
-                <h3 class="media-heading">[UE4]UE4 stylized Enum and Struct in C&#43;&#43;</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Sep 9, 2018
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"> enum 1, define
-UENUM() enum Status { Stopped UMETA(DisplayName = &quot;Stopped&quot;), Moving UMETA(DisplayName = &quot;Moving&quot;), Attacking UMETA(DisplayName = &quot;Attacking&quot;), };  2, using
-UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Status) TEnumAsByte&lt;Status&gt; status;  struct 1, define
-USTRUCT(BlueprintType) struct TESTPROJ_API FMyStruct { GENERATED_USTRUCT_BODY() UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = &quot;Test&quot;) int32 Test; FMyStruct() { } };  2, using
-UPROPERTY(EditDefaultsOnly, BlueprintReadOnly) FMyStruct Test;  </div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2018/09/c--cannot-convert-argument-1-from-const-char-5-to-stdstring-/">
-                <h3 class="media-heading">[C&#43;&#43;]cannot convert argument 1 from &#39;const char [5]&#39; to &#39;std::string &amp;&#39;</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Sep 9, 2018
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather">Compiling Error:
-error C2664: 'void TestFun01(std::string &)': cannot convert argument 1 from 'const char [5]' to 'std::string &' Solution:
-add const to std::string&amp; which is a parameter of function, like this:
-void TestFun01(const std::string&amp; text) { std::cout &lt;&lt; text; } void TestFun02() { TestFun01(&quot;abcd&quot;); }  this would produce compiling error:
-void TestFun01(std::string&amp; text) { std::cout &lt;&lt; text; } void TestFun02() { TestFun01(&quot;abcd&quot;); }  </div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2018/09/ue4assertions/">
-                <h3 class="media-heading">[UE4]Assertions</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Sep 9, 2018
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather">Reporting errors and halting execution.  check(): like assert() in C, can be disabled by DO_CHECK 0 verify(): like check(), but the expression is still executed on DO_CHECK 0 (e.g. for variable assignments) disadvantage: halts program execution (application ends, Editor users can loose unsaved work).
-when to use: catch fatal errors
-  Reporting errors and halting execution exclusively in debug builds.  checkSlow(), checkfSlow(), verifySlow() (see (1)) difference to (1): they are only active in debug builds (when DO_GUARD_SLOW 1)</div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2018/09/shadingtutorials-and-documents-collections/">
-                <h3 class="media-heading">[Shading]Tutorials and Documents Collections</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Sep 9, 2018
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather">The complete shader development course(Unity)
-https://shaderdev.com/</div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2018/09/ue4materials-collections/">
-                <h3 class="media-heading">[UE4]Materials Collections</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Sep 9, 2018
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather">Creating Interactive Grass in Unreal Engine 4
-https://www.raywenderlich.com/6314-creating-interactive-grass-in-unreal-engine-4
-Creating Snow Trails in Unreal Engine 4
-https://www.raywenderlich.com/5760-creating-snow-trails-in-unreal-engine-4
-Dynamic Mesh Painting in Unreal Engine 4
-https://www.raywenderlich.com/6817-dynamic-mesh-painting-in-unreal-engine-4
-Custom Depth in Unreal Engine 4
-https://www.tomlooman.com/the-many-uses-of-custom-depth-in-unreal-4/</div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2018/09/ue4android-building-error-could-not-resolve-all-files-for-configuration-classpath/">
-                <h3 class="media-heading">[UE4]Android Building Error-Could not resolve all files for configuration &#39;classpath&#39;</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Sep 9, 2018
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather">Error 1 Error Log:
-A problem occurred configuring root project 'app'. &gt; Could not resolve all files for configuration ':classpath'. &gt; Could not download kotlin-reflect.jar (org.jetbrains.kotlin:kotlin-reflect:1.1.3-2) &gt; Could not get resource 'https://jcenter.bintray.com/org/jetbrains/kotlin/kotlin-reflect/1.1.3-2/kotlin-reflect-1.1.3-2.jar'. &gt; Could not GET 'https://jcenter.bintray.com/org/jetbrains/kotlin/kotlin-reflect/1.1.3-2/kotlin-reflect-1.1.3-2.jar'. &gt; Software caused connection abort: recv failed &gt; Could not download protobuf-java.jar (com.google.protobuf:protobuf-java:3.0.0) &gt; Could not get resource 'https://jcenter.bintray.com/com/google/protobuf/protobuf-java/3.0.0/protobuf-java-3.0.0.jar'. &gt; Could not GET 'https://jcenter.bintray.com/com/google/protobuf/protobuf-java/3.0.0/protobuf-java-3.0.0.jar'. &gt; Software caused connection abort: recv failed  Solution:</div>
+              <div class="media-content hide-xs font-merryweather">Mathematics
+https://keisan.casio.com/menu/system/000000000250
+Calcuate distance from foot of perpendicular to line
+https://math.stackexchange.com/questions/33868/foot-of-perpendicular-to-line
+How do you find the distance from a point to a plane?
+https://math.stackexchange.com/questions/88392/how-do-you-find-the-distance-from-a-point-to-a-plane
+How to find the equation of a plane using three non-collinear points
+https://www.maplesoft.com/support/help/maple/view.aspx?path=MathApps%2FEquationofaPlane3Points
+Find the equation of the plane knowing that it passes through 3 points
+https://math.stackexchange.com/questions/1156983/find-the-equation-of-the-plane-knowing-that-it-passes-through-3-points
+Find plane by normal and instance point + distance between origin and plane
+https://math.stackexchange.com/questions/752252/find-plane-by-normal-and-instance-point-distance-between-origin-and-plane</div>
             </div>
             <div style="clear:both;"></div>
             <hr>
@@ -1468,7 +1498,7 @@ A problem occurred configuring root project 'app'. &gt; Could not resolve all fi
          data-message-zero="no post found"
          data-message-one="1 post found"
          data-message-other="{n} posts found">
-         429 posts found
+         427 posts found
       </p>
     </div>
   </div>
