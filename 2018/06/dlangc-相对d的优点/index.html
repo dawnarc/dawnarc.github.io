@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.51 with theme Tranquilpeak 0.4.3-SNAPSHOT">
+<meta name="author" content="Neil Wang">
+<meta name="keywords" content="">
+<meta name="description" content="原文：What does C&#43;&#43; do better than D?
+https://softwareengineering.stackexchange.com/questions/97207/what-does-c-do-better-than-d
+Most of the things C&#43;&#43; &ldquo;does&rdquo; better than D are meta things:
+C&#43;&#43; has better compilers, better tools, more mature libraries, more bindings, more experts, more tutorials etc. Basically it has more and better of all the external things that you would expect from a more mature language. This is inarguable.
+As for the language itself, there are a few things that C&#43;&#43; does better than D in my opinion.">
+
+
+<meta property="og:description" content="原文：What does C&#43;&#43; do better than D?
+https://softwareengineering.stackexchange.com/questions/97207/what-does-c-do-better-than-d
+Most of the things C&#43;&#43; &ldquo;does&rdquo; better than D are meta things:
+C&#43;&#43; has better compilers, better tools, more mature libraries, more bindings, more experts, more tutorials etc. Basically it has more and better of all the external things that you would expect from a more mature language. This is inarguable.
+As for the language itself, there are a few things that C&#43;&#43; does better than D in my opinion.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Dlang]C&#43;&#43;相对D的优点">
+<meta name="twitter:title" content="[Dlang]C&#43;&#43;相对D的优点">
+<meta property="og:url" content="https://dawnarc.com/2018/06/dlangc-%E7%9B%B8%E5%AF%B9d%E7%9A%84%E4%BC%98%E7%82%B9/">
+<meta property="twitter:url" content="https://dawnarc.com/2018/06/dlangc-%E7%9B%B8%E5%AF%B9d%E7%9A%84%E4%BC%98%E7%82%B9/">
+<meta property="og:site_name" content="玄冬Wong">
+<meta property="og:description" content="原文：What does C&#43;&#43; do better than D?
+https://softwareengineering.stackexchange.com/questions/97207/what-does-c-do-better-than-d
+Most of the things C&#43;&#43; &ldquo;does&rdquo; better than D are meta things:
+C&#43;&#43; has better compilers, better tools, more mature libraries, more bindings, more experts, more tutorials etc. Basically it has more and better of all the external things that you would expect from a more mature language. This is inarguable.
+As for the language itself, there are a few things that C&#43;&#43; does better than D in my opinion.">
+<meta name="twitter:description" content="原文：What does C&#43;&#43; do better than D?
+https://softwareengineering.stackexchange.com/questions/97207/what-does-c-do-better-than-d
+Most of the things C&#43;&#43; &ldquo;does&rdquo; better than D are meta things:
+C&#43;&#43; has better compilers, better tools, more mature libraries, more bindings, more experts, more tutorials etc. Basically it has more and better of all the external things that you would expect from a more mature language. This is inarguable.
+As for the language itself, there are a few things that C&#43;&#43; does better than D in my opinion.">
+<meta property="og:locale" content="en-us">
+
+  
+    <meta property="article:published_time" content="2018-06-23T17:58:02">
+  
+  
+    <meta property="article:modified_time" content="2018-06-23T17:58:02">
+  
+  
+  
+    
+      <meta property="article:section" content="Dlang">
+    
+  
+  
+    
+      <meta property="article:tag" content="Dlang">
+    
+      <meta property="article:tag" content="C&#43;&#43;">
+    
+  
+
+
+<meta name="twitter:card" content="summary">
+
+  <meta name="twitter:site" content="@idealsland">
+
+
+  <meta name="twitter:creator" content="@idealsland">
+
+
+
+
+
+
+
+
+
+
+  <meta property="og:image" content="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=640">
+  <meta property="twitter:image" content="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=640">
+
+
+    <title>[Dlang]C&#43;&#43;相对D的优点</title>
+
+    <link rel="icon" href="https://dawnarc.com/favicon.png">
+    
+
+    
+      <link rel="publisher" href="https://plus.google.com/111340706178390411568">
+    
+
+    <link rel="canonical" href="https://dawnarc.com/2018/06/dlangc-%E7%9B%B8%E5%AF%B9d%E7%9A%84%E4%BC%98%E7%82%B9/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/jquery.fancybox.min.css" integrity="sha256-vuXZ9LGmmwtjqFX1F+EKin1ThZMub58gKULUyf0qECk=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/helpers/jquery.fancybox-thumbs.min.css" integrity="sha256-SEa4XYAHihTcEP1f5gARTB2K26Uk8PsndQYHQC1f4jU=" crossorigin="anonymous" />
+    
+    
+    <link rel="stylesheet" href="https://dawnarc.com/css/style-nnm2spxvve8onlujjlegkkytaehyadd4ksxc1hyzzq9a2wvtrgbljqyulomn.min.css" />
+    
+    
+      
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/solarized-light.min.css">
+      
+    
+
+    
+      
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-78064851-2', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="4">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="https://dawnarc.com/">玄冬Wong</a>
+  </div>
+  
+    
+      <a class="header-right-picture "
+         href="https://dawnarc.com/#about">
+    
+    
+    
+      
+        <img class="header-picture" src="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=90" alt="Author&#39;s picture" />
+      
+    
+    </a>
+  
+  
+  
+
+</header>
+
+      <nav id="sidebar" data-behavior="4">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="https://dawnarc.com/#about">
+          <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=110" alt="Author&#39;s picture" />
+        </a>
+        <h4 class="sidebar-profile-name">Neil Wang</h4>
+        
+          <h5 class="sidebar-profile-bio">久长唯有品格</h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/categories">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+      
+      <span class="sidebar-button-desc">Categories</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/tags">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+      
+      <span class="sidebar-button-desc">Tags</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/archives">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+      
+      <span class="sidebar-button-desc">Archives</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/#about">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+      
+      <span class="sidebar-button-desc">About</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+      
+      <span class="sidebar-button-desc">Home</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/index.xml">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://stackoverflow.com/users/1645289/protoss" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-stack-overflow"></i>
+      
+      <span class="sidebar-button-desc">Stack Overflow</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://www.artstation.com/artist/dawnarc" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-artstation"></i>
+      
+      <span class="sidebar-button-desc">ArtStation</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://www.facebook.com/koanland" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-facebook"></i>
+      
+      <span class="sidebar-button-desc">Facebook</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/dawnarc" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://www.linkedin.com/in/dawnarc/" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-linkedin"></i>
+      
+      <span class="sidebar-button-desc">Linkedin</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://www.pinterest.com/wangaiguo/" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-pinterest"></i>
+      
+      <span class="sidebar-button-desc">Pinterest</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://steamcommunity.com/id/dawnarc" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-steam"></i>
+      
+      <span class="sidebar-button-desc">Steam</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://twitter.com/idealsland" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-twitter"></i>
+      
+      <span class="sidebar-button-desc">Twitter</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://weibo.com/koanland" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-weibo"></i>
+      
+      <span class="sidebar-button-desc">Weibo</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+
+    </ul>
+  </div>
+</nav>
+
+      
+
+      <div id="main" data-behavior="4"
+        class="
+               hasCoverMetaIn
+               ">
+        <article class="post" itemscope itemType="http://schema.org/BlogPosting">
+          
+          
+            <div class="post-header main-content-wrap text-left">
+  
+    <h1 class="post-title" itemprop="headline">
+      [Dlang]C&#43;&#43;相对D的优点
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2018-06-23T17:58:02&#43;08:00">
+        
+  June 23, 2018
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/dlang">Dlang</a>
+    
+  
+
+  </div>
+
+</div>
+          
+          <div class="post-content markdown" itemprop="articleBody">
+            <div class="main-content-wrap">
+              
+
+<p>原文：What does C++ do better than D?<br />
+<a href="https://softwareengineering.stackexchange.com/questions/97207/what-does-c-do-better-than-d">https://softwareengineering.stackexchange.com/questions/97207/what-does-c-do-better-than-d</a></p>
+
+<p>Most of the things C++ &ldquo;does&rdquo; better than D are meta things:<br />
+C++ has better compilers, better tools, more mature libraries, more bindings, more experts, more tutorials etc. Basically it has more and better of all the external things that you would expect from a more mature language. This is inarguable.</p>
+
+<p>As for the language itself, there are a few things that C++ does better than D in my opinion. There&rsquo;s probably more, but here&rsquo;s a few that I can list off the top of my head:</p>
+
+<h5 id="c-has-a-better-thought-out-type-system">C++ has a better thought out type system</h5>
+
+<p>There are quite a few problems with the type system in D at the moment, which appear to be oversights in the design. For example, it is currently impossible to copy a const struct to a non-const struct if the struct contains class object references or pointers due to the transitivity of const and the way postblit constructors work on value types. Andrei says he knows how to solve this, but didn&rsquo;t give any details. The problem is certainly fixable (introducing C++-style copy constructors would be one fix), but it is a major problem in language at present.</p>
+
+<p>Another problem that has bugged me is the lack of logical const (i.e. no mutable like in C++). This is great for writing thread-safe code, but makes it difficult (impossible?) to do lazy intialisation within const objects (think of a const &lsquo;get&rsquo; function which constructs and caches the returned value on first call).</p>
+
+<p>Finally, given these existing problems, I&rsquo;m worried about how the rest of the type system (pure, shared, etc.) will interact with everything else in the language once they are put to use. The standard library (Phobos) currently makes very little use of D&rsquo;s advanced type system, so I think it is reasonable the question whether it will hold up under stress. I am skeptical, but optimistic.</p>
+
+<p>Note that C++ has some type system warts (e.g. non-transitive const, requiring iterator as well as  const_iterator) that make it quite ugly, but while C++&rsquo;s type system is a little wrong at parts, it doesn&rsquo;t stop you from getting work done like D&rsquo;s sometimes does.</p>
+
+<p>Edit: To clarify, I believe that C++ has a better thought out type system &ndash; not necessarily a better one &ndash; if that makes sense. Essentially, in D I feel that there is a risk involved in using all aspects of its type system that isn&rsquo;t present in C++.</p>
+
+<h5 id="d-is-sometimes-a-little-too-convenient">D is sometimes a little too convenient</h5>
+
+<p>One criticism that you often hear of C++ is that it hides some low-level issues from you e.g. simple assignments like a = b; could be doing many things like calling conversion operators, calling overload assignment operators etc., which can be difficult to see from the code. Some people like this, some people don&rsquo;t. Either way, in D it is worse (better?) due to things like opDispatch, @property, opApply, lazy which have the potential to change innocent looking code into things that you don&rsquo;t expect.</p>
+
+<p>I don&rsquo;t think this is a big issue personally, but some might find this off-putting.</p>
+
+<h5 id="d-requires-garbage-collection">D requires garbage-collection</h5>
+
+<p>This could be seen as controversial because it is possible to run D without the GC. However, just because it is possible doesn&rsquo;t mean it is practical. Without a GC, you lose a lot of D&rsquo;s features, and using the standard library would be like walking in a minefield (who knows which functions allocate memory?). Personally, I think it is totally impractical to use D without a GC, and if you aren&rsquo;t a fan of GCs (like I am) then this can be quite off-putting.</p>
+
+<h5 id="naive-array-definitions-in-d-allocate-memory">Naive array definitions in D allocate memory</h5>
+
+<p>This is a pet peeve of mine:</p>
+
+<pre><code>int[3] a = [1, 2, 3]; // in D, this allocates then copies
+int a[3] = {1, 2, 3}; // in C++, this doesn't allocate
+</code></pre>
+
+<p>Apparently, to avoid the allocation in D, you must do:</p>
+
+<pre><code>static const int[3] staticA = [1, 2, 3]; // in data segment
+int[3] a = staticA; // non-allocating copy
+</code></pre>
+
+<p>These little &lsquo;behind your back&rsquo; allocations are good examples of my previous two points.</p>
+
+<p><del>Edit: Note that this is a known issue that is being worked on.</del><br />
+Edit: This is now fixed. No allocation takes place.</p>
+
+<h5 id="conclusion">Conclusion</h5>
+
+<p>I&rsquo;ve focussed on the negatives of D vs C++ because that&rsquo;s what the question asked, but please don&rsquo;t see this post as a statement that C++ is better than D. I could easily make a larger post of places where D is better than C++. It&rsquo;s up to you to make the decision of which one to use.</p>
+
+<hr />
+
+<p><code>对的那条路，往往不是最好走的。</code></p>
+
+              
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+                
+                
+                  <div class="post-footer-tags">
+                    <span class="text-color-light text-small">TAGGED IN</span><br/>
+                    
+  <a class="tag tag--primary tag--small" href="https://dawnarc.com/tags/dlang/">Dlang</a>
+
+  <a class="tag tag--primary tag--small" href="https://dawnarc.com/tags/c&#43;&#43;/">C&#43;&#43;</a>
+
+                  </div>
+                
+              
+            
+            <div class="post-actions-wrap">
+  
+      <nav >
+        <ul class="post-actions post-action-nav">
+          
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2018/06/openglrendering-pipeline%E6%B8%B2%E6%9F%93%E7%AE%A1%E7%BA%BF%E6%B5%81%E7%A8%8B%E6%A6%82%E8%BF%B0/" data-tooltip="[OpenGL]Rendering Pipeline(渲染管线)流程概述">
+              
+                  <i class="fa fa-angle-left"></i>
+                  <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+                </a>
+            </li>
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2018/06/ue4ufunction-processevent%E8%BF%94%E5%9B%9E%E5%80%BC%E4%B8%8E%E8%BE%93%E5%87%BA%E5%8F%82%E6%95%B0%E8%8E%B7%E5%8F%96/" data-tooltip="[UE4]UFunction-ProcessEvent返回值与输出参数获取">
+              
+                  <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+                  <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+          
+        </ul>
+      </nav>
+    <ul class="post-actions post-action-share" >
+      
+        <li class="post-action hide-lg hide-md hide-sm">
+          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
+            <i class="fa fa-share-alt"></i>
+          </a>
+        </li>
+        
+      
+      
+        <li class="post-action">
+          <a class="post-action-btn btn btn--default" href="#disqus_thread">
+            <i class="fa fa-comment-o"></i>
+          </a>
+        </li>
+      
+      <li class="post-action">
+        
+          <a class="post-action-btn btn btn--default" href="#">
+        
+          <i class="fa fa-list"></i>
+        </a>
+      </li>
+    </ul>
+  
+</div>
+
+            
+              
+                <div id="disqus_thread">
+  <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+              
+            
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2018 Neil Wang. All Rights Reserved. Powered by <A href="https://gohugo.io/"> Hugo</A>.
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+        <div class="post-actions-wrap">
+  
+      <nav >
+        <ul class="post-actions post-action-nav">
+          
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2018/06/openglrendering-pipeline%E6%B8%B2%E6%9F%93%E7%AE%A1%E7%BA%BF%E6%B5%81%E7%A8%8B%E6%A6%82%E8%BF%B0/" data-tooltip="[OpenGL]Rendering Pipeline(渲染管线)流程概述">
+              
+                  <i class="fa fa-angle-left"></i>
+                  <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+                </a>
+            </li>
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2018/06/ue4ufunction-processevent%E8%BF%94%E5%9B%9E%E5%80%BC%E4%B8%8E%E8%BE%93%E5%87%BA%E5%8F%82%E6%95%B0%E8%8E%B7%E5%8F%96/" data-tooltip="[UE4]UFunction-ProcessEvent返回值与输出参数获取">
+              
+                  <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+                  <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+          
+        </ul>
+      </nav>
+    <ul class="post-actions post-action-share" >
+      
+        <li class="post-action hide-lg hide-md hide-sm">
+          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
+            <i class="fa fa-share-alt"></i>
+          </a>
+        </li>
+        
+      
+      
+        <li class="post-action">
+          <a class="post-action-btn btn btn--default" href="#disqus_thread">
+            <i class="fa fa-comment-o"></i>
+          </a>
+        </li>
+      
+      <li class="post-action">
+        
+          <a class="post-action-btn btn btn--default" href="#">
+        
+          <i class="fa fa-list"></i>
+        </a>
+      </li>
+    </ul>
+  
+</div>
+
+      </div>
+      <div id="share-options-bar" class="share-options-bar" data-behavior="4">
+  <i id="btn-close-shareoptions" class="fa fa-close"></i>
+  <ul class="share-options">
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-remove"></i>
+    </div>
+    
+      <img id="about-card-picture" src="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=110" alt="Author&#39;s picture" />
+    
+    <h4 id="about-card-name">Neil Wang</h4>
+    
+      <div id="about-card-bio">久长唯有品格</div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        To Be Marvelous
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker"></i>
+        <br/>
+        Yichang·Hubei
+      </div>
+    
+  </div>
+</div>
+
+    <div id="algolia-search-modal" class="modal-container">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="close-button"><i class="fa fa-close"></i></span>
+      <a href="https://algolia.com" target="_blank" rel="noopener" class="searchby-algolia text-color-light link-unstyled">
+        <span class="searchby-algolia-text text-color-light text-small">by</span>
+        <img class="searchby-algolia-logo" src="https://www.algolia.com/static_assets/images/press/downloads/algolia-light.svg">
+      </a>
+      <i class="search-icon fa fa-search"></i>
+      <form id="algolia-search-form">
+        <input type="text" id="algolia-search-input" name="search"
+          class="form-control input--large search-input" placeholder="Search" />
+      </form>
+    </div>
+    <div class="modal-body">
+      <div class="no-result text-color-light text-center">no post found</div>
+      <div class="results">
+        
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/12/ue4invalid-object-in-gc-0x000001eb2e659900-referencingobject-image/">
+                <h3 class="media-heading">[UE4]Invalid object in GC: 0x000001eb2e659900, ReferencingObject: Image</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Dec 12, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">Exception Throw:
+Fatal error: [File:D:\Build\++UE4\Sync\Engine\Source\Runtime\CoreUObject\Private\UObject\GarbageCollection.cpp] [Line: 623] Invalid object in GC: 0x000001eb2e659900, ReferencingObject: Image /Engine/Transient.GameEngine_0:TDGameInstance_0.CombatMainUIBP_C_0.WidgetTree_0.MiniMapUIBP_1216.WidgetTree_0.Image_0, ReferencingObjectClass: Class /Script/UMG.Image, Property Name: ResourceObject, Offset: 480, TokenIndex: 11 UE4Editor_Core!FDebug::AssertFailed() [d:\build\++ue4\sync\engine\source\runtime\core\private\misc\assertionmacros.cpp:425] UE4Editor_CoreUObject!TFastReferenceCollector&lt;1,FGCReferenceProcessor&lt;1&gt;,FGCCollector&lt;1&gt;,FGCArrayPool,0&gt;::ProcessObjectArray() [d:\build\++ue4\sync\engine\source\runtime\coreuobject\public\uobject\fastreferencecollector.h:697] UE4Editor_CoreUObject!TFastReferenceCollector&lt;1,FGCReferenceProcessor&lt;1&gt;,FGCCollector&lt;1&gt;,FGCArrayPool,0&gt;::FCollectorTaskQueue::DoTask() [d:\build\++ue4\sync\engine\source\runtime\coreuobject\public\uobject\fastreferencecollector.h:378] UE4Editor_CoreUObject!TGraphTask&lt;TFastReferenceCollector&lt;1,FGCReferenceProcessor&lt;1&gt;,FGCCollector&lt;1&gt;,FGCArrayPool,0&gt;::FCollectorTaskProcessorTask&gt;::ExecuteTask() [d:\build\++ue4\sync\engine\source\runtime\core\public\async\taskgraphinterfaces.h:829] UE4Editor_Core!FTaskThreadAnyThread::ProcessTasks() [d:\build\++ue4\sync\engine\source\runtime\core\private\async\taskgraph.cpp:936] UE4Editor_Core!FTaskThreadAnyThread::ProcessTasksUntilQuit() [d:\build\++ue4\sync\engine\source\runtime\core\private\async\taskgraph.cpp:801] UE4Editor_Core!FTaskThreadBase::Run() [d:\build\++ue4\sync\engine\source\runtime\core\private\async\taskgraph.cpp:516] UE4Editor_Core!FRunnableThreadWin::Run() [d:\build\++ue4\sync\engine\source\runtime\core\private\windows\windowsrunnablethread.cpp:76]  Reason:
+Some assets object in memory not persisted
+Solution:
+Use UPROPERTY() or AddToRoot() to persist assets in memory.</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/12/toolsreduce-chrome-drive-activity100-percent-drive-usage/">
+                <h3 class="media-heading">[Tools]Reduce Chrome drive activity(100 percent Drive usage)</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Dec 12, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">Settings -&gt; Advanced -&gt; Privacy and security -&gt; Disable Protects you and your device from dangerous sites</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/12/ue4hardware-cursorsolution-for-umg-customized-cursor-lagging/">
+                <h3 class="media-heading">[UE4]Hardware cursor(solution for UMG customized cursor lagging)</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Dec 12, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">Steps
+1, Put a PNG in game content directory, e.g. E:\MyProj\Content\Asset\Cursor\mouse.png
+2, Project Settings -&gt; Engine -&gt; User Interface -&gt; Hardware Cursors -&gt; add element and set Default, set Cursor Path as Asset/Cursor/mouse.
+3, If the click response position of .PNG cursor isn&rsquo;t the top-left corner, you can modify the Hot Spot, e.g. you can set Hot Spot as (0.5, 0.5) if the click response position is the center of .</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/12/ue4global-variables/">
+                <h3 class="media-heading">[UE4]Global variables</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Dec 12, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">File path:
+Engine\Source\Runtime\Core\Private\Misc\CoreGlobals.cpp
+Source:
+IMPLEMENT_MODULE( FCoreModule, Core ); /*----------------------------------------------------------------------------- Global variables. -----------------------------------------------------------------------------*/ CORE_API FFeedbackContext* GWarn = nullptr; /* User interaction and non critical warnings */ FConfigCacheIni* GConfig = nullptr; /* Configuration database cache */ ITransaction* GUndo = nullptr; /* Transaction tracker, non-NULL when a transaction is in progress */ FOutputDeviceConsole* GLogConsole = nullptr; /* Console log hook */ CORE_API FMalloc* GMalloc = nullptr; /* Memory allocator */ CORE_API FMalloc** GFixedMallocLocationPtr = nullptr; /* Memory allocator pointer location when PLATFORM_USES_FIXED_GMalloc_CLASS is true */ class UPropertyWindowManager* GPropertyWindowManager = nullptr; /* Manages and tracks property editing windows */ /** For building call stack text dump in guard/unguard mechanism.</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/12/ue4trigger-tick-of-the-object-inherited-from-uobject/">
+                <h3 class="media-heading">[UE4]Trigger Tick of the object inherited from UObject</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Dec 12, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">The object inherited from UObject would not trigger Tick when instanced (NewObject()), but AActor and the UActorComponent would trigger Tick.
+So how to trigger Tick of the object inherited from UObject?
+The answer is: inherit FTickableGameObject and UObject at the same.
+example source
+header:
+UCLASS() class UCoolDownMgr : public UObject, public FTickableGameObject { GENERATED_BODY() public: // Sets default values for this character's properties UCoolDownMgr(); virtual ~UCoolDownMgr(); // Begin FTickableGameObject Interface. virtual void Tick(float DeltaTime) override; virtual bool IsTickable() const override; virtual TStatId GetStatId() const override; // End FTickableGameObject Interface.</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/12/ue4editor-extention/">
+                <h3 class="media-heading">[UE4]Editor Extention</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Dec 12, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">UE4 - Easy example of How to create menus in the editor
+http://www.danielmayor.com/ue4-simple-menus
+UE4 Level Editor
+https://books.google.com.sg/books?id=zZ7cDgAAQBAJ&amp;pg=PA272&amp;lpg=PA272&amp;dq=UE4+leveleditor+C%2B%2B&amp;source=bl&amp;ots=ZsX7ZCR6bV&amp;sig=6_J7xzxTDosX5dOuLwpiaKrOSHU&amp;hl=zh-CN&amp;sa=X&amp;ved=2ahUKEwji8aiT8orfAhWFTn0KHU0JB7wQ6AEwBXoECAUQAQ#v=onepage&amp;q=UE4%20leveleditor%20C%2B%2B&amp;f=false
+Creating an Editor Module
+https://wiki.unrealengine.com/Creating_an_Editor_Module
+Customizing the editor&rsquo;s toolbar buttons menu via custom plugin
+https://answers.unrealengine.com/questions/25609/customizing-the-editors-toolbar-buttons-menu-via-c.html
+UE4 Editor Toolbar Extention
+https://blog.csdn.net/hui211314ddhui/article/details/79375548</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/12/ue4packagingresults-error-bad-name-index/">
+                <h3 class="media-heading">[UE4]PackagingResults Error Bad name index</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Dec 12, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">Package Error PackagingResults: Error: Bad name index -1/47  Solution 1 You can find the asset causing this by building the engine from source and adding breakpoints in these two place:
+LinkerLoad.cpp
+void FLinkerLoad::BadNameIndexError(NAME_INDEX NameIndex) { UE_LOG(LogLinker, Error, TEXT(&quot;Bad name index %i/%i&quot;), NameIndex, NameMap.Num()); }  and
+PackageReader.cpp
+FArchive&amp; FPackageReader::operator&lt;&lt;( FName&amp; Name ) { check(Loader); NAME_INDEX NameIndex; FArchive&amp; Ar = *this; Ar &lt;&lt; NameIndex; if( !NameMap.IsValidIndex(NameIndex) ) { UE_LOG(LogAssetRegistry, Fatal, TEXT(&quot;Bad name index %i/%i&quot;), NameIndex, NameMap.</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/12/ue4slate-and-native-umgc-notes/">
+                <h3 class="media-heading">[UE4]Slate and Native UMG(C&#43;&#43;) Notes</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Dec 12, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">How to scale or zoom a widget? For Mouse Zoom:
+ override onMouseWheel add Wheel Delta to Panning Canvas&rsquo; Render Transform Scale clamp min result to something above 0 (widgets flip if scaled below 0) and max to your desired max zoom Set Render Scale of the Panning Canvas with the result of the above  Reference: How to scale/zoom a widget with blueprints?
+https://answers.unrealengine.com/questions/815202/how-to-scalezoom-a-widget-with-blueprints.html
+How to clip widget display area?</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/11/c-const_cast/">
+                <h3 class="media-heading">[C&#43;&#43;]const_cast</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Nov 11, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">You are not allowed to const_cast variables that are actually const. This results in undefined behavior. const_cast is used to remove the const-ness from references and pointers that ultimately refer to something that is not const.
+So, this is allowed:
+int i = 0; const int&amp; ref = i; const int* ptr = &amp;i; const_cast&lt;int&amp;&gt;(ref) = 3; *const_cast&lt;int*&gt;(ptr) = 3;  It&rsquo;s allowed because i, the object being assigned to, is not const.</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/11/ue4logcompile-error-circular-dependency-detected-for-filename/">
+                <h3 class="media-heading">[UE4]LogCompile-error-Circular dependency detected for filename</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Nov 11, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">Compilation Error：
+LogCompile : error : Circular dependency detected for filename D:\Library Storage\Documents\Unreal Projects\DistantHome\Source\DistantHome\Public\Game\DHGameInfo.h!  Solution:
+Don&rsquo;t include headers in header, declare class in header and include headers in cpp.
+class forwardedClass; class UsingIt { public: forwardedClass* instance; }  or
+class UsingIt { public: class forwardedClass* instance; }  Reference:How do you guys combat circular dependencies in your file heads?
+https://forums.unrealengine.com/development-discussion/c-gameplay-programming/109582-how-do-you-guys-combat-circular-dependencies-in-your-file-heads</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+      </div>
+    </div>
+    <div class="modal-footer">
+      <p class="results-count text-medium"
+         data-message-zero="no post found"
+         data-message-one="1 post found"
+         data-message-other="{n} posts found">
+         440 posts found
+      </p>
+    </div>
+  </div>
+</div>
+    
+  
+    
+    <div id="cover" style="background-image:url('https://dawnarc.com/images/cover-v1.2.0.jpg');"></div>
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.7/js/jquery.fancybox.min.js" integrity="sha256-GEAnjcTqVP+vBp3SSc8bEDQqvWAZMiHyUSIorrWwH50=" crossorigin="anonymous"></script>
+
+
+<script src="https://dawnarc.com/js/script-qi9wbxp2ya2j6p7wx1i6tgavftewndznf4v0hy2gvivk1rxgc3lm7njqb6bz.min.js"></script>
+
+
+<script lang="javascript">
+window.onload = updateMinWidth;
+window.onresize = updateMinWidth;
+document.getElementById("sidebar").addEventListener("transitionend", updateMinWidth);
+function updateMinWidth() {
+  var sidebar = document.getElementById("sidebar");
+  var main = document.getElementById("main");
+  main.style.minWidth = "";
+  var w1 = getComputedStyle(main).getPropertyValue("min-width");
+  var w2 = getComputedStyle(sidebar).getPropertyValue("width");
+  var w3 = getComputedStyle(sidebar).getPropertyValue("left");
+  main.style.minWidth = `calc(${w1} - ${w2} - ${w3})`;
+}
+</script>
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+  
+    
+      <script>
+        var disqus_config = function () {
+          this.page.url = 'https:\/\/dawnarc.com\/2018\/06\/dlangc-%E7%9B%B8%E5%AF%B9d%E7%9A%84%E4%BC%98%E7%82%B9\/';
+          
+            this.page.identifier = '\/2018\/06\/dlangc-%E7%9B%B8%E5%AF%B9d%E7%9A%84%E4%BC%98%E7%82%B9\/'
+          
+        };
+        (function() {
+          
+          
+          if (window.location.hostname == "localhost") {
+            return;
+          }
+          var d = document, s = d.createElement('script');
+          var disqus_shortname = 'dawnarc';
+          s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+          s.setAttribute('data-timestamp', +new Date());
+          (d.head || d.body).appendChild(s);
+        })();
+      </script>
+    
+  
+
+
+
+
+    
+  </body>
+</html>
+

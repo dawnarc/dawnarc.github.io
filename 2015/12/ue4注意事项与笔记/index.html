@@ -1,142 +1,184 @@
-
-
-  
-    
-  
-
-
-  
-
-
-
-
-  
-
-
-  
-
 <!DOCTYPE html>
 <html lang="en-us">
   <head>
     
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="generator" content="Hugo 0.42.1 with theme Tranquilpeak 0.4.3-BETA">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.51 with theme Tranquilpeak 0.4.3-SNAPSHOT">
+<meta name="author" content="Neil Wang">
+<meta name="keywords" content="">
+<meta name="description" content="我的老博客中的UE4文章（一百八十多篇，未迁移，和此博客的UE4文章不重叠）
+http://aigo.iteye.com/category/347833
+【2015-12-06】
+如何添加自己的C&#43;&#43;代码
+如果是添加Character C&#43;&#43;代码，是在UE4 Editor中添加的，但是如果想添加一些与UE4引擎无关的c&#43;&#43;代码，比如网络通讯的，或者一些工具类，必须也在UE4 Editor中添加（至少我现在用的4.10版本是这样），如果在VS中直接添加，会出现一些奇怪的编译错误。UE4 Editor中添加自定义C&#43;&#43;代码方式如下： File -&gt; New C&#43;&#43; Class -&gt; 选择None，然后即可创建自己C&#43;&#43;代码
+UE4还写莫名其妙的bug，这些bug可能是与引擎升级有关，可参考解决办法：重新建个空的工程，然后把你现在项目的资源文件重新加进去，然后在编译和构建。
+我的windows10上遇到的奇怪问题有：
+(1)，项目自定义的GameMode没生效，进游戏是默认的自由摄像机控制器。这个问题我没有重新建工程，而是把level删掉重新建了一次。
+(2)，打包安卓Android部署时，提示错误：DistributionSigning settings are not all set. Check the DistributionSetting
+【2016-05-15】
+如果项目中使用了LoadClass，那么蓝图相关的class构造函数中不要执行和实例化对象相关的操作，因为当执行LoadClass时也会把对应class的构造函数执行一遍（即使我们没有手动执行spawn或者create等函数，原因是LoadClass执行了LoadObject，而LoadObject内部又会执行ConstructorHelpers::FObjectFinder()，所以会触发class的构造函数，比如自己新建了一个UserWidget class，这个class的默认构造函数会在LoadClass时被执行一次），建议将初始化操作放在Initialize、BeginPlay等函数中。
+【2016-05-17】
+内存溢出导致的问题：在用FString拼接字符串的时候，抛了一个异常，但是相同的代码在另一个地方是正常的，两个地方都是非GameThread，崩掉的位置发在调用FString::FromInt()。后来用itoa代替就正常了。很可能是逻辑代码有内存溢出的bug。
+【2016-06-02】
+如果同一属性在蓝图编辑器中和C&#43;&#43;中的值不同，那么蓝图中的属性值会shadow掉C&#43;&#43;构造函数中的值。如果想让C&#43;&#43;的值shadow蓝图的值，那么可以在C&#43;&#43;的BeginPlay等非构造函数的初始化函数中设置属性（这里假设没有在蓝图逻辑脚本中对属性设置）。 新建蓝图时，蓝图的属性会遵循C&#43;&#43;父类中的构造函数中的属性设置。
+【2016-08-16】
+用C&#43;&#43;动态创建Component时（NewObject()），在AttachToComponent之前，需要执行RegisterComponent,否则无法Attach成功，且TickComponent()无法触发。
+备注：只有NewObject创建出来的Component才需要执行ResisterComponent，SpawnActor和ConstructorHelpers创建的对象则不需要。
+【2016-09-23】
+UE4中的C&#43;&#43;类继承规则：只能直接继承自两种类，一种是非UObject类，一种是继承过UInterface的UObject类。如果一个类是UObject且其父类没有一个是UInterface，则无法编译通过。
+如果同一批美术材质，在两个不同工程下的渲染效果不一样，比如同一个粒子特效，实际效果在两个工程中有差异，则可能是工程的设置项问题。解决办法：将两个工程中的Config/DefaultEngine.ini中的[/Script/Engine.RendererSettings】配置参数，设置统一即可。
+如果spawn出来的actor执行了AddToRoot操作，那么，需要GameInstance::Shutdown()中执行RemoveFromRoot，否则退出UE4Editor时会出现崩溃。另外，在GameMode和GameInstance的BeginDestroy()中执行是不行的，因为垃圾回收过程发生在BeginDestroy()执行之前。
+【2017-02-06】
+用宏控制debug相关代码的开启和关闭
+#if UE_BUILD_SHIPPING //debug code... #endif  UE4数据同步相关的引擎源码
+Runtime\Engine\Private\ActorReplication.cpp Runtime\Engine\Private\ Replication.cpp Runtime\Engine\Public\Net \DataReplication.cpp Engine\Plugins\Messaging\TcpMessaging\Source\TcpMessaging\Private\TcpMessagingModule.cpp  SpawnActor和NewObject创建出来的对象如何获取父对象
+SpawnActor()有个参数：FActorSpawnParameters，这个参数中有很多属性，设置相关属性后，可以更方便的来控制这个被spawn出来的Actor，比如Owner属性：
+FActorSpawnParameters Param; Param.Owner = MyActor1; AActor MyActor2 = GetWorld()-&gt;SpawnActor&lt;MyActor&gt;(MyClass, Param); //此时的Owner就是MyActor1 MyActor Owner= MyActor2-&gt;GetOwner();  NewObject直接通过构造函数参数指定：">
+
+
+<meta property="og:description" content="我的老博客中的UE4文章（一百八十多篇，未迁移，和此博客的UE4文章不重叠）
+http://aigo.iteye.com/category/347833
+【2015-12-06】
+如何添加自己的C&#43;&#43;代码
+如果是添加Character C&#43;&#43;代码，是在UE4 Editor中添加的，但是如果想添加一些与UE4引擎无关的c&#43;&#43;代码，比如网络通讯的，或者一些工具类，必须也在UE4 Editor中添加（至少我现在用的4.10版本是这样），如果在VS中直接添加，会出现一些奇怪的编译错误。UE4 Editor中添加自定义C&#43;&#43;代码方式如下： File -&gt; New C&#43;&#43; Class -&gt; 选择None，然后即可创建自己C&#43;&#43;代码
+UE4还写莫名其妙的bug，这些bug可能是与引擎升级有关，可参考解决办法：重新建个空的工程，然后把你现在项目的资源文件重新加进去，然后在编译和构建。
+我的windows10上遇到的奇怪问题有：
+(1)，项目自定义的GameMode没生效，进游戏是默认的自由摄像机控制器。这个问题我没有重新建工程，而是把level删掉重新建了一次。
+(2)，打包安卓Android部署时，提示错误：DistributionSigning settings are not all set. Check the DistributionSetting
+【2016-05-15】
+如果项目中使用了LoadClass，那么蓝图相关的class构造函数中不要执行和实例化对象相关的操作，因为当执行LoadClass时也会把对应class的构造函数执行一遍（即使我们没有手动执行spawn或者create等函数，原因是LoadClass执行了LoadObject，而LoadObject内部又会执行ConstructorHelpers::FObjectFinder()，所以会触发class的构造函数，比如自己新建了一个UserWidget class，这个class的默认构造函数会在LoadClass时被执行一次），建议将初始化操作放在Initialize、BeginPlay等函数中。
+【2016-05-17】
+内存溢出导致的问题：在用FString拼接字符串的时候，抛了一个异常，但是相同的代码在另一个地方是正常的，两个地方都是非GameThread，崩掉的位置发在调用FString::FromInt()。后来用itoa代替就正常了。很可能是逻辑代码有内存溢出的bug。
+【2016-06-02】
+如果同一属性在蓝图编辑器中和C&#43;&#43;中的值不同，那么蓝图中的属性值会shadow掉C&#43;&#43;构造函数中的值。如果想让C&#43;&#43;的值shadow蓝图的值，那么可以在C&#43;&#43;的BeginPlay等非构造函数的初始化函数中设置属性（这里假设没有在蓝图逻辑脚本中对属性设置）。 新建蓝图时，蓝图的属性会遵循C&#43;&#43;父类中的构造函数中的属性设置。
+【2016-08-16】
+用C&#43;&#43;动态创建Component时（NewObject()），在AttachToComponent之前，需要执行RegisterComponent,否则无法Attach成功，且TickComponent()无法触发。
+备注：只有NewObject创建出来的Component才需要执行ResisterComponent，SpawnActor和ConstructorHelpers创建的对象则不需要。
+【2016-09-23】
+UE4中的C&#43;&#43;类继承规则：只能直接继承自两种类，一种是非UObject类，一种是继承过UInterface的UObject类。如果一个类是UObject且其父类没有一个是UInterface，则无法编译通过。
+如果同一批美术材质，在两个不同工程下的渲染效果不一样，比如同一个粒子特效，实际效果在两个工程中有差异，则可能是工程的设置项问题。解决办法：将两个工程中的Config/DefaultEngine.ini中的[/Script/Engine.RendererSettings】配置参数，设置统一即可。
+如果spawn出来的actor执行了AddToRoot操作，那么，需要GameInstance::Shutdown()中执行RemoveFromRoot，否则退出UE4Editor时会出现崩溃。另外，在GameMode和GameInstance的BeginDestroy()中执行是不行的，因为垃圾回收过程发生在BeginDestroy()执行之前。
+【2017-02-06】
+用宏控制debug相关代码的开启和关闭
+#if UE_BUILD_SHIPPING //debug code... #endif  UE4数据同步相关的引擎源码
+Runtime\Engine\Private\ActorReplication.cpp Runtime\Engine\Private\ Replication.cpp Runtime\Engine\Public\Net \DataReplication.cpp Engine\Plugins\Messaging\TcpMessaging\Source\TcpMessaging\Private\TcpMessagingModule.cpp  SpawnActor和NewObject创建出来的对象如何获取父对象
+SpawnActor()有个参数：FActorSpawnParameters，这个参数中有很多属性，设置相关属性后，可以更方便的来控制这个被spawn出来的Actor，比如Owner属性：
+FActorSpawnParameters Param; Param.Owner = MyActor1; AActor MyActor2 = GetWorld()-&gt;SpawnActor&lt;MyActor&gt;(MyClass, Param); //此时的Owner就是MyActor1 MyActor Owner= MyActor2-&gt;GetOwner();  NewObject直接通过构造函数参数指定：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[UE4]注意事项与笔记">
+<meta name="twitter:title" content="[UE4]注意事项与笔记">
+<meta property="og:url" content="https://dawnarc.com/2015/12/ue4%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9%E4%B8%8E%E7%AC%94%E8%AE%B0/">
+<meta property="twitter:url" content="https://dawnarc.com/2015/12/ue4%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9%E4%B8%8E%E7%AC%94%E8%AE%B0/">
+<meta property="og:site_name" content="玄冬Wong">
+<meta property="og:description" content="我的老博客中的UE4文章（一百八十多篇，未迁移，和此博客的UE4文章不重叠）
+http://aigo.iteye.com/category/347833
+【2015-12-06】
+如何添加自己的C&#43;&#43;代码
+如果是添加Character C&#43;&#43;代码，是在UE4 Editor中添加的，但是如果想添加一些与UE4引擎无关的c&#43;&#43;代码，比如网络通讯的，或者一些工具类，必须也在UE4 Editor中添加（至少我现在用的4.10版本是这样），如果在VS中直接添加，会出现一些奇怪的编译错误。UE4 Editor中添加自定义C&#43;&#43;代码方式如下： File -&gt; New C&#43;&#43; Class -&gt; 选择None，然后即可创建自己C&#43;&#43;代码
+UE4还写莫名其妙的bug，这些bug可能是与引擎升级有关，可参考解决办法：重新建个空的工程，然后把你现在项目的资源文件重新加进去，然后在编译和构建。
+我的windows10上遇到的奇怪问题有：
+(1)，项目自定义的GameMode没生效，进游戏是默认的自由摄像机控制器。这个问题我没有重新建工程，而是把level删掉重新建了一次。
+(2)，打包安卓Android部署时，提示错误：DistributionSigning settings are not all set. Check the DistributionSetting
+【2016-05-15】
+如果项目中使用了LoadClass，那么蓝图相关的class构造函数中不要执行和实例化对象相关的操作，因为当执行LoadClass时也会把对应class的构造函数执行一遍（即使我们没有手动执行spawn或者create等函数，原因是LoadClass执行了LoadObject，而LoadObject内部又会执行ConstructorHelpers::FObjectFinder()，所以会触发class的构造函数，比如自己新建了一个UserWidget class，这个class的默认构造函数会在LoadClass时被执行一次），建议将初始化操作放在Initialize、BeginPlay等函数中。
+【2016-05-17】
+内存溢出导致的问题：在用FString拼接字符串的时候，抛了一个异常，但是相同的代码在另一个地方是正常的，两个地方都是非GameThread，崩掉的位置发在调用FString::FromInt()。后来用itoa代替就正常了。很可能是逻辑代码有内存溢出的bug。
+【2016-06-02】
+如果同一属性在蓝图编辑器中和C&#43;&#43;中的值不同，那么蓝图中的属性值会shadow掉C&#43;&#43;构造函数中的值。如果想让C&#43;&#43;的值shadow蓝图的值，那么可以在C&#43;&#43;的BeginPlay等非构造函数的初始化函数中设置属性（这里假设没有在蓝图逻辑脚本中对属性设置）。 新建蓝图时，蓝图的属性会遵循C&#43;&#43;父类中的构造函数中的属性设置。
+【2016-08-16】
+用C&#43;&#43;动态创建Component时（NewObject()），在AttachToComponent之前，需要执行RegisterComponent,否则无法Attach成功，且TickComponent()无法触发。
+备注：只有NewObject创建出来的Component才需要执行ResisterComponent，SpawnActor和ConstructorHelpers创建的对象则不需要。
+【2016-09-23】
+UE4中的C&#43;&#43;类继承规则：只能直接继承自两种类，一种是非UObject类，一种是继承过UInterface的UObject类。如果一个类是UObject且其父类没有一个是UInterface，则无法编译通过。
+如果同一批美术材质，在两个不同工程下的渲染效果不一样，比如同一个粒子特效，实际效果在两个工程中有差异，则可能是工程的设置项问题。解决办法：将两个工程中的Config/DefaultEngine.ini中的[/Script/Engine.RendererSettings】配置参数，设置统一即可。
+如果spawn出来的actor执行了AddToRoot操作，那么，需要GameInstance::Shutdown()中执行RemoveFromRoot，否则退出UE4Editor时会出现崩溃。另外，在GameMode和GameInstance的BeginDestroy()中执行是不行的，因为垃圾回收过程发生在BeginDestroy()执行之前。
+【2017-02-06】
+用宏控制debug相关代码的开启和关闭
+#if UE_BUILD_SHIPPING //debug code... #endif  UE4数据同步相关的引擎源码
+Runtime\Engine\Private\ActorReplication.cpp Runtime\Engine\Private\ Replication.cpp Runtime\Engine\Public\Net \DataReplication.cpp Engine\Plugins\Messaging\TcpMessaging\Source\TcpMessaging\Private\TcpMessagingModule.cpp  SpawnActor和NewObject创建出来的对象如何获取父对象
+SpawnActor()有个参数：FActorSpawnParameters，这个参数中有很多属性，设置相关属性后，可以更方便的来控制这个被spawn出来的Actor，比如Owner属性：
+FActorSpawnParameters Param; Param.Owner = MyActor1; AActor MyActor2 = GetWorld()-&gt;SpawnActor&lt;MyActor&gt;(MyClass, Param); //此时的Owner就是MyActor1 MyActor Owner= MyActor2-&gt;GetOwner();  NewObject直接通过构造函数参数指定：">
+<meta name="twitter:description" content="我的老博客中的UE4文章（一百八十多篇，未迁移，和此博客的UE4文章不重叠）
+http://aigo.iteye.com/category/347833
+【2015-12-06】
+如何添加自己的C&#43;&#43;代码
+如果是添加Character C&#43;&#43;代码，是在UE4 Editor中添加的，但是如果想添加一些与UE4引擎无关的c&#43;&#43;代码，比如网络通讯的，或者一些工具类，必须也在UE4 Editor中添加（至少我现在用的4.10版本是这样），如果在VS中直接添加，会出现一些奇怪的编译错误。UE4 Editor中添加自定义C&#43;&#43;代码方式如下： File -&gt; New C&#43;&#43; Class -&gt; 选择None，然后即可创建自己C&#43;&#43;代码
+UE4还写莫名其妙的bug，这些bug可能是与引擎升级有关，可参考解决办法：重新建个空的工程，然后把你现在项目的资源文件重新加进去，然后在编译和构建。
+我的windows10上遇到的奇怪问题有：
+(1)，项目自定义的GameMode没生效，进游戏是默认的自由摄像机控制器。这个问题我没有重新建工程，而是把level删掉重新建了一次。
+(2)，打包安卓Android部署时，提示错误：DistributionSigning settings are not all set. Check the DistributionSetting
+【2016-05-15】
+如果项目中使用了LoadClass，那么蓝图相关的class构造函数中不要执行和实例化对象相关的操作，因为当执行LoadClass时也会把对应class的构造函数执行一遍（即使我们没有手动执行spawn或者create等函数，原因是LoadClass执行了LoadObject，而LoadObject内部又会执行ConstructorHelpers::FObjectFinder()，所以会触发class的构造函数，比如自己新建了一个UserWidget class，这个class的默认构造函数会在LoadClass时被执行一次），建议将初始化操作放在Initialize、BeginPlay等函数中。
+【2016-05-17】
+内存溢出导致的问题：在用FString拼接字符串的时候，抛了一个异常，但是相同的代码在另一个地方是正常的，两个地方都是非GameThread，崩掉的位置发在调用FString::FromInt()。后来用itoa代替就正常了。很可能是逻辑代码有内存溢出的bug。
+【2016-06-02】
+如果同一属性在蓝图编辑器中和C&#43;&#43;中的值不同，那么蓝图中的属性值会shadow掉C&#43;&#43;构造函数中的值。如果想让C&#43;&#43;的值shadow蓝图的值，那么可以在C&#43;&#43;的BeginPlay等非构造函数的初始化函数中设置属性（这里假设没有在蓝图逻辑脚本中对属性设置）。 新建蓝图时，蓝图的属性会遵循C&#43;&#43;父类中的构造函数中的属性设置。
+【2016-08-16】
+用C&#43;&#43;动态创建Component时（NewObject()），在AttachToComponent之前，需要执行RegisterComponent,否则无法Attach成功，且TickComponent()无法触发。
+备注：只有NewObject创建出来的Component才需要执行ResisterComponent，SpawnActor和ConstructorHelpers创建的对象则不需要。
+【2016-09-23】
+UE4中的C&#43;&#43;类继承规则：只能直接继承自两种类，一种是非UObject类，一种是继承过UInterface的UObject类。如果一个类是UObject且其父类没有一个是UInterface，则无法编译通过。
+如果同一批美术材质，在两个不同工程下的渲染效果不一样，比如同一个粒子特效，实际效果在两个工程中有差异，则可能是工程的设置项问题。解决办法：将两个工程中的Config/DefaultEngine.ini中的[/Script/Engine.RendererSettings】配置参数，设置统一即可。
+如果spawn出来的actor执行了AddToRoot操作，那么，需要GameInstance::Shutdown()中执行RemoveFromRoot，否则退出UE4Editor时会出现崩溃。另外，在GameMode和GameInstance的BeginDestroy()中执行是不行的，因为垃圾回收过程发生在BeginDestroy()执行之前。
+【2017-02-06】
+用宏控制debug相关代码的开启和关闭
+#if UE_BUILD_SHIPPING //debug code... #endif  UE4数据同步相关的引擎源码
+Runtime\Engine\Private\ActorReplication.cpp Runtime\Engine\Private\ Replication.cpp Runtime\Engine\Public\Net \DataReplication.cpp Engine\Plugins\Messaging\TcpMessaging\Source\TcpMessaging\Private\TcpMessagingModule.cpp  SpawnActor和NewObject创建出来的对象如何获取父对象
+SpawnActor()有个参数：FActorSpawnParameters，这个参数中有很多属性，设置相关属性后，可以更方便的来控制这个被spawn出来的Actor，比如Owner属性：
+FActorSpawnParameters Param; Param.Owner = MyActor1; AActor MyActor2 = GetWorld()-&gt;SpawnActor&lt;MyActor&gt;(MyClass, Param); //此时的Owner就是MyActor1 MyActor Owner= MyActor2-&gt;GetOwner();  NewObject直接通过构造函数参数指定：">
+<meta property="og:locale" content="en-us">
+
+  
+    <meta property="article:published_time" content="2015-12-06T22:50:40">
+  
+  
+    <meta property="article:modified_time" content="2015-12-06T22:50:40">
+  
+  
+  
+    
+      <meta property="article:section" content="UnrealEngine4">
+    
+  
+  
+    
+      <meta property="article:tag" content="UE4">
+    
+  
+
+
+<meta name="twitter:card" content="summary">
+
+  <meta name="twitter:site" content="@idealsland">
+
+
+  <meta name="twitter:creator" content="@idealsland">
+
+
+
+
+
+
+
+
+
+
+  <meta property="og:image" content="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=640">
+  <meta property="twitter:image" content="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=640">
+
+
     <title>[UE4]注意事项与笔记</title>
-    <meta name="author" content="Neil Wang">
-    <meta name="keywords" content="">
 
     <link rel="icon" href="https://dawnarc.com/favicon.png">
     
 
     
-    <meta name="description" content="我的老博客中的UE4文章（一百八十多篇，未迁移，和此博客的UE4文章不重叠）
-http://aigo.iteye.com/category/347833
-【2015-12-06】
-如何添加自己的C&#43;&#43;代码
-如果是添加Character C&#43;&#43;代码，是在UE4 Editor中添加的，但是如果想添加一些与UE4引擎无关的c&#43;&#43;代码，比如网络通讯的，或者一些工具类，必须也在UE4 Editor中添加（至少我现在用的4.10版本是这样），如果在VS中直接添加，会出现一些奇怪的编译错误。UE4 Editor中添加自定义C&#43;&#43;代码方式如下： File -&gt; New C&#43;&#43; Class -&gt; 选择None，然后即可创建自己C&#43;&#43;代码
-UE4还写莫名其妙的bug，这些bug可能是与引擎升级有关，可参考解决办法：重新建个空的工程，然后把你现在项目的资源文件重新加进去，然后在编译和构建。
-我的windows10上遇到的奇怪问题有：
-(1)，项目自定义的GameMode没生效，进游戏是默认的自由摄像机控制器。这个问题我没有重新建工程，而是把level删掉重新建了一次。
-(2)，打包安卓Android部署时，提示错误：DistributionSigning settings are not all set. Check the DistributionSetting
-【2016-05-15】
-如果项目中使用了LoadClass，那么蓝图相关的class构造函数中不要执行和实例化对象相关的操作，因为当执行LoadClass时也会把对应class的构造函数执行一遍（即使我们没有手动执行spawn或者create等函数，原因是LoadClass执行了LoadObject，而LoadObject内部又会执行ConstructorHelpers::FObjectFinder()，所以会触发class的构造函数，比如自己新建了一个UserWidget class，这个class的默认构造函数会在LoadClass时被执行一次），建议将初始化操作放在Initialize、BeginPlay等函数中。
-【2016-05-17】
-内存溢出导致的问题：在用FString拼接字符串的时候，抛了一个异常，但是相同的代码在另一个地方是正常的，两个地方都是非GameThread，崩掉的位置发在调用FString::FromInt()。后来用itoa代替就正常了。很可能是逻辑代码有内存溢出的bug。
-【2016-06-02】
-如果同一属性在蓝图编辑器中和C&#43;&#43;中的值不同，那么蓝图中的属性值会shadow掉C&#43;&#43;构造函数中的值。如果想让C&#43;&#43;的值shadow蓝图的值，那么可以在C&#43;&#43;的BeginPlay等非构造函数的初始化函数中设置属性（这里假设没有在蓝图逻辑脚本中对属性设置）。 新建蓝图时，蓝图的属性会遵循C&#43;&#43;父类中的构造函数中的属性设置。
-【2016-08-16】
-用C&#43;&#43;动态创建Component时（NewObject()），在AttachToComponent之前，需要执行RegisterComponent,否则无法Attach成功，且TickComponent()无法触发。
-备注：只有NewObject创建出来的Component才需要执行ResisterComponent，SpawnActor和ConstructorHelpers创建的对象则不需要。
-【2016-09-23】
-UE4中的C&#43;&#43;类继承规则：只能直接继承自两种类，一种是非UObject类，一种是继承过UInterface的UObject类。如果一个类是UObject且其父类没有一个是UInterface，则无法编译通过。
-如果同一批美术材质，在两个不同工程下的渲染效果不一样，比如同一个粒子特效，实际效果在两个工程中有差异，则可能是工程的设置项问题。解决办法：将两个工程中的Config/DefaultEngine.ini中的[/Script/Engine.RendererSettings】配置参数，设置统一即可。
-如果spawn出来的actor执行了AddToRoot操作，那么，需要GameInstance::Shutdown()中执行RemoveFromRoot，否则退出UE4Editor时会出现崩溃。另外，在GameMode和GameInstance的BeginDestroy()中执行是不行的，因为垃圾回收过程发生在BeginDestroy()执行之前。
-【2017-02-06】
-用宏控制debug相关代码的开启和关闭
-#if UE_BUILD_SHIPPING //debug code... #endif  UE4数据同步相关的引擎源码
-Runtime\Engine\Private\ActorReplication.cpp Runtime\Engine\Private\ Replication.cpp Runtime\Engine\Public\Net \DataReplication.cpp Engine\Plugins\Messaging\TcpMessaging\Source\TcpMessaging\Private\TcpMessagingModule.cpp  SpawnActor和NewObject创建出来的对象如何获取父对象
-SpawnActor()有个参数：FActorSpawnParameters，这个参数中有很多属性，设置相关属性后，可以更方便的来控制这个被spawn出来的Actor，比如Owner属性：
-FActorSpawnParameters Param; Param.Owner = MyActor1; AActor MyActor2 = GetWorld()-&gt;SpawnActor&lt;MyActor&gt;(MyClass, Param); //此时的Owner就是MyActor1 MyActor Owner= MyActor2-&gt;GetOwner();  NewObject直接通过构造函数参数指定：">
-    <meta property="og:description" content="我的老博客中的UE4文章（一百八十多篇，未迁移，和此博客的UE4文章不重叠）
-http://aigo.iteye.com/category/347833
-【2015-12-06】
-如何添加自己的C&#43;&#43;代码
-如果是添加Character C&#43;&#43;代码，是在UE4 Editor中添加的，但是如果想添加一些与UE4引擎无关的c&#43;&#43;代码，比如网络通讯的，或者一些工具类，必须也在UE4 Editor中添加（至少我现在用的4.10版本是这样），如果在VS中直接添加，会出现一些奇怪的编译错误。UE4 Editor中添加自定义C&#43;&#43;代码方式如下： File -&gt; New C&#43;&#43; Class -&gt; 选择None，然后即可创建自己C&#43;&#43;代码
-UE4还写莫名其妙的bug，这些bug可能是与引擎升级有关，可参考解决办法：重新建个空的工程，然后把你现在项目的资源文件重新加进去，然后在编译和构建。
-我的windows10上遇到的奇怪问题有：
-(1)，项目自定义的GameMode没生效，进游戏是默认的自由摄像机控制器。这个问题我没有重新建工程，而是把level删掉重新建了一次。
-(2)，打包安卓Android部署时，提示错误：DistributionSigning settings are not all set. Check the DistributionSetting
-【2016-05-15】
-如果项目中使用了LoadClass，那么蓝图相关的class构造函数中不要执行和实例化对象相关的操作，因为当执行LoadClass时也会把对应class的构造函数执行一遍（即使我们没有手动执行spawn或者create等函数，原因是LoadClass执行了LoadObject，而LoadObject内部又会执行ConstructorHelpers::FObjectFinder()，所以会触发class的构造函数，比如自己新建了一个UserWidget class，这个class的默认构造函数会在LoadClass时被执行一次），建议将初始化操作放在Initialize、BeginPlay等函数中。
-【2016-05-17】
-内存溢出导致的问题：在用FString拼接字符串的时候，抛了一个异常，但是相同的代码在另一个地方是正常的，两个地方都是非GameThread，崩掉的位置发在调用FString::FromInt()。后来用itoa代替就正常了。很可能是逻辑代码有内存溢出的bug。
-【2016-06-02】
-如果同一属性在蓝图编辑器中和C&#43;&#43;中的值不同，那么蓝图中的属性值会shadow掉C&#43;&#43;构造函数中的值。如果想让C&#43;&#43;的值shadow蓝图的值，那么可以在C&#43;&#43;的BeginPlay等非构造函数的初始化函数中设置属性（这里假设没有在蓝图逻辑脚本中对属性设置）。 新建蓝图时，蓝图的属性会遵循C&#43;&#43;父类中的构造函数中的属性设置。
-【2016-08-16】
-用C&#43;&#43;动态创建Component时（NewObject()），在AttachToComponent之前，需要执行RegisterComponent,否则无法Attach成功，且TickComponent()无法触发。
-备注：只有NewObject创建出来的Component才需要执行ResisterComponent，SpawnActor和ConstructorHelpers创建的对象则不需要。
-【2016-09-23】
-UE4中的C&#43;&#43;类继承规则：只能直接继承自两种类，一种是非UObject类，一种是继承过UInterface的UObject类。如果一个类是UObject且其父类没有一个是UInterface，则无法编译通过。
-如果同一批美术材质，在两个不同工程下的渲染效果不一样，比如同一个粒子特效，实际效果在两个工程中有差异，则可能是工程的设置项问题。解决办法：将两个工程中的Config/DefaultEngine.ini中的[/Script/Engine.RendererSettings】配置参数，设置统一即可。
-如果spawn出来的actor执行了AddToRoot操作，那么，需要GameInstance::Shutdown()中执行RemoveFromRoot，否则退出UE4Editor时会出现崩溃。另外，在GameMode和GameInstance的BeginDestroy()中执行是不行的，因为垃圾回收过程发生在BeginDestroy()执行之前。
-【2017-02-06】
-用宏控制debug相关代码的开启和关闭
-#if UE_BUILD_SHIPPING //debug code... #endif  UE4数据同步相关的引擎源码
-Runtime\Engine\Private\ActorReplication.cpp Runtime\Engine\Private\ Replication.cpp Runtime\Engine\Public\Net \DataReplication.cpp Engine\Plugins\Messaging\TcpMessaging\Source\TcpMessaging\Private\TcpMessagingModule.cpp  SpawnActor和NewObject创建出来的对象如何获取父对象
-SpawnActor()有个参数：FActorSpawnParameters，这个参数中有很多属性，设置相关属性后，可以更方便的来控制这个被spawn出来的Actor，比如Owner属性：
-FActorSpawnParameters Param; Param.Owner = MyActor1; AActor MyActor2 = GetWorld()-&gt;SpawnActor&lt;MyActor&gt;(MyClass, Param); //此时的Owner就是MyActor1 MyActor Owner= MyActor2-&gt;GetOwner();  NewObject直接通过构造函数参数指定：">
-    <meta property="og:type" content="blog">
-    <meta property="og:title" content="[UE4]注意事项与笔记">
-    <meta property="og:url" content="/2015/12/ue4%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9%E4%B8%8E%E7%AC%94%E8%AE%B0/">
-    <meta property="og:site_name" content="玄冬Wong">
-    <meta name="twitter:card" content="summary">
-    <meta name="twitter:title" content="玄冬Wong">
-    <meta name="twitter:description" content="我的老博客中的UE4文章（一百八十多篇，未迁移，和此博客的UE4文章不重叠）
-http://aigo.iteye.com/category/347833
-【2015-12-06】
-如何添加自己的C&#43;&#43;代码
-如果是添加Character C&#43;&#43;代码，是在UE4 Editor中添加的，但是如果想添加一些与UE4引擎无关的c&#43;&#43;代码，比如网络通讯的，或者一些工具类，必须也在UE4 Editor中添加（至少我现在用的4.10版本是这样），如果在VS中直接添加，会出现一些奇怪的编译错误。UE4 Editor中添加自定义C&#43;&#43;代码方式如下： File -&gt; New C&#43;&#43; Class -&gt; 选择None，然后即可创建自己C&#43;&#43;代码
-UE4还写莫名其妙的bug，这些bug可能是与引擎升级有关，可参考解决办法：重新建个空的工程，然后把你现在项目的资源文件重新加进去，然后在编译和构建。
-我的windows10上遇到的奇怪问题有：
-(1)，项目自定义的GameMode没生效，进游戏是默认的自由摄像机控制器。这个问题我没有重新建工程，而是把level删掉重新建了一次。
-(2)，打包安卓Android部署时，提示错误：DistributionSigning settings are not all set. Check the DistributionSetting
-【2016-05-15】
-如果项目中使用了LoadClass，那么蓝图相关的class构造函数中不要执行和实例化对象相关的操作，因为当执行LoadClass时也会把对应class的构造函数执行一遍（即使我们没有手动执行spawn或者create等函数，原因是LoadClass执行了LoadObject，而LoadObject内部又会执行ConstructorHelpers::FObjectFinder()，所以会触发class的构造函数，比如自己新建了一个UserWidget class，这个class的默认构造函数会在LoadClass时被执行一次），建议将初始化操作放在Initialize、BeginPlay等函数中。
-【2016-05-17】
-内存溢出导致的问题：在用FString拼接字符串的时候，抛了一个异常，但是相同的代码在另一个地方是正常的，两个地方都是非GameThread，崩掉的位置发在调用FString::FromInt()。后来用itoa代替就正常了。很可能是逻辑代码有内存溢出的bug。
-【2016-06-02】
-如果同一属性在蓝图编辑器中和C&#43;&#43;中的值不同，那么蓝图中的属性值会shadow掉C&#43;&#43;构造函数中的值。如果想让C&#43;&#43;的值shadow蓝图的值，那么可以在C&#43;&#43;的BeginPlay等非构造函数的初始化函数中设置属性（这里假设没有在蓝图逻辑脚本中对属性设置）。 新建蓝图时，蓝图的属性会遵循C&#43;&#43;父类中的构造函数中的属性设置。
-【2016-08-16】
-用C&#43;&#43;动态创建Component时（NewObject()），在AttachToComponent之前，需要执行RegisterComponent,否则无法Attach成功，且TickComponent()无法触发。
-备注：只有NewObject创建出来的Component才需要执行ResisterComponent，SpawnActor和ConstructorHelpers创建的对象则不需要。
-【2016-09-23】
-UE4中的C&#43;&#43;类继承规则：只能直接继承自两种类，一种是非UObject类，一种是继承过UInterface的UObject类。如果一个类是UObject且其父类没有一个是UInterface，则无法编译通过。
-如果同一批美术材质，在两个不同工程下的渲染效果不一样，比如同一个粒子特效，实际效果在两个工程中有差异，则可能是工程的设置项问题。解决办法：将两个工程中的Config/DefaultEngine.ini中的[/Script/Engine.RendererSettings】配置参数，设置统一即可。
-如果spawn出来的actor执行了AddToRoot操作，那么，需要GameInstance::Shutdown()中执行RemoveFromRoot，否则退出UE4Editor时会出现崩溃。另外，在GameMode和GameInstance的BeginDestroy()中执行是不行的，因为垃圾回收过程发生在BeginDestroy()执行之前。
-【2017-02-06】
-用宏控制debug相关代码的开启和关闭
-#if UE_BUILD_SHIPPING //debug code... #endif  UE4数据同步相关的引擎源码
-Runtime\Engine\Private\ActorReplication.cpp Runtime\Engine\Private\ Replication.cpp Runtime\Engine\Public\Net \DataReplication.cpp Engine\Plugins\Messaging\TcpMessaging\Source\TcpMessaging\Private\TcpMessagingModule.cpp  SpawnActor和NewObject创建出来的对象如何获取父对象
-SpawnActor()有个参数：FActorSpawnParameters，这个参数中有很多属性，设置相关属性后，可以更方便的来控制这个被spawn出来的Actor，比如Owner属性：
-FActorSpawnParameters Param; Param.Owner = MyActor1; AActor MyActor2 = GetWorld()-&gt;SpawnActor&lt;MyActor&gt;(MyClass, Param); //此时的Owner就是MyActor1 MyActor Owner= MyActor2-&gt;GetOwner();  NewObject直接通过构造函数参数指定：">
-    
-      <meta name="twitter:creator" content="@idealsland">
-    
+      <link rel="publisher" href="https://plus.google.com/111340706178390411568">
     
 
-    
-    
-
-    
-      <meta property="og:image" content="//www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=640">
-    
-
-    
-    
-    
-
-    
+    <link rel="canonical" href="https://dawnarc.com/2015/12/ue4%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9%E4%B8%8E%E7%AC%94%E8%AE%B0/">
 
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
@@ -144,7 +186,7 @@ FActorSpawnParameters Param; Param.Owner = MyActor1; AActor MyActor2 = GetWorld(
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/helpers/jquery.fancybox-thumbs.min.css" integrity="sha256-SEa4XYAHihTcEP1f5gARTB2K26Uk8PsndQYHQC1f4jU=" crossorigin="anonymous" />
     
     
-    <link rel="stylesheet" href="https://dawnarc.com/css/style-jsjn0006wyhpyzivf6yceb31gvpjatbcs3qzjvlumobfnugccvobqwxnnaj8.min.css" />
+    <link rel="stylesheet" href="https://dawnarc.com/css/style-nnm2spxvve8onlujjlegkkytaehyadd4ksxc1hyzzq9a2wvtrgbljqyulomn.min.css" />
     
     
       
@@ -154,7 +196,7 @@ FActorSpawnParameters Param; Param.Owner = MyActor1; AActor MyActor2 = GetWorld(
 
     
       
-<script>
+<script type="application/javascript">
 var doNotTrack = false;
 if (!doNotTrack) {
 	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -186,7 +228,7 @@ if (!doNotTrack) {
     
     
       
-        <img class="header-picture" src="//www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=90" alt="Author&#39;s picture" />
+        <img class="header-picture" src="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=90" alt="Author&#39;s picture" />
       
     
     </a>
@@ -201,7 +243,7 @@ if (!doNotTrack) {
     
       <div class="sidebar-profile">
         <a href="https://dawnarc.com/#about">
-          <img class="sidebar-profile-picture" src="//www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=110" alt="Author&#39;s picture" />
+          <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=110" alt="Author&#39;s picture" />
         </a>
         <h4 class="sidebar-profile-name">Neil Wang</h4>
         
@@ -921,9 +963,8 @@ Particle Effect Emitter can&rsquo;t move or rotate in Editor.<br />
 <p>【2018-10-27T20:47】<br />
 NewObject创建出来的Actor，如果没有放入场景中，其<code>BeginPlay()</code>、<code>Tick()</code>函数不会触发，即使设置了<code>PrimaryActorTick.bCanEverTick = true;</code>。</p>
 
-<p>【2018-11-08T20:54】</p>
-
-<p>SpawnActor时如何延迟执行Actor的构造函数？<br />
+<p>【2018-11-08T20:54】<br />
+SpawnActor时如何延迟执行Actor的构造函数？<br />
 先执行<code>UGameplayStatics::BeginDeferredActorSpawnFromClass()</code>，然后执行<code>UGameplayStatics::FinishSpawningActor()</code>。</p>
 
 <pre><code>/** Spawns an instance of an actor class, but does not automatically run its construction script.  */
@@ -932,6 +973,15 @@ static class AActor* BeginDeferredActorSpawnFromClass(const UObject* WorldContex
 /** 'Finish' spawning an actor.  This will run the construction script. */
 static class AActor* FinishSpawningActor(class AActor* Actor, const FTransform&amp; SpawnTransform);
 </code></pre>
+
+<p>【2018-11-26T10:23】<br />
+UMG 的文本动换行<br />
+TextBox 控件：然后修改<code>Auto Warp Text</code>为：true。
+TextBox(Multi-Line) 控件：然后修改<code>Warpping Policy</code>为：<code>Allow Per Character Warpping</code>。</p>
+
+<p>【2018-12-19T12:09】<br />
+如何让一个材质始终朝向摄像机？<br />
+使用：BillboardComponent</p>
 
 <hr />
 
@@ -954,8 +1004,8 @@ static class AActor* FinishSpawningActor(class AActor* Actor, const FTransform&a
                 
               
             
-            
-  <div class="post-actions-wrap">
+            <div class="post-actions-wrap">
+  
       <nav >
         <ul class="post-actions post-action-nav">
           
@@ -1002,8 +1052,8 @@ static class AActor* FinishSpawningActor(class AActor* Actor, const FTransform&a
         </a>
       </li>
     </ul>
-  </div>
-
+  
+</div>
 
             
               
@@ -1022,8 +1072,8 @@ static class AActor* FinishSpawningActor(class AActor* Actor, const FTransform&a
 
       </div>
       <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
-        
-  <div class="post-actions-wrap">
+        <div class="post-actions-wrap">
+  
       <nav >
         <ul class="post-actions post-action-nav">
           
@@ -1070,8 +1120,8 @@ static class AActor* FinishSpawningActor(class AActor* Actor, const FTransform&a
         </a>
       </li>
     </ul>
-  </div>
-
+  
+</div>
 
       </div>
       <div id="share-options-bar" class="share-options-bar" data-behavior="4">
@@ -1089,7 +1139,7 @@ static class AActor* FinishSpawningActor(class AActor* Actor, const FTransform&a
       <i class="fa fa-remove"></i>
     </div>
     
-      <img id="about-card-picture" src="//www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=110" alt="Author&#39;s picture" />
+      <img id="about-card-picture" src="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=110" alt="Author&#39;s picture" />
     
     <h4 id="about-card-name">Neil Wang</h4>
     
@@ -1134,102 +1184,19 @@ static class AActor* FinishSpawningActor(class AActor* Actor, const FTransform&a
           <div class="media">
             
             <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2018/11/ue4destructible-mesh-workflow/">
-                <h3 class="media-heading">[UE4]Destructible Mesh Workflow</h3>
+              <a class="link-unstyled" href="https://dawnarc.com/2018/12/ue4invalid-object-in-gc-0x000001eb2e659900-referencingobject-image/">
+                <h3 class="media-heading">[UE4]Invalid object in GC: 0x000001eb2e659900, ReferencingObject: Image</h3>
               </a>
               <span class="media-meta">
                 <span class="media-date text-small">
-                  Nov 11, 2018
+                  Dec 12, 2018
                 </span>
               </span>
-              <div class="media-content hide-xs font-merryweather">Take damage, destruct mesh if damage is enough:
-// Take damage UFUNCTION(BlueprintCallable, Category=&quot;Components|Destructible&quot;) virtual void UDestructibleComponent::ApplyDamage(float DamageAmount, const FVector&amp; HitLocation, const FVector&amp; ImpulseDir, float ImpulseStrength) override; // Take radius damage UFUNCTION(BlueprintCallable, Category=&quot;Components|Destructible&quot;) virtual void UDestructibleComponent::ApplyRadiusDamage(float BaseDamage, const FVector&amp; HurtOrigin, float DamageRadius, float ImpulseStrength, bool bFullDamage) override;  </div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2018/11/versioncontrolgit-auto-packing-the-repository-in-background-for-optimum-performance/">
-                <h3 class="media-heading">[VersionControl]git Auto packing the repository in background for optimum performance</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Nov 11, 2018
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather">原文：https://blog.csdn.net/xyznol/article/details/51261692
-git运行突然提示
-Auto packing the repository in background for optimum performance  查资料，原来是自己本地一些 “悬空对象”太多(git删除分支或者清空stash的时候，这些其实还没有真正删除，成为悬空对象，我们可以使用merge命令可以从中恢复一些文件)
-解决：
-1.输入命令：git fsck --lost-found，可以看到好多“dangling commit”。
-2.清空他们：git gc --prune=now，完成。</div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2018/11/versioncontrol%E8%BD%AC%E8%BD%BD%E7%AE%80%E5%8D%95%E5%AF%B9%E6%AF%94git-pull%E5%92%8Cgit-pull---rebase%E7%9A%84%E4%BD%BF%E7%94%A8/">
-                <h3 class="media-heading">[VersionControl]转载：简单对比git pull和git pull --rebase的使用</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Nov 11, 2018
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather">原文：https://www.cnblogs.com/kevingrace/p/5896706.html
-使用下面的关系区别这两个操作：
-git pull = git fetch + git merge
-git pull --rebase = git fetch + git rebase
-现在来看看git merge和git rebase的区别。
-假设有3次提交A,B,C。   在远程分支origin的基础上创建一个名为&rdquo;mywork&rdquo;的分支并提交了，同时有其他人在&rdquo;origin&rdquo;上做了一些修改并提交了。   其实这个时候E不应该提交，因为提交后会发生冲突。如何解决这些冲突呢？有以下两种方法：
- git merge
-用git pull命令把&rdquo;origin&rdquo;分支上的修改pull下来与本地提交合并（merge）成版本M，但这样会形成图中的菱形，让人很困惑。    git rebase
-创建一个新的提交R，R的文件内容和上面M的一样，但我们将E提交废除，当它不存在（图中用虚线表示）。由于这种删除，小李不应该push其他的repository.rebase的好处是避免了菱形的产生，保持提交曲线为直线，让大家易于理解。     在rebase的过程中，有时也会有conflict，这时Git会停止rebase并让用户去解决冲突，解决完冲突后，用git add命令去更新这些内容，然后不用执行git-commit,直接执行git rebase &ndash;continue,这样git会继续apply余下的补丁。 在任何时候，都可以用git rebase &ndash;abort参数来终止rebase的行动，并且mywork分支会回到rebase开始前的状态。</div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2018/11/ue4particle-emitter-%E7%B2%92%E5%AD%90%E7%89%B9%E6%95%88%E7%9B%B8%E5%85%B3/">
-                <h3 class="media-heading">[UE4]Particle Emitter 粒子特效相关</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Nov 11, 2018
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"> C++获取特效实例中的单个Emitter对象 UParticleSystemComponent 有个EmitterInstances属性，里面包含了特效中每个Emitter的相关信息：
-TArray&lt;struct FParticleEmitterInstance*&gt; EmitterInstances;  </div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2018/10/ue4destructiblecomponent-doesnt-respect-to-collision-change/">
-                <h3 class="media-heading">[UE4]DestructibleComponent doesn&#39;t respect to Collision change</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Oct 10, 2018
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather">Problem:
-There&rsquo;s a bug that DestructibleComponent isn&rsquo;t affectd by SetActorEnableCollision or SetCollisionEnabled.
+              <div class="media-content hide-xs font-merryweather">Exception Throw:
+Fatal error: [File:D:\Build\++UE4\Sync\Engine\Source\Runtime\CoreUObject\Private\UObject\GarbageCollection.cpp] [Line: 623] Invalid object in GC: 0x000001eb2e659900, ReferencingObject: Image /Engine/Transient.GameEngine_0:TDGameInstance_0.CombatMainUIBP_C_0.WidgetTree_0.MiniMapUIBP_1216.WidgetTree_0.Image_0, ReferencingObjectClass: Class /Script/UMG.Image, Property Name: ResourceObject, Offset: 480, TokenIndex: 11 UE4Editor_Core!FDebug::AssertFailed() [d:\build\++ue4\sync\engine\source\runtime\core\private\misc\assertionmacros.cpp:425] UE4Editor_CoreUObject!TFastReferenceCollector&lt;1,FGCReferenceProcessor&lt;1&gt;,FGCCollector&lt;1&gt;,FGCArrayPool,0&gt;::ProcessObjectArray() [d:\build\++ue4\sync\engine\source\runtime\coreuobject\public\uobject\fastreferencecollector.h:697] UE4Editor_CoreUObject!TFastReferenceCollector&lt;1,FGCReferenceProcessor&lt;1&gt;,FGCCollector&lt;1&gt;,FGCArrayPool,0&gt;::FCollectorTaskQueue::DoTask() [d:\build\++ue4\sync\engine\source\runtime\coreuobject\public\uobject\fastreferencecollector.h:378] UE4Editor_CoreUObject!TGraphTask&lt;TFastReferenceCollector&lt;1,FGCReferenceProcessor&lt;1&gt;,FGCCollector&lt;1&gt;,FGCArrayPool,0&gt;::FCollectorTaskProcessorTask&gt;::ExecuteTask() [d:\build\++ue4\sync\engine\source\runtime\core\public\async\taskgraphinterfaces.h:829] UE4Editor_Core!FTaskThreadAnyThread::ProcessTasks() [d:\build\++ue4\sync\engine\source\runtime\core\private\async\taskgraph.cpp:936] UE4Editor_Core!FTaskThreadAnyThread::ProcessTasksUntilQuit() [d:\build\++ue4\sync\engine\source\runtime\core\private\async\taskgraph.cpp:801] UE4Editor_Core!FTaskThreadBase::Run() [d:\build\++ue4\sync\engine\source\runtime\core\private\async\taskgraph.cpp:516] UE4Editor_Core!FRunnableThreadWin::Run() [d:\build\++ue4\sync\engine\source\runtime\core\private\windows\windowsrunnablethread.cpp:76]  Reason:
+Some assets object in memory not persisted
 Solution:
-Add a custom Component inherit from DestructibleComponent, then override two functions: OnActorEnableCollisionChanged, SetCollisionEnabled
-// Copyright 2015 inbetweengames #include &quot;ProjectDisco.h&quot; #include &quot;DADestructibleComponent.h&quot; void UDADestructibleComponent::OnActorEnableCollisionChanged() { // Update physical properties of the chunks in the mesh if the body instance is valid FBodyInstance* BodyInst = GetBodyInstance(); if (BodyInst) { BodyInst-&gt;UpdatePhysicsFilterData(); } // Update physical properties for individual bone instances as well if (SkeletalMesh) { int32 NumBones = SkeletalMesh-&gt;RefSkeleton.</div>
+Use UPROPERTY() or AddToRoot() to persist assets in memory.</div>
             </div>
             <div style="clear:both;"></div>
             <hr>
@@ -1238,18 +1205,15 @@ Add a custom Component inherit from DestructibleComponent, then override two fun
           <div class="media">
             
             <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2018/10/mayaplugins-collections/">
-                <h3 class="media-heading">[Maya]Plugins Collections</h3>
+              <a class="link-unstyled" href="https://dawnarc.com/2018/12/toolsreduce-chrome-drive-activity100-percent-drive-usage/">
+                <h3 class="media-heading">[Tools]Reduce Chrome drive activity(100 percent Drive usage)</h3>
               </a>
               <span class="media-meta">
                 <span class="media-date text-small">
-                  Oct 10, 2018
+                  Dec 12, 2018
                 </span>
               </span>
-              <div class="media-content hide-xs font-merryweather">A search engine for Maya for all its tools and your own scripts.
-http://cosmos.toolsfrom.space/
-Workflow Toolkit: Shader, UV, Curve, Selection, Renamer.
-https://gumroad.com/eriklehmann</div>
+              <div class="media-content hide-xs font-merryweather">Settings -&gt; Advanced -&gt; Privacy and security -&gt; Disable Protects you and your device from dangerous sites</div>
             </div>
             <div style="clear:both;"></div>
             <hr>
@@ -1258,20 +1222,18 @@ https://gumroad.com/eriklehmann</div>
           <div class="media">
             
             <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2018/10/ue4scene-assets-collections/">
-                <h3 class="media-heading">[UE4]Scene Assets Collections</h3>
+              <a class="link-unstyled" href="https://dawnarc.com/2018/12/ue4hardware-cursorsolution-for-umg-customized-cursor-lagging/">
+                <h3 class="media-heading">[UE4]Hardware cursor(solution for UMG customized cursor lagging)</h3>
               </a>
               <span class="media-meta">
                 <span class="media-date text-small">
-                  Oct 10, 2018
+                  Dec 12, 2018
                 </span>
               </span>
-              <div class="media-content hide-xs font-merryweather">Futuristic modular top-down rooftop
-https://cubebrush.co/matima-studio/products/cdfga-vJET/futuristic-modular-top-down-rooftop
-Overgrown Ruins
-https://cubebrush.co/matima-studio/products/txm3yg-vfju/overgrown-ruins
-https://www.mawiunited.com/
-https://www.matima-studio.com/assets</div>
+              <div class="media-content hide-xs font-merryweather">Steps
+1, Put a PNG in game content directory, e.g. E:\MyProj\Content\Asset\Cursor\mouse.png
+2, Project Settings -&gt; Engine -&gt; User Interface -&gt; Hardware Cursors -&gt; add element and set Default, set Cursor Path as Asset/Cursor/mouse.
+3, If the click response position of .PNG cursor isn&rsquo;t the top-left corner, you can modify the Hot Spot, e.g. you can set Hot Spot as (0.5, 0.5) if the click response position is the center of .</div>
             </div>
             <div style="clear:both;"></div>
             <hr>
@@ -1280,20 +1242,18 @@ https://www.matima-studio.com/assets</div>
           <div class="media">
             
             <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2018/10/ue4lnk2019-unresolved-external-symbol---getprivatestaticclass/">
-                <h3 class="media-heading">[UE4]LNK2019 unresolved external symbol - GetPrivateStaticClass</h3>
+              <a class="link-unstyled" href="https://dawnarc.com/2018/12/ue4global-variables/">
+                <h3 class="media-heading">[UE4]Global variables</h3>
               </a>
               <span class="media-meta">
                 <span class="media-date text-small">
-                  Oct 10, 2018
+                  Dec 12, 2018
                 </span>
               </span>
-              <div class="media-content hide-xs font-merryweather">UE4 Plugin Link Error:
-Error LNK2019 unresolved external symbol &quot;private: static class UClass * __cdecl UMyComponent::GetPrivateStaticClass(void)&quot; (?GetPrivateStaticClass@UMyComponent@@CAPEAVUClass@@XZ) referenced in function &quot;class UMyComponent * __cdecl NewObject&lt;class UMyComponent&gt;(class UObject *)&quot; (??$NewObject@VUMyComponent@@@@YAPEAVUMyComponent@@PEAVUObject@@@Z) ClimbWall  Reason:
-Maybe you removed UE4&rsquo;s macro in your header.
-Solution:
-Add UE4 stylized macro in header, e.g.:
-UCLASS() class TESTPLUGIN_API UMyComponent : public UActorComponent { GENERATED_BODY() }  </div>
+              <div class="media-content hide-xs font-merryweather">File path:
+Engine\Source\Runtime\Core\Private\Misc\CoreGlobals.cpp
+Source:
+IMPLEMENT_MODULE( FCoreModule, Core ); /*----------------------------------------------------------------------------- Global variables. -----------------------------------------------------------------------------*/ CORE_API FFeedbackContext* GWarn = nullptr; /* User interaction and non critical warnings */ FConfigCacheIni* GConfig = nullptr; /* Configuration database cache */ ITransaction* GUndo = nullptr; /* Transaction tracker, non-NULL when a transaction is in progress */ FOutputDeviceConsole* GLogConsole = nullptr; /* Console log hook */ CORE_API FMalloc* GMalloc = nullptr; /* Memory allocator */ CORE_API FMalloc** GFixedMallocLocationPtr = nullptr; /* Memory allocator pointer location when PLATFORM_USES_FIXED_GMalloc_CLASS is true */ class UPropertyWindowManager* GPropertyWindowManager = nullptr; /* Manages and tracks property editing windows */ /** For building call stack text dump in guard/unguard mechanism.</div>
             </div>
             <div style="clear:both;"></div>
             <hr>
@@ -1302,16 +1262,20 @@ UCLASS() class TESTPLUGIN_API UMyComponent : public UActorComponent { GENERATED_
           <div class="media">
             
             <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2018/10/algorithmscalculator-stack/">
-                <h3 class="media-heading">[Algorithms]Calculator Stack</h3>
+              <a class="link-unstyled" href="https://dawnarc.com/2018/12/ue4trigger-tick-of-the-object-inherited-from-uobject/">
+                <h3 class="media-heading">[UE4]Trigger Tick of the object inherited from UObject</h3>
               </a>
               <span class="media-meta">
                 <span class="media-date text-small">
-                  Oct 10, 2018
+                  Dec 12, 2018
                 </span>
               </span>
-              <div class="media-content hide-xs font-merryweather">keywords：计算器代码、Calculator
-#include &quot;stdio.h&quot; #include &quot;string.h&quot; #define MAX 1001 double stack[MAX]; int tail; int main(){ int a; while(scanf(&quot;%d &quot;,&amp;a)&amp;&amp;a!=0){ tail=0; stack[++tail]=1.0*a;//tail始终指向末尾数字位置 //1.入栈所有数据（如果遇到*/号，只更新栈尾） char ch1,ch2; while(scanf(&quot;%c %d%c&quot;,&amp;ch1,&amp;a,&amp;ch2)!=EOF){ if(ch1=='+'){ stack[++tail]=1.0*a;//push }else if(ch1=='-'){ stack[++tail]=-1.0*a;//push neg }else if(ch1=='*'){ stack[tail]=stack[tail]*a;//update tail }else if(ch1=='/'){ stack[tail]=stack[tail]/(double)a;//updata tail } if(ch2!=' ') break; } //2.把栈里头的东西全部加起来，求和 double result=0; for(int i=1;i&lt;=tail;i++) result+=stack[i]; printf(&quot;%.2lf\n&quot;,result); } return 1; }  原文：https://blog.csdn.net/JIEJINQUANIL/article/details/51405381</div>
+              <div class="media-content hide-xs font-merryweather">The object inherited from UObject would not trigger Tick when instanced (NewObject()), but AActor and the UActorComponent would trigger Tick.
+So how to trigger Tick of the object inherited from UObject?
+The answer is: inherit FTickableGameObject and UObject at the same.
+example source
+header:
+UCLASS() class UCoolDownMgr : public UObject, public FTickableGameObject { GENERATED_BODY() public: // Sets default values for this character's properties UCoolDownMgr(); virtual ~UCoolDownMgr(); // Begin FTickableGameObject Interface. virtual void Tick(float DeltaTime) override; virtual bool IsTickable() const override; virtual TStatId GetStatId() const override; // End FTickableGameObject Interface.</div>
             </div>
             <div style="clear:both;"></div>
             <hr>
@@ -1320,26 +1284,106 @@ UCLASS() class TESTPLUGIN_API UMyComponent : public UActorComponent { GENERATED_
           <div class="media">
             
             <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2018/10/matharithmetic-formula-collections/">
-                <h3 class="media-heading">[Math]Arithmetic Formula Collections</h3>
+              <a class="link-unstyled" href="https://dawnarc.com/2018/12/ue4editor-extention/">
+                <h3 class="media-heading">[UE4]Editor Extention</h3>
               </a>
               <span class="media-meta">
                 <span class="media-date text-small">
-                  Oct 10, 2018
+                  Dec 12, 2018
                 </span>
               </span>
-              <div class="media-content hide-xs font-merryweather">Mathematics
-https://keisan.casio.com/menu/system/000000000250
-Calcuate distance from foot of perpendicular to line
-https://math.stackexchange.com/questions/33868/foot-of-perpendicular-to-line
-How do you find the distance from a point to a plane?
-https://math.stackexchange.com/questions/88392/how-do-you-find-the-distance-from-a-point-to-a-plane
-How to find the equation of a plane using three non-collinear points
-https://www.maplesoft.com/support/help/maple/view.aspx?path=MathApps%2FEquationofaPlane3Points
-Find the equation of the plane knowing that it passes through 3 points
-https://math.stackexchange.com/questions/1156983/find-the-equation-of-the-plane-knowing-that-it-passes-through-3-points
-Find plane by normal and instance point + distance between origin and plane
-https://math.stackexchange.com/questions/752252/find-plane-by-normal-and-instance-point-distance-between-origin-and-plane</div>
+              <div class="media-content hide-xs font-merryweather">UE4 - Easy example of How to create menus in the editor
+http://www.danielmayor.com/ue4-simple-menus
+UE4 Level Editor
+https://books.google.com.sg/books?id=zZ7cDgAAQBAJ&amp;pg=PA272&amp;lpg=PA272&amp;dq=UE4+leveleditor+C%2B%2B&amp;source=bl&amp;ots=ZsX7ZCR6bV&amp;sig=6_J7xzxTDosX5dOuLwpiaKrOSHU&amp;hl=zh-CN&amp;sa=X&amp;ved=2ahUKEwji8aiT8orfAhWFTn0KHU0JB7wQ6AEwBXoECAUQAQ#v=onepage&amp;q=UE4%20leveleditor%20C%2B%2B&amp;f=false
+Creating an Editor Module
+https://wiki.unrealengine.com/Creating_an_Editor_Module
+Customizing the editor&rsquo;s toolbar buttons menu via custom plugin
+https://answers.unrealengine.com/questions/25609/customizing-the-editors-toolbar-buttons-menu-via-c.html
+UE4 Editor Toolbar Extention
+https://blog.csdn.net/hui211314ddhui/article/details/79375548</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/12/ue4packagingresults-error-bad-name-index/">
+                <h3 class="media-heading">[UE4]PackagingResults Error Bad name index</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Dec 12, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">Package Error PackagingResults: Error: Bad name index -1/47  Solution 1 You can find the asset causing this by building the engine from source and adding breakpoints in these two place:
+LinkerLoad.cpp
+void FLinkerLoad::BadNameIndexError(NAME_INDEX NameIndex) { UE_LOG(LogLinker, Error, TEXT(&quot;Bad name index %i/%i&quot;), NameIndex, NameMap.Num()); }  and
+PackageReader.cpp
+FArchive&amp; FPackageReader::operator&lt;&lt;( FName&amp; Name ) { check(Loader); NAME_INDEX NameIndex; FArchive&amp; Ar = *this; Ar &lt;&lt; NameIndex; if( !NameMap.IsValidIndex(NameIndex) ) { UE_LOG(LogAssetRegistry, Fatal, TEXT(&quot;Bad name index %i/%i&quot;), NameIndex, NameMap.</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/12/ue4slate-and-native-umgc-notes/">
+                <h3 class="media-heading">[UE4]Slate and Native UMG(C&#43;&#43;) Notes</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Dec 12, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">How to scale or zoom a widget? For Mouse Zoom:
+ override onMouseWheel add Wheel Delta to Panning Canvas&rsquo; Render Transform Scale clamp min result to something above 0 (widgets flip if scaled below 0) and max to your desired max zoom Set Render Scale of the Panning Canvas with the result of the above  Reference: How to scale/zoom a widget with blueprints?
+https://answers.unrealengine.com/questions/815202/how-to-scalezoom-a-widget-with-blueprints.html
+How to clip widget display area?</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/11/c-const_cast/">
+                <h3 class="media-heading">[C&#43;&#43;]const_cast</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Nov 11, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">You are not allowed to const_cast variables that are actually const. This results in undefined behavior. const_cast is used to remove the const-ness from references and pointers that ultimately refer to something that is not const.
+So, this is allowed:
+int i = 0; const int&amp; ref = i; const int* ptr = &amp;i; const_cast&lt;int&amp;&gt;(ref) = 3; *const_cast&lt;int*&gt;(ptr) = 3;  It&rsquo;s allowed because i, the object being assigned to, is not const.</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/11/ue4logcompile-error-circular-dependency-detected-for-filename/">
+                <h3 class="media-heading">[UE4]LogCompile-error-Circular dependency detected for filename</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Nov 11, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">Compilation Error：
+LogCompile : error : Circular dependency detected for filename D:\Library Storage\Documents\Unreal Projects\DistantHome\Source\DistantHome\Public\Game\DHGameInfo.h!  Solution:
+Don&rsquo;t include headers in header, declare class in header and include headers in cpp.
+class forwardedClass; class UsingIt { public: forwardedClass* instance; }  or
+class UsingIt { public: class forwardedClass* instance; }  Reference:How do you guys combat circular dependencies in your file heads?
+https://forums.unrealengine.com/development-discussion/c-gameplay-programming/109582-how-do-you-guys-combat-circular-dependencies-in-your-file-heads</div>
             </div>
             <div style="clear:both;"></div>
             <hr>
@@ -1352,7 +1396,7 @@ https://math.stackexchange.com/questions/752252/find-plane-by-normal-and-instanc
          data-message-zero="no post found"
          data-message-one="1 post found"
          data-message-other="{n} posts found">
-         427 posts found
+         440 posts found
       </p>
     </div>
   </div>
@@ -1375,6 +1419,20 @@ https://math.stackexchange.com/questions/752252/find-plane-by-normal-and-instanc
 <script src="https://dawnarc.com/js/script-qi9wbxp2ya2j6p7wx1i6tgavftewndznf4v0hy2gvivk1rxgc3lm7njqb6bz.min.js"></script>
 
 
+<script lang="javascript">
+window.onload = updateMinWidth;
+window.onresize = updateMinWidth;
+document.getElementById("sidebar").addEventListener("transitionend", updateMinWidth);
+function updateMinWidth() {
+  var sidebar = document.getElementById("sidebar");
+  var main = document.getElementById("main");
+  main.style.minWidth = "";
+  var w1 = getComputedStyle(main).getPropertyValue("min-width");
+  var w2 = getComputedStyle(sidebar).getPropertyValue("width");
+  var w3 = getComputedStyle(sidebar).getPropertyValue("left");
+  main.style.minWidth = `calc(${w1} - ${w2} - ${w3})`;
+}
+</script>
 
 <script>
 $(document).ready(function() {
@@ -1414,6 +1472,7 @@ $(document).ready(function() {
       </script>
     
   
+
 
 
 

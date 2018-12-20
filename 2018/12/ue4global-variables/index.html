@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.51 with theme Tranquilpeak 0.4.3-SNAPSHOT">
+<meta name="author" content="Neil Wang">
+<meta name="keywords" content="UE4, Global variables">
+<meta name="description" content="File path:
+Engine\Source\Runtime\Core\Private\Misc\CoreGlobals.cpp
+Source:
+IMPLEMENT_MODULE( FCoreModule, Core ); /*----------------------------------------------------------------------------- Global variables. -----------------------------------------------------------------------------*/ CORE_API FFeedbackContext* GWarn = nullptr; /* User interaction and non critical warnings */ FConfigCacheIni* GConfig = nullptr; /* Configuration database cache */ ITransaction* GUndo = nullptr; /* Transaction tracker, non-NULL when a transaction is in progress */ FOutputDeviceConsole* GLogConsole = nullptr; /* Console log hook */ CORE_API FMalloc* GMalloc = nullptr; /* Memory allocator */ CORE_API FMalloc** GFixedMallocLocationPtr = nullptr; /* Memory allocator pointer location when PLATFORM_USES_FIXED_GMalloc_CLASS is true */ class UPropertyWindowManager* GPropertyWindowManager = nullptr; /* Manages and tracks property editing windows */ /** For building call stack text dump in guard/unguard mechanism.">
+
+
+<meta property="og:description" content="File path:
+Engine\Source\Runtime\Core\Private\Misc\CoreGlobals.cpp
+Source:
+IMPLEMENT_MODULE( FCoreModule, Core ); /*----------------------------------------------------------------------------- Global variables. -----------------------------------------------------------------------------*/ CORE_API FFeedbackContext* GWarn = nullptr; /* User interaction and non critical warnings */ FConfigCacheIni* GConfig = nullptr; /* Configuration database cache */ ITransaction* GUndo = nullptr; /* Transaction tracker, non-NULL when a transaction is in progress */ FOutputDeviceConsole* GLogConsole = nullptr; /* Console log hook */ CORE_API FMalloc* GMalloc = nullptr; /* Memory allocator */ CORE_API FMalloc** GFixedMallocLocationPtr = nullptr; /* Memory allocator pointer location when PLATFORM_USES_FIXED_GMalloc_CLASS is true */ class UPropertyWindowManager* GPropertyWindowManager = nullptr; /* Manages and tracks property editing windows */ /** For building call stack text dump in guard/unguard mechanism.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[UE4]Global variables">
+<meta name="twitter:title" content="[UE4]Global variables">
+<meta property="og:url" content="https://dawnarc.com/2018/12/ue4global-variables/">
+<meta property="twitter:url" content="https://dawnarc.com/2018/12/ue4global-variables/">
+<meta property="og:site_name" content="玄冬Wong">
+<meta property="og:description" content="File path:
+Engine\Source\Runtime\Core\Private\Misc\CoreGlobals.cpp
+Source:
+IMPLEMENT_MODULE( FCoreModule, Core ); /*----------------------------------------------------------------------------- Global variables. -----------------------------------------------------------------------------*/ CORE_API FFeedbackContext* GWarn = nullptr; /* User interaction and non critical warnings */ FConfigCacheIni* GConfig = nullptr; /* Configuration database cache */ ITransaction* GUndo = nullptr; /* Transaction tracker, non-NULL when a transaction is in progress */ FOutputDeviceConsole* GLogConsole = nullptr; /* Console log hook */ CORE_API FMalloc* GMalloc = nullptr; /* Memory allocator */ CORE_API FMalloc** GFixedMallocLocationPtr = nullptr; /* Memory allocator pointer location when PLATFORM_USES_FIXED_GMalloc_CLASS is true */ class UPropertyWindowManager* GPropertyWindowManager = nullptr; /* Manages and tracks property editing windows */ /** For building call stack text dump in guard/unguard mechanism.">
+<meta name="twitter:description" content="File path:
+Engine\Source\Runtime\Core\Private\Misc\CoreGlobals.cpp
+Source:
+IMPLEMENT_MODULE( FCoreModule, Core ); /*----------------------------------------------------------------------------- Global variables. -----------------------------------------------------------------------------*/ CORE_API FFeedbackContext* GWarn = nullptr; /* User interaction and non critical warnings */ FConfigCacheIni* GConfig = nullptr; /* Configuration database cache */ ITransaction* GUndo = nullptr; /* Transaction tracker, non-NULL when a transaction is in progress */ FOutputDeviceConsole* GLogConsole = nullptr; /* Console log hook */ CORE_API FMalloc* GMalloc = nullptr; /* Memory allocator */ CORE_API FMalloc** GFixedMallocLocationPtr = nullptr; /* Memory allocator pointer location when PLATFORM_USES_FIXED_GMalloc_CLASS is true */ class UPropertyWindowManager* GPropertyWindowManager = nullptr; /* Manages and tracks property editing windows */ /** For building call stack text dump in guard/unguard mechanism.">
+<meta property="og:locale" content="en-us">
+
+  
+    <meta property="article:published_time" content="2018-12-14T18:45:02">
+  
+  
+    <meta property="article:modified_time" content="2018-12-14T18:45:02">
+  
+  
+  
+    
+      <meta property="article:section" content="UnrealEngine4">
+    
+  
+  
+    
+      <meta property="article:tag" content="UE4">
+    
+  
+
+
+<meta name="twitter:card" content="summary">
+
+  <meta name="twitter:site" content="@idealsland">
+
+
+  <meta name="twitter:creator" content="@idealsland">
+
+
+
+
+
+
+
+
+
+
+  <meta property="og:image" content="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=640">
+  <meta property="twitter:image" content="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=640">
+
+
+    <title>[UE4]Global variables</title>
+
+    <link rel="icon" href="https://dawnarc.com/favicon.png">
+    
+
+    
+      <link rel="publisher" href="https://plus.google.com/111340706178390411568">
+    
+
+    <link rel="canonical" href="https://dawnarc.com/2018/12/ue4global-variables/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/jquery.fancybox.min.css" integrity="sha256-vuXZ9LGmmwtjqFX1F+EKin1ThZMub58gKULUyf0qECk=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/helpers/jquery.fancybox-thumbs.min.css" integrity="sha256-SEa4XYAHihTcEP1f5gARTB2K26Uk8PsndQYHQC1f4jU=" crossorigin="anonymous" />
+    
+    
+    <link rel="stylesheet" href="https://dawnarc.com/css/style-nnm2spxvve8onlujjlegkkytaehyadd4ksxc1hyzzq9a2wvtrgbljqyulomn.min.css" />
+    
+    
+      
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/solarized-light.min.css">
+      
+    
+
+    
+      
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-78064851-2', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="4">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="https://dawnarc.com/">玄冬Wong</a>
+  </div>
+  
+    
+      <a class="header-right-picture "
+         href="https://dawnarc.com/#about">
+    
+    
+    
+      
+        <img class="header-picture" src="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=90" alt="Author&#39;s picture" />
+      
+    
+    </a>
+  
+  
+  
+
+</header>
+
+      <nav id="sidebar" data-behavior="4">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="https://dawnarc.com/#about">
+          <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=110" alt="Author&#39;s picture" />
+        </a>
+        <h4 class="sidebar-profile-name">Neil Wang</h4>
+        
+          <h5 class="sidebar-profile-bio">久长唯有品格</h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/categories">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+      
+      <span class="sidebar-button-desc">Categories</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/tags">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+      
+      <span class="sidebar-button-desc">Tags</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/archives">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+      
+      <span class="sidebar-button-desc">Archives</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/#about">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+      
+      <span class="sidebar-button-desc">About</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+      
+      <span class="sidebar-button-desc">Home</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/index.xml">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://stackoverflow.com/users/1645289/protoss" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-stack-overflow"></i>
+      
+      <span class="sidebar-button-desc">Stack Overflow</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://www.artstation.com/artist/dawnarc" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-artstation"></i>
+      
+      <span class="sidebar-button-desc">ArtStation</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://www.facebook.com/koanland" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-facebook"></i>
+      
+      <span class="sidebar-button-desc">Facebook</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/dawnarc" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://www.linkedin.com/in/dawnarc/" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-linkedin"></i>
+      
+      <span class="sidebar-button-desc">Linkedin</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://www.pinterest.com/wangaiguo/" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-pinterest"></i>
+      
+      <span class="sidebar-button-desc">Pinterest</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://steamcommunity.com/id/dawnarc" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-steam"></i>
+      
+      <span class="sidebar-button-desc">Steam</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://twitter.com/idealsland" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-twitter"></i>
+      
+      <span class="sidebar-button-desc">Twitter</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://weibo.com/koanland" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-weibo"></i>
+      
+      <span class="sidebar-button-desc">Weibo</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+
+    </ul>
+  </div>
+</nav>
+
+      
+
+      <div id="main" data-behavior="4"
+        class="
+               hasCoverMetaIn
+               ">
+        <article class="post" itemscope itemType="http://schema.org/BlogPosting">
+          
+          
+            <div class="post-header main-content-wrap text-left">
+  
+    <h1 class="post-title" itemprop="headline">
+      [UE4]Global variables
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2018-12-14T18:45:02&#43;08:00">
+        
+  December 14, 2018
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+</div>
+          
+          <div class="post-content markdown" itemprop="articleBody">
+            <div class="main-content-wrap">
+              <p>File path:<br />
+Engine\Source\Runtime\Core\Private\Misc\CoreGlobals.cpp</p>
+
+<p>Source:</p>
+
+<pre><code>IMPLEMENT_MODULE( FCoreModule, Core );
+
+
+/*-----------------------------------------------------------------------------
+    Global variables.
+-----------------------------------------------------------------------------*/
+
+CORE_API FFeedbackContext*  GWarn                       = nullptr;      /* User interaction and non critical warnings */
+FConfigCacheIni*                GConfig                     = nullptr;      /* Configuration database cache */
+ITransaction*               GUndo                       = nullptr;      /* Transaction tracker, non-NULL when a transaction is in progress */
+FOutputDeviceConsole*       GLogConsole                 = nullptr;      /* Console log hook */
+CORE_API FMalloc*           GMalloc                     = nullptr;      /* Memory allocator */
+CORE_API FMalloc**          GFixedMallocLocationPtr = nullptr;      /* Memory allocator pointer location when PLATFORM_USES_FIXED_GMalloc_CLASS is true */
+
+class UPropertyWindowManager*   GPropertyWindowManager  = nullptr;      /* Manages and tracks property editing windows */
+
+/** For building call stack text dump in guard/unguard mechanism. */
+TCHAR GErrorHist[16384] = TEXT(&quot;&quot;);
+
+/** For building exception description text dump in guard/unguard mechanism. */
+TCHAR GErrorExceptionDescription[4096] = TEXT( &quot;&quot; );
+
+/** The error message, can be assertion message, ensure message or message from the fatal error. */
+TCHAR GErrorMessage[4096] = TEXT( &quot;&quot; );
+
+
+CORE_API const FText GYes   = LOCTEXT(&quot;Yes&quot;,    &quot;Yes&quot;);
+CORE_API const FText GNo    = LOCTEXT(&quot;No&quot;,     &quot;No&quot;);
+CORE_API const FText GTrue  = LOCTEXT(&quot;True&quot;,   &quot;True&quot;);
+CORE_API const FText GFalse = LOCTEXT(&quot;False&quot;,  &quot;False&quot;);
+CORE_API const FText GNone  = LOCTEXT(&quot;None&quot;,   &quot;None&quot;);
+
+/** If true, this executable is able to run all games (which are loaded as DLL's) **/
+#if UE_GAME || UE_SERVER
+    // In monolithic builds, implemented by the IMPLEMENT_GAME_MODULE macro or by UE4Game module.
+    #if !IS_MONOLITHIC
+        bool GIsGameAgnosticExe = true;
+    #endif
+#else
+    // In monolithic Editor builds, implemented by the IMPLEMENT_GAME_MODULE macro or by UE4Game module.
+    #if !IS_MONOLITHIC || !UE_EDITOR
+        // Otherwise only modular editors are game agnostic.
+        #if IS_PROGRAM || IS_MONOLITHIC
+            bool GIsGameAgnosticExe = false;
+        #else
+            bool GIsGameAgnosticExe = true;
+        #endif
+    #endif //!IS_MONOLITHIC || !UE_EDITOR
+#endif
+
+/** When saving out of the game, this override allows the game to load editor only properties **/
+bool GForceLoadEditorOnly = false;
+
+/** Name of the core package                    **/
+FName GLongCorePackageName(TEXT(&quot;/Script/Core&quot;));
+/** Name of the core package                    **/
+FName GLongCoreUObjectPackageName(TEXT(&quot;/Script/CoreUObject&quot;));
+
+/** Disable loading of objects not contained within script files; used during script compilation */
+bool GVerifyObjectReferencesOnly = false;
+
+/** when constructing objects, use the fast path on consoles... */
+bool GFastPathUniqueNameGeneration = false;
+
+/** allow AActor object to execute script in the editor from specific entry points, such as when running a construction script */
+bool GAllowActorScriptExecutionInEditor = false;
+
+/** Forces use of template names for newly instanced components in a CDO */
+bool GCompilingBlueprint = false;
+
+/** True if we're reconstructing blueprint instances. Should never be true on cooked builds */
+bool GIsReconstructingBlueprintInstances = false;
+
+/** True if actors and objects are being re-instanced. */
+bool GIsReinstancing = false;
+
+/**
+ * If true, we are running an editor script that should not prompt any dialog modal. The default value of any model will be used.
+ * This is used when running a Blutility or script like Python and we don't want an OK dialog to pop while the script is running.
+ * Could be set for commandlet with -RUNNINGUNATTENDEDSCRIPT
+ */
+bool GIsRunningUnattendedScript = false;
+
+#if WITH_ENGINE
+bool                    PRIVATE_GIsRunningCommandlet        = false;                /** Whether this executable is running a commandlet (custom command-line processing code) */
+bool                    PRIVATE_GAllowCommandletRendering   = false;                /** If true, initialise RHI and set up scene for rendering even when running a commandlet. */
+bool                    PRIVATE_GAllowCommandletAudio       = false;                /** If true, allow audio even when running a commandlet. */
+#endif  // WITH_ENGINE
+
+#if WITH_EDITORONLY_DATA
+bool                    GIsEditor                       = false;                    /* Whether engine was launched for editing */
+bool                    GIsImportingT3D                 = false;                    /* Whether editor is importing T3D */
+bool                    GIsUCCMakeStandaloneHeaderGenerator = false;                /* Are we rebuilding script via the standalone header generator? */
+bool                    GIsTransacting                  = false;                    /* true if there is an undo/redo operation in progress. */
+bool                    GIntraFrameDebuggingGameThread  = false;                    /* Indicates that the game thread is currently paused deep in a call stack; do not process any game thread tasks */
+bool                    GFirstFrameIntraFrameDebugging  = false;                    /* Indicates that we're currently processing the first frame of intra-frame debugging */
+#elif USING_CODE_ANALYSIS
+// These are always false during 'non-editor code analysis', just like they would be when #defined.
+bool                    GIsEditor                       = false;
+bool                    GIsUCCMakeStandaloneHeaderGenerator = false;
+bool                    GIntraFrameDebuggingGameThread  = false;
+bool                    GFirstFrameIntraFrameDebugging  = false;
+#endif // !WITH_EDITORONLY_DATA
+
+bool                    GEdSelectionLock                = false;                    /* Are selections locked? (you can't select/deselect additional actors) */
+bool                    GIsClient                       = false;                    /* Whether engine was launched as a client */
+bool                    GIsServer                       = false;                    /* Whether engine was launched as a server, true if GIsClient */
+bool                    GIsCriticalError                = false;                    /* An appError() has occured */
+bool                    GIsGuarded                      = false;                    /* Whether execution is happening within main()/WinMain()'s try/catch handler */
+TSAN_ATOMIC(bool)       GIsRunning(false);                                          /* Whether execution is happening within MainLoop() */
+bool                    GIsDuplicatingClassForReinstancing = false;                 /* Whether we are currently using SDO on a UClass or CDO for live reinstancing */
+/** This specifies whether the engine was launched as a build machine process                               */
+bool                    GIsBuildMachine                 = false;
+/** This determines if we should output any log text.  If Yes then no log text should be emitted.           */
+bool                    GIsSilent                       = false;
+bool                    GIsSlowTask                     = false;                    /* Whether there is a slow task in progress */
+bool                    GSlowTaskOccurred               = false;                    /* Whether a slow task began last tick*/
+bool                    GIsRequestingExit               = false;                    /* Indicates that MainLoop() should be exited at the end of the current iteration */
+/** Archive for serializing arbitrary data to and from memory                                               */
+bool                    GAreScreenMessagesEnabled       = true;                     /* Whether onscreen warnings/messages are enabled */
+bool                    GScreenMessagesRestoreState     = false;                    /* Used to restore state after a screenshot */
+int32                   GIsDumpingMovie                 = 0;                        /* Whether we are dumping screenshots (!= 0), exposed as console variable r.DumpingMovie */
+bool                    GIsHighResScreenshot            = false;                    /* Whether we're capturing a high resolution shot */
+uint32                  GScreenshotResolutionX          = 0;                        /* X Resolution for high res shots */
+uint32                  GScreenshotResolutionY          = 0;                        /* Y Resolution for high res shots */
+uint64                  GMakeCacheIDIndex               = 0;                        /* Cache ID */
+
+FString             GEngineIni;                                                 /* Engine ini filename */
+
+/** Editor ini file locations - stored per engine version (shared across all projects). Migrated between versions on first run. */
+FString             GEditorIni;                                                 /* Editor ini filename */
+FString             GEditorKeyBindingsIni;                                      /* Editor Key Bindings ini file */
+FString             GEditorLayoutIni;                                           /* Editor UI Layout ini filename */
+FString             GEditorSettingsIni;                                         /* Editor Settings ini filename */
+
+/** Editor per-project ini files - stored per project. */
+FString             GEditorPerProjectIni;                                       /* Editor User Settings ini filename */
+
+FString             GCompatIni;
+FString             GLightmassIni;                                              /* Lightmass settings ini filename */
+FString             GScalabilityIni;                                            /* Scalability settings ini filename */
+FString             GHardwareIni;                                               /* Hardware ini filename */
+FString             GInputIni;                                                  /* Input ini filename */
+FString             GGameIni;                                                   /* Game ini filename */
+FString             GGameUserSettingsIni;                                       /* User Game Settings ini filename */
+
+float                   GNearClippingPlane              = 10.0f;                /* Near clipping plane */
+
+bool                    GExitPurge                      = false;
+
+FChunkedFixedUObjectArray* GCoreObjectArrayForDebugVisualizers = nullptr;
+#if PLATFORM_UNIX
+FNameEntry*** CORE_API GFNameTableForDebuggerVisualizers_MT = FName::GetNameTableForDebuggerVisualizers_MT();
+FChunkedFixedUObjectArray*&amp; CORE_API GObjectArrayForDebugVisualizers = GCoreObjectArrayForDebugVisualizers;
+#endif
+
+/** Game name, used for base game directory and ini among other things                                      */
+#if (!IS_MONOLITHIC &amp;&amp; !IS_PROGRAM)
+// In modular game builds, the game name will be set when the application launches
+TCHAR                   GInternalProjectName[64]                    = TEXT(&quot;None&quot;);
+#elif !IS_MONOLITHIC &amp;&amp; IS_PROGRAM
+// In non-monolithic programs builds, the game name will be set by the module, but not just yet, so we need to NOT initialize it!
+TCHAR                   GInternalProjectName[64];
+#else
+// For monolithic builds, the game name variable definition will be set by the IMPLEMENT_GAME_MODULE
+// macro for the game's main game module.
+#endif
+
+// Foreign engine directory. This is required to projects built outside the engine root to reference their engine directory.
+#if !IS_MONOLITHIC
+IMPLEMENT_FOREIGN_ENGINE_DIR()
+#endif
+
+/** A function that does nothing. Allows for a default behavior for callback function pointers. */
+static void appNoop()
+{
+}
+
+/** Exec handler for game debugging tool, allowing commands like &quot;editactor&quot;, ...                           */
+FExec*                  GDebugToolExec                  = NULL;
+/** Whether we're currently in the async loading codepath or not                                            */
+static bool IsAsyncLoadingCoreInternal()
+{
+    // No Async loading in Core
+    return false;
+}
+bool (*IsAsyncLoading)() = &amp;IsAsyncLoadingCoreInternal;
+void (*SuspendAsyncLoading)() = &amp;appNoop;
+void (*ResumeAsyncLoading)() = &amp;appNoop;
+bool (*IsAsyncLoadingSuspended)() = &amp;IsAsyncLoadingCoreInternal;
+bool (*IsAsyncLoadingMultithreaded)() = &amp;IsAsyncLoadingCoreInternal;
+void (*SuspendTextureStreamingRenderTasks)() = &amp;appNoop;
+void (*ResumeTextureStreamingRenderTasks)() = &amp;appNoop;
+
+/** Whether the editor is currently loading a package or not                                                */
+bool                    GIsEditorLoadingPackage             = false;
+/** Whether the cooker is currently loading a package or not                                                */
+bool                    GIsCookerLoadingPackage = false;
+/** Whether GWorld points to the play in editor world                                                       */
+bool                    GIsPlayInEditorWorld            = false;
+/** Unique ID for multiple PIE instances running in one process */
+int32                   GPlayInEditorID                 = -1;
+/** Whether or not PIE was attempting to play from PlayerStart                          */
+bool                    GIsPIEUsingPlayerStart          = false;
+/** true if the runtime needs textures to be powers of two                                                  */
+bool                    GPlatformNeedsPowerOfTwoTextures = false;
+/** Time at which FPlatformTime::Seconds() was first initialized (before main)                                          */
+double                  GStartTime                      = FPlatformTime::InitTiming();
+/** System time at engine init.                                                                             */
+FString                 GSystemStartTime;
+/** Whether we are still in the initial loading proces.                                                     */
+bool                    GIsInitialLoad                  = true;
+/* Whether we are using the event driven loader */
+bool                    GEventDrivenLoaderEnabled = false;
+
+/** Steadily increasing frame counter.                                                                      */
+TSAN_ATOMIC(uint64)     GFrameCounter(0);
+uint64                  GLastGCFrame                    = 0;
+/** Incremented once per frame before the scene is being rendered. In split screen mode this is incremented once for all views (not for each view). */
+uint32                  GFrameNumber                    = 1;
+/** NEED TO RENAME, for RT version of GFrameTime use View.ViewFamily-&gt;FrameNumber or pass down from RT from GFrameTime). */
+uint32                  GFrameNumberRenderThread        = 1;
+#if !(UE_BUILD_SHIPPING &amp;&amp; WITH_EDITOR)
+// We cannot count on this variable to be accurate in a shipped game, so make sure no code tries to use it
+/** Whether we are the first instance of the game running.                                                  */
+#if !PLATFORM_UNIX
+bool                    GIsFirstInstance                = true;
+#endif
+#endif
+/** Threshold for a frame to be considered a hitch (in milliseconds). */
+float GHitchThresholdMS = 60.0f;
+/** Size to break up data into when saving compressed data                                                  */
+int32                   GSavingCompressionChunkSize     = SAVING_COMPRESSION_CHUNK_SIZE;
+/** Thread ID of the main/game thread                                                                       */
+uint32                  GGameThreadId                   = 0;
+uint32                  GRenderThreadId                 = 0;
+uint32                  GSlateLoadingThreadId           = 0;
+uint32                  GAudioThreadId                  = 0;
+/** Has GGameThreadId been set yet?                                                                         */
+bool                    GIsGameThreadIdInitialized      = false;
+
+/** Helper function to flush resource streaming.                                                            */
+void                    (*GFlushStreamingFunc)(void)      = &amp;appNoop;
+/** Whether to emit begin/ end draw events.                                                                 */
+bool                    GEmitDrawEvents                 = false;
+/** Whether forward DrawEvents to the RHI or keep them only on the Commandlist. */
+bool                    GCommandListOnlyDrawEvents      = false;
+/** Whether we want the rendering thread to be suspended, used e.g. for tracing.                            */
+bool                    GShouldSuspendRenderingThread   = false;
+/** Determines what kind of trace should occur, NAME_None for none.                                         */
+FName                   GCurrentTraceName               = NAME_None;
+/** How to print the time in log output                                                                     */
+ELogTimes::Type         GPrintLogTimes                  = ELogTimes::None;
+/** How to print the category in log output. */
+bool                    GPrintLogCategory = true;
+/** How to print the verbosity in log output. */
+bool                    GPrintLogVerbosity = true;
+
+#if USE_HITCH_DETECTION
+bool                GHitchDetected = false;
+#endif
+
+/** Whether stats should emit named events for e.g. PIX.                                                    */
+int32                   GCycleStatsShouldEmitNamedEvents = 0;
+/** Disables some warnings and minor features that would interrupt a demo presentation                      */
+bool                    GIsDemoMode                     = false;
+/** Whether or not a unit test is currently being run                                                       */
+bool                    GIsAutomationTesting                    = false;
+/** Whether or not messages are being pumped outside of the main loop                                       */
+bool                    GPumpingMessagesOutsideOfMainLoop = false;
+
+/** Enables various editor and HMD hacks that allow the experimental VR editor feature to work, perhaps at the expense of other systems */
+bool                    GEnableVREditorHacks = false;
+
+bool CORE_API           GIsGPUCrashed = false;
+
+bool GetEmitDrawEvents()
+{
+    return GEmitDrawEvents;
+}
+
+void CORE_API SetEmitDrawEvents(bool EmitDrawEvents)
+{
+    GEmitDrawEvents = EmitDrawEvents;
+    GCommandListOnlyDrawEvents = !GEmitDrawEvents;
+}
+
+void CORE_API EnableEmitDrawEventsOnlyOnCommandlist()
+{
+    GCommandListOnlyDrawEvents = !GEmitDrawEvents;
+    GEmitDrawEvents = true;
+}
+
+void ToggleGDebugPUCrashedFlag(const TArray&lt;FString&gt;&amp; Args)
+{
+    GIsGPUCrashed = !GIsGPUCrashed;
+    UE_LOG(LogCore, Log, TEXT(&quot;Gpu crashed flag forcibly set to: %i&quot;), GIsGPUCrashed ? 1 : 0);
+}
+
+FAutoConsoleCommand ToggleDebugGPUCrashedCmd(
+    TEXT(&quot;c.ToggleGPUCrashedFlagDbg&quot;),
+    TEXT(&quot;Forcibly toggles the 'GPU Crashed' flag for testing crash analytics.&quot;),
+    FConsoleCommandWithArgsDelegate::CreateStatic(&amp;ToggleGDebugPUCrashedFlag),
+    ECVF_Cheat);
+</code></pre>
+
+              
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+                
+                
+                  <div class="post-footer-tags">
+                    <span class="text-color-light text-small">TAGGED IN</span><br/>
+                    
+  <a class="tag tag--primary tag--small" href="https://dawnarc.com/tags/ue4/">UE4</a>
+
+                  </div>
+                
+              
+            
+            <div class="post-actions-wrap">
+  
+      <nav >
+        <ul class="post-actions post-action-nav">
+          
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2018/12/ue4hardware-cursorsolution-for-umg-customized-cursor-lagging/" data-tooltip="[UE4]Hardware cursor(solution for UMG customized cursor lagging)">
+              
+                  <i class="fa fa-angle-left"></i>
+                  <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+                </a>
+            </li>
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2018/12/ue4trigger-tick-of-the-object-inherited-from-uobject/" data-tooltip="[UE4]Trigger Tick of the object inherited from UObject">
+              
+                  <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+                  <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+          
+        </ul>
+      </nav>
+    <ul class="post-actions post-action-share" >
+      
+        <li class="post-action hide-lg hide-md hide-sm">
+          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
+            <i class="fa fa-share-alt"></i>
+          </a>
+        </li>
+        
+      
+      
+        <li class="post-action">
+          <a class="post-action-btn btn btn--default" href="#disqus_thread">
+            <i class="fa fa-comment-o"></i>
+          </a>
+        </li>
+      
+      <li class="post-action">
+        
+          <a class="post-action-btn btn btn--default" href="#">
+        
+          <i class="fa fa-list"></i>
+        </a>
+      </li>
+    </ul>
+  
+</div>
+
+            
+              
+                <div id="disqus_thread">
+  <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+              
+            
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2018 Neil Wang. All Rights Reserved. Powered by <A href="https://gohugo.io/"> Hugo</A>.
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+        <div class="post-actions-wrap">
+  
+      <nav >
+        <ul class="post-actions post-action-nav">
+          
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2018/12/ue4hardware-cursorsolution-for-umg-customized-cursor-lagging/" data-tooltip="[UE4]Hardware cursor(solution for UMG customized cursor lagging)">
+              
+                  <i class="fa fa-angle-left"></i>
+                  <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+                </a>
+            </li>
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2018/12/ue4trigger-tick-of-the-object-inherited-from-uobject/" data-tooltip="[UE4]Trigger Tick of the object inherited from UObject">
+              
+                  <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+                  <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+          
+        </ul>
+      </nav>
+    <ul class="post-actions post-action-share" >
+      
+        <li class="post-action hide-lg hide-md hide-sm">
+          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
+            <i class="fa fa-share-alt"></i>
+          </a>
+        </li>
+        
+      
+      
+        <li class="post-action">
+          <a class="post-action-btn btn btn--default" href="#disqus_thread">
+            <i class="fa fa-comment-o"></i>
+          </a>
+        </li>
+      
+      <li class="post-action">
+        
+          <a class="post-action-btn btn btn--default" href="#">
+        
+          <i class="fa fa-list"></i>
+        </a>
+      </li>
+    </ul>
+  
+</div>
+
+      </div>
+      <div id="share-options-bar" class="share-options-bar" data-behavior="4">
+  <i id="btn-close-shareoptions" class="fa fa-close"></i>
+  <ul class="share-options">
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-remove"></i>
+    </div>
+    
+      <img id="about-card-picture" src="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=110" alt="Author&#39;s picture" />
+    
+    <h4 id="about-card-name">Neil Wang</h4>
+    
+      <div id="about-card-bio">久长唯有品格</div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        To Be Marvelous
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker"></i>
+        <br/>
+        Yichang·Hubei
+      </div>
+    
+  </div>
+</div>
+
+    <div id="algolia-search-modal" class="modal-container">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="close-button"><i class="fa fa-close"></i></span>
+      <a href="https://algolia.com" target="_blank" rel="noopener" class="searchby-algolia text-color-light link-unstyled">
+        <span class="searchby-algolia-text text-color-light text-small">by</span>
+        <img class="searchby-algolia-logo" src="https://www.algolia.com/static_assets/images/press/downloads/algolia-light.svg">
+      </a>
+      <i class="search-icon fa fa-search"></i>
+      <form id="algolia-search-form">
+        <input type="text" id="algolia-search-input" name="search"
+          class="form-control input--large search-input" placeholder="Search" />
+      </form>
+    </div>
+    <div class="modal-body">
+      <div class="no-result text-color-light text-center">no post found</div>
+      <div class="results">
+        
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/12/ue4invalid-object-in-gc-0x000001eb2e659900-referencingobject-image/">
+                <h3 class="media-heading">[UE4]Invalid object in GC: 0x000001eb2e659900, ReferencingObject: Image</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Dec 12, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">Exception Throw:
+Fatal error: [File:D:\Build\++UE4\Sync\Engine\Source\Runtime\CoreUObject\Private\UObject\GarbageCollection.cpp] [Line: 623] Invalid object in GC: 0x000001eb2e659900, ReferencingObject: Image /Engine/Transient.GameEngine_0:TDGameInstance_0.CombatMainUIBP_C_0.WidgetTree_0.MiniMapUIBP_1216.WidgetTree_0.Image_0, ReferencingObjectClass: Class /Script/UMG.Image, Property Name: ResourceObject, Offset: 480, TokenIndex: 11 UE4Editor_Core!FDebug::AssertFailed() [d:\build\++ue4\sync\engine\source\runtime\core\private\misc\assertionmacros.cpp:425] UE4Editor_CoreUObject!TFastReferenceCollector&lt;1,FGCReferenceProcessor&lt;1&gt;,FGCCollector&lt;1&gt;,FGCArrayPool,0&gt;::ProcessObjectArray() [d:\build\++ue4\sync\engine\source\runtime\coreuobject\public\uobject\fastreferencecollector.h:697] UE4Editor_CoreUObject!TFastReferenceCollector&lt;1,FGCReferenceProcessor&lt;1&gt;,FGCCollector&lt;1&gt;,FGCArrayPool,0&gt;::FCollectorTaskQueue::DoTask() [d:\build\++ue4\sync\engine\source\runtime\coreuobject\public\uobject\fastreferencecollector.h:378] UE4Editor_CoreUObject!TGraphTask&lt;TFastReferenceCollector&lt;1,FGCReferenceProcessor&lt;1&gt;,FGCCollector&lt;1&gt;,FGCArrayPool,0&gt;::FCollectorTaskProcessorTask&gt;::ExecuteTask() [d:\build\++ue4\sync\engine\source\runtime\core\public\async\taskgraphinterfaces.h:829] UE4Editor_Core!FTaskThreadAnyThread::ProcessTasks() [d:\build\++ue4\sync\engine\source\runtime\core\private\async\taskgraph.cpp:936] UE4Editor_Core!FTaskThreadAnyThread::ProcessTasksUntilQuit() [d:\build\++ue4\sync\engine\source\runtime\core\private\async\taskgraph.cpp:801] UE4Editor_Core!FTaskThreadBase::Run() [d:\build\++ue4\sync\engine\source\runtime\core\private\async\taskgraph.cpp:516] UE4Editor_Core!FRunnableThreadWin::Run() [d:\build\++ue4\sync\engine\source\runtime\core\private\windows\windowsrunnablethread.cpp:76]  Reason:
+Some assets object in memory not persisted
+Solution:
+Use UPROPERTY() or AddToRoot() to persist assets in memory.</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/12/toolsreduce-chrome-drive-activity100-percent-drive-usage/">
+                <h3 class="media-heading">[Tools]Reduce Chrome drive activity(100 percent Drive usage)</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Dec 12, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">Settings -&gt; Advanced -&gt; Privacy and security -&gt; Disable Protects you and your device from dangerous sites</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/12/ue4hardware-cursorsolution-for-umg-customized-cursor-lagging/">
+                <h3 class="media-heading">[UE4]Hardware cursor(solution for UMG customized cursor lagging)</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Dec 12, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">Steps
+1, Put a PNG in game content directory, e.g. E:\MyProj\Content\Asset\Cursor\mouse.png
+2, Project Settings -&gt; Engine -&gt; User Interface -&gt; Hardware Cursors -&gt; add element and set Default, set Cursor Path as Asset/Cursor/mouse.
+3, If the click response position of .PNG cursor isn&rsquo;t the top-left corner, you can modify the Hot Spot, e.g. you can set Hot Spot as (0.5, 0.5) if the click response position is the center of .</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/12/ue4global-variables/">
+                <h3 class="media-heading">[UE4]Global variables</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Dec 12, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">File path:
+Engine\Source\Runtime\Core\Private\Misc\CoreGlobals.cpp
+Source:
+IMPLEMENT_MODULE( FCoreModule, Core ); /*----------------------------------------------------------------------------- Global variables. -----------------------------------------------------------------------------*/ CORE_API FFeedbackContext* GWarn = nullptr; /* User interaction and non critical warnings */ FConfigCacheIni* GConfig = nullptr; /* Configuration database cache */ ITransaction* GUndo = nullptr; /* Transaction tracker, non-NULL when a transaction is in progress */ FOutputDeviceConsole* GLogConsole = nullptr; /* Console log hook */ CORE_API FMalloc* GMalloc = nullptr; /* Memory allocator */ CORE_API FMalloc** GFixedMallocLocationPtr = nullptr; /* Memory allocator pointer location when PLATFORM_USES_FIXED_GMalloc_CLASS is true */ class UPropertyWindowManager* GPropertyWindowManager = nullptr; /* Manages and tracks property editing windows */ /** For building call stack text dump in guard/unguard mechanism.</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/12/ue4trigger-tick-of-the-object-inherited-from-uobject/">
+                <h3 class="media-heading">[UE4]Trigger Tick of the object inherited from UObject</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Dec 12, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">The object inherited from UObject would not trigger Tick when instanced (NewObject()), but AActor and the UActorComponent would trigger Tick.
+So how to trigger Tick of the object inherited from UObject?
+The answer is: inherit FTickableGameObject and UObject at the same.
+example source
+header:
+UCLASS() class UCoolDownMgr : public UObject, public FTickableGameObject { GENERATED_BODY() public: // Sets default values for this character's properties UCoolDownMgr(); virtual ~UCoolDownMgr(); // Begin FTickableGameObject Interface. virtual void Tick(float DeltaTime) override; virtual bool IsTickable() const override; virtual TStatId GetStatId() const override; // End FTickableGameObject Interface.</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/12/ue4editor-extention/">
+                <h3 class="media-heading">[UE4]Editor Extention</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Dec 12, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">UE4 - Easy example of How to create menus in the editor
+http://www.danielmayor.com/ue4-simple-menus
+UE4 Level Editor
+https://books.google.com.sg/books?id=zZ7cDgAAQBAJ&amp;pg=PA272&amp;lpg=PA272&amp;dq=UE4+leveleditor+C%2B%2B&amp;source=bl&amp;ots=ZsX7ZCR6bV&amp;sig=6_J7xzxTDosX5dOuLwpiaKrOSHU&amp;hl=zh-CN&amp;sa=X&amp;ved=2ahUKEwji8aiT8orfAhWFTn0KHU0JB7wQ6AEwBXoECAUQAQ#v=onepage&amp;q=UE4%20leveleditor%20C%2B%2B&amp;f=false
+Creating an Editor Module
+https://wiki.unrealengine.com/Creating_an_Editor_Module
+Customizing the editor&rsquo;s toolbar buttons menu via custom plugin
+https://answers.unrealengine.com/questions/25609/customizing-the-editors-toolbar-buttons-menu-via-c.html
+UE4 Editor Toolbar Extention
+https://blog.csdn.net/hui211314ddhui/article/details/79375548</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/12/ue4packagingresults-error-bad-name-index/">
+                <h3 class="media-heading">[UE4]PackagingResults Error Bad name index</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Dec 12, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">Package Error PackagingResults: Error: Bad name index -1/47  Solution 1 You can find the asset causing this by building the engine from source and adding breakpoints in these two place:
+LinkerLoad.cpp
+void FLinkerLoad::BadNameIndexError(NAME_INDEX NameIndex) { UE_LOG(LogLinker, Error, TEXT(&quot;Bad name index %i/%i&quot;), NameIndex, NameMap.Num()); }  and
+PackageReader.cpp
+FArchive&amp; FPackageReader::operator&lt;&lt;( FName&amp; Name ) { check(Loader); NAME_INDEX NameIndex; FArchive&amp; Ar = *this; Ar &lt;&lt; NameIndex; if( !NameMap.IsValidIndex(NameIndex) ) { UE_LOG(LogAssetRegistry, Fatal, TEXT(&quot;Bad name index %i/%i&quot;), NameIndex, NameMap.</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/12/ue4slate-and-native-umgc-notes/">
+                <h3 class="media-heading">[UE4]Slate and Native UMG(C&#43;&#43;) Notes</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Dec 12, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">How to scale or zoom a widget? For Mouse Zoom:
+ override onMouseWheel add Wheel Delta to Panning Canvas&rsquo; Render Transform Scale clamp min result to something above 0 (widgets flip if scaled below 0) and max to your desired max zoom Set Render Scale of the Panning Canvas with the result of the above  Reference: How to scale/zoom a widget with blueprints?
+https://answers.unrealengine.com/questions/815202/how-to-scalezoom-a-widget-with-blueprints.html
+How to clip widget display area?</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/11/c-const_cast/">
+                <h3 class="media-heading">[C&#43;&#43;]const_cast</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Nov 11, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">You are not allowed to const_cast variables that are actually const. This results in undefined behavior. const_cast is used to remove the const-ness from references and pointers that ultimately refer to something that is not const.
+So, this is allowed:
+int i = 0; const int&amp; ref = i; const int* ptr = &amp;i; const_cast&lt;int&amp;&gt;(ref) = 3; *const_cast&lt;int*&gt;(ptr) = 3;  It&rsquo;s allowed because i, the object being assigned to, is not const.</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/11/ue4logcompile-error-circular-dependency-detected-for-filename/">
+                <h3 class="media-heading">[UE4]LogCompile-error-Circular dependency detected for filename</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Nov 11, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">Compilation Error：
+LogCompile : error : Circular dependency detected for filename D:\Library Storage\Documents\Unreal Projects\DistantHome\Source\DistantHome\Public\Game\DHGameInfo.h!  Solution:
+Don&rsquo;t include headers in header, declare class in header and include headers in cpp.
+class forwardedClass; class UsingIt { public: forwardedClass* instance; }  or
+class UsingIt { public: class forwardedClass* instance; }  Reference:How do you guys combat circular dependencies in your file heads?
+https://forums.unrealengine.com/development-discussion/c-gameplay-programming/109582-how-do-you-guys-combat-circular-dependencies-in-your-file-heads</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+      </div>
+    </div>
+    <div class="modal-footer">
+      <p class="results-count text-medium"
+         data-message-zero="no post found"
+         data-message-one="1 post found"
+         data-message-other="{n} posts found">
+         440 posts found
+      </p>
+    </div>
+  </div>
+</div>
+    
+  
+    
+    <div id="cover" style="background-image:url('https://dawnarc.com/images/cover-v1.2.0.jpg');"></div>
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.7/js/jquery.fancybox.min.js" integrity="sha256-GEAnjcTqVP+vBp3SSc8bEDQqvWAZMiHyUSIorrWwH50=" crossorigin="anonymous"></script>
+
+
+<script src="https://dawnarc.com/js/script-qi9wbxp2ya2j6p7wx1i6tgavftewndznf4v0hy2gvivk1rxgc3lm7njqb6bz.min.js"></script>
+
+
+<script lang="javascript">
+window.onload = updateMinWidth;
+window.onresize = updateMinWidth;
+document.getElementById("sidebar").addEventListener("transitionend", updateMinWidth);
+function updateMinWidth() {
+  var sidebar = document.getElementById("sidebar");
+  var main = document.getElementById("main");
+  main.style.minWidth = "";
+  var w1 = getComputedStyle(main).getPropertyValue("min-width");
+  var w2 = getComputedStyle(sidebar).getPropertyValue("width");
+  var w3 = getComputedStyle(sidebar).getPropertyValue("left");
+  main.style.minWidth = `calc(${w1} - ${w2} - ${w3})`;
+}
+</script>
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+  
+    
+      <script>
+        var disqus_config = function () {
+          this.page.url = 'https:\/\/dawnarc.com\/2018\/12\/ue4global-variables\/';
+          
+            this.page.identifier = '\/2018\/12\/ue4global-variables\/'
+          
+        };
+        (function() {
+          
+          
+          if (window.location.hostname == "localhost") {
+            return;
+          }
+          var d = document, s = d.createElement('script');
+          var disqus_shortname = 'dawnarc';
+          s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+          s.setAttribute('data-timestamp', +new Date());
+          (d.head || d.body).appendChild(s);
+        })();
+      </script>
+    
+  
+
+
+
+
+    
+  </body>
+</html>
+

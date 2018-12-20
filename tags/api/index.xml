@@ -13,10 +13,10 @@
     
     <item>
       <title>[UE4]C&#43;&#43;创建BoxCollision(BoxComponent)并注册Overlap和Hit事件回调函数</title>
-      <link>https://dawnarc.com/2017/05/ue4c--%E5%88%9B%E5%BB%BAboxcollisionboxcomponent%E5%B9%B6%E6%B3%A8%E5%86%8Coverlap%E5%92%8Chit%E4%BA%8B%E4%BB%B6%E5%9B%9E%E8%B0%83%E5%87%BD%E6%95%B0/</link>
+      <link>https://dawnarc.com/2017/05/ue4c-%E5%88%9B%E5%BB%BAboxcollisionboxcomponent%E5%B9%B6%E6%B3%A8%E5%86%8Coverlap%E5%92%8Chit%E4%BA%8B%E4%BB%B6%E5%9B%9E%E8%B0%83%E5%87%BD%E6%95%B0/</link>
       <pubDate>Mon, 15 May 2017 23:31:02 +0800</pubDate>
       
-      <guid>https://dawnarc.com/2017/05/ue4c--%E5%88%9B%E5%BB%BAboxcollisionboxcomponent%E5%B9%B6%E6%B3%A8%E5%86%8Coverlap%E5%92%8Chit%E4%BA%8B%E4%BB%B6%E5%9B%9E%E8%B0%83%E5%87%BD%E6%95%B0/</guid>
+      <guid>https://dawnarc.com/2017/05/ue4c-%E5%88%9B%E5%BB%BAboxcollisionboxcomponent%E5%B9%B6%E6%B3%A8%E5%86%8Coverlap%E5%92%8Chit%E4%BA%8B%E4%BB%B6%E5%9B%9E%E8%B0%83%E5%87%BD%E6%95%B0/</guid>
       <description>keywords: UE4、Overlap、Hit、Event、Callback、C++、Blueprint、Box Collision、BoxComponent、SphereComponent、Trace Channel、碰撞
 BoxComponent的Overlap事件 1，C++中的代码编写 这里我们演示的例子，是在角色身上创建一个BoxComponent，假设角色的C++ class叫AMyCharacter。 MyCharacter.h头文件中定义：
 //Box对象 UBoxComponent* CollisionMesh; //OverlapBegin事件的回调函数，注意函数签名！ UFUNCTION() void OnTestOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &amp;amp; SweepResult); //OverlapEnd事件的回调函数，注意函数签名！ UFUNCTION() void OnTestOverlapEnd(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);  回调函数一定要加UFUNCTION()，否则无法注册成功，因为注册函数时使用了UE4编译器的反射。
@@ -36,16 +36,6 @@ BoxComponent的Overlap事件 1，C++中的代码编写 这里我们演示的例�
 #pragma once #include &amp;quot;GameFramework/Actor.h&amp;quot; #include &amp;quot;FloatingActor.generated.h&amp;quot; DECLARE_LOG_CATEGORY_EXTERN(YourLog, Log, All);  cpp文件中加入：
 #include &amp;quot;FirstProject.h&amp;quot; #include &amp;quot;FloatingActor.h&amp;quot; DEFINE_LOG_CATEGORY(YourLog);  使用
 UE_LOG(YourLog, Warning, TEXT(&amp;quot;Test UE_LOG %d&amp;quot;), rand());  三种方式的输出结果 Does something LogTemp: 1111 LogTemp: Warning: 1111（黄色）  </description>
-    </item>
-    
-    <item>
-      <title>[UE4]AddToRoot()要与RemoveFromRoot成对出现</title>
-      <link>https://dawnarc.com/2016/10/ue4addtoroot%E8%A6%81%E4%B8%8Eremovefromroot%E6%88%90%E5%AF%B9%E5%87%BA%E7%8E%B0/</link>
-      <pubDate>Wed, 19 Oct 2016 15:33:40 +0800</pubDate>
-      
-      <guid>https://dawnarc.com/2016/10/ue4addtoroot%E8%A6%81%E4%B8%8Eremovefromroot%E6%88%90%E5%AF%B9%E5%87%BA%E7%8E%B0/</guid>
-      <description>如果对某个UObject执行了AddToRoot()，那么需要在该UObject所属的上级UOject销毁前，执行RemoveFromRoot()，否则当程序退出时，会出现崩溃，崩溃堆栈：
-Assertion failed: !IsRooted() [File:d:\build\++ue4+release-4.13+compile\sync\engine\source\runtime\coreuobject\public\uobject\UObjectBaseUtility.h] [Line: 135] UE4Editor_Core!FDebug::AssertFailed() [d:\build\++ue4+release-4.13+compile\sync\engine\source\runtime\core\private\misc\outputdevice.cpp:421] UE4Editor_UnrealEd!&amp;lt;lambda_26419e543909ee92ebfb672b1e9c08dc&amp;gt;::operator()() [d:\build\++ue4+release-4.13+compile\sync\engine\source\editor\unrealed\private\playlevel.cpp:384] UE4Editor_CoreUObject!ForEachObjectWithOuter() [d:\build\++ue4+release-4.13+compile\sync\engine\source\runtime\coreuobject\private\uobject\uobjecthash.cpp:678] UE4Editor_UnrealEd!UEditorEngine::EndPlayMap() [d:\build\++ue4+release-4.13+compile\sync\engine\source\editor\unrealed\private\playlevel.cpp:380] UE4Editor_UnrealEd!UEditorEngine::Tick() [d:\build\++ue4+release-4.13+compile\sync\engine\source\editor\unrealed\private\editorengine.cpp:1653] UE4Editor_UnrealEd!UUnrealEdEngine::Tick() [d:\build\++ue4+release-4.13+compile\sync\engine\source\editor\unrealed\private\unrealedengine.cpp:371] UE4Editor!FEngineLoop::Tick() [d:\build\++ue4+release-4.13+compile\sync\engine\source\runtime\launch\private\launchengineloop.cpp:2834] UE4Editor!GuardedMain() [d:\build\++ue4+release-4.13+compile\sync\engine\source\runtime\launch\private\launch.cpp:156] UE4Editor!GuardedMainWrapper() [d:\build\++ue4+release-4.13+compile\sync\engine\source\runtime\launch\private\windows\launchwindows.cpp:126] UE4Editor!WinMain() [d:\build\++ue4+release-4.13+compile\sync\engine\source\runtime\launch\private\windows\launchwindows.cpp:202] UE4Editor!__scrt_common_main_seh() [f:\dd\vctools\crt\vcstartup\src\startup\exe_common.inl:264] kernel32 ntdll  </description>
     </item>
     
     <item>
@@ -86,10 +76,10 @@ FVector spawnLocation = FVector(0.0f, 0.0f, 0.0f); FRotator spawnRotation = FRot
     
     <item>
       <title>[UE4]如何遍历场景中的所有Actor和Object(C&#43;&#43;)</title>
-      <link>https://dawnarc.com/2016/09/ue4%E5%A6%82%E4%BD%95%E9%81%8D%E5%8E%86%E5%9C%BA%E6%99%AF%E4%B8%AD%E7%9A%84%E6%89%80%E6%9C%89actor%E5%92%8Cobjectc--/</link>
+      <link>https://dawnarc.com/2016/09/ue4%E5%A6%82%E4%BD%95%E9%81%8D%E5%8E%86%E5%9C%BA%E6%99%AF%E4%B8%AD%E7%9A%84%E6%89%80%E6%9C%89actor%E5%92%8Cobjectc-/</link>
       <pubDate>Thu, 29 Sep 2016 19:43:02 +0800</pubDate>
       
-      <guid>https://dawnarc.com/2016/09/ue4%E5%A6%82%E4%BD%95%E9%81%8D%E5%8E%86%E5%9C%BA%E6%99%AF%E4%B8%AD%E7%9A%84%E6%89%80%E6%9C%89actor%E5%92%8Cobjectc--/</guid>
+      <guid>https://dawnarc.com/2016/09/ue4%E5%A6%82%E4%BD%95%E9%81%8D%E5%8E%86%E5%9C%BA%E6%99%AF%E4%B8%AD%E7%9A%84%E6%89%80%E6%9C%89actor%E5%92%8Cobjectc-/</guid>
       <description>原文： https://wiki.unrealengine.com/Iterators:_Object_%26_Actor_Iterators,_Optional_Class_Scope_For_Faster_Search
 遍历所有SkeletalMeshComponent
 for ( TObjectIterator&amp;lt;USkeletalMeshComponent&amp;gt; Itr; Itr; ++Itr ) { // Access the subclass instance with the * or -&amp;gt; operators. USkeletalMeshCompoment *Component = *Itr; ClientMessage(Itr-&amp;gt;GetName()); }  遍历所有StaticMeshActor
@@ -111,10 +101,10 @@ C++方式
 要在C++中使用Detour Crowd AI，需要借助 UCrowdFollowingComponent，在AIController的构造函数中设置即可
 头文件：
 MyAIController(const FObjectInitializer&amp;amp; ObjectInitializer = FObjectInitializer::Get());  cpp：
-MyAIController::MyAIController(const FObjectInitializer&amp;amp; ObjectInitializer) : Super(ObjectInitializer.SetDefaultSubobjectClass&amp;lt;UCrowdFollowingComponent&amp;gt;(TEXT(&amp;quot;PathFollowingComponent&amp;quot;))) { }  Crowd Manager 配置 Project Settings -》Engine -》 Navigation System -》 Crowd Manager Class
-  并可以在 Project Settings -》 Engine -》 Crowd Manager 编辑各种参数。
-官方doc： FCrowdAvoidanceConfig https://docs.unrealengine.com/latest/INT/API/Runtime/AIModule/Navigation/FCrowdAvoidanceConfig/index.html
-注意事项 1，使用UCrowdFollowingComponent时必须禁用RVO避让模式，否则无法生效：</description>
+MyAIController::MyAIController(const FObjectInitializer&amp;amp; ObjectInitializer) : Super(ObjectInitializer.SetDefaultSubobjectClass&amp;lt;UCrowdFollowingComponent&amp;gt;(TEXT(&amp;quot;PathFollowingComponent&amp;quot;))) { }  注意事项：
+使用默认的UCrowdFollowingComponent，角色在转向时会抖动，要解决这个问题，需要将属性UCrowdFollowingComponent::bSuspendCrowdSimulation设置为true。
+完整代码：
+#include &amp;quot;Navigation/CrowdFollowingComponent.h&amp;quot; AMyAIController::AMyAIController(const FObjectInitializer&amp;amp; ObjectInitializer) : Super(ObjectInitializer.SetDefaultSubobjectClass&amp;lt;UCrowdFollowingComponent&amp;gt;(TEXT(&amp;quot;PathFollowingComponent&amp;quot;))) { if (UCrowdFollowingComponent* CrowdComp = Cast&amp;lt;UCrowdFollowingComponent&amp;gt;(GetComponentByClass(UCrowdFollowingComponent::StaticClass()))) { CrowdComp-&amp;gt;SuspendCrowdSteering(true); //CrowdComp-&amp;gt;SetCrowdAnticipateTurns(true); //CrowdComp-&amp;gt;SetCrowdSeparation(true); //CrowdComp-&amp;gt;SetCrowdPathOffset(true); //CrowdComp-&amp;gt;SetCrowdAvoidanceQuality(ECrowdAvoidanceQuality::High); } }  Crowd Manager 配置 Project Settings -》Engine -》 Navigation System -》 Crowd Manager Class</description>
     </item>
     
     <item>
@@ -131,20 +121,19 @@ R1 = {Pitch=0.0 Yaw=45.0 Roll=0.0 } R2 = {Pitch=0.0 Yaw=-135.0 Roll=0.0 } R3 = {
     </item>
     
     <item>
-      <title>[UE4]线性代数与解析几何相关的API</title>
-      <link>https://dawnarc.com/2016/06/ue4%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0%E4%B8%8E%E8%A7%A3%E6%9E%90%E5%87%A0%E4%BD%95%E7%9B%B8%E5%85%B3%E7%9A%84api/</link>
+      <title>[UE4]Linear Algebra &amp; Plane Geometry API</title>
+      <link>https://dawnarc.com/2016/06/ue4linear-algebra-plane-geometry-api/</link>
       <pubDate>Thu, 23 Jun 2016 23:35:02 +0800</pubDate>
       
-      <guid>https://dawnarc.com/2016/06/ue4%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0%E4%B8%8E%E8%A7%A3%E6%9E%90%E5%87%A0%E4%BD%95%E7%9B%B8%E5%85%B3%E7%9A%84api/</guid>
-      <description>keywords：UE4、Linear Algebra、Plane Geometry
+      <guid>https://dawnarc.com/2016/06/ue4linear-algebra-plane-geometry-api/</guid>
+      <description>keywords：UE4、Linear Algebra、Plane Geometry、线性代数、解析几何
 范围判定 检测一个点是否在一个多边形(或矩形)的内部(2D和3D)
-FBox2D::IsInside(const FVector2D&amp;amp; TestPoint) FBox::IsInside(const FVector&amp;amp; TestPoint) FIntRect::Contains( FIntPoint P )  角度计算 计算两个向量的夹角(Get an angle between 2 Vectors)
+FBox2D::IsInside(const FVector2D&amp;amp; TestPoint) FBox::IsInside(const FVector&amp;amp; TestPoint) FIntRect::Contains( FIntPoint P )  角度计算 计算两个向量的夹角(Get an angle between 2 Vectors)，范围：(0, 180)
 float AimAtAngle = FMath::RadiansToDegrees(acosf(FVector::DotProduct(PlayerDirection, MouseDirection)));  参考：How to get an angle between 2 Vectors?
 https://answers.unrealengine.com/questions/31058/how-to-get-an-angle-between-2-vectors.html
-计算方向向量 InDirection 相对 ReferenceFrame 的方位俯仰角(Azimuth-Elevation)
-void UKismetMathLibrary::GetAzimuthAndElevation(FVector InDirection, const FTransform&amp;amp; ReferenceFrame, float&amp;amp; Azimuth, float&amp;amp; Elevation);  根据入射向量和法线向量计算反射向量
-FVector FMath::GetReflectionVector(const FVector&amp;amp; Direction, const FVector&amp;amp; SurfaceNormal);  根据地面的法线向量、Right方向向量、Up向量向量，计算出斜坡的 Roll 和 Pitch 方向的角度：
-void UKismetMathLibrary::GetSlopeDegreeAngles(const FVector&amp;amp; MyRightYAxis, const FVector&amp;amp; FloorNormal, const FVector&amp;amp; UpVector, float&amp;amp; OutSlopePitchDegreeAngle, float&amp;amp; OutSlopeRollDegreeAngle);  点坐标计算 计算直线外一点到该直线的最近的点（垂足的坐标）：</description>
+计算方向向量与坐标轴的夹角，范围：(-180, 180)
+FRotator Rot = UKismetMathLibrary::MakeRotFromX(TestVector); float Angle = Rot.Yaw; //(-180, 180)  计算方向向量 InDirection 相对 ReferenceFrame 的方位俯仰角(Azimuth-Elevation)
+void UKismetMathLibrary::GetAzimuthAndElevation(FVector InDirection, const FTransform&amp;amp; ReferenceFrame, float&amp;amp; Azimuth, float&amp;amp; Elevation);  根据入射向量和法线向量计算反射向量</description>
     </item>
     
     <item>
@@ -206,10 +195,10 @@ AActor::AttachRootComponentToActor已废弃，需要使用AttachToActor替换
     
     <item>
       <title>[UE4]C&#43;&#43;的K2 API和普通API有什么区别</title>
-      <link>https://dawnarc.com/2016/05/ue4c--%E7%9A%84k2-api%E5%92%8C%E6%99%AE%E9%80%9Aapi%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB/</link>
+      <link>https://dawnarc.com/2016/05/ue4c-%E7%9A%84k2-api%E5%92%8C%E6%99%AE%E9%80%9Aapi%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB/</link>
       <pubDate>Sun, 29 May 2016 15:08:02 +0800</pubDate>
       
-      <guid>https://dawnarc.com/2016/05/ue4c--%E7%9A%84k2-api%E5%92%8C%E6%99%AE%E9%80%9Aapi%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB/</guid>
+      <guid>https://dawnarc.com/2016/05/ue4c-%E7%9A%84k2-api%E5%92%8C%E6%99%AE%E9%80%9Aapi%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB/</guid>
       <description>比如我们看到很多API都有一个以K2开头的API，比如 AActor::AttachRootComponentTo对应的有一个API叫
 AActor::K2_AttachRootComponentTo  这些K2的和常规API有什么区别：K2是给蓝图用调换的，如果你使用C++编码，那么这些K2的开头的不需要关心。 蓝图的前身是UDK的Kismet，所以有人认为K2是Kismet 2.0的意思，即蓝图。
 参考：https://answers.unrealengine.com/questions/38197/what-is-k2-functions.html</description>
@@ -221,15 +210,15 @@ AActor::K2_AttachRootComponentTo  这些K2的和常规API有什么区别：K2是
       <pubDate>Tue, 01 Mar 2016 16:45:02 +0800</pubDate>
       
       <guid>https://dawnarc.com/2016/03/ue4fstring%E5%B8%B8%E7%94%A8api/</guid>
-      <description> 将int或float转换为string：
-FString NewString = FString::FromInt(YourInt); FString VeryCleanString = FString::SanitizeFloat(YourFloat);  将FString转换为char*：
-FString s; char *c = *s;  将string转换为int或者float：
+      <description>将int或float转换为string：
+FString NewString = FString::FromInt(YourInt); FString VeryCleanString = FString::SanitizeFloat(YourFloat);  将FString转换为 TCHAR*：
+FString str; TCHAR *c1 = *str; TCHAR* c2 = str.GetCharArray().GetData();  将string转换为int或者float：
 FString TheString = &amp;quot;123.021&amp;quot;; int32 MyShinyNewInt = FCString::Atoi(*TheString); float MyShinyNewFloat = FCString::Atof(*TheString);  字符串切割：
 FString a(&amp;quot;1,2,3&amp;quot;); TArray&amp;lt;FString&amp;gt; stringArray; a.ParseIntoArray(stringArray, TEXT(&amp;quot;,&amp;quot;), false);  字符串截取：
 FString::Left(int count); FString::Right(int count);  字符串格式化Format：
 FString Path = FString::Printf(TEXT(&amp;quot;StaticMesh&#39;/Game/Shapes/ground_shape_%d.ground_shape_%d&#39;&amp;quot;), i);  如何获取FString转换后char之后的长度 比如用TCHAR_TO_ANSI()将tchar转换为char之后，char的长度如何计算？ 使用FTCHARToANSI::Length()，示例如下：
 FTCHARToANSI Convert(*String); Ar-&amp;gt;Serialize((ANSICHAR*)Convert, Convert.Length());  参考自：https://docs.unrealengine.com/latest/INT/Programming/UnrealArchitecture/StringHandling/CharacterEncoding/index.html
-中文字符的FString 转换 char数组 FString str(TEXT(&amp;quot;笑傲江湖DA&amp;quot;)); const wchar_t* s1 = *str; int LenW = wcslen(s1); int LenC = LenW * 2; //先转换为 char*, 比如 protobuf 不支持 wchar_t，那么可以将中文转换char储存再protobuf内部。 char* buf = new char[LenC + 1](); memcpy(buf, s1, LenC); //验证char*能否还原为 wchar_t 数组 wchar_t* buf2 = new wchar_t[LenC/2 + 1](); memcpy(buf2, buf, LenC);  TCHAR*、wchar_t、char 转换相关 //TCHAR 转换为 wchar_t FSting Str; wchar_t* Str2 = TCHAR_TO_WCHAR(*Str); //TCHAR 转换为 char char* Str4 = TCHAR_TO_UTF8(*Str); char* Str4 = TCHAR_TO_ANSI(*Str); wchar_t Str5[] = L&amp;quot;sss&amp;quot;; TCHAR* Str6 = (TCHAR*)Str5;  </description>
+中文字符的FString 转换 char数组 FString str(TEXT(&amp;quot;笑傲江湖DA&amp;quot;)); const wchar_t* s1 = *str; int LenW = wcslen(s1); int LenC = LenW * 2; //先转换为 char*, 比如 protobuf 不支持 wchar_t，那么可以将中文转换为char，然后储存在protobuf内部。 char* buf = new char[LenC + 1](); memcpy(buf, s1, LenC); //验证char*能否还原为 wchar_t 数组 wchar_t* buf2 = new wchar_t[LenC/2 + 1](); memcpy(buf2, buf, LenC);  TCHAR*、wchar_t、char 转换相关 //char 转换为 TCHAR TCHAR* msg = ANSI_TO_TCHAR(&amp;quot;dddd&amp;quot;); TCHAR* msg2 = UTF8_TO_TCHAR(&amp;quot;dddd&amp;quot;); //TCHAR 转换为 char char* Str4 = TCHAR_TO_UTF8(*Str); char* Str4 = TCHAR_TO_ANSI(*Str); //TCHAR 转换为 wchar_t FSting Str; wchar_t* Str2 = TCHAR_TO_WCHAR(*Str); //wchar_t 转换为 TCHAR wchar_t Str5[] = L&amp;quot;sss&amp;quot;; TCHAR* Str6 = (TCHAR*)Str5;  如果 char* 字符串有中文，转换为 FString 时，必须使用 ANSI_TO_TCHAR() 或者 UTF8_TO_TCHAR()，例如：FString Text = UTF8_TO_TCHAR(&amp;ldquo;牛鼻&amp;rdquo;); 。否则会出现乱码。</description>
     </item>
     
     <item>
