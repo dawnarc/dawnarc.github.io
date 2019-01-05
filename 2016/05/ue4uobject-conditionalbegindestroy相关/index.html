@@ -5,73 +5,89 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.51 with theme Tranquilpeak 0.4.3-SNAPSHOT">
+<meta name="generator" content="Hugo 0.52 with theme Tranquilpeak 0.4.3-SNAPSHOT">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="">
-<meta name="description" content="UObject ConditionalBeginDestroy()导致无法第二次重新Load的问题 如果一个材质对象首次执行垃圾回收（ConditionalBeginDestroy是对BeginDestroy的封装，BeginDestroy是不管任何因素强制回收）：
+<meta name="description" content="UObject ConditionalBeginDestroy()导致无法第二次重新Load的问题 现象：
+如果一个材质对象首次执行垃圾回收（ConditionalBeginDestroy是对BeginDestroy的封装，BeginDestroy是不管任何因素强制回收）：
 UObject::ConditionalBeginDestroy()  或者：
 UObject::BeginDestroy()  之后又需要再次加载该材质，那么调用LoadObject()时，第一个参数不能为NULL:
-UObject* Obj = LoadObject&lt;UObject&gt;(NULL, Path);  因为这样只是在内存中扫描，不会从工程的资源Package文件中去加载(为什么首次这样执行可以加载成功？因为启动UE4Editor或程序首次启动时会加载被引用的资源)，所以这样不会加载成功，返回值为NULL。 如果要从工程资源文件中加载，那么需要手动new一个UObject，作为LoadObject的第一个参数：
-UObject* Obj = NewObject&lt;UTexture2D&gt;(); LoadObject&lt;UObject&gt;(Obj, Path);  这样就能正确加载了。 但是这样有个问题：会发现，过几秒以后，再次使用这个UObject时会出现指针非法的错误，原因是刚刚自己New的UObject被引擎从内存中回收了。 如何禁止引擎对该UObject自动垃圾回收，而是我们自己手动执行？执行下AddToRoot：
-Obj-&gt;AddToRoot();  注：如果执行了AddToRoot()，那么退出程序前需要执行RemoveFromRoot()，否则在引擎在清理内存时会错误。(www.dawnarc.com)
-如果一个UObject是SpawnActor创建出来的，那么执行Destroy()之后，再次执行Spawn是可以正常创建出来的。这点和LoadObject有区别。
-ConditionalBeginDestroy()并不推荐在业务逻辑中使用 UE4官方论坛上，很多帖子或资料告诉你，如果要销毁对象，需要执行ConditionalBeginDestroy()。其实这个API不是给上层逻辑使用的，如果要销毁对象，只要保证该对象失去引用或者RemoveFromRoot()即可，否则就会出现上述问题，即：Destroy之后，无法第二次Load。但是这个问题只存在编辑器运行模式下，如果是打包版本（或者Play时选择下拉菜单：Standalone），即使Destroy()，第二次LoadObject()，第一个参数为NULL，也是可以正常加载的。
- DedicatedServer 中的问题 如果在 DedicatedServer 模式下，SpawnActor生成Actor，且这个Actor bReplicates 设置为true，执行 ConditionalBeginDestroy() ，一定时间后客户端会崩掉，但是使用 Destroy() 没问题。对于服务端生成的 Actor，销毁对象时绝对不要 ConditionalBeginDestroy()。
- DedicatedServer 模式下，SpawnActor生成出的 Actor，且这个Actor bReplicates 设置为true， 执行ConditionalBeginDestroy()时，一定时间后客户端会崩掉。
+UObject* Obj = LoadObject&lt;UObject&gt;(NULL, Path);  原因：
+在编辑器模式下，通过LoadObject加载出来的对象，如果执行了Destroy，那么在不重启编辑器模式的情况下，第二次执行LoadObject&lt;UObject&gt;(NULL, Path);会返回NULL，即使在编辑器模式下重新启动游戏也返回NULL
 解决办法：
-SpawnActor生成出的 Actor，且 AActor::bReplicates = true; ，销毁时，不要用ConditionalBeginDestroy()，而要用Destroy()。Standalone 模式貌似没这种限制。
-崩溃日志：
-Assertion failed: Index &gt;= 0 [File:D:\Build\&#43;&#43;UE4&#43;Release-4.16&#43;Compile\Sync\Engine\Source\Runtime\CoreUObject\Public\UObject/UObjectArray.h] [Line: 455] UE4Editor_Core!">
+上述情况只存在编辑器模式下，如果是打包版本，即使一开始 Destroy，第二次 LoadObject 的时候仍然可以加载成功。
+如果非得希望在编辑器模式下，Destroy资源之后仍然能够正常第二次 LoadObject 该资源，方式如下：
+手动new一个UObject，作为LoadObject的第一个参数
+UObject* Obj = NewObject&lt;UTexture2D&gt;(); LoadObject&lt;UObject&gt;(Obj, Path);  这样就能正确加载了。
+通过上述表现可以推算出，编辑器和引擎的Runtime公用了同一个对象
+ 且该对象没有随着编辑器模式下退出游戏而被清理； 且该对象在编辑器和Runtime分别存在一个是否已销毁的标记； 且该对象在PIE（Play In Editor）模式下 Destroy 后，并没有标记该对象在编辑器中已非法；  所以在PIE模式下第二次 LoadObject 时认为该对象还存在，并且直接返回了这个已经被Destroy的空对象。
+如果UE4资源管理的引擎代码写的足够好，对于Destroy对象的操作，应该提供两个版本：一个PIE、一个Game Runtime。
+内存持久化 (Memory Persistence) 上述问题中，即使在第二次加载时手动 NewObject 创建一个对象，仍然存在问题：会发现，过几秒以后，再次使用这个UObject时会出现指针非法的错误，原因是刚刚自己New的UObject被引擎从内存中回收了。 如何禁止引擎对该UObject自动垃圾回收，而是我们自己手动执行？执行下AddToRoot：
+Obj-&gt;AddToRoot();  注：如果执行了AddToRoot()，那么退出程序前需要执行RemoveFromRoot()，否则在引擎在清理内存时会错误。
+如果一个UObject是SpawnActor创建出来的，那么执行Destroy()之后，再次执行Spawn是可以正常创建出来的。这点和LoadObject有区别。 ConditionalBeginDestroy()并不推荐在业务逻辑中使用 UE4官方论坛上，很多帖子或资料告诉你，如果要销毁对象，需要执行ConditionalBeginDestroy()。其实这个API不是给上层逻辑使用的，如果要销毁对象，只要保证该对象失去引用或者RemoveFromRoot()即可，否则就会出现上述问题，即：Destroy之后，无法第二次Load。但是这个问题只存在编辑器运行模式下，如果是打包版本（或者Play时选择下拉菜单：Standalone），即使Destroy()，第二次LoadObject()，第一个参数为NULL，也是可以正常加载的。
+ DedicatedServer 中的问题 如果在 DedicatedServer 模式下，SpawnActor生成Actor，且这个Actor bReplicates 设置为true，执行 ConditionalBeginDestroy() ，一定时间后客户端会崩掉，但是使用 Destroy() 没问题。对于服务端生成的 Actor，销毁对象时绝对不要 ConditionalBeginDestroy()。">
 
 
-<meta property="og:description" content="UObject ConditionalBeginDestroy()导致无法第二次重新Load的问题 如果一个材质对象首次执行垃圾回收（ConditionalBeginDestroy是对BeginDestroy的封装，BeginDestroy是不管任何因素强制回收）：
+<meta property="og:description" content="UObject ConditionalBeginDestroy()导致无法第二次重新Load的问题 现象：
+如果一个材质对象首次执行垃圾回收（ConditionalBeginDestroy是对BeginDestroy的封装，BeginDestroy是不管任何因素强制回收）：
 UObject::ConditionalBeginDestroy()  或者：
 UObject::BeginDestroy()  之后又需要再次加载该材质，那么调用LoadObject()时，第一个参数不能为NULL:
-UObject* Obj = LoadObject&lt;UObject&gt;(NULL, Path);  因为这样只是在内存中扫描，不会从工程的资源Package文件中去加载(为什么首次这样执行可以加载成功？因为启动UE4Editor或程序首次启动时会加载被引用的资源)，所以这样不会加载成功，返回值为NULL。 如果要从工程资源文件中加载，那么需要手动new一个UObject，作为LoadObject的第一个参数：
-UObject* Obj = NewObject&lt;UTexture2D&gt;(); LoadObject&lt;UObject&gt;(Obj, Path);  这样就能正确加载了。 但是这样有个问题：会发现，过几秒以后，再次使用这个UObject时会出现指针非法的错误，原因是刚刚自己New的UObject被引擎从内存中回收了。 如何禁止引擎对该UObject自动垃圾回收，而是我们自己手动执行？执行下AddToRoot：
-Obj-&gt;AddToRoot();  注：如果执行了AddToRoot()，那么退出程序前需要执行RemoveFromRoot()，否则在引擎在清理内存时会错误。(www.dawnarc.com)
-如果一个UObject是SpawnActor创建出来的，那么执行Destroy()之后，再次执行Spawn是可以正常创建出来的。这点和LoadObject有区别。
-ConditionalBeginDestroy()并不推荐在业务逻辑中使用 UE4官方论坛上，很多帖子或资料告诉你，如果要销毁对象，需要执行ConditionalBeginDestroy()。其实这个API不是给上层逻辑使用的，如果要销毁对象，只要保证该对象失去引用或者RemoveFromRoot()即可，否则就会出现上述问题，即：Destroy之后，无法第二次Load。但是这个问题只存在编辑器运行模式下，如果是打包版本（或者Play时选择下拉菜单：Standalone），即使Destroy()，第二次LoadObject()，第一个参数为NULL，也是可以正常加载的。
- DedicatedServer 中的问题 如果在 DedicatedServer 模式下，SpawnActor生成Actor，且这个Actor bReplicates 设置为true，执行 ConditionalBeginDestroy() ，一定时间后客户端会崩掉，但是使用 Destroy() 没问题。对于服务端生成的 Actor，销毁对象时绝对不要 ConditionalBeginDestroy()。
- DedicatedServer 模式下，SpawnActor生成出的 Actor，且这个Actor bReplicates 设置为true， 执行ConditionalBeginDestroy()时，一定时间后客户端会崩掉。
+UObject* Obj = LoadObject&lt;UObject&gt;(NULL, Path);  原因：
+在编辑器模式下，通过LoadObject加载出来的对象，如果执行了Destroy，那么在不重启编辑器模式的情况下，第二次执行LoadObject&lt;UObject&gt;(NULL, Path);会返回NULL，即使在编辑器模式下重新启动游戏也返回NULL
 解决办法：
-SpawnActor生成出的 Actor，且 AActor::bReplicates = true; ，销毁时，不要用ConditionalBeginDestroy()，而要用Destroy()。Standalone 模式貌似没这种限制。
-崩溃日志：
-Assertion failed: Index &gt;= 0 [File:D:\Build\&#43;&#43;UE4&#43;Release-4.16&#43;Compile\Sync\Engine\Source\Runtime\CoreUObject\Public\UObject/UObjectArray.h] [Line: 455] UE4Editor_Core!">
+上述情况只存在编辑器模式下，如果是打包版本，即使一开始 Destroy，第二次 LoadObject 的时候仍然可以加载成功。
+如果非得希望在编辑器模式下，Destroy资源之后仍然能够正常第二次 LoadObject 该资源，方式如下：
+手动new一个UObject，作为LoadObject的第一个参数
+UObject* Obj = NewObject&lt;UTexture2D&gt;(); LoadObject&lt;UObject&gt;(Obj, Path);  这样就能正确加载了。
+通过上述表现可以推算出，编辑器和引擎的Runtime公用了同一个对象
+ 且该对象没有随着编辑器模式下退出游戏而被清理； 且该对象在编辑器和Runtime分别存在一个是否已销毁的标记； 且该对象在PIE（Play In Editor）模式下 Destroy 后，并没有标记该对象在编辑器中已非法；  所以在PIE模式下第二次 LoadObject 时认为该对象还存在，并且直接返回了这个已经被Destroy的空对象。
+如果UE4资源管理的引擎代码写的足够好，对于Destroy对象的操作，应该提供两个版本：一个PIE、一个Game Runtime。
+内存持久化 (Memory Persistence) 上述问题中，即使在第二次加载时手动 NewObject 创建一个对象，仍然存在问题：会发现，过几秒以后，再次使用这个UObject时会出现指针非法的错误，原因是刚刚自己New的UObject被引擎从内存中回收了。 如何禁止引擎对该UObject自动垃圾回收，而是我们自己手动执行？执行下AddToRoot：
+Obj-&gt;AddToRoot();  注：如果执行了AddToRoot()，那么退出程序前需要执行RemoveFromRoot()，否则在引擎在清理内存时会错误。
+如果一个UObject是SpawnActor创建出来的，那么执行Destroy()之后，再次执行Spawn是可以正常创建出来的。这点和LoadObject有区别。 ConditionalBeginDestroy()并不推荐在业务逻辑中使用 UE4官方论坛上，很多帖子或资料告诉你，如果要销毁对象，需要执行ConditionalBeginDestroy()。其实这个API不是给上层逻辑使用的，如果要销毁对象，只要保证该对象失去引用或者RemoveFromRoot()即可，否则就会出现上述问题，即：Destroy之后，无法第二次Load。但是这个问题只存在编辑器运行模式下，如果是打包版本（或者Play时选择下拉菜单：Standalone），即使Destroy()，第二次LoadObject()，第一个参数为NULL，也是可以正常加载的。
+ DedicatedServer 中的问题 如果在 DedicatedServer 模式下，SpawnActor生成Actor，且这个Actor bReplicates 设置为true，执行 ConditionalBeginDestroy() ，一定时间后客户端会崩掉，但是使用 Destroy() 没问题。对于服务端生成的 Actor，销毁对象时绝对不要 ConditionalBeginDestroy()。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[UE4]UObject ConditionalBeginDestroy相关">
 <meta name="twitter:title" content="[UE4]UObject ConditionalBeginDestroy相关">
 <meta property="og:url" content="https://dawnarc.com/2016/05/ue4uobject-conditionalbegindestroy%E7%9B%B8%E5%85%B3/">
 <meta property="twitter:url" content="https://dawnarc.com/2016/05/ue4uobject-conditionalbegindestroy%E7%9B%B8%E5%85%B3/">
 <meta property="og:site_name" content="玄冬Wong">
-<meta property="og:description" content="UObject ConditionalBeginDestroy()导致无法第二次重新Load的问题 如果一个材质对象首次执行垃圾回收（ConditionalBeginDestroy是对BeginDestroy的封装，BeginDestroy是不管任何因素强制回收）：
+<meta property="og:description" content="UObject ConditionalBeginDestroy()导致无法第二次重新Load的问题 现象：
+如果一个材质对象首次执行垃圾回收（ConditionalBeginDestroy是对BeginDestroy的封装，BeginDestroy是不管任何因素强制回收）：
 UObject::ConditionalBeginDestroy()  或者：
 UObject::BeginDestroy()  之后又需要再次加载该材质，那么调用LoadObject()时，第一个参数不能为NULL:
-UObject* Obj = LoadObject&lt;UObject&gt;(NULL, Path);  因为这样只是在内存中扫描，不会从工程的资源Package文件中去加载(为什么首次这样执行可以加载成功？因为启动UE4Editor或程序首次启动时会加载被引用的资源)，所以这样不会加载成功，返回值为NULL。 如果要从工程资源文件中加载，那么需要手动new一个UObject，作为LoadObject的第一个参数：
-UObject* Obj = NewObject&lt;UTexture2D&gt;(); LoadObject&lt;UObject&gt;(Obj, Path);  这样就能正确加载了。 但是这样有个问题：会发现，过几秒以后，再次使用这个UObject时会出现指针非法的错误，原因是刚刚自己New的UObject被引擎从内存中回收了。 如何禁止引擎对该UObject自动垃圾回收，而是我们自己手动执行？执行下AddToRoot：
-Obj-&gt;AddToRoot();  注：如果执行了AddToRoot()，那么退出程序前需要执行RemoveFromRoot()，否则在引擎在清理内存时会错误。(www.dawnarc.com)
-如果一个UObject是SpawnActor创建出来的，那么执行Destroy()之后，再次执行Spawn是可以正常创建出来的。这点和LoadObject有区别。
-ConditionalBeginDestroy()并不推荐在业务逻辑中使用 UE4官方论坛上，很多帖子或资料告诉你，如果要销毁对象，需要执行ConditionalBeginDestroy()。其实这个API不是给上层逻辑使用的，如果要销毁对象，只要保证该对象失去引用或者RemoveFromRoot()即可，否则就会出现上述问题，即：Destroy之后，无法第二次Load。但是这个问题只存在编辑器运行模式下，如果是打包版本（或者Play时选择下拉菜单：Standalone），即使Destroy()，第二次LoadObject()，第一个参数为NULL，也是可以正常加载的。
- DedicatedServer 中的问题 如果在 DedicatedServer 模式下，SpawnActor生成Actor，且这个Actor bReplicates 设置为true，执行 ConditionalBeginDestroy() ，一定时间后客户端会崩掉，但是使用 Destroy() 没问题。对于服务端生成的 Actor，销毁对象时绝对不要 ConditionalBeginDestroy()。
- DedicatedServer 模式下，SpawnActor生成出的 Actor，且这个Actor bReplicates 设置为true， 执行ConditionalBeginDestroy()时，一定时间后客户端会崩掉。
+UObject* Obj = LoadObject&lt;UObject&gt;(NULL, Path);  原因：
+在编辑器模式下，通过LoadObject加载出来的对象，如果执行了Destroy，那么在不重启编辑器模式的情况下，第二次执行LoadObject&lt;UObject&gt;(NULL, Path);会返回NULL，即使在编辑器模式下重新启动游戏也返回NULL
 解决办法：
-SpawnActor生成出的 Actor，且 AActor::bReplicates = true; ，销毁时，不要用ConditionalBeginDestroy()，而要用Destroy()。Standalone 模式貌似没这种限制。
-崩溃日志：
-Assertion failed: Index &gt;= 0 [File:D:\Build\&#43;&#43;UE4&#43;Release-4.16&#43;Compile\Sync\Engine\Source\Runtime\CoreUObject\Public\UObject/UObjectArray.h] [Line: 455] UE4Editor_Core!">
-<meta name="twitter:description" content="UObject ConditionalBeginDestroy()导致无法第二次重新Load的问题 如果一个材质对象首次执行垃圾回收（ConditionalBeginDestroy是对BeginDestroy的封装，BeginDestroy是不管任何因素强制回收）：
+上述情况只存在编辑器模式下，如果是打包版本，即使一开始 Destroy，第二次 LoadObject 的时候仍然可以加载成功。
+如果非得希望在编辑器模式下，Destroy资源之后仍然能够正常第二次 LoadObject 该资源，方式如下：
+手动new一个UObject，作为LoadObject的第一个参数
+UObject* Obj = NewObject&lt;UTexture2D&gt;(); LoadObject&lt;UObject&gt;(Obj, Path);  这样就能正确加载了。
+通过上述表现可以推算出，编辑器和引擎的Runtime公用了同一个对象
+ 且该对象没有随着编辑器模式下退出游戏而被清理； 且该对象在编辑器和Runtime分别存在一个是否已销毁的标记； 且该对象在PIE（Play In Editor）模式下 Destroy 后，并没有标记该对象在编辑器中已非法；  所以在PIE模式下第二次 LoadObject 时认为该对象还存在，并且直接返回了这个已经被Destroy的空对象。
+如果UE4资源管理的引擎代码写的足够好，对于Destroy对象的操作，应该提供两个版本：一个PIE、一个Game Runtime。
+内存持久化 (Memory Persistence) 上述问题中，即使在第二次加载时手动 NewObject 创建一个对象，仍然存在问题：会发现，过几秒以后，再次使用这个UObject时会出现指针非法的错误，原因是刚刚自己New的UObject被引擎从内存中回收了。 如何禁止引擎对该UObject自动垃圾回收，而是我们自己手动执行？执行下AddToRoot：
+Obj-&gt;AddToRoot();  注：如果执行了AddToRoot()，那么退出程序前需要执行RemoveFromRoot()，否则在引擎在清理内存时会错误。
+如果一个UObject是SpawnActor创建出来的，那么执行Destroy()之后，再次执行Spawn是可以正常创建出来的。这点和LoadObject有区别。 ConditionalBeginDestroy()并不推荐在业务逻辑中使用 UE4官方论坛上，很多帖子或资料告诉你，如果要销毁对象，需要执行ConditionalBeginDestroy()。其实这个API不是给上层逻辑使用的，如果要销毁对象，只要保证该对象失去引用或者RemoveFromRoot()即可，否则就会出现上述问题，即：Destroy之后，无法第二次Load。但是这个问题只存在编辑器运行模式下，如果是打包版本（或者Play时选择下拉菜单：Standalone），即使Destroy()，第二次LoadObject()，第一个参数为NULL，也是可以正常加载的。
+ DedicatedServer 中的问题 如果在 DedicatedServer 模式下，SpawnActor生成Actor，且这个Actor bReplicates 设置为true，执行 ConditionalBeginDestroy() ，一定时间后客户端会崩掉，但是使用 Destroy() 没问题。对于服务端生成的 Actor，销毁对象时绝对不要 ConditionalBeginDestroy()。">
+<meta name="twitter:description" content="UObject ConditionalBeginDestroy()导致无法第二次重新Load的问题 现象：
+如果一个材质对象首次执行垃圾回收（ConditionalBeginDestroy是对BeginDestroy的封装，BeginDestroy是不管任何因素强制回收）：
 UObject::ConditionalBeginDestroy()  或者：
 UObject::BeginDestroy()  之后又需要再次加载该材质，那么调用LoadObject()时，第一个参数不能为NULL:
-UObject* Obj = LoadObject&lt;UObject&gt;(NULL, Path);  因为这样只是在内存中扫描，不会从工程的资源Package文件中去加载(为什么首次这样执行可以加载成功？因为启动UE4Editor或程序首次启动时会加载被引用的资源)，所以这样不会加载成功，返回值为NULL。 如果要从工程资源文件中加载，那么需要手动new一个UObject，作为LoadObject的第一个参数：
-UObject* Obj = NewObject&lt;UTexture2D&gt;(); LoadObject&lt;UObject&gt;(Obj, Path);  这样就能正确加载了。 但是这样有个问题：会发现，过几秒以后，再次使用这个UObject时会出现指针非法的错误，原因是刚刚自己New的UObject被引擎从内存中回收了。 如何禁止引擎对该UObject自动垃圾回收，而是我们自己手动执行？执行下AddToRoot：
-Obj-&gt;AddToRoot();  注：如果执行了AddToRoot()，那么退出程序前需要执行RemoveFromRoot()，否则在引擎在清理内存时会错误。(www.dawnarc.com)
-如果一个UObject是SpawnActor创建出来的，那么执行Destroy()之后，再次执行Spawn是可以正常创建出来的。这点和LoadObject有区别。
-ConditionalBeginDestroy()并不推荐在业务逻辑中使用 UE4官方论坛上，很多帖子或资料告诉你，如果要销毁对象，需要执行ConditionalBeginDestroy()。其实这个API不是给上层逻辑使用的，如果要销毁对象，只要保证该对象失去引用或者RemoveFromRoot()即可，否则就会出现上述问题，即：Destroy之后，无法第二次Load。但是这个问题只存在编辑器运行模式下，如果是打包版本（或者Play时选择下拉菜单：Standalone），即使Destroy()，第二次LoadObject()，第一个参数为NULL，也是可以正常加载的。
- DedicatedServer 中的问题 如果在 DedicatedServer 模式下，SpawnActor生成Actor，且这个Actor bReplicates 设置为true，执行 ConditionalBeginDestroy() ，一定时间后客户端会崩掉，但是使用 Destroy() 没问题。对于服务端生成的 Actor，销毁对象时绝对不要 ConditionalBeginDestroy()。
- DedicatedServer 模式下，SpawnActor生成出的 Actor，且这个Actor bReplicates 设置为true， 执行ConditionalBeginDestroy()时，一定时间后客户端会崩掉。
+UObject* Obj = LoadObject&lt;UObject&gt;(NULL, Path);  原因：
+在编辑器模式下，通过LoadObject加载出来的对象，如果执行了Destroy，那么在不重启编辑器模式的情况下，第二次执行LoadObject&lt;UObject&gt;(NULL, Path);会返回NULL，即使在编辑器模式下重新启动游戏也返回NULL
 解决办法：
-SpawnActor生成出的 Actor，且 AActor::bReplicates = true; ，销毁时，不要用ConditionalBeginDestroy()，而要用Destroy()。Standalone 模式貌似没这种限制。
-崩溃日志：
-Assertion failed: Index &gt;= 0 [File:D:\Build\&#43;&#43;UE4&#43;Release-4.16&#43;Compile\Sync\Engine\Source\Runtime\CoreUObject\Public\UObject/UObjectArray.h] [Line: 455] UE4Editor_Core!">
+上述情况只存在编辑器模式下，如果是打包版本，即使一开始 Destroy，第二次 LoadObject 的时候仍然可以加载成功。
+如果非得希望在编辑器模式下，Destroy资源之后仍然能够正常第二次 LoadObject 该资源，方式如下：
+手动new一个UObject，作为LoadObject的第一个参数
+UObject* Obj = NewObject&lt;UTexture2D&gt;(); LoadObject&lt;UObject&gt;(Obj, Path);  这样就能正确加载了。
+通过上述表现可以推算出，编辑器和引擎的Runtime公用了同一个对象
+ 且该对象没有随着编辑器模式下退出游戏而被清理； 且该对象在编辑器和Runtime分别存在一个是否已销毁的标记； 且该对象在PIE（Play In Editor）模式下 Destroy 后，并没有标记该对象在编辑器中已非法；  所以在PIE模式下第二次 LoadObject 时认为该对象还存在，并且直接返回了这个已经被Destroy的空对象。
+如果UE4资源管理的引擎代码写的足够好，对于Destroy对象的操作，应该提供两个版本：一个PIE、一个Game Runtime。
+内存持久化 (Memory Persistence) 上述问题中，即使在第二次加载时手动 NewObject 创建一个对象，仍然存在问题：会发现，过几秒以后，再次使用这个UObject时会出现指针非法的错误，原因是刚刚自己New的UObject被引擎从内存中回收了。 如何禁止引擎对该UObject自动垃圾回收，而是我们自己手动执行？执行下AddToRoot：
+Obj-&gt;AddToRoot();  注：如果执行了AddToRoot()，那么退出程序前需要执行RemoveFromRoot()，否则在引擎在清理内存时会错误。
+如果一个UObject是SpawnActor创建出来的，那么执行Destroy()之后，再次执行Spawn是可以正常创建出来的。这点和LoadObject有区别。 ConditionalBeginDestroy()并不推荐在业务逻辑中使用 UE4官方论坛上，很多帖子或资料告诉你，如果要销毁对象，需要执行ConditionalBeginDestroy()。其实这个API不是给上层逻辑使用的，如果要销毁对象，只要保证该对象失去引用或者RemoveFromRoot()即可，否则就会出现上述问题，即：Destroy之后，无法第二次Load。但是这个问题只存在编辑器运行模式下，如果是打包版本（或者Play时选择下拉菜单：Standalone），即使Destroy()，第二次LoadObject()，第一个参数为NULL，也是可以正常加载的。
+ DedicatedServer 中的问题 如果在 DedicatedServer 模式下，SpawnActor生成Actor，且这个Actor bReplicates 设置为true，执行 ConditionalBeginDestroy() ，一定时间后客户端会崩掉，但是使用 Destroy() 没问题。对于服务端生成的 Actor，销毁对象时绝对不要 ConditionalBeginDestroy()。">
 <meta property="og:locale" content="en-us">
 
   
@@ -405,7 +421,8 @@ if (!doNotTrack) {
 
 <h5 id="uobject-conditionalbegindestroy-导致无法第二次重新load的问题">UObject ConditionalBeginDestroy()导致无法第二次重新Load的问题</h5>
 
-<p>如果一个材质对象首次执行垃圾回收（ConditionalBeginDestroy是对BeginDestroy的封装，BeginDestroy是不管任何因素强制回收）：</p>
+<p>现象：<br />
+如果一个材质对象首次执行垃圾回收（ConditionalBeginDestroy是对BeginDestroy的封装，BeginDestroy是不管任何因素强制回收）：</p>
 
 <pre><code>UObject::ConditionalBeginDestroy()
 </code></pre>
@@ -420,23 +437,43 @@ if (!doNotTrack) {
 <pre><code>UObject* Obj = LoadObject&lt;UObject&gt;(NULL, Path);
 </code></pre>
 
-<p>因为这样只是在内存中扫描，不会从工程的资源Package文件中去加载(为什么首次这样执行可以加载成功？因为启动UE4Editor或程序首次启动时会加载被引用的资源)，所以这样不会加载成功，返回值为NULL。
-如果要从工程资源文件中加载，那么需要手动new一个UObject，作为LoadObject的第一个参数：</p>
+<p>原因：<br />
+在编辑器模式下，通过<code>LoadObject</code>加载出来的对象，如果执行了Destroy，那么在不重启编辑器模式的情况下，第二次执行<code>LoadObject&lt;UObject&gt;(NULL, Path);</code>会返回<code>NULL</code>，即使在编辑器模式下重新启动游戏也返回<code>NULL</code></p>
+
+<p>解决办法：<br />
+上述情况只存在编辑器模式下，如果是打包版本，即使一开始 Destroy，第二次 LoadObject 的时候仍然可以加载成功。</p>
+
+<p>如果非得希望在编辑器模式下，Destroy资源之后仍然能够正常第二次 LoadObject 该资源，方式如下：<br />
+<span class="highlight-text green">手动new一个UObject，作为LoadObject的第一个参数</span></p>
 
 <pre><code>UObject* Obj = NewObject&lt;UTexture2D&gt;();
 LoadObject&lt;UObject&gt;(Obj, Path);
 </code></pre>
 
-<p>这样就能正确加载了。
-但是这样有个问题：会发现，过几秒以后，再次使用这个UObject时会出现指针非法的错误，原因是刚刚自己New的UObject被引擎从内存中回收了。
+<p>这样就能正确加载了。</p>
+
+<p>通过上述表现可以推算出，编辑器和引擎的Runtime公用了同一个对象</p>
+
+<ul>
+<li>且该对象没有随着编辑器模式下退出游戏而被清理；</li>
+<li>且该对象在编辑器和Runtime分别存在一个是否已销毁的标记；</li>
+<li>且该对象在PIE（Play In Editor）模式下 Destroy 后，并没有标记该对象在编辑器中已非法；</li>
+</ul>
+
+<p>所以在PIE模式下第二次 LoadObject 时认为该对象还存在，并且直接返回了这个已经被Destroy的空对象。<br />
+如果UE4资源管理的引擎代码写的足够好，对于Destroy对象的操作，应该提供两个版本：一个PIE、一个Game Runtime。</p>
+
+<h5 id="内存持久化-memory-persistence">内存持久化 (Memory Persistence)</h5>
+
+<p>上述问题中，即使在第二次加载时手动 NewObject 创建一个对象，仍然存在问题：会发现，过几秒以后，再次使用这个UObject时会出现指针非法的错误，原因是刚刚自己New的UObject被引擎从内存中回收了。
 如何禁止引擎对该UObject自动垃圾回收，而是我们自己手动执行？执行下AddToRoot：</p>
 
 <pre><code>Obj-&gt;AddToRoot();
 </code></pre>
 
-<p>注：如果执行了<code>AddToRoot()</code>，那么退出程序前需要执行<code>RemoveFromRoot()</code>，否则在引擎在清理内存时会错误。(www.dawnarc.com)</p>
+<p>注：如果执行了<code>AddToRoot()</code>，那么退出程序前需要执行<code>RemoveFromRoot()</code>，否则在引擎在清理内存时会错误。</p>
 
-<p>如果一个UObject是SpawnActor创建出来的，那么执行Destroy()之后，再次执行Spawn是可以正常创建出来的。这点和LoadObject有区别。</p>
+<span class="highlight-text red">如果一个UObject是SpawnActor创建出来的，那么执行Destroy()之后，再次执行Spawn是可以正常创建出来的。这点和LoadObject有区别。</span>
 
 <h5 id="conditionalbegindestroy-并不推荐在业务逻辑中使用">ConditionalBeginDestroy()并不推荐在业务逻辑中使用</h5>
 
@@ -450,8 +487,7 @@ LoadObject&lt;UObject&gt;(Obj, Path);
   <p>如果在 DedicatedServer 模式下，SpawnActor生成Actor，且这个Actor bReplicates 设置为true，执行 ConditionalBeginDestroy() ，一定时间后客户端会崩掉，但是使用 Destroy() 没问题。对于服务端生成的 Actor，销毁对象时绝对不要 ConditionalBeginDestroy()。</p>
 </div>
 
-<p>DedicatedServer 模式下，<code>SpawnActor</code>生成出的 Actor，且这个Actor bReplicates 设置为true， 执行<code>ConditionalBeginDestroy()</code>时，一定时间后客户端会崩掉。<br />
-解决办法：<br />
+<p>解决办法：<br />
 <code>SpawnActor</code>生成出的 Actor，且 <code>AActor::bReplicates = true;</code> ，销毁时，不要用<code>ConditionalBeginDestroy()</code>，而要用<code>Destroy()</code>。Standalone 模式貌似没这种限制。</p>
 
 <p>崩溃日志：</p>
@@ -478,7 +514,9 @@ ntdll
 
 <h5 id="conditionalbegindestroy-和-destroy区别">ConditionalBeginDestroy 和 Destroy区别</h5>
 
-<p>ConditionalBeginDestroy 和 Destroy两者都是销毁对象，区别是：前者是在delay一定时间后执行销毁，Destroy是在当前帧结束时执行销毁。如果逻辑上每帧都有很多 Actor需要销毁，那么可以先把这些Actor隐藏，然后再调用ConditionalBeginDestroy，让引擎批量执行GC。</p>
+<p>ConditionalBeginDestroy 和 Destroy两者都是销毁对象，区别是：前者是在delay一定时间后执行销毁，Destroy是在当前帧结束时执行销毁。</p>
+
+<p>如果逻辑上每帧都有很多 Actor需要销毁，那么可以先把这些Actor隐藏，让对象失去引用（如果对象是被<code>URPOPERTY</code>属性保持的，那就让其所属的对象失去引用，比如：<code>RemoveFromRoot()</code>），不必手动执行 Destroy，让引擎批量执行GC。</p>
 
               
             </div>
@@ -561,7 +599,7 @@ ntdll
         </article>
         <footer id="footer" class="main-content-wrap">
   <span class="copyrights">
-    &copy; 2018 Neil Wang. All Rights Reserved. Powered by <A href="https://gohugo.io/"> Hugo</A>.
+    &copy; 2019 Neil Wang. All Rights Reserved. Powered by <A href="https://gohugo.io/"> Hugo</A>.
   </span>
 </footer>
 
@@ -679,6 +717,175 @@ ntdll
           <div class="media">
             
             <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/01/ue4transform-skeletal-bone-in-c-/">
+                <h3 class="media-heading">[UE4]Transform skeletal bone in C&#43;&#43;</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jan 1, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">Blueprint Node Transform from Bone Space    C++ code Steps
+ Add UPoseableMeshComponent in your Actor class, and set Skeletal Mesh asset for it.      Modify bones transform by UPoseableMeshComponent&rsquo;s functions:
+UFUNCTION(BlueprintCallable, Category=&quot;Components|PoseableMesh&quot;) void SetBoneTransformByName(FName BoneName, const FTransform&amp; InTransform, EBoneSpaces::Type BoneSpace); UFUNCTION(BlueprintCallable, Category=&quot;Components|PoseableMesh&quot;) void SetBoneLocationByName(FName BoneName, FVector InLocation, EBoneSpaces::Type BoneSpace); UFUNCTION(BlueprintCallable, Category=&quot;Components|PoseableMesh&quot;) void SetBoneRotationByName(FName BoneName, FRotator InRotation, EBoneSpaces::Type BoneSpace); UFUNCTION(BlueprintCallable, Category=&quot;Components|PoseableMesh&quot;) void SetBoneScaleByName(FName BoneName, FVector InScale3D, EBoneSpaces::Type BoneSpace);   Reference Transform skeletal bone in C++</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/01/c-address-source-line-from-crash-callstack-using-binary/">
+                <h3 class="media-heading">[C&#43;&#43;]Address source line from crash callstack using binary</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jan 1, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">keywords: Windows Debugging Tools, PDB file, Crash, Dump file
+WinDbg for Windows Steps
+ Get the crash callstack. e.g.:
+TestTP2 0x00000000fff20000 + 2c44aa2 TestTP2 0x00000000fff20000 + 987262 TestTP2 0x00000000fff20000 + 3ab0cc4 TestTP2 0x00000000fff20000 + 362fbbc TestTP2 0x00000000fff20000 + 3643325 TestTP2 0x00000000fff20000 + 362d8e4 TestTP2 0x00000000fff20000 + 3642128 TestTP2 0x00000000fff20000 + 2c20100 TestTP2 0x00000000fff20000 + 39a2c25 TestTP2 0x00000000fff20000 + 39ba846 TestTP2 0x00000000fff20000 + 9cae56 TestTP2 0x00000000fff20000 + 9cb376 TestTP2 0x00000000fff20000 + 3a07c61 TestTP2 0x00000000fff20000 + 3a16ef8 TestTP2 0x00000000fff20000 + 32dff6f TestTP2 0x00000000fff20000 + 32e8e3f TestTP2 0x00000000fff20000 + 3146e59 TestTP2 0x00000000fff20000 + 43f1c9 TestTP2 0x00000000fff20000 + 44ec1c TestTP2 0x00000000fff20000 + 44ec7a TestTP2 0x00000000fff20000 + 45d265 TestTP2 0x00000000fff20000 + 47dc1c6 KERNEL32 0x0000000005b70000 + 18102 ntdll 0x00000000070f0000 + 5c5b4  Open WinDbg, set symbol file and open binary file.</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/12/windowsgetting-the-convenient-automatic-folder-navigation-tree-expansion-back/">
+                <h3 class="media-heading">[Windows]Getting the convenient automatic folder navigation tree expansion back</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Dec 12, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">Software:
+Microsoft Windows 10
+ In the folder toolbar, Click the View tab. Click the Navigator pane drop-down on the left, And enable Expand to open folder.    Origin Text:
+https://odederell3d.wordpress.com/2018/09/19/windows-10-getting-the-convenient-automatic-navigation-folder-tree-expansion-back/</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/12/windowsquickly-get-a-files-folder-path/">
+                <h3 class="media-heading">[Windows]Quickly get a file’s folder path</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Dec 12, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">Software:
+Microsoft Windows 10
+ Shift + RMB Click the file Choose Copy As Path    Origin Text:
+https://odederell3d.wordpress.com/2018/10/25/windows-10-quickly-get-a-files-path/</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/12/ue4materialshow-tos/">
+                <h3 class="media-heading">[UE4][Materials]How-To&#39;s</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Dec 12, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">UE4 Materials How-To&rsquo;s https://docs.unrealengine.com/en-us/Engine/Rendering/Materials/HowTo
+How to metal only for a part of mesh Using Texture Masks
+https://docs.unrealengine.com/en-us/Engine/Rendering/Materials/HowTo/Masking
+How to make a stained glass window effect Using Colored Translucent Shadows
+https://docs.unrealengine.com/en-us/Engine/Rendering/Materials/HowTo/ColoredTransluscentShadows
+How to create a richly colored metallic surface Create a richly colored metallic surface in UE4
+https://odederell3d.wordpress.com/2018/02/08/create-a-richly-colored-metallic-surface-in-ue4/
+How To Use The Spiral Blur Material Node How To Use The Spiral Blur Material Node
+https://wiki.unrealengine.com/How_To_Use_The_Spiral_Blur_Material_Node
+Font Materials and Outlines Font Materials and Outlines</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/12/ue4gpu-visualizer-gpu-profiling-specification/">
+                <h3 class="media-heading">[UE4]GPU Visualizer (GPU Profiling) Specification</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Dec 12, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">keywords: Performance, Optimization
+GPU Visualizer arguments specification PrePass DDM_AllOpaque(Forced by DBuffer) ShadowDepths Reference UE4 Graphics Profiling: All Categories Guide (Rendering Passes)
+https://www.youtube.com/watch?v=C3lumWdwHmA
+GPU Profiling
+https://docs.unrealengine.com/en-us/Engine/Performance/GPU</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/12/pythoncommon-syntax-collections/">
+                <h3 class="media-heading">[Python]Common syntax collections</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Dec 12, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">Print Python2
+print(&quot;a=%d,b=%d&quot; % (f(x,n), g(x,n)))  Python3
+print('x={:d}, y={:d}'.format(f(x,n), g(x,n)))  Python3.6
+print(f'a={f(x,n):d}, b={g(x,n):d}')  How to print like printf in Python3?
+https://stackoverflow.com/questions/19457227/how-to-print-like-printf-in-python3
+Case-insensitive string comparison Python2
+string1 = 'Hello' string2 = 'hello' if string1.lower() == string2.lower(): print &quot;The strings are the same (case insensitive)&quot; else: print &quot;The strings are not the same (case insensitive)&quot;  Python3
+s = 'ß' s.lower() # 'ß' s.casefold() # 'ss'  casefold() not only can be used for ASCII strings, but also for Non-ASCII strings, e.</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/12/ue411-short-steps-to-create-an-animated-loading-screenasync-switch-level/">
+                <h3 class="media-heading">[UE4]11 Short Steps to Create an Animated Loading Screen(Async switch level)</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Dec 12, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">keywords: UE4, Stream Level, Loading Screen, Async Open Level, Async Change Level
+11 Short Steps to Create an Animated Loading Screen
+ - I Went into Window &gt; Levels - Created a New Level by going to “Levels” and selecting “Create new Level” - Moved all my main level stuff by highlighting it all in the editor window and selecting “Move Selected Actors to Level” via the “Levels” tab. - Created my load screen texture, camera and animated spinning icon and made sure they were in “Persistent Level”.</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
               <a class="link-unstyled" href="https://dawnarc.com/2018/12/ue4invalid-object-in-gc-0x000001eb2e659900-referencingobject-image/">
                 <h3 class="media-heading">[UE4]Invalid object in GC: 0x000001eb2e659900, ReferencingObject: Image</h3>
               </a>
@@ -714,176 +921,6 @@ Use UPROPERTY() or AddToRoot() to persist assets in memory.</div>
             <hr>
           </div>
         
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2018/12/ue4hardware-cursorsolution-for-umg-customized-cursor-lagging/">
-                <h3 class="media-heading">[UE4]Hardware cursor(solution for UMG customized cursor lagging)</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Dec 12, 2018
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather">Steps
-1, Put a PNG in game content directory, e.g. E:\MyProj\Content\Asset\Cursor\mouse.png
-2, Project Settings -&gt; Engine -&gt; User Interface -&gt; Hardware Cursors -&gt; add element and set Default, set Cursor Path as Asset/Cursor/mouse.
-3, If the click response position of .PNG cursor isn&rsquo;t the top-left corner, you can modify the Hot Spot, e.g. you can set Hot Spot as (0.5, 0.5) if the click response position is the center of .</div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2018/12/ue4global-variables/">
-                <h3 class="media-heading">[UE4]Global variables</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Dec 12, 2018
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather">File path:
-Engine\Source\Runtime\Core\Private\Misc\CoreGlobals.cpp
-Source:
-IMPLEMENT_MODULE( FCoreModule, Core ); /*----------------------------------------------------------------------------- Global variables. -----------------------------------------------------------------------------*/ CORE_API FFeedbackContext* GWarn = nullptr; /* User interaction and non critical warnings */ FConfigCacheIni* GConfig = nullptr; /* Configuration database cache */ ITransaction* GUndo = nullptr; /* Transaction tracker, non-NULL when a transaction is in progress */ FOutputDeviceConsole* GLogConsole = nullptr; /* Console log hook */ CORE_API FMalloc* GMalloc = nullptr; /* Memory allocator */ CORE_API FMalloc** GFixedMallocLocationPtr = nullptr; /* Memory allocator pointer location when PLATFORM_USES_FIXED_GMalloc_CLASS is true */ class UPropertyWindowManager* GPropertyWindowManager = nullptr; /* Manages and tracks property editing windows */ /** For building call stack text dump in guard/unguard mechanism.</div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2018/12/ue4trigger-tick-of-the-object-inherited-from-uobject/">
-                <h3 class="media-heading">[UE4]Trigger Tick of the object inherited from UObject</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Dec 12, 2018
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather">The object inherited from UObject would not trigger Tick when instanced (NewObject()), but AActor and the UActorComponent would trigger Tick.
-So how to trigger Tick of the object inherited from UObject?
-The answer is: inherit FTickableGameObject and UObject at the same.
-example source
-header:
-UCLASS() class UCoolDownMgr : public UObject, public FTickableGameObject { GENERATED_BODY() public: // Sets default values for this character's properties UCoolDownMgr(); virtual ~UCoolDownMgr(); // Begin FTickableGameObject Interface. virtual void Tick(float DeltaTime) override; virtual bool IsTickable() const override; virtual TStatId GetStatId() const override; // End FTickableGameObject Interface.</div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2018/12/ue4editor-extention/">
-                <h3 class="media-heading">[UE4]Editor Extention</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Dec 12, 2018
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather">UE4 - Easy example of How to create menus in the editor
-http://www.danielmayor.com/ue4-simple-menus
-UE4 Level Editor
-https://books.google.com.sg/books?id=zZ7cDgAAQBAJ&amp;pg=PA272&amp;lpg=PA272&amp;dq=UE4+leveleditor+C%2B%2B&amp;source=bl&amp;ots=ZsX7ZCR6bV&amp;sig=6_J7xzxTDosX5dOuLwpiaKrOSHU&amp;hl=zh-CN&amp;sa=X&amp;ved=2ahUKEwji8aiT8orfAhWFTn0KHU0JB7wQ6AEwBXoECAUQAQ#v=onepage&amp;q=UE4%20leveleditor%20C%2B%2B&amp;f=false
-Creating an Editor Module
-https://wiki.unrealengine.com/Creating_an_Editor_Module
-Customizing the editor&rsquo;s toolbar buttons menu via custom plugin
-https://answers.unrealengine.com/questions/25609/customizing-the-editors-toolbar-buttons-menu-via-c.html
-UE4 Editor Toolbar Extention
-https://blog.csdn.net/hui211314ddhui/article/details/79375548</div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2018/12/ue4packagingresults-error-bad-name-index/">
-                <h3 class="media-heading">[UE4]PackagingResults Error Bad name index</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Dec 12, 2018
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather">Package Error PackagingResults: Error: Bad name index -1/47  Solution 1 You can find the asset causing this by building the engine from source and adding breakpoints in these two place:
-LinkerLoad.cpp
-void FLinkerLoad::BadNameIndexError(NAME_INDEX NameIndex) { UE_LOG(LogLinker, Error, TEXT(&quot;Bad name index %i/%i&quot;), NameIndex, NameMap.Num()); }  and
-PackageReader.cpp
-FArchive&amp; FPackageReader::operator&lt;&lt;( FName&amp; Name ) { check(Loader); NAME_INDEX NameIndex; FArchive&amp; Ar = *this; Ar &lt;&lt; NameIndex; if( !NameMap.IsValidIndex(NameIndex) ) { UE_LOG(LogAssetRegistry, Fatal, TEXT(&quot;Bad name index %i/%i&quot;), NameIndex, NameMap.</div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2018/12/ue4slate-and-native-umgc-notes/">
-                <h3 class="media-heading">[UE4]Slate and Native UMG(C&#43;&#43;) Notes</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Dec 12, 2018
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather">How to scale or zoom a widget? For Mouse Zoom:
- override onMouseWheel add Wheel Delta to Panning Canvas&rsquo; Render Transform Scale clamp min result to something above 0 (widgets flip if scaled below 0) and max to your desired max zoom Set Render Scale of the Panning Canvas with the result of the above  Reference: How to scale/zoom a widget with blueprints?
-https://answers.unrealengine.com/questions/815202/how-to-scalezoom-a-widget-with-blueprints.html
-How to clip widget display area?</div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2018/11/c-const_cast/">
-                <h3 class="media-heading">[C&#43;&#43;]const_cast</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Nov 11, 2018
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather">You are not allowed to const_cast variables that are actually const. This results in undefined behavior. const_cast is used to remove the const-ness from references and pointers that ultimately refer to something that is not const.
-So, this is allowed:
-int i = 0; const int&amp; ref = i; const int* ptr = &amp;i; const_cast&lt;int&amp;&gt;(ref) = 3; *const_cast&lt;int*&gt;(ptr) = 3;  It&rsquo;s allowed because i, the object being assigned to, is not const.</div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2018/11/ue4logcompile-error-circular-dependency-detected-for-filename/">
-                <h3 class="media-heading">[UE4]LogCompile-error-Circular dependency detected for filename</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Nov 11, 2018
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather">Compilation Error：
-LogCompile : error : Circular dependency detected for filename D:\Library Storage\Documents\Unreal Projects\DistantHome\Source\DistantHome\Public\Game\DHGameInfo.h!  Solution:
-Don&rsquo;t include headers in header, declare class in header and include headers in cpp.
-class forwardedClass; class UsingIt { public: forwardedClass* instance; }  or
-class UsingIt { public: class forwardedClass* instance; }  Reference:How do you guys combat circular dependencies in your file heads?
-https://forums.unrealengine.com/development-discussion/c-gameplay-programming/109582-how-do-you-guys-combat-circular-dependencies-in-your-file-heads</div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
       </div>
     </div>
     <div class="modal-footer">
@@ -891,7 +928,7 @@ https://forums.unrealengine.com/development-discussion/c-gameplay-programming/10
          data-message-zero="no post found"
          data-message-one="1 post found"
          data-message-other="{n} posts found">
-         440 posts found
+         448 posts found
       </p>
     </div>
   </div>

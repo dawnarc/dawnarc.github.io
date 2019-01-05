@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.52 with theme Tranquilpeak 0.4.3-SNAPSHOT">
+<meta name="author" content="Neil Wang">
+<meta name="keywords" content="">
+<meta name="description" content="keywords: Windows Debugging Tools, PDB file, Crash, Dump file
+WinDbg for Windows Steps
+ Get the crash callstack. e.g.:
+TestTP2 0x00000000fff20000 &#43; 2c44aa2 TestTP2 0x00000000fff20000 &#43; 987262 TestTP2 0x00000000fff20000 &#43; 3ab0cc4 TestTP2 0x00000000fff20000 &#43; 362fbbc TestTP2 0x00000000fff20000 &#43; 3643325 TestTP2 0x00000000fff20000 &#43; 362d8e4 TestTP2 0x00000000fff20000 &#43; 3642128 TestTP2 0x00000000fff20000 &#43; 2c20100 TestTP2 0x00000000fff20000 &#43; 39a2c25 TestTP2 0x00000000fff20000 &#43; 39ba846 TestTP2 0x00000000fff20000 &#43; 9cae56 TestTP2 0x00000000fff20000 &#43; 9cb376 TestTP2 0x00000000fff20000 &#43; 3a07c61 TestTP2 0x00000000fff20000 &#43; 3a16ef8 TestTP2 0x00000000fff20000 &#43; 32dff6f TestTP2 0x00000000fff20000 &#43; 32e8e3f TestTP2 0x00000000fff20000 &#43; 3146e59 TestTP2 0x00000000fff20000 &#43; 43f1c9 TestTP2 0x00000000fff20000 &#43; 44ec1c TestTP2 0x00000000fff20000 &#43; 44ec7a TestTP2 0x00000000fff20000 &#43; 45d265 TestTP2 0x00000000fff20000 &#43; 47dc1c6 KERNEL32 0x0000000005b70000 &#43; 18102 ntdll 0x00000000070f0000 &#43; 5c5b4  Open WinDbg, set symbol file and open binary file.">
+
+
+<meta property="og:description" content="keywords: Windows Debugging Tools, PDB file, Crash, Dump file
+WinDbg for Windows Steps
+ Get the crash callstack. e.g.:
+TestTP2 0x00000000fff20000 &#43; 2c44aa2 TestTP2 0x00000000fff20000 &#43; 987262 TestTP2 0x00000000fff20000 &#43; 3ab0cc4 TestTP2 0x00000000fff20000 &#43; 362fbbc TestTP2 0x00000000fff20000 &#43; 3643325 TestTP2 0x00000000fff20000 &#43; 362d8e4 TestTP2 0x00000000fff20000 &#43; 3642128 TestTP2 0x00000000fff20000 &#43; 2c20100 TestTP2 0x00000000fff20000 &#43; 39a2c25 TestTP2 0x00000000fff20000 &#43; 39ba846 TestTP2 0x00000000fff20000 &#43; 9cae56 TestTP2 0x00000000fff20000 &#43; 9cb376 TestTP2 0x00000000fff20000 &#43; 3a07c61 TestTP2 0x00000000fff20000 &#43; 3a16ef8 TestTP2 0x00000000fff20000 &#43; 32dff6f TestTP2 0x00000000fff20000 &#43; 32e8e3f TestTP2 0x00000000fff20000 &#43; 3146e59 TestTP2 0x00000000fff20000 &#43; 43f1c9 TestTP2 0x00000000fff20000 &#43; 44ec1c TestTP2 0x00000000fff20000 &#43; 44ec7a TestTP2 0x00000000fff20000 &#43; 45d265 TestTP2 0x00000000fff20000 &#43; 47dc1c6 KERNEL32 0x0000000005b70000 &#43; 18102 ntdll 0x00000000070f0000 &#43; 5c5b4  Open WinDbg, set symbol file and open binary file.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[C&#43;&#43;]Address source line from crash callstack using binary">
+<meta name="twitter:title" content="[C&#43;&#43;]Address source line from crash callstack using binary">
+<meta property="og:url" content="https://dawnarc.com/2019/01/c-address-source-line-from-crash-callstack-using-binary/">
+<meta property="twitter:url" content="https://dawnarc.com/2019/01/c-address-source-line-from-crash-callstack-using-binary/">
+<meta property="og:site_name" content="玄冬Wong">
+<meta property="og:description" content="keywords: Windows Debugging Tools, PDB file, Crash, Dump file
+WinDbg for Windows Steps
+ Get the crash callstack. e.g.:
+TestTP2 0x00000000fff20000 &#43; 2c44aa2 TestTP2 0x00000000fff20000 &#43; 987262 TestTP2 0x00000000fff20000 &#43; 3ab0cc4 TestTP2 0x00000000fff20000 &#43; 362fbbc TestTP2 0x00000000fff20000 &#43; 3643325 TestTP2 0x00000000fff20000 &#43; 362d8e4 TestTP2 0x00000000fff20000 &#43; 3642128 TestTP2 0x00000000fff20000 &#43; 2c20100 TestTP2 0x00000000fff20000 &#43; 39a2c25 TestTP2 0x00000000fff20000 &#43; 39ba846 TestTP2 0x00000000fff20000 &#43; 9cae56 TestTP2 0x00000000fff20000 &#43; 9cb376 TestTP2 0x00000000fff20000 &#43; 3a07c61 TestTP2 0x00000000fff20000 &#43; 3a16ef8 TestTP2 0x00000000fff20000 &#43; 32dff6f TestTP2 0x00000000fff20000 &#43; 32e8e3f TestTP2 0x00000000fff20000 &#43; 3146e59 TestTP2 0x00000000fff20000 &#43; 43f1c9 TestTP2 0x00000000fff20000 &#43; 44ec1c TestTP2 0x00000000fff20000 &#43; 44ec7a TestTP2 0x00000000fff20000 &#43; 45d265 TestTP2 0x00000000fff20000 &#43; 47dc1c6 KERNEL32 0x0000000005b70000 &#43; 18102 ntdll 0x00000000070f0000 &#43; 5c5b4  Open WinDbg, set symbol file and open binary file.">
+<meta name="twitter:description" content="keywords: Windows Debugging Tools, PDB file, Crash, Dump file
+WinDbg for Windows Steps
+ Get the crash callstack. e.g.:
+TestTP2 0x00000000fff20000 &#43; 2c44aa2 TestTP2 0x00000000fff20000 &#43; 987262 TestTP2 0x00000000fff20000 &#43; 3ab0cc4 TestTP2 0x00000000fff20000 &#43; 362fbbc TestTP2 0x00000000fff20000 &#43; 3643325 TestTP2 0x00000000fff20000 &#43; 362d8e4 TestTP2 0x00000000fff20000 &#43; 3642128 TestTP2 0x00000000fff20000 &#43; 2c20100 TestTP2 0x00000000fff20000 &#43; 39a2c25 TestTP2 0x00000000fff20000 &#43; 39ba846 TestTP2 0x00000000fff20000 &#43; 9cae56 TestTP2 0x00000000fff20000 &#43; 9cb376 TestTP2 0x00000000fff20000 &#43; 3a07c61 TestTP2 0x00000000fff20000 &#43; 3a16ef8 TestTP2 0x00000000fff20000 &#43; 32dff6f TestTP2 0x00000000fff20000 &#43; 32e8e3f TestTP2 0x00000000fff20000 &#43; 3146e59 TestTP2 0x00000000fff20000 &#43; 43f1c9 TestTP2 0x00000000fff20000 &#43; 44ec1c TestTP2 0x00000000fff20000 &#43; 44ec7a TestTP2 0x00000000fff20000 &#43; 45d265 TestTP2 0x00000000fff20000 &#43; 47dc1c6 KERNEL32 0x0000000005b70000 &#43; 18102 ntdll 0x00000000070f0000 &#43; 5c5b4  Open WinDbg, set symbol file and open binary file.">
+<meta property="og:locale" content="en-us">
+
+  
+    <meta property="article:published_time" content="2019-01-02T11:26:40">
+  
+  
+    <meta property="article:modified_time" content="2019-01-02T11:26:40">
+  
+  
+  
+    
+      <meta property="article:section" content="C&#43;&#43;">
+    
+  
+  
+    
+      <meta property="article:tag" content="C&#43;&#43;">
+    
+  
+
+
+<meta name="twitter:card" content="summary">
+
+  <meta name="twitter:site" content="@idealsland">
+
+
+  <meta name="twitter:creator" content="@idealsland">
+
+
+
+
+
+
+
+
+
+
+  <meta property="og:image" content="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=640">
+  <meta property="twitter:image" content="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=640">
+
+
+    <title>[C&#43;&#43;]Address source line from crash callstack using binary</title>
+
+    <link rel="icon" href="https://dawnarc.com/favicon.png">
+    
+
+    
+      <link rel="publisher" href="https://plus.google.com/111340706178390411568">
+    
+
+    <link rel="canonical" href="https://dawnarc.com/2019/01/c-address-source-line-from-crash-callstack-using-binary/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/jquery.fancybox.min.css" integrity="sha256-vuXZ9LGmmwtjqFX1F+EKin1ThZMub58gKULUyf0qECk=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/helpers/jquery.fancybox-thumbs.min.css" integrity="sha256-SEa4XYAHihTcEP1f5gARTB2K26Uk8PsndQYHQC1f4jU=" crossorigin="anonymous" />
+    
+    
+    <link rel="stylesheet" href="https://dawnarc.com/css/style-nnm2spxvve8onlujjlegkkytaehyadd4ksxc1hyzzq9a2wvtrgbljqyulomn.min.css" />
+    
+    
+      
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/solarized-light.min.css">
+      
+    
+
+    
+      
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-78064851-2', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="4">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="https://dawnarc.com/">玄冬Wong</a>
+  </div>
+  
+    
+      <a class="header-right-picture "
+         href="https://dawnarc.com/#about">
+    
+    
+    
+      
+        <img class="header-picture" src="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=90" alt="Author&#39;s picture" />
+      
+    
+    </a>
+  
+  
+  
+
+</header>
+
+      <nav id="sidebar" data-behavior="4">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="https://dawnarc.com/#about">
+          <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=110" alt="Author&#39;s picture" />
+        </a>
+        <h4 class="sidebar-profile-name">Neil Wang</h4>
+        
+          <h5 class="sidebar-profile-bio">久长唯有品格</h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/categories">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+      
+      <span class="sidebar-button-desc">Categories</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/tags">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+      
+      <span class="sidebar-button-desc">Tags</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/archives">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+      
+      <span class="sidebar-button-desc">Archives</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/#about">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+      
+      <span class="sidebar-button-desc">About</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+      
+      <span class="sidebar-button-desc">Home</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/index.xml">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://stackoverflow.com/users/1645289/protoss" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-stack-overflow"></i>
+      
+      <span class="sidebar-button-desc">Stack Overflow</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://www.artstation.com/artist/dawnarc" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-artstation"></i>
+      
+      <span class="sidebar-button-desc">ArtStation</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://www.facebook.com/koanland" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-facebook"></i>
+      
+      <span class="sidebar-button-desc">Facebook</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/dawnarc" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://www.linkedin.com/in/dawnarc/" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-linkedin"></i>
+      
+      <span class="sidebar-button-desc">Linkedin</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://www.pinterest.com/wangaiguo/" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-pinterest"></i>
+      
+      <span class="sidebar-button-desc">Pinterest</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://steamcommunity.com/id/dawnarc" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-steam"></i>
+      
+      <span class="sidebar-button-desc">Steam</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://twitter.com/idealsland" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-twitter"></i>
+      
+      <span class="sidebar-button-desc">Twitter</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://weibo.com/koanland" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-weibo"></i>
+      
+      <span class="sidebar-button-desc">Weibo</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+
+    </ul>
+  </div>
+</nav>
+
+      
+
+      <div id="main" data-behavior="4"
+        class="
+               hasCoverMetaIn
+               ">
+        <article class="post" itemscope itemType="http://schema.org/BlogPosting">
+          
+          
+            <div class="post-header main-content-wrap text-left">
+  
+    <h1 class="post-title" itemprop="headline">
+      [C&#43;&#43;]Address source line from crash callstack using binary
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2019-01-02T11:26:40&#43;08:00">
+        
+  January 2, 2019
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/c&#43;&#43;">C&#43;&#43;</a>
+    
+  
+
+  </div>
+
+</div>
+          
+          <div class="post-content markdown" itemprop="articleBody">
+            <div class="main-content-wrap">
+              
+
+<p>keywords: Windows Debugging Tools, PDB file, Crash, Dump file</p>
+
+<h3 id="windbg-for-windows">WinDbg for Windows</h3>
+
+<p>Steps</p>
+
+<ol>
+<li><p>Get the crash callstack. e.g.:</p>
+
+<pre><code>TestTP2   0x00000000fff20000 + 2c44aa2 
+TestTP2   0x00000000fff20000 + 987262  
+TestTP2   0x00000000fff20000 + 3ab0cc4 
+TestTP2   0x00000000fff20000 + 362fbbc 
+TestTP2   0x00000000fff20000 + 3643325 
+TestTP2   0x00000000fff20000 + 362d8e4 
+TestTP2   0x00000000fff20000 + 3642128 
+TestTP2   0x00000000fff20000 + 2c20100 
+TestTP2   0x00000000fff20000 + 39a2c25 
+TestTP2   0x00000000fff20000 + 39ba846 
+TestTP2   0x00000000fff20000 + 9cae56  
+TestTP2   0x00000000fff20000 + 9cb376  
+TestTP2   0x00000000fff20000 + 3a07c61 
+TestTP2   0x00000000fff20000 + 3a16ef8 
+TestTP2   0x00000000fff20000 + 32dff6f 
+TestTP2   0x00000000fff20000 + 32e8e3f 
+TestTP2   0x00000000fff20000 + 3146e59 
+TestTP2   0x00000000fff20000 + 43f1c9  
+TestTP2   0x00000000fff20000 + 44ec1c  
+TestTP2   0x00000000fff20000 + 44ec7a  
+TestTP2   0x00000000fff20000 + 45d265  
+TestTP2   0x00000000fff20000 + 47dc1c6 
+KERNEL32  0x0000000005b70000 + 18102   
+ntdll     0x00000000070f0000 + 5c5b4   
+</code></pre></li>
+
+<li><p>Open WinDbg, set symbol file and open binary file. e.g.:<br />
+set symbol file directory
+<figure>
+    <img src="https://dawnarc.com/img/20190105-[C&#43;&#43;]Address%20source%20line%20from%20crash%20callstack%20using%20binary/[C&#43;&#43;]Address%20source%20line%20from%20crash%20callstack%20using%20binary-01.jpg"/> 
+</figure>
+
+<figure>
+    <img src="https://dawnarc.com/img/20190105-[C&#43;&#43;]Address%20source%20line%20from%20crash%20callstack%20using%20binary/[C&#43;&#43;]Address%20source%20line%20from%20crash%20callstack%20using%20binary-02.jpg"/> 
+</figure>
+
+then WinDbg would search symbol file in this directory:
+<figure>
+    <img src="https://dawnarc.com/img/20190105-[C&#43;&#43;]Address%20source%20line%20from%20crash%20callstack%20using%20binary/[C&#43;&#43;]Address%20source%20line%20from%20crash%20callstack%20using%20binary-03.jpg"/> 
+</figure>
+</p></li>
+
+<li><p>Open Executable file:
+<figure>
+    <img src="https://dawnarc.com/img/20190105-[C&#43;&#43;]Address%20source%20line%20from%20crash%20callstack%20using%20binary/[C&#43;&#43;]Address%20source%20line%20from%20crash%20callstack%20using%20binary-04.jpg"/> 
+</figure>
+
+<figure>
+    <img src="https://dawnarc.com/img/20190105-[C&#43;&#43;]Address%20source%20line%20from%20crash%20callstack%20using%20binary/[C&#43;&#43;]Address%20source%20line%20from%20crash%20callstack%20using%20binary-05.jpg"/> 
+</figure>
+</p></li>
+
+<li><p>Execute command to address source line.<br />
+e.g. : ln TestTP2.exe+2c44aa2
+<figure>
+    <img src="https://dawnarc.com/img/20190105-[C&#43;&#43;]Address%20source%20line%20from%20crash%20callstack%20using%20binary/[C&#43;&#43;]Address%20source%20line%20from%20crash%20callstack%20using%20binary-06.jpg"/> 
+</figure>
+
+then would output the source line. In there, because SetActorLocation is the source of engine, and we didn&rsquo;t set the symbol file directory of engine binary, so it didn&rsquo;t display the engine source line.
+<figure>
+    <img src="https://dawnarc.com/img/20190105-[C&#43;&#43;]Address%20source%20line%20from%20crash%20callstack%20using%20binary/[C&#43;&#43;]Address%20source%20line%20from%20crash%20callstack%20using%20binary-07.jpg"/> 
+</figure>
+
+then we search the last address, we can find ourself source, and display the source file path and line
+<figure>
+    <img src="https://dawnarc.com/img/20190105-[C&#43;&#43;]Address%20source%20line%20from%20crash%20callstack%20using%20binary/[C&#43;&#43;]Address%20source%20line%20from%20crash%20callstack%20using%20binary-08.jpg"/> 
+</figure>
+</p></li>
+
+<li><p>Finally we can locate place where cause a crash: the line above the display line
+<figure>
+    <img src="https://dawnarc.com/img/20190105-[C&#43;&#43;]Address%20source%20line%20from%20crash%20callstack%20using%20binary/[C&#43;&#43;]Address%20source%20line%20from%20crash%20callstack%20using%20binary-09.jpg"/> 
+</figure>
+
+<div class="alert warning ">
+  <p>Note: the line displayed in WinDbg isn&rsquo;t the exact place where cause a crash, the real line cause the crash is above it.</p>
+</div></p></li>
+</ol>
+
+<p>WinDbg download<br />
+<a href="https://github.com/dawnarc/DevTools/tree/master/Debug/Windows/WinDbg">https://github.com/dawnarc/DevTools/tree/master/Debug/Windows/WinDbg</a></p>
+
+<p>WinDbg analysis dump file<br />
+<a href="https://www.jianshu.com/p/ee979eaadf34">https://www.jianshu.com/p/ee979eaadf34</a></p>
+
+<p>Where to put the PDBs in WinDbg<br />
+<a href="https://stackoverflow.com/a/573796/1645289">https://stackoverflow.com/a/573796/1645289</a></p>
+
+<h5 id="windows-driver">Windows Driver</h5>
+
+<p>Manually Walking a Stack<br />
+<a href="https://docs.microsoft.com/en-us/windows-hardware/drivers/debugger/manually-walking-a-stack">https://docs.microsoft.com/en-us/windows-hardware/drivers/debugger/manually-walking-a-stack</a></p>
+
+<h3 id="gdb-command-for-linux">GDB command for Linux</h3>
+
+<p>Command:</p>
+
+<pre><code>addr2line -e /path/to/non-stripped/.../my-buggy-app \
+    0x4a6889 0x4a8b43 0x4e8765
+</code></pre>
+
+<p>Or</p>
+
+<pre><code>info line *0x10045740
+</code></pre>
+
+<p>Using gdb to convert addresses to lines<br />
+<a href="https://stackoverflow.com/questions/8545931/using-gdb-to-convert-addresses-to-lines">https://stackoverflow.com/questions/8545931/using-gdb-to-convert-addresses-to-lines</a></p>
+
+              
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+                
+                
+                  <div class="post-footer-tags">
+                    <span class="text-color-light text-small">TAGGED IN</span><br/>
+                    
+  <a class="tag tag--primary tag--small" href="https://dawnarc.com/tags/c&#43;&#43;/">C&#43;&#43;</a>
+
+                  </div>
+                
+              
+            
+            <div class="post-actions-wrap">
+  
+      <nav >
+        <ul class="post-actions post-action-nav">
+          
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2019/01/ue4transform-skeletal-bone-in-c-/" data-tooltip="[UE4]Transform skeletal bone in C&#43;&#43;">
+              
+                  <i class="fa fa-angle-left"></i>
+                  <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+                </a>
+            </li>
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2018/12/windowsgetting-the-convenient-automatic-folder-navigation-tree-expansion-back/" data-tooltip="[Windows]Getting the convenient automatic folder navigation tree expansion back">
+              
+                  <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+                  <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+          
+        </ul>
+      </nav>
+    <ul class="post-actions post-action-share" >
+      
+        <li class="post-action hide-lg hide-md hide-sm">
+          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
+            <i class="fa fa-share-alt"></i>
+          </a>
+        </li>
+        
+      
+      
+        <li class="post-action">
+          <a class="post-action-btn btn btn--default" href="#disqus_thread">
+            <i class="fa fa-comment-o"></i>
+          </a>
+        </li>
+      
+      <li class="post-action">
+        
+          <a class="post-action-btn btn btn--default" href="#">
+        
+          <i class="fa fa-list"></i>
+        </a>
+      </li>
+    </ul>
+  
+</div>
+
+            
+              
+                <div id="disqus_thread">
+  <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+              
+            
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2019 Neil Wang. All Rights Reserved. Powered by <A href="https://gohugo.io/"> Hugo</A>.
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+        <div class="post-actions-wrap">
+  
+      <nav >
+        <ul class="post-actions post-action-nav">
+          
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2019/01/ue4transform-skeletal-bone-in-c-/" data-tooltip="[UE4]Transform skeletal bone in C&#43;&#43;">
+              
+                  <i class="fa fa-angle-left"></i>
+                  <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+                </a>
+            </li>
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2018/12/windowsgetting-the-convenient-automatic-folder-navigation-tree-expansion-back/" data-tooltip="[Windows]Getting the convenient automatic folder navigation tree expansion back">
+              
+                  <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+                  <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+          
+        </ul>
+      </nav>
+    <ul class="post-actions post-action-share" >
+      
+        <li class="post-action hide-lg hide-md hide-sm">
+          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
+            <i class="fa fa-share-alt"></i>
+          </a>
+        </li>
+        
+      
+      
+        <li class="post-action">
+          <a class="post-action-btn btn btn--default" href="#disqus_thread">
+            <i class="fa fa-comment-o"></i>
+          </a>
+        </li>
+      
+      <li class="post-action">
+        
+          <a class="post-action-btn btn btn--default" href="#">
+        
+          <i class="fa fa-list"></i>
+        </a>
+      </li>
+    </ul>
+  
+</div>
+
+      </div>
+      <div id="share-options-bar" class="share-options-bar" data-behavior="4">
+  <i id="btn-close-shareoptions" class="fa fa-close"></i>
+  <ul class="share-options">
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-remove"></i>
+    </div>
+    
+      <img id="about-card-picture" src="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=110" alt="Author&#39;s picture" />
+    
+    <h4 id="about-card-name">Neil Wang</h4>
+    
+      <div id="about-card-bio">久长唯有品格</div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        To Be Marvelous
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker"></i>
+        <br/>
+        Yichang·Hubei
+      </div>
+    
+  </div>
+</div>
+
+    <div id="algolia-search-modal" class="modal-container">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="close-button"><i class="fa fa-close"></i></span>
+      <a href="https://algolia.com" target="_blank" rel="noopener" class="searchby-algolia text-color-light link-unstyled">
+        <span class="searchby-algolia-text text-color-light text-small">by</span>
+        <img class="searchby-algolia-logo" src="https://www.algolia.com/static_assets/images/press/downloads/algolia-light.svg">
+      </a>
+      <i class="search-icon fa fa-search"></i>
+      <form id="algolia-search-form">
+        <input type="text" id="algolia-search-input" name="search"
+          class="form-control input--large search-input" placeholder="Search" />
+      </form>
+    </div>
+    <div class="modal-body">
+      <div class="no-result text-color-light text-center">no post found</div>
+      <div class="results">
+        
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/01/ue4transform-skeletal-bone-in-c-/">
+                <h3 class="media-heading">[UE4]Transform skeletal bone in C&#43;&#43;</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jan 1, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">Blueprint Node Transform from Bone Space    C++ code Steps
+ Add UPoseableMeshComponent in your Actor class, and set Skeletal Mesh asset for it.      Modify bones transform by UPoseableMeshComponent&rsquo;s functions:
+UFUNCTION(BlueprintCallable, Category=&quot;Components|PoseableMesh&quot;) void SetBoneTransformByName(FName BoneName, const FTransform&amp; InTransform, EBoneSpaces::Type BoneSpace); UFUNCTION(BlueprintCallable, Category=&quot;Components|PoseableMesh&quot;) void SetBoneLocationByName(FName BoneName, FVector InLocation, EBoneSpaces::Type BoneSpace); UFUNCTION(BlueprintCallable, Category=&quot;Components|PoseableMesh&quot;) void SetBoneRotationByName(FName BoneName, FRotator InRotation, EBoneSpaces::Type BoneSpace); UFUNCTION(BlueprintCallable, Category=&quot;Components|PoseableMesh&quot;) void SetBoneScaleByName(FName BoneName, FVector InScale3D, EBoneSpaces::Type BoneSpace);   Reference Transform skeletal bone in C++</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/01/c-address-source-line-from-crash-callstack-using-binary/">
+                <h3 class="media-heading">[C&#43;&#43;]Address source line from crash callstack using binary</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jan 1, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">keywords: Windows Debugging Tools, PDB file, Crash, Dump file
+WinDbg for Windows Steps
+ Get the crash callstack. e.g.:
+TestTP2 0x00000000fff20000 + 2c44aa2 TestTP2 0x00000000fff20000 + 987262 TestTP2 0x00000000fff20000 + 3ab0cc4 TestTP2 0x00000000fff20000 + 362fbbc TestTP2 0x00000000fff20000 + 3643325 TestTP2 0x00000000fff20000 + 362d8e4 TestTP2 0x00000000fff20000 + 3642128 TestTP2 0x00000000fff20000 + 2c20100 TestTP2 0x00000000fff20000 + 39a2c25 TestTP2 0x00000000fff20000 + 39ba846 TestTP2 0x00000000fff20000 + 9cae56 TestTP2 0x00000000fff20000 + 9cb376 TestTP2 0x00000000fff20000 + 3a07c61 TestTP2 0x00000000fff20000 + 3a16ef8 TestTP2 0x00000000fff20000 + 32dff6f TestTP2 0x00000000fff20000 + 32e8e3f TestTP2 0x00000000fff20000 + 3146e59 TestTP2 0x00000000fff20000 + 43f1c9 TestTP2 0x00000000fff20000 + 44ec1c TestTP2 0x00000000fff20000 + 44ec7a TestTP2 0x00000000fff20000 + 45d265 TestTP2 0x00000000fff20000 + 47dc1c6 KERNEL32 0x0000000005b70000 + 18102 ntdll 0x00000000070f0000 + 5c5b4  Open WinDbg, set symbol file and open binary file.</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/12/windowsgetting-the-convenient-automatic-folder-navigation-tree-expansion-back/">
+                <h3 class="media-heading">[Windows]Getting the convenient automatic folder navigation tree expansion back</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Dec 12, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">Software:
+Microsoft Windows 10
+ In the folder toolbar, Click the View tab. Click the Navigator pane drop-down on the left, And enable Expand to open folder.    Origin Text:
+https://odederell3d.wordpress.com/2018/09/19/windows-10-getting-the-convenient-automatic-navigation-folder-tree-expansion-back/</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/12/windowsquickly-get-a-files-folder-path/">
+                <h3 class="media-heading">[Windows]Quickly get a file’s folder path</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Dec 12, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">Software:
+Microsoft Windows 10
+ Shift + RMB Click the file Choose Copy As Path    Origin Text:
+https://odederell3d.wordpress.com/2018/10/25/windows-10-quickly-get-a-files-path/</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/12/ue4materialshow-tos/">
+                <h3 class="media-heading">[UE4][Materials]How-To&#39;s</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Dec 12, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">UE4 Materials How-To&rsquo;s https://docs.unrealengine.com/en-us/Engine/Rendering/Materials/HowTo
+How to metal only for a part of mesh Using Texture Masks
+https://docs.unrealengine.com/en-us/Engine/Rendering/Materials/HowTo/Masking
+How to make a stained glass window effect Using Colored Translucent Shadows
+https://docs.unrealengine.com/en-us/Engine/Rendering/Materials/HowTo/ColoredTransluscentShadows
+How to create a richly colored metallic surface Create a richly colored metallic surface in UE4
+https://odederell3d.wordpress.com/2018/02/08/create-a-richly-colored-metallic-surface-in-ue4/
+How To Use The Spiral Blur Material Node How To Use The Spiral Blur Material Node
+https://wiki.unrealengine.com/How_To_Use_The_Spiral_Blur_Material_Node
+Font Materials and Outlines Font Materials and Outlines</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/12/ue4gpu-visualizer-gpu-profiling-specification/">
+                <h3 class="media-heading">[UE4]GPU Visualizer (GPU Profiling) Specification</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Dec 12, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">keywords: Performance, Optimization
+GPU Visualizer arguments specification PrePass DDM_AllOpaque(Forced by DBuffer) ShadowDepths Reference UE4 Graphics Profiling: All Categories Guide (Rendering Passes)
+https://www.youtube.com/watch?v=C3lumWdwHmA
+GPU Profiling
+https://docs.unrealengine.com/en-us/Engine/Performance/GPU</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/12/pythoncommon-syntax-collections/">
+                <h3 class="media-heading">[Python]Common syntax collections</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Dec 12, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">Print Python2
+print(&quot;a=%d,b=%d&quot; % (f(x,n), g(x,n)))  Python3
+print('x={:d}, y={:d}'.format(f(x,n), g(x,n)))  Python3.6
+print(f'a={f(x,n):d}, b={g(x,n):d}')  How to print like printf in Python3?
+https://stackoverflow.com/questions/19457227/how-to-print-like-printf-in-python3
+Case-insensitive string comparison Python2
+string1 = 'Hello' string2 = 'hello' if string1.lower() == string2.lower(): print &quot;The strings are the same (case insensitive)&quot; else: print &quot;The strings are not the same (case insensitive)&quot;  Python3
+s = 'ß' s.lower() # 'ß' s.casefold() # 'ss'  casefold() not only can be used for ASCII strings, but also for Non-ASCII strings, e.</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/12/ue411-short-steps-to-create-an-animated-loading-screenasync-switch-level/">
+                <h3 class="media-heading">[UE4]11 Short Steps to Create an Animated Loading Screen(Async switch level)</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Dec 12, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">keywords: UE4, Stream Level, Loading Screen, Async Open Level, Async Change Level
+11 Short Steps to Create an Animated Loading Screen
+ - I Went into Window &gt; Levels - Created a New Level by going to “Levels” and selecting “Create new Level” - Moved all my main level stuff by highlighting it all in the editor window and selecting “Move Selected Actors to Level” via the “Levels” tab. - Created my load screen texture, camera and animated spinning icon and made sure they were in “Persistent Level”.</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/12/ue4invalid-object-in-gc-0x000001eb2e659900-referencingobject-image/">
+                <h3 class="media-heading">[UE4]Invalid object in GC: 0x000001eb2e659900, ReferencingObject: Image</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Dec 12, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">Exception Throw:
+Fatal error: [File:D:\Build\++UE4\Sync\Engine\Source\Runtime\CoreUObject\Private\UObject\GarbageCollection.cpp] [Line: 623] Invalid object in GC: 0x000001eb2e659900, ReferencingObject: Image /Engine/Transient.GameEngine_0:TDGameInstance_0.CombatMainUIBP_C_0.WidgetTree_0.MiniMapUIBP_1216.WidgetTree_0.Image_0, ReferencingObjectClass: Class /Script/UMG.Image, Property Name: ResourceObject, Offset: 480, TokenIndex: 11 UE4Editor_Core!FDebug::AssertFailed() [d:\build\++ue4\sync\engine\source\runtime\core\private\misc\assertionmacros.cpp:425] UE4Editor_CoreUObject!TFastReferenceCollector&lt;1,FGCReferenceProcessor&lt;1&gt;,FGCCollector&lt;1&gt;,FGCArrayPool,0&gt;::ProcessObjectArray() [d:\build\++ue4\sync\engine\source\runtime\coreuobject\public\uobject\fastreferencecollector.h:697] UE4Editor_CoreUObject!TFastReferenceCollector&lt;1,FGCReferenceProcessor&lt;1&gt;,FGCCollector&lt;1&gt;,FGCArrayPool,0&gt;::FCollectorTaskQueue::DoTask() [d:\build\++ue4\sync\engine\source\runtime\coreuobject\public\uobject\fastreferencecollector.h:378] UE4Editor_CoreUObject!TGraphTask&lt;TFastReferenceCollector&lt;1,FGCReferenceProcessor&lt;1&gt;,FGCCollector&lt;1&gt;,FGCArrayPool,0&gt;::FCollectorTaskProcessorTask&gt;::ExecuteTask() [d:\build\++ue4\sync\engine\source\runtime\core\public\async\taskgraphinterfaces.h:829] UE4Editor_Core!FTaskThreadAnyThread::ProcessTasks() [d:\build\++ue4\sync\engine\source\runtime\core\private\async\taskgraph.cpp:936] UE4Editor_Core!FTaskThreadAnyThread::ProcessTasksUntilQuit() [d:\build\++ue4\sync\engine\source\runtime\core\private\async\taskgraph.cpp:801] UE4Editor_Core!FTaskThreadBase::Run() [d:\build\++ue4\sync\engine\source\runtime\core\private\async\taskgraph.cpp:516] UE4Editor_Core!FRunnableThreadWin::Run() [d:\build\++ue4\sync\engine\source\runtime\core\private\windows\windowsrunnablethread.cpp:76]  Reason:
+Some assets object in memory not persisted
+Solution:
+Use UPROPERTY() or AddToRoot() to persist assets in memory.</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/12/toolsreduce-chrome-drive-activity100-percent-drive-usage/">
+                <h3 class="media-heading">[Tools]Reduce Chrome drive activity(100 percent Drive usage)</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Dec 12, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">Settings -&gt; Advanced -&gt; Privacy and security -&gt; Disable Protects you and your device from dangerous sites</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+      </div>
+    </div>
+    <div class="modal-footer">
+      <p class="results-count text-medium"
+         data-message-zero="no post found"
+         data-message-one="1 post found"
+         data-message-other="{n} posts found">
+         448 posts found
+      </p>
+    </div>
+  </div>
+</div>
+    
+  
+    
+    <div id="cover" style="background-image:url('https://dawnarc.com/images/cover-v1.2.0.jpg');"></div>
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.7/js/jquery.fancybox.min.js" integrity="sha256-GEAnjcTqVP+vBp3SSc8bEDQqvWAZMiHyUSIorrWwH50=" crossorigin="anonymous"></script>
+
+
+<script src="https://dawnarc.com/js/script-qi9wbxp2ya2j6p7wx1i6tgavftewndznf4v0hy2gvivk1rxgc3lm7njqb6bz.min.js"></script>
+
+
+<script lang="javascript">
+window.onload = updateMinWidth;
+window.onresize = updateMinWidth;
+document.getElementById("sidebar").addEventListener("transitionend", updateMinWidth);
+function updateMinWidth() {
+  var sidebar = document.getElementById("sidebar");
+  var main = document.getElementById("main");
+  main.style.minWidth = "";
+  var w1 = getComputedStyle(main).getPropertyValue("min-width");
+  var w2 = getComputedStyle(sidebar).getPropertyValue("width");
+  var w3 = getComputedStyle(sidebar).getPropertyValue("left");
+  main.style.minWidth = `calc(${w1} - ${w2} - ${w3})`;
+}
+</script>
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+  
+    
+      <script>
+        var disqus_config = function () {
+          this.page.url = 'https:\/\/dawnarc.com\/2019\/01\/c-address-source-line-from-crash-callstack-using-binary\/';
+          
+            this.page.identifier = '\/2019\/01\/c-address-source-line-from-crash-callstack-using-binary\/'
+          
+        };
+        (function() {
+          
+          
+          if (window.location.hostname == "localhost") {
+            return;
+          }
+          var d = document, s = d.createElement('script');
+          var disqus_shortname = 'dawnarc';
+          s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+          s.setAttribute('data-timestamp', +new Date());
+          (d.head || d.body).appendChild(s);
+        })();
+      </script>
+    
+  
+
+
+
+
+    
+  </body>
+</html>
+

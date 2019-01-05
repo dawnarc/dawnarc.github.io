@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.51 with theme Tranquilpeak 0.4.3-SNAPSHOT">
+<meta name="generator" content="Hugo 0.52 with theme Tranquilpeak 0.4.3-SNAPSHOT">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="">
 <meta name="description" content="Hugo tranquilpeak theme demo">
@@ -303,6 +303,255 @@ if (!doNotTrack) {
         
           <section class="postShorten-group main-content-wrap">
             
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2017/09/ue4no-owning-connection-for-actor-xxx.-function-xxx-will-not-be-processed/">
+          [UE4]No owning connection for actor XXX. Function XXX will not be processed
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2017-09-12T18:26:40&#43;08:00">
+        
+  September 12, 2017
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        keywords：UE4、Dedicated Server、Replication、独立服务器
+在客户端连接独立服务端的情况下，客户端执行Server函数时提示以下警告：
+LogNet: Warning: UIpNetDriver::ProcesRemoteFunction: No owning connection for actor TopDownCharacter_C_0. Function ServerMoveToDest will not be processed.  原因：
+Client执行Server函数的对象，是在服务端Spawn出来的，不是在客户端创建的，所以提示这个警告。
+比如你在Server端的GameMode中创建了一个Character，且这个Character的Replicated相关属性设置为true，你在客户端用这个Character对象来执行Server函数（即UFUNCTION(Server, Reliable)函数），这时就会提示这个错误。
+UE4独立服务端的规则是，只有在客户端创建的对象才允许执行Server函数，比如PlayerController，这个是引擎自动在客户端创建的对象，它身上的Server函数可以在客户端调用且在服务端执行。
+解决办法：
+如果你的逻辑是要操作某个服务端创建的对象，比如刚刚说的在服务端Spawn出来的Character，可以先通过PlayerController执行Server函数，在其Server函数内部获取服务端的Character对象，然后再执行相关逻辑。
+UE4独立服务器的几个注意要点：
+ Replicated属性只允许服务端修改，而不允许客户端修改。 客户端和客户端之间无法直接通信，只能通过独立服务器广播通知。 客户端要执行服务端函数，则执行对象必须是在客户端Spawn出来的，服务端创建的且复制到客户端的对象，没有权限执行服务端函数。这也很好理解，这是为了保证安全性。  最高贵的复仇是宽容。──维克多·雨果（HugoVictor）
+      
+      <p>
+        <a href="https://dawnarc.com/2017/09/ue4no-owning-connection-for-actor-xxx.-function-xxx-will-not-be-processed/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2017/09/ue4getnavigationsystem%E8%BF%94%E5%9B%9Enull%E7%9A%84%E9%97%AE%E9%A2%98/">
+          [UE4]GetNavigationSystem返回NULL的问题
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2017-09-12T15:31:40&#43;08:00">
+        
+  September 12, 2017
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        keywords：UE4、Client、UNavigationSystem、自动寻路、Dedicated Server
+在有独立服务器的情况下，客户端默认关闭了Navigation，导致在客户端获取NavigationSystem时始终返回NULL。
+UNavigationSystem* const NavSys = GetWorld()-&gt;GetNavigationSystem();  解决办法：
+打包之前勾选工程设置的中的Allow Client Side Navigation（Project Settings -》 Engine -》 Navigation System）：   注意事项：
+默认关闭Allow Client Side Navigation，是因为UE4的DedicatedServer默认开启了角色的Movement Replicate，所以可以不用客户端寻路。如果要开启此项，一般是关闭了角色的自动位移同步，自己手动处理客户端和服务端的位移同步。
+天涯旧恨，试看几许消魂？长亭门外山重叠。不尽眼中青，是愁来时节。—张元千《石州慢》
+      
+      <p>
+        <a href="https://dawnarc.com/2017/09/ue4getnavigationsystem%E8%BF%94%E5%9B%9Enull%E7%9A%84%E9%97%AE%E9%A2%98/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2017/09/ue4%E7%AA%97%E5%8F%A3%E5%8C%96%E5%90%AF%E5%8A%A8%E6%B8%B8%E6%88%8F/">
+          [UE4]窗口化启动游戏
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2017-09-12T15:22:40&#43;08:00">
+        
+  September 12, 2017
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        keywords：UE4、Launch Game、Windowed
+命令：
+MyProject.exe -WINDOWED  更多参数说明：
+Command-Line Arguments
+https://docs.unrealengine.com/latest/INT/Programming/Basics/CommandLineArguments/index.html
+我住长江头，君住长江尾；日日思君不见君，共饮长江水。—李之仪《卜算子》
+      
+      <p>
+        <a href="https://dawnarc.com/2017/09/ue4%E7%AA%97%E5%8F%A3%E5%8C%96%E5%90%AF%E5%8A%A8%E6%B8%B8%E6%88%8F/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2017/08/ue4vs201715.3%E7%BC%96%E8%AF%91%E5%BC%95%E6%93%8E%E4%BB%A3%E7%A0%81%E9%94%99%E8%AF%AFerror-c2187-syntax-error-identifier-was-unexpected-here/">
+          [UE4]VS2017(15.3)编译引擎代码错误：error C2187 syntax error &#39;identifier&#39; was unexpected here
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2017-08-30T22:05:40&#43;08:00">
+        
+  August 30, 2017
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        错误信息：
+D:\Program_Filesx86\Windows Kits\8.1\include\um\combaseapi.h(229): error C2187: syntax error: 'identifier' was unexpected here  报错的代码位置：c:\Program Filesx86\Windows Kits\8.1\Include\um\combaseapi.h
+extern &quot;C++&quot; { template&lt;typename T&gt; _Post_equal_to_(pp) _Post_satisfies_(return == pp) void** IID_PPV_ARGS_Helper(T** pp) { #pragma prefast(suppress: 6269, &quot;Tool issue with unused static_cast&quot;) static_cast&lt;IUnknown*&gt;(*pp); // make sure everyone derives from IUnknown return reinterpret_cast&lt;void**&gt;(pp); } }  原因：VS2017 15.3版本的bug。
+解决办法：把下面这个代码补丁加入你们引擎代码中。估计4.17.2版本就会把这个补丁合进来。 https://github.com/EpicGames/UnrealEngine/commit/4f48ef53ed646a22532e8e981f5515c94f303932
+参考自：
+https://answers.unrealengine.com/questions/688112/ue417-will-not-compile-with-new-153-update.html
+寂寞凭高念远，向南楼、一声归雁。—陈亮《水龙吟》
+      
+      <p>
+        <a href="https://dawnarc.com/2017/08/ue4vs201715.3%E7%BC%96%E8%AF%91%E5%BC%95%E6%93%8E%E4%BB%A3%E7%A0%81%E9%94%99%E8%AF%AFerror-c2187-syntax-error-identifier-was-unexpected-here/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
             
               
   
@@ -972,240 +1221,6 @@ https://docs.unrealengine.com/latest/INT/Engine/OpenWorldTools/ProceduralFoliage
 </article>
 
             
-              
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2017/05/ue4c-%E5%88%9B%E5%BB%BAboxcollisionboxcomponent%E5%B9%B6%E6%B3%A8%E5%86%8Coverlap%E5%92%8Chit%E4%BA%8B%E4%BB%B6%E5%9B%9E%E8%B0%83%E5%87%BD%E6%95%B0/">
-          [UE4]C&#43;&#43;创建BoxCollision(BoxComponent)并注册Overlap和Hit事件回调函数
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2017-05-15T23:31:02&#43;08:00">
-        
-  May 15, 2017
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        keywords: UE4、Overlap、Hit、Event、Callback、C++、Blueprint、Box Collision、BoxComponent、SphereComponent、Trace Channel、碰撞
-BoxComponent的Overlap事件 1，C++中的代码编写 这里我们演示的例子，是在角色身上创建一个BoxComponent，假设角色的C++ class叫AMyCharacter。 MyCharacter.h头文件中定义：
-//Box对象 UBoxComponent* CollisionMesh; //OverlapBegin事件的回调函数，注意函数签名！ UFUNCTION() void OnTestOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &amp; SweepResult); //OverlapEnd事件的回调函数，注意函数签名！ UFUNCTION() void OnTestOverlapEnd(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);  回调函数一定要加UFUNCTION()，否则无法注册成功，因为注册函数时使用了UE4编译器的反射。
- MyCharacter.cpp的构造函数中：
-//创建BoxComponent CollisionMesh = CreateDefaultSubobject&lt;UBoxComponent&gt;(TEXT(&quot;TestCollision&quot;)); CollisionMesh-&gt;SetBoxExtent(FVector(200.f, 200.f, 96.f)); CollisionMesh-&gt;bDynamicObstacle = true; CollisionMesh-&gt;SetupAttachment(GetRootComponent()); //如果需要Overlap事件，将bGenerateOverlapEvents设置为true。如果不设置，默认也为true。 CollisionMesh-&gt;bGenerateOverlapEvents = true; //注意：要触发Overlap事件，SetCollisionResponseToAllChannels要么不设置，要么设置为ECR_Overlap。 CollisionMesh-&gt;SetCollisionResponseToAllChannels(ECR_Overlap); /*CollisionMesh-&gt;SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block); CollisionMesh-&gt;SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Block); CollisionMesh-&gt;SetCollisionResponseToChannel(ECC_Pawn, ECR_Block); CollisionMesh-&gt;SetNotifyRigidBodyCollision(true); CollisionMesh-&gt;SetSimulatePhysics(true);*/ //要触发Overlap事件，碰对对象需要勾选属性：Generate Overlap Events FScriptDelegate DelegateBegin; DelegateBegin.
-      
-      <p>
-        <a href="https://dawnarc.com/2017/05/ue4c-%E5%88%9B%E5%BB%BAboxcollisionboxcomponent%E5%B9%B6%E6%B3%A8%E5%86%8Coverlap%E5%92%8Chit%E4%BA%8B%E4%BB%B6%E5%9B%9E%E8%B0%83%E5%87%BD%E6%95%B0/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-            
-              
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2017/05/ue4%E5%A6%82%E4%BD%95%E6%98%BE%E7%A4%BAboxcomponent%E7%9A%84%E8%BE%B9%E6%A1%86%E7%BA%BF/">
-          [UE4]如何显示BoxComponent的边框线
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2017-05-15T22:21:40&#43;08:00">
-        
-  May 15, 2017
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        比如，在角色蓝图中创建个BoxCollision：   在游戏运行过程中，box的边框是看不见的，如果想让边框可见，则不勾选Hidden in Game属性。对应的C++属性也是同名属性。   游戏运行中的效果：   青山遮不住，毕竟东流去。—辛弃疾《菩萨蛮》
-      
-      <p>
-        <a href="https://dawnarc.com/2017/05/ue4%E5%A6%82%E4%BD%95%E6%98%BE%E7%A4%BAboxcomponent%E7%9A%84%E8%BE%B9%E6%A1%86%E7%BA%BF/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-            
-              
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2017/05/ue4c-%E5%BC%80%E5%8F%91fsp%E6%B8%B8%E6%88%8F%E7%9A%84%E5%AE%98%E6%96%B9wiki%E6%95%99%E7%A8%8B/">
-          [UE4]C&#43;&#43;开发FSP游戏的官方wiki教程
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2017-05-15T00:12:40&#43;08:00">
-        
-  May 15, 2017
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        First Person Shooter C++ Tutorial https://wiki.unrealengine.com/First_Person_Shooter_C%2B%2B_Tutorial
-教程很久没有更新，有的api在新版本中已经变动了。比如对于CollisionComponent的Hit(碰撞)事件，其回调函数的写法已经变动： https://answers.unrealengine.com/questions/556543/oncomponenthitadddynamic.html
-渐行渐远渐无书，水阔鱼沉何处问？---欧阳修《木兰花》
-      
-      <p>
-        <a href="https://dawnarc.com/2017/05/ue4c-%E5%BC%80%E5%8F%91fsp%E6%B8%B8%E6%88%8F%E7%9A%84%E5%AE%98%E6%96%B9wiki%E6%95%99%E7%A8%8B/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-            
-              
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2017/04/ue4%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E4%B8%8E%E5%86%85%E5%AD%98%E5%B8%B8%E9%A9%BB/">
-          [UE4]对象的垃圾回收与内存常驻
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2017-04-26T14:11:40&#43;08:00">
-        
-  April 26, 2017
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        keywords：UE4, Memory Persist, GC, 垃圾回收, 内存管理
-防止GC的办法 一个UObject类型的变量，即使是static，默认也会被GC掉。
- 要防止该对象被GC，有4种方式：
- 作为成员变量并标记为UPROPERTY()； 创建对象后 AddToRoot() ；（退出游戏时需要RemoveFromRoot()） FStreamableManager Load资源时，bManageActiveHandle 设置为true； FGCObjectScopeGuard 在指定代码区域内保持对象；  Uobject不能使用TSharedPtr进行引用计数，非UObject才可以；如果一个非UObject的类想加入GC，那么必须继承FGCObject类。
- UPROPERTY()用法 URPOPERTY() UObject* MyObj;  AddToRoot()用法 UMyObject* MyObj = NewObject&lt;UMyObject&gt;(); MyObj.AddToRoot();  FStreamableManager 用法 FSoftObjectPath AssetPath(TEXT(&quot;/Game/Mannequin/Animations/ThirdPersonWalk.ThirdPersonWalk&quot;)); FStreamableManager&amp; AssetLoader = UAssetManager::GetStreamableManager(); //hold object in memory. TSharedPtr&lt;FStreamableHandle&gt; Handle = AssetLoader.RequestSyncLoad(AssetPath, true); UObject* Obj = Handle-&gt;GetLoadedAsset(); //free memory of object. Handle-&gt;ReleaseHandle();  FGCObjectScopeGuard 用法 { FGCObjectScopeGuard(UObject* GladOS = NewObject&lt;...&gt;(...)); GladOS-&gt;SpawnCell(); RunGC(); GladOS-&gt;IsStillAlive(); // Object will not be removed by GC }  GC 常见问题  官方论坛上有人说 NewObject() 或者 LoadObject() 创建的对象才会自动被 GC ， SpawnActor 创建的对象会被自动 AddToRoot ，不会被 GC。不知早期的版本是否确实如此，但是目前版本不是这样，即使时 SpawnActor ，默认也会被 GC。  参考资料 虚幻4垃圾回收剖析
-      
-      <p>
-        <a href="https://dawnarc.com/2017/04/ue4%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E4%B8%8E%E5%86%85%E5%AD%98%E5%B8%B8%E9%A9%BB/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-            
             
   <div class="pagination-bar">
     <ul class="pagination">
@@ -1227,7 +1242,7 @@ BoxComponent的Overlap事件 1，C++中的代码编写 这里我们演示的例�
           </li>
         
       
-      <li class="pagination-number">page 9 of 15</li>
+      <li class="pagination-number">page 9 of 16</li>
     </ul>
   </div>
 
@@ -1236,7 +1251,7 @@ BoxComponent的Overlap事件 1，C++中的代码编写 这里我们演示的例�
         
         <footer id="footer" class="main-content-wrap">
   <span class="copyrights">
-    &copy; 2018 Neil Wang. All Rights Reserved. Powered by <A href="https://gohugo.io/"> Hugo</A>.
+    &copy; 2019 Neil Wang. All Rights Reserved. Powered by <A href="https://gohugo.io/"> Hugo</A>.
   </span>
 </footer>
 
@@ -1294,6 +1309,175 @@ BoxComponent的Overlap事件 1，C++中的代码编写 这里我们演示的例�
           <div class="media">
             
             <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/01/ue4transform-skeletal-bone-in-c-/">
+                <h3 class="media-heading">[UE4]Transform skeletal bone in C&#43;&#43;</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jan 1, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">Blueprint Node Transform from Bone Space    C++ code Steps
+ Add UPoseableMeshComponent in your Actor class, and set Skeletal Mesh asset for it.      Modify bones transform by UPoseableMeshComponent&rsquo;s functions:
+UFUNCTION(BlueprintCallable, Category=&quot;Components|PoseableMesh&quot;) void SetBoneTransformByName(FName BoneName, const FTransform&amp; InTransform, EBoneSpaces::Type BoneSpace); UFUNCTION(BlueprintCallable, Category=&quot;Components|PoseableMesh&quot;) void SetBoneLocationByName(FName BoneName, FVector InLocation, EBoneSpaces::Type BoneSpace); UFUNCTION(BlueprintCallable, Category=&quot;Components|PoseableMesh&quot;) void SetBoneRotationByName(FName BoneName, FRotator InRotation, EBoneSpaces::Type BoneSpace); UFUNCTION(BlueprintCallable, Category=&quot;Components|PoseableMesh&quot;) void SetBoneScaleByName(FName BoneName, FVector InScale3D, EBoneSpaces::Type BoneSpace);   Reference Transform skeletal bone in C++</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/01/c-address-source-line-from-crash-callstack-using-binary/">
+                <h3 class="media-heading">[C&#43;&#43;]Address source line from crash callstack using binary</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jan 1, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">keywords: Windows Debugging Tools, PDB file, Crash, Dump file
+WinDbg for Windows Steps
+ Get the crash callstack. e.g.:
+TestTP2 0x00000000fff20000 + 2c44aa2 TestTP2 0x00000000fff20000 + 987262 TestTP2 0x00000000fff20000 + 3ab0cc4 TestTP2 0x00000000fff20000 + 362fbbc TestTP2 0x00000000fff20000 + 3643325 TestTP2 0x00000000fff20000 + 362d8e4 TestTP2 0x00000000fff20000 + 3642128 TestTP2 0x00000000fff20000 + 2c20100 TestTP2 0x00000000fff20000 + 39a2c25 TestTP2 0x00000000fff20000 + 39ba846 TestTP2 0x00000000fff20000 + 9cae56 TestTP2 0x00000000fff20000 + 9cb376 TestTP2 0x00000000fff20000 + 3a07c61 TestTP2 0x00000000fff20000 + 3a16ef8 TestTP2 0x00000000fff20000 + 32dff6f TestTP2 0x00000000fff20000 + 32e8e3f TestTP2 0x00000000fff20000 + 3146e59 TestTP2 0x00000000fff20000 + 43f1c9 TestTP2 0x00000000fff20000 + 44ec1c TestTP2 0x00000000fff20000 + 44ec7a TestTP2 0x00000000fff20000 + 45d265 TestTP2 0x00000000fff20000 + 47dc1c6 KERNEL32 0x0000000005b70000 + 18102 ntdll 0x00000000070f0000 + 5c5b4  Open WinDbg, set symbol file and open binary file.</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/12/windowsgetting-the-convenient-automatic-folder-navigation-tree-expansion-back/">
+                <h3 class="media-heading">[Windows]Getting the convenient automatic folder navigation tree expansion back</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Dec 12, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">Software:
+Microsoft Windows 10
+ In the folder toolbar, Click the View tab. Click the Navigator pane drop-down on the left, And enable Expand to open folder.    Origin Text:
+https://odederell3d.wordpress.com/2018/09/19/windows-10-getting-the-convenient-automatic-navigation-folder-tree-expansion-back/</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/12/windowsquickly-get-a-files-folder-path/">
+                <h3 class="media-heading">[Windows]Quickly get a file’s folder path</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Dec 12, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">Software:
+Microsoft Windows 10
+ Shift + RMB Click the file Choose Copy As Path    Origin Text:
+https://odederell3d.wordpress.com/2018/10/25/windows-10-quickly-get-a-files-path/</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/12/ue4materialshow-tos/">
+                <h3 class="media-heading">[UE4][Materials]How-To&#39;s</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Dec 12, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">UE4 Materials How-To&rsquo;s https://docs.unrealengine.com/en-us/Engine/Rendering/Materials/HowTo
+How to metal only for a part of mesh Using Texture Masks
+https://docs.unrealengine.com/en-us/Engine/Rendering/Materials/HowTo/Masking
+How to make a stained glass window effect Using Colored Translucent Shadows
+https://docs.unrealengine.com/en-us/Engine/Rendering/Materials/HowTo/ColoredTransluscentShadows
+How to create a richly colored metallic surface Create a richly colored metallic surface in UE4
+https://odederell3d.wordpress.com/2018/02/08/create-a-richly-colored-metallic-surface-in-ue4/
+How To Use The Spiral Blur Material Node How To Use The Spiral Blur Material Node
+https://wiki.unrealengine.com/How_To_Use_The_Spiral_Blur_Material_Node
+Font Materials and Outlines Font Materials and Outlines</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/12/ue4gpu-visualizer-gpu-profiling-specification/">
+                <h3 class="media-heading">[UE4]GPU Visualizer (GPU Profiling) Specification</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Dec 12, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">keywords: Performance, Optimization
+GPU Visualizer arguments specification PrePass DDM_AllOpaque(Forced by DBuffer) ShadowDepths Reference UE4 Graphics Profiling: All Categories Guide (Rendering Passes)
+https://www.youtube.com/watch?v=C3lumWdwHmA
+GPU Profiling
+https://docs.unrealengine.com/en-us/Engine/Performance/GPU</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/12/pythoncommon-syntax-collections/">
+                <h3 class="media-heading">[Python]Common syntax collections</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Dec 12, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">Print Python2
+print(&quot;a=%d,b=%d&quot; % (f(x,n), g(x,n)))  Python3
+print('x={:d}, y={:d}'.format(f(x,n), g(x,n)))  Python3.6
+print(f'a={f(x,n):d}, b={g(x,n):d}')  How to print like printf in Python3?
+https://stackoverflow.com/questions/19457227/how-to-print-like-printf-in-python3
+Case-insensitive string comparison Python2
+string1 = 'Hello' string2 = 'hello' if string1.lower() == string2.lower(): print &quot;The strings are the same (case insensitive)&quot; else: print &quot;The strings are not the same (case insensitive)&quot;  Python3
+s = 'ß' s.lower() # 'ß' s.casefold() # 'ss'  casefold() not only can be used for ASCII strings, but also for Non-ASCII strings, e.</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/12/ue411-short-steps-to-create-an-animated-loading-screenasync-switch-level/">
+                <h3 class="media-heading">[UE4]11 Short Steps to Create an Animated Loading Screen(Async switch level)</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Dec 12, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">keywords: UE4, Stream Level, Loading Screen, Async Open Level, Async Change Level
+11 Short Steps to Create an Animated Loading Screen
+ - I Went into Window &gt; Levels - Created a New Level by going to “Levels” and selecting “Create new Level” - Moved all my main level stuff by highlighting it all in the editor window and selecting “Move Selected Actors to Level” via the “Levels” tab. - Created my load screen texture, camera and animated spinning icon and made sure they were in “Persistent Level”.</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
               <a class="link-unstyled" href="https://dawnarc.com/2018/12/ue4invalid-object-in-gc-0x000001eb2e659900-referencingobject-image/">
                 <h3 class="media-heading">[UE4]Invalid object in GC: 0x000001eb2e659900, ReferencingObject: Image</h3>
               </a>
@@ -1329,176 +1513,6 @@ Use UPROPERTY() or AddToRoot() to persist assets in memory.</div>
             <hr>
           </div>
         
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2018/12/ue4hardware-cursorsolution-for-umg-customized-cursor-lagging/">
-                <h3 class="media-heading">[UE4]Hardware cursor(solution for UMG customized cursor lagging)</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Dec 12, 2018
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather">Steps
-1, Put a PNG in game content directory, e.g. E:\MyProj\Content\Asset\Cursor\mouse.png
-2, Project Settings -&gt; Engine -&gt; User Interface -&gt; Hardware Cursors -&gt; add element and set Default, set Cursor Path as Asset/Cursor/mouse.
-3, If the click response position of .PNG cursor isn&rsquo;t the top-left corner, you can modify the Hot Spot, e.g. you can set Hot Spot as (0.5, 0.5) if the click response position is the center of .</div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2018/12/ue4global-variables/">
-                <h3 class="media-heading">[UE4]Global variables</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Dec 12, 2018
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather">File path:
-Engine\Source\Runtime\Core\Private\Misc\CoreGlobals.cpp
-Source:
-IMPLEMENT_MODULE( FCoreModule, Core ); /*----------------------------------------------------------------------------- Global variables. -----------------------------------------------------------------------------*/ CORE_API FFeedbackContext* GWarn = nullptr; /* User interaction and non critical warnings */ FConfigCacheIni* GConfig = nullptr; /* Configuration database cache */ ITransaction* GUndo = nullptr; /* Transaction tracker, non-NULL when a transaction is in progress */ FOutputDeviceConsole* GLogConsole = nullptr; /* Console log hook */ CORE_API FMalloc* GMalloc = nullptr; /* Memory allocator */ CORE_API FMalloc** GFixedMallocLocationPtr = nullptr; /* Memory allocator pointer location when PLATFORM_USES_FIXED_GMalloc_CLASS is true */ class UPropertyWindowManager* GPropertyWindowManager = nullptr; /* Manages and tracks property editing windows */ /** For building call stack text dump in guard/unguard mechanism.</div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2018/12/ue4trigger-tick-of-the-object-inherited-from-uobject/">
-                <h3 class="media-heading">[UE4]Trigger Tick of the object inherited from UObject</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Dec 12, 2018
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather">The object inherited from UObject would not trigger Tick when instanced (NewObject()), but AActor and the UActorComponent would trigger Tick.
-So how to trigger Tick of the object inherited from UObject?
-The answer is: inherit FTickableGameObject and UObject at the same.
-example source
-header:
-UCLASS() class UCoolDownMgr : public UObject, public FTickableGameObject { GENERATED_BODY() public: // Sets default values for this character's properties UCoolDownMgr(); virtual ~UCoolDownMgr(); // Begin FTickableGameObject Interface. virtual void Tick(float DeltaTime) override; virtual bool IsTickable() const override; virtual TStatId GetStatId() const override; // End FTickableGameObject Interface.</div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2018/12/ue4editor-extention/">
-                <h3 class="media-heading">[UE4]Editor Extention</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Dec 12, 2018
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather">UE4 - Easy example of How to create menus in the editor
-http://www.danielmayor.com/ue4-simple-menus
-UE4 Level Editor
-https://books.google.com.sg/books?id=zZ7cDgAAQBAJ&amp;pg=PA272&amp;lpg=PA272&amp;dq=UE4+leveleditor+C%2B%2B&amp;source=bl&amp;ots=ZsX7ZCR6bV&amp;sig=6_J7xzxTDosX5dOuLwpiaKrOSHU&amp;hl=zh-CN&amp;sa=X&amp;ved=2ahUKEwji8aiT8orfAhWFTn0KHU0JB7wQ6AEwBXoECAUQAQ#v=onepage&amp;q=UE4%20leveleditor%20C%2B%2B&amp;f=false
-Creating an Editor Module
-https://wiki.unrealengine.com/Creating_an_Editor_Module
-Customizing the editor&rsquo;s toolbar buttons menu via custom plugin
-https://answers.unrealengine.com/questions/25609/customizing-the-editors-toolbar-buttons-menu-via-c.html
-UE4 Editor Toolbar Extention
-https://blog.csdn.net/hui211314ddhui/article/details/79375548</div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2018/12/ue4packagingresults-error-bad-name-index/">
-                <h3 class="media-heading">[UE4]PackagingResults Error Bad name index</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Dec 12, 2018
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather">Package Error PackagingResults: Error: Bad name index -1/47  Solution 1 You can find the asset causing this by building the engine from source and adding breakpoints in these two place:
-LinkerLoad.cpp
-void FLinkerLoad::BadNameIndexError(NAME_INDEX NameIndex) { UE_LOG(LogLinker, Error, TEXT(&quot;Bad name index %i/%i&quot;), NameIndex, NameMap.Num()); }  and
-PackageReader.cpp
-FArchive&amp; FPackageReader::operator&lt;&lt;( FName&amp; Name ) { check(Loader); NAME_INDEX NameIndex; FArchive&amp; Ar = *this; Ar &lt;&lt; NameIndex; if( !NameMap.IsValidIndex(NameIndex) ) { UE_LOG(LogAssetRegistry, Fatal, TEXT(&quot;Bad name index %i/%i&quot;), NameIndex, NameMap.</div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2018/12/ue4slate-and-native-umgc-notes/">
-                <h3 class="media-heading">[UE4]Slate and Native UMG(C&#43;&#43;) Notes</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Dec 12, 2018
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather">How to scale or zoom a widget? For Mouse Zoom:
- override onMouseWheel add Wheel Delta to Panning Canvas&rsquo; Render Transform Scale clamp min result to something above 0 (widgets flip if scaled below 0) and max to your desired max zoom Set Render Scale of the Panning Canvas with the result of the above  Reference: How to scale/zoom a widget with blueprints?
-https://answers.unrealengine.com/questions/815202/how-to-scalezoom-a-widget-with-blueprints.html
-How to clip widget display area?</div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2018/11/c-const_cast/">
-                <h3 class="media-heading">[C&#43;&#43;]const_cast</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Nov 11, 2018
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather">You are not allowed to const_cast variables that are actually const. This results in undefined behavior. const_cast is used to remove the const-ness from references and pointers that ultimately refer to something that is not const.
-So, this is allowed:
-int i = 0; const int&amp; ref = i; const int* ptr = &amp;i; const_cast&lt;int&amp;&gt;(ref) = 3; *const_cast&lt;int*&gt;(ptr) = 3;  It&rsquo;s allowed because i, the object being assigned to, is not const.</div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2018/11/ue4logcompile-error-circular-dependency-detected-for-filename/">
-                <h3 class="media-heading">[UE4]LogCompile-error-Circular dependency detected for filename</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Nov 11, 2018
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather">Compilation Error：
-LogCompile : error : Circular dependency detected for filename D:\Library Storage\Documents\Unreal Projects\DistantHome\Source\DistantHome\Public\Game\DHGameInfo.h!  Solution:
-Don&rsquo;t include headers in header, declare class in header and include headers in cpp.
-class forwardedClass; class UsingIt { public: forwardedClass* instance; }  or
-class UsingIt { public: class forwardedClass* instance; }  Reference:How do you guys combat circular dependencies in your file heads?
-https://forums.unrealengine.com/development-discussion/c-gameplay-programming/109582-how-do-you-guys-combat-circular-dependencies-in-your-file-heads</div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
       </div>
     </div>
     <div class="modal-footer">
@@ -1506,7 +1520,7 @@ https://forums.unrealengine.com/development-discussion/c-gameplay-programming/10
          data-message-zero="no post found"
          data-message-one="1 post found"
          data-message-other="{n} posts found">
-         440 posts found
+         448 posts found
       </p>
     </div>
   </div>
