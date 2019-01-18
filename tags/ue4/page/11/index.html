@@ -25,10 +25,10 @@
 
 <meta name="twitter:card" content="summary">
 
-  <meta name="twitter:site" content="@idealsland">
+  <meta name="twitter:site" content="@dawn_arc">
 
 
-  <meta name="twitter:creator" content="@idealsland">
+  <meta name="twitter:creator" content="@dawn_arc">
 
 
 
@@ -303,6 +303,326 @@ if (!doNotTrack) {
         
           <section class="postShorten-group main-content-wrap">
             
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2017/02/ue4dedicated-server%E5%90%8C%E6%AD%A5%E7%A4%BA%E4%BE%8B%E5%85%A8%E6%B5%81%E7%A8%8B%E7%99%BB%E5%BD%95replication%E5%92%8Crpc/">
+          [UE4]Dedicated Server同步示例全流程(登录、Replication和RPC)
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2017-02-25T20:33:40&#43;08:00">
+        
+  February 25, 2017
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        转载请注明原文出处：https://dawnarc.com
+keywords：UE4、Replication、Relicate、reliable、RPC、RTS Movement、Dedicated Server、属性同步、位移同步、专用服务器、demo、example
+实例的完整工程下载地址见文章底部
+属性同步 步骤：
+1，对属性添加UPROPERTY(Replicated)宏：
+//Player display name UPROPERTY(Replicated) FString Alias_;  2，属性所在的class中重写函数GetLifetimeReplicatedProps：
+需要头文件：
+#include &quot;Net/UnrealNetwork.h&quot;  重写函数：
+void AReplTestCharacter::GetLifetimeReplicatedProps(TArray&lt; FLifetimeProperty &gt; &amp; OutLifetimeProps) const { Super::GetLifetimeReplicatedProps(OutLifetimeProps); DOREPLIFETIME(AReplTestCharacter, Alias_); }  RPC（远程执行调用） 步骤：
+1，对需要远程执行的函数添加宏UFUNCTION(Server, Reliable, WithValidation)或者UFUNCTION(Client, Reliable)。其中Server表示在客户端调用，在服务端执行；WithValidation表示是否需要验证函数，加上的画需要添加函数：bool MyFun_Validate()，函数提内容写在MyFun_Implementation函数内。cpp中不需要与函数名同名的函数体，只需要实现_Validate和_Implementation两个函数即可。 头文件：
+//移动角色(只在服务端执行的函数) UFUNCTION(Server, Reliable, WithValidation) void ServerMoveToDest(APawn* Panw, const FVector DestLocation); bool ServerMoveToDest_Validate(APawn* Panw, const FVector DestLocation); void ServerMoveToDest_Implementation(APawn* Panw, const FVector DestLocation);  CPP：
+bool AReplTestPlayerController::ServerMoveToDest_Validate(APawn* Panw, const FVector DestLocation) { return true; } void AReplTestPlayerController::ServerMoveToDest_Implementation(APawn* Pawn, const FVector DestLocation) { //logic.
+      
+      <p>
+        <a href="https://dawnarc.com/2017/02/ue4dedicated-server%E5%90%8C%E6%AD%A5%E7%A4%BA%E4%BE%8B%E5%85%A8%E6%B5%81%E7%A8%8B%E7%99%BB%E5%BD%95replication%E5%92%8Crpc/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2017/02/ue4%E5%A6%82%E4%BD%95%E7%BC%96%E8%AF%91%E9%83%A8%E7%BD%B2%E7%8B%AC%E7%AB%8B%E4%B8%93%E7%94%A8%E6%9C%8D%E5%8A%A1%E7%AB%AFstandalone-dedicated-server/">
+          [UE4]如何编译部署独立专用服务端(Standalone Dedicated Server)
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2017-02-25T20:33:40&#43;08:00">
+        
+  February 25, 2017
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        下面步骤假设是以development模式来构建，步骤和shipping模式没差异。
+下面步骤中假设我们自己的UE4工程名叫：MyProject
+1，下载源码及编译 需要现在unrealengine官网上注册并加入github开发组才有权限进入下面地址。
+https://github.com/EpicGames/UnrealEngine/tags
+注意：编译专用服务器，只能用源码编译版本的引擎，安装版本的引擎无法编译Server。
+ 打开页面后下载一个最新的release版本，解压出来后先运行Setup.bat，会自动下载资源文件，大概有几个G，下载完以后，然后再运行GenerateProjectFiles.bat，会生成VS工程文件，这里假设你已经安装好了VS，我用的vs2015旗舰版，生成完以后打开VS，build类型选择debuggame editor或者development editor，并编译。
+2，切换工程的UE4版本 右键点击你的UE4工程文件MyProject.uproject -》 Switch Unreal Engine version，选择刚刚编译出来的UE4，切换版本以后，再右击*.uproject并选择：Generate Visual Studio project files，最后启动VS，启动VS之后再选择一种build类型来编译工程并启动，这里测试用的是development editor类型。
+3，cook client content 上面第二步编译并启动运行工程后，这一步来打包客户端（官方文档上叫cook client content），方法和正常客户端版本打包的步骤一样：
+Package Project -》 Windows -》 Windows x64。   有人可能会问，安装版本的UE4为什么有没PS4、Xbox等打包选项？是的，只有源码编译的UE4才有这些选项。
+这里我们假设打包时选择的输出目录为：D:/PackageTest/，那么输出的客户端exe文件就在D:/PackageTest/WindowsNoEditor/MyProject/Binariesk/Win64/MyProject.exe
+这个目录位置会在后面步骤中用到。
+如果不cook client content，则后面启动服务端时会报错： Error: The global shader cache file &lsquo;F:/EpicGames/UnrealEngine/Engine/GlobalShaderCache-PCD3D_SM5.bin&rsquo; is missing.
+
+还有一个纯蓝图UE4工程的构建bug问题：
+这个问题v4.7版本时还存在，当前最新版本不知道解决没有。
+问题现象是：如果用VS构建之前不添加一个自定义的C++代码，那么构建出来的版本会有问题。
+解决办法：在VS构建server版本之前，在UE4 Editor中添加一个C++代码，这个代码随意，只要是C++代码就行（比如添加一个自定义HUD的class），内容默认，不需要编辑。
+添加C++方法是：File -》 Add Code to Project。
+由于我这里演示的是C++工程，所以不需要添加再添加C++ class。
+打包之前记得GameMode和Map是否设置正确了，如果不使用默认的话。   如果这里不设置，默认为空，则客户端进入服务端后会黑屏。
+      
+      <p>
+        <a href="https://dawnarc.com/2017/02/ue4%E5%A6%82%E4%BD%95%E7%BC%96%E8%AF%91%E9%83%A8%E7%BD%B2%E7%8B%AC%E7%AB%8B%E4%B8%93%E7%94%A8%E6%9C%8D%E5%8A%A1%E7%AB%AFstandalone-dedicated-server/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2017/02/ue4overlap%E6%A3%80%E6%B5%8B%E7%9A%84%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7%E5%87%BD%E6%95%B0/">
+          [UE4]Overlap检测的常用工具函数
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2017-02-22T17:27:40&#43;08:00">
+        
+  February 22, 2017
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        keyword: Overlap、Test、Blocking
+World.h
+/** * Test the collision of a shape at the supplied location using a specific channel, and return if any blocking overlap is found * @param Pos Location of center of box to test against the world * @param TraceChannel The 'channel' that this query is in, used to determine which components to hit * @param CollisionShape CollisionShape - supports Box, Sphere, Capsule, Convex * @param Params Additional parameters used for the trace * @param ResponseParam ResponseContainer to be used for this trace * @return TRUE if any blocking results are found */ bool OverlapBlockingTestByChannel(const FVector&amp; Pos, const FQuat&amp; Rot, ECollisionChannel TraceChannel, const FCollisionShape&amp; CollisionShape, const FCollisionQueryParams&amp; Params = FCollisionQueryParams::DefaultQueryParam, const FCollisionResponseParams&amp; ResponseParam = FCollisionResponseParams::DefaultResponseParam) const; /** * Test the collision of a shape at the supplied location using a specific channel, and return if any blocking or overlapping shape is found * @param Pos Location of center of box to test against the world * @param TraceChannel The 'channel' that this query is in, used to determine which components to hit * @param CollisionShape CollisionShape - supports Box, Sphere, Capsule, Convex * @param Params Additional parameters used for the trace * @param ResponseParam ResponseContainer to be used for this trace * @return TRUE if any blocking or overlapping results are found */ bool OverlapAnyTestByChannel(const FVector&amp; Pos, const FQuat&amp; Rot, ECollisionChannel TraceChannel, const FCollisionShape&amp; CollisionShape, const FCollisionQueryParams&amp; Params = FCollisionQueryParams::DefaultQueryParam, const FCollisionResponseParams&amp; ResponseParam = FCollisionResponseParams::DefaultResponseParam) const; /** * Test the collision of a shape at the supplied location using object types, and return if any overlap is found * @param Pos Location of center of box to test against the world * @param ObjectQueryParams List of object types it's looking for * @param CollisionShape CollisionShape - supports Box, Sphere, Capsule, Convex * @param Params Additional parameters used for the trace * @return TRUE if any blocking results are found */ bool OverlapAnyTestByObjectType(const FVector&amp; Pos, const FQuat&amp; Rot, const FCollisionObjectQueryParams&amp; ObjectQueryParams, const FCollisionShape&amp; CollisionShape, const FCollisionQueryParams&amp; Params = FCollisionQueryParams::DefaultQueryParam) const; /** * Test the collision of a shape at the supplied location using a specific profile, and return if any blocking overlap is found * @param Pos Location of center of box to test against the world * @param ProfileName The 'profile' used to determine which components to hit * @param CollisionShape CollisionShape - supports Box, Sphere, Capsule * @param Params Additional parameters used for the trace * @return TRUE if any blocking results are found */ bool OverlapBlockingTestByProfile(const FVector&amp; Pos, const FQuat&amp; Rot, FName ProfileName, const FCollisionShape&amp; CollisionShape, const FCollisionQueryParams&amp; Params = FCollisionQueryParams::DefaultQueryParam) const; /** * Test the collision of a shape at the supplied location using a specific profile, and return if any blocking or overlap is found * @param Pos Location of center of box to test against the world * @param ProfileName The 'profile' used to determine which components to hit * @param CollisionShape CollisionShape - supports Box, Sphere, Capsule * @param Params Additional parameters used for the trace * @return TRUE if any blocking or overlapping results are found */ bool OverlapAnyTestByProfile(const FVector&amp; Pos, const FQuat&amp; Rot, FName ProfileName, const FCollisionShape&amp; CollisionShape, const FCollisionQueryParams&amp; Params = FCollisionQueryParams::DefaultQueryParam) const; /** * Test the collision of a shape at the supplied location using a specific channel, and determine the set of components that it overlaps * @param OutOverlaps Array of components found to overlap supplied box * @param Pos Location of center of shape to test against the world * @param TraceChannel The 'channel' that this query is in, used to determine which components to hit * @param CollisionShape CollisionShape - supports Box, Sphere, Capsule * @param Params Additional parameters used for the trace * @param ResponseParam ResponseContainer to be used for this trace * @return TRUE if OutOverlaps contains any blocking results */ bool OverlapMultiByChannel(TArray&lt;struct FOverlapResult&gt;&amp; OutOverlaps, const FVector&amp; Pos, const FQuat&amp; Rot, ECollisionChannel TraceChannel, const FCollisionShape&amp; CollisionShape, const FCollisionQueryParams&amp; Params = FCollisionQueryParams::DefaultQueryParam, const FCollisionResponseParams&amp; ResponseParam = FCollisionResponseParams::DefaultResponseParam) const; /** * Test the collision of a shape at the supplied location using object types, and determine the set of components that it overlaps * @param OutOverlaps Array of components found to overlap supplied box * @param Pos Location of center of shape to test against the world * @param ObjectQueryParams List of object types it's looking for * @param CollisionShape CollisionShape - supports Box, Sphere, Capsule * @param Params Additional parameters used for the trace * @return TRUE if any overlap is found */ bool OverlapMultiByObjectType(TArray&lt;struct FOverlapResult&gt;&amp; OutOverlaps, const FVector&amp; Pos, const FQuat&amp; Rot, const FCollisionObjectQueryParams&amp; ObjectQueryParams, const FCollisionShape&amp; CollisionShape, const FCollisionQueryParams&amp; Params = FCollisionQueryParams::DefaultQueryParam) const; /** * Test the collision of a shape at the supplied location using a specific profile, and determine the set of components that it overlaps * @param OutOverlaps Array of components found to overlap supplied box * @param Pos Location of center of shape to test against the world * @param ProfileName The 'profile' used to determine which components to hit * @param CollisionShape CollisionShape - supports Box, Sphere, Capsule * @param Params Additional parameters used for the trace * @return TRUE if OutOverlaps contains any blocking results */ bool OverlapMultiByProfile(TArray&lt;struct FOverlapResult&gt;&amp; OutOverlaps, const FVector&amp; Pos, const FQuat&amp; Rot, FName ProfileName, const FCollisionShape&amp; CollisionShape, const FCollisionQueryParams&amp; Params = FCollisionQueryParams::DefaultQueryParam) const;  今年花胜去年红。可惜明年花更好，知与谁同？—欧阳修《浪淘沙》
+      
+      <p>
+        <a href="https://dawnarc.com/2017/02/ue4overlap%E6%A3%80%E6%B5%8B%E7%9A%84%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7%E5%87%BD%E6%95%B0/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2017/02/math%E4%B8%A4%E4%B8%AA%E6%97%8B%E8%BD%AC%E7%9F%A9%E9%98%B5rotation-matrix%E7%9B%B8%E4%B9%98multiply%E7%9A%84%E5%87%A0%E4%BD%95%E6%84%8F%E4%B9%89/">
+          [Math]两个旋转矩阵（Rotation Matrix）相乘（Multiply）的几何意义
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2017-02-09T16:48:02&#43;08:00">
+        
+  February 9, 2017
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/math">Math</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        讲之前，先说下如果两个Rotation相加的意义，比如：
+FRotator Rot1(0.f, 90.f, 0.f); FRotator Rot2(90.f,0.f, 0.f); FRotator Result = Rot1 + Rot2;  得到的结果FRotator Result(90.f, 90.f, 0.f)，其意义是： 物体相对空间坐标原点的Rotation为(90.f, 90.f, 0.f)，很好理解。
+如果两个Rotation转换为Martix并相乘，比如：
+FRotator Rot1(0.f, 90.f, 0.f); FRotator Rot2(90.f,0.f, 0.f); FRotator Result =( FRotationMatrix(Rot1) * FRotationMatrix(Rot2)).Rotator;  得到的结果FRotator Result(0.f, 90.f, 90.f)，其意义是： 先将物体作Rot1旋转，即：Yaw方向（水平平面）旋转90度，然后再假设该物体相对坐标轴原点的旋转量为(0, 0, 0)，即没有作任何旋转，但实际Rotation相对坐标轴原点为(0, 90, 0)；然后再将物体进行Rot2旋转，即Pitch方向（垂直于(90, 0, 0)方向的平面）侧翻90度，因为侧翻90度前假设物体的Rotation是(0, 0, 0)，所以侧翻时所在的平面不再是Yaw=90的平面（垂直于(0, 90, 0)方向），而是Yaw=0的平面（垂直于(90, 0, 0)方向）。没做相关配图，这段话理解起来有点绕，最好用空间思维想象下，可以用手掌比划。
+实际应用： 比如空间中有两个物体：A和B，现在要将A旋转至与B相同的朝向，目前只知道A的相对世界坐标的Rotation Rw(90.f,0.f, 0.f)、B相对A（将A的Rotation当做(0, 0, 0)）的Rotation Rr(0.f, 90.f, 0.f)，求A旋转后的世界坐标Rotation。
+此时的计算公式就是：
+(FRotationMatrix(Rr) * FRotationMatrix(Rw)).Rotator()  注意：矩阵相乘时，两个乘数的前后位置不同则计算的结果也不同，比如上面例子，如果是( FRotationMatrix(Rot2) * FRotationMatrix(Rot1)).
+      
+      <p>
+        <a href="https://dawnarc.com/2017/02/math%E4%B8%A4%E4%B8%AA%E6%97%8B%E8%BD%AC%E7%9F%A9%E9%98%B5rotation-matrix%E7%9B%B8%E4%B9%98multiply%E7%9A%84%E5%87%A0%E4%BD%95%E6%84%8F%E4%B9%89/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2017/02/ue4component%E7%9B%B8%E5%85%B3%E5%B8%B8%E7%94%A8api/">
+          [UE4]Component相关常用API
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2017-02-07T14:06:40&#43;08:00">
+        
+  February 7, 2017
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        Actor.h
+//获取第一个与指定类型相同的Component UActorComponent* AActor::FindComponentByClass(const TSubclassOf&lt;UActorComponent&gt; ComponentClass) const //获取当前actor的所有component template&lt;class T, class AllocatorType&gt; void GetComponents(TArray&lt;T*, AllocatorType&gt;&amp; OutComponents, bool bIncludeFromChildActors = false) const //与FindComponentByClass作用相同，暴露给蓝图使用的C++函数 UActorComponent* AActor::GetComponentByClass(TSubclassOf&lt;UActorComponent&gt; ComponentClass) const //获取指定类型的所有Component TArray&lt;UActorComponent*&gt; AActor::GetComponentsByClass(TSubclassOf&lt;UActorComponent&gt; ComponentClass) const  PrimitiveComponent.h
+//获取当前component中材质的个数 int32 UPrimitiveComponent::GetNumMaterials() const //创建一个材质对象，并替换到Parent对象上的指定index的材质 UMaterialInstanceDynamic* UPrimitiveComponent::CreateAndSetMaterialInstanceDynamicFromMaterial(int32 ElementIndex, class UMaterialInterface* Parent)  燕子不知何世，向寻常、巷陌人家，相对如说兴亡，斜阳里。—周邦彦《金陵怀古》
+      
+      <p>
+        <a href="https://dawnarc.com/2017/02/ue4component%E7%9B%B8%E5%85%B3%E5%B8%B8%E7%94%A8api/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
             
               
   
@@ -917,297 +1237,6 @@ MeshComponent中类似函数还有ToggleActive()
 </article>
 
             
-              
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2016/10/ue4%E5%9C%BA%E6%99%AF%E4%B8%ADactor%E5%90%8D%E5%AD%97%E4%B8%8E%E8%AF%A6%E7%BB%86%E4%BF%A1%E6%81%AF%E9%9D%A2%E6%9D%BF%E4%B8%AD%E7%9A%84name%E4%B8%8D%E4%B8%80%E8%87%B4%E7%9A%84%E9%97%AE%E9%A2%98/">
-          [UE4]场景中Actor名字与详细信息面板中的Name不一致的问题
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2016-10-25T23:10:40&#43;08:00">
-        
-  October 25, 2016
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        比如这种情况，场景对象的Details面板中，显示name和ID Name不一致，在场景中多次copy和delete对象后，就容易出现这种情况。 解决办法： 在Details面板中重新修改一次Name。
-  
-      
-      <p>
-        <a href="https://dawnarc.com/2016/10/ue4%E5%9C%BA%E6%99%AF%E4%B8%ADactor%E5%90%8D%E5%AD%97%E4%B8%8E%E8%AF%A6%E7%BB%86%E4%BF%A1%E6%81%AF%E9%9D%A2%E6%9D%BF%E4%B8%AD%E7%9A%84name%E4%B8%8D%E4%B8%80%E8%87%B4%E7%9A%84%E9%97%AE%E9%A2%98/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-            
-              
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2016/10/ue4hud%E7%9A%84canvas%E5%8F%98%E9%87%8F%E4%B8%BAnull%E7%9A%84%E9%97%AE%E9%A2%98/">
-          [UE4]HUD的Canvas变量为NULL的问题
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2016-10-24T23:06:40&#43;08:00">
-        
-  October 24, 2016
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        AHUD中的成员变量Canvas只在PostRender()事件中有效，离开此函数后就会被引擎置空。 要想使用HUD的Canvas，必须重写HUD的两个函数之一：
-/** PostRender is the main draw loop. */ virtual void PostRenderFor(); /** The Main Draw loop for the hud. Gets called before any messaging. Should be subclassed */ virtual void DrawHUD();  其中DrawHUD为HUD独有的函数，而PostRender是所有Actor都有函数。 另外注意：PostRenderFor()不是重写了就会触发，还需要执行AHUD::AddPostRenderedActor()，将需要触发的Actor加入PostRenderActors数组中。
-Canvas的引擎源码注释：
-protected: /** Canvas to Draw HUD on. Only valid during PostRender() event. */ UPROPERTY() UCanvas* Canvas;  
-      
-      <p>
-        <a href="https://dawnarc.com/2016/10/ue4hud%E7%9A%84canvas%E5%8F%98%E9%87%8F%E4%B8%BAnull%E7%9A%84%E9%97%AE%E9%A2%98/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-            
-              
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2016/10/ue4tmap%E4%BD%BF%E7%94%A8struct%E5%BD%93%E4%BD%9Ckey%E6%97%B6%E9%9C%80%E8%A6%81%E9%87%8D%E8%BD%BD%E7%9A%84%E6%93%8D%E4%BD%9C%E7%AC%A6/">
-          [UE4]TMap使用Struct当作key时需要重载的操作符
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2016-10-23T17:20:40&#43;08:00">
-        
-  October 23, 2016
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        定义struct：
-struct FMyStruct { // String which identifies our key FString UniqueID; // Some state which doesn't affect struct identity float SomeFloat; explicit FMyStruct(float InFloat) : UniqueID (FGuid::NewGuid().ToString()) , SomeFloat(InFloat) { } }; template &lt;typename ValueType&gt; struct TMyStructMapKeyFuncs : BaseKeyFuncs&lt; TPair&lt;FMyStruct, ValueType&gt;, FString &gt; { private: typedef BaseKeyFuncs&lt; TPair&lt;FMyStruct, ValueType&gt;, FString &gt; Super; public: typedef typename Super::ElementInitType ElementInitType; typedef typename Super::KeyInitType KeyInitType; static KeyInitType GetSetKey(ElementInitType Element) { return Element.Key.UniqueID; } static bool Matches(KeyInitType A, KeyInitType B) { return A.
-      
-      <p>
-        <a href="https://dawnarc.com/2016/10/ue4tmap%E4%BD%BF%E7%94%A8struct%E5%BD%93%E4%BD%9Ckey%E6%97%B6%E9%9C%80%E8%A6%81%E9%87%8D%E8%BD%BD%E7%9A%84%E6%93%8D%E4%BD%9C%E7%AC%A6/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-            
-              
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2016/10/ue4getworldtimermanager.settimer%E5%A6%82%E4%BD%95%E4%BC%A0%E9%80%92%E5%8F%82%E6%95%B0/">
-          [UE4]GetWorldTimerManager().SetTimer()如何传递参数
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2016-10-22T17:35:40&#43;08:00">
-        
-  October 22, 2016
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        回调函数：
-UFUNCTION() void MyUsefulFunction(int32 x, float y);  .h
-FTimerDelegate TimerDel; FTimerHandle TimerHandle;  .cpp
-int32 MyInt = 10; float MyFloat = 20.f; //Binding the function with specific values TimerDel.BindUFunction(this, FName(&quot;MyUsefulFunction&quot;), MyInt, MyFloat); //Calling MyUsefulFunction after 5 seconds without looping GetWorld()-&gt;GetTimerManager().SetTimer(TimerHandle, TimerDel, 5.f, false);  参考自：https://answers.unrealengine.com/questions/165678/using-settimer-on-a-function-with-parameters.html
-      
-      <p>
-        <a href="https://dawnarc.com/2016/10/ue4getworldtimermanager.settimer%E5%A6%82%E4%BD%95%E4%BC%A0%E9%80%92%E5%8F%82%E6%95%B0/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-            
-              
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2016/10/ue4pointlight%E7%82%B9%E5%85%89%E6%BA%90%E7%9A%84%E8%A1%B0%E5%87%8F%E5%8F%82%E6%95%B0/">
-          [UE4]PointLight点光源的衰减参数
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2016-10-20T13:46:40&#43;08:00">
-        
-  October 20, 2016
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        要想以较小的Intensity（光照强度）来获得较大的光照面积（或者光照亮度），影响的参数有两个
- Attenuation Radius（衰减半径）：衰减半径越大，光照区域越大
- Use Inverse Squared Falloff（是否启用平方反差衰减）：如果启用，则会以真实世界的光照效果来模拟物体与光源距离的不同而光照效果衰减变化的效果。如果不启用，则能增大光照区域。如果场景中有高度雾，开启此属性后，灯光的半径设置的再大，光照范围也不会有明显增大。  参数示例：   效果：   官方文档： https://docs.unrealengine.com/latest/INT/Resources/ContentExamples/Lighting/4_2/index.html
-  先知先觉者胜，后知后觉者平，不知不觉者败。
-      
-      <p>
-        <a href="https://dawnarc.com/2016/10/ue4pointlight%E7%82%B9%E5%85%89%E6%BA%90%E7%9A%84%E8%A1%B0%E5%87%8F%E5%8F%82%E6%95%B0/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-            
             
   <div class="pagination-bar">
     <ul class="pagination">
@@ -1296,6 +1325,129 @@ int32 MyInt = 10; float MyFloat = 20.f; //Binding the function with specific val
           <div class="media">
             
             <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/01/vfxtools-plugins-collections-for-art-making/">
+                <h3 class="media-heading">[VFX]Tools &amp; Plugins Collections for Art Making</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jan 1, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">UE4 Tools and Plugins umeFX to UE4 Tutorial: Smoke/Grenade effect using flipbooks.
+https://www.youtube.com/watch?v=CKbgMxLiRJM
+Interactive Tree Creator
+https://www.unrealengine.com/marketplace/interactive-tree-creator</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/01/zbrushplugins-collections/">
+                <h3 class="media-heading">[ZBrush]Plugins Collections</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jan 1, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">ZWrap Plugin for ZBrush
+https://www.russian3dscanner.com/zwrap/</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/01/ue4ies-light-profile-collections/">
+                <h3 class="media-heading">[UE4]IES Light Profile Collections</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jan 1, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>IES Light Profile</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/01/ue4vfx-collections/">
+                <h3 class="media-heading">[UE4]VFX Collections</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jan 1, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>VFX Series Pack 1</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/01/ue4kismetsystemlibrarys-api-in-common-use/">
+                <h3 class="media-heading">[UE4]KismetSystemLibrary‘s API in common use</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jan 1, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>keywords: KismetSystemLibrary, UKismetSystemLibrary</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/01/ue4build.csget-the-current-project-directory/">
+                <h3 class="media-heading">[UE4][Build.cs]Get the current Project Directory</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jan 1, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>.</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/01/ue4sequencer-related/">
+                <h3 class="media-heading">[UE4]Sequencer Related</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jan 1, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><h5 id="how-to-limit-the-frame-rate-of-sequencer">How to limit the frame rate of Sequencer</h5></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
               <a class="link-unstyled" href="https://dawnarc.com/2019/01/ue4transform-skeletal-bone-in-c-/">
                 <h3 class="media-heading">[UE4]Transform skeletal bone in C&#43;&#43;</h3>
               </a>
@@ -1304,8 +1456,7 @@ int32 MyInt = 10; float MyFloat = 20.f; //Binding the function with specific val
                   Jan 1, 2019
                 </span>
               </span>
-              <div class="media-content hide-xs font-merryweather"><p>Add <code>UPoseableMeshComponent</code> in your Actor class, and set Skeletal Mesh asset for it.<br />
-Modify bones transform by UPoseableMeshComponent&rsquo;s functions:</p></div>
+              <div class="media-content hide-xs font-merryweather"><h5 id="blueprint-node">Blueprint Node</h5></div>
             </div>
             <div style="clear:both;"></div>
             <hr>
@@ -1345,128 +1496,6 @@ Modify bones transform by UPoseableMeshComponent&rsquo;s functions:</p></div>
             <hr>
           </div>
         
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2018/12/windowsquickly-get-a-files-folder-path/">
-                <h3 class="media-heading">[Windows]Quickly get a file’s folder path</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Dec 12, 2018
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>Shift + RMB Click the file<br />
-Choose <code>Copy As Path</code></p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2018/12/ue4materialshow-tos/">
-                <h3 class="media-heading">[UE4][Materials]How-To&#39;s</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Dec 12, 2018
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>How to metal only for a part of mesh<br />
-How to make a stained glass window effect</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2018/12/ue4gpu-visualizer-gpu-profiling-specification/">
-                <h3 class="media-heading">[UE4]GPU Visualizer (GPU Profiling) Specification</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Dec 12, 2018
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>PrePass DDM_AllOpaque(Forced by DBuffer)</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2018/12/pythoncommon-syntax-collections/">
-                <h3 class="media-heading">[Python]Common syntax collections</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Dec 12, 2018
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>How to print like printf in Python3?<br />
-Case-insensitive string comparison</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2018/12/ue411-short-steps-to-create-an-animated-loading-screenasync-switch-level/">
-                <h3 class="media-heading">[UE4]11 Short Steps to Create an Animated Loading Screen(Async switch level)</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Dec 12, 2018
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>I Went into Window &gt; Levels</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2018/12/ue4invalid-object-in-gc-0x000001eb2e659900-referencingobject-image/">
-                <h3 class="media-heading">[UE4]Invalid object in GC: 0x000001eb2e659900, ReferencingObject: Image</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Dec 12, 2018
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>Runtime\CoreUObject\Private\UObject\GarbageCollection.cpp</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2018/12/toolsreduce-chrome-drive-activity100-percent-drive-usage/">
-                <h3 class="media-heading">[Tools]Reduce Chrome drive activity(100 percent Drive usage)</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Dec 12, 2018
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather">Settings -&gt; Advanced -&gt; Privacy and security -&gt; Disable Protects you and your device from dangerous sites</div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
       </div>
     </div>
     <div class="modal-footer">
@@ -1474,7 +1503,7 @@ Case-insensitive string comparison</p></div>
          data-message-zero="no post found"
          data-message-one="1 post found"
          data-message-other="{n} posts found">
-         448 posts found
+         455 posts found
       </p>
     </div>
   </div>

@@ -1,0 +1,1806 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.53 with theme Tranquilpeak 0.4.3-SNAPSHOT">
+<meta name="author" content="Neil Wang">
+<meta name="keywords" content="UE4, KismetSystemLibrary, UKismetSystemLibrary">
+<meta name="description" content="keywords: KismetSystemLibrary, UKismetSystemLibrary">
+
+
+<meta property="og:description" content="keywords: KismetSystemLibrary, UKismetSystemLibrary">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[UE4]KismetSystemLibrary‘s API in common use">
+<meta name="twitter:title" content="[UE4]KismetSystemLibrary‘s API in common use">
+<meta property="og:url" content="https://dawnarc.com/2019/01/ue4kismetsystemlibrarys-api-in-common-use/">
+<meta property="twitter:url" content="https://dawnarc.com/2019/01/ue4kismetsystemlibrarys-api-in-common-use/">
+<meta property="og:site_name" content="玄冬Wong">
+<meta property="og:description" content="keywords: KismetSystemLibrary, UKismetSystemLibrary">
+<meta name="twitter:description" content="keywords: KismetSystemLibrary, UKismetSystemLibrary">
+<meta property="og:locale" content="en-us">
+
+  
+    <meta property="article:published_time" content="2019-01-16T15:42:02">
+  
+  
+    <meta property="article:modified_time" content="2019-01-16T15:42:02">
+  
+  
+  
+    
+      <meta property="article:section" content="UnrealEngine4">
+    
+  
+  
+    
+      <meta property="article:tag" content="UE4">
+    
+  
+
+
+<meta name="twitter:card" content="summary">
+
+  <meta name="twitter:site" content="@dawn_arc">
+
+
+  <meta name="twitter:creator" content="@dawn_arc">
+
+
+
+
+
+
+  <meta property="og:image" content="https://dawnarc.com/thumbnail/thumbnail-japen-015.jpg">
+  <meta property="twitter:image" content="https://dawnarc.com/thumbnail/thumbnail-japen-015.jpg">
+
+
+
+
+
+  <meta property="og:image" content="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=640">
+  <meta property="twitter:image" content="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=640">
+
+
+    <title>[UE4]KismetSystemLibrary‘s API in common use</title>
+
+    <link rel="icon" href="https://dawnarc.com/favicon.png">
+    
+
+    
+      <link rel="publisher" href="https://plus.google.com/111340706178390411568">
+    
+
+    <link rel="canonical" href="https://dawnarc.com/2019/01/ue4kismetsystemlibrarys-api-in-common-use/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/jquery.fancybox.min.css" integrity="sha256-vuXZ9LGmmwtjqFX1F+EKin1ThZMub58gKULUyf0qECk=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/helpers/jquery.fancybox-thumbs.min.css" integrity="sha256-SEa4XYAHihTcEP1f5gARTB2K26Uk8PsndQYHQC1f4jU=" crossorigin="anonymous" />
+    
+    
+    <link rel="stylesheet" href="https://dawnarc.com/css/style-nnm2spxvve8onlujjlegkkytaehyadd4ksxc1hyzzq9a2wvtrgbljqyulomn.min.css" />
+    
+    
+      
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/solarized-light.min.css">
+      
+    
+
+    
+      
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-78064851-2', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="4">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="https://dawnarc.com/">玄冬Wong</a>
+  </div>
+  
+    
+      <a class="header-right-picture "
+         href="https://dawnarc.com/#about">
+    
+    
+    
+      
+        <img class="header-picture" src="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=90" alt="Author&#39;s picture" />
+      
+    
+    </a>
+  
+  
+  
+
+</header>
+
+      <nav id="sidebar" data-behavior="4">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="https://dawnarc.com/#about">
+          <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=110" alt="Author&#39;s picture" />
+        </a>
+        <h4 class="sidebar-profile-name">Neil Wang</h4>
+        
+          <h5 class="sidebar-profile-bio">久长唯有品格</h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/categories">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+      
+      <span class="sidebar-button-desc">Categories</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/tags">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+      
+      <span class="sidebar-button-desc">Tags</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/archives">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+      
+      <span class="sidebar-button-desc">Archives</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/#about">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+      
+      <span class="sidebar-button-desc">About</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+      
+      <span class="sidebar-button-desc">Home</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/index.xml">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://stackoverflow.com/users/1645289/protoss" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-stack-overflow"></i>
+      
+      <span class="sidebar-button-desc">Stack Overflow</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://www.artstation.com/artist/dawnarc" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-artstation"></i>
+      
+      <span class="sidebar-button-desc">ArtStation</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://www.facebook.com/koanland" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-facebook"></i>
+      
+      <span class="sidebar-button-desc">Facebook</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/dawnarc" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://www.linkedin.com/in/dawnarc/" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-linkedin"></i>
+      
+      <span class="sidebar-button-desc">Linkedin</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://www.pinterest.com/wangaiguo/" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-pinterest"></i>
+      
+      <span class="sidebar-button-desc">Pinterest</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://steamcommunity.com/id/dawnarc" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-steam"></i>
+      
+      <span class="sidebar-button-desc">Steam</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://twitter.com/idealsland" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-twitter"></i>
+      
+      <span class="sidebar-button-desc">Twitter</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://weibo.com/koanland" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-weibo"></i>
+      
+      <span class="sidebar-button-desc">Weibo</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+
+    </ul>
+  </div>
+</nav>
+
+      
+
+      <div id="main" data-behavior="4"
+        class="
+               hasCoverMetaIn
+               ">
+        <article class="post" itemscope itemType="http://schema.org/BlogPosting">
+          
+          
+            <div class="post-header main-content-wrap text-left">
+  
+    <h1 class="post-title" itemprop="headline">
+      [UE4]KismetSystemLibrary‘s API in common use
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2019-01-16T15:42:02&#43;08:00">
+        
+  January 16, 2019
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+</div>
+          
+          <div class="post-content markdown" itemprop="articleBody">
+            <div class="main-content-wrap">
+              <p>keywords: KismetSystemLibrary, UKismetSystemLibrary</p>
+
+<h5 id="direction-and-os">Direction and OS</h5>
+
+<pre><code>/** Get the directory of the current project */
+UFUNCTION(BlueprintPure, Category=&quot;Utilities|Paths&quot;, meta=(BlueprintThreadSafe))
+static FString GetProjectDirectory();
+
+/** Get the content directory of the current project */
+UFUNCTION(BlueprintPure, Category=&quot;Utilities|Paths&quot;, meta=(BlueprintThreadSafe))
+static FString GetProjectContentDirectory();
+
+/** Get the saved directory of the current project */
+UFUNCTION(BlueprintPure, Category=&quot;Utilities|Paths&quot;, meta=(BlueprintThreadSafe))
+static FString GetProjectSavedDirectory();
+
+/** Get the current user name from the OS */
+UFUNCTION(BlueprintPure, Category=&quot;Utilities|Platform&quot;)
+static FString GetPlatformUserName();
+
+/** 
+ * Get the current game time, in seconds. This stops when the game is paused and is affected by slomo. 
+ * 
+ * @param WorldContextObject    World context
+ */
+UFUNCTION(BlueprintPure, Category=&quot;Utilities|Time&quot;, meta=(WorldContext=&quot;WorldContextObject&quot;) )
+static float GetGameTimeInSeconds(UObject* WorldContextObject);
+</code></pre>
+
+<h5 id="object">Object</h5>
+
+<pre><code>UFUNCTION(BlueprintPure, Category=&quot;Utilities&quot;)
+static bool DoesImplementInterface(UObject* TestObject, TSubclassOf&lt;UInterface&gt; Interface);
+</code></pre>
+
+<h5 id="server-building">Server &amp; Building</h5>
+
+<pre><code>/** Returns whether the world this object is in is the host or not */
+UFUNCTION(BlueprintPure, Category=&quot;Networking&quot;, meta=(WorldContext=&quot;WorldContextObject&quot;) )
+static bool IsServer(UObject* WorldContextObject);
+
+/** Returns whether this is running on a dedicated server */
+UFUNCTION(BlueprintPure, Category=&quot;Networking&quot;, meta=(WorldContext=&quot;WorldContextObject&quot;))
+static bool IsDedicatedServer(UObject* WorldContextObject);
+
+/** Returns whether this game instance is stand alone (no networking). */
+UFUNCTION(BlueprintPure, Category=&quot;Networking&quot;, meta=(WorldContext=&quot;WorldContextObject&quot;))
+static bool IsStandalone(UObject* WorldContextObject);
+
+/** Returns whether this is a build that is packaged for distribution */
+UFUNCTION(BlueprintPure, Category=&quot;Development&quot;, meta=(BlueprintThreadSafe))
+static bool IsPackagedForDistribution();
+</code></pre>
+
+<h5 id="device">Device</h5>
+
+<pre><code>/** Returns the platform specific unique device id */
+UFUNCTION(BlueprintPure, Category=&quot;Utilities|Platform&quot;, meta = (DeprecatedFunction, DeprecationMessage = &quot;Use GetDeviceId instead&quot;))
+static FString GetUniqueDeviceId();
+</code></pre>
+
+<h5 id="log">Log</h5>
+
+<pre><code>/**
+ * Prints a string to the log, and optionally, to the screen
+ * If Print To Log is true, it will be visible in the Output Log window.  Otherwise it will be logged only as 'Verbose', so it generally won't show up.
+ *
+ * @param   InString        The string to log out
+ * @param   bPrintToScreen  Whether or not to print the output to the screen
+ * @param   bPrintToLog     Whether or not to print the output to the log
+ * @param   bPrintToConsole Whether or not to print the output to the console
+ * @param   TextColor       Whether or not to print the output to the console
+ * @param   Duration        The display duration (if Print to Screen is True). Using negative number will result in loading the duration time from the config.
+ */
+UFUNCTION(BlueprintCallable, meta=(WorldContext=&quot;WorldContextObject&quot;, CallableWithoutWorldContext, Keywords = &quot;log print&quot;, AdvancedDisplay = &quot;2&quot;, DevelopmentOnly), Category=&quot;Utilities|String&quot;)
+static void PrintString(UObject* WorldContextObject, const FString&amp; InString = FString(TEXT(&quot;Hello&quot;)), bool bPrintToScreen = true, bool bPrintToLog = true, FLinearColor TextColor = FLinearColor(0.0, 0.66, 1.0), float Duration = 2.f);
+
+/**
+ * Prints text to the log, and optionally, to the screen
+ * If Print To Log is true, it will be visible in the Output Log window.  Otherwise it will be logged only as 'Verbose', so it generally won't show up.
+ *
+ * @param   InText          The text to log out
+ * @param   bPrintToScreen  Whether or not to print the output to the screen
+ * @param   bPrintToLog     Whether or not to print the output to the log
+ * @param   bPrintToConsole Whether or not to print the output to the console
+ * @param   TextColor       Whether or not to print the output to the console
+ * @param   Duration        The display duration (if Print to Screen is True). Using negative number will result in loading the duration time from the config.
+ */
+UFUNCTION(BlueprintCallable, meta=(WorldContext=&quot;WorldContextObject&quot;, CallableWithoutWorldContext, Keywords = &quot;log&quot;, AdvancedDisplay = &quot;2&quot;, DevelopmentOnly), Category=&quot;Utilities|Text&quot;)
+static void PrintText(UObject* WorldContextObject, const FText InText = INVTEXT(&quot;Hello&quot;), bool bPrintToScreen = true, bool bPrintToLog = true, FLinearColor TextColor = FLinearColor(0.0, 0.66, 1.0), float Duration = 2.f);
+
+/**
+ * Prints a warning string to the log and the screen. Meant to be used as a way to inform the user that they misused the node.
+ *
+ * WARNING!! Don't change the signature of this function without fixing up all nodes using it in the compiler
+ *
+ * @param   InString        The string to log out
+ */
+UFUNCTION(BlueprintCallable, meta=(BlueprintInternalUseOnly = &quot;TRUE&quot;))
+static void PrintWarning(const FString&amp; InString);
+
+/** Sets the game window title */
+UFUNCTION(BlueprintCallable, Category = &quot;Utilities&quot;)
+static void SetWindowTitle(const FText&amp; Title);
+</code></pre>
+
+<h5 id="console">Console</h5>
+
+<pre><code>/**
+ * Executes a console command, optionally on a specific controller
+ * 
+ * @param   Command         Command to send to the console
+ * @param   SpecificPlayer  If specified, the console command will be routed through the specified player
+ */
+UFUNCTION(BlueprintCallable, Category=&quot;Development&quot;,meta=(WorldContext=&quot;WorldContextObject&quot;))
+static void ExecuteConsoleCommand(UObject* WorldContextObject, const FString&amp; Command, class APlayerController* SpecificPlayer = NULL );
+
+/**
+ * Attempts to retrieve the value of the specified float console variable, if it exists.
+ * 
+ * @param   VariableName    Name of the console variable to find.
+ * @return  The value if found, 0 otherwise.
+ */
+UFUNCTION(BlueprintCallable, Category=&quot;Development&quot;,meta=(WorldContext=&quot;WorldContextObject&quot;))
+static float GetConsoleVariableFloatValue(UObject* WorldContextObject, const FString&amp; VariableName);
+
+/**
+ * Attempts to retrieve the value of the specified integer console variable, if it exists.
+ * 
+ * @param   VariableName    Name of the console variable to find.
+ * @return  The value if found, 0 otherwise.
+ */
+UFUNCTION(BlueprintCallable, Category=&quot;Development&quot;,meta=(WorldContext=&quot;WorldContextObject&quot;))
+static int32 GetConsoleVariableIntValue(UObject* WorldContextObject, const FString&amp; VariableName);
+
+/** 
+ *  Exit the current game 
+ * @param   SpecificPlayer  The specific player to quit the game. If not specified, player 0 will quit.
+ * @param   QuitPreference  Form of quitting.
+ * @param   bIgnorePlatformRestrictions Ignores and best-practices based on platform (e.g PS4 games should never quit). Non-shipping only
+ */
+UFUNCTION(BlueprintCallable, Category=&quot;Game&quot;,meta=(WorldContext=&quot;WorldContextObject&quot;))
+static void QuitGame(UObject* WorldContextObject, class APlayerController* SpecificPlayer, TEnumAsByte&lt;EQuitPreference::Type&gt; QuitPreference, bool bIgnorePlatformRestrictions);
+</code></pre>
+
+<h5 id="latent-actions">Latent Actions</h5>
+
+<pre><code>/** 
+ * Perform a latent action with a delay (specified in seconds).  Calling again while it is counting down will be ignored.
+ * 
+ * @param WorldContext  World context.
+ * @param Duration      length of delay (in seconds).
+ * @param LatentInfo    The latent action.
+ */
+UFUNCTION(BlueprintCallable, Category=&quot;Utilities|FlowControl&quot;, meta=(Latent, WorldContext=&quot;WorldContextObject&quot;, LatentInfo=&quot;LatentInfo&quot;, Duration=&quot;0.2&quot;, Keywords=&quot;sleep&quot;))
+static void Delay(UObject* WorldContextObject, float Duration, struct FLatentActionInfo LatentInfo );
+
+/** 
+ * Perform a latent action with a retriggerable delay (specified in seconds).  Calling again while it is counting down will reset the countdown to Duration.
+ * 
+ * @param WorldContext  World context.
+ * @param Duration      length of delay (in seconds).
+ * @param LatentInfo    The latent action.
+ */
+UFUNCTION(BlueprintCallable, meta=(Latent, LatentInfo=&quot;LatentInfo&quot;, WorldContext=&quot;WorldContextObject&quot;, Duration=&quot;0.2&quot;, Keywords=&quot;sleep&quot;), Category=&quot;Utilities|FlowControl&quot;)
+static void RetriggerableDelay(UObject* WorldContextObject, float Duration, FLatentActionInfo LatentInfo);
+
+/*
+ * Interpolate a component to the specified relative location and rotation over the course of OverTime seconds. 
+ * @param Component                     Component to interpolate
+ * @param TargetRelativeLocation        Relative target location
+ * @param TargetRelativeRotation        Relative target rotation
+ * @param bEaseOut                      if true we will ease out (ie end slowly) during interpolation
+ * @param bEaseIn                       if true we will ease in (ie start slowly) during interpolation
+ * @param OverTime                      duration of interpolation
+ * @param bForceShortestRotationPath    if true we will always use the shortest path for rotation
+ * @param MoveAction                    required movement behavior @see EMoveComponentAction
+ * @param LatentInfo                    The latent action
+ */
+UFUNCTION(BlueprintCallable, meta=(Latent, LatentInfo=&quot;LatentInfo&quot;, WorldContext=&quot;WorldContextObject&quot;, ExpandEnumAsExecs=&quot;MoveAction&quot;, OverTime=&quot;0.2&quot;), Category=&quot;Components&quot;)
+static void MoveComponentTo(USceneComponent* Component, FVector TargetRelativeLocation, FRotator TargetRelativeRotation, bool bEaseOut, bool bEaseIn, float OverTime, bool bForceShortestRotationPath, TEnumAsByte&lt;EMoveComponentAction::Type&gt; MoveAction, FLatentActionInfo LatentInfo);
+</code></pre>
+
+<h5 id="set-property-by-name-functions">&lsquo;Set property by name&rsquo; functions</h5>
+
+<pre><code>// --- 'Set property by name' functions ------------------------------
+
+/** Set an int32 property by name */
+UFUNCTION(BlueprintCallable, meta=(BlueprintInternalUseOnly = &quot;true&quot;))
+static void SetIntPropertyByName(UObject* Object, FName PropertyName, int32 Value);
+
+/** Set an uint8 or enum property by name */
+UFUNCTION(BlueprintCallable, meta=(BlueprintInternalUseOnly = &quot;true&quot;))
+static void SetBytePropertyByName(UObject* Object, FName PropertyName, uint8 Value);
+
+/** Set a float property by name */
+UFUNCTION(BlueprintCallable, meta=(BlueprintInternalUseOnly = &quot;true&quot;))
+static void SetFloatPropertyByName(UObject* Object, FName PropertyName, float Value);
+
+/** Set a bool property by name */
+UFUNCTION(BlueprintCallable, meta=(BlueprintInternalUseOnly = &quot;true&quot;))
+static void SetBoolPropertyByName(UObject* Object, FName PropertyName, bool Value);
+
+/** Set an OBJECT property by name */
+UFUNCTION(BlueprintCallable, meta=(BlueprintInternalUseOnly = &quot;true&quot;))
+static void SetObjectPropertyByName(UObject* Object, FName PropertyName, UObject* Value);
+
+/** Set a CLASS property by name */
+UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = &quot;true&quot;))
+static void SetClassPropertyByName(UObject* Object, FName PropertyName, TSubclassOf&lt;UObject&gt; Value);
+</code></pre>
+
+<h5 id="collision-functions">Collision functions</h5>
+
+<pre><code>/**
+ * Returns an array of actors that overlap the given sphere.
+ * @param WorldContext  World context
+ * @param SpherePos     Center of sphere.
+ * @param SphereRadius  Size of sphere.
+ * @param Filter        Option to restrict results to only static or only dynamic.  For efficiency.
+ * @param ClassFilter   If set, will only return results of this class or subclasses of it.
+ * @param ActorsToIgnore        Ignore these actors in the list
+ * @param OutActors     Returned array of actors. Unsorted.
+ * @return              true if there was an overlap that passed the filters, false otherwise.
+ */
+UFUNCTION(BlueprintCallable, Category=&quot;Collision&quot;, meta=(WorldContext=&quot;WorldContextObject&quot;, AutoCreateRefTerm=&quot;ActorsToIgnore&quot;, DisplayName = &quot;SphereOverlapActors&quot;))
+static bool SphereOverlapActors(UObject* WorldContextObject, const FVector SpherePos, float SphereRadius, const TArray&lt;TEnumAsByte&lt;EObjectTypeQuery&gt; &gt; &amp; ObjectTypes, UClass* ActorClassFilter, const TArray&lt;AActor*&gt;&amp; ActorsToIgnore, TArray&lt;class AActor*&gt;&amp; OutActors);
+
+/**
+ * Returns an array of components that overlap the given sphere.
+ * @param WorldContext  World context
+ * @param SpherePos     Center of sphere.
+ * @param SphereRadius  Size of sphere.
+ * @param Filter        Option to restrict results to only static or only dynamic.  For efficiency.
+ * @param ClassFilter   If set, will only return results of this class or subclasses of it.
+ * @param ActorsToIgnore        Ignore these actors in the list
+ * @param OutActors     Returned array of actors. Unsorted.
+ * @return              true if there was an overlap that passed the filters, false otherwise.
+ */
+UFUNCTION(BlueprintCallable, Category=&quot;Collision&quot;, meta=(WorldContext=&quot;WorldContextObject&quot;, AutoCreateRefTerm=&quot;ActorsToIgnore&quot;, DisplayName=&quot;SphereOverlapComponents&quot;))
+static bool SphereOverlapComponents(UObject* WorldContextObject, const FVector SpherePos, float SphereRadius, const TArray&lt;TEnumAsByte&lt;EObjectTypeQuery&gt; &gt; &amp; ObjectTypes, UClass* ComponentClassFilter, const TArray&lt;AActor*&gt;&amp; ActorsToIgnore, TArray&lt;class UPrimitiveComponent*&gt;&amp; OutComponents);
+
+
+/**
+ * Returns an array of actors that overlap the given axis-aligned box.
+ * @param WorldContext  World context
+ * @param BoxPos        Center of box.
+ * @param BoxExtent     Extents of box.
+ * @param Filter        Option to restrict results to only static or only dynamic.  For efficiency.
+ * @param ClassFilter   If set, will only return results of this class or subclasses of it.
+ * @param ActorsToIgnore        Ignore these actors in the list
+ * @param OutActors     Returned array of actors. Unsorted.
+ * @return              true if there was an overlap that passed the filters, false otherwise.
+ */
+UFUNCTION(BlueprintCallable, Category=&quot;Collision&quot;, meta=(WorldContext=&quot;WorldContextObject&quot;, AutoCreateRefTerm=&quot;ActorsToIgnore&quot;, DisplayName=&quot;BoxOverlapActors&quot;))
+static bool BoxOverlapActors(UObject* WorldContextObject, const FVector BoxPos, FVector BoxExtent, const TArray&lt;TEnumAsByte&lt;EObjectTypeQuery&gt; &gt; &amp; ObjectTypes, UClass* ActorClassFilter, const TArray&lt;AActor*&gt;&amp; ActorsToIgnore, TArray&lt;class AActor*&gt;&amp; OutActors);
+
+/**
+ * Returns an array of components that overlap the given axis-aligned box.
+ * @param WorldContext  World context
+ * @param BoxPos        Center of box.
+ * @param BoxExtent     Extents of box.
+ * @param Filter        Option to restrict results to only static or only dynamic.  For efficiency.
+ * @param ClassFilter   If set, will only return results of this class or subclasses of it.
+ * @param ActorsToIgnore        Ignore these actors in the list
+ * @param OutActors     Returned array of actors. Unsorted.
+ * @return              true if there was an overlap that passed the filters, false otherwise.
+ */
+UFUNCTION(BlueprintCallable, Category=&quot;Collision&quot;, meta=(WorldContext=&quot;WorldContextObject&quot;, AutoCreateRefTerm=&quot;ActorsToIgnore&quot;, DisplayName=&quot;BoxOverlapComponents&quot;))
+static bool BoxOverlapComponents(UObject* WorldContextObject, const FVector BoxPos, FVector Extent, const TArray&lt;TEnumAsByte&lt;EObjectTypeQuery&gt; &gt; &amp; ObjectTypes, UClass* ComponentClassFilter, const TArray&lt;AActor*&gt;&amp; ActorsToIgnore, TArray&lt;class UPrimitiveComponent*&gt;&amp; OutComponents);
+
+
+/**
+ * Returns an array of actors that overlap the given capsule.
+ * @param WorldContext  World context
+ * @param CapsulePos    Center of the capsule.
+ * @param Radius        Radius of capsule hemispheres and radius of center cylinder portion.
+ * @param HalfHeight    Half-height of the capsule (from center of capsule to tip of hemisphere.
+ * @param Filter        Option to restrict results to only static or only dynamic.  For efficiency.
+ * @param ClassFilter   If set, will only return results of this class or subclasses of it.
+ * @param ActorsToIgnore        Ignore these actors in the list
+ * @param OutActors     Returned array of actors. Unsorted.
+ * @return              true if there was an overlap that passed the filters, false otherwise.
+ */
+UFUNCTION(BlueprintCallable, Category=&quot;Collision&quot;, meta=(WorldContext=&quot;WorldContextObject&quot;, AutoCreateRefTerm=&quot;ActorsToIgnore&quot;, DisplayName=&quot;CapsuleOverlapActors&quot;))
+static bool CapsuleOverlapActors(UObject* WorldContextObject, const FVector CapsulePos, float Radius, float HalfHeight, const TArray&lt;TEnumAsByte&lt;EObjectTypeQuery&gt; &gt; &amp; ObjectTypes, UClass* ActorClassFilter, const TArray&lt;AActor*&gt;&amp; ActorsToIgnore, TArray&lt;class AActor*&gt;&amp; OutActors);
+
+/**
+ * Returns an array of components that overlap the given capsule.
+ * @param WorldContext  World context
+ * @param CapsulePos    Center of the capsule.
+ * @param Radius        Radius of capsule hemispheres and radius of center cylinder portion.
+ * @param HalfHeight    Half-height of the capsule (from center of capsule to tip of hemisphere.
+ * @param Filter        Option to restrict results to only static or only dynamic.  For efficiency.
+ * @param ClassFilter   If set, will only return results of this class or subclasses of it.
+ * @param ActorsToIgnore        Ignore these actors in the list
+ * @param OutActors     Returned array of actors. Unsorted.
+ * @return              true if there was an overlap that passed the filters, false otherwise.
+ */
+UFUNCTION(BlueprintCallable, Category=&quot;Collision&quot;, meta=(WorldContext=&quot;WorldContextObject&quot;, AutoCreateRefTerm=&quot;ActorsToIgnore&quot;, DisplayName=&quot;CapsuleOverlapComponents&quot;) )
+static bool CapsuleOverlapComponents(UObject* WorldContextObject, const FVector CapsulePos, float Radius, float HalfHeight, const TArray&lt;TEnumAsByte&lt;EObjectTypeQuery&gt; &gt; &amp; ObjectTypes, UClass* ComponentClassFilter, const TArray&lt;AActor*&gt;&amp; ActorsToIgnore, TArray&lt;class UPrimitiveComponent*&gt;&amp; OutComponents);
+
+
+/**
+ * Returns an array of actors that overlap the given component.
+ * @param Component             Component to test with.
+ * @param ComponentTransform    Defines where to place the component for overlap testing.
+ * @param Filter                Option to restrict results to only static or only dynamic.  For efficiency.
+ * @param ClassFilter           If set, will only return results of this class or subclasses of it.
+ * @param ActorsToIgnore        Ignore these actors in the list
+ * @param OutActors             Returned array of actors. Unsorted.
+ * @return                      true if there was an overlap that passed the filters, false otherwise.
+ */
+UFUNCTION(BlueprintCallable, Category=&quot;Collision&quot;, meta=(AutoCreateRefTerm=&quot;ActorsToIgnore&quot;, DisplayName=&quot;ComponentOverlapActors&quot;))
+static bool ComponentOverlapActors(UPrimitiveComponent* Component, const FTransform&amp; ComponentTransform, const TArray&lt;TEnumAsByte&lt;EObjectTypeQuery&gt; &gt; &amp; ObjectTypes, UClass* ActorClassFilter, const TArray&lt;AActor*&gt;&amp; ActorsToIgnore, TArray&lt;class AActor*&gt;&amp; OutActors);
+
+/**
+ * Returns an array of components that overlap the given component.
+ * @param Component             Component to test with.
+ * @param ComponentTransform    Defines where to place the component for overlap testing.
+ * @param Filter                Option to restrict results to only static or only dynamic.  For efficiency.
+ * @param ClassFilter           If set, will only return results of this class or subclasses of it.
+ * @param ActorsToIgnore        Ignore these actors in the list
+ * @param OutActors             Returned array of actors. Unsorted.
+ * @return                      true if there was an overlap that passed the filters, false otherwise.
+ */
+UFUNCTION(BlueprintCallable, Category=&quot;Collision&quot;, meta=(AutoCreateRefTerm=&quot;ActorsToIgnore&quot;, DisplayName=&quot;ComponentOverlapComponents&quot;))
+static bool ComponentOverlapComponents(UPrimitiveComponent* Component, const FTransform&amp; ComponentTransform, const TArray&lt;TEnumAsByte&lt;EObjectTypeQuery&gt; &gt; &amp; ObjectTypes, UClass* ComponentClassFilter, const TArray&lt;AActor*&gt;&amp; ActorsToIgnore, TArray&lt;class UPrimitiveComponent*&gt;&amp; OutComponents);
+
+
+/**
+ * Does a collision trace along the given line and returns the first blocking hit encountered.
+ * This trace finds the objects that RESPONDS to the given TraceChannel
+ * 
+ * @param WorldContext  World context
+ * @param Start         Start of line segment.
+ * @param End           End of line segment.
+ * @param TraceChannel  
+ * @param bTraceComplex True to test against complex collision, false to test against simplified collision.
+ * @param OutHit        Properties of the trace hit.
+ * @return              True if there was a hit, false otherwise.
+ */
+UFUNCTION(BlueprintCallable, Category=&quot;Collision&quot;, meta=(bIgnoreSelf=&quot;true&quot;, WorldContext=&quot;WorldContextObject&quot;, AutoCreateRefTerm=&quot;ActorsToIgnore&quot;, DisplayName=&quot;LineTraceByChannel&quot;, AdvancedDisplay=&quot;TraceColor,TraceHitColor,DrawTime&quot;, Keywords=&quot;raycast&quot;))
+static bool LineTraceSingle(UObject* WorldContextObject, const FVector Start, const FVector End, ETraceTypeQuery TraceChannel, bool bTraceComplex, const TArray&lt;AActor*&gt;&amp; ActorsToIgnore, EDrawDebugTrace::Type DrawDebugType, FHitResult&amp; OutHit, bool bIgnoreSelf, FLinearColor TraceColor = FLinearColor::Red, FLinearColor TraceHitColor = FLinearColor::Green, float DrawTime = 5.0f);
+
+/**
+ * Does a collision trace along the given line and returns all hits encountered up to and including the first blocking hit.
+ * This trace finds the objects that RESPOND to the given TraceChannel
+ * 
+ * @param WorldContext  World context
+ * @param Start         Start of line segment.
+ * @param End           End of line segment.
+ * @param TraceChannel  The channel to trace
+ * @param bTraceComplex True to test against complex collision, false to test against simplified collision.
+ * @param OutHit        Properties of the trace hit.
+ * @return              True if there was a blocking hit, false otherwise.
+ */
+UFUNCTION(BlueprintCallable, Category=&quot;Collision&quot;, meta=(bIgnoreSelf=&quot;true&quot;, WorldContext=&quot;WorldContextObject&quot;, AutoCreateRefTerm=&quot;ActorsToIgnore&quot;, DisplayName = &quot;MultiLineTraceByChannel&quot;, AdvancedDisplay=&quot;TraceColor,TraceHitColor,DrawTime&quot;, Keywords=&quot;raycast&quot;))
+static bool LineTraceMulti(UObject* WorldContextObject, const FVector Start, const FVector End, ETraceTypeQuery TraceChannel, bool bTraceComplex, const TArray&lt;AActor*&gt;&amp; ActorsToIgnore, EDrawDebugTrace::Type DrawDebugType, TArray&lt;FHitResult&gt;&amp; OutHits, bool bIgnoreSelf, FLinearColor TraceColor = FLinearColor::Red, FLinearColor TraceHitColor = FLinearColor::Green, float DrawTime = 5.0f);
+
+/**
+ * Sweeps a sphere along the given line and returns the first blocking hit encountered.
+ * This trace finds the objects that RESPONDS to the given TraceChannel
+ * 
+ * @param Start         Start of line segment.
+ * @param End           End of line segment.
+ * @param Radius        Radius of the sphere to sweep
+ * @param TraceChannel  
+ * @param bTraceComplex True to test against complex collision, false to test against simplified collision.
+ * @param OutHit        Properties of the trace hit.
+ * @return              True if there was a hit, false otherwise.
+ */
+UFUNCTION(BlueprintCallable, Category=&quot;Collision&quot;, meta=(bIgnoreSelf=&quot;true&quot;, WorldContext=&quot;WorldContextObject&quot;, AutoCreateRefTerm=&quot;ActorsToIgnore&quot;, DisplayName = &quot;SphereTraceByChannel&quot;, AdvancedDisplay=&quot;TraceColor,TraceHitColor,DrawTime&quot;, Keywords=&quot;sweep&quot;))
+static bool SphereTraceSingle(UObject* WorldContextObject, const FVector Start, const FVector End, float Radius, ETraceTypeQuery TraceChannel, bool bTraceComplex, const TArray&lt;AActor*&gt;&amp; ActorsToIgnore, EDrawDebugTrace::Type DrawDebugType, FHitResult&amp; OutHit, bool bIgnoreSelf, FLinearColor TraceColor = FLinearColor::Red, FLinearColor TraceHitColor = FLinearColor::Green, float DrawTime = 5.0f);
+
+/**
+ * Sweeps a sphere along the given line and returns all hits encountered up to and including the first blocking hit.
+ * This trace finds the objects that RESPOND to the given TraceChannel
+ * 
+ * @param WorldContext  World context
+ * @param Start         Start of line segment.
+ * @param End           End of line segment.
+ * @param Radius        Radius of the sphere to sweep
+ * @param TraceChannel  
+ * @param bTraceComplex True to test against complex collision, false to test against simplified collision.
+ * @param OutHits       A list of hits, sorted along the trace from start to finish.  The blocking hit will be the last hit, if there was one.
+ * @return              True if there was a blocking hit, false otherwise.
+ */
+UFUNCTION(BlueprintCallable, Category=&quot;Collision&quot;, meta=(bIgnoreSelf=&quot;true&quot;, WorldContext=&quot;WorldContextObject&quot;, AutoCreateRefTerm=&quot;ActorsToIgnore&quot;, DisplayName = &quot;MultiSphereTraceByChannel&quot;, AdvancedDisplay=&quot;TraceColor,TraceHitColor,DrawTime&quot;, Keywords=&quot;sweep&quot;))
+static bool SphereTraceMulti(UObject* WorldContextObject, const FVector Start, const FVector End, float Radius, ETraceTypeQuery TraceChannel, bool bTraceComplex, const TArray&lt;AActor*&gt;&amp; ActorsToIgnore, EDrawDebugTrace::Type DrawDebugType, TArray&lt;FHitResult&gt;&amp; OutHits, bool bIgnoreSelf, FLinearColor TraceColor = FLinearColor::Red, FLinearColor TraceHitColor = FLinearColor::Green, float DrawTime = 5.0f);
+
+/**
+* Sweeps a box along the given line and returns the first blocking hit encountered.
+* This trace finds the objects that RESPONDS to the given TraceChannel
+*
+* @param Start          Start of line segment.
+* @param End            End of line segment.
+* @param HalfSize       Distance from the center of box along each axis
+* @param Orientation    Orientation of the box
+* @param TraceChannel
+* @param bTraceComplex  True to test against complex collision, false to test against simplified collision.
+* @param OutHit         Properties of the trace hit.
+* @return               True if there was a hit, false otherwise.
+*/
+UFUNCTION(BlueprintCallable, Category = &quot;Collision&quot;, meta = (bIgnoreSelf = &quot;true&quot;, WorldContext=&quot;WorldContextObject&quot;, AutoCreateRefTerm = &quot;ActorsToIgnore&quot;, DisplayName = &quot;BoxTraceByChannel&quot;, AdvancedDisplay=&quot;TraceColor,TraceHitColor,DrawTime&quot;, Keywords=&quot;sweep&quot;))
+static bool BoxTraceSingle(UObject* WorldContextObject, const FVector Start, const FVector End, const FVector HalfSize, const FRotator Orientation, ETraceTypeQuery TraceChannel, bool bTraceComplex, const TArray&lt;AActor*&gt;&amp; ActorsToIgnore, EDrawDebugTrace::Type DrawDebugType, FHitResult&amp; OutHit, bool bIgnoreSelf, FLinearColor TraceColor = FLinearColor::Red, FLinearColor TraceHitColor = FLinearColor::Green, float DrawTime = 5.0f);
+
+/**
+* Sweeps a box along the given line and returns all hits encountered.
+* This trace finds the objects that RESPONDS to the given TraceChannel
+*
+* @param Start          Start of line segment.
+* @param End            End of line segment.
+* @param HalfSize       Distance from the center of box along each axis
+* @param Orientation    Orientation of the box
+* @param TraceChannel
+* @param bTraceComplex  True to test against complex collision, false to test against simplified collision.
+* @param OutHits        A list of hits, sorted along the trace from start to finish. The blocking hit will be the last hit, if there was one.
+* @return               True if there was a blocking hit, false otherwise.
+*/
+UFUNCTION(BlueprintCallable, Category = &quot;Collision&quot;, meta = (bIgnoreSelf = &quot;true&quot;, WorldContext=&quot;WorldContextObject&quot;, AutoCreateRefTerm = &quot;ActorsToIgnore&quot;, DisplayName = &quot;MultiBoxTraceByChannel&quot;, AdvancedDisplay=&quot;TraceColor,TraceHitColor,DrawTime&quot;, Keywords=&quot;sweep&quot;))
+static bool BoxTraceMulti(UObject* WorldContextObject, const FVector Start, const FVector End, FVector HalfSize, const FRotator Orientation, ETraceTypeQuery TraceChannel, bool bTraceComplex, const TArray&lt;AActor*&gt;&amp; ActorsToIgnore, EDrawDebugTrace::Type DrawDebugType, TArray&lt;FHitResult&gt;&amp; OutHits, bool bIgnoreSelf, FLinearColor TraceColor = FLinearColor::Red, FLinearColor TraceHitColor = FLinearColor::Green, float DrawTime = 5.0f);
+
+
+/**
+ * Sweeps a capsule along the given line and returns the first blocking hit encountered.
+ * This trace finds the objects that RESPOND to the given TraceChannel
+ * 
+ * @param WorldContext  World context
+ * @param Start         Start of line segment.
+ * @param End           End of line segment.
+ * @param Radius        Radius of the capsule to sweep
+ * @param HalfHeight    Distance from center of capsule to tip of hemisphere endcap.
+ * @param TraceChannel  
+ * @param bTraceComplex True to test against complex collision, false to test against simplified collision.
+ * @param OutHit        Properties of the trace hit.
+ * @return              True if there was a hit, false otherwise.
+ */
+UFUNCTION(BlueprintCallable, Category=&quot;Collision&quot;, meta=(bIgnoreSelf=&quot;true&quot;, WorldContext=&quot;WorldContextObject&quot;, AutoCreateRefTerm=&quot;ActorsToIgnore&quot;, DisplayName = &quot;CapsuleTraceByChannel&quot;, AdvancedDisplay=&quot;TraceColor,TraceHitColor,DrawTime&quot;, Keywords=&quot;sweep&quot;))
+static bool CapsuleTraceSingle(UObject* WorldContextObject, const FVector Start, const FVector End, float Radius, float HalfHeight, ETraceTypeQuery TraceChannel, bool bTraceComplex, const TArray&lt;AActor*&gt;&amp; ActorsToIgnore, EDrawDebugTrace::Type DrawDebugType, FHitResult&amp; OutHit, bool bIgnoreSelf, FLinearColor TraceColor = FLinearColor::Red, FLinearColor TraceHitColor = FLinearColor::Green, float DrawTime = 5.0f);
+
+/**
+ * Sweeps a capsule along the given line and returns all hits encountered up to and including the first blocking hit.
+ * This trace finds the objects that RESPOND to the given TraceChannel
+ * 
+ * @param WorldContext  World context
+ * @param Start         Start of line segment.
+ * @param End           End of line segment.
+ * @param Radius        Radius of the capsule to sweep
+ * @param HalfHeight    Distance from center of capsule to tip of hemisphere endcap.
+ * @param TraceChannel  
+ * @param bTraceComplex True to test against complex collision, false to test against simplified collision.
+ * @param OutHits       A list of hits, sorted along the trace from start to finish.  The blocking hit will be the last hit, if there was one.
+ * @return              True if there was a blocking hit, false otherwise.
+ */
+UFUNCTION(BlueprintCallable, Category=&quot;Collision&quot;, meta=(bIgnoreSelf=&quot;true&quot;, WorldContext=&quot;WorldContextObject&quot;, AutoCreateRefTerm=&quot;ActorsToIgnore&quot;, DisplayName = &quot;MultiCapsuleTraceByChannel&quot;, AdvancedDisplay=&quot;TraceColor,TraceHitColor,DrawTime&quot;, Keywords=&quot;sweep&quot;))
+static bool CapsuleTraceMulti(UObject* WorldContextObject, const FVector Start, const FVector End, float Radius, float HalfHeight, ETraceTypeQuery TraceChannel, bool bTraceComplex, const TArray&lt;AActor*&gt;&amp; ActorsToIgnore, EDrawDebugTrace::Type DrawDebugType, TArray&lt;FHitResult&gt;&amp; OutHits, bool bIgnoreSelf, FLinearColor TraceColor = FLinearColor::Red, FLinearColor TraceHitColor = FLinearColor::Green, float DrawTime = 5.0f);
+
+/**
+ * Does a collision trace along the given line and returns the first hit encountered.
+ * This only finds objects that are of a type specified by ObjectTypes.
+ * 
+ * @param WorldContext  World context
+ * @param Start         Start of line segment.
+ * @param End           End of line segment.
+ * @param ObjectTypes   Array of Object Types to trace 
+ * @param bTraceComplex True to test against complex collision, false to test against simplified collision.
+ * @param OutHit        Properties of the trace hit.
+ * @return              True if there was a hit, false otherwise.
+ */
+UFUNCTION(BlueprintCallable, Category=&quot;Collision&quot;, meta=(bIgnoreSelf=&quot;true&quot;, WorldContext=&quot;WorldContextObject&quot;, AutoCreateRefTerm=&quot;ActorsToIgnore&quot;, DisplayName = &quot;LineTraceForObjects&quot;, AdvancedDisplay=&quot;TraceColor,TraceHitColor,DrawTime&quot;, Keywords=&quot;raycast&quot;))
+static bool LineTraceSingleForObjects(UObject* WorldContextObject, const FVector Start, const FVector End, const TArray&lt;TEnumAsByte&lt;EObjectTypeQuery&gt; &gt; &amp; ObjectTypes, bool bTraceComplex, const TArray&lt;AActor*&gt;&amp; ActorsToIgnore, EDrawDebugTrace::Type DrawDebugType, FHitResult&amp; OutHit, bool bIgnoreSelf, FLinearColor TraceColor = FLinearColor::Red, FLinearColor TraceHitColor = FLinearColor::Green, float DrawTime = 5.0f );
+
+/**
+ * Does a collision trace along the given line and returns all hits encountered.
+ * This only finds objects that are of a type specified by ObjectTypes.
+ * 
+ * @param WorldContext  World context
+ * @param Start         Start of line segment.
+ * @param End           End of line segment.
+ * @param ObjectTypes   Array of Object Types to trace 
+ * @param bTraceComplex True to test against complex collision, false to test against simplified collision.
+ * @param OutHit        Properties of the trace hit.
+ * @return              True if there was a hit, false otherwise.
+ */
+UFUNCTION(BlueprintCallable, Category=&quot;Collision&quot;, meta=(bIgnoreSelf=&quot;true&quot;, WorldContext=&quot;WorldContextObject&quot;, AutoCreateRefTerm=&quot;ActorsToIgnore&quot;, DisplayName = &quot;MultiLineTraceForObjects&quot;, AdvancedDisplay=&quot;TraceColor,TraceHitColor,DrawTime&quot;, Keywords=&quot;raycast&quot;))
+static bool LineTraceMultiForObjects(UObject* WorldContextObject, const FVector Start, const FVector End, const TArray&lt;TEnumAsByte&lt;EObjectTypeQuery&gt; &gt; &amp; ObjectTypes, bool bTraceComplex, const TArray&lt;AActor*&gt;&amp; ActorsToIgnore, EDrawDebugTrace::Type DrawDebugType, TArray&lt;FHitResult&gt;&amp; OutHits, bool bIgnoreSelf, FLinearColor TraceColor = FLinearColor::Red, FLinearColor TraceHitColor = FLinearColor::Green, float DrawTime = 5.0f);
+
+/**
+ * Sweeps a sphere along the given line and returns the first hit encountered.
+ * This only finds objects that are of a type specified by ObjectTypes.
+ * 
+ * @param Start         Start of line segment.
+ * @param End           End of line segment.
+ * @param Radius        Radius of the sphere to sweep
+ * @param ObjectTypes   Array of Object Types to trace 
+ * @param bTraceComplex True to test against complex collision, false to test against simplified collision.
+ * @param OutHit        Properties of the trace hit.
+ * @return              True if there was a hit, false otherwise.
+ */
+UFUNCTION(BlueprintCallable, Category=&quot;Collision&quot;, meta=(bIgnoreSelf=&quot;true&quot;, WorldContext=&quot;WorldContextObject&quot;, AutoCreateRefTerm=&quot;ActorsToIgnore&quot;, DisplayName = &quot;SphereTraceForObjects&quot;, AdvancedDisplay=&quot;TraceColor,TraceHitColor,DrawTime&quot;, Keywords=&quot;sweep&quot;))
+static bool SphereTraceSingleForObjects(UObject* WorldContextObject, const FVector Start, const FVector End, float Radius, const TArray&lt;TEnumAsByte&lt;EObjectTypeQuery&gt; &gt; &amp; ObjectTypes, bool bTraceComplex, const TArray&lt;AActor*&gt;&amp; ActorsToIgnore, EDrawDebugTrace::Type DrawDebugType, FHitResult&amp; OutHit, bool bIgnoreSelf, FLinearColor TraceColor = FLinearColor::Red, FLinearColor TraceHitColor = FLinearColor::Green, float DrawTime = 5.0f);
+
+/**
+ * Sweeps a sphere along the given line and returns all hits encountered.
+ * This only finds objects that are of a type specified by ObjectTypes.
+ * 
+ * @param WorldContext  World context
+ * @param Start         Start of line segment.
+ * @param End           End of line segment.
+ * @param Radius        Radius of the sphere to sweep
+ * @param ObjectTypes   Array of Object Types to trace 
+ * @param bTraceComplex True to test against complex collision, false to test against simplified collision.
+ * @param OutHits       A list of hits, sorted along the trace from start to finish.  The blocking hit will be the last hit, if there was one.
+ * @return              True if there was a hit, false otherwise.
+ */
+UFUNCTION(BlueprintCallable, Category=&quot;Collision&quot;, meta=(bIgnoreSelf=&quot;true&quot;, WorldContext=&quot;WorldContextObject&quot;, AutoCreateRefTerm=&quot;ActorsToIgnore&quot;, DisplayName = &quot;MultiSphereTraceForObjects&quot;, AdvancedDisplay=&quot;TraceColor,TraceHitColor,DrawTime&quot;, Keywords=&quot;sweep&quot;))
+static bool SphereTraceMultiForObjects(UObject* WorldContextObject, const FVector Start, const FVector End, float Radius, const TArray&lt;TEnumAsByte&lt;EObjectTypeQuery&gt; &gt; &amp; ObjectTypes, bool bTraceComplex, const TArray&lt;AActor*&gt;&amp; ActorsToIgnore, EDrawDebugTrace::Type DrawDebugType, TArray&lt;FHitResult&gt;&amp; OutHits, bool bIgnoreSelf, FLinearColor TraceColor = FLinearColor::Red, FLinearColor TraceHitColor = FLinearColor::Green, float DrawTime = 5.0f);
+
+
+/**
+* Sweeps a box along the given line and returns the first hit encountered.
+* This only finds objects that are of a type specified by ObjectTypes.
+*
+* @param Start          Start of line segment.
+* @param End            End of line segment.
+* @param Orientation    
+* @param HalfSize       Radius of the sphere to sweep
+* @param ObjectTypes    Array of Object Types to trace
+* @param bTraceComplex  True to test against complex collision, false to test against simplified collision.
+* @param OutHit         Properties of the trace hit.
+* @return               True if there was a hit, false otherwise.
+*/
+UFUNCTION(BlueprintCallable, Category = &quot;Collision&quot;, meta = (bIgnoreSelf = &quot;true&quot;, WorldContext=&quot;WorldContextObject&quot;, AutoCreateRefTerm = &quot;ActorsToIgnore&quot;, DisplayName = &quot;BoxTraceForObjects&quot;, AdvancedDisplay=&quot;TraceColor,TraceHitColor,DrawTime&quot;, Keywords=&quot;sweep&quot;))
+static bool BoxTraceSingleForObjects(UObject* WorldContextObject, const FVector Start, const FVector End, const FVector HalfSize, const FRotator Orientation, const TArray&lt;TEnumAsByte&lt;EObjectTypeQuery&gt; &gt; &amp; ObjectTypes, bool bTraceComplex, const TArray&lt;AActor*&gt;&amp; ActorsToIgnore, EDrawDebugTrace::Type DrawDebugType, FHitResult&amp; OutHit, bool bIgnoreSelf, FLinearColor TraceColor = FLinearColor::Red, FLinearColor TraceHitColor = FLinearColor::Green, float DrawTime = 5.0f);
+
+
+/**
+* Sweeps a box along the given line and returns all hits encountered.
+* This only finds objects that are of a type specified by ObjectTypes.
+*
+* @param Start          Start of line segment.
+* @param End            End of line segment.
+* @param Orientation
+* @param HalfSize       Radius of the sphere to sweep
+* @param ObjectTypes    Array of Object Types to trace
+* @param bTraceComplex  True to test against complex collision, false to test against simplified collision.
+* @param OutHits        A list of hits, sorted along the trace from start to finish.  The blocking hit will be the last hit, if there was one.
+* @return               True if there was a hit, false otherwise.
+*/
+UFUNCTION(BlueprintCallable, Category = &quot;Collision&quot;, meta = (bIgnoreSelf = &quot;true&quot;, WorldContext=&quot;WorldContextObject&quot;, AutoCreateRefTerm = &quot;ActorsToIgnore&quot;, DisplayName = &quot;MultiBoxTraceForObjects&quot;, AdvancedDisplay=&quot;TraceColor,TraceHitColor,DrawTime&quot;, Keywords=&quot;sweep&quot;))
+static bool BoxTraceMultiForObjects(UObject* WorldContextObject, const FVector Start, const FVector End, const FVector HalfSize, const FRotator Orientation, const TArray&lt;TEnumAsByte&lt;EObjectTypeQuery&gt; &gt; &amp; ObjectTypes, bool bTraceComplex, const TArray&lt;AActor*&gt;&amp; ActorsToIgnore, EDrawDebugTrace::Type DrawDebugType, TArray&lt;FHitResult&gt;&amp; OutHits, bool bIgnoreSelf, FLinearColor TraceColor = FLinearColor::Red, FLinearColor TraceHitColor = FLinearColor::Green, float DrawTime = 5.0f);
+
+/**
+ * Sweeps a capsule along the given line and returns the first hit encountered.
+ * This only finds objects that are of a type specified by ObjectTypes.
+ * 
+ * @param WorldContext  World context
+ * @param Start         Start of line segment.
+ * @param End           End of line segment.
+ * @param Radius        Radius of the capsule to sweep
+ * @param HalfHeight    Distance from center of capsule to tip of hemisphere endcap.
+ * @param ObjectTypes   Array of Object Types to trace 
+ * @param bTraceComplex True to test against complex collision, false to test against simplified collision.
+ * @param OutHit        Properties of the trace hit.
+ * @return              True if there was a hit, false otherwise.
+ */
+UFUNCTION(BlueprintCallable, Category=&quot;Collision&quot;, meta=(bIgnoreSelf=&quot;true&quot;, WorldContext=&quot;WorldContextObject&quot;, AutoCreateRefTerm=&quot;ActorsToIgnore&quot;, DisplayName = &quot;CapsuleTraceForObjects&quot;, AdvancedDisplay=&quot;TraceColor,TraceHitColor,DrawTime&quot;, Keywords=&quot;sweep&quot;))
+static bool CapsuleTraceSingleForObjects(UObject* WorldContextObject, const FVector Start, const FVector End, float Radius, float HalfHeight, const TArray&lt;TEnumAsByte&lt;EObjectTypeQuery&gt; &gt; &amp; ObjectTypes, bool bTraceComplex, const TArray&lt;AActor*&gt;&amp; ActorsToIgnore, EDrawDebugTrace::Type DrawDebugType, FHitResult&amp; OutHit, bool bIgnoreSelf, FLinearColor TraceColor = FLinearColor::Red, FLinearColor TraceHitColor = FLinearColor::Green, float DrawTime = 5.0f);
+
+/**
+ * Sweeps a capsule along the given line and returns all hits encountered.
+ * This only finds objects that are of a type specified by ObjectTypes.
+ * 
+ * @param WorldContext  World context
+ * @param Start         Start of line segment.
+ * @param End           End of line segment.
+ * @param Radius        Radius of the capsule to sweep
+ * @param HalfHeight    Distance from center of capsule to tip of hemisphere endcap.
+ * @param ObjectTypes   Array of Object Types to trace 
+ * @param bTraceComplex True to test against complex collision, false to test against simplified collision.
+ * @param OutHits       A list of hits, sorted along the trace from start to finish.  The blocking hit will be the last hit, if there was one.
+ * @return              True if there was a hit, false otherwise.
+ */
+UFUNCTION(BlueprintCallable, Category=&quot;Collision&quot;, meta=(bIgnoreSelf=&quot;true&quot;, WorldContext=&quot;WorldContextObject&quot;, AutoCreateRefTerm=&quot;ActorsToIgnore&quot;, DisplayName = &quot;MultiCapsuleTraceForObjects&quot;, AdvancedDisplay=&quot;TraceColor,TraceHitColor,DrawTime&quot;, Keywords=&quot;sweep&quot;))
+static bool CapsuleTraceMultiForObjects(UObject* WorldContextObject, const FVector Start, const FVector End, float Radius, float HalfHeight, const TArray&lt;TEnumAsByte&lt;EObjectTypeQuery&gt; &gt; &amp; ObjectTypes, bool bTraceComplex, const TArray&lt;AActor*&gt;&amp; ActorsToIgnore, EDrawDebugTrace::Type DrawDebugType, TArray&lt;FHitResult&gt;&amp; OutHits, bool bIgnoreSelf, FLinearColor TraceColor = FLinearColor::Red, FLinearColor TraceHitColor = FLinearColor::Green, float DrawTime = 5.0f);
+
+// BY PROFILE
+
+/**
+* Trace a ray against the world using a specific profile and return the first blocking hit
+*
+* @param WorldContext   World context
+* @param Start          Start of line segment.
+* @param End            End of line segment.
+* @param ProfileName    The 'profile' used to determine which components to hit
+* @param bTraceComplex  True to test against complex collision, false to test against simplified collision.
+* @param OutHit         Properties of the trace hit.
+* @return               True if there was a hit, false otherwise.
+*/
+UFUNCTION(BlueprintCallable, Category = &quot;Collision&quot;, meta = (bIgnoreSelf = &quot;true&quot;, WorldContext = &quot;WorldContextObject&quot;, AutoCreateRefTerm = &quot;ActorsToIgnore&quot;, DisplayName = &quot;LineTraceByProfile&quot;, AdvancedDisplay = &quot;TraceColor,TraceHitColor,DrawTime&quot;, Keywords = &quot;raycast&quot;))
+static bool LineTraceSingleByProfile(UObject* WorldContextObject, const FVector Start, const FVector End, FName ProfileName, bool bTraceComplex, const TArray&lt;AActor*&gt;&amp; ActorsToIgnore, EDrawDebugTrace::Type DrawDebugType, FHitResult&amp; OutHit, bool bIgnoreSelf, FLinearColor TraceColor = FLinearColor::Red, FLinearColor TraceHitColor = FLinearColor::Green, float DrawTime = 5.0f);
+
+/**
+*  Trace a ray against the world using a specific profile and return overlapping hits and then first blocking hit
+*  Results are sorted, so a blocking hit (if found) will be the last element of the array
+*  Only the single closest blocking result will be generated, no tests will be done after that
+*
+* @param WorldContext   World context
+* @param Start          Start of line segment.
+* @param End            End of line segment.
+* @param ProfileName    The 'profile' used to determine which components to hit
+* @param bTraceComplex  True to test against complex collision, false to test against simplified collision.
+* @param OutHit     Properties of the trace hit.
+* @return               True if there was a blocking hit, false otherwise.
+*/
+UFUNCTION(BlueprintCallable, Category = &quot;Collision&quot;, meta = (bIgnoreSelf = &quot;true&quot;, WorldContext = &quot;WorldContextObject&quot;, AutoCreateRefTerm = &quot;ActorsToIgnore&quot;, DisplayName = &quot;MultiLineTraceByProfile&quot;, AdvancedDisplay = &quot;TraceColor,TraceHitColor,DrawTime&quot;, Keywords = &quot;raycast&quot;))
+static bool LineTraceMultiByProfile(UObject* WorldContextObject, const FVector Start, const FVector End, FName ProfileName, bool bTraceComplex, const TArray&lt;AActor*&gt;&amp; ActorsToIgnore, EDrawDebugTrace::Type DrawDebugType, TArray&lt;FHitResult&gt;&amp; OutHits, bool bIgnoreSelf, FLinearColor TraceColor = FLinearColor::Red, FLinearColor TraceHitColor = FLinearColor::Green, float DrawTime = 5.0f);
+
+/**
+*  Sweep a sphere against the world and return the first blocking hit using a specific profile
+*
+* @param Start          Start of line segment.
+* @param End            End of line segment.
+* @param Radius         Radius of the sphere to sweep
+* @param ProfileName    The 'profile' used to determine which components to hit
+* @param bTraceComplex  True to test against complex collision, false to test against simplified collision.
+* @param OutHit         Properties of the trace hit.
+* @return               True if there was a hit, false otherwise.
+*/
+UFUNCTION(BlueprintCallable, Category = &quot;Collision&quot;, meta = (bIgnoreSelf = &quot;true&quot;, WorldContext = &quot;WorldContextObject&quot;, AutoCreateRefTerm = &quot;ActorsToIgnore&quot;, DisplayName = &quot;SphereTraceByProfile&quot;, AdvancedDisplay = &quot;TraceColor,TraceHitColor,DrawTime&quot;, Keywords = &quot;sweep&quot;))
+static bool SphereTraceSingleByProfile(UObject* WorldContextObject, const FVector Start, const FVector End, float Radius, FName ProfileName, bool bTraceComplex, const TArray&lt;AActor*&gt;&amp; ActorsToIgnore, EDrawDebugTrace::Type DrawDebugType, FHitResult&amp; OutHit, bool bIgnoreSelf, FLinearColor TraceColor = FLinearColor::Red, FLinearColor TraceHitColor = FLinearColor::Green, float DrawTime = 5.0f);
+
+/**
+*  Sweep a sphere against the world and return all initial overlaps using a specific profile, then overlapping hits and then first blocking hit
+*  Results are sorted, so a blocking hit (if found) will be the last element of the array
+*  Only the single closest blocking result will be generated, no tests will be done after that
+*
+* @param WorldContext   World context
+* @param Start          Start of line segment.
+* @param End            End of line segment.
+* @param Radius     Radius of the sphere to sweep
+* @param ProfileName    The 'profile' used to determine which components to hit
+* @param bTraceComplex  True to test against complex collision, false to test against simplified collision.
+* @param OutHits        A list of hits, sorted along the trace from start to finish.  The blocking hit will be the last hit, if there was one.
+* @return               True if there was a blocking hit, false otherwise.
+*/
+UFUNCTION(BlueprintCallable, Category = &quot;Collision&quot;, meta = (bIgnoreSelf = &quot;true&quot;, WorldContext = &quot;WorldContextObject&quot;, AutoCreateRefTerm = &quot;ActorsToIgnore&quot;, DisplayName = &quot;MultiSphereTraceByProfile&quot;, AdvancedDisplay = &quot;TraceColor,TraceHitColor,DrawTime&quot;, Keywords = &quot;sweep&quot;))
+static bool SphereTraceMultiByProfile(UObject* WorldContextObject, const FVector Start, const FVector End, float Radius, FName ProfileName, bool bTraceComplex, const TArray&lt;AActor*&gt;&amp; ActorsToIgnore, EDrawDebugTrace::Type DrawDebugType, TArray&lt;FHitResult&gt;&amp; OutHits, bool bIgnoreSelf, FLinearColor TraceColor = FLinearColor::Red, FLinearColor TraceHitColor = FLinearColor::Green, float DrawTime = 5.0f);
+
+/**
+*  Sweep a box against the world and return the first blocking hit using a specific profile
+*
+* @param Start          Start of line segment.
+* @param End            End of line segment.
+* @param HalfSize       Distance from the center of box along each axis
+* @param Orientation    Orientation of the box
+* @param ProfileName    The 'profile' used to determine which components to hit
+* @param bTraceComplex  True to test against complex collision, false to test against simplified collision.
+* @param OutHit         Properties of the trace hit.
+* @return               True if there was a hit, false otherwise.
+*/
+UFUNCTION(BlueprintCallable, Category = &quot;Collision&quot;, meta = (bIgnoreSelf = &quot;true&quot;, WorldContext = &quot;WorldContextObject&quot;, AutoCreateRefTerm = &quot;ActorsToIgnore&quot;, DisplayName = &quot;BoxTraceByProfile&quot;, AdvancedDisplay = &quot;TraceColor,TraceHitColor,DrawTime&quot;, Keywords = &quot;sweep&quot;))
+static bool BoxTraceSingleByProfile(UObject* WorldContextObject, const FVector Start, const FVector End, const FVector HalfSize, const FRotator Orientation, FName ProfileName, bool bTraceComplex, const TArray&lt;AActor*&gt;&amp; ActorsToIgnore, EDrawDebugTrace::Type DrawDebugType, FHitResult&amp; OutHit, bool bIgnoreSelf, FLinearColor TraceColor = FLinearColor::Red, FLinearColor TraceHitColor = FLinearColor::Green, float DrawTime = 5.0f);
+
+/**
+*  Sweep a box against the world and return all initial overlaps using a specific profile, then overlapping hits and then first blocking hit
+*  Results are sorted, so a blocking hit (if found) will be the last element of the array
+*  Only the single closest blocking result will be generated, no tests will be done after that
+*
+* @param Start          Start of line segment.
+* @param End            End of line segment.
+* @param HalfSize       Distance from the center of box along each axis
+* @param Orientation    Orientation of the box
+* @param ProfileName    The 'profile' used to determine which components to hit
+* @param bTraceComplex  True to test against complex collision, false to test against simplified collision.
+* @param OutHits        A list of hits, sorted along the trace from start to finish. The blocking hit will be the last hit, if there was one.
+* @return               True if there was a blocking hit, false otherwise.
+*/
+UFUNCTION(BlueprintCallable, Category = &quot;Collision&quot;, meta = (bIgnoreSelf = &quot;true&quot;, WorldContext = &quot;WorldContextObject&quot;, AutoCreateRefTerm = &quot;ActorsToIgnore&quot;, DisplayName = &quot;MultiBoxTraceByProfile&quot;, AdvancedDisplay = &quot;TraceColor,TraceHitColor,DrawTime&quot;, Keywords = &quot;sweep&quot;))
+static bool BoxTraceMultiByProfile(UObject* WorldContextObject, const FVector Start, const FVector End, FVector HalfSize, const FRotator Orientation, FName ProfileName, bool bTraceComplex, const TArray&lt;AActor*&gt;&amp; ActorsToIgnore, EDrawDebugTrace::Type DrawDebugType, TArray&lt;FHitResult&gt;&amp; OutHits, bool bIgnoreSelf, FLinearColor TraceColor = FLinearColor::Red, FLinearColor TraceHitColor = FLinearColor::Green, float DrawTime = 5.0f);
+
+
+/**
+*  Sweep a capsule against the world and return the first blocking hit using a specific profile
+*
+* @param WorldContext   World context
+* @param Start          Start of line segment.
+* @param End            End of line segment.
+* @param Radius         Radius of the capsule to sweep
+* @param HalfHeight     Distance from center of capsule to tip of hemisphere endcap.
+* @param ProfileName    The 'profile' used to determine which components to hit
+* @param bTraceComplex  True to test against complex collision, false to test against simplified collision.
+* @param OutHit         Properties of the trace hit.
+* @return               True if there was a hit, false otherwise.
+*/
+UFUNCTION(BlueprintCallable, Category = &quot;Collision&quot;, meta = (bIgnoreSelf = &quot;true&quot;, WorldContext = &quot;WorldContextObject&quot;, AutoCreateRefTerm = &quot;ActorsToIgnore&quot;, DisplayName = &quot;CapsuleTraceByProfile&quot;, AdvancedDisplay = &quot;TraceColor,TraceHitColor,DrawTime&quot;, Keywords = &quot;sweep&quot;))
+static bool CapsuleTraceSingleByProfile(UObject* WorldContextObject, const FVector Start, const FVector End, float Radius, float HalfHeight, FName ProfileName, bool bTraceComplex, const TArray&lt;AActor*&gt;&amp; ActorsToIgnore, EDrawDebugTrace::Type DrawDebugType, FHitResult&amp; OutHit, bool bIgnoreSelf, FLinearColor TraceColor = FLinearColor::Red, FLinearColor TraceHitColor = FLinearColor::Green, float DrawTime = 5.0f);
+
+/**
+*  Sweep a capsule against the world and return all initial overlaps using a specific profile, then overlapping hits and then first blocking hit
+*  Results are sorted, so a blocking hit (if found) will be the last element of the array
+*  Only the single closest blocking result will be generated, no tests will be done after that
+*
+* @param WorldContext   World context
+* @param Start          Start of line segment.
+* @param End            End of line segment.
+* @param Radius         Radius of the capsule to sweep
+* @param HalfHeight     Distance from center of capsule to tip of hemisphere endcap.
+* @param ProfileName    The 'profile' used to determine which components to hit
+* @param bTraceComplex  True to test against complex collision, false to test against simplified collision.
+* @param OutHits        A list of hits, sorted along the trace from start to finish.  The blocking hit will be the last hit, if there was one.
+* @return               True if there was a blocking hit, false otherwise.
+*/
+UFUNCTION(BlueprintCallable, Category = &quot;Collision&quot;, meta = (bIgnoreSelf = &quot;true&quot;, WorldContext = &quot;WorldContextObject&quot;, AutoCreateRefTerm = &quot;ActorsToIgnore&quot;, DisplayName = &quot;MultiCapsuleTraceByProfile&quot;, AdvancedDisplay = &quot;TraceColor,TraceHitColor,DrawTime&quot;, Keywords = &quot;sweep&quot;))
+static bool CapsuleTraceMultiByProfile(UObject* WorldContextObject, const FVector Start, const FVector End, float Radius, float HalfHeight, FName ProfileName, bool bTraceComplex, const TArray&lt;AActor*&gt;&amp; ActorsToIgnore, EDrawDebugTrace::Type DrawDebugType, TArray&lt;FHitResult&gt;&amp; OutHits, bool bIgnoreSelf, FLinearColor TraceColor = FLinearColor::Red, FLinearColor TraceHitColor = FLinearColor::Green, float DrawTime = 5.0f);
+
+
+
+/**
+ * Returns an array of unique actors represented by the given list of components.
+ * @param ComponentList     List of components.
+ * @param ClassFilter       If set, will only return results of this class or subclasses of it.
+ * @param OutActorList      Start of line segment.
+ */
+UFUNCTION(BlueprintCallable, Category=&quot;Utilities&quot;)
+static void GetActorListFromComponentList(const TArray&lt;class UPrimitiveComponent*&gt;&amp; ComponentList, UClass* ActorClassFilter, TArray&lt;class AActor*&gt;&amp; OutActorList);
+</code></pre>
+
+<h5 id="debug-drawing-functions">Debug drawing functions</h5>
+
+<pre><code>/** Draw a debug line */
+UFUNCTION(BlueprintCallable, Category=&quot;Rendering|Debug&quot;, meta=(WorldContext=&quot;WorldContextObject&quot;, DevelopmentOnly))
+static void DrawDebugLine(UObject* WorldContextObject, const FVector LineStart, const FVector LineEnd, FLinearColor LineColor, float Duration=0.f, float Thickness = 0.f);
+
+/** Draw a debug circle! */
+UFUNCTION(BlueprintCallable, Category=&quot;Rendering|Debug&quot;, meta=(WorldContext=&quot;WorldContextObject&quot;, DevelopmentOnly))
+static void DrawDebugCircle(UObject* WorldContextObject, FVector Center, float Radius, int32 NumSegments=12, FLinearColor LineColor = FLinearColor::White, float Duration=0.f, float Thickness=0.f, FVector YAxis=FVector(0.f,1.f,0.f),FVector ZAxis=FVector(0.f,0.f,1.f), bool bDrawAxis=false);
+
+/** Draw a debug point */
+UFUNCTION(BlueprintCallable, Category=&quot;Rendering|Debug&quot;, meta=(WorldContext=&quot;WorldContextObject&quot;, DevelopmentOnly))
+static void DrawDebugPoint(UObject* WorldContextObject, const FVector Position, float Size, FLinearColor PointColor, float Duration=0.f);
+
+/** Draw directional arrow, pointing from LineStart to LineEnd. */
+UFUNCTION(BlueprintCallable, Category=&quot;Rendering|Debug&quot;, meta=(WorldContext=&quot;WorldContextObject&quot;, DevelopmentOnly))
+static void DrawDebugArrow(UObject* WorldContextObject, const FVector LineStart, const FVector LineEnd, float ArrowSize, FLinearColor LineColor, float Duration=0.f, float Thickness = 0.f);
+
+/** Draw a debug box */
+UFUNCTION(BlueprintCallable, Category=&quot;Rendering|Debug&quot;, meta=(WorldContext=&quot;WorldContextObject&quot;, DevelopmentOnly))
+static void DrawDebugBox(UObject* WorldContextObject, const FVector Center, FVector Extent, FLinearColor LineColor, const FRotator Rotation=FRotator::ZeroRotator, float Duration=0.f, float Thickness = 0.f);
+
+/** Draw a debug coordinate system. */
+UFUNCTION(BlueprintCallable, Category=&quot;Rendering|Debug&quot;, meta=(WorldContext=&quot;WorldContextObject&quot;, DevelopmentOnly))
+static void DrawDebugCoordinateSystem(UObject* WorldContextObject, const FVector AxisLoc, const FRotator AxisRot, float Scale=1.f, float Duration=0.f, float Thickness = 0.f);
+
+/** Draw a debug sphere */
+UFUNCTION(BlueprintCallable, Category=&quot;Rendering|Debug&quot;, meta=(WorldContext=&quot;WorldContextObject&quot;, DevelopmentOnly))
+static void DrawDebugSphere(UObject* WorldContextObject, const FVector Center, float Radius=100.f, int32 Segments=12, FLinearColor LineColor = FLinearColor::White, float Duration=0.f, float Thickness = 0.f);
+
+/** Draw a debug cylinder */
+UFUNCTION(BlueprintCallable, Category=&quot;Rendering|Debug&quot;, meta=(WorldContext=&quot;WorldContextObject&quot;, DevelopmentOnly))
+static void DrawDebugCylinder(UObject* WorldContextObject, const FVector Start, const FVector End, float Radius=100.f, int32 Segments=12, FLinearColor LineColor = FLinearColor::White, float Duration=0.f, float Thickness = 0.f);
+
+/** Draw a debug cone */
+UFUNCTION(BlueprintCallable, Category=&quot;Rendering|Debug&quot;, meta=(WorldContext=&quot;WorldContextObject&quot;, DeprecatedFunction, DeprecationMessage=&quot;DrawDebugCone has been changed to use degrees for angles instead of radians. Place a new DrawDebugCone node and pass your angles as degrees.&quot;, DevelopmentOnly))
+static void DrawDebugCone(UObject* WorldContextObject, const FVector Origin, const FVector Direction, float Length, float AngleWidth, float AngleHeight, int32 NumSides, FLinearColor LineColor, float Duration = 0.f, float Thickness = 0.f);
+
+/** 
+ * Draw a debug cone 
+ * Angles are specified in degrees
+ */
+UFUNCTION(BlueprintCallable, Category=&quot;Rendering|Debug&quot;, meta=(WorldContext=&quot;WorldContextObject&quot;, DisplayName=&quot;DrawDebugCone&quot;, DevelopmentOnly))
+static void DrawDebugConeInDegrees(UObject* WorldContextObject, const FVector Origin, const FVector Direction, float Length=100.f, float AngleWidth=45.f, float AngleHeight=45.f, int32 NumSides = 12, FLinearColor LineColor = FLinearColor::White, float Duration=0.f, float Thickness = 0.f);
+
+/** Draw a debug capsule */
+UFUNCTION(BlueprintCallable, Category=&quot;Rendering|Debug&quot;, meta=(WorldContext=&quot;WorldContextObject&quot;, DevelopmentOnly))
+static void DrawDebugCapsule(UObject* WorldContextObject, const FVector Center, float HalfHeight, float Radius, const FRotator Rotation, FLinearColor LineColor = FLinearColor::White, float Duration=0.f, float Thickness = 0.f);
+
+/** Draw a debug string at a 3d world location. */
+UFUNCTION(BlueprintCallable, Category=&quot;Rendering|Debug&quot;, meta=(WorldContext=&quot;WorldContextObject&quot;, DevelopmentOnly))
+static void DrawDebugString(UObject* WorldContextObject, const FVector TextLocation, const FString&amp; Text, class AActor* TestBaseActor = NULL, FLinearColor TextColor = FLinearColor::White, float Duration=0.f);
+/** 
+ * Removes all debug strings. 
+ *
+ * @param WorldContext  World context
+ */
+UFUNCTION(BlueprintCallable, Category=&quot;Rendering|Debug&quot;, meta=(WorldContext=&quot;WorldContextObject&quot;, DevelopmentOnly))
+static void FlushDebugStrings(UObject* WorldContextObject);
+
+/** Draws a debug plane. */
+UFUNCTION(BlueprintCallable, Category=&quot;Rendering|Debug&quot;, meta=(WorldContext=&quot;WorldContextObject&quot;, DevelopmentOnly))
+static void DrawDebugPlane(UObject* WorldContextObject, const FPlane&amp; PlaneCoordinates, const FVector Location, float Size, FLinearColor PlaneColor = FLinearColor::White, float Duration=0.f);
+
+/** 
+ * Flush all persistent debug lines and shapes.
+ *
+ * @param WorldContext  World context
+ */
+UFUNCTION(BlueprintCallable, Category=&quot;Rendering|Debug&quot;, meta=(WorldContext=&quot;WorldContextObject&quot;, DevelopmentOnly))
+static void FlushPersistentDebugLines(UObject* WorldContextObject);
+
+/** Draws a debug frustum. */
+UFUNCTION(BlueprintCallable, Category=&quot;Rendering|Debug&quot;, meta=(WorldContext=&quot;WorldContextObject&quot;, DevelopmentOnly))
+static void DrawDebugFrustum(UObject* WorldContextObject, const FTransform&amp; FrustumTransform, FLinearColor FrustumColor = FLinearColor::White, float Duration=0.f, float Thickness = 0.f);
+
+/** Draw a debug camera shape. */
+UFUNCTION(BlueprintCallable, Category=&quot;Rendering|Debug&quot;, meta=(DevelopmentOnly))
+static void DrawDebugCamera(const ACameraActor* CameraActor, FLinearColor CameraColor = FLinearColor::White, float Duration=0.f);
+
+/* Draws a 2D Histogram of size 'DrawSize' based FDebugFloatHistory struct, using DrawTransform for the position in the world. */
+UFUNCTION(BlueprintCallable, Category = &quot;Rendering|Debug&quot;, meta=(WorldContext=&quot;WorldContextObject&quot;, DevelopmentOnly))
+static void DrawDebugFloatHistoryTransform(UObject* WorldContextObject, const FDebugFloatHistory&amp; FloatHistory, const FTransform&amp; DrawTransform, FVector2D DrawSize, FLinearColor DrawColor = FLinearColor::White, float Duration = 0.f);
+
+/* Draws a 2D Histogram of size 'DrawSize' based FDebugFloatHistory struct, using DrawLocation for the location in the world, rotation will face camera of first player. */
+UFUNCTION(BlueprintCallable, Category = &quot;Rendering|Debug&quot;, meta=(WorldContext=&quot;WorldContextObject&quot;, DevelopmentOnly))
+static void DrawDebugFloatHistoryLocation(UObject* WorldContextObject, const FDebugFloatHistory&amp; FloatHistory, FVector DrawLocation, FVector2D DrawSize, FLinearColor DrawColor = FLinearColor::White, float Duration = 0.f);
+
+UFUNCTION(BlueprintCallable, Category = &quot;Rendering|Debug&quot;, meta=(DevelopmentOnly))
+static FDebugFloatHistory AddFloatHistorySample(float Value, const FDebugFloatHistory&amp; FloatHistory);
+
+/** Mark as modified. */
+UFUNCTION(BlueprintCallable, Category=&quot;Development|Editor&quot;)
+static void CreateCopyForUndoBuffer(UObject* ObjectToModify);
+
+/** Get bounds */
+UFUNCTION(BlueprintPure, Category=&quot;Collision&quot;)
+static void GetComponentBounds(const USceneComponent* Component, FVector&amp; Origin, FVector&amp; BoxExtent, float&amp; SphereRadius);
+
+UFUNCTION(BlueprintPure, Category=&quot;Collision&quot;, meta=(DeprecatedFunction))
+static void GetActorBounds(const AActor* Actor, FVector&amp; Origin, FVector&amp; BoxExtent);
+</code></pre>
+
+<h5 id="get-rendering-info">Get Rendering Info</h5>
+
+<pre><code>/**
+ * Get the clamped state of r.DetailMode, see console variable help (allows for scalability, cannot be used in construction scripts)
+ * 0: low, show only object with DetailMode low or higher
+ * 1: medium, show all object with DetailMode medium or higher
+ * 2: high, show all objects
+ */
+UFUNCTION(BlueprintPure, Category=&quot;Rendering&quot;, meta=(UnsafeDuringActorConstruction = &quot;true&quot;))
+static int32 GetRenderingDetailMode();
+
+/**
+ * Get the clamped state of r.MaterialQualityLevel, see console variable help (allows for scalability, cannot be used in construction scripts)
+ * 0: low
+ * 1: high
+ * 2: medium
+ */
+UFUNCTION(BlueprintPure, Category=&quot;Rendering|Material&quot;, meta=(UnsafeDuringActorConstruction = &quot;true&quot;))
+static int32 GetRenderingMaterialQualityLevel();
+
+/**
+ * Gets the list of support fullscreen resolutions.
+ * @return true if successfully queried the device for available resolutions.
+ */
+UFUNCTION(BlueprintCallable, Category=&quot;Rendering&quot;)
+static bool GetSupportedFullscreenResolutions(TArray&lt;FIntPoint&gt;&amp; Resolutions);
+
+/**
+* Gets the list of windowed resolutions which are convenient for the current primary display size.
+* @return true if successfully queried the device for available resolutions.
+*/
+UFUNCTION(BlueprintCallable, Category=&quot;Rendering&quot;)
+static bool GetConvenientWindowedResolutions(TArray&lt;FIntPoint&gt;&amp; Resolutions);
+
+/**
+ * Gets the smallest Y resolution we want to support in the UI, clamped within reasons
+ * @return value in pixels
+ */
+UFUNCTION(BlueprintPure, Category=&quot;Rendering&quot;, meta=(UnsafeDuringActorConstruction = &quot;true&quot;))
+static int32 GetMinYResolutionForUI();
+
+/**
+* Gets the smallest Y resolution we want to support in the 3D view, clamped within reasons
+* @return value in pixels
+*/
+UFUNCTION(BlueprintPure, Category = &quot;Rendering&quot;, meta = (UnsafeDuringActorConstruction = &quot;true&quot;))
+static int32 GetMinYResolutionFor3DView();
+</code></pre>
+
+<h5 id="ad-banner-iad-on-ios-or-admob-on-android">AD banner (iAd on iOS, or AdMob on Android)</h5>
+
+<pre><code>/**
+ * Will show an ad banner (iAd on iOS, or AdMob on Android) on the top or bottom of screen, on top of the GL view (doesn't resize the view)
+ * (iOS and Android only)
+ *
+ * @param AdIdIndex The index of the ID to select for the ad to show
+ * @param bShowOnBottomOfScreen If true, the iAd will be shown at the bottom of the screen, top otherwise
+ */
+UFUNCTION(BlueprintCallable, Category = &quot;Utilities|Platform&quot;)
+static void ShowAdBanner(int32 AdIdIndex, bool bShowOnBottomOfScreen);
+
+/**
+* Retrieves the total number of Ad IDs that can be selected between
+*/
+UFUNCTION(BlueprintPure, Category = &quot;Utilities|Platform&quot;, meta = (DisplayName = &quot;Get Ad ID Count&quot;))
+static int32 GetAdIDCount();
+
+/**
+ * Hides the ad banner (iAd on iOS, or AdMob on Android). Will force close the ad if it's open
+ * (iOS and Android only)
+ */
+UFUNCTION(BlueprintCallable, Category = &quot;Utilities|Platform&quot;)
+static void HideAdBanner();
+
+/**
+ * Forces closed any displayed ad. Can lead to loss of revenue
+ * (iOS and Android only)
+ */
+UFUNCTION(BlueprintCallable, Category = &quot;Utilities|Platform&quot;)
+static void ForceCloseAdBanner();
+
+/**
+* Will load a fullscreen interstitial AdMob ad. Call this before using ShowInterstitialAd
+* (Android only)
+*
+* @param AdIdIndex The index of the ID to select for the ad to show
+*/
+UFUNCTION(BlueprintCallable, Category = &quot;Utilities|Platform&quot;)
+    static void LoadInterstitialAd(int32 AdIdIndex);
+
+/**
+* Returns true if the requested interstitial ad is loaded and ready
+* (Android only)
+*/
+UFUNCTION(BlueprintCallable, Category = &quot;Utilities|Platform&quot;)
+    static bool IsInterstitialAdAvailable();
+
+/**
+* Returns true if the requested interstitial ad has been successfully requested (false if load request fails)
+* (Android only)
+*/
+UFUNCTION(BlueprintCallable, Category = &quot;Utilities|Platform&quot;)
+    static bool IsInterstitialAdRequested();
+
+/**
+* Shows the loaded interstitial ad (loaded with LoadInterstitialAd)
+* (Android only)
+*/
+UFUNCTION(BlueprintCallable, Category = &quot;Utilities|Platform&quot;)
+    static void ShowInterstitialAd();
+
+/**
+ * Displays the built-in leaderboard GUI (iOS and Android only; this function may be renamed or moved in a future release)
+ */
+UFUNCTION(BlueprintCallable, Category = &quot;Utilities|Platform&quot;)
+static void ShowPlatformSpecificLeaderboardScreen(const FString&amp; CategoryName);
+
+/**
+ * Displays the built-in achievements GUI (iOS and Android only; this function may be renamed or moved in a future release)
+ *
+ * @param SpecificPlayer Specific player's achievements to show. May not be supported on all platforms. If null, defaults to the player with ControllerId 0
+ */
+UFUNCTION(BlueprintCallable, Category = &quot;Utilities|Platform&quot;)
+static void ShowPlatformSpecificAchievementsScreen(class APlayerController* SpecificPlayer);
+</code></pre>
+
+<h5 id="operate-system">Operate System</h5>
+
+<pre><code>/**
+ * Returns whether the player is logged in to the currently active online subsystem.
+ *
+ * @param Player Specific player's login status to get. May not be supported on all platforms. If null, defaults to the player with ControllerId 0.
+ */
+UFUNCTION(BlueprintPure, Category = &quot;Online&quot;)
+static bool IsLoggedIn(APlayerController* SpecificPlayer);
+
+/**
+ * Returns true if screen saver is enabled.
+ *
+ */
+UFUNCTION(BlueprintCallable, Category = &quot;Utilities|Platform&quot;)
+static bool IsScreensaverEnabled();
+
+/**
+ * Allows or inhibits screensaver
+ * @param   bAllowScreenSaver       If false, don't allow screensaver if possible, otherwise allow default behavior
+ */
+UFUNCTION(BlueprintCallable, Category = &quot;Utilities|Platform&quot;)
+static void ControlScreensaver(bool bAllowScreenSaver);
+
+/**
+ * Allows or inhibits system default handling of volume up and volume down buttons (Android only)
+ * @param   bEnabled                If true, allow Android to handle volume up and down events
+ */
+UFUNCTION(BlueprintCallable, Category = &quot;Utilities|Platform&quot;)
+static void SetVolumeButtonsHandledBySystem(bool bEnabled);
+
+/**
+ * Returns true if system default handling of volume up and volume down buttons enabled (Android only)
+ */
+UFUNCTION(BlueprintPure, Category = &quot;Utilities|Platform&quot;)
+static bool GetVolumeButtonsHandledBySystem();
+</code></pre>
+              
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+                
+                
+                  <div class="post-footer-tags">
+                    <span class="text-color-light text-small">TAGGED IN</span><br/>
+                    
+  <a class="tag tag--primary tag--small" href="https://dawnarc.com/tags/ue4/">UE4</a>
+
+                  </div>
+                
+              
+            
+            <div class="post-actions-wrap">
+  
+      <nav >
+        <ul class="post-actions post-action-nav">
+          
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2019/01/ue4vfx-collections/" data-tooltip="[UE4]VFX Collections">
+              
+                  <i class="fa fa-angle-left"></i>
+                  <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+                </a>
+            </li>
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2019/01/ue4build.csget-the-current-project-directory/" data-tooltip="[UE4][Build.cs]Get the current Project Directory">
+              
+                  <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+                  <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+          
+        </ul>
+      </nav>
+    <ul class="post-actions post-action-share" >
+      
+        <li class="post-action hide-lg hide-md hide-sm">
+          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
+            <i class="fa fa-share-alt"></i>
+          </a>
+        </li>
+        
+      
+      
+        <li class="post-action">
+          <a class="post-action-btn btn btn--default" href="#disqus_thread">
+            <i class="fa fa-comment-o"></i>
+          </a>
+        </li>
+      
+      <li class="post-action">
+        
+          <a class="post-action-btn btn btn--default" href="#">
+        
+          <i class="fa fa-list"></i>
+        </a>
+      </li>
+    </ul>
+  
+</div>
+
+            
+              
+                <div id="disqus_thread">
+  <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+              
+            
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2019 Neil Wang. All Rights Reserved. Powered by <A href="https://gohugo.io/"> Hugo</A>.
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+        <div class="post-actions-wrap">
+  
+      <nav >
+        <ul class="post-actions post-action-nav">
+          
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2019/01/ue4vfx-collections/" data-tooltip="[UE4]VFX Collections">
+              
+                  <i class="fa fa-angle-left"></i>
+                  <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+                </a>
+            </li>
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2019/01/ue4build.csget-the-current-project-directory/" data-tooltip="[UE4][Build.cs]Get the current Project Directory">
+              
+                  <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+                  <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+          
+        </ul>
+      </nav>
+    <ul class="post-actions post-action-share" >
+      
+        <li class="post-action hide-lg hide-md hide-sm">
+          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
+            <i class="fa fa-share-alt"></i>
+          </a>
+        </li>
+        
+      
+      
+        <li class="post-action">
+          <a class="post-action-btn btn btn--default" href="#disqus_thread">
+            <i class="fa fa-comment-o"></i>
+          </a>
+        </li>
+      
+      <li class="post-action">
+        
+          <a class="post-action-btn btn btn--default" href="#">
+        
+          <i class="fa fa-list"></i>
+        </a>
+      </li>
+    </ul>
+  
+</div>
+
+      </div>
+      <div id="share-options-bar" class="share-options-bar" data-behavior="4">
+  <i id="btn-close-shareoptions" class="fa fa-close"></i>
+  <ul class="share-options">
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-remove"></i>
+    </div>
+    
+      <img id="about-card-picture" src="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=110" alt="Author&#39;s picture" />
+    
+    <h4 id="about-card-name">Neil Wang</h4>
+    
+      <div id="about-card-bio">久长唯有品格</div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        To Be Marvelous
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker"></i>
+        <br/>
+        Yichang·Hubei
+      </div>
+    
+  </div>
+</div>
+
+    <div id="algolia-search-modal" class="modal-container">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="close-button"><i class="fa fa-close"></i></span>
+      <a href="https://algolia.com" target="_blank" rel="noopener" class="searchby-algolia text-color-light link-unstyled">
+        <span class="searchby-algolia-text text-color-light text-small">by</span>
+        <img class="searchby-algolia-logo" src="https://www.algolia.com/static_assets/images/press/downloads/algolia-light.svg">
+      </a>
+      <i class="search-icon fa fa-search"></i>
+      <form id="algolia-search-form">
+        <input type="text" id="algolia-search-input" name="search"
+          class="form-control input--large search-input" placeholder="Search" />
+      </form>
+    </div>
+    <div class="modal-body">
+      <div class="no-result text-color-light text-center">no post found</div>
+      <div class="results">
+        
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/01/vfxtools-plugins-collections-for-art-making/">
+                <h3 class="media-heading">[VFX]Tools &amp; Plugins Collections for Art Making</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jan 1, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">UE4 Tools and Plugins umeFX to UE4 Tutorial: Smoke/Grenade effect using flipbooks.
+https://www.youtube.com/watch?v=CKbgMxLiRJM
+Interactive Tree Creator
+https://www.unrealengine.com/marketplace/interactive-tree-creator</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/01/zbrushplugins-collections/">
+                <h3 class="media-heading">[ZBrush]Plugins Collections</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jan 1, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">ZWrap Plugin for ZBrush
+https://www.russian3dscanner.com/zwrap/</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/01/ue4ies-light-profile-collections/">
+                <h3 class="media-heading">[UE4]IES Light Profile Collections</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jan 1, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>IES Light Profile</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/01/ue4vfx-collections/">
+                <h3 class="media-heading">[UE4]VFX Collections</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jan 1, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>VFX Series Pack 1</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/01/ue4kismetsystemlibrarys-api-in-common-use/">
+                <h3 class="media-heading">[UE4]KismetSystemLibrary‘s API in common use</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jan 1, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>keywords: KismetSystemLibrary, UKismetSystemLibrary</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/01/ue4build.csget-the-current-project-directory/">
+                <h3 class="media-heading">[UE4][Build.cs]Get the current Project Directory</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jan 1, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>.</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/01/ue4sequencer-related/">
+                <h3 class="media-heading">[UE4]Sequencer Related</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jan 1, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><h5 id="how-to-limit-the-frame-rate-of-sequencer">How to limit the frame rate of Sequencer</h5></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/01/ue4transform-skeletal-bone-in-c-/">
+                <h3 class="media-heading">[UE4]Transform skeletal bone in C&#43;&#43;</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jan 1, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><h5 id="blueprint-node">Blueprint Node</h5></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/01/c-address-source-line-from-crash-callstack-using-binary/">
+                <h3 class="media-heading">[C&#43;&#43;]Address source line from crash callstack using binary</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jan 1, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>Get the crash callstack.</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2018/12/windowsgetting-the-convenient-automatic-folder-navigation-tree-expansion-back/">
+                <h3 class="media-heading">[Windows]Getting the convenient automatic folder navigation tree expansion back</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Dec 12, 2018
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>In the folder toolbar, Click the View tab.</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+      </div>
+    </div>
+    <div class="modal-footer">
+      <p class="results-count text-medium"
+         data-message-zero="no post found"
+         data-message-one="1 post found"
+         data-message-other="{n} posts found">
+         455 posts found
+      </p>
+    </div>
+  </div>
+</div>
+    
+  
+    
+    <div id="cover" style="background-image:url('https://dawnarc.com/images/cover-v1.2.0.jpg');"></div>
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.7/js/jquery.fancybox.min.js" integrity="sha256-GEAnjcTqVP+vBp3SSc8bEDQqvWAZMiHyUSIorrWwH50=" crossorigin="anonymous"></script>
+
+
+<script src="https://dawnarc.com/js/script-qi9wbxp2ya2j6p7wx1i6tgavftewndznf4v0hy2gvivk1rxgc3lm7njqb6bz.min.js"></script>
+
+
+<script lang="javascript">
+window.onload = updateMinWidth;
+window.onresize = updateMinWidth;
+document.getElementById("sidebar").addEventListener("transitionend", updateMinWidth);
+function updateMinWidth() {
+  var sidebar = document.getElementById("sidebar");
+  var main = document.getElementById("main");
+  main.style.minWidth = "";
+  var w1 = getComputedStyle(main).getPropertyValue("min-width");
+  var w2 = getComputedStyle(sidebar).getPropertyValue("width");
+  var w3 = getComputedStyle(sidebar).getPropertyValue("left");
+  main.style.minWidth = `calc(${w1} - ${w2} - ${w3})`;
+}
+</script>
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+  
+    
+      <script>
+        var disqus_config = function () {
+          this.page.url = 'https:\/\/dawnarc.com\/2019\/01\/ue4kismetsystemlibrarys-api-in-common-use\/';
+          
+            this.page.identifier = '\/2019\/01\/ue4kismetsystemlibrarys-api-in-common-use\/'
+          
+        };
+        (function() {
+          
+          
+          if (window.location.hostname == "localhost") {
+            return;
+          }
+          var d = document, s = d.createElement('script');
+          var disqus_shortname = 'dawnarc';
+          s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+          s.setAttribute('data-timestamp', +new Date());
+          (d.head || d.body).appendChild(s);
+        })();
+      </script>
+    
+  
+
+
+
+
+    
+  </body>
+</html>
+

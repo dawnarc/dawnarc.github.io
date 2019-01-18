@@ -25,10 +25,10 @@
 
 <meta name="twitter:card" content="summary">
 
-  <meta name="twitter:site" content="@idealsland">
+  <meta name="twitter:site" content="@dawn_arc">
 
 
-  <meta name="twitter:creator" content="@idealsland">
+  <meta name="twitter:creator" content="@dawn_arc">
 
 
 
@@ -303,6 +303,311 @@ if (!doNotTrack) {
         
           <section class="postShorten-group main-content-wrap">
             
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2016/07/ue4%E5%A6%82%E4%BD%95%E5%90%AF%E7%94%A8detour-crowd-ai-controller%E7%BE%A4%E7%BB%84%E7%A7%BB%E5%8A%A8%E6%97%B6%E7%9A%84%E7%BB%95%E8%B7%AF%E9%97%AE%E9%A2%98/">
+          [UE4]如何启用Detour Crowd AI Controller(群组移动时的绕路问题)
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2016-07-27T19:39:02&#43;08:00">
+        
+  July 27, 2016
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        keywords：UE4、AI、群体移动、闪避、避让、回避
+Detour Crowd AI Controller 蓝图方式
+打开ControllerBP，在 Class Settings 中设置 Parent Class 为：Detour Crowd AI Controller。
+C++方式
+引擎的C++代码有个叫 ADetourCrowdAIController 的class，但是这个class无法继承；
+要在C++中使用Detour Crowd AI，需要借助 UCrowdFollowingComponent，在AIController的构造函数中设置即可
+头文件：
+MyAIController(const FObjectInitializer&amp; ObjectInitializer = FObjectInitializer::Get());  cpp：
+MyAIController::MyAIController(const FObjectInitializer&amp; ObjectInitializer) : Super(ObjectInitializer.SetDefaultSubobjectClass&lt;UCrowdFollowingComponent&gt;(TEXT(&quot;PathFollowingComponent&quot;))) { }  转向抖动问题 使用默认的UCrowdFollowingComponent，角色在转向时会抖动，要解决这个问题，需要将属性UCrowdFollowingComponent::bSuspendCrowdSimulation设置为true。
+完整代码：
+#include &quot;Navigation/CrowdFollowingComponent.h&quot; AMyAIController::AMyAIController(const FObjectInitializer&amp; ObjectInitializer) : Super(ObjectInitializer.SetDefaultSubobjectClass&lt;UCrowdFollowingComponent&gt;(TEXT(&quot;PathFollowingComponent&quot;))) { if (UCrowdFollowingComponent* CrowdComp = Cast&lt;UCrowdFollowingComponent&gt;(GetComponentByClass(UCrowdFollowingComponent::StaticClass()))) { CrowdComp-&gt;SuspendCrowdSteering(true); //CrowdComp-&gt;SetCrowdAnticipateTurns(true); //CrowdComp-&gt;SetCrowdSeparation(true); //CrowdComp-&gt;SetCrowdPathOffset(true); //CrowdComp-&gt;SetCrowdAvoidanceQuality(ECrowdAvoidanceQuality::High); } }  但是`SuspendCrowdSteering` 设置为true后，自动避让面前角色的功能就失效了，如果要处理这个问题，建议重写 UCrowdFollowingComponent 中的转向逻辑，因为其内部没有考虑慢速转向的问题。 Crowd Manager 配置 Project Settings -》Engine -》 Navigation System -》 Crowd Manager Class
+      
+      <p>
+        <a href="https://dawnarc.com/2016/07/ue4%E5%A6%82%E4%BD%95%E5%90%AF%E7%94%A8detour-crowd-ai-controller%E7%BE%A4%E7%BB%84%E7%A7%BB%E5%8A%A8%E6%97%B6%E7%9A%84%E7%BB%95%E8%B7%AF%E9%97%AE%E9%A2%98/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2016/07/ue4%E5%A6%82%E4%BD%95%E4%BC%B8%E7%BC%A9texture%E8%AE%BE%E7%BD%AEtexture%E7%9A%84%E5%B9%B3%E9%93%BA%E5%80%8D%E6%95%B0/">
+          [UE4]如何伸缩texture(设置texture的平铺倍数)
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2016-07-23T21:34:02&#43;08:00">
+        
+  July 23, 2016
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        使用texture coordinate node，并设置其UTiling和VTiling参数
+      
+      <p>
+        <a href="https://dawnarc.com/2016/07/ue4%E5%A6%82%E4%BD%95%E4%BC%B8%E7%BC%A9texture%E8%AE%BE%E7%BD%AEtexture%E7%9A%84%E5%B9%B3%E9%93%BA%E5%80%8D%E6%95%B0/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2016/07/ue4%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0%E5%90%91%E9%87%8F%E7%A7%AF%E5%A4%96%E7%A7%AF%E5%8F%89%E7%A7%AF/">
+          [UE4][线性代数]向量积、外积、叉积
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2016-07-23T19:19:02&#43;08:00">
+        
+  July 23, 2016
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        叉积 http://baike.baidu.com/view/973423.htm
+点积 http://baike.baidu.com/view/2744555.htm
+UE4的叉积（向量积、外积）函数：
+FVector::CrossProduct()  UE4的点积（数量积、内积）函数：
+FVector::DotProduct()  具体代码示例
+FVector V1(100.f, 0.f, 0.f); FVector V2 = FRotator(0.f, 30.f, 0.f).RotateVector(V1); FVector V3 = FRotator(0.f, 45.f, 0.f).RotateVector(V1); FVector V4 = FRotator(0.f, 60.f, 0.f).RotateVector(V1); float d1 = FVector::DotProduct(V2, V3); float d2 = FVector::DotProduct(V3, V2); float d3 = FVector::DotProduct(V3, V4); float d4 = FVector::DotProduct(V2, V4);  其中各个值为：
+V2 = (86.6f, 50.f, 0.f) V3 = (70.7f, 70.7f, 0.f) V4 = (50.f, 86.6f, 0.f) d1 = 9659.
+      
+      <p>
+        <a href="https://dawnarc.com/2016/07/ue4%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0%E5%90%91%E9%87%8F%E7%A7%AF%E5%A4%96%E7%A7%AF%E5%8F%89%E7%A7%AF/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2016/07/ue4%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0%E5%9F%BA%E4%BA%8E%E6%9F%90%E7%82%B9%E5%90%91%E6%9F%90%E6%96%B9%E5%90%91%E4%B8%8A%E6%8A%95%E5%B0%84%E6%8C%87%E5%AE%9A%E8%B7%9D%E7%A6%BB%E5%90%8E%E7%9A%84%E5%9D%90%E6%A0%87%E8%AE%A1%E7%AE%97/">
+          [UE4][线性代数]基于某点向某方向上投射指定距离后的坐标计算
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2016-07-06T19:54:40&#43;08:00">
+        
+  July 6, 2016
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        代码：
+float Len = FMath::Sqrt(100 * 100 + 100 * 100); FVector Loc = FVector(100.f, 100.f, 0.f) + FRotator(0.f, 45.f, 0.f).Vector() * Len;  结果：
+Loc = {X=200.f, Y=200.f, Z=0.f}  FRotator::Vector()对应的蓝图函数为GetRotationXVector
+ =================================
+例子2：
+float Len = FMath::Sqrt(100 * 100 + 100 * 100); FVector Loc1 = FVector(0.f, 0.f, 0.f) + FRotator(0.f, 45.f, 0.f).Vector() * Len; FVector Loc2 = FVector(0.f, 0.f, 0.f) + FRotator(0.f, 135.f, 0.f).Vector() * Len; FVector Loc3 = FVector(0.
+      
+      <p>
+        <a href="https://dawnarc.com/2016/07/ue4%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0%E5%9F%BA%E4%BA%8E%E6%9F%90%E7%82%B9%E5%90%91%E6%9F%90%E6%96%B9%E5%90%91%E4%B8%8A%E6%8A%95%E5%B0%84%E6%8C%87%E5%AE%9A%E8%B7%9D%E7%A6%BB%E5%90%8E%E7%9A%84%E5%9D%90%E6%A0%87%E8%AE%A1%E7%AE%97/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2016/07/ue4%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0%E5%B7%B2%E7%9F%A5%E6%96%B9%E5%90%91%E5%90%91%E9%87%8F%E6%B1%82%E8%AF%A5%E5%90%91%E9%87%8F%E4%B8%8E%E7%A9%BA%E9%97%B4%E5%9D%90%E6%A0%87%E8%BD%B4%E7%9A%84%E5%A4%B9%E8%A7%92/">
+          [UE4][线性代数]已知方向向量，求该向量与空间坐标轴的夹角
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2016-07-06T17:30:02&#43;08:00">
+        
+  July 6, 2016
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        原始的数学公式不列举了，需要的话找个Math库看下源码。这里以UE4的API说明：
+情况一：已知两个坐标点，求连线与空间坐标的夹角 已知空间中两个点FVector V1, V2，方向向量V3 = V2 - V1，求V3与空间坐标的夹角：
+FRotator R = (V2 - V1).Rotation();  情况二：单个向量与世界坐标的夹角 已知方向向量Vector V1，求V1与空间坐标轴的夹角Rotator R1：即将Vector转换为Rotator
+FRotator R1 = FVector(100.f, 100.f, 0.f).Rotation(); FRotator R2 = FVector(-100.f, -100.f, 0.f).Rotation(); FRotator R3 = FVector(100.f, 0.f, 0.f).Rotation(); FRotator R4 = FVector(0.f, 100.f, 0.f).Rotation();  结果分别是：
+R1 = {Pitch=0.0 Yaw=45.0 Roll=0.0 } R2 = {Pitch=0.0 Yaw=-135.0 Roll=0.0 } R3 = {Pitch=0.0 Yaw=0.0 Roll=0.0 } R4 = {Pitch=0.0 Yaw=90.0 Roll=0.0 }  FVector::Rotation()函数的内部实现（局部）：
+      
+      <p>
+        <a href="https://dawnarc.com/2016/07/ue4%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0%E5%B7%B2%E7%9F%A5%E6%96%B9%E5%90%91%E5%90%91%E9%87%8F%E6%B1%82%E8%AF%A5%E5%90%91%E9%87%8F%E4%B8%8E%E7%A9%BA%E9%97%B4%E5%9D%90%E6%A0%87%E8%BD%B4%E7%9A%84%E5%A4%B9%E8%A7%92/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
             
               
   
@@ -904,300 +1209,6 @@ Try to use vector math. decide in which order you rotate, first along x, then al
 </article>
 
             
-              
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2016/06/ue4charactermovementcomponent%E7%9A%84%E7%9B%B8%E5%85%B3%E5%B1%9E%E6%80%A7/">
-          [UE4]CharacterMovementComponent的相关属性
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2016-06-05T10:15:02&#43;08:00">
-        
-  June 5, 2016
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        bFastAttachedMove：如果确定行走过程中的障碍物都是静止的，那么设为true可以提供寻路效率 bWantsToCrouch：希望在下一个update中停下来
-      
-      <p>
-        <a href="https://dawnarc.com/2016/06/ue4charactermovementcomponent%E7%9A%84%E7%9B%B8%E5%85%B3%E5%B1%9E%E6%80%A7/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-            
-              
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2016/06/ue4%E5%88%9B%E5%BB%BA%E8%87%AA%E5%AE%9A%E4%B9%89playercontroller%E7%9A%84%E6%96%B9%E6%B3%95c-/">
-          [UE4]创建自定义PlayerController的方法(C&#43;&#43;)
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2016-06-02T18:15:02&#43;08:00">
-        
-  June 2, 2016
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        一种不推荐的写法：
-FActorSpawnParameters SpawnInfo; SpawnInfo.Instigator = Instigator; SpawnInfo.ObjectFlags |= RF_Transient; // We never want to save player controllers into a map SpawnInfo.bDeferConstruction = true; AMyPlayerController* NewPC = GetWorld()-&gt;SpawnActor&lt;AMyPlayerController&gt;(AMyPlayerController::StaticClass(), SpawnLocation, SpawnRotation, SpawnInfo);  参考自AGameMode::SpawnPlayerController()函数：
-APlayerController* AGameMode::SpawnPlayerController(ENetRole RemoteRole, FVector const&amp; SpawnLocation, FRotator const&amp; SpawnRotation) { FActorSpawnParameters SpawnInfo; SpawnInfo.Instigator = Instigator; SpawnInfo.ObjectFlags |= RF_Transient; // We never want to save player controllers into a map SpawnInfo.bDeferConstruction = true; APlayerController* NewPC = GetWorld()-&gt;SpawnActor&lt;APlayerController&gt;(PlayerControllerClass, SpawnLocation, SpawnRotation, SpawnInfo); if (NewPC) { if (RemoteRole == ROLE_SimulatedProxy) { // This is a local player because it has no authority/autonomous remote role NewPC-&gt;SetAsLocalPlayerController(); } UGameplayStatics::FinishSpawningActor(NewPC, FTransform(SpawnRotation, SpawnLocation)); } return NewPC; }  推荐写法：
-      
-      <p>
-        <a href="https://dawnarc.com/2016/06/ue4%E5%88%9B%E5%BB%BA%E8%87%AA%E5%AE%9A%E4%B9%89playercontroller%E7%9A%84%E6%96%B9%E6%B3%95c-/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-            
-              
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2016/05/ue4constructor%E4%B8%8Eruntime%E4%B8%A4%E7%A7%8D%E7%8E%AF%E5%A2%83%E4%B8%8B%E5%88%9B%E5%BB%BAcomponent%E5%B9%B6attach%E7%9A%84%E6%96%B9%E5%BC%8F/">
-          [UE4]Constructor与Runtime两种环境下创建Component并Attach的方式
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2016-05-29T15:47:02&#43;08:00">
-        
-  May 29, 2016
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        Component MyActor.h：
-UShapeComponent * CollisionMesh;  Constructor中 Create &amp; Attach MyActor.cpp：
-CollisionMesh = CreateDefaultSubobject&lt;UBoxComponent&gt;(TEXT(&quot;TestCollision&quot;)); if(CollisionMesh) { CollisionMesh-&gt;SetupAttachment(GetRootComponent()); }  Runtime中（非构造） Create &amp; Attach MyActor.cpp：
-CollisionMesh = NewObject&lt;UBoxComponent&gt;(this); if (CollisionMesh) { CollisionMesh-&gt;RegisterComponent(); CollisionMesh-&gt;AttachToComponent(GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform); }  Actor Runtime中Actor和Actor之间相互Attach Actor1 = GetWorld()-&gt;SpawnActor&lt;AMyActor&gt;(AMyActor::StaticClass()); if(Actor1) { Actor1-&gt;AttachToActor(Actor2, FAttachmentTransformRules::KeepRelativeTransform); }  Constructor中 Create &amp; Attach 很少情况下需要在构造函数执行Actor之间的相关Attach。
-ConstructorHelpers::FObjectFinder&lt;UMaterial&gt; DecalMaterialAsset(TEXT(&quot;Material'/Game/TopDownCPP/Blueprints/M_Cursor_Decal.M_Cursor_Decal'&quot;)); if (DecalMaterialAsset.Succeeded()) { DecalMaterialAsset.AttachToActor(MyActor, FAttachmentTransformRules::KeepRelativeTransform); }  AttachToComponent()为引擎的仅次于UObject的子类ActorComponent的函数； AttachToActor为引擎的仅次于UObject的子类Actor的函数。
- 通过NewObject创建Component之后，执行Register的目的是为了触发OnComponentCreate等回调。不执行Create相关的Initial回调会导致后续的Attach失效。
- 注意：Actor::AttachToActor()和Actor::AttachTo()为4.12的新版API，旧版本的工程迁移至4.12后，编译提示警告：
-AActor::AttachRootComponentToActor已废弃，需要使用AttachToActor替换
-获取 ActorComponent 所属的 Actor AActor* GetOwner() const;  GetOwner() 会沿着 ActorComponent 到 RootComponent 之间的从属链一直往上走，找到 RootComponent 并返回 RootComponent 所属的 Actor 对象。
-      
-      <p>
-        <a href="https://dawnarc.com/2016/05/ue4constructor%E4%B8%8Eruntime%E4%B8%A4%E7%A7%8D%E7%8E%AF%E5%A2%83%E4%B8%8B%E5%88%9B%E5%BB%BAcomponent%E5%B9%B6attach%E7%9A%84%E6%96%B9%E5%BC%8F/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-            
-              
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2016/05/ue4c-%E7%9A%84k2-api%E5%92%8C%E6%99%AE%E9%80%9Aapi%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB/">
-          [UE4]C&#43;&#43;的K2 API和普通API有什么区别
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2016-05-29T15:08:02&#43;08:00">
-        
-  May 29, 2016
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        比如我们看到很多API都有一个以K2开头的API，比如 AActor::AttachRootComponentTo对应的有一个API叫
-AActor::K2_AttachRootComponentTo  这些K2的和常规API有什么区别：K2是给蓝图用调换的，如果你使用C++编码，那么这些K2的开头的不需要关心。 蓝图的前身是UDK的Kismet，所以有人认为K2是Kismet 2.0的意思，即蓝图。
-参考：https://answers.unrealengine.com/questions/38197/what-is-k2-functions.html
-      
-      <p>
-        <a href="https://dawnarc.com/2016/05/ue4c-%E7%9A%84k2-api%E5%92%8C%E6%99%AE%E9%80%9Aapi%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-            
-              
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2016/05/ue4fmalloctbbmalloc-scalable_malloc-crash/">
-          [UE4]FMallocTBB：：Malloc  scalable_malloc() crash
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2016-05-28T21:54:02&#43;08:00">
-        
-  May 28, 2016
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        #
-UE4Editor_Core!rml::internal::Block::freePublicObject() UE4Editor_Core!rml::internal::ExtMemoryPool::initTLS() UE4Editor_Core!FMallocTBB::Free() [d:\build\++ue4+release-4.12+compile\sync\engine\source\runtime\core\private\hal\malloctbb.cpp:115] UE4Editor_Core!FMemory::Free() [d:\build\++ue4+release-4.12+compile\sync\engine\source\runtime\core\public\hal\fmemory.inl:49] UE4Editor_MyProject_784_Win64_DebugGame!operator delete[]() [d:\workspace\unreal_project\huaikongxin2\program\client\huaikxcli\source\huaikx\huaikx.cpp:15] UE4Editor_MyProject_784_Win64_DebugGame!HServices::HRecvMsg::~HRecvMsg() [d:\workspace\unreal_project\huaikongxin2\program\client\huaikxcli\source\huaikx\services\network\hrecvmsg.cpp:33] UE4Editor_MyProject_784_Win64_DebugGame!AHGameMode::Tick() [d:\workspace\unreal_project\huaikongxin2\program\client\huaikxcli\source\huaikx\graphics\world\hgamemode.cpp:121] UE4Editor_Engine!AActor::TickActor() [d:\build\++ue4+release-4.12+compile\sync\engine\source\runtime\engine\private\actor.cpp:814] UE4Editor_Engine!FActorTickFunction::ExecuteTick() [d:\build\++ue4+release-4.12+compile\sync\engine\source\runtime\engine\private\actor.cpp:111] UE4Editor_Engine!FTickFunctionTask::DoTask() [d:\build\++ue4+release-4.12+compile\sync\engine\source\runtime\engine\private\ticktaskmanager.cpp:262] UE4Editor_Engine!TGraphTask&lt;FTickFunctionTask&gt;::ExecuteTask() [d:\build\++ue4+release-4.12+compile\sync\engine\source\runtime\core\public\async\taskgraphinterfaces.h:999] UE4Editor_Core!FNamedTaskThread::ProcessTasksNamedThread() [d:\build\++ue4+release-4.12+compile\sync\engine\source\runtime\core\private\async\taskgraph.cpp:932] UE4Editor_Core!FNamedTaskThread::ProcessTasksUntilQuit() [d:\build\++ue4+release-4.12+compile\sync\engine\source\runtime\core\private\async\taskgraph.cpp:679] UE4Editor_Core!FTaskGraphImplementation::WaitUntilTasksComplete() [d:\build\++ue4+release-4.12+compile\sync\engine\source\runtime\core\private\async\taskgraph.cpp:1776] UE4Editor_Engine!FTickTaskSequencer::ReleaseTickGroup() [d:\build\++ue4+release-4.12+compile\sync\engine\source\runtime\engine\private\ticktaskmanager.cpp:530] UE4Editor_Engine!FTickTaskManager::RunTickGroup() [d:\build\++ue4+release-4.12+compile\sync\engine\source\runtime\engine\private\ticktaskmanager.cpp:1435] UE4Editor_Engine!UWorld::RunTickGroup() [d:\build\++ue4+release-4.12+compile\sync\engine\source\runtime\engine\private\leveltick.cpp:704] UE4Editor_Engine!UWorld::Tick() [d:\build\++ue4+release-4.12+compile\sync\engine\source\runtime\engine\private\leveltick.cpp:1197] UE4Editor_UnrealEd!UEditorEngine::Tick() [d:\build\++ue4+release-4.12+compile\sync\engine\source\editor\unrealed\private\editorengine.cpp:1349] UE4Editor_UnrealEd!UUnrealEdEngine::Tick() [d:\build\++ue4+release-4.12+compile\sync\engine\source\editor\unrealed\private\unrealedengine.cpp:368] UE4Editor!FEngineLoop::Tick() [d:\build\++ue4+release-4.12+compile\sync\engine\source\runtime\launch\private\launchengineloop.cpp:2774] UE4Editor!GuardedMain() [d:\build\++ue4+release-4.12+compile\sync\engine\source\runtime\launch\private\launch.cpp:148] UE4Editor!GuardedMainWrapper() [d:\build\++ue4+release-4.12+compile\sync\engine\source\runtime\launch\private\windows\launchwindows.cpp:126] UE4Editor!WinMain() [d:\build\++ue4+release-4.12+compile\sync\engine\source\runtime\launch\private\windows\launchwindows.cpp:200] UE4Editor!__scrt_common_main_seh() [f:\dd\vctools\crt\vcstartup\src\startup\exe_common.inl:264] kernel32 ntdll  #
-UE4Editor-Core.dll!rml::internal::ExtMemoryPool::initTLS(void) UE4Editor-Core.dll!scalable_mallo() UE4Editor-Core.dll!FMallocTBB::Malloc(unsigned __int64 Size, unsigned int Alignment) Line 44 C++ UE4Editor-HuaiKX-6959-Win64-DebugGame.dll!HServices::HRecvMsg::HRecvMsg(int type, const char * data, int len) Line 20 C++ UE4Editor-HuaiKX-6959-Win64-DebugGame.
-      
-      <p>
-        <a href="https://dawnarc.com/2016/05/ue4fmalloctbbmalloc-scalable_malloc-crash/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-            
             
   <div class="pagination-bar">
     <ul class="pagination">
@@ -1286,6 +1297,129 @@ UE4Editor-Core.dll!rml::internal::ExtMemoryPool::initTLS(void) UE4Editor-Core.dl
           <div class="media">
             
             <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/01/vfxtools-plugins-collections-for-art-making/">
+                <h3 class="media-heading">[VFX]Tools &amp; Plugins Collections for Art Making</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jan 1, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">UE4 Tools and Plugins umeFX to UE4 Tutorial: Smoke/Grenade effect using flipbooks.
+https://www.youtube.com/watch?v=CKbgMxLiRJM
+Interactive Tree Creator
+https://www.unrealengine.com/marketplace/interactive-tree-creator</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/01/zbrushplugins-collections/">
+                <h3 class="media-heading">[ZBrush]Plugins Collections</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jan 1, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">ZWrap Plugin for ZBrush
+https://www.russian3dscanner.com/zwrap/</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/01/ue4ies-light-profile-collections/">
+                <h3 class="media-heading">[UE4]IES Light Profile Collections</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jan 1, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>IES Light Profile</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/01/ue4vfx-collections/">
+                <h3 class="media-heading">[UE4]VFX Collections</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jan 1, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>VFX Series Pack 1</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/01/ue4kismetsystemlibrarys-api-in-common-use/">
+                <h3 class="media-heading">[UE4]KismetSystemLibrary‘s API in common use</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jan 1, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>keywords: KismetSystemLibrary, UKismetSystemLibrary</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/01/ue4build.csget-the-current-project-directory/">
+                <h3 class="media-heading">[UE4][Build.cs]Get the current Project Directory</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jan 1, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>.</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/01/ue4sequencer-related/">
+                <h3 class="media-heading">[UE4]Sequencer Related</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jan 1, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><h5 id="how-to-limit-the-frame-rate-of-sequencer">How to limit the frame rate of Sequencer</h5></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
               <a class="link-unstyled" href="https://dawnarc.com/2019/01/ue4transform-skeletal-bone-in-c-/">
                 <h3 class="media-heading">[UE4]Transform skeletal bone in C&#43;&#43;</h3>
               </a>
@@ -1294,8 +1428,7 @@ UE4Editor-Core.dll!rml::internal::ExtMemoryPool::initTLS(void) UE4Editor-Core.dl
                   Jan 1, 2019
                 </span>
               </span>
-              <div class="media-content hide-xs font-merryweather"><p>Add <code>UPoseableMeshComponent</code> in your Actor class, and set Skeletal Mesh asset for it.<br />
-Modify bones transform by UPoseableMeshComponent&rsquo;s functions:</p></div>
+              <div class="media-content hide-xs font-merryweather"><h5 id="blueprint-node">Blueprint Node</h5></div>
             </div>
             <div style="clear:both;"></div>
             <hr>
@@ -1335,128 +1468,6 @@ Modify bones transform by UPoseableMeshComponent&rsquo;s functions:</p></div>
             <hr>
           </div>
         
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2018/12/windowsquickly-get-a-files-folder-path/">
-                <h3 class="media-heading">[Windows]Quickly get a file’s folder path</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Dec 12, 2018
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>Shift + RMB Click the file<br />
-Choose <code>Copy As Path</code></p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2018/12/ue4materialshow-tos/">
-                <h3 class="media-heading">[UE4][Materials]How-To&#39;s</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Dec 12, 2018
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>How to metal only for a part of mesh<br />
-How to make a stained glass window effect</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2018/12/ue4gpu-visualizer-gpu-profiling-specification/">
-                <h3 class="media-heading">[UE4]GPU Visualizer (GPU Profiling) Specification</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Dec 12, 2018
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>PrePass DDM_AllOpaque(Forced by DBuffer)</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2018/12/pythoncommon-syntax-collections/">
-                <h3 class="media-heading">[Python]Common syntax collections</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Dec 12, 2018
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>How to print like printf in Python3?<br />
-Case-insensitive string comparison</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2018/12/ue411-short-steps-to-create-an-animated-loading-screenasync-switch-level/">
-                <h3 class="media-heading">[UE4]11 Short Steps to Create an Animated Loading Screen(Async switch level)</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Dec 12, 2018
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>I Went into Window &gt; Levels</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2018/12/ue4invalid-object-in-gc-0x000001eb2e659900-referencingobject-image/">
-                <h3 class="media-heading">[UE4]Invalid object in GC: 0x000001eb2e659900, ReferencingObject: Image</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Dec 12, 2018
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>Runtime\CoreUObject\Private\UObject\GarbageCollection.cpp</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2018/12/toolsreduce-chrome-drive-activity100-percent-drive-usage/">
-                <h3 class="media-heading">[Tools]Reduce Chrome drive activity(100 percent Drive usage)</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Dec 12, 2018
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather">Settings -&gt; Advanced -&gt; Privacy and security -&gt; Disable Protects you and your device from dangerous sites</div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
       </div>
     </div>
     <div class="modal-footer">
@@ -1464,7 +1475,7 @@ Case-insensitive string comparison</p></div>
          data-message-zero="no post found"
          data-message-one="1 post found"
          data-message-other="{n} posts found">
-         448 posts found
+         455 posts found
       </p>
     </div>
   </div>

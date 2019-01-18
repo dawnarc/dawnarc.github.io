@@ -25,10 +25,10 @@
 
 <meta name="twitter:card" content="summary">
 
-  <meta name="twitter:site" content="@idealsland">
+  <meta name="twitter:site" content="@dawn_arc">
 
 
-  <meta name="twitter:creator" content="@idealsland">
+  <meta name="twitter:creator" content="@dawn_arc">
 
 
 
@@ -300,6 +300,437 @@ if (!doNotTrack) {
                ">
         <section class="postShorten-group main-content-wrap">
           
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2018/03/ue4c-bindufunction%E6%97%B6%E4%BC%A0%E9%80%92%E5%8F%82%E6%95%B0bindufunction-with-variable-capture-in-c-/">
+          [UE4]C&#43;&#43; BindUFunction时传递参数(BindUFunction with Variable Capture in C&#43;&#43;)
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2018-03-30T18:26:02&#43;08:00">
+        
+  March 30, 2018
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        keywords：UE4、BindUFunction、BindUObject、Pass Arguments、Variable
+示例1：
+void UMyClass::FunctionWithVar(const FString&amp; MyVar, TFunction&lt;void(const FString&amp;)&gt; InFunction) { MyLambdaHandle = OnMyDelegate.BindStatic([MyVar](TFunction&lt;void(const FString&amp;)&gt; callback) {callback(MyVar);}, InFunction); // TODO: You have to track MyLambdaHandle to be able to unregister it when needed }  https://answers.unrealengine.com/questions/715835/bindufunction-with-variable-capture-in-c.html
+示例2：
+使用固定参数绑定
+DECLARE_DELEGATE(RefreshOne); class MyClass { public: MyClass() { one.BindRaw(this, &amp;MyClass::MyFunction, (uint8)1); } void MyFunction(uint8 Val) { // Whatever } void Invoke() { one.Execute(); // Will call this-&gt;MyFunction((uint8)1); } private: RefreshOne one; };  使用动态参数绑定
+      
+      <p>
+        <a href="https://dawnarc.com/2018/03/ue4c-bindufunction%E6%97%B6%E4%BC%A0%E9%80%92%E5%8F%82%E6%95%B0bindufunction-with-variable-capture-in-c-/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2018/03/android-ndkarm-eabi-addr2line-android%E5%BA%94%E7%94%A8%E5%B4%A9%E6%BA%83%E7%9A%84%E8%B0%83%E8%AF%95%E6%96%B9%E6%B3%95/">
+          [Android NDK]arm-eabi-addr2line android应用崩溃的调试方法
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2018-03-29T18:04:02&#43;08:00">
+        
+  March 29, 2018
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/android">Android</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        原文：https://blog.csdn.net/tommy_wxie/article/details/12841735
+1.将ndk中的arm-linux-androideabi-addr2line可执行文件的路径加入配置文件~/.bashrc中，例如：
+export PATH=$PATH:~/dlna/android-ndk-r6b/toolchains/arm-linux-androideabi-4.4.3/prebuilt/linux-x86/bin  2.使配置生效：
+source ~/.bashrc  3.使用工具。例如：
+arm-linux-androideabi-addr2line -C -f -e ~/workspace/DLNA/libs/armeabi/libctrlpt.so 0003deb4  其中，0003deb4为堆栈信息中pc的值。
+android应用崩溃的调试方法 有两种方法可以分析 crash 的堆栈信息
+1，google提供了一个python脚本，可以从 https://github.com/maxme/android-ndk-stacktrace-analyzer 下载这个python脚本，然后使用 adb logcat -d &gt; logfile 导出 crash 的log,使用 arm-eabi-objdump 位于build/prebuilt/linux-x86/arm-eabi-4.2.1/bin下面把so或exe转换成汇编代码，如：arm-eabi-objdump -S mylib.so &gt; mylib.asm,使用脚本
+python parse_stack.py &lt;asm-file&gt; &lt;logcat-file&gt;  2，直接使用NDK下面的arm-linux-androideabi-addr2line
+(D:\android-ndk-r8\toolchains\arm-linux- androideabi-4.4.3\prebuilt\windows\bin\arm-linux-androideabi-addr2line.exe)
+例如：
+arm-linux-androideabi-addr2line -C -f -e libxxx.so 0x#####(address)  出现 ??:0 , 没法展示源代码行数的问题 在Android.mk 文件中:
+LOCAL_CFLAGS := -D__STDC_CONSTANT_MACROS -Wl,-Map=test.map -g  补充2个编译参数 -Wl,-Map=test.map -g .
+      
+      <p>
+        <a href="https://dawnarc.com/2018/03/android-ndkarm-eabi-addr2line-android%E5%BA%94%E7%94%A8%E5%B4%A9%E6%BA%83%E7%9A%84%E8%B0%83%E8%AF%95%E6%96%B9%E6%B3%95/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2018/03/ue42d%E5%8A%A8%E7%94%BB%E5%BA%8F%E5%88%97%E5%B8%A7paper-sprite/">
+          [UE4]2D动画序列帧Paper Sprite
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2018-03-27T11:23:02&#43;08:00">
+        
+  March 27, 2018
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        Paper 2D Sprites
+http://api.unrealengine.com/CHN/Engine/Paper2D/Sprites/index.html
+Paper 2D Import Options
+http://api.unrealengine.com/CHN/Engine/Paper2D/Importing/index.html
+VaTexAtlas：一款支持TexturePacker json数据导入UE4插件
+https://github.com/ufna/VaTexAtlas
+UMG Animation
+https://docs.unrealengine.com/latest/INT/Engine/UMG/UserGuide/Animation/index.html
+甚爱必大费，多藏必厚亡。 ----老子《道德经》
+      
+      <p>
+        <a href="https://dawnarc.com/2018/03/ue42d%E5%8A%A8%E7%94%BB%E5%BA%8F%E5%88%97%E5%B8%A7paper-sprite/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2018/03/ue4%E7%8E%AF%E5%BD%A2%E8%BF%9B%E5%BA%A6%E6%9D%A1%E6%9D%90%E8%B4%A8-umg%E5%8A%A8%E7%94%BBcircular-progress-bar-for-umg/">
+          [UE4]环形进度条材质-UMG动画(Circular Progress Bar for UMG)
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2018-03-22T21:49:02&#43;08:00">
+        
+  March 22, 2018
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        keywords：Cooldown Effect、UMG Material
+参考自：Circular Progress Bar for UMG
+http://www.tomlooman.com/circular-progress-bar-for-umg/
+下载地址：
+https://pan.baidu.com/s/1kfzODWw8i_VXfd9L5ughmg
+静待一树花开，盼你叶落归来。----安意如《人生若只如初见》
+      
+      <p>
+        <a href="https://dawnarc.com/2018/03/ue4%E7%8E%AF%E5%BD%A2%E8%BF%9B%E5%BA%A6%E6%9D%A1%E6%9D%90%E8%B4%A8-umg%E5%8A%A8%E7%94%BBcircular-progress-bar-for-umg/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2018/03/next-gen%E9%94%88%E8%BF%B9%E6%9D%90%E8%B4%A8%E5%85%A8%E6%B5%81%E7%A8%8B%E5%AE%9E%E4%BE%8Bblender-sp-ue4/">
+          [Next-Gen]锈迹材质全流程实例：Blender-》SP-》UE4
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2018-03-21T01:55:02&#43;08:00">
+        
+  March 21, 2018
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/next-gen">Next-Gen</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        1，准备Mesh 准备一个现成模型资源。这里从Blender中提取现成的猴头模型
+按住Shift + A -》 Mesh -》 Monkey     自动生成UV   然后执行Smooth   然后增加细分级别   最终效果：   2，导出FBX File -》 Export -》 FBX   导出选项中勾选Select Objects。   3，导入SP File -》 New，打开创建工程界面，设置Mesh的FBX文件位置（刚刚导出的FBX），其他不用修改。   因为当前示例中的AO、Normal等等贴图我们会在SP中自动生成，所以这里“Import Mesh NOrmal Map &hellip;”中可以不添加任何东西，如果你的模型已经有现成的贴图，可以在这里Add。
+点击OK，在SP中可以看到默认贴图和UV     4，烘焙贴图 在Layer面板中，点击 Bake Textures，打开烘焙选项面板   不勾选ID，并设置贴图大小   点击Bake DefaultMaterial Textures，稍等一会后，就可以在Project中看到6张贴图   5，编辑材质 打开Smart Materials   选一个要想材质，这里我选择的是Steel Rust Surface   然后拖拽到Layer面板钟   立即可以看到效果   同时，在TextureSet Settings中可以看到自动帮我们设置好了前面烘焙好的各种贴图   SP提供的智能材质很多，这些材质帮你省去了手动调参数的步骤，相当于材质模版。材质里面的具体参数我没深究过，所以我也不详细讲各种参数的使用了，这些参数具体可以看SP官方视频或文档。
+      
+      <p>
+        <a href="https://dawnarc.com/2018/03/next-gen%E9%94%88%E8%BF%B9%E6%9D%90%E8%B4%A8%E5%85%A8%E6%B5%81%E7%A8%8B%E5%AE%9E%E4%BE%8Bblender-sp-ue4/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2018/03/ue4get-widget-animation-in-c-/">
+          [UE4]Get Widget Animation in C&#43;&#43;
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2018-03-20T18:49:02&#43;08:00">
+        
+  March 20, 2018
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        keywords：C++操作控制UMG动画、Widget Animation
+示例代码：
+void UMyMenuWidget::AssignAnimations() { UProperty* prop = GetClass()-&gt;PropertyLink; // Run through all properties of this class to find any widget animations while( prop != nullptr ) { // Only interested in object properties if( prop-&gt;GetClass() == UObjectProperty::StaticClass() ) { UObjectProperty* objectProp = Cast&lt;UObjectProperty&gt;(prop); // Only want the properties that are widget animations if( objectProp-&gt;PropertyClass == UWidgetAnimation::StaticClass() ) { UObject* object = objectProp-&gt;GetObjectPropertyValue_InContainer( this ); UWidgetAnimation* widgetAnim = Cast&lt;UWidgetAnimation&gt;(object); if( widgetAnim !
+      
+      <p>
+        <a href="https://dawnarc.com/2018/03/ue4get-widget-animation-in-c-/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2018/03/ue4%E8%BD%AC%E8%BD%BDwindows-%E8%BF%9C%E7%A8%8B%E7%BC%96%E8%AF%91ios%E8%8B%A5%E5%B9%B2%E9%97%AE%E9%A2%98/">
+          [UE4]转载：Windows 远程编译iOS若干问题
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2018-03-16T18:35:02&#43;08:00">
+        
+  March 16, 2018
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        原文
+http://wangjie.rocks/2017/11/30/ue4-ios-build-on-windows/
+问题一 ssh_exchange_identification: Connection closed by remote hostrsync: connection unexpectedly closed (0 bytes received so far) [sender]rsync error: error in rsync protocol data stream (code 12) at /home/lapo/packaging/rsync-3.0.4-1/src/rsync-3.0.4/io.c(632) [sender=3.0.4]  解决方法
+首先保证远程机器 OSX 上的 ssh 并发数配置足够，使用命令查看
+grep MaxStartups /etc/ssh/sshd_config  一般输出如下格式 10/20/30 意思是连接达到10之后以20%的概率拒绝新连接直到30为止，可以根据需求调大第一个值并重启
+其次保证 RemoteToolChainPrivate.key 文件存在于 C:\Users\用户名\AppData\Roaming\Unreal Engine\UnrealBuildTool\SSHKeys\远程机器地址\mac 文件夹下，没有的话需要在 Edit -&gt; Project Settings&hellip; -&gt; Platforms -&gt; iOS -&gt; Build 中进行配置，配置好远程 OSX 机器的地址，用户名，然后点击 Generate SSH Key 生成
+问题二 编译失败，出现如下错误
+      
+      <p>
+        <a href="https://dawnarc.com/2018/03/ue4%E8%BD%AC%E8%BD%BDwindows-%E8%BF%9C%E7%A8%8B%E7%BC%96%E8%AF%91ios%E8%8B%A5%E5%B9%B2%E9%97%AE%E9%A2%98/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
           
             
   
@@ -805,425 +1236,6 @@ http://zompi.pl/building-ios-game-in-unreal-engine-4-via-remote-machine/
 </article>
 
           
-            
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2018/03/xcode%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C/">
-          [Xcode]常用操作
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2018-03-07T20:29:02&#43;08:00">
-        
-  March 7, 2018
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/xcode">Xcode</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        构建 command + R
-清理工程 command + shift + K
-当前工程根目录的环境变量（.xcworkspace文件所在目录） $(SRCROOT)  头文件搜索路径 Always Search User Paths 是否优先使用User Header Search Paths
-Header Search Paths 编译器的头文件目录
-User Header Search Paths 自己工程的头文件目录
-修改编译输出目录 Build Settings -&gt; Build Locations -&gt; Build Products Path
-修改后需要重启xcode才会生效。
-参考：http://blog.csdn.net/tintinr/article/details/50936313
-iOS 静态库制作（Xcode9.0）
-http://blog.csdn.net/wanna_dance/article/details/78687676
-人们最好在运筹帷幄时胆小一点，并想到所有不良后果；但在必须行动的时候，便要大胆敢为。
-      
-      <p>
-        <a href="https://dawnarc.com/2018/03/xcode%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-          
-            
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2018/03/iosprotobuf2.6%E7%BC%96%E8%AF%91ios%E7%89%88%E6%9C%AC%E9%9D%99%E6%80%81%E5%BA%93/">
-          [iOS]protobuf2.6编译iOS版本静态库
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2018-03-07T19:20:02&#43;08:00">
-        
-  March 7, 2018
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/ios">iOS</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        将以下脚本保存为shell脚本并运行：
-sh build-protobuf-2.6.1.sh  build-protobuf-2.6.1.sh
-#!/bin/bash -x echo &quot;$(tput setaf 2)&quot; echo Building Google Protobuf for Mac OS X / iOS. echo Use 'tail -f build.log' to monitor progress. echo &quot;$(tput sgr0)&quot; # Controls which architectures are build/included in the # universal binaries and libraries this script produces. # Set each to '1' to include, '0' to exclude. BUILD_X86_64_MAC=1 BUILD_X86_64_IOS_SIM=1 BUILD_I386_IOS_SIM=1 BUILD_ARMV7_IPHONE=1 BUILD_ARMV7S_IPHONE=1 BUILD_ARM64_IPHONE=1 PB_VERSION=2.6.1 # Set this to the replacement name for the 'google' namespace.
-      
-      <p>
-        <a href="https://dawnarc.com/2018/03/iosprotobuf2.6%E7%BC%96%E8%AF%91ios%E7%89%88%E6%9C%AC%E9%9D%99%E6%80%81%E5%BA%93/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-          
-            
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2018/03/iosmac%E5%B9%B3%E5%8F%B0%E7%94%A8cmake%E7%BC%96%E8%AF%91ios-lib/">
-          [iOS]mac平台用cmake编译ios lib
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2018-03-06T17:56:02&#43;08:00">
-        
-  March 6, 2018
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/ios">iOS</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        转载自：https://github.com/Tencent/ncnn/wiki/cmake-%E6%89%93%E5%8C%85-ios-sdk
-安装 xcode 和 cmake xcode https://developer.apple.com/xcode/download
-cmake OS X版本 https://cmake.org/download
-默认情况 cmake 命令行可能用不了，需要手工加在 PATH 里面
-export PATH=/Applications/CMake.app/Contents/bin/:$PATH  准备 ios toolchain 文件 把 ios.toolchain.cmake 放到和 CMakeLists.txt 同一级的项目目录里 可以去 opencv 的 github 上弄来，自己稍微调整下。
-传送门 https://github.com/Itseez/opencv/tree/master/platforms/ios/cmake
-编译方法 mkdir build-ios cd build-ios cmake -DCMAKE_BUILD_TYPE=Release \ -DCMAKE_TOOLCHAIN_FILE=../ios.toolchain.cmake \ -DIOS_PLATFORM=iPhoneOS \ -DCMAKE_OSX_ARCHITECTURES=armv7 .. make make install make package  没有遇到错误的话，手机平台 armv7 库已经编好了
-这里简要介绍几个参数
- IOS_PLATFORM 是平台名字，iPhoneOS 是真实机器的 ios，iPhoneSimulator 是模拟器平台 CMAKE_OSX_ARCHITECTURES 指定架构，iPhoneOS 配套 armv7 armv7s arm64，iPhoneSimulator 配套 i386 x86_64  CMakeLists.
-      
-      <p>
-        <a href="https://dawnarc.com/2018/03/iosmac%E5%B9%B3%E5%8F%B0%E7%94%A8cmake%E7%BC%96%E8%AF%91ios-lib/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-          
-            
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2018/03/toolsjira7.3%E5%AE%89%E8%A3%85%E6%AD%A5%E9%AA%A4/">
-          [Tools]Jira7.3安装步骤
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2018-03-06T11:29:02&#43;08:00">
-        
-  March 6, 2018
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/tools">Tools</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        烂泥：jira7.3&frasl;7.2安装、中文及破解(20170829更新)
-https://www.ilanni.com/?p=12119
-向来缘浅，奈何情深。----《何以笙箫默》
-      
-      <p>
-        <a href="https://dawnarc.com/2018/03/toolsjira7.3%E5%AE%89%E8%A3%85%E6%AD%A5%E9%AA%A4/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-          
-            
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2018/03/ue4foliage-instance-cull-distanceinstanced%E6%A4%8D%E8%A2%AB%E8%B7%9D%E7%A6%BB%E8%A3%81%E5%89%AA/">
-          [UE4]Foliage Instance Cull Distance(Instanced植被距离裁剪)
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2018-03-05T17:51:02&#43;08:00">
-        
-  March 5, 2018
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        在植被编辑面板的Instance Settings中，Cull Distance的Min设置为默认值0，Max改为需要的距离，以RTS视角为例，Max设置为300。这样摄像机投射在底面上的点与植被的距离超过300后，植被就会被自动隐藏掉。
-  孰能浊以静之徐清，孰能安以动之徐生？ ----《老子》
-      
-      <p>
-        <a href="https://dawnarc.com/2018/03/ue4foliage-instance-cull-distanceinstanced%E6%A4%8D%E8%A2%AB%E8%B7%9D%E7%A6%BB%E8%A3%81%E5%89%AA/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-          
-            
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2018/03/ue4cull-distance-volume%E8%B7%9D%E7%A6%BB%E8%A3%81%E5%89%AA%E7%94%A8%E6%B3%95/">
-          [UE4]Cull Distance Volume(距离裁剪)用法
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2018-03-04T13:42:02&#43;08:00">
-        
-  March 4, 2018
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        keywords：UE4、Cull Distance Volume、距离裁剪、遮挡剔除
-排除物体 打开编辑器，在World Outline（不是Content Browser中的static mesh双击后的编辑面板，而是static mesh拖拽到场景中之后的实例对象的属性面板）。选中要排除的物体，打开Show All Advanced Details，找到LOD -》 去掉勾选 All Cull Distance Volume。   常用的Distance级别设置   Cull Distance Volume在游戏运行时才有效，在编辑器非运行期间拖拉摄像机无效。
- 识不足则多虑；威不足则多怒；信不足则多言。----弘一法师
-      
-      <p>
-        <a href="https://dawnarc.com/2018/03/ue4cull-distance-volume%E8%B7%9D%E7%A6%BB%E8%A3%81%E5%89%AA%E7%94%A8%E6%B3%95/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-          
-            
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2018/03/ue4%E7%89%A9%E4%BD%93%E8%B7%9F%E9%9A%8Fspline%E8%B7%AF%E5%BE%84%E7%A7%BB%E5%8A%A8move-along-spline-path/">
-          [UE4]物体跟随Spline路径移动(Move Along Spline Path)
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2018-03-04T13:41:02&#43;08:00">
-        
-  March 4, 2018
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        先建一个普通的Actor蓝图，然后再蓝图中添加Spline Component（注意：不是Spline Mesh Component）   然后编辑路径，如果要添加新节点，右键路径 -》 Add Spline Point Here。   然后把该Actor蓝图拖到场景中，然后在相应蓝图（比如角色蓝图）中编辑移动逻辑：   (图片放大：复制图片地址单独打开)
-将Spline 曲线打直（Turn Splines curves into straight Spline paths） 选中需要打直的曲线，在Detail面板中找到：Selected Points -》 Type，修改为Linear，默认为Curve。
-君子和而不同，小人同而不和。 ----《论语》
-      
-      <p>
-        <a href="https://dawnarc.com/2018/03/ue4%E7%89%A9%E4%BD%93%E8%B7%9F%E9%9A%8Fspline%E8%B7%AF%E5%BE%84%E7%A7%BB%E5%8A%A8move-along-spline-path/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-          
           
   <div class="pagination-bar">
     <ul class="pagination">
@@ -1245,7 +1257,7 @@ https://www.ilanni.com/?p=12119
           </li>
         
       
-      <li class="pagination-number">page 8 of 30</li>
+      <li class="pagination-number">page 8 of 31</li>
     </ul>
   </div>
 
@@ -1311,6 +1323,129 @@ https://www.ilanni.com/?p=12119
           <div class="media">
             
             <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/01/vfxtools-plugins-collections-for-art-making/">
+                <h3 class="media-heading">[VFX]Tools &amp; Plugins Collections for Art Making</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jan 1, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">UE4 Tools and Plugins umeFX to UE4 Tutorial: Smoke/Grenade effect using flipbooks.
+https://www.youtube.com/watch?v=CKbgMxLiRJM
+Interactive Tree Creator
+https://www.unrealengine.com/marketplace/interactive-tree-creator</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/01/zbrushplugins-collections/">
+                <h3 class="media-heading">[ZBrush]Plugins Collections</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jan 1, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather">ZWrap Plugin for ZBrush
+https://www.russian3dscanner.com/zwrap/</div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/01/ue4ies-light-profile-collections/">
+                <h3 class="media-heading">[UE4]IES Light Profile Collections</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jan 1, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>IES Light Profile</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/01/ue4vfx-collections/">
+                <h3 class="media-heading">[UE4]VFX Collections</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jan 1, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>VFX Series Pack 1</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/01/ue4kismetsystemlibrarys-api-in-common-use/">
+                <h3 class="media-heading">[UE4]KismetSystemLibrary‘s API in common use</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jan 1, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>keywords: KismetSystemLibrary, UKismetSystemLibrary</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/01/ue4build.csget-the-current-project-directory/">
+                <h3 class="media-heading">[UE4][Build.cs]Get the current Project Directory</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jan 1, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>.</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/01/ue4sequencer-related/">
+                <h3 class="media-heading">[UE4]Sequencer Related</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jan 1, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><h5 id="how-to-limit-the-frame-rate-of-sequencer">How to limit the frame rate of Sequencer</h5></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
               <a class="link-unstyled" href="https://dawnarc.com/2019/01/ue4transform-skeletal-bone-in-c-/">
                 <h3 class="media-heading">[UE4]Transform skeletal bone in C&#43;&#43;</h3>
               </a>
@@ -1319,8 +1454,7 @@ https://www.ilanni.com/?p=12119
                   Jan 1, 2019
                 </span>
               </span>
-              <div class="media-content hide-xs font-merryweather"><p>Add <code>UPoseableMeshComponent</code> in your Actor class, and set Skeletal Mesh asset for it.<br />
-Modify bones transform by UPoseableMeshComponent&rsquo;s functions:</p></div>
+              <div class="media-content hide-xs font-merryweather"><h5 id="blueprint-node">Blueprint Node</h5></div>
             </div>
             <div style="clear:both;"></div>
             <hr>
@@ -1360,128 +1494,6 @@ Modify bones transform by UPoseableMeshComponent&rsquo;s functions:</p></div>
             <hr>
           </div>
         
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2018/12/windowsquickly-get-a-files-folder-path/">
-                <h3 class="media-heading">[Windows]Quickly get a file’s folder path</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Dec 12, 2018
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>Shift + RMB Click the file<br />
-Choose <code>Copy As Path</code></p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2018/12/ue4materialshow-tos/">
-                <h3 class="media-heading">[UE4][Materials]How-To&#39;s</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Dec 12, 2018
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>How to metal only for a part of mesh<br />
-How to make a stained glass window effect</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2018/12/ue4gpu-visualizer-gpu-profiling-specification/">
-                <h3 class="media-heading">[UE4]GPU Visualizer (GPU Profiling) Specification</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Dec 12, 2018
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>PrePass DDM_AllOpaque(Forced by DBuffer)</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2018/12/pythoncommon-syntax-collections/">
-                <h3 class="media-heading">[Python]Common syntax collections</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Dec 12, 2018
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>How to print like printf in Python3?<br />
-Case-insensitive string comparison</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2018/12/ue411-short-steps-to-create-an-animated-loading-screenasync-switch-level/">
-                <h3 class="media-heading">[UE4]11 Short Steps to Create an Animated Loading Screen(Async switch level)</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Dec 12, 2018
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>I Went into Window &gt; Levels</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2018/12/ue4invalid-object-in-gc-0x000001eb2e659900-referencingobject-image/">
-                <h3 class="media-heading">[UE4]Invalid object in GC: 0x000001eb2e659900, ReferencingObject: Image</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Dec 12, 2018
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>Runtime\CoreUObject\Private\UObject\GarbageCollection.cpp</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2018/12/toolsreduce-chrome-drive-activity100-percent-drive-usage/">
-                <h3 class="media-heading">[Tools]Reduce Chrome drive activity(100 percent Drive usage)</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Dec 12, 2018
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather">Settings -&gt; Advanced -&gt; Privacy and security -&gt; Disable Protects you and your device from dangerous sites</div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
       </div>
     </div>
     <div class="modal-footer">
@@ -1489,7 +1501,7 @@ Case-insensitive string comparison</p></div>
          data-message-zero="no post found"
          data-message-one="1 post found"
          data-message-other="{n} posts found">
-         448 posts found
+         455 posts found
       </p>
     </div>
   </div>
