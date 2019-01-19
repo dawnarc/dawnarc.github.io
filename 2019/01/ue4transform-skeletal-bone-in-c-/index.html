@@ -8,18 +8,18 @@
 <meta name="generator" content="Hugo 0.53 with theme Tranquilpeak 0.4.3-SNAPSHOT">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="UE4, skeletal bone, Transform">
-<meta name="description" content="Blueprint Node">
+<meta name="description" content="Blueprint">
 
 
-<meta property="og:description" content="Blueprint Node">
+<meta property="og:description" content="Blueprint">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[UE4]Transform skeletal bone in C&#43;&#43;">
 <meta name="twitter:title" content="[UE4]Transform skeletal bone in C&#43;&#43;">
 <meta property="og:url" content="https://dawnarc.com/2019/01/ue4transform-skeletal-bone-in-c-/">
 <meta property="twitter:url" content="https://dawnarc.com/2019/01/ue4transform-skeletal-bone-in-c-/">
 <meta property="og:site_name" content="玄冬Wong">
-<meta property="og:description" content="Blueprint Node">
-<meta name="twitter:description" content="Blueprint Node">
+<meta property="og:description" content="Blueprint">
+<meta name="twitter:description" content="Blueprint">
 <meta property="og:locale" content="en-us">
 
   
@@ -284,7 +284,7 @@ if (!doNotTrack) {
 
   <li class="sidebar-button">
     
-      <a class="sidebar-button-link " href="https://twitter.com/idealsland" target="_blank" rel="noopener">
+      <a class="sidebar-button-link " href="https://twitter.com/dawn_arc" target="_blank" rel="noopener">
     
       <i class="sidebar-button-icon fa fa-lg fa-twitter"></i>
       
@@ -350,27 +350,40 @@ if (!doNotTrack) {
           
           <div class="post-content markdown" itemprop="articleBody">
             <div class="main-content-wrap">
-              <h5 id="blueprint-node">Blueprint Node</h5>
+              <h5 id="blueprint">Blueprint</h5>
 
-<p>Transform from Bone Space</p>
+<p>Blueprint Node</p>
 
-<figure>
+<pre><code>Transform Bone
+</code></pre>
+
+<p>Example</p>
+
+<p><figure>
     <img src="https://dawnarc.com/img/20190105-[UE4]Transform%20skeletal%20bone%20in%20C&#43;&#43;/[UE4]Transform%20skeletal%20bone%20in%20C&#43;&#43;-01.jpg"/> 
 </figure>
 
-
-<h5 id="c-code">C++ code</h5>
-
-<p>Steps</p>
-
-<ol>
-<li>Add <code>UPoseableMeshComponent</code> in your Actor class, and set Skeletal Mesh asset for it.
 <figure>
     <img src="https://dawnarc.com/img/20190105-[UE4]Transform%20skeletal%20bone%20in%20C&#43;&#43;/[UE4]Transform%20skeletal%20bone%20in%20C&#43;&#43;-02.jpg"/> 
 </figure>
 
 <figure>
     <img src="https://dawnarc.com/img/20190105-[UE4]Transform%20skeletal%20bone%20in%20C&#43;&#43;/[UE4]Transform%20skeletal%20bone%20in%20C&#43;&#43;-03.jpg"/> 
+</figure>
+</p>
+
+<h5 id="poseablemeshcomponent-of-c">PoseableMeshComponent of C++</h5>
+
+<p>Steps</p>
+
+<ol>
+<li>Add <code>UPoseableMeshComponent</code> in your Actor class, and set Skeletal Mesh asset for it.
+<figure>
+    <img src="https://dawnarc.com/img/20190105-[UE4]Transform%20skeletal%20bone%20in%20C&#43;&#43;/[UE4]Transform%20skeletal%20bone%20in%20C&#43;&#43;-04.jpg"/> 
+</figure>
+
+<figure>
+    <img src="https://dawnarc.com/img/20190105-[UE4]Transform%20skeletal%20bone%20in%20C&#43;&#43;/[UE4]Transform%20skeletal%20bone%20in%20C&#43;&#43;-05.jpg"/> 
 </figure>
 
 <div class="alert info ">
@@ -393,14 +406,52 @@ void SetBoneScaleByName(FName BoneName, FVector InScale3D, EBoneSpaces::Type Bon
 </code></pre></li>
 </ol>
 
+<h5 id="skeletalmeshcomponent-of-c">SkeletalMeshComponent of C++</h5>
+
+<p>Sorry, I didn&rsquo;t find a way to transform bones of SkeletalMesh using C++.</p>
+
 <h5 id="reference">Reference</h5>
 
 <p>Transform skeletal bone in C++<br />
 <a href="https://answers.unrealengine.com/questions/59010/transform-skeletal-bone-in-c.html">https://answers.unrealengine.com/questions/59010/transform-skeletal-bone-in-c.html</a></p>
 
+<p>Transform Bone<br />
+<a href="https://docs.unrealengine.com/en-us/Engine/Animation/NodeReference/SkeletalControls/TransformBone">https://docs.unrealengine.com/en-us/Engine/Animation/NodeReference/SkeletalControls/TransformBone</a></p>
+
+<h4 id="bone-related">Bone Related</h4>
+
+<p>Transform a location/rotation in bone relative space to world space.</p>
+
+<pre><code>Transform from Bone Space
+</code></pre>
+
+<p>Transform a location/rotation from world space to bone relative space.<br />
+This is handy if you know the location in world space for a bone attachment, as AttachComponent takes location/rotation in bone-relative space.</p>
+
+<pre><code>TransformToBoneSpace
+</code></pre>
+
+<p>C++</p>
+
+<pre><code>void USkinnedMeshComponent::TransformToBoneSpace(FName BoneName, FVector InPosition, FRotator InRotation, FVector&amp; OutPosition, FRotator&amp; OutRotation) const
+
+void USkinnedMeshComponent::TransformFromBoneSpace(FName BoneName, FVector InPosition, FRotator InRotation, FVector&amp; OutPosition, FRotator&amp; OutRotation)
+</code></pre>
+
+<h5 id="problem-summary">Problem Summary</h5>
+
+<p>If you want to control transform of bones at real-time, following properties may be set:</p>
+
+<pre><code>// prevent anim frame skipping optimization based on visibility etc
+Mesh-&gt;bEnableUpdateRateOptimizations = false;
+
+// update animation even when mesh is not visible
+Mesh-&gt;MeshComponentUpdateFlag = EMeshComponentUpdateFlag::AlwaysTickPoseAndRefreshBones;
+</code></pre>
+
 <hr />
 
-<p><code>发生过的事，以后还会发生；做过的事，将来还要再做。太阳底下没有新的事。有谁能说，看，这是新事？不，在我们出生之前早就有了。以往的事没有人去追忆，今后的事也没有人去掛念。</code> ──《旧约·传道书》</p>
+<p><code>发生过的事，以后还会发生；做过的事，将来还要再做。太阳底下没有新的事。有谁能说，看，这是新事？不，在我们出生之前早就有了。以往的事没有人去追忆，今后的事也没有人去掛念。 ──《旧约·传道书》</code></p>
               
             </div>
           </div>
@@ -598,6 +649,23 @@ void SetBoneScaleByName(FName BoneName, FVector InScale3D, EBoneSpaces::Type Bon
           <div class="media">
             
             <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/01/ue4editor-related/">
+                <h3 class="media-heading">[UE4]Editor Related</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jan 1, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><h5 id="how-to-set-pivot-offset">How to set Pivot Offset</h5></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
               <a class="link-unstyled" href="https://dawnarc.com/2019/01/vfxtools-plugins-collections-for-art-making/">
                 <h3 class="media-heading">[VFX]Tools &amp; Plugins Collections for Art Making</h3>
               </a>
@@ -606,11 +674,7 @@ void SetBoneScaleByName(FName BoneName, FVector InScale3D, EBoneSpaces::Type Bon
                   Jan 1, 2019
                 </span>
               </span>
-              <div class="media-content hide-xs font-merryweather">UE4 Tools and Plugins umeFX to UE4 Tutorial: Smoke/Grenade effect using flipbooks.
-https://www.youtube.com/watch?v=CKbgMxLiRJM
-Interactive Tree Creator
-https://www.unrealengine.com/marketplace/interactive-tree-creator
-英雄之所以是英雄，是他不知道有一个阴谋在他身后。——张锐锋《古战场》</div>
+              <div class="media-content hide-xs font-merryweather"><h5 id="maya-3dmax">Maya &amp; 3DMax</h5></div>
             </div>
             <div style="clear:both;"></div>
             <hr>
@@ -627,9 +691,7 @@ https://www.unrealengine.com/marketplace/interactive-tree-creator
                   Jan 1, 2019
                 </span>
               </span>
-              <div class="media-content hide-xs font-merryweather">ZWrap Plugin for ZBrush
-https://www.russian3dscanner.com/zwrap/
-做学问要在不疑处有疑，做人要在有疑处不疑。——胡适</div>
+              <div class="media-content hide-xs font-merryweather"><p>ZWrap Plugin for ZBrush</p></div>
             </div>
             <div style="clear:both;"></div>
             <hr>
@@ -731,7 +793,7 @@ https://www.russian3dscanner.com/zwrap/
                   Jan 1, 2019
                 </span>
               </span>
-              <div class="media-content hide-xs font-merryweather"><h5 id="blueprint-node">Blueprint Node</h5></div>
+              <div class="media-content hide-xs font-merryweather"><h5 id="blueprint">Blueprint</h5></div>
             </div>
             <div style="clear:both;"></div>
             <hr>
@@ -754,23 +816,6 @@ https://www.russian3dscanner.com/zwrap/
             <hr>
           </div>
         
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2018/12/windowsgetting-the-convenient-automatic-folder-navigation-tree-expansion-back/">
-                <h3 class="media-heading">[Windows]Getting the convenient automatic folder navigation tree expansion back</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Dec 12, 2018
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>In the folder toolbar, Click the View tab.</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
       </div>
     </div>
     <div class="modal-footer">
@@ -778,7 +823,7 @@ https://www.russian3dscanner.com/zwrap/
          data-message-zero="no post found"
          data-message-one="1 post found"
          data-message-other="{n} posts found">
-         455 posts found
+         456 posts found
       </p>
     </div>
   </div>

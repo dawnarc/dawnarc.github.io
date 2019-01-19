@@ -265,7 +265,7 @@ if (!doNotTrack) {
 
   <li class="sidebar-button">
     
-      <a class="sidebar-button-link " href="https://twitter.com/idealsland" target="_blank" rel="noopener">
+      <a class="sidebar-button-link " href="https://twitter.com/dawn_arc" target="_blank" rel="noopener">
     
       <i class="sidebar-button-icon fa fa-lg fa-twitter"></i>
       
@@ -303,6 +303,77 @@ if (!doNotTrack) {
         
           <section class="postShorten-group main-content-wrap">
             
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2017/09/ue4character-movement-and-networking%E7%9B%B8%E5%85%B3/">
+          [UE4]Character Movement and Networking相关
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2017-09-15T10:55:40&#43;08:00">
+        
+  September 15, 2017
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        keywords：UE4、Movement Replicate、Networking、Server、Client、Smooth
+引擎对于客户端服务端的位移同步，CharacterMovementComponent::SmoothCorrection()函数中有进行平滑处理。
+其他参考资料：
+What is the best way to smooth player movement for network hiccups? Interp? Ease? (no physics)
+https://answers.unrealengine.com/questions/479211/what-is-the-best-way-to-smooth-player-movement-for.html
+Authoritative Networked Character Movement
+https://wiki.unrealengine.com/Authoritative_Networked_Character_Movement
+Advanced Topic: Adding New Movement Abilities to Character Movement
+https://docs.unrealengine.com/latest/INT/Gameplay/Networking/CharacterMovementComponent/index.html#advancedtopic:addingnewmovementabilitiestocharactermovement
+Custom Character Movement Component
+https://wiki.unrealengine.com/Custom_Character_Movement_Component
+Dedicated Server 的 Movement 优化 如果仅仅为了性能，不希望服务端实时修正客户端坐标，以客户端发过来的坐标为准，可以开启以下选项：
+[/Script/Engine.GameNetworkManager] MAXPOSITIONERRORSQUARED=625 ClientAuthorativePosition=true  但是这么做会被外挂 hack
+参考自：How am I able to Replicate movement when using &ldquo;AddMovement Input&rdquo;, but not AddLocalTransform?
+https://answers.unrealengine.com/questions/26116/able-to-replicate-movement-when-using-addmovement.html
+运行时期间断开Actor的Replication 比如一个 Character 一开始是在服务端同步的，当他死亡时，之后相关表现希望不再同步，比如布娃娃系统（可破碎网格），如果继续保持同步，会增加服务端计算开销，且布娃娃此时只是客户端表现，并不会驱动服务端数据，所以希望在执行布娃娃破碎之前，断开该Character在客户端服务端之间的Replication。
+      
+      <p>
+        <a href="https://dawnarc.com/2017/09/ue4character-movement-and-networking%E7%9B%B8%E5%85%B3/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
             
               
   
@@ -1160,71 +1231,6 @@ https://www.cnblogs.com/ghl_carmack/p/5481763.html
 </article>
 
             
-              
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2017/06/ue4%E8%BD%AC%E8%BD%BDuengine-browse%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B/">
-          [UE4]转载：UEngine Browse()执行流程
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2017-06-01T13:00:40&#43;08:00">
-        
-  June 1, 2017
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        原文：http://blog.csdn.net/xiaozhi0999/article/details/51393704
-ue4中，客户端登陆流程如下，调用UEngine::Browse方法，在这个方法中，判断如果是客户端，则创建UPendingNetGame实例，代码如下：
-WorldContext.PendingNetGame = NewObject&lt;UPendingNetGame&gt;(); WorldContext.PendingNetGame-&gt;Initialize(URL); WorldContext.PendingNetGame-&gt;InitNetDriver();  而在InitNetDriver函数中，会向服务器发送 NMT_Hello 协议，我们转到NMT_Hello 的定义，如下：
-DEFINE_CONTROL_CHANNEL_MESSAGE_TWOPARAM(Hello, 0, uint8, uint32); // initial client connection message  参数1：大端还是小端
-参数2：客户端版本号
-客户端处理协议的地方是如下两个函数：
-void UPendingNetGame::NotifyControlMessage(UNetConnection* Connection, uint8 MessageType, class FInBunch&amp; Bunch) void UWorld::NotifyControlMessage(UNetConnection* Connection, uint8 MessageType, class FInBunch&amp; Bunch)  服务器处理协议的地方是下面这个函数：
-void UWorld::NotifyControlMessage(UNetConnection* Connection, uint8 MessageType, class FInBunch&amp; Bunch)  在服务器的协议处理函数，我们可以看到NMT_Hello协议的处理过程，先调用Receive接收消息，然后判断版本号是否一致，不一致发送NMT_Upgrade消息，一致则发送NMT_Challenge消息
-DEFINE_CONTROL_CHANNEL_MESSAGE_ONEPARAM(Challenge, 3, FString); // server sends client challenge string to verify integrity  客户端收到NMT_Challenge消息后，向服务器发送NMT_Login消息，NMT_Login消息携带三个参数，如下：
-DEFINE_CONTROL_CHANNEL_MESSAGE_THREEPARAM(Login, 5, FString, FString, FUniqueNetIdRepl); // client requests to be admitted to the game  参数1：客户端响应
-      
-      <p>
-        <a href="https://dawnarc.com/2017/06/ue4%E8%BD%AC%E8%BD%BDuengine-browse%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-            
             
   <div class="pagination-bar">
     <ul class="pagination">
@@ -1313,6 +1319,23 @@ DEFINE_CONTROL_CHANNEL_MESSAGE_THREEPARAM(Login, 5, FString, FString, FUniqueNet
           <div class="media">
             
             <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/01/ue4editor-related/">
+                <h3 class="media-heading">[UE4]Editor Related</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jan 1, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><h5 id="how-to-set-pivot-offset">How to set Pivot Offset</h5></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
               <a class="link-unstyled" href="https://dawnarc.com/2019/01/vfxtools-plugins-collections-for-art-making/">
                 <h3 class="media-heading">[VFX]Tools &amp; Plugins Collections for Art Making</h3>
               </a>
@@ -1321,11 +1344,7 @@ DEFINE_CONTROL_CHANNEL_MESSAGE_THREEPARAM(Login, 5, FString, FString, FUniqueNet
                   Jan 1, 2019
                 </span>
               </span>
-              <div class="media-content hide-xs font-merryweather">UE4 Tools and Plugins umeFX to UE4 Tutorial: Smoke/Grenade effect using flipbooks.
-https://www.youtube.com/watch?v=CKbgMxLiRJM
-Interactive Tree Creator
-https://www.unrealengine.com/marketplace/interactive-tree-creator
-英雄之所以是英雄，是他不知道有一个阴谋在他身后。——张锐锋《古战场》</div>
+              <div class="media-content hide-xs font-merryweather"><h5 id="maya-3dmax">Maya &amp; 3DMax</h5></div>
             </div>
             <div style="clear:both;"></div>
             <hr>
@@ -1342,9 +1361,7 @@ https://www.unrealengine.com/marketplace/interactive-tree-creator
                   Jan 1, 2019
                 </span>
               </span>
-              <div class="media-content hide-xs font-merryweather">ZWrap Plugin for ZBrush
-https://www.russian3dscanner.com/zwrap/
-做学问要在不疑处有疑，做人要在有疑处不疑。——胡适</div>
+              <div class="media-content hide-xs font-merryweather"><p>ZWrap Plugin for ZBrush</p></div>
             </div>
             <div style="clear:both;"></div>
             <hr>
@@ -1446,7 +1463,7 @@ https://www.russian3dscanner.com/zwrap/
                   Jan 1, 2019
                 </span>
               </span>
-              <div class="media-content hide-xs font-merryweather"><h5 id="blueprint-node">Blueprint Node</h5></div>
+              <div class="media-content hide-xs font-merryweather"><h5 id="blueprint">Blueprint</h5></div>
             </div>
             <div style="clear:both;"></div>
             <hr>
@@ -1469,23 +1486,6 @@ https://www.russian3dscanner.com/zwrap/
             <hr>
           </div>
         
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2018/12/windowsgetting-the-convenient-automatic-folder-navigation-tree-expansion-back/">
-                <h3 class="media-heading">[Windows]Getting the convenient automatic folder navigation tree expansion back</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Dec 12, 2018
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>In the folder toolbar, Click the View tab.</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
       </div>
     </div>
     <div class="modal-footer">
@@ -1493,7 +1493,7 @@ https://www.russian3dscanner.com/zwrap/
          data-message-zero="no post found"
          data-message-one="1 post found"
          data-message-other="{n} posts found">
-         455 posts found
+         456 posts found
       </p>
     </div>
   </div>
