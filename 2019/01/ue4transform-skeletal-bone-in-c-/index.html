@@ -8,18 +8,18 @@
 <meta name="generator" content="Hugo 0.53 with theme Tranquilpeak 0.4.3-SNAPSHOT">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="UE4, skeletal bone, Transform">
-<meta name="description" content="Blueprint">
+<meta name="description" content="Transform SkeletalMeshComponent&rsquo;s bone in Blueprint">
 
 
-<meta property="og:description" content="Blueprint">
+<meta property="og:description" content="Transform SkeletalMeshComponent&rsquo;s bone in Blueprint">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[UE4]Transform skeletal bone in C&#43;&#43;">
 <meta name="twitter:title" content="[UE4]Transform skeletal bone in C&#43;&#43;">
 <meta property="og:url" content="https://dawnarc.com/2019/01/ue4transform-skeletal-bone-in-c-/">
 <meta property="twitter:url" content="https://dawnarc.com/2019/01/ue4transform-skeletal-bone-in-c-/">
 <meta property="og:site_name" content="玄冬Wong">
-<meta property="og:description" content="Blueprint">
-<meta name="twitter:description" content="Blueprint">
+<meta property="og:description" content="Transform SkeletalMeshComponent&rsquo;s bone in Blueprint">
+<meta name="twitter:description" content="Transform SkeletalMeshComponent&rsquo;s bone in Blueprint">
 <meta property="og:locale" content="en-us">
 
   
@@ -350,11 +350,11 @@ if (!doNotTrack) {
           
           <div class="post-content markdown" itemprop="articleBody">
             <div class="main-content-wrap">
-              <h5 id="blueprint">Blueprint</h5>
+              <h5 id="transform-skeletalmeshcomponent-s-bone-in-blueprint">Transform SkeletalMeshComponent&rsquo;s bone in Blueprint</h5>
 
 <p>Blueprint Node</p>
 
-<pre><code>Transform Bone
+<pre><code>Transform (Modify) Bone
 </code></pre>
 
 <p>Example</p>
@@ -372,7 +372,7 @@ if (!doNotTrack) {
 </figure>
 </p>
 
-<h5 id="poseablemeshcomponent-of-c">PoseableMeshComponent of C++</h5>
+<h5 id="transform-poseablemeshcomponent-s-bone-in-c">Transform PoseableMeshComponent&rsquo;s bone in C++</h5>
 
 <p>Steps</p>
 
@@ -406,9 +406,210 @@ void SetBoneScaleByName(FName BoneName, FVector InScale3D, EBoneSpaces::Type Bon
 </code></pre></li>
 </ol>
 
-<h5 id="skeletalmeshcomponent-of-c">SkeletalMeshComponent of C++</h5>
+<h5 id="transform-skeletalmeshcomponent-s-bone-in-c">Transform SkeletalMeshComponent&rsquo;s bone in C++</h5>
 
-<p>Sorry, I didn&rsquo;t find a way to transform bones of SkeletalMesh using C++.</p>
+<p>Reference by Engine source:</p>
+
+<p>Engine\Source\Editor\AnimGraph\Classes\AnimGraphNode_ModifyBone.h<br />
+<div class="alert success ">
+  <p>This is the GraphNode <code>Transform (Modify) Bone</code> in this Animation Blueprint Editor. The property <code>FAnimNode_ModifyBone</code> is the definite native class for transforming bones.</p>
+</div></p>
+
+<pre><code>UCLASS(meta=(Keywords = &quot;Modify Transform&quot;))
+class ANIMGRAPH_API UAnimGraphNode_ModifyBone : public UAnimGraphNode_SkeletalControlBase
+{
+    GENERATED_UCLASS_BODY()
+
+    UPROPERTY(EditAnywhere, Category=Settings)
+    FAnimNode_ModifyBone Node;
+
+public:
+    // UEdGraphNode interface
+    virtual FText GetNodeTitle(ENodeTitleType::Type TitleType) const override;
+    virtual FText GetTooltipText() const override;
+    // End of UEdGraphNode interface
+
+protected:
+    // UAnimGraphNode_Base interface
+    virtual void ValidateAnimNodeDuringCompilation(USkeleton* ForSkeleton, FCompilerResultsLog&amp; MessageLog) override;
+    virtual FEditorModeID GetEditorMode() const override;
+    virtual void CopyNodeDataToPreviewNode(FAnimNode_Base* InPreviewNode) override;
+    virtual void CopyPinDefaultsToNodeData(UEdGraphPin* InPin) override;
+    // End of UAnimGraphNode_Base interface
+
+    // UAnimGraphNode_SkeletalControlBase interface
+    virtual FText GetControllerDescription() const override;
+    virtual const FAnimNode_SkeletalControlBase* GetNode() const override { return &amp;Node; }
+    // End of UAnimGraphNode_SkeletalControlBase interface
+
+private:
+    /** Constructing FText strings can be costly, so we cache the node's title */
+    FNodeTitleTextTable CachedNodeTitles;
+
+    // storing current widget mode 
+    int32 CurWidgetMode;
+};
+</code></pre>
+
+<p>Engine\Source\Runtime\AnimGraphRuntime\Public\BoneControllers\AnimNode_ModifyBone.h</p>
+
+<pre><code>UENUM()
+enum EBoneModificationMode
+{
+    /** The modifier ignores this channel (keeps the existing bone translation, rotation, or scale). */
+    BMM_Ignore UMETA(DisplayName = &quot;Ignore&quot;),
+
+    /** The modifier replaces the existing translation, rotation, or scale. */
+    BMM_Replace UMETA(DisplayName = &quot;Replace Existing&quot;),
+
+    /** The modifier adds to the existing translation, rotation, or scale. */
+    BMM_Additive UMETA(DisplayName = &quot;Add to Existing&quot;)
+};
+
+/**
+ *  Simple controller that replaces or adds to the translation/rotation of a single bone.
+ */
+USTRUCT(BlueprintInternalUseOnly)
+struct ANIMGRAPHRUNTIME_API FAnimNode_ModifyBone : public FAnimNode_SkeletalControlBase
+{
+    GENERATED_USTRUCT_BODY()
+
+    /** Name of bone to control. This is the main bone chain to modify from. **/
+    UPROPERTY(EditAnywhere, Category=SkeletalControl) 
+    FBoneReference BoneToModify;
+
+    /** New translation of bone to apply. */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Translation, meta=(PinShownByDefault))
+    FVector Translation;
+
+    /** New rotation of bone to apply. */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Rotation, meta=(PinShownByDefault))
+    FRotator Rotation;
+
+    /** New Scale of bone to apply. This is only worldspace. */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Scale, meta=(PinShownByDefault))
+    FVector Scale;
+
+    /** Whether and how to modify the translation of this bone. */
+    UPROPERTY(EditAnywhere, Category=Translation)
+    TEnumAsByte&lt;EBoneModificationMode&gt; TranslationMode;
+
+    /** Whether and how to modify the translation of this bone. */
+    UPROPERTY(EditAnywhere, Category=Rotation)
+    TEnumAsByte&lt;EBoneModificationMode&gt; RotationMode;
+
+    /** Whether and how to modify the translation of this bone. */
+    UPROPERTY(EditAnywhere, Category=Scale)
+    TEnumAsByte&lt;EBoneModificationMode&gt; ScaleMode;
+
+    /** Reference frame to apply Translation in. */
+    UPROPERTY(EditAnywhere, Category=Translation)
+    TEnumAsByte&lt;enum EBoneControlSpace&gt; TranslationSpace;
+
+    /** Reference frame to apply Rotation in. */
+    UPROPERTY(EditAnywhere, Category=Rotation)
+    TEnumAsByte&lt;enum EBoneControlSpace&gt; RotationSpace;
+
+    /** Reference frame to apply Scale in. */
+    UPROPERTY(EditAnywhere, Category=Scale)
+    TEnumAsByte&lt;enum EBoneControlSpace&gt; ScaleSpace;
+
+    FAnimNode_ModifyBone();
+
+    // FAnimNode_Base interface
+    virtual void GatherDebugData(FNodeDebugData&amp; DebugData) override;
+    // End of FAnimNode_Base interface
+
+    // FAnimNode_SkeletalControlBase interface
+    virtual void EvaluateSkeletalControl_AnyThread(FComponentSpacePoseContext&amp; Output, TArray&lt;FBoneTransform&gt;&amp; OutBoneTransforms) override;
+    virtual bool IsValidToEvaluate(const USkeleton* Skeleton, const FBoneContainer&amp; RequiredBones) override;
+    // End of FAnimNode_SkeletalControlBase interface
+
+private:
+    // FAnimNode_SkeletalControlBase interface
+    virtual void InitializeBoneReferences(const FBoneContainer&amp; RequiredBones) override;
+    // End of FAnimNode_SkeletalControlBase interface
+};
+</code></pre>
+
+<div class="alert success ">
+  <p><code>FAnimNode_ModifyBone</code> inherit from <code>FAnimNode_SkeletalControlBase</code> and implement father&rsquo;s function <code>EvaluateSkeletalControl_AnyThread</code> which execute transformation of bones</p>
+</div>
+
+<pre><code>void FAnimNode_ModifyBone::EvaluateSkeletalControl_AnyThread(FComponentSpacePoseContext&amp; Output, TArray&lt;FBoneTransform&gt;&amp; OutBoneTransforms)
+{
+    check(OutBoneTransforms.Num() == 0);
+
+    // the way we apply transform is same as FMatrix or FTransform
+    // we apply scale first, and rotation, and translation
+    // if you'd like to translate first, you'll need two nodes that first node does translate and second nodes to rotate.
+    const FBoneContainer&amp; BoneContainer = Output.Pose.GetPose().GetBoneContainer();
+
+    FCompactPoseBoneIndex CompactPoseBoneToModify = BoneToModify.GetCompactPoseIndex(BoneContainer);
+    FTransform NewBoneTM = Output.Pose.GetComponentSpaceTransform(CompactPoseBoneToModify);
+    FTransform ComponentTransform = Output.AnimInstanceProxy-&gt;GetComponentTransform();
+
+    if (ScaleMode != BMM_Ignore)
+    {
+        // Convert to Bone Space.
+        FAnimationRuntime::ConvertCSTransformToBoneSpace(ComponentTransform, Output.Pose, NewBoneTM, CompactPoseBoneToModify, ScaleSpace);
+
+        if (ScaleMode == BMM_Additive)
+        {
+            NewBoneTM.SetScale3D(NewBoneTM.GetScale3D() * Scale);
+        }
+        else
+        {
+            NewBoneTM.SetScale3D(Scale);
+        }
+
+        // Convert back to Component Space.
+        FAnimationRuntime::ConvertBoneSpaceTransformToCS(ComponentTransform, Output.Pose, NewBoneTM, CompactPoseBoneToModify, ScaleSpace);
+    }
+
+    if (RotationMode != BMM_Ignore)
+    {
+        // Convert to Bone Space.
+        FAnimationRuntime::ConvertCSTransformToBoneSpace(ComponentTransform, Output.Pose, NewBoneTM, CompactPoseBoneToModify, RotationSpace);
+
+        const FQuat BoneQuat(Rotation);
+        if (RotationMode == BMM_Additive)
+        {   
+            NewBoneTM.SetRotation(BoneQuat * NewBoneTM.GetRotation());
+        }
+        else
+        {
+            NewBoneTM.SetRotation(BoneQuat);
+        }
+
+        // Convert back to Component Space.
+        FAnimationRuntime::ConvertBoneSpaceTransformToCS(ComponentTransform, Output.Pose, NewBoneTM, CompactPoseBoneToModify, RotationSpace);
+    }
+
+    if (TranslationMode != BMM_Ignore)
+    {
+        // Convert to Bone Space.
+        FAnimationRuntime::ConvertCSTransformToBoneSpace(ComponentTransform, Output.Pose, NewBoneTM, CompactPoseBoneToModify, TranslationSpace);
+
+        if (TranslationMode == BMM_Additive)
+        {
+            NewBoneTM.AddToTranslation(Translation);
+        }
+        else
+        {
+            NewBoneTM.SetTranslation(Translation);
+        }
+
+        // Convert back to Component Space.
+        FAnimationRuntime::ConvertBoneSpaceTransformToCS(ComponentTransform, Output.Pose, NewBoneTM, CompactPoseBoneToModify, TranslationSpace);
+    }
+
+    OutBoneTransforms.Add( FBoneTransform(BoneToModify.GetCompactPoseIndex(BoneContainer), NewBoneTM) );
+}
+</code></pre>
+
+<p>Reference: Creating Custom Animation Nodes<br />
+<a href="https://www.unrealengine.com/en-US/blog/creating-custom-animation-nodes">https://www.unrealengine.com/en-US/blog/creating-custom-animation-nodes</a></p>
 
 <h5 id="reference">Reference</h5>
 
@@ -649,6 +850,40 @@ Mesh-&gt;MeshComponentUpdateFlag = EMeshComponentUpdateFlag::AlwaysTickPoseAndRe
           <div class="media">
             
             <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/01/ue4blog-articles-collections/">
+                <h3 class="media-heading">[UE4]Blog &amp; Articles Collections</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jan 1, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><h3 id="ue4-blog">UE4 Blog</h3></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/01/versioncontrolinstall-windows-service-for-svn/">
+                <h3 class="media-heading">[VersionControl]Install Windows Service for SVN</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jan 1, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>Keywords: SVN, Windows Services, CMD</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
               <a class="link-unstyled" href="https://dawnarc.com/2019/01/ue4editor-related/">
                 <h3 class="media-heading">[UE4]Editor Related</h3>
               </a>
@@ -782,40 +1017,6 @@ Mesh-&gt;MeshComponentUpdateFlag = EMeshComponentUpdateFlag::AlwaysTickPoseAndRe
             <hr>
           </div>
         
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/01/ue4transform-skeletal-bone-in-c-/">
-                <h3 class="media-heading">[UE4]Transform skeletal bone in C&#43;&#43;</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Jan 1, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><h5 id="blueprint">Blueprint</h5></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/01/c-address-source-line-from-crash-callstack-using-binary/">
-                <h3 class="media-heading">[C&#43;&#43;]Address source line from crash callstack using binary</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Jan 1, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>Get the crash callstack.</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
       </div>
     </div>
     <div class="modal-footer">
@@ -823,7 +1024,7 @@ Mesh-&gt;MeshComponentUpdateFlag = EMeshComponentUpdateFlag::AlwaysTickPoseAndRe
          data-message-zero="no post found"
          data-message-one="1 post found"
          data-message-other="{n} posts found">
-         456 posts found
+         459 posts found
       </p>
     </div>
   </div>
