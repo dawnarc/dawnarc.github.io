@@ -468,6 +468,38 @@ if (!doNotTrack) {
 <p>参考：<br />
 <a href="https://answers.unrealengine.com/questions/707241/object-shadows-disappearing-too-early.html?sort=oldest">https://answers.unrealengine.com/questions/707241/object-shadows-disappearing-too-early.html?sort=oldest</a></p>
 
+<h3 id="sky-light-s-api-in-common">Sky Light&rsquo;s API in common</h3>
+
+<pre><code>/** Sets the cubemap used when SourceType is set to SpecifiedCubemap, and causes a skylight update on the next tick. */
+UFUNCTION(BlueprintCallable, Category=&quot;SkyLight&quot;)
+void SetCubemap(UTextureCube* NewCubemap);
+
+/** 
+ * Creates sky lighting from a blend between two cubemaps, which is only valid when SourceType is set to SpecifiedCubemap. 
+ * This can be used to seamlessly transition sky lighting between different times of day.
+ * The caller should continue to update the blend until BlendFraction is 0 or 1 to reduce rendering cost.
+ * The caller is responsible for avoiding pops due to changing the source or destination.
+ */
+UFUNCTION(BlueprintCallable, Category=&quot;SkyLight&quot;)
+void SetCubemapBlend(UTextureCube* SourceCubemap, UTextureCube* DestinationCubemap, float InBlendFraction);
+
+/** Indicates that the capture needs to recapture the scene, adds it to the recapture queue. */
+void SetCaptureIsDirty();
+void SetBlendDestinationCaptureIsDirty();
+void SanitizeCubemapSize();
+
+/** Whether sky occlusion is supported by current feature level */
+bool IsOcclusionSupported() const;
+
+/** 
+ * Recaptures the scene for the skylight. 
+ * This is useful for making sure the sky light is up to date after changing something in the world that it would capture.
+ * Warning: this is very costly and will definitely cause a hitch.
+ */
+UFUNCTION(BlueprintCallable, Category=&quot;Rendering|Components|SkyLight&quot;)
+void RecaptureSky();
+</code></pre>
+
 <h5 id="reference">Reference</h5>
 
 <p>Lighting Passes<br />
@@ -674,8 +706,59 @@ if (!doNotTrack) {
           <div class="media">
             
             <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/01/ue4rendering-related/">
-                <h3 class="media-heading">[UE4]Rendering Related</h3>
+              <a class="link-unstyled" href="https://dawnarc.com/2019/01/mayacamera-related/">
+                <h3 class="media-heading">[Maya]Camera Related</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jan 1, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><h5 id="how-display-an-extreme-large-too-huge-object">How display an extreme large (too huge) object</h5></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/01/ue4material-editor-related/">
+                <h3 class="media-heading">[UE4]Material Editor Related</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jan 1, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>Material Editor UI</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/01/ue4material-formulas-and-functions-notes/">
+                <h3 class="media-heading">[UE4]Material Formulas and Functions Notes</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jan 1, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>keywords: Material, Formula, Function, Expression</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/01/ue4renderer-related/">
+                <h3 class="media-heading">[UE4]Renderer Related</h3>
               </a>
               <span class="media-meta">
                 <span class="media-date text-small">
@@ -790,57 +873,6 @@ if (!doNotTrack) {
             <hr>
           </div>
         
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/01/zbrushplugins-collections/">
-                <h3 class="media-heading">[ZBrush]Plugins Collections</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Jan 1, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>ZWrap Plugin for ZBrush</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/01/ue4ies-light-profile-collections/">
-                <h3 class="media-heading">[UE4]IES Light Profile Collections</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Jan 1, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>IES Light Profile</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/01/ue4vfx-collections/">
-                <h3 class="media-heading">[UE4]VFX Collections</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Jan 1, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>VFX Series Pack 1</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
       </div>
     </div>
     <div class="modal-footer">
@@ -848,7 +880,7 @@ if (!doNotTrack) {
          data-message-zero="no post found"
          data-message-one="1 post found"
          data-message-other="{n} posts found">
-         462 posts found
+         465 posts found
       </p>
     </div>
   </div>

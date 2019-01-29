@@ -321,6 +321,139 @@ if (!doNotTrack) {
     
     <div class="postShorten-header">
       <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2018/04/ue4%E5%85%B3%E5%8D%A1%E8%93%9D%E5%9B%BE%E7%BB%A7%E6%89%BFc-creating-a-c-level-blueprint/">
+          [UE4]关卡蓝图继承C&#43;&#43;(Creating a C&#43;&#43; Level Blueprint)
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2018-04-04T18:47:02&#43;08:00">
+        
+  April 4, 2018
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        1，新建一个C++ Actor，继承LevelScriptActor。
+2，打开关卡蓝图，点击Class Settings，修改Parent Class。
+  3，然后关卡蓝图中就可以调用自定义LevelScriptActor Class中的UFUNCTION(BlueprintCallable)函数
+参考：http://orfeasel.com/creating-a-c-level-blueprint/
+获取 Actor 所在的 Level if (ULevel* Level = MyActor-&gt;GetLevel()) { if (AMyLevelScriptActor* LevelActor = Cast&lt;AMyLevelScriptActor&gt;(Level-&gt;GetLevelScriptActor())) { } }  天之道利而无害，人之道为而不争。 ----《道德经》
+      
+      <p>
+        <a href="https://dawnarc.com/2018/04/ue4%E5%85%B3%E5%8D%A1%E8%93%9D%E5%9B%BE%E7%BB%A7%E6%89%BFc-creating-a-c-level-blueprint/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2018/04/ue4indirect-lighting-cache%E9%97%B4%E6%8E%A5%E5%85%89%E7%85%A7%E7%BC%93%E5%AD%98/">
+          [UE4]Indirect Lighting Cache(间接光照缓存)
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2018-04-02T14:55:02&#43;08:00">
+        
+  April 2, 2018
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        原文：https://home.gamer.com.tw/creationDetail.php?sn=3315244
+某台湾网站上看到的文章，比起youtube上讲Indirect Lighting的视频要直观易懂。
+Indirect Lighting Cache(间接光照缓存) 官方文档
+http://api.unrealengine.com/INT/Engine/Rendering/LightingAndShadows/IndirectLightingCache/index.html
+Indirect Lighting Cache是类似于Unity的LightProbe，间接光照就是当光线直射到一个物体上后，光线反弹后所得到的颜色，反弹后的光线还会再去影响到周边的物体，如同白色的桌面上摆着红色的物体，物体周围会有些微的红色。
+而Indirect Lighting Cache还有一种功能就是提供动态物件能获得间接光的资讯，例如像是当角色靠近一面红色墙壁时，会有些微的红光反映在角色身上。
+在UE4里面建构光照后会自动产生Indirect Lighting Cache，可以从编辑画面的Show &gt; Visualize &gt; volume light sample显示当前Indirect Lighting Cache的情形。
+  显示间接光照缓存
+  没有间接光照缓存的情况，角色不会受到静态灯光的颜色影响
+  有间接光照缓存时，角色即会受到静态灯光影响
+可以从上图看到场景中那些小正方形就是间接光照缓存的颜色，周围的物件会受到靠近的间接光照颜色影响。
+Lightmass Importance Volume(重要光照范围) 官方文档
+http://api.unrealengine.com/INT/Engine/Rendering/LightingAndShadows/Lightmass/Basics/index.html
+在建构光照贴图时，若场景中没有给予Lightmass Importance Volume，会对整个场景做间接光照的采样，产生Indirect Lighting Cache，这对大型游戏场景是相当的浪费，像是游戏角色到不了的中、远景不需要产生Indirect Lighting Cache，这时候就可以在场景中置入Lightmass Importance Volume，指定特定区域内才会产生Indirect Lighting Cache，节省不少建构光照的时间。
+  Modes视窗中的Volumes页签找到Lightmass Importance Volume
+  拖曳至场景后，调整Scale直到包覆特定区域即可
+  建构光照后会在Lightmass Importance Volume区域内看到产生的间接光照缓存
+Lightmass Character Indirect Detail Volumes(角色细节间接光范围 ) 在上述的Lightmass Importance Volume所建构出来的间接光会发现大多都只有在模型上才有，无法再浮空的地方产生间接光缓存 (像是靠近天花板的地方)，主要原因是Lightmass Importance Volume是提供使用者快速建构重要范围，没有办法处理到细节的部份，因此在这种情况下会产生这种问题:
+      
+      <p>
+        <a href="https://dawnarc.com/2018/04/ue4indirect-lighting-cache%E9%97%B4%E6%8E%A5%E5%85%89%E7%85%A7%E7%BC%93%E5%AD%98/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
         <a class="link-unstyled" href="https://dawnarc.com/2018/04/ue4umg-widget%E4%BD%9C%E4%B8%BA%E5%8F%98%E9%87%8F%E8%AE%BF%E9%97%AE/">
           [UE4]UMG Widget作为变量访问
         </a>
@@ -1112,130 +1245,6 @@ https://home.gamer.com.tw/creationDetail.php?sn=3315244
 </article>
 
             
-              
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2018/03/ue4%E5%88%A0%E9%99%A4%E6%97%A7%E7%9A%84mobileprovision%E6%96%87%E4%BB%B6clean-ios-mobileprovision-history/">
-          [UE4]删除旧的mobileprovision文件(clean ios mobileprovision history)
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2018-03-08T18:24:02&#43;08:00">
-        
-  March 8, 2018
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        清除mobileprovision [Windows]
- C:\Users\&lt;you&gt;\AppData\Local\Apple Computer\MobileDevice\Provisioning Profiles  [Mac]
-~/Library/MobileDevice/Provisioning Profiles /Library/MobileDevice/Provisioning Profiles  参考：Remove obsolete mobileprovision profiles (iOS)
-https://answers.unrealengine.com/questions/223227/remove-obsolete-mobileprovision-profiles-ios.html
-清除Certificate [Windows]
-运行（Win +R ） -》输入certmgr.msc，回车 -》 个人 -》 证书 -》删除和Mac相关的证书  当你凝视深渊时，深渊也在凝视着你。----尼采《善恶的彼岸》
-      
-      <p>
-        <a href="https://dawnarc.com/2018/03/ue4%E5%88%A0%E9%99%A4%E6%97%A7%E7%9A%84mobileprovision%E6%96%87%E4%BB%B6clean-ios-mobileprovision-history/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-            
-              
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2018/03/ue4%E8%BD%AC%E8%BD%BD%E5%9C%A8windows-pc%E4%B8%8A%E4%BD%BF%E7%94%A8remote-build%E6%89%93%E5%8C%85ios-app/">
-          [UE4]转载：在Windows PC上使用Remote Build打包iOS App
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2018-03-08T18:19:02&#43;08:00">
-        
-  March 8, 2018
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        How to setup Remote Build ?
-https://answers.unrealengine.com/questions/450714/how-to-setup-remote-build.html
-[UE4]在Windows PC上打包纯蓝图工程 https://www.jianshu.com/p/7c62ec452ce1
-[UE4]在Windows PC上使用Remote Build打包iOS App（C++或蓝图）
-https://www.jianshu.com/p/8770044771e3
-Building iOS game in Unreal Engine 4 via remote machine
-http://zompi.pl/building-ios-game-in-unreal-engine-4-via-remote-machine/
-如果一切看起来尽在掌控之中，那说明你跑得不够快；如果你身高会中冷箭，说明你走在他们面前；如果你会被他们伤到，说明你走得不够远，还在他们的射程以内。不要停下来解释，只需要继续前进，把他们远远甩在后面。
-      
-      <p>
-        <a href="https://dawnarc.com/2018/03/ue4%E8%BD%AC%E8%BD%BD%E5%9C%A8windows-pc%E4%B8%8A%E4%BD%BF%E7%94%A8remote-build%E6%89%93%E5%8C%85ios-app/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-            
             
   <div class="pagination-bar">
     <ul class="pagination">
@@ -1324,8 +1333,59 @@ http://zompi.pl/building-ios-game-in-unreal-engine-4-via-remote-machine/
           <div class="media">
             
             <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/01/ue4rendering-related/">
-                <h3 class="media-heading">[UE4]Rendering Related</h3>
+              <a class="link-unstyled" href="https://dawnarc.com/2019/01/mayacamera-related/">
+                <h3 class="media-heading">[Maya]Camera Related</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jan 1, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><h5 id="how-display-an-extreme-large-too-huge-object">How display an extreme large (too huge) object</h5></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/01/ue4material-editor-related/">
+                <h3 class="media-heading">[UE4]Material Editor Related</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jan 1, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>Material Editor UI</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/01/ue4material-formulas-and-functions-notes/">
+                <h3 class="media-heading">[UE4]Material Formulas and Functions Notes</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jan 1, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>keywords: Material, Formula, Function, Expression</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/01/ue4renderer-related/">
+                <h3 class="media-heading">[UE4]Renderer Related</h3>
               </a>
               <span class="media-meta">
                 <span class="media-date text-small">
@@ -1440,57 +1500,6 @@ http://zompi.pl/building-ios-game-in-unreal-engine-4-via-remote-machine/
             <hr>
           </div>
         
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/01/zbrushplugins-collections/">
-                <h3 class="media-heading">[ZBrush]Plugins Collections</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Jan 1, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>ZWrap Plugin for ZBrush</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/01/ue4ies-light-profile-collections/">
-                <h3 class="media-heading">[UE4]IES Light Profile Collections</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Jan 1, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>IES Light Profile</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/01/ue4vfx-collections/">
-                <h3 class="media-heading">[UE4]VFX Collections</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Jan 1, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>VFX Series Pack 1</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
       </div>
     </div>
     <div class="modal-footer">
@@ -1498,7 +1507,7 @@ http://zompi.pl/building-ios-game-in-unreal-engine-4-via-remote-machine/
          data-message-zero="no post found"
          data-message-one="1 post found"
          data-message-other="{n} posts found">
-         462 posts found
+         465 posts found
       </p>
     </div>
   </div>

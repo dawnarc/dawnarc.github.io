@@ -9,6 +9,7 @@
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="UE4性能优化, UE4, Performance, Optimization">
 <meta name="description" content="keywords：UE4性能优化、Performance Optimization
+内容都是处理项目问题的相关笔记，留给自己做备忘录，也分享出来让别人少走弯路。
 零散记录  GPUProfile来统计性能消耗的时候，在editor模式下不是很准，因为编辑器的消耗也算进去了，如果要用，最好以Game模式来查看。
  UE4不支持640X480的分辨率，如果在这个分辨率下运行程序，会导致程序崩溃（4.4版本，不知最新版本是否仍有此问题）。
  如果角色身上有很多Component需要Attach，尽量在使用时Attach，不要一加载就全部attach，否则当场景中角色很多时，会有严重性能问题。
@@ -26,6 +27,7 @@ Min Screen Radius for Cascaded Shadow Maps
 
 
 <meta property="og:description" content="keywords：UE4性能优化、Performance Optimization
+内容都是处理项目问题的相关笔记，留给自己做备忘录，也分享出来让别人少走弯路。
 零散记录  GPUProfile来统计性能消耗的时候，在editor模式下不是很准，因为编辑器的消耗也算进去了，如果要用，最好以Game模式来查看。
  UE4不支持640X480的分辨率，如果在这个分辨率下运行程序，会导致程序崩溃（4.4版本，不知最新版本是否仍有此问题）。
  如果角色身上有很多Component需要Attach，尽量在使用时Attach，不要一加载就全部attach，否则当场景中角色很多时，会有严重性能问题。
@@ -47,6 +49,7 @@ Min Screen Radius for Cascaded Shadow Maps
 <meta property="twitter:url" content="https://dawnarc.com/2016/12/ue4%E4%BC%98%E5%8C%96%E5%BB%BA%E8%AE%AE%E4%B8%8E%E7%BB%8F%E9%AA%8C/">
 <meta property="og:site_name" content="玄冬Wong">
 <meta property="og:description" content="keywords：UE4性能优化、Performance Optimization
+内容都是处理项目问题的相关笔记，留给自己做备忘录，也分享出来让别人少走弯路。
 零散记录  GPUProfile来统计性能消耗的时候，在editor模式下不是很准，因为编辑器的消耗也算进去了，如果要用，最好以Game模式来查看。
  UE4不支持640X480的分辨率，如果在这个分辨率下运行程序，会导致程序崩溃（4.4版本，不知最新版本是否仍有此问题）。
  如果角色身上有很多Component需要Attach，尽量在使用时Attach，不要一加载就全部attach，否则当场景中角色很多时，会有严重性能问题。
@@ -62,6 +65,7 @@ Min Screen Radius for Early Z Pass
 Min Screen Radius for Cascaded Shadow Maps
   灯光优化  3种光源的性能消耗从低到高：">
 <meta name="twitter:description" content="keywords：UE4性能优化、Performance Optimization
+内容都是处理项目问题的相关笔记，留给自己做备忘录，也分享出来让别人少走弯路。
 零散记录  GPUProfile来统计性能消耗的时候，在editor模式下不是很准，因为编辑器的消耗也算进去了，如果要用，最好以Game模式来查看。
  UE4不支持640X480的分辨率，如果在这个分辨率下运行程序，会导致程序崩溃（4.4版本，不知最新版本是否仍有此问题）。
  如果角色身上有很多Component需要Attach，尽量在使用时Attach，不要一加载就全部attach，否则当场景中角色很多时，会有严重性能问题。
@@ -411,6 +415,8 @@ if (!doNotTrack) {
 
 <p>keywords：UE4性能优化、Performance Optimization</p>
 
+<p>内容都是处理项目问题的相关笔记，留给自己做备忘录，也分享出来让别人少走弯路。</p>
+
 <h5 id="零散记录">零散记录</h5>
 
 <ol>
@@ -447,18 +453,23 @@ Min Screen Radius for Cascaded Shadow Maps</p></li>
 <li><p>点光源和聚光灯尽量不要开启<code>Cast Volumetric Shadow</code>。开启后的性能消耗为不开启的性能消耗三倍。</p></li>
 
 <li><p>如果开启体积雾，建议将灯光改成静态光，这样在Build Lighting时会生成预计算的体积雾相关数据，这样可以显著提升体积雾性能。体积雾性能消耗巨大。</p></li>
+
+<li><p>如果场景没有静态光 Static Light（全是动态光 Movable Light 或者固定光 Stationary Light），则要禁用 Static Lighting，以节省 Static Lighting 相关的开销（比如 LightMaps和ShadowMaps的相关计算）。禁用方式：Project Settings -&gt; Engine -&gt; Rendering -&gt; Lighting -&gt; disable <code>Allow Static Lighting</code>。<div class="alert success ">
+  <p>当全动态灯光为性能瓶颈时，禁用Static Lighting可以提升10帧以上。测试用例：我的某个游戏场景，Lighting是瓶颈之一，<code>r.ScreenPercentage</code> 修改为400进行压力测试，关闭 Static Lighting 后帧率提升了20帧。因为没有静态光，禁用后光影效果亦无任何损失。</p>
+</div></p></li>
 </ol>
 
 <h5 id="阴影优化">阴影优化</h5>
 
 <ol>
-<li>如果使用了Stationary Directional Light，场景中有大量单位时，一定要开启<code>Dynamic Shadow Distance StationaryLight</code>（默认为0，表示关闭）。<br />
-测试用例： 500 个 Actor 同屏，摄像机高度4000，DirectionalLight 的属性<code>Dynamic Shadow Distance StationaryLight</code>的值要大于摄像机到Actor的直线距离（注意：是到每个Actor的直线距离，所以值尽量要设置的大一些，比5000），否则帧率从200 fps 下降到 100 fps。<br />
-<code>Dynamic Shadow Distance StationaryLight</code>开启后能提升性能的原因：<br />
-Dynamic Shadow Distance StationaryLight 表示在多少距离内使用动态阴影，超过这个距离之外Fade成静态阴影，而Fade成静态阴影后就可以提升性能。<br /></li>
+<li>如果使用了非静态的Directional Light（Stationary 或者 Movable），场景中有大量单位时，一定要开启<code>Dynamic Shadow Distance</code>（默认为0，表示关闭）。<br />
+测试用例： 500 个 Actor 同屏，摄像机高度4000，Stationary类型的 Directional Light 的属性<code>Dynamic Shadow Distance StationaryLight</code>的值要大于摄像机到Actor的直线距离（注意：是到每个Actor的直线距离，所以值尽量要设置的大一些，比5000），否则帧率从200 fps 下降到 100 fps。<br />
+<code>Dynamic Shadow Distance</code>开启后能提升性能的原因：<br />
+Dynamic Shadow Distance 表示在多少距离内使用动态阴影，超过这个距离之外Fade成静态阴影，而Fade成静态阴影后就可以提升性能。<br /></li>
 
 <li><p>逻辑控制Cast Shadow<br />
-虽然灯光提供了属性<code>DistanceField Shadow Distance</code>来控制阴影根据摄像机距离投射，但是这种做法是一刀切。比如：假设性能瓶颈是大量怪物的阴影投射，远处山体和建筑的树木的阴影投射对性能影响很小，此时使用<code>DistanceField Shadow Distance</code>就会导致场景的表现效果大打折扣。推荐做法是，程序逻辑上控制：如果是怪物对象，只对离摄像机一定距离内的怪物开启阴影。</p>
+虽然灯光提供了属性<code>DistanceField Shadow Distance</code>来控制阴影根据摄像机距离投射，但是这种做法是一刀切。比如：假设性能瓶颈是大量怪物的阴影投射，远处山体和建筑的树木的阴影投射对性能影响很小，此时使用<code>DistanceField Shadow Distance</code>就会导致场景的表现效果大打折扣。推荐做法是，程序逻辑上控制：如果是怪物对象，只对离摄像机一定距离内的怪物开启阴影。<br />
+物体投射阴影的开关：</p>
 
 <pre><code>void UPrimitiveComponent::SetCastShadow(bool NewCastShadow)
 </code></pre></li>
@@ -794,8 +805,59 @@ Project Settings -&gt; Engine -&gt; Animation -&gt; 勾选 Strip Animation Data 
           <div class="media">
             
             <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/01/ue4rendering-related/">
-                <h3 class="media-heading">[UE4]Rendering Related</h3>
+              <a class="link-unstyled" href="https://dawnarc.com/2019/01/mayacamera-related/">
+                <h3 class="media-heading">[Maya]Camera Related</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jan 1, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><h5 id="how-display-an-extreme-large-too-huge-object">How display an extreme large (too huge) object</h5></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/01/ue4material-editor-related/">
+                <h3 class="media-heading">[UE4]Material Editor Related</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jan 1, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>Material Editor UI</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/01/ue4material-formulas-and-functions-notes/">
+                <h3 class="media-heading">[UE4]Material Formulas and Functions Notes</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jan 1, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>keywords: Material, Formula, Function, Expression</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/01/ue4renderer-related/">
+                <h3 class="media-heading">[UE4]Renderer Related</h3>
               </a>
               <span class="media-meta">
                 <span class="media-date text-small">
@@ -910,57 +972,6 @@ Project Settings -&gt; Engine -&gt; Animation -&gt; 勾选 Strip Animation Data 
             <hr>
           </div>
         
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/01/zbrushplugins-collections/">
-                <h3 class="media-heading">[ZBrush]Plugins Collections</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Jan 1, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>ZWrap Plugin for ZBrush</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/01/ue4ies-light-profile-collections/">
-                <h3 class="media-heading">[UE4]IES Light Profile Collections</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Jan 1, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>IES Light Profile</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/01/ue4vfx-collections/">
-                <h3 class="media-heading">[UE4]VFX Collections</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Jan 1, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>VFX Series Pack 1</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
       </div>
     </div>
     <div class="modal-footer">
@@ -968,7 +979,7 @@ Project Settings -&gt; Engine -&gt; Animation -&gt; 勾选 Strip Animation Data 
          data-message-zero="no post found"
          data-message-one="1 post found"
          data-message-other="{n} posts found">
-         462 posts found
+         465 posts found
       </p>
     </div>
   </div>

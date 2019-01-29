@@ -318,6 +318,186 @@ if (!doNotTrack) {
     
     <div class="postShorten-header">
       <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2016/10/android-ndkandroid.mk-missing-separator.stop/">
+          [Android NDK]Android.mk missing separator.Stop
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2016-10-15T15:30:40&#43;08:00">
+        
+  October 15, 2016
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/android">Android</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+         android NDK编译代码时，命令行提示错误：
+jni/Android.mk:21: *** missing separator. Stop.
+原因有以下几点： 1，$符号之前必须有一个空格，不能跟前面的字符连在一起。如果$是该行的第一个字符，前面可以不用空格。 例子（正常）：
+LOCAL_PATH := $(call my-dir) include $(CLEAR_VARS)  错误写法：
+LOCAL_PATH :=$(call my-dir) include$(CLEAR_VARS)  2，每行结尾处不能有空格。 例子（正常）：
+COMPILER_SRC_FILES := \  错误写法：
+COMPILER_SRC_FILES := \  
+      
+      <p>
+        <a href="https://dawnarc.com/2016/10/android-ndkandroid.mk-missing-separator.stop/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2016/10/android-ndkstl-linking-issues-bug/">
+          [Android NDK]STL linking issues (bug)
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2016-10-15T02:24:40&#43;08:00">
+        
+  October 15, 2016
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/android">Android</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        NDK 1.2之后的版本已修复此bug，1.2及1.2之前的版本存在这个问题。但1.2之后的版本不再支持GCC。
+原文： http://boguscoder.blogspot.jp/2013/08/android-ndk-stl-linking-issues-bug.html
+ld.exe: libmoduleA.a(moduleA.o): in function std::priv::_String_base&gt;::_M_allocate_block(unsigned int):/sources/cxx-stl/stlport/stlport/stl/_alloc.h:158: error: undefined reference to &lsquo;std::_node_alloc::_M_allocate(unsigned int&amp;)&rsquo; ld.exe: libmoduleA.a(moduleA.o): in function std::priv::_String_base&gt;::_M_allocate_block(unsigned int):/sources/cxx-stl/stlport/stlport/stl/_string.c:600: error: undefined reference to &lsquo;std:stl_throw_length_error(char const*)&rsquo; ld.exe: libmoduleA.a(moduleA.o): in function functionA():/sources/cxx-stl/stlport/stlport/stl/_alloc.h:161: error: undefined reference to &lsquo;std::node_alloc::_M_deallocate(void*, unsigned int)&lsquo;collect2: ld returned 1 exit status
+Android.mk中添加库libstlport_static.a：
+LOCAL_LDLIBS := -lmoduleA \ &lt;NDK_PATH&gt;/libstlport_static.a  如果是UE4工程编译Android，到android-ndk-r10e\sources\cxx-stl\stlport\libs\armeabi\下拷贝一个libstlport_static.a到你工程的库文件目录下即可。
+      
+      <p>
+        <a href="https://dawnarc.com/2016/10/android-ndkstl-linking-issues-bug/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2016/10/android-ndk-link-static-library-to-your-jni-library/">
+          [Android NDK] Link static library to your JNI library
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2016-10-15T01:09:40&#43;08:00">
+        
+  October 15, 2016
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/android">Android</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        http://blog.marcingil.com/android-ndk-link-static-library-to-your-jni-library/
+When you&rsquo;re developing an application that needs to use a custom, native precompiled library (the .a file) together with your gluing JNI interface maybe you&rsquo;re wondering how to link it. It&rsquo;s fairly simple and you can even make it target architecture aware (separate precompiled libraries for arm, arm-v7a, x86). In your module (I&rsquo;m using Android Studio) you should have a jnidirectory, like this:
+project / + module + src + main + jni # JNI source files here and other native sources here | Android.
+      
+      <p>
+        <a href="https://dawnarc.com/2016/10/android-ndk-link-static-library-to-your-jni-library/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
         <a class="link-unstyled" href="https://dawnarc.com/2016/10/android-ndkfatal-error-backward_warning.h-file-not-found/">
           [Android NDK]fatal error &#39;backward_warning.h&#39; file not found
         </a>
@@ -1014,178 +1194,6 @@ bUseFixedFrameRate=True
 </article>
 
           
-            
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2016/10/ue4%E7%94%A8drawdebugline%E7%BB%98%E5%88%B6%E7%9F%A9%E5%BD%A2/">
-          [UE4]用DrawDebugLine绘制矩形
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2016-10-08T01:02:40&#43;08:00">
-        
-  October 8, 2016
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        自己实现的用DrawDebugLine绘制矩形的函数：
-/* Draw rectangle use line @CenterLoc, location of rectangle center @Rot, rotation of rectangle @Angle, angle of diagonal @DiagonalHalve, half of diagonal lenght. */ void DrawDebugTrangle(const FVector&amp; CenterLoc, const FRotator&amp; Rot, float Angle, float DiagonalHalve) { FVector Point1 = CenterLoc + (Rot + FRotator(0.f, Angle, 0.f)).Vector() * DiagonalHalve; FVector Point2 = CenterLoc + (Rot + FRotator(0.f, 90.f + (90.f - Angle), 0.f)).Vector() * DiagonalHalve; FVector Point3 = CenterLoc + (Rot + FRotator(0.
-      
-      <p>
-        <a href="https://dawnarc.com/2016/10/ue4%E7%94%A8drawdebugline%E7%BB%98%E5%88%B6%E7%9F%A9%E5%BD%A2/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-          
-            
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2016/10/ue4drawdebugline%E7%9A%84%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9/">
-          [UE4]DrawDebugLine的注意事项
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2016-10-07T01:05:40&#43;08:00">
-        
-  October 7, 2016
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        有时候调用DrawDebugLine划线，在场景中看不见：
-DrawDebugLine(GameMode-&gt;GetWorld(), StartLocation, EndLocation, FColor::Red);  代码上没有任何问题，如果还是看不见，则可能是天光太强，导致线条没有渲染出来。
-解决办法： 按F2关掉天光，或者按F1开启mesh透视模式
-      
-      <p>
-        <a href="https://dawnarc.com/2016/10/ue4drawdebugline%E7%9A%84%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-          
-            
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2016/10/ue4%E7%B2%92%E5%AD%90%E7%B3%BB%E7%BB%9F%E5%A6%82%E4%BD%95%E8%AE%BE%E7%BD%AE%E7%B2%92%E5%AD%90%E5%9C%A8%E5%9C%BA%E6%99%AF%E4%B8%AD%E7%9A%84rotation/">
-          [UE4][粒子系统]如何设置粒子在场景中的Rotation
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2016-10-06T18:48:40&#43;08:00">
-        
-  October 6, 2016
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        如果想在游戏场景中控制粒子特效的Rotation，需要勾选发射器Required组件中的Use Local Space选项，否则无论设置rotation值多少，其旋转角度始终是默认的初始值。 （查看大图，请复制图片链接在新窗口中打开）
-  
-      
-      <p>
-        <a href="https://dawnarc.com/2016/10/ue4%E7%B2%92%E5%AD%90%E7%B3%BB%E7%BB%9F%E5%A6%82%E4%BD%95%E8%AE%BE%E7%BD%AE%E7%B2%92%E5%AD%90%E5%9C%A8%E5%9C%BA%E6%99%AF%E4%B8%AD%E7%9A%84rotation/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-          
           
   <div class="pagination-bar">
     <ul class="pagination">
@@ -1273,8 +1281,59 @@ DrawDebugLine(GameMode-&gt;GetWorld(), StartLocation, EndLocation, FColor::Red);
           <div class="media">
             
             <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/01/ue4rendering-related/">
-                <h3 class="media-heading">[UE4]Rendering Related</h3>
+              <a class="link-unstyled" href="https://dawnarc.com/2019/01/mayacamera-related/">
+                <h3 class="media-heading">[Maya]Camera Related</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jan 1, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><h5 id="how-display-an-extreme-large-too-huge-object">How display an extreme large (too huge) object</h5></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/01/ue4material-editor-related/">
+                <h3 class="media-heading">[UE4]Material Editor Related</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jan 1, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>Material Editor UI</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/01/ue4material-formulas-and-functions-notes/">
+                <h3 class="media-heading">[UE4]Material Formulas and Functions Notes</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jan 1, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>keywords: Material, Formula, Function, Expression</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/01/ue4renderer-related/">
+                <h3 class="media-heading">[UE4]Renderer Related</h3>
               </a>
               <span class="media-meta">
                 <span class="media-date text-small">
@@ -1389,57 +1448,6 @@ DrawDebugLine(GameMode-&gt;GetWorld(), StartLocation, EndLocation, FColor::Red);
             <hr>
           </div>
         
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/01/zbrushplugins-collections/">
-                <h3 class="media-heading">[ZBrush]Plugins Collections</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Jan 1, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>ZWrap Plugin for ZBrush</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/01/ue4ies-light-profile-collections/">
-                <h3 class="media-heading">[UE4]IES Light Profile Collections</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Jan 1, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>IES Light Profile</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/01/ue4vfx-collections/">
-                <h3 class="media-heading">[UE4]VFX Collections</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Jan 1, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>VFX Series Pack 1</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
       </div>
     </div>
     <div class="modal-footer">
@@ -1447,7 +1455,7 @@ DrawDebugLine(GameMode-&gt;GetWorld(), StartLocation, EndLocation, FColor::Red);
          data-message-zero="no post found"
          data-message-one="1 post found"
          data-message-other="{n} posts found">
-         462 posts found
+         465 posts found
       </p>
     </div>
   </div>
