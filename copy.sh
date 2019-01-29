@@ -1,0 +1,1 @@
+mv -f myblog/public/* .
