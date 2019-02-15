@@ -1,1 +1,1 @@
-mv -f myblog/public/* .
+mv -f ../myblog/public/* .

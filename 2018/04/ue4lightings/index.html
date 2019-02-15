@@ -453,9 +453,11 @@ if (!doNotTrack) {
 <p>Lights view distance<br />
 <a href="https://forums.unrealengine.com/unreal-engine/feedback-for-epic/54065-lights-view-distance">https://forums.unrealengine.com/unreal-engine/feedback-for-epic/54065-lights-view-distance</a></p>
 
-<h5 id="移动端的灯光问题">移动端的灯光问题</h5>
+<h5 id="lighting-related-on-mobile">Lighting Related on Mobile</h5>
 
-<p>1，移动端不支持Movable的Spotlight，Spotlight在移动端只支持Static和Stationary；但是Movable的Pointlight在移动端也支持。</p>
+<p>1，<code>Static</code> and <code>Stationary</code> Spotlight support on Mobile, but <code>Movable</code> Spotlight not support on Mobile before v4.22;</p>
+
+<p>2, <code>Movable</code> Pointlight support on Mobile always;</p>
 
 <h5 id="物体与摄像机距离超过一定范围时-阴影自动消失的问题">物体与摄像机距离超过一定范围时，阴影自动消失的问题</h5>
 
@@ -468,7 +470,129 @@ if (!doNotTrack) {
 <p>参考：<br />
 <a href="https://answers.unrealengine.com/questions/707241/object-shadows-disappearing-too-early.html?sort=oldest">https://answers.unrealengine.com/questions/707241/object-shadows-disappearing-too-early.html?sort=oldest</a></p>
 
-<h3 id="sky-light-s-api-in-common">Sky Light&rsquo;s API in common</h3>
+<h3 id="lightcomponentbase-the-basic-of-lightcomponent">LightComponentBase (the basic of LightComponent)</h3>
+
+<h5 id="lightcomponentbase-s-api-in-common">LightComponentBase&rsquo;s API in common</h5>
+
+<p>Properties:</p>
+
+<pre><code>/** 
+ * Total energy that the light emits.  
+ */
+UPROPERTY(BlueprintReadOnly, interp, Category=Light, meta=(DisplayName = &quot;Intensity&quot;, UIMin = &quot;0.0&quot;, UIMax = &quot;20.0&quot;))
+float Intensity;
+
+/** 
+ * Filter color of the light.
+ * Note that this can change the light's effective intensity.
+ */
+UPROPERTY(BlueprintReadOnly, interp, Category=Light, meta=(HideAlphaChannel))
+FColor LightColor;
+
+/** 
+ * Whether the light can affect the world, or whether it is disabled.
+ * A disabled light will not contribute to the scene in any way.  This setting cannot be changed at runtime and unbuilds lighting when changed.
+ * Setting this to false has the same effect as deleting the light, so it is useful for non-destructive experiments.
+ */
+UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Light)
+uint32 bAffectsWorld:1;
+
+/**
+ * Whether the light should cast any shadows.
+ **/
+UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Light)
+uint32 CastShadows:1;
+
+/**
+ * Whether the light should cast shadows from static objects.  Also requires Cast Shadows to be set to True.
+ */
+UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Light, AdvancedDisplay)
+uint32 CastStaticShadows:1;
+
+/**
+ * Whether the light should cast shadows from dynamic objects.  Also requires Cast Shadows to be set to True.
+ **/
+UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Light, AdvancedDisplay)
+uint32 CastDynamicShadows:1;
+
+/** Whether the light affects translucency or not.  Disabling this can save GPU time when there are many small lights. */
+UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Light, AdvancedDisplay)
+uint32 bAffectTranslucentLighting:1;
+
+/** Whether light from this light transmits through surfaces with subsurface scattering profiles. Requires light to be movable. */
+UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Light, AdvancedDisplay)
+uint32 bTransmission : 1;
+
+/** Whether the light shadows volumetric fog.  Disabling this can save GPU time. */
+UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Light, AdvancedDisplay)
+uint32 bCastVolumetricShadow : 1;
+
+/** 
+ * Scales the indirect lighting contribution from this light. 
+ * A value of 0 disables any GI from this light. Default is 1.
+ */
+UPROPERTY(BlueprintReadOnly, interp, Category=Light, meta=(UIMin = &quot;0.0&quot;, UIMax = &quot;6.0&quot;))
+float IndirectLightingIntensity;
+
+/** Intensity of the volumetric scattering from this light.  This scales Intensity and LightColor. */
+UPROPERTY(BlueprintReadOnly, interp, Category=Light, meta=(UIMin = &quot;0.25&quot;, UIMax = &quot;4.0&quot;))
+float VolumetricScatteringIntensity;
+</code></pre>
+
+<h3 id="lightcomponent-the-basic-component-of-various-light">LightComponent (the basic component of various Light)</h3>
+
+<p>Engine\Source\Runtime\Engine\Classes\Components\LightComponent.h</p>
+
+<h5 id="lightcomponent-s-api-in-common">LightComponent&rsquo;s API in common</h5>
+
+<p>Properties:</p>
+
+<pre><code>/** 
+ * Whether to render light shaft bloom from this light. 
+ * For directional lights, the color around the light direction will be blurred radially and added back to the scene.
+ * for point lights, the color on pixels closer than the light's SourceRadius will be blurred radially and added back to the scene.
+ */
+UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=LightShafts, meta=(DisplayName = &quot;Light Shaft Bloom&quot;))
+uint32 bEnableLightShaftBloom:1;
+
+/** Scales the additive color. */
+UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=LightShafts, meta=(UIMin = &quot;0&quot;, UIMax = &quot;10&quot;))
+float BloomScale;
+
+/** Scene color must be larger than this to create bloom in the light shafts. */
+UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=LightShafts, meta=(UIMin = &quot;0&quot;, UIMax = &quot;4&quot;))
+float BloomThreshold;
+
+/** Multiplies against scene color to create the bloom color. */
+UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=LightShafts)
+FColor BloomTint;
+</code></pre>
+
+<h3 id="sky-light">Sky Light</h3>
+
+<p>Engine\Source\Runtime\Engine\Classes\Components\SkyLightComponent.h</p>
+
+<h5 id="sky-light-s-api-in-common">Sky Light&rsquo;s API in common</h5>
+
+<p>Properties:</p>
+
+<pre><code>/** Whether the light shadows volumetric fog.  Disabling this can save GPU time. */
+UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Light, AdvancedDisplay)
+uint32 bCastVolumetricShadow : 1;
+
+/** 
+ * Scales the indirect lighting contribution from this light. 
+ * A value of 0 disables any GI from this light. Default is 1.
+ */
+UPROPERTY(BlueprintReadOnly, interp, Category=Light, meta=(UIMin = &quot;0.0&quot;, UIMax = &quot;6.0&quot;))
+float IndirectLightingIntensity;
+
+/** Intensity of the volumetric scattering from this light.  This scales Intensity and LightColor. */
+UPROPERTY(BlueprintReadOnly, interp, Category=Light, meta=(UIMin = &quot;0.25&quot;, UIMax = &quot;4.0&quot;))
+float VolumetricScatteringIntensity;
+</code></pre>
+
+<p>Functions:</p>
 
 <pre><code>/** Sets the cubemap used when SourceType is set to SpecifiedCubemap, and causes a skylight update on the next tick. */
 UFUNCTION(BlueprintCallable, Category=&quot;SkyLight&quot;)
@@ -498,6 +622,29 @@ bool IsOcclusionSupported() const;
  */
 UFUNCTION(BlueprintCallable, Category=&quot;Rendering|Components|SkyLight&quot;)
 void RecaptureSky();
+</code></pre>
+
+<h3 id="exponential-height-fog">Exponential Height Fog</h3>
+
+<p>Engine\Source\Runtime\Engine\Classes\Components\ExponentialHeightFogComponent.h</p>
+
+<h5 id="exponential-height-fog-s-api-in-common">Exponential Height Fog&rsquo;s API in common</h5>
+
+<p>Properties:</p>
+
+<pre><code>/** Global density factor. */
+UPROPERTY(BlueprintReadOnly, interp, Category=ExponentialHeightFogComponent, meta=(UIMin = &quot;0&quot;, UIMax = &quot;.05&quot;))
+float FogDensity;
+
+UPROPERTY(BlueprintReadOnly, interp, Category=ExponentialHeightFogComponent)
+FLinearColor FogInscatteringColor;
+
+/** 
+ * Controls the color of the directional inscattering, which is used to approximate inscattering from a directional light. 
+ * Note: there must be a directional light with bUsedAsAtmosphereSunLight enabled for DirectionalInscattering to be used.
+ */
+UPROPERTY(BlueprintReadOnly, interp, Category=DirectionalInscattering)
+FLinearColor DirectionalInscatteringColor;
 </code></pre>
 
 <h5 id="reference">Reference</h5>
@@ -706,6 +853,74 @@ void RecaptureSky();
           <div class="media">
             
             <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/02/ue4release-version-features-notes/">
+                <h3 class="media-heading">[UE4]Release Version Features Notes</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Feb 2, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><h5 id="4-21">4.21</h5></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/02/artassets-collections/">
+                <h3 class="media-heading">[Art]Assets Collections</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Feb 2, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><h5 id="scene-painting">Scene Painting</h5></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/02/ue4animation-assets-collections/">
+                <h3 class="media-heading">[UE4]Animation Assets Collections</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Feb 2, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>.</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/02/visualstudionew-code-analysis-checks-in-visual-studio-2019-use-after-move-and-coroutine/">
+                <h3 class="media-heading">[VisualStudio]New Code Analysis Checks in Visual Studio 2019 - use-after-move and coroutine</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Feb 2, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>New Code Analysis Checks in Visual Studio 2019: use-after-move and coroutine</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
               <a class="link-unstyled" href="https://dawnarc.com/2019/01/mayacamera-related/">
                 <h3 class="media-heading">[Maya]Camera Related</h3>
               </a>
@@ -714,7 +929,7 @@ void RecaptureSky();
                   Jan 1, 2019
                 </span>
               </span>
-              <div class="media-content hide-xs font-merryweather"><h5 id="how-display-an-extreme-large-too-huge-object">How display an extreme large (too huge) object</h5></div>
+              <div class="media-content hide-xs font-merryweather"><h5 id="how-to-display-an-extreme-large-too-huge-object">How to display an extreme large (too huge) object</h5></div>
             </div>
             <div style="clear:both;"></div>
             <hr>
@@ -805,74 +1020,6 @@ void RecaptureSky();
             <hr>
           </div>
         
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/01/ue4blog-articles-collections/">
-                <h3 class="media-heading">[UE4]Blog &amp; Articles Collections</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Jan 1, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><h3 id="ue4-blog">UE4 Blog</h3></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/01/versioncontrolinstall-windows-service-for-svn/">
-                <h3 class="media-heading">[VersionControl]Install Windows Service for SVN</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Jan 1, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>Keywords: SVN, Windows Services, CMD</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/01/ue4editor-related/">
-                <h3 class="media-heading">[UE4]Editor Related</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Jan 1, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><h5 id="how-to-set-pivot-offset">How to set Pivot Offset</h5></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/01/vfxtools-plugins-collections-for-art-making/">
-                <h3 class="media-heading">[VFX]Tools &amp; Plugins Collections for Art Making</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Jan 1, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><h5 id="maya-3dmax">Maya &amp; 3DMax</h5></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
       </div>
     </div>
     <div class="modal-footer">
@@ -880,7 +1027,7 @@ void RecaptureSky();
          data-message-zero="no post found"
          data-message-one="1 post found"
          data-message-other="{n} posts found">
-         465 posts found
+         469 posts found
       </p>
     </div>
   </div>

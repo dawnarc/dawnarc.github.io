@@ -321,6 +321,190 @@ if (!doNotTrack) {
     
     <div class="postShorten-header">
       <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2018/04/ue4loadobject%E5%8A%A0%E8%BD%BDuanimblueprint%E5%A4%B1%E8%B4%A5/">
+          [UE4]LoadObject加载UAnimBlueprint失败
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2018-04-14T22:10:02&#43;08:00">
+        
+  April 14, 2018
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        keywords：UE4、Dynamic Load、Animation Blueprint、LoadObject、动画蓝图
+问题现象 假如用以下方式加载动画蓝图：
+FString AnimBPStringTest = &quot;AnimBlueprint'/Game/ThirdPerson/Animations/ThirdPerson_AnimBP.ThirdPerson_AnimBP'&quot;; UAnimBlueprint* AnimationBP = LoadObject&lt;UAnimBlueprint&gt;(NULL, *AnimBPStringTest);  在PIE和Standalone模式下都可加载成功，但是一旦打包运行（打包配置中添加了该资源cook）就会加载失败，并提示如下错误：
+LogUObjectGlobals:Warning: Failed to find object 'AnimBlueprint /Game/ThirdPerson/Animations/ThirdPerson_AnimBP.ThirdPerson_AnimBP'  解决办法 貌似动画蓝图比较特殊，用LoadObject无法加载，如果要获取动画蓝图Class，可以通过如下方式加载：
+// get the blueprint class reference from the editor FString AnimClassStringTest = &quot;Class'/Game/mixamo/Heidi/IcloneAnimBP.IcloneAnimBP_C'&quot;; // load the class UClass* AnimationClass = LoadObject&lt;UClass&gt;(NULL, *AnimClassStringTest); if (!AnimationClass) return; // assign the anim blueprint class to your skeletal mesh component Skeletal3DMeshComponent-&gt;SetAnimInstanceClass(AnimationClass);  参考：Why can&rsquo;t i dynamically load an animation BP in a packaged game
+      
+      <p>
+        <a href="https://dawnarc.com/2018/04/ue4loadobject%E5%8A%A0%E8%BD%BDuanimblueprint%E5%A4%B1%E8%B4%A5/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2018/04/ue4%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0%E4%B8%96%E7%95%8C%E5%9D%90%E6%A0%87%E8%BD%AC%E5%B1%80%E9%83%A8%E5%9D%90%E6%A0%87world-space-to-local-space/">
+          [UE4][线性代数]世界坐标转局部坐标(World Space to Local Space)
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2018-04-13T15:59:02&#43;08:00">
+        
+  April 13, 2018
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        keywords：UE4、InverseTransformVector、InverseTransformPosition
+实例代码：
+//返回摄像机Rotation相对角色Rotation的偏移量Offset FRotator ASBaseCharacter::GetAimOffsets() const { const FVector AimDirWS = GetBaseAimRotation().Vector(); const FVector AimDirLS = ActorToWorld().InverseTransformVectorNoScale(AimDirWS); const FRotator AimRotLS = AimDirLS.Rotation(); return AimRotLS; }  https://github.com/tomlooman/EpicSurvivalGameSeries/blob/4a6ee9a6081529fadbe0f693b2e4e6729d5ec08d/SurvivalGame/Source/SurvivalGame/Private/Player/SBaseCharacter.cpp#L374
+如果只是想获取两个Rotation之间的Offset，更简单的办法：
+FRotator R1; FRotator R2; FRotator Offset = R2 - R1;  但这种直接相减的方式，返回的结果Rotation，度数可能会小于-180 或 大于 180，需要手动处理范围限定，但是效率远高于 InverseTransformVector。
+无欲则刚，关心则乱。----《论语》
+      
+      <p>
+        <a href="https://dawnarc.com/2018/04/ue4%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0%E4%B8%96%E7%95%8C%E5%9D%90%E6%A0%87%E8%BD%AC%E5%B1%80%E9%83%A8%E5%9D%90%E6%A0%87world-space-to-local-space/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2018/04/ue4animation-blend%E5%8A%A8%E7%94%BB%E8%9E%8D%E5%90%88/">
+          [UE4]Animation Blend(动画融合)
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2018-04-13T11:23:02&#43;08:00">
+        
+  April 13, 2018
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        keywords：UE4、Animation Blend Nodes、动画融合实例
+各个Blend节点的解释：Blend Nodes
+https://docs.unrealengine.com/en-us/Engine/Animation/NodeReference/Blend
+动画融合实例可以参考：
+EpicSurvivalGameSeries\SurvivalGame\Content\AnimStarterPack\Player_AnimBP  该蓝图中实现逻辑：角色握枪动作跟随摄像机方向动态融合。
+项目地址：https://github.com/tomlooman/EpicSurvivalGameSeries
+      Blend Option AlphaBlend.h
+UENUM() enum class EAlphaBlendOption : uint8 { // Linear interpolation Linear = 0, // Cubic-in interpolation Cubic, // Hermite-Cubic HermiteCubic, // Sinusoidal interpolation Sinusoidal, // Quadratic in-out interpolation QuadraticInOut, // Cubic in-out interpolation CubicInOut, // Quartic in-out interpolation QuarticInOut, // Quintic in-out interpolation QuinticInOut, // Circular-in interpolation CircularIn, // Circular-out interpolation CircularOut, // Circular in-out interpolation CircularInOut, // Exponential-in interpolation ExpIn, // Exponential-Out interpolation ExpOut, // Exponential in-out interpolation ExpInOut, // Custom interpolation, will use custom curve inside an FAlphaBlend or linear if none has been set Custom, };  说明
+      
+      <p>
+        <a href="https://dawnarc.com/2018/04/ue4animation-blend%E5%8A%A8%E7%94%BB%E8%9E%8D%E5%90%88/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
         <a class="link-unstyled" href="https://dawnarc.com/2018/04/ue4%E5%85%B3%E5%8D%A1%E8%93%9D%E5%9B%BE%E7%BB%A7%E6%89%BFc-creating-a-c-level-blueprint/">
           [UE4]关卡蓝图继承C&#43;&#43;(Creating a C&#43;&#43; Level Blueprint)
         </a>
@@ -1051,195 +1235,6 @@ http://www.cnblogs.com/ghl_carmack/p/8580617.html
 </article>
 
             
-              
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2018/03/ue4%E7%A7%BB%E5%8A%A8%E7%AB%AF%E6%9D%90%E8%B4%A8%E4%B8%8E%E8%B4%B4%E5%9B%BE%E9%97%AE%E9%A2%98/">
-          [UE4]移动端材质与贴图问题
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2018-03-16T13:10:02&#43;08:00">
-        
-  March 16, 2018
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        Keywords：android、mobile、material、building、low quality
-Rendering参数 现在版本的UE4编译android版本时，默认使用的是最高特效，如果想是为了低配设备编译，可以在Project Settings –》 Engine –》 Rendering -》Mobile中，去掉HDR和Shadowing   OpenGL和Vulkan版本选择 以Android版本为例：
-Project Settings -》 Platforms -》 Android -》 Build -》 Support OpenGL ES3.1。默认只使用OpenGL ES2。
-iOS版本材质丢失或马赛克的问题(Material Mosaic) 问题现象：
-在Mac上以ios渲染模式运行，材质丢失，打包到真机上运行，材质变成马赛克。
-解决办法：
-打开材质蓝图，勾选Use Full Precision。   参考自：
-https://answers.unrealengine.com/questions/211323/layered-landscape-material-on-mobile.html
-移动端无法run-time修改Instanced Static Mesh的问题 解决办法：
-InstancedStaticMeshComponent::UseDynamicInstanceBuffer 设置为true，默认为false。
-相关文档 Scalability Reference https://docs.unrealengine.com/latest/INT/Engine/Performance/Scalability/ScalabilityReference/
-Performance Guidelines for Mobile Devices
-https://docs.unrealengine.com/latest/INT/Platforms/Mobile/Performance/
-Materials for Mobile Platforms https://docs.unrealengine.com/latest/INT/Platforms/Mobile/Materials/
-只有诗人同圣徒才能相信，在沥青路上辛勤浇水会培养出百合花来。 ----毛姆
-      
-      <p>
-        <a href="https://dawnarc.com/2018/03/ue4%E7%A7%BB%E5%8A%A8%E7%AB%AF%E6%9D%90%E8%B4%A8%E4%B8%8E%E8%B4%B4%E5%9B%BE%E9%97%AE%E9%A2%98/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-            
-              
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2018/03/ue4xcode-build-project-failed-build.sh-failed-with-exit-code-5/">
-          [UE4]Xcode Build Project Failed - Build.sh failed with exit code 5
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2018-03-12T22:08:02&#43;08:00">
-        
-  March 12, 2018
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        生成Xcode project file之后，打开Xcode并编译运行（Cmd + R ），提示以下错误:
-Command /Users/Shared/EpicGames/UE_4.18/Engine/Build/BatchFiles/Mac/Build.sh failed with exit code 5  解决办法：
-打开Launcher -》 Library -》 点击对应引擎版本下拉框 -》 Verify。然后继续编译Xcode工程（不用清理，如果清理重编，可能还会出现exit code 5的错误）
-感觉是UE4的bug，出现这种问题的环境是：
-Mac OSX 10.13.3，Xcode 9.3，UE4.18 / 4.19
-出现这个问题的原因，是因为我的UE4工程引用的第三方库没有对应的Mac版本（x86_64），所以每次一清理就出现exit code 5的错误，将工程所引用的所有第三方库都编译出对应的Mac版本，即可彻底解决此问题。xcode之前没用过，不知道其他C++工程对于缺少链接库的编译错误，是否都报exit code 5错误。
-你锋芒太露，这是你的弱点，你像把无鞘刀，锋利，但好刀应在刀鞘里。---- 黑泽明《穿心剑》
-      
-      <p>
-        <a href="https://dawnarc.com/2018/03/ue4xcode-build-project-failed-build.sh-failed-with-exit-code-5/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-            
-              
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2018/03/ue4mac-generate-xcode-project-files-command/">
-          [UE4]Mac Generate Xcode Project Files Command
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2018-03-12T21:44:02&#43;08:00">
-        
-  March 12, 2018
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        command:
-cd &quot;/Users/Shared/Epic Games/UE_4.19/Engine/Build/BatchFiles/Mac&quot; sh &quot;/Users/Shared/Epic Games/UE_4.19/Engine/Build/BatchFiles/Mac/GenerateProjectFiles.sh&quot; -project=&quot;/Path/To/Project/TestProj/TestProj.uproject&quot; -game  纵然万劫不复，纵然相思入骨，我也待你眉眼如初，岁月如故。----《没有因为没有所以》
-      
-      <p>
-        <a href="https://dawnarc.com/2018/03/ue4mac-generate-xcode-project-files-command/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-            
             
   <div class="pagination-bar">
     <ul class="pagination">
@@ -1328,6 +1323,74 @@ cd &quot;/Users/Shared/Epic Games/UE_4.19/Engine/Build/BatchFiles/Mac&quot; sh &
           <div class="media">
             
             <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/02/ue4release-version-features-notes/">
+                <h3 class="media-heading">[UE4]Release Version Features Notes</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Feb 2, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><h5 id="4-21">4.21</h5></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/02/artassets-collections/">
+                <h3 class="media-heading">[Art]Assets Collections</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Feb 2, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><h5 id="scene-painting">Scene Painting</h5></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/02/ue4animation-assets-collections/">
+                <h3 class="media-heading">[UE4]Animation Assets Collections</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Feb 2, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>.</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/02/visualstudionew-code-analysis-checks-in-visual-studio-2019-use-after-move-and-coroutine/">
+                <h3 class="media-heading">[VisualStudio]New Code Analysis Checks in Visual Studio 2019 - use-after-move and coroutine</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Feb 2, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>New Code Analysis Checks in Visual Studio 2019: use-after-move and coroutine</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
               <a class="link-unstyled" href="https://dawnarc.com/2019/01/mayacamera-related/">
                 <h3 class="media-heading">[Maya]Camera Related</h3>
               </a>
@@ -1336,7 +1399,7 @@ cd &quot;/Users/Shared/Epic Games/UE_4.19/Engine/Build/BatchFiles/Mac&quot; sh &
                   Jan 1, 2019
                 </span>
               </span>
-              <div class="media-content hide-xs font-merryweather"><h5 id="how-display-an-extreme-large-too-huge-object">How display an extreme large (too huge) object</h5></div>
+              <div class="media-content hide-xs font-merryweather"><h5 id="how-to-display-an-extreme-large-too-huge-object">How to display an extreme large (too huge) object</h5></div>
             </div>
             <div style="clear:both;"></div>
             <hr>
@@ -1427,74 +1490,6 @@ cd &quot;/Users/Shared/Epic Games/UE_4.19/Engine/Build/BatchFiles/Mac&quot; sh &
             <hr>
           </div>
         
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/01/ue4blog-articles-collections/">
-                <h3 class="media-heading">[UE4]Blog &amp; Articles Collections</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Jan 1, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><h3 id="ue4-blog">UE4 Blog</h3></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/01/versioncontrolinstall-windows-service-for-svn/">
-                <h3 class="media-heading">[VersionControl]Install Windows Service for SVN</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Jan 1, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>Keywords: SVN, Windows Services, CMD</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/01/ue4editor-related/">
-                <h3 class="media-heading">[UE4]Editor Related</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Jan 1, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><h5 id="how-to-set-pivot-offset">How to set Pivot Offset</h5></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/01/vfxtools-plugins-collections-for-art-making/">
-                <h3 class="media-heading">[VFX]Tools &amp; Plugins Collections for Art Making</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Jan 1, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><h5 id="maya-3dmax">Maya &amp; 3DMax</h5></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
       </div>
     </div>
     <div class="modal-footer">
@@ -1502,7 +1497,7 @@ cd &quot;/Users/Shared/Epic Games/UE_4.19/Engine/Build/BatchFiles/Mac&quot; sh &
          data-message-zero="no post found"
          data-message-one="1 post found"
          data-message-other="{n} posts found">
-         465 posts found
+         469 posts found
       </p>
     </div>
   </div>
