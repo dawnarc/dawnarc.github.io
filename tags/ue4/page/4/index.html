@@ -321,6 +321,194 @@ if (!doNotTrack) {
     
     <div class="postShorten-header">
       <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2018/08/ue4actor-lifecycle/">
+          [UE4]Actor Lifecycle
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2018-08-20T12:33:02&#43;08:00">
+        
+  August 20, 2018
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        EndPlay、BeginDestroy、Destroy 的调用时机  如果要获取 Actor 销毁时的准确时间点，建议重写 Destroy() 函数，而不是EndPlay()、BeginDestroy()。 官方文档上说 EndPlay 会在执行Destroy的时候触发，但实际上并不会（至少4.20版本中测试过不会），而是当 Actor 所在场景销毁时（比如退出编辑器）才会调用。 BeginDestroy()、IsReadyForFinishDestroy()、FinishDestroy() 是在执行垃圾回收时才会触发的函数，而不是对象被 Destroy 后立即执行的函数。  Difference between BeginPlay and StartPlay of GameModeBase  BeginPlay() inherit in Actor, and StartPlay() inherit in GameModeBase. GameModeBase::BeginPlay() triggered before GameModeBase::StartPlay().  官方文档
+https://docs.unrealengine.com/en-us/Programming/UnrealArchitecture/Actors/ActorLifecycle
+乐观主义是一种别致的自我欺骗。
+      
+      <p>
+        <a href="https://dawnarc.com/2018/08/ue4actor-lifecycle/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2018/07/ue4%E7%89%A9%E7%90%86%E5%92%8C%E5%88%9A%E4%BD%93%E7%9B%B8%E5%85%B3%E7%9A%84%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9simulate-physics-and-rigidbody/">
+          [UE4]物理和刚体相关的注意事项(Simulate Physics and RigidBody)
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2018-07-23T00:27:02&#43;08:00">
+        
+  July 23, 2018
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        UProjectileMovementComponent相关 官方第一人称射击模版项目中，是在构造函数中就设置好了速度：
+ProjectileMovement = CreateDefaultSubobject&lt;UProjectileMovementComponent&gt;(TEXT(&quot;ProjectileComp&quot;)); ProjectileMovement-&gt;UpdatedComponent = CollisionComp; ProjectileMovement-&gt;InitialSpeed = 3000.f; ProjectileMovement-&gt;MaxSpeed = 3000.f; ProjectileMovement-&gt;bRotationFollowsVelocity = true; ProjectileMovement-&gt;bShouldBounce = true;  两个问题：
+ 如何停止移动； 如何在运行时期间修改速度；  问题1解决方法：
+默认情况下，Actor spawn之后，就会受到 ProjectileMovement 影响立即移动，如何在 Spawn 之后马上停止移动：
+ProjectileMovement-&gt;Deactivate();  问题2解决方法：
+如何在 Spawn 之后修改 Speed，两种方式：
+UProjectileMovementComponent-&gt;SetVelocityInLocalSpace(FVector NewVelocity);  或者
+UProjectileMovementComponent-&gt;Velocity = NewVelocity;  前者速度方向是相对于 UProjectileMovementComponent本地坐标系 的相对Rotation，后者速度方向是相对于世界坐标系的绝对Rotation。 注意：当使用 UProjectileMovementComponent 后，UPrimitiveComponent::SetSimulatePhysics() 启用物理会与 ProjectileMovement 冲突。如果要使用物理，那么只能去掉 UProjectileMovementComponent ，使用 Add Impulse 来代替。
+ 参考：
+Simulate Physics and Projectile Movement Component
+      
+      <p>
+        <a href="https://dawnarc.com/2018/07/ue4%E7%89%A9%E7%90%86%E5%92%8C%E5%88%9A%E4%BD%93%E7%9B%B8%E5%85%B3%E7%9A%84%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9simulate-physics-and-rigidbody/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2018/07/ue4-tsharedptr-%E4%B8%8E-tweakobjectptr-%E5%8C%BA%E5%88%AB/">
+          [UE4] TSharedPtr 与 TWeakObjectPtr 区别
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2018-07-04T16:44:02&#43;08:00">
+        
+  July 4, 2018
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        UE4 的 TSharedPtr、TWeakObjectPtr 模仿自 C++11 的 shared_ptr 、 weak_ptr 。
+TSharedPtr TSharedPtr 相当于对象的引用计数器。每当对 TSharedPtr 赋值一次，该 TSharedPtr 引用对象计数加一，当引用计数为0时，则该对象被自动销毁。TSharedPtr 可以防止 raw pointer 对象被垃圾回收，。
+用法：
+ TSharedPtr&lt;TestClass&gt; ObjPtr = MakeShareable(new TestClass());  如果两个 TSharedPtr 相互赋值，则会导致对象永不释放，导致内存泄漏。
+ Uobject 不能使用 TSharedPtr 进行引用计数，非UObject才可以；如果一个非UObject的类想加入GC，那么必须继承FGCObject类。
+ TWeakObjectPtr TWeakObjectPtr 保持的对象不能防止被垃圾回收。若引用的对象在其他地方被销毁，则 TWeakObjectPtr 内部的指针自动将被置为NULL，TWeakObjectPtr::IsValid()会返回false。TSharedPtr 则没有这个作用。
+Usage Assignment
+TWeakObjectPtr&lt;AActor&gt; MyWeakActor; MyWeakActor = MyActor;  Get value
+AActor* Actor = MyWeakActor.Get();  or
+if(MyWeakActor.Get()) { ACharacter* Character = Cast&lt;ACharacter&gt;(MyWeakActor); }  if MyActor has been destroyed, MyWeakActor.
+      
+      <p>
+        <a href="https://dawnarc.com/2018/07/ue4-tsharedptr-%E4%B8%8E-tweakobjectptr-%E5%8C%BA%E5%88%AB/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
         <a class="link-unstyled" href="https://dawnarc.com/2018/07/ue4error-c3668-utexturecubeupdateresourcew/">
           [UE4]error C3668: &#39;UTextureCube::UpdateResourceW&#39;
         </a>
@@ -1086,180 +1274,6 @@ Cascaded Shadow Maps related Enable Dynamic Shadow Distance Test Case: 500 Actor
 </article>
 
             
-              
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2018/04/ue4android-ndk%E6%89%93%E5%8C%85%E7%89%88%E6%9C%AC%E6%89%A7%E8%A1%8Cprotobuf%E7%9A%84parsefromarray%E5%87%BD%E6%95%B0%E5%B4%A9%E6%BA%83/">
-          [UE4]Android NDK打包版本执行protobuf的ParseFromArray函数崩溃
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2018-04-21T22:01:02&#43;08:00">
-        
-  April 21, 2018
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        keywords：UE4、protobuf-lite、Android NDK、ParseFromArray、Crash
-protobuf与android ndk编译后，集成到UE4中执行时，每当执行ParseFromArray时就会崩溃（Windows版本没有问题）：
-MessageTest msg; bool rs = msg.ParseFromArray(buffer, buffer_size);  解决办法：将ParseFromArray()函数内部的代码复制出来，放在工程的代码中，然后再执行。
-protobuf 2.x #ifndef __ProtobufHelper_H__ #define __ProtobufHelper_H__ #include &lt;google/protobuf/message_lite.h&gt; #include &lt;google/protobuf/io/coded_stream.h&gt; class ProtobufHelper { public: static bool Parse(::google::protobuf::MessageLite&amp; Message, const char* Data, int Size) { ::google::protobuf::io::CodedInputStream input(reinterpret_cast&lt;const uint8*&gt;(Data), Size); return Message.MergePartialFromCodedStream(&amp;input) &amp;&amp; input.ConsumedEntireMessage(); } }; #endif  protobuf 3.x #ifndef __ProtobufHelper_H__ #define __ProtobufHelper_H__ #include &lt;google/protobuf/message_lite.h&gt; #include &lt;google/protobuf/io/coded_stream.h&gt; #include &quot;CoreMinimal.h&quot; class ProtobufHelper { public: static bool Parse(::google::protobuf::MessageLite&amp; Message, const void* Data, int Size) { ::google::protobuf::io::CodedInputStream input(static_cast&lt;const uint8*&gt;(Data), Size); Message.
-      
-      <p>
-        <a href="https://dawnarc.com/2018/04/ue4android-ndk%E6%89%93%E5%8C%85%E7%89%88%E6%9C%AC%E6%89%A7%E8%A1%8Cprotobuf%E7%9A%84parsefromarray%E5%87%BD%E6%95%B0%E5%B4%A9%E6%BA%83/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-            
-              
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2018/04/ue4umg-progress-bar%E7%9B%B8%E5%85%B3%E8%AE%BE%E7%BD%AE/">
-          [UE4]UMG Progress Bar相关设置
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2018-04-17T17:32:02&#43;08:00">
-        
-  April 17, 2018
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        keywords：进度条、process bar
-先拖一个Progress Bar控件   再设置Style -》 Style -》 Background Image     再设置Percent的大小，来预览进度条颜色填充效果     也可以自定义填充颜色：Fill Color and Opacity     也可以去掉颜色，改成图片填充     注意，如果使用图片作为填充色，则Fill Color and Opacity需要改成默认值，否则填充图片颜色会受到影响。
-   然后再设置填充图片的Padding     设置进度条的填充方向   你最好不要爱上我，因为游侠是不需要女人的，游侠非常孤独。----《森林好小子》
-      
-      <p>
-        <a href="https://dawnarc.com/2018/04/ue4umg-progress-bar%E7%9B%B8%E5%85%B3%E8%AE%BE%E7%BD%AE/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-            
-              
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2018/04/ue4umg-image-draw-as-type/">
-          [UE4]UMG Image ‘Draw as’ Type
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2018-04-17T16:34:02&#43;08:00">
-        
-  April 17, 2018
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        添加一个Button，大小设置为300x300     Image 当Draw As设置为Image时，图片会被整体拉伸     Box 图片会被分成九宫格（3x3），其中4个脚的格子大小固定，不会随分辨率改变而拉伸，上下边沿格子会跟随分辨率横向拉伸，左右边沿格子会跟随分辨率纵向拉伸   Border Border模式，Margin设置为0.25     Border模式，Margin设置为0.5     Marin表示Image边沿格子的大小，数值是百分比。例如，假设Margin设置为0.5，则表示边沿格子的大小为图片的50%。
- Border模式下，Image不会随着屏幕大小拉伸，而是固定大小。例如，当Margin为0.5，且Viewport变小时，每个格子的图片不会被拉伸：   有些动物主要是皮值钱，譬如狐狸；有些动物主要是肉值钱，譬如牛；有些动物主要是骨头值钱，譬如人。——丰子恺
-      
-      <p>
-        <a href="https://dawnarc.com/2018/04/ue4umg-image-draw-as-type/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-            
             
   <div class="pagination-bar">
     <ul class="pagination">
@@ -1344,6 +1358,74 @@ protobuf 2.x #ifndef __ProtobufHelper_H__ #define __ProtobufHelper_H__ #include 
       <div class="no-result text-color-light text-center">no post found</div>
       <div class="results">
         
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/02/ue4texture-related/">
+                <h3 class="media-heading">[UE4]Texture Related</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Feb 2, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><h5 id="is-it-need-to-make-texture-lods">Is it need to make Texture LODs?</h5></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/02/ue4remove-and-add-instanced-foliage-mesh-at-run-time/">
+                <h3 class="media-heading">[UE4]Remove and Add Instanced Foliage Mesh at Run-time</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Feb 2, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>Keywords：InstancedFoliageActor, AInstancedFoliageActor,</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/02/ue4fatal-error-c1083-cannot-open-include-file-foliagetype.generated.h/">
+                <h3 class="media-heading">[UE4]fatal error C1083 Cannot open include file &#39;FoliageType.generated.h</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Feb 2, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><h5 id="issue">Issue</h5></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/02/ue4sky-sphere-notes/">
+                <h3 class="media-heading">[UE4]Sky Sphere Notes</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Feb 2, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>Engine Default Sky Sphere:</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
         
           <div class="media">
             
@@ -1447,74 +1529,6 @@ protobuf 2.x #ifndef __ProtobufHelper_H__ #define __ProtobufHelper_H__ #include 
             <hr>
           </div>
         
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/01/ue4material-formulas-and-functions-notes/">
-                <h3 class="media-heading">[UE4]Material Formulas and Functions Notes</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Jan 1, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>keywords: Material, Formula, Function, Expression</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/01/ue4renderer-related/">
-                <h3 class="media-heading">[UE4]Renderer Related</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Jan 1, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><h5 id="how-to-enable-forward-rendering">How to enable &ldquo;Forward Rendering&rdquo;</h5></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/01/mayaimport-fbx-error-unrecognized-file-type/">
-                <h3 class="media-heading">[Maya]Import FBX Error - Unrecognized file type</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Jan 1, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>Maya import FBX failed:</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/01/ue4physics-animation-related/">
-                <h3 class="media-heading">[UE4]Physics Animation Related</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Jan 1, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>Physics Asset Properties Reference</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
       </div>
     </div>
     <div class="modal-footer">
@@ -1522,7 +1536,7 @@ protobuf 2.x #ifndef __ProtobufHelper_H__ #define __ProtobufHelper_H__ #include 
          data-message-zero="no post found"
          data-message-one="1 post found"
          data-message-other="{n} posts found">
-         469 posts found
+         473 posts found
       </p>
     </div>
   </div>

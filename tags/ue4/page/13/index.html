@@ -321,6 +321,181 @@ if (!doNotTrack) {
     
     <div class="postShorten-header">
       <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2016/10/ue4tmap%E4%BD%BF%E7%94%A8struct%E5%BD%93%E4%BD%9Ckey%E6%97%B6%E9%9C%80%E8%A6%81%E9%87%8D%E8%BD%BD%E7%9A%84%E6%93%8D%E4%BD%9C%E7%AC%A6/">
+          [UE4]TMap使用Struct当作key时需要重载的操作符
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2016-10-23T17:20:40&#43;08:00">
+        
+  October 23, 2016
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        定义struct：
+struct FMyStruct { // String which identifies our key FString UniqueID; // Some state which doesn't affect struct identity float SomeFloat; explicit FMyStruct(float InFloat) : UniqueID (FGuid::NewGuid().ToString()) , SomeFloat(InFloat) { } }; template &lt;typename ValueType&gt; struct TMyStructMapKeyFuncs : BaseKeyFuncs&lt; TPair&lt;FMyStruct, ValueType&gt;, FString &gt; { private: typedef BaseKeyFuncs&lt; TPair&lt;FMyStruct, ValueType&gt;, FString &gt; Super; public: typedef typename Super::ElementInitType ElementInitType; typedef typename Super::KeyInitType KeyInitType; static KeyInitType GetSetKey(ElementInitType Element) { return Element.Key.UniqueID; } static bool Matches(KeyInitType A, KeyInitType B) { return A.
+      
+      <p>
+        <a href="https://dawnarc.com/2016/10/ue4tmap%E4%BD%BF%E7%94%A8struct%E5%BD%93%E4%BD%9Ckey%E6%97%B6%E9%9C%80%E8%A6%81%E9%87%8D%E8%BD%BD%E7%9A%84%E6%93%8D%E4%BD%9C%E7%AC%A6/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2016/10/ue4getworldtimermanager.settimer%E5%A6%82%E4%BD%95%E4%BC%A0%E9%80%92%E5%8F%82%E6%95%B0/">
+          [UE4]GetWorldTimerManager().SetTimer()如何传递参数
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2016-10-22T17:35:40&#43;08:00">
+        
+  October 22, 2016
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        回调函数：
+UFUNCTION() void MyUsefulFunction(int32 x, float y);  .h
+FTimerDelegate TimerDel; FTimerHandle TimerHandle;  .cpp
+int32 MyInt = 10; float MyFloat = 20.f; //Binding the function with specific values TimerDel.BindUFunction(this, FName(&quot;MyUsefulFunction&quot;), MyInt, MyFloat); //Calling MyUsefulFunction after 5 seconds without looping GetWorld()-&gt;GetTimerManager().SetTimer(TimerHandle, TimerDel, 5.f, false);  参考自：https://answers.unrealengine.com/questions/165678/using-settimer-on-a-function-with-parameters.html
+      
+      <p>
+        <a href="https://dawnarc.com/2016/10/ue4getworldtimermanager.settimer%E5%A6%82%E4%BD%95%E4%BC%A0%E9%80%92%E5%8F%82%E6%95%B0/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2016/10/ue4pointlight%E7%82%B9%E5%85%89%E6%BA%90%E7%9A%84%E8%A1%B0%E5%87%8F%E5%8F%82%E6%95%B0/">
+          [UE4]PointLight点光源的衰减参数
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2016-10-20T13:46:40&#43;08:00">
+        
+  October 20, 2016
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        要想以较小的Intensity（光照强度）来获得较大的光照面积（或者光照亮度），影响的参数有两个
+ Attenuation Radius（衰减半径）：衰减半径越大，光照区域越大
+ Use Inverse Squared Falloff（是否启用平方反差衰减）：如果启用，则会以真实世界的光照效果来模拟物体与光源距离的不同而光照效果衰减变化的效果。如果不启用，则能增大光照区域。如果场景中有高度雾，开启此属性后，灯光的半径设置的再大，光照范围也不会有明显增大。  参数示例：   效果：   官方文档： https://docs.unrealengine.com/latest/INT/Resources/ContentExamples/Lighting/4_2/index.html
+  先知先觉者胜，后知后觉者平，不知不觉者败。
+      
+      <p>
+        <a href="https://dawnarc.com/2016/10/ue4pointlight%E7%82%B9%E5%85%89%E6%BA%90%E7%9A%84%E8%A1%B0%E5%87%8F%E5%8F%82%E6%95%B0/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
         <a class="link-unstyled" href="https://dawnarc.com/2016/10/ue4addtoroot%E8%A6%81%E4%B8%8Eremovefromroot%E6%88%90%E5%AF%B9%E5%87%BA%E7%8E%B0/">
           [UE4]AddToRoot()要与RemoveFromRoot成对出现
         </a>
@@ -1016,180 +1191,6 @@ UCLASS() class TOWERDEFENSE_API UAnimNotify_Test : public UAnimNotify { GENERATE
 </article>
 
             
-              
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2016/10/ue4%E7%B2%92%E5%AD%90%E7%89%B9%E6%95%88%E7%A2%B0%E6%92%9E%E5%9C%B0%E9%9D%A2%E6%97%A0%E6%B3%95%E8%A7%A6%E5%8F%91%E7%A2%B0%E6%92%9E%E4%BA%8B%E4%BB%B6%E7%9A%84%E9%97%AE%E9%A2%98/">
-          [UE4]粒子特效碰撞地面无法触发碰撞事件的问题
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2016-10-09T01:22:40&#43;08:00">
-        
-  October 9, 2016
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        Keyword：UE4、Particle、Emitter、Collision、Hit、Event、Floor
-问题表现：粒子特效中有个事件类型为collision的Event Generator
-  但是当粒子发生碰撞时（比如撞击地面时），并没有触发此Event。原因可能如下：
-1， 碰撞的物体没有设置为static   2， 碰撞方式没有设置default或者BlockAll   3， 如果是4.15之前的版本，修改Config/DefaultEngine.ini中[/Script/Engine.Engine]节点下的参数bUseFixedFrameRate设置为true，删掉这个参数或者设为false即可：
-bUseFixedFrameRate=True
-这是UE4的一个bug，在4.15版本修复了：https://issues.unrealengine.com/issue/UE-37210
-      
-      <p>
-        <a href="https://dawnarc.com/2016/10/ue4%E7%B2%92%E5%AD%90%E7%89%B9%E6%95%88%E7%A2%B0%E6%92%9E%E5%9C%B0%E9%9D%A2%E6%97%A0%E6%B3%95%E8%A7%A6%E5%8F%91%E7%A2%B0%E6%92%9E%E4%BA%8B%E4%BB%B6%E7%9A%84%E9%97%AE%E9%A2%98/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-            
-              
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2016/10/ue4%E7%B2%92%E5%AD%90%E7%B3%BB%E7%BB%9F%E7%9A%84%E4%BA%8B%E4%BB%B6particle-event/">
-          [UE4]粒子系统的事件(Particle Event)
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2016-10-08T17:56:40&#43;08:00">
-        
-  October 8, 2016
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        粒子发射器中的两个Module：Event Generator和EventRcvr Spawn https://wiki.unrealengine.com/Particle_Events
-      
-      <p>
-        <a href="https://dawnarc.com/2016/10/ue4%E7%B2%92%E5%AD%90%E7%B3%BB%E7%BB%9F%E7%9A%84%E4%BA%8B%E4%BB%B6particle-event/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-            
-              
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2016/10/ue4%E7%94%A8drawdebugline%E7%BB%98%E5%88%B6%E7%9F%A9%E5%BD%A2/">
-          [UE4]用DrawDebugLine绘制矩形
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2016-10-08T01:02:40&#43;08:00">
-        
-  October 8, 2016
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        自己实现的用DrawDebugLine绘制矩形的函数：
-/* Draw rectangle use line @CenterLoc, location of rectangle center @Rot, rotation of rectangle @Angle, angle of diagonal @DiagonalHalve, half of diagonal lenght. */ void DrawDebugTrangle(const FVector&amp; CenterLoc, const FRotator&amp; Rot, float Angle, float DiagonalHalve) { FVector Point1 = CenterLoc + (Rot + FRotator(0.f, Angle, 0.f)).Vector() * DiagonalHalve; FVector Point2 = CenterLoc + (Rot + FRotator(0.f, 90.f + (90.f - Angle), 0.f)).Vector() * DiagonalHalve; FVector Point3 = CenterLoc + (Rot + FRotator(0.
-      
-      <p>
-        <a href="https://dawnarc.com/2016/10/ue4%E7%94%A8drawdebugline%E7%BB%98%E5%88%B6%E7%9F%A9%E5%BD%A2/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-            
             
   <div class="pagination-bar">
     <ul class="pagination">
@@ -1274,6 +1275,74 @@ bUseFixedFrameRate=True
       <div class="no-result text-color-light text-center">no post found</div>
       <div class="results">
         
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/02/ue4texture-related/">
+                <h3 class="media-heading">[UE4]Texture Related</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Feb 2, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><h5 id="is-it-need-to-make-texture-lods">Is it need to make Texture LODs?</h5></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/02/ue4remove-and-add-instanced-foliage-mesh-at-run-time/">
+                <h3 class="media-heading">[UE4]Remove and Add Instanced Foliage Mesh at Run-time</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Feb 2, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>Keywords：InstancedFoliageActor, AInstancedFoliageActor,</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/02/ue4fatal-error-c1083-cannot-open-include-file-foliagetype.generated.h/">
+                <h3 class="media-heading">[UE4]fatal error C1083 Cannot open include file &#39;FoliageType.generated.h</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Feb 2, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><h5 id="issue">Issue</h5></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/02/ue4sky-sphere-notes/">
+                <h3 class="media-heading">[UE4]Sky Sphere Notes</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Feb 2, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>Engine Default Sky Sphere:</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
         
           <div class="media">
             
@@ -1377,74 +1446,6 @@ bUseFixedFrameRate=True
             <hr>
           </div>
         
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/01/ue4material-formulas-and-functions-notes/">
-                <h3 class="media-heading">[UE4]Material Formulas and Functions Notes</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Jan 1, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>keywords: Material, Formula, Function, Expression</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/01/ue4renderer-related/">
-                <h3 class="media-heading">[UE4]Renderer Related</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Jan 1, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><h5 id="how-to-enable-forward-rendering">How to enable &ldquo;Forward Rendering&rdquo;</h5></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/01/mayaimport-fbx-error-unrecognized-file-type/">
-                <h3 class="media-heading">[Maya]Import FBX Error - Unrecognized file type</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Jan 1, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>Maya import FBX failed:</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/01/ue4physics-animation-related/">
-                <h3 class="media-heading">[UE4]Physics Animation Related</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Jan 1, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>Physics Asset Properties Reference</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
       </div>
     </div>
     <div class="modal-footer">
@@ -1452,7 +1453,7 @@ bUseFixedFrameRate=True
          data-message-zero="no post found"
          data-message-one="1 post found"
          data-message-other="{n} posts found">
-         469 posts found
+         473 posts found
       </p>
     </div>
   </div>

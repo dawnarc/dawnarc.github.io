@@ -474,6 +474,62 @@ TCHAR* Str6 = (TCHAR*)Str5;
   <p>如果 char* 字符串有中文，转换为 FString 时，必须使用 ANSI_TO_TCHAR() 或者 UTF8_TO_TCHAR()，例如：FString Text = UTF8_TO_TCHAR(&ldquo;牛鼻&rdquo;); 。否则会出现乱码。</p>
 </div>
 
+<h5 id="4-20-android版本的wchar-t到tchar转换问题">4.20 android版本的wchar_t到TCHAR转换问题</h5>
+
+<p>问题现象：<br />
+<div class="alert danger ">
+  <p>4.20之前，wchar_t* 和 TCHAR* 之前直接强转没什么问题，但是4.20版本开始，直接强转在android版本下只会截取字符串的第一个字母，之前的内容都丢失。Windows版本没这个问题。</p>
+</div></p>
+
+<p>解决办法：<br />
+使用<code>TCHAR_TO_WCHAR</code>和<code>WCHAR_TO_TCHAR</code>转换，而不要直接强制转换。强制转换在Windwos版本下没有问题，android就会出现数据错误。</p>
+
+<span class="highlight-text red">
+但是使用 WCHAR_TO_TCHAR 在android版本下编译会有错误：
+</span>
+
+<pre><code>UATHelper: Packaging (Android (ASTC)):     UE_4.21/Engine/Source/Runtime/Core/Public/Misc/CString.h(658,9) :  error: no matching function for call to 'Strlen'
+</code></pre>
+
+<p>感觉像是引擎的bug，临时解决办法，自己写 wchar_t 转换 TCHAR 的函数：</p>
+
+<pre><code>bool UMyStringUtil::WCharToTChar(const wchar_t* Src, TCHAR* Dest, int DestLen)
+{
+    bool Ret = true;
+    if (!Src)
+    {
+        Ret = false;
+    }
+    else
+    {
+        int SrcLen = wcslen(Src) + 1;
+
+        if (SrcLen == 1)
+        {
+            Ret = false;
+        }
+        else
+        {
+            int MinLen = SrcLen &lt; DestLen ? SrcLen : DestLen;
+            for (int i = 0; i &lt; MinLen; i++)
+            {
+                Dest[i] = Src[i];
+            }
+        }
+    }
+
+    return Ret;
+}
+</code></pre>
+
+<p>使用示例：</p>
+
+<pre><code>size_t StrLen = wcslen(MyWcharArray) + 1;
+TCHAR *pData = new TCHAR[StrLen];
+FMemory::Memset(pData, 0, StrLen);
+WCharToTChar(MyWcharArray, pData, StrLen);
+</code></pre>
+
               
             </div>
           </div>
@@ -673,6 +729,74 @@ TCHAR* Str6 = (TCHAR*)Str5;
           <div class="media">
             
             <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/02/ue4texture-related/">
+                <h3 class="media-heading">[UE4]Texture Related</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Feb 2, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><h5 id="is-it-need-to-make-texture-lods">Is it need to make Texture LODs?</h5></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/02/ue4remove-and-add-instanced-foliage-mesh-at-run-time/">
+                <h3 class="media-heading">[UE4]Remove and Add Instanced Foliage Mesh at Run-time</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Feb 2, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>Keywords：InstancedFoliageActor, AInstancedFoliageActor,</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/02/ue4fatal-error-c1083-cannot-open-include-file-foliagetype.generated.h/">
+                <h3 class="media-heading">[UE4]fatal error C1083 Cannot open include file &#39;FoliageType.generated.h</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Feb 2, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><h5 id="issue">Issue</h5></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/02/ue4sky-sphere-notes/">
+                <h3 class="media-heading">[UE4]Sky Sphere Notes</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Feb 2, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>Engine Default Sky Sphere:</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
               <a class="link-unstyled" href="https://dawnarc.com/2019/02/ue4release-version-features-notes/">
                 <h3 class="media-heading">[UE4]Release Version Features Notes</h3>
               </a>
@@ -772,74 +896,6 @@ TCHAR* Str6 = (TCHAR*)Str5;
             <hr>
           </div>
         
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/01/ue4material-formulas-and-functions-notes/">
-                <h3 class="media-heading">[UE4]Material Formulas and Functions Notes</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Jan 1, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>keywords: Material, Formula, Function, Expression</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/01/ue4renderer-related/">
-                <h3 class="media-heading">[UE4]Renderer Related</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Jan 1, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><h5 id="how-to-enable-forward-rendering">How to enable &ldquo;Forward Rendering&rdquo;</h5></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/01/mayaimport-fbx-error-unrecognized-file-type/">
-                <h3 class="media-heading">[Maya]Import FBX Error - Unrecognized file type</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Jan 1, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>Maya import FBX failed:</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/01/ue4physics-animation-related/">
-                <h3 class="media-heading">[UE4]Physics Animation Related</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Jan 1, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>Physics Asset Properties Reference</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
       </div>
     </div>
     <div class="modal-footer">
@@ -847,7 +903,7 @@ TCHAR* Str6 = (TCHAR*)Str5;
          data-message-zero="no post found"
          data-message-one="1 post found"
          data-message-other="{n} posts found">
-         469 posts found
+         473 posts found
       </p>
     </div>
   </div>

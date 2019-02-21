@@ -321,6 +321,181 @@ if (!doNotTrack) {
     
     <div class="postShorten-header">
       <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2016/10/ue4%E7%94%A8c-%E6%88%96%E8%93%9D%E5%9B%BE%E6%9D%A5%E5%8A%A8%E6%80%81%E8%AE%BE%E7%BD%AE%E7%B2%92%E5%AD%90%E7%B3%BB%E7%BB%9F%E7%9A%84%E7%9B%B8%E5%85%B3%E5%B1%9E%E6%80%A7/">
+          [UE4]用C&#43;&#43;或蓝图来动态设置粒子系统的相关属性
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2016-10-05T13:58:40&#43;08:00">
+        
+  October 5, 2016
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        蓝图方式 1，我拿StartContent中官方提供的火焰特效来举例，在蓝图脚本中来修改火焰的颜色   2，打开粒子编辑界面，这是粒子发射器中设置好的颜色参数   3，修改：Color Over Lif模组 –》 Color Over Life参数 –》Distribution参数 –》 Distribution Vector Particle Parameter   4，为这个参数起一个当前粒子里面的唯一名字。当然你如果希望多个参数共享一个设置，那么参数也可以同名   5，因为这个特效中和颜色相关的发射器有两个，所以我们这两个发射器中的参数名字设置为同名：ParamFireColor   6，设置参数模式为 DPM Direct     7，然后将粒子拖入场景中进行编辑。当然你可以通过Spawn在运行时动态生成，但是这里为了方便直接场景中放一个静态的   8，添加一个Instance Parameters参数   9，设置参数名为之前定好的ParamFireColor，类型选择Vector Random   10，启动运行程序，然后我们在游戏运行时动态修改。先找到粒子对象   11，然后在属性面板中，编辑之前添加的参数ParamFireColor，这里我们先改为之前的默认数值     12，这时修改颜色，场景中的火焰也会即时生效了。这些修改的数值不会保存，因为这是即时数据。     补充内容：用蓝图动态生成并设置颜色方式，按下键盘E时生成火焰并将颜色设置为蓝色     因为这里没有写随机颜色的逻辑，所以看起来很单薄。
+C++方式 C++方式也需要上面蓝图的前面步骤，从第7步开始，后面的步骤都不需要了。 具体代码如下：
+UParticleSystemComponent* PSC = UGameplayStatics::SpawnEmitterAtLocation(GameMode-&gt;GetWorld(), EmitterTemplate, Location, FRotator::ZeroRotator, true); PSC-&gt;SetColorParameter(FName(TEXT(&quot;ParamFireColor&quot;)), FLinearColor::Red); FLinearColor OutColor; PSC-&gt;GetColorParameter(FName(TEXT(&quot;ParamFireColor &quot;)), OutColor);  注意：要Get参数之前，必须先Set一次，否则无法Get。
+      
+      <p>
+        <a href="https://dawnarc.com/2016/10/ue4%E7%94%A8c-%E6%88%96%E8%93%9D%E5%9B%BE%E6%9D%A5%E5%8A%A8%E6%80%81%E8%AE%BE%E7%BD%AE%E7%B2%92%E5%AD%90%E7%B3%BB%E7%BB%9F%E7%9A%84%E7%9B%B8%E5%85%B3%E5%B1%9E%E6%80%A7/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2016/09/ue4%E5%A6%82%E4%BD%95%E9%81%8D%E5%8E%86%E5%9C%BA%E6%99%AF%E4%B8%AD%E7%9A%84%E6%89%80%E6%9C%89actor%E5%92%8Cobjectc-/">
+          [UE4]如何遍历场景中的所有Actor和Object(C&#43;&#43;)
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2016-09-29T19:43:02&#43;08:00">
+        
+  September 29, 2016
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        原文： https://wiki.unrealengine.com/Iterators:_Object_%26_Actor_Iterators,_Optional_Class_Scope_For_Faster_Search
+遍历所有SkeletalMeshComponent
+for ( TObjectIterator&lt;USkeletalMeshComponent&gt; Itr; Itr; ++Itr ) { // Access the subclass instance with the * or -&gt; operators. USkeletalMeshCompoment *Component = *Itr; ClientMessage(Itr-&gt;GetName()); }  遍历所有StaticMeshActor
+for (TActorIterator&lt;AStaticMeshActor&gt; ActorItr(GetWorld()); ActorItr; ++ActorItr) { // Same as with the Object Iterator, access the subclass instance with the * or -&gt; operators. AStaticMeshActor *Mesh = *ActorItr; ClientMessage(ActorItr-&gt;GetName()); ClientMessage(ActorItr-&gt;GetActorLocation().ToString()); }  遍历所有Character
+for (TActorIterator&lt;ACharacter&gt; ActorItr(GetWorld()); ActorItr; ++ActorItr) { if (ActorItr-&gt;GetName().
+      
+      <p>
+        <a href="https://dawnarc.com/2016/09/ue4%E5%A6%82%E4%BD%95%E9%81%8D%E5%8E%86%E5%9C%BA%E6%99%AF%E4%B8%AD%E7%9A%84%E6%89%80%E6%9C%89actor%E5%92%8Cobjectc-/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2016/09/ue4%E5%A6%82%E4%BD%95%E6%9F%A5%E7%9C%8B%E8%93%9D%E5%9B%BE%E4%B8%AD%E7%9A%84%E6%9F%90%E4%B8%AA%E7%BB%84%E4%BB%B6component%E5%AF%B9%E5%BA%94%E7%9A%84c-%E7%B1%BB%E5%90%8D%E5%AD%97/">
+          [UE4]如何查看蓝图中的某个组件(Component)对应的C&#43;&#43;类名字
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2016-09-24T16:37:40&#43;08:00">
+        
+  September 24, 2016
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        右键单击蓝图中的Component，最下方的C++头文件就是该蓝图组件对应的C++ class。
+  
+      
+      <p>
+        <a href="https://dawnarc.com/2016/09/ue4%E5%A6%82%E4%BD%95%E6%9F%A5%E7%9C%8B%E8%93%9D%E5%9B%BE%E4%B8%AD%E7%9A%84%E6%9F%90%E4%B8%AA%E7%BB%84%E4%BB%B6component%E5%AF%B9%E5%BA%94%E7%9A%84c-%E7%B1%BB%E5%90%8D%E5%AD%97/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
         <a class="link-unstyled" href="https://dawnarc.com/2016/09/ue4%E7%B2%92%E5%AD%90%E7%B3%BB%E7%BB%9F%E7%9A%84%E7%A7%BB%E5%8A%A8%E9%80%BB%E8%BE%91%E7%BC%96%E5%86%99/">
           [UE4]粒子系统的移动逻辑编写
         </a>
@@ -995,178 +1170,6 @@ void TickFun() { FVector MyLoc = MyCharacter-&gt;GetActorLocation(); FVector Tar
 </article>
 
             
-              
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2016/08/ue4%E7%94%A8c-%E5%A6%82%E4%BD%95%E5%8A%A8%E6%80%81%E5%88%9B%E5%BB%BAtextrender/">
-          [UE4]用C&#43;&#43;如何动态创建TextRender
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2016-08-15T23:07:40&#43;08:00">
-        
-  August 15, 2016
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        关键字：Runtime、TextRender、TextRenderActor
-代码：
-#include &quot;Engine/TextRenderActor.h&quot; #include &quot;Components/TextRenderComponent.h&quot; void ATopDownTestGameMode::BeginPlay() { Super::BeginPlay(); Text = GetWorld()-&gt;SpawnActor&lt;ATextRenderActor&gt;(ATextRenderActor::StaticClass(), FVector(0.f, 100, 170.f), FRotator(90.f, 180.f, 0.f)); Text-&gt;GetTextRender()-&gt;SetText(FText::FromString(TEXT(&quot;Dynamic Text&quot;))); Text-&gt;GetTextRender()-&gt;SetTextRenderColor(FColor::Red); Text-&gt;SetActorScale3D(FVector(5.f, 5.f, 5.f)); }  
-      
-      <p>
-        <a href="https://dawnarc.com/2016/08/ue4%E7%94%A8c-%E5%A6%82%E4%BD%95%E5%8A%A8%E6%80%81%E5%88%9B%E5%BB%BAtextrender/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-            
-              
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2016/08/ue4navmesh%E5%8F%82%E6%95%B0%E8%AE%BE%E7%BD%AE/">
-          [UE4]NavMesh参数设置
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2016-08-11T02:38:40&#43;08:00">
-        
-  August 11, 2016
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        1，设置NavMesh的三角形粒度和高度。Project Setting –》 Engine –》 Navigation Mesh，其中Cell Size为MavMesh三角形粒度大小，Cell Height为离地面的高度。 
-      
-      <p>
-        <a href="https://dawnarc.com/2016/08/ue4navmesh%E5%8F%82%E6%95%B0%E8%AE%BE%E7%BD%AE/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-            
-              
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2016/08/ue4time%E6%97%B6%E9%97%B4%E7%9B%B8%E5%85%B3/">
-          [UE4]Time时间相关
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2016-08-06T22:59:40&#43;08:00">
-        
-  August 6, 2016
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-         获取系统时间以及UNIX时间戳 蓝图：
-float UKismetSystemLibrary::GetGameTimeInSeconds(UObject* WorldContextObject);  C++代码：
-FDateTime Time = FDateTime::Now(); int64 Timestamp = Time.ToUnixTimestamp();  将 Unix Timestamp 转换为年月日（year, month, day） FDateTime Time = FDateTime::FromUnixTimestamp(int64 UnixTime);  获取系统当前日期时间：年月日时分秒 FDateTime Time = FDateTime::Now(); int Year = Time.GetYear(); int Month = Time.GetMonth(); int Day = Time.GetDay(); int Hour = Time.GetHour(); int Minute = Time.GetMinute(); int Second = Time.GetSecond();  获取CPU时钟周期 //微妙格式 uint64 cycle = FPlatformTime::Cycles64(); uint32 cycle = FPlatformTime::Cycles(); //秒格式 double now = FPlatformTime::Seconds();  
-      
-      <p>
-        <a href="https://dawnarc.com/2016/08/ue4time%E6%97%B6%E9%97%B4%E7%9B%B8%E5%85%B3/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-            
             
   <div class="pagination-bar">
     <ul class="pagination">
@@ -1251,6 +1254,74 @@ FDateTime Time = FDateTime::Now(); int64 Timestamp = Time.ToUnixTimestamp();  �
       <div class="no-result text-color-light text-center">no post found</div>
       <div class="results">
         
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/02/ue4texture-related/">
+                <h3 class="media-heading">[UE4]Texture Related</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Feb 2, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><h5 id="is-it-need-to-make-texture-lods">Is it need to make Texture LODs?</h5></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/02/ue4remove-and-add-instanced-foliage-mesh-at-run-time/">
+                <h3 class="media-heading">[UE4]Remove and Add Instanced Foliage Mesh at Run-time</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Feb 2, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>Keywords：InstancedFoliageActor, AInstancedFoliageActor,</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/02/ue4fatal-error-c1083-cannot-open-include-file-foliagetype.generated.h/">
+                <h3 class="media-heading">[UE4]fatal error C1083 Cannot open include file &#39;FoliageType.generated.h</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Feb 2, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><h5 id="issue">Issue</h5></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/02/ue4sky-sphere-notes/">
+                <h3 class="media-heading">[UE4]Sky Sphere Notes</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Feb 2, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>Engine Default Sky Sphere:</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
         
           <div class="media">
             
@@ -1354,74 +1425,6 @@ FDateTime Time = FDateTime::Now(); int64 Timestamp = Time.ToUnixTimestamp();  �
             <hr>
           </div>
         
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/01/ue4material-formulas-and-functions-notes/">
-                <h3 class="media-heading">[UE4]Material Formulas and Functions Notes</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Jan 1, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>keywords: Material, Formula, Function, Expression</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/01/ue4renderer-related/">
-                <h3 class="media-heading">[UE4]Renderer Related</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Jan 1, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><h5 id="how-to-enable-forward-rendering">How to enable &ldquo;Forward Rendering&rdquo;</h5></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/01/mayaimport-fbx-error-unrecognized-file-type/">
-                <h3 class="media-heading">[Maya]Import FBX Error - Unrecognized file type</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Jan 1, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>Maya import FBX failed:</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/01/ue4physics-animation-related/">
-                <h3 class="media-heading">[UE4]Physics Animation Related</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Jan 1, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>Physics Asset Properties Reference</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
       </div>
     </div>
     <div class="modal-footer">
@@ -1429,7 +1432,7 @@ FDateTime Time = FDateTime::Now(); int64 Timestamp = Time.ToUnixTimestamp();  �
          data-message-zero="no post found"
          data-message-one="1 post found"
          data-message-other="{n} posts found">
-         469 posts found
+         473 posts found
       </p>
     </div>
   </div>
