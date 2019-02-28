@@ -318,6 +318,185 @@ if (!doNotTrack) {
     
     <div class="postShorten-header">
       <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2016/07/ue4%E5%A6%82%E4%BD%95%E5%9C%A8%E8%BF%90%E8%A1%8C%E6%97%B6%E7%BC%96%E8%BE%91%E5%9C%BA%E6%99%AF%E4%B8%AD%E7%9A%84%E5%AF%B9%E8%B1%A1/">
+          [UE4]如何在运行时编辑场景中的对象
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2016-07-27T22:40:40&#43;08:00">
+        
+  July 27, 2016
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        比如场景中有个box，我们想在运行时查看这个box的坐标轴并且来编辑这个box，方式如下： 点击Play菜单中的Simulate选项，快捷键时Alt+S。
+  
+      
+      <p>
+        <a href="https://dawnarc.com/2016/07/ue4%E5%A6%82%E4%BD%95%E5%9C%A8%E8%BF%90%E8%A1%8C%E6%97%B6%E7%BC%96%E8%BE%91%E5%9C%BA%E6%99%AF%E4%B8%AD%E7%9A%84%E5%AF%B9%E8%B1%A1/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2016/07/ue4%E5%A6%82%E4%BD%95%E5%90%AF%E7%94%A8detour-crowd-ai-controller%E7%BE%A4%E7%BB%84%E7%A7%BB%E5%8A%A8%E6%97%B6%E7%9A%84%E7%BB%95%E8%B7%AF%E9%97%AE%E9%A2%98/">
+          [UE4]如何启用Detour Crowd AI Controller(群组移动时的绕路问题)
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2016-07-27T19:39:02&#43;08:00">
+        
+  July 27, 2016
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        keywords：UE4、AI、群体移动、闪避、避让、回避
+Detour Crowd AI Controller 蓝图方式
+打开ControllerBP，在 Class Settings 中设置 Parent Class 为：Detour Crowd AI Controller。
+C++方式
+引擎的C++代码有个叫 ADetourCrowdAIController 的class，但是这个class无法继承；
+要在C++中使用Detour Crowd AI，需要借助 UCrowdFollowingComponent，在AIController的构造函数中设置即可
+头文件：
+MyAIController(const FObjectInitializer&amp; ObjectInitializer = FObjectInitializer::Get());  cpp：
+MyAIController::MyAIController(const FObjectInitializer&amp; ObjectInitializer) : Super(ObjectInitializer.SetDefaultSubobjectClass&lt;UCrowdFollowingComponent&gt;(TEXT(&quot;PathFollowingComponent&quot;))) { }  转向抖动问题 使用默认的UCrowdFollowingComponent，角色在转向时会抖动，要解决这个问题，需要将属性UCrowdFollowingComponent::bSuspendCrowdSimulation设置为true。
+完整代码：
+#include &quot;Navigation/CrowdFollowingComponent.h&quot; AMyAIController::AMyAIController(const FObjectInitializer&amp; ObjectInitializer) : Super(ObjectInitializer.SetDefaultSubobjectClass&lt;UCrowdFollowingComponent&gt;(TEXT(&quot;PathFollowingComponent&quot;))) { if (UCrowdFollowingComponent* CrowdComp = Cast&lt;UCrowdFollowingComponent&gt;(GetComponentByClass(UCrowdFollowingComponent::StaticClass()))) { CrowdComp-&gt;SuspendCrowdSteering(true); //CrowdComp-&gt;SetCrowdAnticipateTurns(true); //CrowdComp-&gt;SetCrowdSeparation(true); //CrowdComp-&gt;SetCrowdPathOffset(true); //CrowdComp-&gt;SetCrowdAvoidanceQuality(ECrowdAvoidanceQuality::High); } }  但是`SuspendCrowdSteering` 设置为true后，自动避让面前角色的功能就失效了，如果要处理这个问题，建议重写 UCrowdFollowingComponent 中的转向逻辑，因为其内部没有考虑慢速转向的问题。 Crowd Manager 配置 Project Settings -》Engine -》 Navigation System -》 Crowd Manager Class
+      
+      <p>
+        <a href="https://dawnarc.com/2016/07/ue4%E5%A6%82%E4%BD%95%E5%90%AF%E7%94%A8detour-crowd-ai-controller%E7%BE%A4%E7%BB%84%E7%A7%BB%E5%8A%A8%E6%97%B6%E7%9A%84%E7%BB%95%E8%B7%AF%E9%97%AE%E9%A2%98/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2016/07/ue4%E5%A6%82%E4%BD%95%E4%BC%B8%E7%BC%A9texture%E8%AE%BE%E7%BD%AEtexture%E7%9A%84%E5%B9%B3%E9%93%BA%E5%80%8D%E6%95%B0/">
+          [UE4]如何伸缩texture(设置texture的平铺倍数)
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2016-07-23T21:34:02&#43;08:00">
+        
+  July 23, 2016
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        使用texture coordinate node，并设置其UTiling和VTiling参数
+      
+      <p>
+        <a href="https://dawnarc.com/2016/07/ue4%E5%A6%82%E4%BD%95%E4%BC%B8%E7%BC%A9texture%E8%AE%BE%E7%BD%AEtexture%E7%9A%84%E5%B9%B3%E9%93%BA%E5%80%8D%E6%95%B0/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
         <a class="link-unstyled" href="https://dawnarc.com/2016/07/ue4%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0%E5%90%91%E9%87%8F%E7%A7%AF%E5%A4%96%E7%A7%AF%E5%8F%89%E7%A7%AF/">
           [UE4][线性代数]向量积、外积、叉积
         </a>
@@ -1023,176 +1202,6 @@ AddForce accounts for delta time and should be used for applying force over more
 </article>
 
           
-            
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2016/06/tortoisegitfetch%E5%92%8Cmerge%E6%93%8D%E4%BD%9C/">
-          [TortoiseGit]fetch和merge操作
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2016-06-16T20:14:40&#43;08:00">
-        
-  June 16, 2016
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/versioncontrol">VersionControl</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        右键菜单Merge： Branch选择：FETCH_HEAD
-      
-      <p>
-        <a href="https://dawnarc.com/2016/06/tortoisegitfetch%E5%92%8Cmerge%E6%93%8D%E4%BD%9C/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-          
-            
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2016/06/ue4%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%97%A0%E6%B3%95%E8%B0%83%E7%94%A8findpathtolocationsynchronously%E5%87%BD%E6%95%B0%E7%9A%84%E9%97%AE%E9%A2%98/">
-          [UE4]客户端无法调用FindPathToLocationSynchronously函数的问题
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2016-06-13T12:02:02&#43;08:00">
-        
-  June 13, 2016
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        如果client-side执行UNavigationSystem::FindPathToLocationSynchronously()，会返回错误：
-Error Accessed None 'CallFunc_FindPathToLocationSynchronously_ReturnValue2' from node ReturnNode in blueprint GameController  原因： client-side默认关闭了寻路功能，需要启动，修改设置：Project Settings &gt; Navigation System &gt; bAllowClientSideNavigation
-参考：https://answers.unrealengine.com/questions/222353/find-path-to-location-synchronously-not-working-on.html
-      
-      <p>
-        <a href="https://dawnarc.com/2016/06/ue4%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%97%A0%E6%B3%95%E8%B0%83%E7%94%A8findpathtolocationsynchronously%E5%87%BD%E6%95%B0%E7%9A%84%E9%97%AE%E9%A2%98/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-          
-            
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2016/06/ue4%E5%A6%82%E4%BD%95%E5%88%B6%E4%BD%9Crts%E6%B8%B8%E6%88%8F%E4%B8%AD%E7%9A%84%E8%A7%92%E8%89%B2%E8%84%9A%E4%B8%8B%E5%9C%86%E7%8E%AF/">
-          [UE4]如何制作RTS游戏中的角色脚下圆环
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2016-06-12T10:24:40&#43;08:00">
-        
-  June 12, 2016
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        1，准备好贴图 2，新建一个材质蓝图 3，在蓝图中新建个Texture Sample节点，并设置为之前准备的贴图 4，将材质的Blend Mode设置为Translucent半透明模式 5，设置好材质的BaseColor和Opacity 6，然后新建一个Actor蓝图 7，在actor蓝图中新建个Scene组件 8，将新建个Scene组件拖拽到Root根节点中，以替换原来默认根节点 10，然后再新建一个StaticMesh组件 11，然后将这个StaticMesh组件的Mesh设置为一个地砖形状的模型 12，同时讲StaticMesh的材质设置为之前新建个材质 13，然后将actor蓝图设置为Movable 14，这样设置完成了，之后就可以将这个actor蓝图spawn到场景中并attach到人物的身上，并设置后相对坐标即可 
-      
-      <p>
-        <a href="https://dawnarc.com/2016/06/ue4%E5%A6%82%E4%BD%95%E5%88%B6%E4%BD%9Crts%E6%B8%B8%E6%88%8F%E4%B8%AD%E7%9A%84%E8%A7%92%E8%89%B2%E8%84%9A%E4%B8%8B%E5%9C%86%E7%8E%AF/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-          
           
   <div class="pagination-bar">
     <ul class="pagination">
@@ -1276,6 +1285,57 @@ Error Accessed None 'CallFunc_FindPathToLocationSynchronously_ReturnValue2' from
       <div class="no-result text-color-light text-center">no post found</div>
       <div class="results">
         
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/02/mayatutorials-collections/">
+                <h3 class="media-heading">[Maya]Tutorials Collections</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Feb 2, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>Get Faster in Maya</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/02/mathcheck-if-a-point-is-inside-regular-hexagon/">
+                <h3 class="media-heading">[Math]Check if a point is inside regular hexagon</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Feb 2, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>Keywords: 计算坐标点是否在六边形内部</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/02/android-ndkhow-to-support-android-9.0-when-building-using-ndk-r12b/">
+                <h3 class="media-heading">[Android NDK]How to support Android 9.0 when building using NDK r12b</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Feb 2, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>.</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
         
           <div class="media">
             
@@ -1396,57 +1456,6 @@ Error Accessed None 'CallFunc_FindPathToLocationSynchronously_ReturnValue2' from
             <hr>
           </div>
         
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/02/visualstudionew-code-analysis-checks-in-visual-studio-2019-use-after-move-and-coroutine/">
-                <h3 class="media-heading">[VisualStudio]New Code Analysis Checks in Visual Studio 2019 - use-after-move and coroutine</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Feb 2, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>New Code Analysis Checks in Visual Studio 2019: use-after-move and coroutine</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/01/mayacamera-related/">
-                <h3 class="media-heading">[Maya]Camera Related</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Jan 1, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><h5 id="how-to-display-an-extreme-large-too-huge-object">How to display an extreme large (too huge) object</h5></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/01/ue4material-editor-related/">
-                <h3 class="media-heading">[UE4]Material Editor Related</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Jan 1, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>Material Editor UI</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
       </div>
     </div>
     <div class="modal-footer">
@@ -1454,7 +1463,7 @@ Error Accessed None 'CallFunc_FindPathToLocationSynchronously_ReturnValue2' from
          data-message-zero="no post found"
          data-message-one="1 post found"
          data-message-other="{n} posts found">
-         473 posts found
+         476 posts found
       </p>
     </div>
   </div>
