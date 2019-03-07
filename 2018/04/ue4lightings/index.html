@@ -405,11 +405,11 @@ if (!doNotTrack) {
 
 <p>以下问题都是基于4.18，不排除后续新版本变动。</p>
 
-<h5 id="lighting-content-examples">Lighting Content Examples</h5>
+<h3 id="lighting-content-examples">Lighting Content Examples</h3>
 
 <p><a href="https://docs.unrealengine.com/en-us/Resources/ContentExamples/Lighting">https://docs.unrealengine.com/en-us/Resources/ContentExamples/Lighting</a></p>
 
-<h5 id="light-propagation-volumes">Light Propagation Volumes</h5>
+<h3 id="light-propagation-volumes">Light Propagation Volumes</h3>
 
 <p>Light Propagation Volumes<br />
 <a href="https://docs.unrealengine.com/en-us/Engine/Rendering/LightingAndShadows/LightPropagationVolumes">https://docs.unrealengine.com/en-us/Engine/Rendering/LightingAndShadows/LightPropagationVolumes</a></p>
@@ -417,7 +417,7 @@ if (!doNotTrack) {
 <p>Dynamic GI : Getting the Most out of LPV ( Light Propagation Volume )<br />
 <a href="https://forums.unrealengine.com/community/community-content-tools-and-tutorials/103572-dynamic-gi-getting-the-most-out-of-lpv-light-propagation-volume">https://forums.unrealengine.com/community/community-content-tools-and-tutorials/103572-dynamic-gi-getting-the-most-out-of-lpv-light-propagation-volume</a></p>
 
-<h5 id="lighting-channels">Lighting Channels</h5>
+<h3 id="lighting-channels">Lighting Channels</h3>
 
 <p><a href="https://docs.unrealengine.com/en-us/Engine/Rendering/LightingAndShadows/LightingChannels">https://docs.unrealengine.com/en-us/Engine/Rendering/LightingAndShadows/LightingChannels</a></p>
 
@@ -446,246 +446,249 @@ if (!doNotTrack) {
 
 <p>另外：Lighting Channels不支持运行时修改，就是说Lighting Channels在Actor创建时(比如BeginPlay)设置好以后，之后就无法再修改。</p>
 
-<h5 id="occlusion-culling-光源距离裁剪">Occlusion Culling 光源距离裁剪</h5>
+<h3 id="occlusion-culling-光源距离裁剪">Occlusion Culling 光源距离裁剪</h3>
 
 <p>Project Settings -》 Engine -》 Rendering -》 Culling -》 Min Screen Radius for Lights</p>
 
 <p>Lights view distance<br />
 <a href="https://forums.unrealengine.com/unreal-engine/feedback-for-epic/54065-lights-view-distance">https://forums.unrealengine.com/unreal-engine/feedback-for-epic/54065-lights-view-distance</a></p>
 
-<h5 id="lighting-related-on-mobile">Lighting Related on Mobile</h5>
+<h3 id="lighting-related-on-mobile">Lighting Related on Mobile</h3>
 
-<p>1，<code>Static</code> and <code>Stationary</code> Spotlight support on Mobile, but <code>Movable</code> Spotlight not support on Mobile before v4.22;</p>
+<p>1, <code>Static</code> and <code>Stationary</code> Spotlight support on Mobile, but <code>Movable</code> Spotlight not support on Mobile before v4.22;</p>
 
 <p>2, <code>Movable</code> Pointlight support on Mobile always;</p>
 
-<h5 id="物体与摄像机距离超过一定范围时-阴影自动消失的问题">物体与摄像机距离超过一定范围时，阴影自动消失的问题</h5>
+<p>3, <span class="highlight-text red"> Testing in v4.21: Static and Stationary Point Light not work on Android Vulkan without building lighting.  
+Setting up your lighting in SM5, then building lighting, then switch to Android Vulkan, when start game, lighting would works right.<span class="highlight-text red">
 
-<p>这个问题受两个因素影响：</p>
+### 物体与摄像机距离超过一定范围时，阴影自动消失的问题
 
-<p>1，DirectionalLight 的属性 <code>Dynamic Shadow Distance</code>，如果值小于物体到摄像机的直线距离，则阴影消失。</p>
+这个问题受两个因素影响：
 
-<p>2，引擎配置参数 <code>r.Shadow.RadiusThreshold</code>，表示在屏幕中大小的屏占比 ，该值受 Settings -》 Engine Scalability Settings -》 Shadow 级别控制。</p>
+1，DirectionalLight 的属性 `Dynamic Shadow Distance`，如果值小于物体到摄像机的直线距离，则阴影消失。
 
-<p>参考：<br />
-<a href="https://answers.unrealengine.com/questions/707241/object-shadows-disappearing-too-early.html?sort=oldest">https://answers.unrealengine.com/questions/707241/object-shadows-disappearing-too-early.html?sort=oldest</a></p>
+2，引擎配置参数 `r.Shadow.RadiusThreshold`，表示在屏幕中大小的屏占比 ，该值受 Settings -》 Engine Scalability Settings -》 Shadow 级别控制。
 
-<h3 id="lightcomponentbase-the-basic-of-lightcomponent">LightComponentBase (the basic of LightComponent)</h3>
+参考：  
+https://answers.unrealengine.com/questions/707241/object-shadows-disappearing-too-early.html?sort=oldest
+	
+### LightComponentBase (the basic of LightComponent)
 
-<h5 id="lightcomponentbase-s-api-in-common">LightComponentBase&rsquo;s API in common</h5>
+##### LightComponentBase's API in common
 
-<p>Properties:</p>
+Properties:
 
-<pre><code>/** 
- * Total energy that the light emits.  
- */
-UPROPERTY(BlueprintReadOnly, interp, Category=Light, meta=(DisplayName = &quot;Intensity&quot;, UIMin = &quot;0.0&quot;, UIMax = &quot;20.0&quot;))
-float Intensity;
+	/** 
+	 * Total energy that the light emits.  
+	 */
+	UPROPERTY(BlueprintReadOnly, interp, Category=Light, meta=(DisplayName = "Intensity", UIMin = "0.0", UIMax = "20.0"))
+	float Intensity;
 
-/** 
- * Filter color of the light.
- * Note that this can change the light's effective intensity.
- */
-UPROPERTY(BlueprintReadOnly, interp, Category=Light, meta=(HideAlphaChannel))
-FColor LightColor;
+	/** 
+	 * Filter color of the light.
+	 * Note that this can change the light's effective intensity.
+	 */
+	UPROPERTY(BlueprintReadOnly, interp, Category=Light, meta=(HideAlphaChannel))
+	FColor LightColor;
 
-/** 
- * Whether the light can affect the world, or whether it is disabled.
- * A disabled light will not contribute to the scene in any way.  This setting cannot be changed at runtime and unbuilds lighting when changed.
- * Setting this to false has the same effect as deleting the light, so it is useful for non-destructive experiments.
- */
-UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Light)
-uint32 bAffectsWorld:1;
+	/** 
+	 * Whether the light can affect the world, or whether it is disabled.
+	 * A disabled light will not contribute to the scene in any way.  This setting cannot be changed at runtime and unbuilds lighting when changed.
+	 * Setting this to false has the same effect as deleting the light, so it is useful for non-destructive experiments.
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Light)
+	uint32 bAffectsWorld:1;
 
-/**
- * Whether the light should cast any shadows.
- **/
-UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Light)
-uint32 CastShadows:1;
+	/**
+	 * Whether the light should cast any shadows.
+	 **/
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Light)
+	uint32 CastShadows:1;
 
-/**
- * Whether the light should cast shadows from static objects.  Also requires Cast Shadows to be set to True.
- */
-UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Light, AdvancedDisplay)
-uint32 CastStaticShadows:1;
+	/**
+	 * Whether the light should cast shadows from static objects.  Also requires Cast Shadows to be set to True.
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Light, AdvancedDisplay)
+	uint32 CastStaticShadows:1;
 
-/**
- * Whether the light should cast shadows from dynamic objects.  Also requires Cast Shadows to be set to True.
- **/
-UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Light, AdvancedDisplay)
-uint32 CastDynamicShadows:1;
+	/**
+	 * Whether the light should cast shadows from dynamic objects.  Also requires Cast Shadows to be set to True.
+	 **/
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Light, AdvancedDisplay)
+	uint32 CastDynamicShadows:1;
 
-/** Whether the light affects translucency or not.  Disabling this can save GPU time when there are many small lights. */
-UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Light, AdvancedDisplay)
-uint32 bAffectTranslucentLighting:1;
+	/** Whether the light affects translucency or not.  Disabling this can save GPU time when there are many small lights. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Light, AdvancedDisplay)
+	uint32 bAffectTranslucentLighting:1;
 
-/** Whether light from this light transmits through surfaces with subsurface scattering profiles. Requires light to be movable. */
-UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Light, AdvancedDisplay)
-uint32 bTransmission : 1;
+	/** Whether light from this light transmits through surfaces with subsurface scattering profiles. Requires light to be movable. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Light, AdvancedDisplay)
+	uint32 bTransmission : 1;
 
-/** Whether the light shadows volumetric fog.  Disabling this can save GPU time. */
-UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Light, AdvancedDisplay)
-uint32 bCastVolumetricShadow : 1;
+	/** Whether the light shadows volumetric fog.  Disabling this can save GPU time. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Light, AdvancedDisplay)
+	uint32 bCastVolumetricShadow : 1;
 
-/** 
- * Scales the indirect lighting contribution from this light. 
- * A value of 0 disables any GI from this light. Default is 1.
- */
-UPROPERTY(BlueprintReadOnly, interp, Category=Light, meta=(UIMin = &quot;0.0&quot;, UIMax = &quot;6.0&quot;))
-float IndirectLightingIntensity;
+	/** 
+	 * Scales the indirect lighting contribution from this light. 
+	 * A value of 0 disables any GI from this light. Default is 1.
+	 */
+	UPROPERTY(BlueprintReadOnly, interp, Category=Light, meta=(UIMin = "0.0", UIMax = "6.0"))
+	float IndirectLightingIntensity;
 
-/** Intensity of the volumetric scattering from this light.  This scales Intensity and LightColor. */
-UPROPERTY(BlueprintReadOnly, interp, Category=Light, meta=(UIMin = &quot;0.25&quot;, UIMax = &quot;4.0&quot;))
-float VolumetricScatteringIntensity;
-</code></pre>
+	/** Intensity of the volumetric scattering from this light.  This scales Intensity and LightColor. */
+	UPROPERTY(BlueprintReadOnly, interp, Category=Light, meta=(UIMin = "0.25", UIMax = "4.0"))
+	float VolumetricScatteringIntensity;
+	
+### LightComponent (the basic component of various Light)
 
-<h3 id="lightcomponent-the-basic-component-of-various-light">LightComponent (the basic component of various Light)</h3>
+Engine\Source\Runtime\Engine\Classes\Components\LightComponent.h
 
-<p>Engine\Source\Runtime\Engine\Classes\Components\LightComponent.h</p>
+##### LightComponent's API in common
 
-<h5 id="lightcomponent-s-api-in-common">LightComponent&rsquo;s API in common</h5>
+Properties:
 
-<p>Properties:</p>
+	/** 
+	 * Whether to render light shaft bloom from this light. 
+	 * For directional lights, the color around the light direction will be blurred radially and added back to the scene.
+	 * for point lights, the color on pixels closer than the light's SourceRadius will be blurred radially and added back to the scene.
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=LightShafts, meta=(DisplayName = "Light Shaft Bloom"))
+	uint32 bEnableLightShaftBloom:1;
 
-<pre><code>/** 
- * Whether to render light shaft bloom from this light. 
- * For directional lights, the color around the light direction will be blurred radially and added back to the scene.
- * for point lights, the color on pixels closer than the light's SourceRadius will be blurred radially and added back to the scene.
- */
-UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=LightShafts, meta=(DisplayName = &quot;Light Shaft Bloom&quot;))
-uint32 bEnableLightShaftBloom:1;
+	/** Scales the additive color. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=LightShafts, meta=(UIMin = "0", UIMax = "10"))
+	float BloomScale;
 
-/** Scales the additive color. */
-UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=LightShafts, meta=(UIMin = &quot;0&quot;, UIMax = &quot;10&quot;))
-float BloomScale;
+	/** Scene color must be larger than this to create bloom in the light shafts. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=LightShafts, meta=(UIMin = "0", UIMax = "4"))
+	float BloomThreshold;
 
-/** Scene color must be larger than this to create bloom in the light shafts. */
-UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=LightShafts, meta=(UIMin = &quot;0&quot;, UIMax = &quot;4&quot;))
-float BloomThreshold;
+	/** Multiplies against scene color to create the bloom color. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=LightShafts)
+	FColor BloomTint;
 
-/** Multiplies against scene color to create the bloom color. */
-UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=LightShafts)
-FColor BloomTint;
-</code></pre>
+### Sky Light
 
-<h3 id="sky-light">Sky Light</h3>
+Engine\Source\Runtime\Engine\Classes\Components\SkyLightComponent.h
 
-<p>Engine\Source\Runtime\Engine\Classes\Components\SkyLightComponent.h</p>
+##### Sky Light's API in common
 
-<h5 id="sky-light-s-api-in-common">Sky Light&rsquo;s API in common</h5>
+Properties:
 
-<p>Properties:</p>
+	/** Whether the light shadows volumetric fog.  Disabling this can save GPU time. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Light, AdvancedDisplay)
+	uint32 bCastVolumetricShadow : 1;
 
-<pre><code>/** Whether the light shadows volumetric fog.  Disabling this can save GPU time. */
-UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Light, AdvancedDisplay)
-uint32 bCastVolumetricShadow : 1;
+	/** 
+	 * Scales the indirect lighting contribution from this light. 
+	 * A value of 0 disables any GI from this light. Default is 1.
+	 */
+	UPROPERTY(BlueprintReadOnly, interp, Category=Light, meta=(UIMin = "0.0", UIMax = "6.0"))
+	float IndirectLightingIntensity;
 
-/** 
- * Scales the indirect lighting contribution from this light. 
- * A value of 0 disables any GI from this light. Default is 1.
- */
-UPROPERTY(BlueprintReadOnly, interp, Category=Light, meta=(UIMin = &quot;0.0&quot;, UIMax = &quot;6.0&quot;))
-float IndirectLightingIntensity;
+	/** Intensity of the volumetric scattering from this light.  This scales Intensity and LightColor. */
+	UPROPERTY(BlueprintReadOnly, interp, Category=Light, meta=(UIMin = "0.25", UIMax = "4.0"))
+	float VolumetricScatteringIntensity;
+	
+Functions:
 
-/** Intensity of the volumetric scattering from this light.  This scales Intensity and LightColor. */
-UPROPERTY(BlueprintReadOnly, interp, Category=Light, meta=(UIMin = &quot;0.25&quot;, UIMax = &quot;4.0&quot;))
-float VolumetricScatteringIntensity;
-</code></pre>
+	/** Sets the cubemap used when SourceType is set to SpecifiedCubemap, and causes a skylight update on the next tick. */
+	UFUNCTION(BlueprintCallable, Category="SkyLight")
+	void SetCubemap(UTextureCube* NewCubemap);
 
-<p>Functions:</p>
+	/** 
+	 * Creates sky lighting from a blend between two cubemaps, which is only valid when SourceType is set to SpecifiedCubemap. 
+	 * This can be used to seamlessly transition sky lighting between different times of day.
+	 * The caller should continue to update the blend until BlendFraction is 0 or 1 to reduce rendering cost.
+	 * The caller is responsible for avoiding pops due to changing the source or destination.
+	 */
+	UFUNCTION(BlueprintCallable, Category="SkyLight")
+	void SetCubemapBlend(UTextureCube* SourceCubemap, UTextureCube* DestinationCubemap, float InBlendFraction);
+	
+	/** Indicates that the capture needs to recapture the scene, adds it to the recapture queue. */
+	void SetCaptureIsDirty();
+	void SetBlendDestinationCaptureIsDirty();
+	void SanitizeCubemapSize();
 
-<pre><code>/** Sets the cubemap used when SourceType is set to SpecifiedCubemap, and causes a skylight update on the next tick. */
-UFUNCTION(BlueprintCallable, Category=&quot;SkyLight&quot;)
-void SetCubemap(UTextureCube* NewCubemap);
+	/** Whether sky occlusion is supported by current feature level */
+	bool IsOcclusionSupported() const;
 
-/** 
- * Creates sky lighting from a blend between two cubemaps, which is only valid when SourceType is set to SpecifiedCubemap. 
- * This can be used to seamlessly transition sky lighting between different times of day.
- * The caller should continue to update the blend until BlendFraction is 0 or 1 to reduce rendering cost.
- * The caller is responsible for avoiding pops due to changing the source or destination.
- */
-UFUNCTION(BlueprintCallable, Category=&quot;SkyLight&quot;)
-void SetCubemapBlend(UTextureCube* SourceCubemap, UTextureCube* DestinationCubemap, float InBlendFraction);
+	/** 
+	 * Recaptures the scene for the skylight. 
+	 * This is useful for making sure the sky light is up to date after changing something in the world that it would capture.
+	 * Warning: this is very costly and will definitely cause a hitch.
+	 */
+	UFUNCTION(BlueprintCallable, Category="Rendering|Components|SkyLight")
+	void RecaptureSky();
+	
+	
+### Exponential Height Fog
 
-/** Indicates that the capture needs to recapture the scene, adds it to the recapture queue. */
-void SetCaptureIsDirty();
-void SetBlendDestinationCaptureIsDirty();
-void SanitizeCubemapSize();
+Engine\Source\Runtime\Engine\Classes\Components\ExponentialHeightFogComponent.h
 
-/** Whether sky occlusion is supported by current feature level */
-bool IsOcclusionSupported() const;
+##### Exponential Height Fog's API in common
 
-/** 
- * Recaptures the scene for the skylight. 
- * This is useful for making sure the sky light is up to date after changing something in the world that it would capture.
- * Warning: this is very costly and will definitely cause a hitch.
- */
-UFUNCTION(BlueprintCallable, Category=&quot;Rendering|Components|SkyLight&quot;)
-void RecaptureSky();
-</code></pre>
+Properties:
 
-<h3 id="exponential-height-fog">Exponential Height Fog</h3>
+	/** Global density factor. */
+	UPROPERTY(BlueprintReadOnly, interp, Category=ExponentialHeightFogComponent, meta=(UIMin = "0", UIMax = ".05"))
+	float FogDensity;
 
-<p>Engine\Source\Runtime\Engine\Classes\Components\ExponentialHeightFogComponent.h</p>
+	UPROPERTY(BlueprintReadOnly, interp, Category=ExponentialHeightFogComponent)
+	FLinearColor FogInscatteringColor;
+	
+	/** 
+	 * Controls the color of the directional inscattering, which is used to approximate inscattering from a directional light. 
+	 * Note: there must be a directional light with bUsedAsAtmosphereSunLight enabled for DirectionalInscattering to be used.
+	 */
+	UPROPERTY(BlueprintReadOnly, interp, Category=DirectionalInscattering)
+	FLinearColor DirectionalInscatteringColor;
+	
+### Ambient Occlusion
 
-<h5 id="exponential-height-fog-s-api-in-common">Exponential Height Fog&rsquo;s API in common</h5>
+DFAO can be used with precomputed lighting, but SSAO can not. DFAO can save GPU cost but would memory usage would increase.
 
-<p>Properties:</p>
+##### Screen Space Ambient Occlusion (SSAO) 
 
-<pre><code>/** Global density factor. */
-UPROPERTY(BlueprintReadOnly, interp, Category=ExponentialHeightFogComponent, meta=(UIMin = &quot;0&quot;, UIMax = &quot;.05&quot;))
-float FogDensity;
+Ambient Occlusion  
+https://docs.unrealengine.com/en-us/Engine/Rendering/LightingAndShadows/AmbientOcclusion
 
-UPROPERTY(BlueprintReadOnly, interp, Category=ExponentialHeightFogComponent)
-FLinearColor FogInscatteringColor;
+##### Distance Field Ambient Occlusion (DFAO)
 
-/** 
- * Controls the color of the directional inscattering, which is used to approximate inscattering from a directional light. 
- * Note: there must be a directional light with bUsedAsAtmosphereSunLight enabled for DirectionalInscattering to be used.
- */
-UPROPERTY(BlueprintReadOnly, interp, Category=DirectionalInscattering)
-FLinearColor DirectionalInscatteringColor;
-</code></pre>
+How to enable DFAO
 
-<h3 id="ambient-occlusion">Ambient Occlusion</h3>
+1. Start by navigating to the Modes window, then in the Lights section, select and drag a Sky Light into the Level Viewport.
+2. With the Sky Light selected, navigate over to its Details panel and set its Mobility to Movable.
+3. Project Settings -> Engine -> Rendering -> Default Settings -> check `Ambient Occlusion`  
+or  
+Place a post process volume into your level, enable `Unbound` in it's properties and then modify `Intensity` of `AO intensity`.  
+4. Project Settings -> Engine -> Rendering -> Lighting -> check `Generate Mesh Distance Fields`
 
-<p>DFAO can be used with precomputed lighting, but SSAO can not. DFAO can save GPU cost but would memory usage would increase.</p>
+Distance Field Ambient Occlusion  
+https://docs.unrealengine.com/en-us/Engine/Rendering/LightingAndShadows/DistanceFieldAmbientOcclusion
 
-<h5 id="screen-space-ambient-occlusion-ssao">Screen Space Ambient Occlusion (SSAO)</h5>
+Using Distance Field Ambient Occlusion  
+https://docs.unrealengine.com/en-US/Engine/Rendering/LightingAndShadows/MeshDistanceFields/HowTo/DFHT_2
 
-<p>Ambient Occlusion<br />
-<a href="https://docs.unrealengine.com/en-us/Engine/Rendering/LightingAndShadows/AmbientOcclusion">https://docs.unrealengine.com/en-us/Engine/Rendering/LightingAndShadows/AmbientOcclusion</a></p>
+Mesh Distance Fields  
+https://docs.unrealengine.com/en-US/Engine/Rendering/LightingAndShadows/MeshDistanceFields#EnablingDistanceFields
 
-<h5 id="distance-field-ambient-occlusion-dfao">Distance Field Ambient Occlusion (DFAO)</h5>
+### Lighting Issues
 
-<p>How to enable DFAO</p>
+Issue:  
+Point Light intensity is very low event set `Intensity` to large value.
 
-<ol>
-<li>Start by navigating to the Modes window, then in the Lights section, select and drag a Sky Light into the Level Viewport.</li>
-<li>With the Sky Light selected, navigate over to its Details panel and set its Mobility to Movable.</li>
-<li>Project Settings -&gt; Engine -&gt; Rendering -&gt; Default Settings -&gt; check <code>Ambient Occlusion</code><br />
-or<br />
-Place a post process volume into your level, enable <code>Unbound</code> in it&rsquo;s properties and then modify <code>Intensity</code> of <code>AO intensity</code>.<br /></li>
-<li>Project Settings -&gt; Engine -&gt; Rendering -&gt; Lighting -&gt; check <code>Generate Mesh Distance Fields</code></li>
-</ol>
+Solution:  
+Remove Point Light and add a new Point Light into scene and setting up it.
 
-<p>Distance Field Ambient Occlusion<br />
-<a href="https://docs.unrealengine.com/en-us/Engine/Rendering/LightingAndShadows/DistanceFieldAmbientOcclusion">https://docs.unrealengine.com/en-us/Engine/Rendering/LightingAndShadows/DistanceFieldAmbientOcclusion</a></p>
+### Reference
+Lighting Passes  
+https://unrealartoptimization.github.io/book/profiling/passes-lighting/
 
-<p>Using Distance Field Ambient Occlusion<br />
-<a href="https://docs.unrealengine.com/en-US/Engine/Rendering/LightingAndShadows/MeshDistanceFields/HowTo/DFHT_2">https://docs.unrealengine.com/en-US/Engine/Rendering/LightingAndShadows/MeshDistanceFields/HowTo/DFHT_2</a></p>
-
-<p>Mesh Distance Fields<br />
-<a href="https://docs.unrealengine.com/en-US/Engine/Rendering/LightingAndShadows/MeshDistanceFields#EnablingDistanceFields">https://docs.unrealengine.com/en-US/Engine/Rendering/LightingAndShadows/MeshDistanceFields#EnablingDistanceFields</a></p>
-
-<h3 id="reference">Reference</h3>
-
-<p>Lighting Passes<br />
-<a href="https://unrealartoptimization.github.io/book/profiling/passes-lighting/">https://unrealartoptimization.github.io/book/profiling/passes-lighting/</a></p>
-
-<hr />
-
-<p><code>我只担心一件事，我怕我配不上自己所受的苦难。----陀思妥耶夫斯基</code></p>
+***
+`我只担心一件事，我怕我配不上自己所受的苦难。----陀思妥耶夫斯基`</span></span></p>
 
               
             </div>
@@ -884,6 +887,40 @@ Place a post process volume into your level, enable <code>Unbound</code> in it&r
           <div class="media">
             
             <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/03/musicsfx-assets-collections/">
+                <h3 class="media-heading">[Music]SFX Assets Collections</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Mar 3, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><h3 id="sites">Sites</h3></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/03/versioncontrolerror-out-of-memory-loading-unknown-object/">
+                <h3 class="media-heading">[VersionControl]error Out of memory loading unknown object</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Mar 3, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>Keywords: SVN, Windows Services, CMD</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
               <a class="link-unstyled" href="https://dawnarc.com/2019/02/mayatutorials-collections/">
                 <h3 class="media-heading">[Maya]Tutorials Collections</h3>
               </a>
@@ -909,7 +946,7 @@ Place a post process volume into your level, enable <code>Unbound</code> in it&r
                   Feb 2, 2019
                 </span>
               </span>
-              <div class="media-content hide-xs font-merryweather"><p>Keywords: 计算坐标点是否在六边形内部</p></div>
+              <div class="media-content hide-xs font-merryweather"><p>Keywords: Calculate point location to check if it&rsquo;s inside hexagon, 计算坐标点是否在六边形内部</p></div>
             </div>
             <div style="clear:both;"></div>
             <hr>
@@ -1017,40 +1054,6 @@ Place a post process volume into your level, enable <code>Unbound</code> in it&r
             <hr>
           </div>
         
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/02/artassets-collections/">
-                <h3 class="media-heading">[Art]Assets Collections</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Feb 2, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><h5 id="scene-painting">Scene Painting</h5></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/02/ue4animation-assets-collections/">
-                <h3 class="media-heading">[UE4]Animation Assets Collections</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Feb 2, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>.</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
       </div>
     </div>
     <div class="modal-footer">
@@ -1058,7 +1061,7 @@ Place a post process volume into your level, enable <code>Unbound</code> in it&r
          data-message-zero="no post found"
          data-message-one="1 post found"
          data-message-other="{n} posts found">
-         476 posts found
+         478 posts found
       </p>
     </div>
   </div>
