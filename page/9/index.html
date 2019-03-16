@@ -318,6 +318,67 @@ if (!doNotTrack) {
     
     <div class="postShorten-header">
       <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2018/04/ue4%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0%E4%B8%96%E7%95%8C%E5%9D%90%E6%A0%87%E8%BD%AC%E5%B1%80%E9%83%A8%E5%9D%90%E6%A0%87world-space-to-local-space/">
+          [UE4][线性代数]世界坐标转局部坐标(World Space to Local Space)
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2018-04-13T15:59:02&#43;08:00">
+        
+  April 13, 2018
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        keywords：UE4、InverseTransformVector、InverseTransformPosition
+实例代码：
+//返回摄像机Rotation相对角色Rotation的偏移量Offset FRotator ASBaseCharacter::GetAimOffsets() const { const FVector AimDirWS = GetBaseAimRotation().Vector(); const FVector AimDirLS = ActorToWorld().InverseTransformVectorNoScale(AimDirWS); const FRotator AimRotLS = AimDirLS.Rotation(); return AimRotLS; }  https://github.com/tomlooman/EpicSurvivalGameSeries/blob/4a6ee9a6081529fadbe0f693b2e4e6729d5ec08d/SurvivalGame/Source/SurvivalGame/Private/Player/SBaseCharacter.cpp#L374
+如果只是想获取两个Rotation之间的Offset，更简单的办法：
+FRotator R1; FRotator R2; FRotator Offset = R2 - R1;  但这种直接相减的方式，返回的结果Rotation，度数可能会小于-180 或 大于 180，需要手动处理范围限定，但是效率远高于 InverseTransformVector。
+无欲则刚，关心则乱。----《论语》
+      
+      <p>
+        <a href="https://dawnarc.com/2018/04/ue4%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0%E4%B8%96%E7%95%8C%E5%9D%90%E6%A0%87%E8%BD%AC%E5%B1%80%E9%83%A8%E5%9D%90%E6%A0%87world-space-to-local-space/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
         <a class="link-unstyled" href="https://dawnarc.com/2018/04/ue4animation-blend%E5%8A%A8%E7%94%BB%E8%9E%8D%E5%90%88/">
           [UE4]Animation Blend(动画融合)
         </a>
@@ -1178,68 +1239,6 @@ void UMyMenuWidget::AssignAnimations() { UProperty* prop = GetClass()-&gt;Proper
 </article>
 
           
-            
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2018/03/ue4%E8%BD%AC%E8%BD%BDwindows-%E8%BF%9C%E7%A8%8B%E7%BC%96%E8%AF%91ios%E8%8B%A5%E5%B9%B2%E9%97%AE%E9%A2%98/">
-          [UE4]转载：Windows 远程编译iOS若干问题
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2018-03-16T18:35:02&#43;08:00">
-        
-  March 16, 2018
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        原文
-http://wangjie.rocks/2017/11/30/ue4-ios-build-on-windows/
-问题一 ssh_exchange_identification: Connection closed by remote hostrsync: connection unexpectedly closed (0 bytes received so far) [sender]rsync error: error in rsync protocol data stream (code 12) at /home/lapo/packaging/rsync-3.0.4-1/src/rsync-3.0.4/io.c(632) [sender=3.0.4]  解决方法
-首先保证远程机器 OSX 上的 ssh 并发数配置足够，使用命令查看
-grep MaxStartups /etc/ssh/sshd_config  一般输出如下格式 10/20/30 意思是连接达到10之后以20%的概率拒绝新连接直到30为止，可以根据需求调大第一个值并重启
-其次保证 RemoteToolChainPrivate.key 文件存在于 C:\Users\用户名\AppData\Roaming\Unreal Engine\UnrealBuildTool\SSHKeys\远程机器地址\mac 文件夹下，没有的话需要在 Edit -&gt; Project Settings&hellip; -&gt; Platforms -&gt; iOS -&gt; Build 中进行配置，配置好远程 OSX 机器的地址，用户名，然后点击 Generate SSH Key 生成
-问题二 编译失败，出现如下错误
-      
-      <p>
-        <a href="https://dawnarc.com/2018/03/ue4%E8%BD%AC%E8%BD%BDwindows-%E8%BF%9C%E7%A8%8B%E7%BC%96%E8%AF%91ios%E8%8B%A5%E5%B9%B2%E9%97%AE%E9%A2%98/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-          
           
   <div class="pagination-bar">
     <ul class="pagination">
@@ -1369,7 +1368,9 @@ grep MaxStartups /etc/ssh/sshd_config  一般输出如下格式 10/20/30 意思�
                   Feb 2, 2019
                 </span>
               </span>
-              <div class="media-content hide-xs font-merryweather"><p>Get Faster in Maya</p></div>
+              <div class="media-content hide-xs font-merryweather"><h5 id="synthesis">Synthesis</h5>
+
+<p>Get Faster in Maya</p></div>
             </div>
             <div style="clear:both;"></div>
             <hr>

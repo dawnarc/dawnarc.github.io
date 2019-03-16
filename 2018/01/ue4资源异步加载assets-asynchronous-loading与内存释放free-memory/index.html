@@ -588,6 +588,8 @@ AssetLoader.Unload(FSoftObjectPath(AssetPath));
 <li><p>ConditionalBeginDestroy()是所有UObject都有的API，其对象销毁是异步执行且对象在当前帧内持续有效；AActor::Destroy()是AActor特有的API，其对象回收发生在当前帧结束时。</p></li>
 
 <li><p>bManageActiveHandle为true时，即使切换关卡，该资源也不会被销毁，类似AddToRoot()的效果。</p></li>
+
+<li><p>加载角色蓝图时，蓝图中引用的SkeletalMesh等资源并不会被加载，而是在SpawnActor时才会去加载。在移动端上，如果角色蓝图引用的资源（SkeletalMeshes、Materials、Textures等）体积较大时，首次SpawnActor时会出现hitch。</p></li>
 </ul>
 
 <h5 id="参考">参考</h5>
@@ -861,7 +863,9 @@ TSoftObjectPtr&lt;UParticleSystem&gt; Asset(FSoftObjectPath(TCHAR_TO_ANSI(*Path)
                   Feb 2, 2019
                 </span>
               </span>
-              <div class="media-content hide-xs font-merryweather"><p>Get Faster in Maya</p></div>
+              <div class="media-content hide-xs font-merryweather"><h5 id="synthesis">Synthesis</h5>
+
+<p>Get Faster in Maya</p></div>
             </div>
             <div style="clear:both;"></div>
             <hr>

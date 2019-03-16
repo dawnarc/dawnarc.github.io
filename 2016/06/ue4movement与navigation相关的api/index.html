@@ -565,6 +565,28 @@ if (tpath != NULL)
 }
 </code></pre>
 
+<h5 id="notice">Notice</h5>
+
+<p>Compilation Error:</p>
+
+<pre><code> error LNK2019: unresolved external symbol &quot;__declspec(dllimport) public: static class UNavigationSystemV1 * __cdecl UNavigationSystemV1::GetNavigationSystem(class UObject *)&quot; (__imp_?GetNavigationSystem@UNavigationSystemV1@@SAPEAV1@PEAVUObject@@@Z) referenced in function &quot;protected: void __cdecl AMyPlayerController::SetNewMoveDestination(struct FVector)&quot; (?SetNewMoveDestination@AMyPlayerController@@IEAAXUFVector@@@Z)
+1&gt;SkillJoystickPlayerController.cpp.obj : error LNK2019: unresolved external symbol &quot;__declspec(dllimport) public: static void __cdecl UNavigationSystemV1::SimpleMoveToLocation(class AController *,struct FVector const &amp;)&quot; (__imp_?SimpleMoveToLocation@UNavigationSystemV1@@SAXPEAVAController@@AEBUFVector@@@Z) referenced in function &quot;protected: void __cdecl AMyPlayerController::SetNewMoveDestination(struct FVector)&quot; (?SetNewMoveDestination@AMyPlayerController@@IEAAXUFVector@@@Z)
+</code></pre>
+
+<p>Solution:<br />
+Add <code>NavigationSystem</code> into DependencyModule. e.g.:</p>
+
+<pre><code>public class SkillJoystick : ModuleRules
+{
+    public SkillJoystick(ReadOnlyTargetRules Target) : base(Target)
+    {
+        PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
+
+        PublicDependencyModuleNames.AddRange(new string[] { &quot;Core&quot;, &quot;CoreUObject&quot;, &quot;Engine&quot;, &quot;InputCore&quot;, &quot;NavigationSystem&quot; });
+    }
+}
+</code></pre>
+
 <p>参考：<a href="https://answers.unrealengine.com/questions/102126/how-do-i-get-the-navigation-path-to-a-point.html">https://answers.unrealengine.com/questions/102126/how-do-i-get-the-navigation-path-to-a-point.html</a></p>
 
               
@@ -808,7 +830,9 @@ if (tpath != NULL)
                   Feb 2, 2019
                 </span>
               </span>
-              <div class="media-content hide-xs font-merryweather"><p>Get Faster in Maya</p></div>
+              <div class="media-content hide-xs font-merryweather"><h5 id="synthesis">Synthesis</h5>
+
+<p>Get Faster in Maya</p></div>
             </div>
             <div style="clear:both;"></div>
             <hr>

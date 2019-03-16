@@ -461,8 +461,10 @@ Unity早期文档：灯光 Light<br />
 <li><p>如果开启体积雾，建议将灯光改成静态光，这样在Build Lighting时会生成预计算的体积雾相关数据，这样可以显著提升体积雾性能。体积雾性能消耗巨大。</p></li>
 
 <li><p>如果场景没有静态光 Static Light（全是动态光 Movable Light 或者固定光 Stationary Light），则要禁用 Static Lighting，以节省 Static Lighting 相关的开销（比如 LightMaps和ShadowMaps的相关计算）。禁用方式：Project Settings -&gt; Engine -&gt; Rendering -&gt; Lighting -&gt; disable <code>Allow Static Lighting</code>。<div class="alert success ">
-  <p>当全动态灯光为性能瓶颈时，禁用Static Lighting可以提升10帧以上。测试用例：我的某个游戏场景，Lighting是瓶颈之一，<code>r.ScreenPercentage</code> 修改为400进行压力测试，关闭 Static Lighting 后帧率提升了20帧。因为没有静态光，禁用后光影效果亦无任何损失。</p>
+  <p>当全动态灯光为性能瓶颈时，禁用Static Lighting可以提升性能。测试用例：我的某个游戏场景，Lighting是瓶颈之一，<code>r.ScreenPercentage</code> 修改为400进行压力测试，关闭 Static Lighting 后帧率提升了20帧。因为没有静态光，禁用后光影效果亦无任何损失。</p>
 </div></p></li>
+
+<li><p>关闭<code>Support Global clip plane for Planar Reflections</code>，默认关闭，开启后消耗巨大。</p></li>
 
 <li><p>AO性能优化。默认AO是关闭的，在超大型场景中，一般灯光会是性能瓶颈之一，特别是动态光场景下。此时关闭AO可以大幅提高帧率。开启AO后（Project Settings -&gt; Engine -&gt; Rendering -&gt; Default Settings -&gt; <code>Ambient Occlusion</code>），引擎默认的AO为SSAO(Screen Space Ambient Occlusion), SSAO无法进行预计算，所以GPU性能开销较大，可以修改为DFAO(Distance Field Ambient Occlusion)以提升性能，因为DFAO可以预计算，代价是增加显存开销。<br />
 DFAO开启方式：<br />
@@ -511,7 +513,8 @@ Dynamic Shadow Distance 表示在多少距离内使用动态阴影，超过这�
 <ol>
 <li><p>地形编辑时，使用Instanced Static Meshes。Intancing会增加GPU的开销，但是可以显著降低CPU的开销。注意：Instancing不会减少CPU draw call次数，要减少draw call次数，需要减少材质种类，提高材质复用率。</p></li>
 
-<li><p>当Instanced Mesh的数量较多时（比如数十万），将<code>UHierarchicalInstancedStaticMeshComponent::bAutoRebuildTreeOnInstanceChanges</code>设置为false，可以提高渲染性能。</p></li>
+<li><p>当Instanced Mesh的数量较多时（比如百万级），一帧内执行<code>RemoveInstance</code>或者<code>UpdateInstanceTransform</code>数次，帧率会狂泻。<br />
+优化办法：操作Instanced Mesh之前，将<code>UHierarchicalInstancedStaticMeshComponent::bAutoRebuildTreeOnInstanceChanges</code>设置为false，然后执行你需要的各种Instanced Mesh操作，操作玩之后，然后将<code>bAutoRebuildTreeOnInstanceChanges</code>设置为true，然后执行<code>BuildTreeIfOutdated(true, false);</code>，这样可以显著减少因操作百万级Instanced Mesh而导致的性能损失。</p></li>
 
 <li><p>如果植被材质消耗成为瓶颈时，宁可增加面数，也不要使用 Translucent 材质，Masked酌情使用。比如一根草的面片，其整个形状全部使用三角面拼出来，而不要用一个三角面再加 Mask 或者 Translucent 材质的方式。</p></li>
 </ol>
@@ -633,6 +636,10 @@ Project Settings -&gt; Engine -&gt; Animation -&gt; 勾选 Strip Animation Data 
 
 <p>Performance Optimization: Shadows Triggering Zones<br />
 <a href="https://www.unrealengine.com/marketplace/performance-optimization-shadows-triggering-zones">https://www.unrealengine.com/marketplace/performance-optimization-shadows-triggering-zones</a></p>
+
+<hr />
+
+<p><code>嗜欲深者天机浅 ---《庄子·大宗师》</code></p>
 
               
             </div>
@@ -877,7 +884,9 @@ Project Settings -&gt; Engine -&gt; Animation -&gt; 勾选 Strip Animation Data 
                   Feb 2, 2019
                 </span>
               </span>
-              <div class="media-content hide-xs font-merryweather"><p>Get Faster in Maya</p></div>
+              <div class="media-content hide-xs font-merryweather"><h5 id="synthesis">Synthesis</h5>
+
+<p>Get Faster in Maya</p></div>
             </div>
             <div style="clear:both;"></div>
             <hr>

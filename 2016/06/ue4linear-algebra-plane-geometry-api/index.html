@@ -450,11 +450,6 @@ float CalculateDirecton(const AActor* ActorA, const AActor* ActorB)
     float&amp; OutSlopePitchDegreeAngle, float&amp; OutSlopeRollDegreeAngle);
 </code></pre>
 
-<p>计算指定 Rotator 的反向 Rotator</p>
-
-<pre><code>FRotator FRotator::GetInverse()
-</code></pre>
-
 <h5 id="点坐标计算">点坐标计算</h5>
 
 <p>计算直线外一点到该直线的最近的点（垂足的坐标）：</p>
@@ -531,6 +526,54 @@ FVector RightVector = RotMatrix.GetScaledAxis(EAxis::Y);
 FVector TopVector = RotMatrix.GetScaledAxis(EAxis::Z);
 </code></pre>
 
+<p>Local space (Position, Direction or rotation) to world space:</p>
+
+<pre><code>/** 
+ *  Transform a position by the supplied transform.
+ *  For example, if T was an object's transform, this would transform a position from local space to world space.
+ */
+UFUNCTION(BlueprintPure, Category=&quot;Math|Transform&quot;, meta=(Keywords=&quot;location&quot;))
+static FVector UKismetMathLibrary::TransformLocation(const FTransform&amp; T, FVector Location);
+
+/** 
+ *  Transform a direction vector by the supplied transform - will not change its length. 
+ *  For example, if T was an object's transform, this would transform a direction from local space to world space.
+ */
+UFUNCTION(BlueprintPure, Category=&quot;Math|Transform&quot;)
+static FVector UKismetMathLibrary::TransformDirection(const FTransform&amp; T, FVector Direction);
+
+/** 
+ *  Transform a rotator by the supplied transform. 
+ *  For example, if T was an object's transform, this would transform a rotation from local space to world space.
+ */
+UFUNCTION(BlueprintPure, Category=&quot;Math|Transform&quot;)
+static FRotator UKismetMathLibrary::TransformRotation(const FTransform&amp; T, FRotator Rotation);
+</code></pre>
+
+<p>World space (Position, Direction or rotation) to local space:</p>
+
+<pre><code>/** 
+ *  Transform a position by the inverse of the supplied transform.
+ *  For example, if T was an object's transform, this would transform a position from world space to local space.
+ */
+UFUNCTION(BlueprintPure, Category=&quot;Math|Transform&quot;, meta=(Keywords=&quot;location&quot;))
+static FVector UKismetMathLibrary::InverseTransformLocation(const FTransform&amp; T, FVector Location);
+
+/** 
+ *  Transform a direction vector by the inverse of the supplied transform - will not change its length.
+ *  For example, if T was an object's transform, this would transform a direction from world space to local space.
+ */
+UFUNCTION(BlueprintPure, Category=&quot;Math|Transform&quot;)
+static FVector UKismetMathLibrary::InverseTransformDirection(const FTransform&amp; T, FVector Direction);
+
+/** 
+ *  Transform a rotator by the inverse of the supplied transform. 
+ *  For example, if T was an object's transform, this would transform a rotation from world space to local space.
+ */
+UFUNCTION(BlueprintPure, Category=&quot;Math|Transform&quot;)
+static FRotator UKismetMathLibrary::InverseTransformRotation(const FTransform&amp; T, FRotator Rotation);
+</code></pre>
+
 <h5 id="插值相关">插值相关</h5>
 
 <p>使用简单弹簧模型来 interpolate 浮点数值（范围从 Current 到 Target）</p>
@@ -547,6 +590,47 @@ FVector TopVector = RotMatrix.GetScaledAxis(EAxis::Z);
 <p>Transform 插值计算：</p>
 
 <pre><code>FTransform UKismetMathLibrary::TInterpTo(const FTransform&amp; Current, const FTransform&amp; Target, float DeltaTime, float InterpSpeed);
+</code></pre>
+
+<h5 id="坐标系相关">坐标系相关</h5>
+
+<p>世界坐标系转局部（本地）坐标系（World To Local），以Rotation为例：</p>
+
+<pre><code>FQuat InverseTransformRotation(const FQuat&amp; Q) const;
+</code></pre>
+
+<p>示例代码：</p>
+
+<pre><code>FRotator DestWorldRot(100.f, 100.f, 0.f);
+FQuat QuatWorld = DestWorldRot.Quaternion();
+FQuat QuatLocal = MyActor-&gt;GetComponentTransform().InverseTransformRotation(QuatWorld);
+FRotator RotOffset = QuatLocal.Rotator();
+</code></pre>
+
+<p>局部（本地）坐标系转世界坐标系（Local To World），以Rotation为例：</p>
+
+<pre><code>FQuat FTransform::TransformRotation(const FQuat&amp; Q) const;
+</code></pre>
+
+<p>示例代码：</p>
+
+<pre><code>FRotator DestRotOffset(100.f, 100.f, 0.f);
+FRotator DestWorldRot = FTransform(CameraRotOrig).TransformRotation(DestRotOffset.Quaternion()).Rotator();
+</code></pre>
+
+<h5 id="曲线相关">曲线相关</h5>
+
+<p>贝塞尔曲线</p>
+
+<pre><code>/**
+ * Generates a list of sample points on a Bezier curve defined by 2 points.
+ *
+ * @param ControlPoints Array of 4 FVectors (vert1, controlpoint1, controlpoint2, vert2).
+ * @param NumPoints Number of samples.
+ * @param OutPoints Receives the output samples.
+ * @return The path length.
+ */
+static CORE_API float FVector::EvaluateBezier(const FVector* ControlPoints, int32 NumPoints, TArray&lt;FVector&gt;&amp; OutPoints);
 </code></pre>
 
               
@@ -790,7 +874,9 @@ FVector TopVector = RotMatrix.GetScaledAxis(EAxis::Z);
                   Feb 2, 2019
                 </span>
               </span>
-              <div class="media-content hide-xs font-merryweather"><p>Get Faster in Maya</p></div>
+              <div class="media-content hide-xs font-merryweather"><h5 id="synthesis">Synthesis</h5>
+
+<p>Get Faster in Maya</p></div>
             </div>
             <div style="clear:both;"></div>
             <hr>
