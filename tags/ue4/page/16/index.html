@@ -321,6 +321,128 @@ if (!doNotTrack) {
     
     <div class="postShorten-header">
       <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2016/07/ue4%E5%A6%82%E4%BD%95%E5%90%AF%E7%94%A8detour-crowd-ai-controller%E7%BE%A4%E7%BB%84%E7%A7%BB%E5%8A%A8%E6%97%B6%E7%9A%84%E7%BB%95%E8%B7%AF%E9%97%AE%E9%A2%98/">
+          [UE4]如何启用Detour Crowd AI Controller(群组移动时的绕路问题)
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2016-07-27T19:39:02&#43;08:00">
+        
+  July 27, 2016
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        keywords：UE4、AI、群体移动、闪避、避让、回避
+Detour Crowd AI Controller 蓝图方式
+打开ControllerBP，在 Class Settings 中设置 Parent Class 为：Detour Crowd AI Controller。
+C++方式
+引擎的C++代码有个叫 ADetourCrowdAIController 的class，但是这个class无法继承；
+要在C++中使用Detour Crowd AI，需要借助 UCrowdFollowingComponent，在AIController的构造函数中设置即可
+头文件：
+MyAIController(const FObjectInitializer&amp; ObjectInitializer = FObjectInitializer::Get());  cpp：
+MyAIController::MyAIController(const FObjectInitializer&amp; ObjectInitializer) : Super(ObjectInitializer.SetDefaultSubobjectClass&lt;UCrowdFollowingComponent&gt;(TEXT(&quot;PathFollowingComponent&quot;))) { }  转向抖动问题 使用默认的UCrowdFollowingComponent，角色在转向时会抖动，要解决这个问题，需要将属性UCrowdFollowingComponent::bSuspendCrowdSimulation设置为true。
+完整代码：
+#include &quot;Navigation/CrowdFollowingComponent.h&quot; AMyAIController::AMyAIController(const FObjectInitializer&amp; ObjectInitializer) : Super(ObjectInitializer.SetDefaultSubobjectClass&lt;UCrowdFollowingComponent&gt;(TEXT(&quot;PathFollowingComponent&quot;))) { if (UCrowdFollowingComponent* CrowdComp = Cast&lt;UCrowdFollowingComponent&gt;(GetComponentByClass(UCrowdFollowingComponent::StaticClass()))) { CrowdComp-&gt;SuspendCrowdSteering(true); //CrowdComp-&gt;SetCrowdAnticipateTurns(true); //CrowdComp-&gt;SetCrowdSeparation(true); //CrowdComp-&gt;SetCrowdPathOffset(true); //CrowdComp-&gt;SetCrowdAvoidanceQuality(ECrowdAvoidanceQuality::High); } }  但是`SuspendCrowdSteering` 设置为true后，自动避让面前角色的功能就失效了，如果要处理这个问题，建议重写 UCrowdFollowingComponent 中的转向逻辑，因为其内部没有考虑慢速转向的问题。 Crowd Manager 配置 Project Settings -》Engine -》 Navigation System -》 Crowd Manager Class
+      
+      <p>
+        <a href="https://dawnarc.com/2016/07/ue4%E5%A6%82%E4%BD%95%E5%90%AF%E7%94%A8detour-crowd-ai-controller%E7%BE%A4%E7%BB%84%E7%A7%BB%E5%8A%A8%E6%97%B6%E7%9A%84%E7%BB%95%E8%B7%AF%E9%97%AE%E9%A2%98/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2016/07/ue4%E5%A6%82%E4%BD%95%E4%BC%B8%E7%BC%A9texture%E8%AE%BE%E7%BD%AEtexture%E7%9A%84%E5%B9%B3%E9%93%BA%E5%80%8D%E6%95%B0/">
+          [UE4]如何伸缩texture(设置texture的平铺倍数)
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2016-07-23T21:34:02&#43;08:00">
+        
+  July 23, 2016
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        使用texture coordinate node，并设置其UTiling和VTiling参数
+      
+      <p>
+        <a href="https://dawnarc.com/2016/07/ue4%E5%A6%82%E4%BD%95%E4%BC%B8%E7%BC%A9texture%E8%AE%BE%E7%BD%AEtexture%E7%9A%84%E5%B9%B3%E9%93%BA%E5%80%8D%E6%95%B0/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
         <a class="link-unstyled" href="https://dawnarc.com/2016/07/ue4%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0%E5%90%91%E9%87%8F%E7%A7%AF%E5%A4%96%E7%A7%AF%E5%8F%89%E7%A7%AF/">
           [UE4][线性代数]向量积、外积、叉积
         </a>
@@ -889,19 +1011,20 @@ void MyObj::MyFunction(FViewport* ViewPort, uint32 val) { }
       
         keywords: UE4、Movement
 1，Actor-&gt;SetActorLocation
-Actor-&gt;SetActorLocation()  2，Velocity
-ACharacter-&gt;GetCharacterMovement()-&gt;Velocity += FVector(5.f, 5.f, 0.f);  3，将一个Controller（PlayerController或者AIController）possess到一个Actor上，然后调用：
-Controller-&gt;MoveTo();  4，将一个Controller（PlayerController或者AIController）possess到一个Actor上，然后调用
+Actor-&gt;SetActorLocation()  2，AActor::AddActorWorldOffset(), AActor::AddActorLocalOffset()
+AddActorWorldOffset与AddActorLocalOffset区别：如果期望Actor沿着某个世界坐标系方向移动，那么使用AddActorWorldOffset并且参数为世界坐标系的DeltaLocation；如果期望Actor沿着当前Actor局部坐标系方向移动，那么使用AddActorLocalOffset并且参数为相对当前Actor的DeltaLocation Offset。
+ 如果使用AddActorWorldOffset或者AddActorLocalOffset移动Character，那么MovementMode必须设置为fly，否则当DeltaLocation较小时，角色会始终往下掉（即使禁用物理模拟）。UCharacterMovementComponent::SetMovementMode(EMovementMode::MOVE_Flying);
+ 3，Velocity
+ACharacter-&gt;GetCharacterMovement()-&gt;Velocity += FVector(5.f, 5.f, 0.f);  4，将一个Controller（PlayerController或者AIController）possess到一个Actor上，然后调用：
+Controller-&gt;MoveTo();  5，将一个Controller（PlayerController或者AIController）possess到一个Actor上，然后调用
 GetWorld()-&gt;GetNavigationSystem()-&gt;SimpleMoveToLocation(Controller, DestLocation);  注意：如果使用Controller-&gt;MoveTo或者使用NavigationSystem的Move函数，前提条件是你使用了Navigation组件并build了地形，否则无效。
- 5，APawn-&gt;AddMovementInput
+ 6，APawn-&gt;AddMovementInput
 APawn-&gt;AddMovementInput(FVector WorldDirection, float ScaleValue = 1.0f, bool bForce = false);  其中WorldDirection是方向，ScaleValue是速率倍速，bForce表示是否忽略Controller中的IgnoreMoveInput属性值，强制移动。
-6，UCharacterMovementComponent::AddImpulse
+7，UCharacterMovementComponent::AddImpulse
 void UCharacterMovementComponent::AddImpulse( FVector Impulse, bool bVelocityChange )  AddImpulse 一般用来做投掷、爆炸、击飞等物理效果。添加的是一个瞬间的力，之后就不需要每帧做处理了。 注意：AddImpulse 作用对象一般都是 StaticMeshComponent ，而不能是 CollisionComponent，否则无效。且 StaticMeshComponent 要开启物理：SetSimulatePhysics(true) ，否则也无效。
 
-7，UCharacterMovementComponent::AddForce
+8，UCharacterMovementComponent::AddForce
 void UCharacterMovementComponent::AddForce( FVector Force )  如果想让物体保持移动，需要每帧都执行AddForce()函数，也就说如果加速度是实时变化的，那么就可以用AddForce。 两者的区别可以参考：
-https://forums.unrealengine.com/showthread.php?29496-Addforce-and-addimpulse
-AddForce accounts for delta time and should be used for applying force over more than one frame, AddImpulse does not account for delta time and should be used for single 'pushes', like from an explosion or being thrown by a player.
       
       <p>
         <a href="https://dawnarc.com/2016/06/ue4%E7%A7%BB%E5%8A%A8%E7%89%A9%E4%BD%93%E7%9A%84%E5%87%A0%E7%A7%8D%E6%96%B9%E6%B3%95/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -1087,120 +1210,6 @@ Try to use vector math. decide in which order you rotate, first along x, then al
 </article>
 
             
-              
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2016/06/ue4charactermovementcomponent%E7%9A%84%E7%9B%B8%E5%85%B3%E5%B1%9E%E6%80%A7/">
-          [UE4]CharacterMovementComponent的相关属性
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2016-06-05T10:15:02&#43;08:00">
-        
-  June 5, 2016
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        bFastAttachedMove：如果确定行走过程中的障碍物都是静止的，那么设为true可以提供寻路效率 bWantsToCrouch：希望在下一个update中停下来
-      
-      <p>
-        <a href="https://dawnarc.com/2016/06/ue4charactermovementcomponent%E7%9A%84%E7%9B%B8%E5%85%B3%E5%B1%9E%E6%80%A7/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-            
-              
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2016/06/ue4%E5%88%9B%E5%BB%BA%E8%87%AA%E5%AE%9A%E4%B9%89playercontroller%E7%9A%84%E6%96%B9%E6%B3%95c-/">
-          [UE4]创建自定义PlayerController的方法(C&#43;&#43;)
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2016-06-02T18:15:02&#43;08:00">
-        
-  June 2, 2016
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        一种不推荐的写法：
-FActorSpawnParameters SpawnInfo; SpawnInfo.Instigator = Instigator; SpawnInfo.ObjectFlags |= RF_Transient; // We never want to save player controllers into a map SpawnInfo.bDeferConstruction = true; AMyPlayerController* NewPC = GetWorld()-&gt;SpawnActor&lt;AMyPlayerController&gt;(AMyPlayerController::StaticClass(), SpawnLocation, SpawnRotation, SpawnInfo);  参考自AGameMode::SpawnPlayerController()函数：
-APlayerController* AGameMode::SpawnPlayerController(ENetRole RemoteRole, FVector const&amp; SpawnLocation, FRotator const&amp; SpawnRotation) { FActorSpawnParameters SpawnInfo; SpawnInfo.Instigator = Instigator; SpawnInfo.ObjectFlags |= RF_Transient; // We never want to save player controllers into a map SpawnInfo.bDeferConstruction = true; APlayerController* NewPC = GetWorld()-&gt;SpawnActor&lt;APlayerController&gt;(PlayerControllerClass, SpawnLocation, SpawnRotation, SpawnInfo); if (NewPC) { if (RemoteRole == ROLE_SimulatedProxy) { // This is a local player because it has no authority/autonomous remote role NewPC-&gt;SetAsLocalPlayerController(); } UGameplayStatics::FinishSpawningActor(NewPC, FTransform(SpawnRotation, SpawnLocation)); } return NewPC; }  推荐写法：
-      
-      <p>
-        <a href="https://dawnarc.com/2016/06/ue4%E5%88%9B%E5%BB%BA%E8%87%AA%E5%AE%9A%E4%B9%89playercontroller%E7%9A%84%E6%96%B9%E6%B3%95c-/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-            
             
   <div class="pagination-bar">
     <ul class="pagination">
@@ -1289,6 +1298,74 @@ APlayerController* AGameMode::SpawnPlayerController(ENetRole RemoteRole, FVector
           <div class="media">
             
             <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/03/ue4how-to-override-blueprintnativeevent-function-which-without-virtual/">
+                <h3 class="media-heading">[UE4]How to override BlueprintNativeEvent function which without virtual</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Mar 3, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>Problem:</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/03/versioncontrolgit-push-error-java-heap-space/">
+                <h3 class="media-heading">[VersionControl]git push error-Java heap space</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Mar 3, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>Keywords: Git</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/03/math-smoothstep/">
+                <h3 class="media-heading">Math-Smoothstep</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Mar 3, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>Origin Text:</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/03/ue4gameplay-examples-collections/">
+                <h3 class="media-heading">[UE4]Gameplay Examples Collections</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Mar 3, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><h5 id="physics">Physics</h5></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
               <a class="link-unstyled" href="https://dawnarc.com/2019/03/musicsfx-assets-collections/">
                 <h3 class="media-heading">[Music]SFX Assets Collections</h3>
               </a>
@@ -1306,15 +1383,15 @@ APlayerController* AGameMode::SpawnPlayerController(ENetRole RemoteRole, FVector
           <div class="media">
             
             <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/03/versioncontrolerror-out-of-memory-loading-unknown-object/">
-                <h3 class="media-heading">[VersionControl]error Out of memory loading unknown object</h3>
+              <a class="link-unstyled" href="https://dawnarc.com/2019/03/versioncontrolgit-push-error-out-of-memory-loading-unknown-object/">
+                <h3 class="media-heading">[VersionControl]git push error - Out of memory loading unknown object</h3>
               </a>
               <span class="media-meta">
                 <span class="media-date text-small">
                   Mar 3, 2019
                 </span>
               </span>
-              <div class="media-content hide-xs font-merryweather"><p>Keywords: SVN, Windows Services, CMD</p></div>
+              <div class="media-content hide-xs font-merryweather"><p>Keywords: git</p></div>
             </div>
             <div style="clear:both;"></div>
             <hr>
@@ -1390,74 +1467,6 @@ APlayerController* AGameMode::SpawnPlayerController(ENetRole RemoteRole, FVector
             <hr>
           </div>
         
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/02/ue4remove-and-add-instanced-foliage-mesh-at-run-time/">
-                <h3 class="media-heading">[UE4]Remove and Add Instanced Foliage Mesh at Run-time</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Feb 2, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>Keywords：InstancedFoliageActor, AInstancedFoliageActor,</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/02/ue4fatal-error-c1083-cannot-open-include-file-foliagetype.generated.h/">
-                <h3 class="media-heading">[UE4]fatal error C1083 Cannot open include file &#39;FoliageType.generated.h</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Feb 2, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><h5 id="issue">Issue</h5></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/02/ue4sky-sphere-notes/">
-                <h3 class="media-heading">[UE4]Sky Sphere Notes</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Feb 2, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>Engine Default Sky Sphere:</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/02/ue4release-version-features-notes/">
-                <h3 class="media-heading">[UE4]Release Version Features Notes</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Feb 2, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><h5 id="4-21">4.21</h5></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
       </div>
     </div>
     <div class="modal-footer">
@@ -1465,7 +1474,7 @@ APlayerController* AGameMode::SpawnPlayerController(ENetRole RemoteRole, FVector
          data-message-zero="no post found"
          data-message-one="1 post found"
          data-message-other="{n} posts found">
-         478 posts found
+         482 posts found
       </p>
     </div>
   </div>

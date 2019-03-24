@@ -10,36 +10,38 @@
 <meta name="keywords" content="">
 <meta name="description" content="keywords: UE4、Movement
 1，Actor-&gt;SetActorLocation
-Actor-&gt;SetActorLocation()  2，Velocity
-ACharacter-&gt;GetCharacterMovement()-&gt;Velocity &#43;= FVector(5.f, 5.f, 0.f);  3，将一个Controller（PlayerController或者AIController）possess到一个Actor上，然后调用：
-Controller-&gt;MoveTo();  4，将一个Controller（PlayerController或者AIController）possess到一个Actor上，然后调用
+Actor-&gt;SetActorLocation()  2，AActor::AddActorWorldOffset(), AActor::AddActorLocalOffset()
+AddActorWorldOffset与AddActorLocalOffset区别：如果期望Actor沿着某个世界坐标系方向移动，那么使用AddActorWorldOffset并且参数为世界坐标系的DeltaLocation；如果期望Actor沿着当前Actor局部坐标系方向移动，那么使用AddActorLocalOffset并且参数为相对当前Actor的DeltaLocation Offset。
+ 如果使用AddActorWorldOffset或者AddActorLocalOffset移动Character，那么MovementMode必须设置为fly，否则当DeltaLocation较小时，角色会始终往下掉（即使禁用物理模拟）。UCharacterMovementComponent::SetMovementMode(EMovementMode::MOVE_Flying);
+ 3，Velocity
+ACharacter-&gt;GetCharacterMovement()-&gt;Velocity &#43;= FVector(5.f, 5.f, 0.f);  4，将一个Controller（PlayerController或者AIController）possess到一个Actor上，然后调用：
+Controller-&gt;MoveTo();  5，将一个Controller（PlayerController或者AIController）possess到一个Actor上，然后调用
 GetWorld()-&gt;GetNavigationSystem()-&gt;SimpleMoveToLocation(Controller, DestLocation);  注意：如果使用Controller-&gt;MoveTo或者使用NavigationSystem的Move函数，前提条件是你使用了Navigation组件并build了地形，否则无效。
- 5，APawn-&gt;AddMovementInput
+ 6，APawn-&gt;AddMovementInput
 APawn-&gt;AddMovementInput(FVector WorldDirection, float ScaleValue = 1.0f, bool bForce = false);  其中WorldDirection是方向，ScaleValue是速率倍速，bForce表示是否忽略Controller中的IgnoreMoveInput属性值，强制移动。
-6，UCharacterMovementComponent::AddImpulse
+7，UCharacterMovementComponent::AddImpulse
 void UCharacterMovementComponent::AddImpulse( FVector Impulse, bool bVelocityChange )  AddImpulse 一般用来做投掷、爆炸、击飞等物理效果。添加的是一个瞬间的力，之后就不需要每帧做处理了。 注意：AddImpulse 作用对象一般都是 StaticMeshComponent ，而不能是 CollisionComponent，否则无效。且 StaticMeshComponent 要开启物理：SetSimulatePhysics(true) ，否则也无效。
 
-7，UCharacterMovementComponent::AddForce
-void UCharacterMovementComponent::AddForce( FVector Force )  如果想让物体保持移动，需要每帧都执行AddForce()函数，也就说如果加速度是实时变化的，那么就可以用AddForce。 两者的区别可以参考：
-https://forums.unrealengine.com/showthread.php?29496-Addforce-and-addimpulse
-AddForce accounts for delta time and should be used for applying force over more than one frame, AddImpulse does not account for delta time and should be used for single &#39;pushes&#39;, like from an explosion or being thrown by a player.">
+8，UCharacterMovementComponent::AddForce
+void UCharacterMovementComponent::AddForce( FVector Force )  如果想让物体保持移动，需要每帧都执行AddForce()函数，也就说如果加速度是实时变化的，那么就可以用AddForce。 两者的区别可以参考：">
 
 
 <meta property="og:description" content="keywords: UE4、Movement
 1，Actor-&gt;SetActorLocation
-Actor-&gt;SetActorLocation()  2，Velocity
-ACharacter-&gt;GetCharacterMovement()-&gt;Velocity &#43;= FVector(5.f, 5.f, 0.f);  3，将一个Controller（PlayerController或者AIController）possess到一个Actor上，然后调用：
-Controller-&gt;MoveTo();  4，将一个Controller（PlayerController或者AIController）possess到一个Actor上，然后调用
+Actor-&gt;SetActorLocation()  2，AActor::AddActorWorldOffset(), AActor::AddActorLocalOffset()
+AddActorWorldOffset与AddActorLocalOffset区别：如果期望Actor沿着某个世界坐标系方向移动，那么使用AddActorWorldOffset并且参数为世界坐标系的DeltaLocation；如果期望Actor沿着当前Actor局部坐标系方向移动，那么使用AddActorLocalOffset并且参数为相对当前Actor的DeltaLocation Offset。
+ 如果使用AddActorWorldOffset或者AddActorLocalOffset移动Character，那么MovementMode必须设置为fly，否则当DeltaLocation较小时，角色会始终往下掉（即使禁用物理模拟）。UCharacterMovementComponent::SetMovementMode(EMovementMode::MOVE_Flying);
+ 3，Velocity
+ACharacter-&gt;GetCharacterMovement()-&gt;Velocity &#43;= FVector(5.f, 5.f, 0.f);  4，将一个Controller（PlayerController或者AIController）possess到一个Actor上，然后调用：
+Controller-&gt;MoveTo();  5，将一个Controller（PlayerController或者AIController）possess到一个Actor上，然后调用
 GetWorld()-&gt;GetNavigationSystem()-&gt;SimpleMoveToLocation(Controller, DestLocation);  注意：如果使用Controller-&gt;MoveTo或者使用NavigationSystem的Move函数，前提条件是你使用了Navigation组件并build了地形，否则无效。
- 5，APawn-&gt;AddMovementInput
+ 6，APawn-&gt;AddMovementInput
 APawn-&gt;AddMovementInput(FVector WorldDirection, float ScaleValue = 1.0f, bool bForce = false);  其中WorldDirection是方向，ScaleValue是速率倍速，bForce表示是否忽略Controller中的IgnoreMoveInput属性值，强制移动。
-6，UCharacterMovementComponent::AddImpulse
+7，UCharacterMovementComponent::AddImpulse
 void UCharacterMovementComponent::AddImpulse( FVector Impulse, bool bVelocityChange )  AddImpulse 一般用来做投掷、爆炸、击飞等物理效果。添加的是一个瞬间的力，之后就不需要每帧做处理了。 注意：AddImpulse 作用对象一般都是 StaticMeshComponent ，而不能是 CollisionComponent，否则无效。且 StaticMeshComponent 要开启物理：SetSimulatePhysics(true) ，否则也无效。
 
-7，UCharacterMovementComponent::AddForce
-void UCharacterMovementComponent::AddForce( FVector Force )  如果想让物体保持移动，需要每帧都执行AddForce()函数，也就说如果加速度是实时变化的，那么就可以用AddForce。 两者的区别可以参考：
-https://forums.unrealengine.com/showthread.php?29496-Addforce-and-addimpulse
-AddForce accounts for delta time and should be used for applying force over more than one frame, AddImpulse does not account for delta time and should be used for single &#39;pushes&#39;, like from an explosion or being thrown by a player.">
+8，UCharacterMovementComponent::AddForce
+void UCharacterMovementComponent::AddForce( FVector Force )  如果想让物体保持移动，需要每帧都执行AddForce()函数，也就说如果加速度是实时变化的，那么就可以用AddForce。 两者的区别可以参考：">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[UE4]移动物体的几种方法">
 <meta name="twitter:title" content="[UE4]移动物体的几种方法">
@@ -48,34 +50,36 @@ AddForce accounts for delta time and should be used for applying force over more
 <meta property="og:site_name" content="玄冬Wong">
 <meta property="og:description" content="keywords: UE4、Movement
 1，Actor-&gt;SetActorLocation
-Actor-&gt;SetActorLocation()  2，Velocity
-ACharacter-&gt;GetCharacterMovement()-&gt;Velocity &#43;= FVector(5.f, 5.f, 0.f);  3，将一个Controller（PlayerController或者AIController）possess到一个Actor上，然后调用：
-Controller-&gt;MoveTo();  4，将一个Controller（PlayerController或者AIController）possess到一个Actor上，然后调用
+Actor-&gt;SetActorLocation()  2，AActor::AddActorWorldOffset(), AActor::AddActorLocalOffset()
+AddActorWorldOffset与AddActorLocalOffset区别：如果期望Actor沿着某个世界坐标系方向移动，那么使用AddActorWorldOffset并且参数为世界坐标系的DeltaLocation；如果期望Actor沿着当前Actor局部坐标系方向移动，那么使用AddActorLocalOffset并且参数为相对当前Actor的DeltaLocation Offset。
+ 如果使用AddActorWorldOffset或者AddActorLocalOffset移动Character，那么MovementMode必须设置为fly，否则当DeltaLocation较小时，角色会始终往下掉（即使禁用物理模拟）。UCharacterMovementComponent::SetMovementMode(EMovementMode::MOVE_Flying);
+ 3，Velocity
+ACharacter-&gt;GetCharacterMovement()-&gt;Velocity &#43;= FVector(5.f, 5.f, 0.f);  4，将一个Controller（PlayerController或者AIController）possess到一个Actor上，然后调用：
+Controller-&gt;MoveTo();  5，将一个Controller（PlayerController或者AIController）possess到一个Actor上，然后调用
 GetWorld()-&gt;GetNavigationSystem()-&gt;SimpleMoveToLocation(Controller, DestLocation);  注意：如果使用Controller-&gt;MoveTo或者使用NavigationSystem的Move函数，前提条件是你使用了Navigation组件并build了地形，否则无效。
- 5，APawn-&gt;AddMovementInput
+ 6，APawn-&gt;AddMovementInput
 APawn-&gt;AddMovementInput(FVector WorldDirection, float ScaleValue = 1.0f, bool bForce = false);  其中WorldDirection是方向，ScaleValue是速率倍速，bForce表示是否忽略Controller中的IgnoreMoveInput属性值，强制移动。
-6，UCharacterMovementComponent::AddImpulse
+7，UCharacterMovementComponent::AddImpulse
 void UCharacterMovementComponent::AddImpulse( FVector Impulse, bool bVelocityChange )  AddImpulse 一般用来做投掷、爆炸、击飞等物理效果。添加的是一个瞬间的力，之后就不需要每帧做处理了。 注意：AddImpulse 作用对象一般都是 StaticMeshComponent ，而不能是 CollisionComponent，否则无效。且 StaticMeshComponent 要开启物理：SetSimulatePhysics(true) ，否则也无效。
 
-7，UCharacterMovementComponent::AddForce
-void UCharacterMovementComponent::AddForce( FVector Force )  如果想让物体保持移动，需要每帧都执行AddForce()函数，也就说如果加速度是实时变化的，那么就可以用AddForce。 两者的区别可以参考：
-https://forums.unrealengine.com/showthread.php?29496-Addforce-and-addimpulse
-AddForce accounts for delta time and should be used for applying force over more than one frame, AddImpulse does not account for delta time and should be used for single &#39;pushes&#39;, like from an explosion or being thrown by a player.">
+8，UCharacterMovementComponent::AddForce
+void UCharacterMovementComponent::AddForce( FVector Force )  如果想让物体保持移动，需要每帧都执行AddForce()函数，也就说如果加速度是实时变化的，那么就可以用AddForce。 两者的区别可以参考：">
 <meta name="twitter:description" content="keywords: UE4、Movement
 1，Actor-&gt;SetActorLocation
-Actor-&gt;SetActorLocation()  2，Velocity
-ACharacter-&gt;GetCharacterMovement()-&gt;Velocity &#43;= FVector(5.f, 5.f, 0.f);  3，将一个Controller（PlayerController或者AIController）possess到一个Actor上，然后调用：
-Controller-&gt;MoveTo();  4，将一个Controller（PlayerController或者AIController）possess到一个Actor上，然后调用
+Actor-&gt;SetActorLocation()  2，AActor::AddActorWorldOffset(), AActor::AddActorLocalOffset()
+AddActorWorldOffset与AddActorLocalOffset区别：如果期望Actor沿着某个世界坐标系方向移动，那么使用AddActorWorldOffset并且参数为世界坐标系的DeltaLocation；如果期望Actor沿着当前Actor局部坐标系方向移动，那么使用AddActorLocalOffset并且参数为相对当前Actor的DeltaLocation Offset。
+ 如果使用AddActorWorldOffset或者AddActorLocalOffset移动Character，那么MovementMode必须设置为fly，否则当DeltaLocation较小时，角色会始终往下掉（即使禁用物理模拟）。UCharacterMovementComponent::SetMovementMode(EMovementMode::MOVE_Flying);
+ 3，Velocity
+ACharacter-&gt;GetCharacterMovement()-&gt;Velocity &#43;= FVector(5.f, 5.f, 0.f);  4，将一个Controller（PlayerController或者AIController）possess到一个Actor上，然后调用：
+Controller-&gt;MoveTo();  5，将一个Controller（PlayerController或者AIController）possess到一个Actor上，然后调用
 GetWorld()-&gt;GetNavigationSystem()-&gt;SimpleMoveToLocation(Controller, DestLocation);  注意：如果使用Controller-&gt;MoveTo或者使用NavigationSystem的Move函数，前提条件是你使用了Navigation组件并build了地形，否则无效。
- 5，APawn-&gt;AddMovementInput
+ 6，APawn-&gt;AddMovementInput
 APawn-&gt;AddMovementInput(FVector WorldDirection, float ScaleValue = 1.0f, bool bForce = false);  其中WorldDirection是方向，ScaleValue是速率倍速，bForce表示是否忽略Controller中的IgnoreMoveInput属性值，强制移动。
-6，UCharacterMovementComponent::AddImpulse
+7，UCharacterMovementComponent::AddImpulse
 void UCharacterMovementComponent::AddImpulse( FVector Impulse, bool bVelocityChange )  AddImpulse 一般用来做投掷、爆炸、击飞等物理效果。添加的是一个瞬间的力，之后就不需要每帧做处理了。 注意：AddImpulse 作用对象一般都是 StaticMeshComponent ，而不能是 CollisionComponent，否则无效。且 StaticMeshComponent 要开启物理：SetSimulatePhysics(true) ，否则也无效。
 
-7，UCharacterMovementComponent::AddForce
-void UCharacterMovementComponent::AddForce( FVector Force )  如果想让物体保持移动，需要每帧都执行AddForce()函数，也就说如果加速度是实时变化的，那么就可以用AddForce。 两者的区别可以参考：
-https://forums.unrealengine.com/showthread.php?29496-Addforce-and-addimpulse
-AddForce accounts for delta time and should be used for applying force over more than one frame, AddImpulse does not account for delta time and should be used for single &#39;pushes&#39;, like from an explosion or being thrown by a player.">
+8，UCharacterMovementComponent::AddForce
+void UCharacterMovementComponent::AddForce( FVector Force )  如果想让物体保持移动，需要每帧都执行AddForce()函数，也就说如果加速度是实时变化的，那么就可以用AddForce。 两者的区别可以参考：">
 <meta property="og:locale" content="en-us">
 
   
@@ -412,17 +416,27 @@ if (!doNotTrack) {
 <pre><code>Actor-&gt;SetActorLocation()
 </code></pre>
 
-<p>2，Velocity</p>
+<p>2，AActor::AddActorWorldOffset(), AActor::AddActorLocalOffset()</p>
+
+<div class="alert warning ">
+  <p>AddActorWorldOffset与AddActorLocalOffset区别：如果期望Actor沿着某个世界坐标系方向移动，那么使用AddActorWorldOffset并且参数为世界坐标系的DeltaLocation；如果期望Actor沿着当前Actor局部坐标系方向移动，那么使用AddActorLocalOffset并且参数为相对当前Actor的DeltaLocation Offset。</p>
+</div>
+
+<div class="alert danger ">
+  <p>如果使用AddActorWorldOffset或者AddActorLocalOffset移动Character，那么MovementMode必须设置为fly，否则当DeltaLocation较小时，角色会始终往下掉（即使禁用物理模拟）。UCharacterMovementComponent::SetMovementMode(EMovementMode::MOVE_Flying);</p>
+</div>
+
+<p>3，Velocity</p>
 
 <pre><code>ACharacter-&gt;GetCharacterMovement()-&gt;Velocity += FVector(5.f, 5.f, 0.f);
 </code></pre>
 
-<p>3，将一个Controller（PlayerController或者AIController）possess到一个Actor上，然后调用：</p>
+<p>4，将一个Controller（PlayerController或者AIController）possess到一个Actor上，然后调用：</p>
 
 <pre><code>Controller-&gt;MoveTo();
 </code></pre>
 
-<p>4，将一个Controller（PlayerController或者AIController）possess到一个Actor上，然后调用</p>
+<p>5，将一个Controller（PlayerController或者AIController）possess到一个Actor上，然后调用</p>
 
 <pre><code>GetWorld()-&gt;GetNavigationSystem()-&gt;SimpleMoveToLocation(Controller, DestLocation);
 </code></pre>
@@ -431,14 +445,14 @@ if (!doNotTrack) {
   <p>注意：如果使用Controller-&gt;MoveTo或者使用NavigationSystem的Move函数，前提条件是你使用了Navigation组件并build了地形，否则无效。</p>
 </div>
 
-<p>5，APawn-&gt;AddMovementInput</p>
+<p>6，APawn-&gt;AddMovementInput</p>
 
 <pre><code>APawn-&gt;AddMovementInput(FVector WorldDirection, float ScaleValue = 1.0f, bool bForce = false);
 </code></pre>
 
 <p>其中WorldDirection是方向，ScaleValue是速率倍速，bForce表示是否忽略Controller中的IgnoreMoveInput属性值，强制移动。</p>
 
-<p>6，UCharacterMovementComponent::AddImpulse</p>
+<p>7，UCharacterMovementComponent::AddImpulse</p>
 
 <pre><code>void UCharacterMovementComponent::AddImpulse( FVector Impulse, bool bVelocityChange )
 </code></pre>
@@ -448,7 +462,7 @@ if (!doNotTrack) {
   <p>注意：AddImpulse 作用对象一般都是 StaticMeshComponent ，而不能是 CollisionComponent，否则无效。且 StaticMeshComponent 要开启物理：SetSimulatePhysics(true) ，否则也无效。</p>
 </div></p>
 
-<p>7，UCharacterMovementComponent::AddForce</p>
+<p>8，UCharacterMovementComponent::AddForce</p>
 
 <pre><code>void UCharacterMovementComponent::AddForce( FVector Force )
 </code></pre>
@@ -461,7 +475,7 @@ if (!doNotTrack) {
 <p>参考：<br />
 <a href="https://forums.unrealengine.com/showthread.php?29496-Addforce-and-addimpulse">https://forums.unrealengine.com/showthread.php?29496-Addforce-and-addimpulse</a></p>
 
-<p>8，UKismetSystemLibrary::MoveComponentTo</p>
+<p>9，UKismetSystemLibrary::MoveComponentTo</p>
 
 <pre><code>FLatentActionInfo ActionInfo;
 ActionInfo.CallbackTarget = this;
@@ -669,6 +683,74 @@ UKismetSystemLibrary::MoveComponentTo(TopDownCameraComponent, Location, Rotation
           <div class="media">
             
             <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/03/ue4how-to-override-blueprintnativeevent-function-which-without-virtual/">
+                <h3 class="media-heading">[UE4]How to override BlueprintNativeEvent function which without virtual</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Mar 3, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>Problem:</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/03/versioncontrolgit-push-error-java-heap-space/">
+                <h3 class="media-heading">[VersionControl]git push error-Java heap space</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Mar 3, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>Keywords: Git</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/03/math-smoothstep/">
+                <h3 class="media-heading">Math-Smoothstep</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Mar 3, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>Origin Text:</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/03/ue4gameplay-examples-collections/">
+                <h3 class="media-heading">[UE4]Gameplay Examples Collections</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Mar 3, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><h5 id="physics">Physics</h5></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
               <a class="link-unstyled" href="https://dawnarc.com/2019/03/musicsfx-assets-collections/">
                 <h3 class="media-heading">[Music]SFX Assets Collections</h3>
               </a>
@@ -686,15 +768,15 @@ UKismetSystemLibrary::MoveComponentTo(TopDownCameraComponent, Location, Rotation
           <div class="media">
             
             <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/03/versioncontrolerror-out-of-memory-loading-unknown-object/">
-                <h3 class="media-heading">[VersionControl]error Out of memory loading unknown object</h3>
+              <a class="link-unstyled" href="https://dawnarc.com/2019/03/versioncontrolgit-push-error-out-of-memory-loading-unknown-object/">
+                <h3 class="media-heading">[VersionControl]git push error - Out of memory loading unknown object</h3>
               </a>
               <span class="media-meta">
                 <span class="media-date text-small">
                   Mar 3, 2019
                 </span>
               </span>
-              <div class="media-content hide-xs font-merryweather"><p>Keywords: SVN, Windows Services, CMD</p></div>
+              <div class="media-content hide-xs font-merryweather"><p>Keywords: git</p></div>
             </div>
             <div style="clear:both;"></div>
             <hr>
@@ -770,74 +852,6 @@ UKismetSystemLibrary::MoveComponentTo(TopDownCameraComponent, Location, Rotation
             <hr>
           </div>
         
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/02/ue4remove-and-add-instanced-foliage-mesh-at-run-time/">
-                <h3 class="media-heading">[UE4]Remove and Add Instanced Foliage Mesh at Run-time</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Feb 2, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>Keywords：InstancedFoliageActor, AInstancedFoliageActor,</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/02/ue4fatal-error-c1083-cannot-open-include-file-foliagetype.generated.h/">
-                <h3 class="media-heading">[UE4]fatal error C1083 Cannot open include file &#39;FoliageType.generated.h</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Feb 2, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><h5 id="issue">Issue</h5></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/02/ue4sky-sphere-notes/">
-                <h3 class="media-heading">[UE4]Sky Sphere Notes</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Feb 2, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>Engine Default Sky Sphere:</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/02/ue4release-version-features-notes/">
-                <h3 class="media-heading">[UE4]Release Version Features Notes</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Feb 2, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><h5 id="4-21">4.21</h5></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
       </div>
     </div>
     <div class="modal-footer">
@@ -845,7 +859,7 @@ UKismetSystemLibrary::MoveComponentTo(TopDownCameraComponent, Location, Rotation
          data-message-zero="no post found"
          data-message-one="1 post found"
          data-message-other="{n} posts found">
-         478 posts found
+         482 posts found
       </p>
     </div>
   </div>
