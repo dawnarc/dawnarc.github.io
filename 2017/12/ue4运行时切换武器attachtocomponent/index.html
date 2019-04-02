@@ -10,12 +10,16 @@
 <meta name="keywords" content="UE4, AttachToComponent">
 <meta name="description" content="https://github.com/tomlooman/EpicSurvivalGameSeries/blob/4a6ee9a6081529fadbe0f693b2e4e6729d5ec08d/SurvivalGame/Source/SurvivalGame/Private/Items/SWeapon.cpp#L106
 EpicSurvivalGameSeries\SurvivalGame\Source\SurvivalGame\Private\Items\SWeapon.cpp
-void ASWeapon::AttachMeshToPawn(EInventorySlot Slot) { if (MyPawn) { // Remove and hide DetachMeshFromPawn(); USkeletalMeshComponent* PawnMesh = MyPawn-&gt;GetMesh(); FName AttachPoint = MyPawn-&gt;GetInventoryAttachPoint(Slot); Mesh-&gt;SetHiddenInGame(false); Mesh-&gt;AttachToComponent(PawnMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, AttachPoint); } } void ASWeapon::DetachMeshFromPawn() { Mesh-&gt;DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform); Mesh-&gt;SetHiddenInGame(true); }  念去去、千里烟波，暮霭沉沉楚天阔。----北宋·柳永《雨霖铃》">
+void ASWeapon::AttachMeshToPawn(EInventorySlot Slot) { if (MyPawn) { // Remove and hide DetachMeshFromPawn(); USkeletalMeshComponent* PawnMesh = MyPawn-&gt;GetMesh(); FName AttachPoint = MyPawn-&gt;GetInventoryAttachPoint(Slot); Mesh-&gt;SetHiddenInGame(false); Mesh-&gt;AttachToComponent(PawnMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, AttachPoint); } } void ASWeapon::DetachMeshFromPawn() { Mesh-&gt;DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform); Mesh-&gt;SetHiddenInGame(true); }  StaticMeshComponent无法附加到SkeletalMeshComponent上，附加后StaticMeshComponent会出现在场景中的随机位置，而不是父级SkeletalMeshComponent身上，且此时即使设置LocationOffset也无效。
+ 通过NewObject&lt;USkeletalMeshComponent&gt;(Owner)运行时创建的SkeletalMeshComponent可以附加到父级SkeletalMeshComponent上，但是无法播放父级SkeletalMeshComponent的动画，即使设置了WeaponComp-&gt;SetMasterPoseComponent(PawnMesh)。建议在构造函数中创建后SkeletalMeshComponent，然后再run-time修改SkeletalMesh模型，run-time修改指定SkeletalMeshComponent的SkeletalMesh是没有问题的，且可以正常播放父级的动画。
+ 念去去、千里烟波，暮霭沉沉楚天阔。----北宋·柳永《雨霖铃》">
 
 
 <meta property="og:description" content="https://github.com/tomlooman/EpicSurvivalGameSeries/blob/4a6ee9a6081529fadbe0f693b2e4e6729d5ec08d/SurvivalGame/Source/SurvivalGame/Private/Items/SWeapon.cpp#L106
 EpicSurvivalGameSeries\SurvivalGame\Source\SurvivalGame\Private\Items\SWeapon.cpp
-void ASWeapon::AttachMeshToPawn(EInventorySlot Slot) { if (MyPawn) { // Remove and hide DetachMeshFromPawn(); USkeletalMeshComponent* PawnMesh = MyPawn-&gt;GetMesh(); FName AttachPoint = MyPawn-&gt;GetInventoryAttachPoint(Slot); Mesh-&gt;SetHiddenInGame(false); Mesh-&gt;AttachToComponent(PawnMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, AttachPoint); } } void ASWeapon::DetachMeshFromPawn() { Mesh-&gt;DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform); Mesh-&gt;SetHiddenInGame(true); }  念去去、千里烟波，暮霭沉沉楚天阔。----北宋·柳永《雨霖铃》">
+void ASWeapon::AttachMeshToPawn(EInventorySlot Slot) { if (MyPawn) { // Remove and hide DetachMeshFromPawn(); USkeletalMeshComponent* PawnMesh = MyPawn-&gt;GetMesh(); FName AttachPoint = MyPawn-&gt;GetInventoryAttachPoint(Slot); Mesh-&gt;SetHiddenInGame(false); Mesh-&gt;AttachToComponent(PawnMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, AttachPoint); } } void ASWeapon::DetachMeshFromPawn() { Mesh-&gt;DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform); Mesh-&gt;SetHiddenInGame(true); }  StaticMeshComponent无法附加到SkeletalMeshComponent上，附加后StaticMeshComponent会出现在场景中的随机位置，而不是父级SkeletalMeshComponent身上，且此时即使设置LocationOffset也无效。
+ 通过NewObject&lt;USkeletalMeshComponent&gt;(Owner)运行时创建的SkeletalMeshComponent可以附加到父级SkeletalMeshComponent上，但是无法播放父级SkeletalMeshComponent的动画，即使设置了WeaponComp-&gt;SetMasterPoseComponent(PawnMesh)。建议在构造函数中创建后SkeletalMeshComponent，然后再run-time修改SkeletalMesh模型，run-time修改指定SkeletalMeshComponent的SkeletalMesh是没有问题的，且可以正常播放父级的动画。
+ 念去去、千里烟波，暮霭沉沉楚天阔。----北宋·柳永《雨霖铃》">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[UE4]运行时切换武器(AttachToComponent)">
 <meta name="twitter:title" content="[UE4]运行时切换武器(AttachToComponent)">
@@ -24,10 +28,14 @@ void ASWeapon::AttachMeshToPawn(EInventorySlot Slot) { if (MyPawn) { // Remove a
 <meta property="og:site_name" content="玄冬Wong">
 <meta property="og:description" content="https://github.com/tomlooman/EpicSurvivalGameSeries/blob/4a6ee9a6081529fadbe0f693b2e4e6729d5ec08d/SurvivalGame/Source/SurvivalGame/Private/Items/SWeapon.cpp#L106
 EpicSurvivalGameSeries\SurvivalGame\Source\SurvivalGame\Private\Items\SWeapon.cpp
-void ASWeapon::AttachMeshToPawn(EInventorySlot Slot) { if (MyPawn) { // Remove and hide DetachMeshFromPawn(); USkeletalMeshComponent* PawnMesh = MyPawn-&gt;GetMesh(); FName AttachPoint = MyPawn-&gt;GetInventoryAttachPoint(Slot); Mesh-&gt;SetHiddenInGame(false); Mesh-&gt;AttachToComponent(PawnMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, AttachPoint); } } void ASWeapon::DetachMeshFromPawn() { Mesh-&gt;DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform); Mesh-&gt;SetHiddenInGame(true); }  念去去、千里烟波，暮霭沉沉楚天阔。----北宋·柳永《雨霖铃》">
+void ASWeapon::AttachMeshToPawn(EInventorySlot Slot) { if (MyPawn) { // Remove and hide DetachMeshFromPawn(); USkeletalMeshComponent* PawnMesh = MyPawn-&gt;GetMesh(); FName AttachPoint = MyPawn-&gt;GetInventoryAttachPoint(Slot); Mesh-&gt;SetHiddenInGame(false); Mesh-&gt;AttachToComponent(PawnMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, AttachPoint); } } void ASWeapon::DetachMeshFromPawn() { Mesh-&gt;DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform); Mesh-&gt;SetHiddenInGame(true); }  StaticMeshComponent无法附加到SkeletalMeshComponent上，附加后StaticMeshComponent会出现在场景中的随机位置，而不是父级SkeletalMeshComponent身上，且此时即使设置LocationOffset也无效。
+ 通过NewObject&lt;USkeletalMeshComponent&gt;(Owner)运行时创建的SkeletalMeshComponent可以附加到父级SkeletalMeshComponent上，但是无法播放父级SkeletalMeshComponent的动画，即使设置了WeaponComp-&gt;SetMasterPoseComponent(PawnMesh)。建议在构造函数中创建后SkeletalMeshComponent，然后再run-time修改SkeletalMesh模型，run-time修改指定SkeletalMeshComponent的SkeletalMesh是没有问题的，且可以正常播放父级的动画。
+ 念去去、千里烟波，暮霭沉沉楚天阔。----北宋·柳永《雨霖铃》">
 <meta name="twitter:description" content="https://github.com/tomlooman/EpicSurvivalGameSeries/blob/4a6ee9a6081529fadbe0f693b2e4e6729d5ec08d/SurvivalGame/Source/SurvivalGame/Private/Items/SWeapon.cpp#L106
 EpicSurvivalGameSeries\SurvivalGame\Source\SurvivalGame\Private\Items\SWeapon.cpp
-void ASWeapon::AttachMeshToPawn(EInventorySlot Slot) { if (MyPawn) { // Remove and hide DetachMeshFromPawn(); USkeletalMeshComponent* PawnMesh = MyPawn-&gt;GetMesh(); FName AttachPoint = MyPawn-&gt;GetInventoryAttachPoint(Slot); Mesh-&gt;SetHiddenInGame(false); Mesh-&gt;AttachToComponent(PawnMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, AttachPoint); } } void ASWeapon::DetachMeshFromPawn() { Mesh-&gt;DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform); Mesh-&gt;SetHiddenInGame(true); }  念去去、千里烟波，暮霭沉沉楚天阔。----北宋·柳永《雨霖铃》">
+void ASWeapon::AttachMeshToPawn(EInventorySlot Slot) { if (MyPawn) { // Remove and hide DetachMeshFromPawn(); USkeletalMeshComponent* PawnMesh = MyPawn-&gt;GetMesh(); FName AttachPoint = MyPawn-&gt;GetInventoryAttachPoint(Slot); Mesh-&gt;SetHiddenInGame(false); Mesh-&gt;AttachToComponent(PawnMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, AttachPoint); } } void ASWeapon::DetachMeshFromPawn() { Mesh-&gt;DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform); Mesh-&gt;SetHiddenInGame(true); }  StaticMeshComponent无法附加到SkeletalMeshComponent上，附加后StaticMeshComponent会出现在场景中的随机位置，而不是父级SkeletalMeshComponent身上，且此时即使设置LocationOffset也无效。
+ 通过NewObject&lt;USkeletalMeshComponent&gt;(Owner)运行时创建的SkeletalMeshComponent可以附加到父级SkeletalMeshComponent上，但是无法播放父级SkeletalMeshComponent的动画，即使设置了WeaponComp-&gt;SetMasterPoseComponent(PawnMesh)。建议在构造函数中创建后SkeletalMeshComponent，然后再run-time修改SkeletalMesh模型，run-time修改指定SkeletalMeshComponent的SkeletalMesh是没有问题的，且可以正常播放父级的动画。
+ 念去去、千里烟波，暮霭沉沉楚天阔。----北宋·柳永《雨霖铃》">
 <meta property="og:locale" content="en-us">
 
   
@@ -381,6 +389,14 @@ void ASWeapon::DetachMeshFromPawn()
 }
 </code></pre>
 
+<div class="alert danger ">
+  <p>StaticMeshComponent无法附加到SkeletalMeshComponent上，附加后StaticMeshComponent会出现在场景中的随机位置，而不是父级SkeletalMeshComponent身上，且此时即使设置LocationOffset也无效。</p>
+</div>
+
+<div class="alert danger ">
+  <p>通过<code>NewObject&lt;USkeletalMeshComponent&gt;(Owner)</code>运行时创建的SkeletalMeshComponent可以附加到父级SkeletalMeshComponent上，但是无法播放父级SkeletalMeshComponent的动画，即使设置了<code>WeaponComp-&gt;SetMasterPoseComponent(PawnMesh)</code>。建议在构造函数中创建后SkeletalMeshComponent，然后再run-time修改SkeletalMesh模型，run-time修改指定SkeletalMeshComponent的SkeletalMesh是没有问题的，且可以正常播放父级的动画。</p>
+</div>
+
 <hr />
 
 <p><code>念去去、千里烟波，暮霭沉沉楚天阔。----北宋·柳永《雨霖铃》</code></p>
@@ -582,6 +598,57 @@ void ASWeapon::DetachMeshFromPawn()
           <div class="media">
             
             <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/03/ue4animationblendspace-for-c-/">
+                <h3 class="media-heading">[UE4][Animation]BlendSpace for C&#43;&#43;</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Mar 3, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p><code>FAnimNode_BlendSpacePlayer</code> is the native source of <code>BlendSpace</code> which used in Animation Blueprint.</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/03/ue4umg-slider-related/">
+                <h3 class="media-heading">[UE4]UMG Slider Related</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Mar 3, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><h5 id="how-to-increase-slider-bar-thickness-height-scale-in-y">How to increase slider bar thickness (height, scale in Y)</h5></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/03/opensourcelibraries-and-frameworks-collections/">
+                <h3 class="media-heading">[OpenSource]Libraries and Frameworks Collections</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Mar 3, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><h3 id="math">Math</h3></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
               <a class="link-unstyled" href="https://dawnarc.com/2019/03/ue4how-to-override-blueprintnativeevent-function-which-without-virtual/">
                 <h3 class="media-heading">[UE4]How to override BlueprintNativeEvent function which without virtual</h3>
               </a>
@@ -700,57 +767,6 @@ void ASWeapon::DetachMeshFromPawn()
             <hr>
           </div>
         
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/02/mathcheck-if-a-point-is-inside-regular-hexagon/">
-                <h3 class="media-heading">[Math]Check if a point is inside regular hexagon</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Feb 2, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>Keywords: Calculate point location to check if it&rsquo;s inside hexagon, 计算坐标点是否在六边形内部</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/02/android-ndkhow-to-support-android-9.0-when-building-using-ndk-r12b/">
-                <h3 class="media-heading">[Android NDK]How to support Android 9.0 when building using NDK r12b</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Feb 2, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>.</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/02/ue4texture-related/">
-                <h3 class="media-heading">[UE4]Texture Related</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Feb 2, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><h5 id="is-it-need-to-make-texture-lods">Is it need to make Texture LODs?</h5></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
       </div>
     </div>
     <div class="modal-footer">
@@ -758,7 +774,7 @@ void ASWeapon::DetachMeshFromPawn()
          data-message-zero="no post found"
          data-message-one="1 post found"
          data-message-other="{n} posts found">
-         482 posts found
+         485 posts found
       </p>
     </div>
   </div>

@@ -318,6 +318,195 @@ if (!doNotTrack) {
     
     <div class="postShorten-header">
       <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2018/03/ue4umgcreate-widget-dynamically-using-c-/">
+          [UE4][UMG]Create Widget Dynamically using C&#43;&#43;
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2018-03-31T19:03:02&#43;08:00">
+        
+  March 31, 2018
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        keyworkds：UE4、C++动态创建Widget、Runtime Create Widget
+动态创建 CanvasPanel 并在内部动态创建 Button 在空白蓝图中创建一个 CanvasPanel 并在内部创建一个 Button。假设空白UMG蓝图的默认 CanvasPanel 是动态创建，而不是新建UMG蓝图时自带的那个。
+示例：
+void UMyUserWidget::NativeConstruct() { Super::NativeConstruct(); auto MyCanvas = WidgetTree-&gt;ConstructWidget&lt;UCanvasPanel&gt;(UCanvasPanel::StaticClass()); if(MyCanvas) { auto MyButton = WidgetTree-&gt;ConstructWidget&lt;UButton&gt;(UButton::StaticClass()); MyCanvas-&gt;AddChild(MyButton); WidgetTree-&gt;RootWidget = MyCanvas; } }  动态填充 HorizontalBoxSlot 这里假设把 HorizontalBoxSlot 当作一个背包，然后往这个背包中动态添加道具对象。
+示例：
+void UBags::NativeConstruct() { Super::NativeConstruct(); //获取UMG蓝图摆放好的 HorizontalBoxSlot UHorizontalBox* HorBox = Cast&lt;UHorizontalBox&gt;(GetWidgetFromName(FName(&quot;HorizontalBox_62&quot;))); if (HorBox) { //加载道具蓝图 class if (UClass* MyWidgetClass = LoadClass&lt;UMyItemWidget&gt;(NULL, TEXT(&quot;WidgetBlueprint'/Game/UI/ItemBP.ItemBP_C'&quot;))) { for (int i = 0; i &lt; 5; i++) { UMyItemWidget* Item = WidgetTree-&gt;ConstructWidget&lt;UMyItemWidget&gt;(MyWidgetClass); UPanelSlot* Slot = HorBox-&gt;AddChild(Item); if (UHorizontalBoxSlot* HorSlot = Cast&lt;UHorizontalBoxSlot&gt;(Slot)) { //设置大小为填充 FSlateChildSize Size(ESlateSizeRule::Type::Fill); HorSlot-&gt;SetSize(Size); //横向居中对其 HorSlot-&gt;SetHorizontalAlignment(EHorizontalAlignment::HAlign_Center); //纵向居中对其 HorSlot-&gt;SetVerticalAlignment(EVerticalAlignment::VAlign_Center); } } } } }  动态填充 UniformGridPanel void UMyUserWidget::NativeConstruct() { Super::NativeConstruct(); //获取UMG蓝图摆放好的 HorizontalBoxSlot UUniformGridPanel* UniGrid = Cast&lt;UUniformGridPanel&gt;(GetWidgetFromName(FName(&quot;UniformGridPanel_01&quot;))); if (UniGrid) { UButton* MyButton = WidgetTree-&gt;ConstructWidget&lt;UButton&gt;(UButton::StaticClass()); if(UUniformGridSlot* Slot = UniGrid-&gt;AddChildToUniformGrid(MyButton)) { //设置单元格的纵向和横向位置 Slot-&gt;SetRow(5); Slot-&gt;SetColumn(5); } } }  批量获取并设置 UniformGridPanel 单元格位置 TArray&lt;UPanelSlot*&gt; Slots = UniformGridPanel-&gt;GetSlots(); int index = 0; for (UPanelSlot* Slot : Slots) { UUniformGridSlot * UniSlot = Cast&lt;UUniformGridSlot&gt;(Slot); if (UniSlot) { UniSlot-&gt;SetRow(index); UniSlot-&gt;SetColumn(1); } index++; }  运行时期间修改Widget屏幕位置 Modify widget&rsquo;s screen position at run-time:
+      
+      <p>
+        <a href="https://dawnarc.com/2018/03/ue4umgcreate-widget-dynamically-using-c-/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2018/03/ue4c-bindufunction%E6%97%B6%E4%BC%A0%E9%80%92%E5%8F%82%E6%95%B0bindufunction-with-variable-capture-in-c-/">
+          [UE4]C&#43;&#43; BindUFunction时传递参数(BindUFunction with Variable Capture in C&#43;&#43;)
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2018-03-30T18:26:02&#43;08:00">
+        
+  March 30, 2018
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        keywords：UE4、BindUFunction、BindUObject、Pass Arguments、Variable
+示例1：
+void UMyClass::FunctionWithVar(const FString&amp; MyVar, TFunction&lt;void(const FString&amp;)&gt; InFunction) { MyLambdaHandle = OnMyDelegate.BindStatic([MyVar](TFunction&lt;void(const FString&amp;)&gt; callback) {callback(MyVar);}, InFunction); // TODO: You have to track MyLambdaHandle to be able to unregister it when needed }  https://answers.unrealengine.com/questions/715835/bindufunction-with-variable-capture-in-c.html
+示例2：
+使用固定参数绑定
+DECLARE_DELEGATE(RefreshOne); class MyClass { public: MyClass() { one.BindRaw(this, &amp;MyClass::MyFunction, (uint8)1); } void MyFunction(uint8 Val) { // Whatever } void Invoke() { one.Execute(); // Will call this-&gt;MyFunction((uint8)1); } private: RefreshOne one; };  使用动态参数绑定
+      
+      <p>
+        <a href="https://dawnarc.com/2018/03/ue4c-bindufunction%E6%97%B6%E4%BC%A0%E9%80%92%E5%8F%82%E6%95%B0bindufunction-with-variable-capture-in-c-/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2018/03/android-ndkarm-eabi-addr2line-android%E5%BA%94%E7%94%A8%E5%B4%A9%E6%BA%83%E7%9A%84%E8%B0%83%E8%AF%95%E6%96%B9%E6%B3%95/">
+          [Android NDK]arm-eabi-addr2line android应用崩溃的调试方法
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2018-03-29T18:04:02&#43;08:00">
+        
+  March 29, 2018
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/android">Android</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        原文：https://blog.csdn.net/tommy_wxie/article/details/12841735
+1.将ndk中的arm-linux-androideabi-addr2line可执行文件的路径加入配置文件~/.bashrc中，例如：
+export PATH=$PATH:~/dlna/android-ndk-r6b/toolchains/arm-linux-androideabi-4.4.3/prebuilt/linux-x86/bin  2.使配置生效：
+source ~/.bashrc  3.使用工具。例如：
+arm-linux-androideabi-addr2line -C -f -e ~/workspace/DLNA/libs/armeabi/libctrlpt.so 0003deb4  其中，0003deb4为堆栈信息中pc的值。
+android应用崩溃的调试方法 有两种方法可以分析 crash 的堆栈信息
+1，google提供了一个python脚本，可以从 https://github.com/maxme/android-ndk-stacktrace-analyzer 下载这个python脚本，然后使用 adb logcat -d &gt; logfile 导出 crash 的log,使用 arm-eabi-objdump 位于build/prebuilt/linux-x86/arm-eabi-4.2.1/bin下面把so或exe转换成汇编代码，如：arm-eabi-objdump -S mylib.so &gt; mylib.asm,使用脚本
+python parse_stack.py &lt;asm-file&gt; &lt;logcat-file&gt;  2，直接使用NDK下面的arm-linux-androideabi-addr2line
+(D:\android-ndk-r8\toolchains\arm-linux- androideabi-4.4.3\prebuilt\windows\bin\arm-linux-androideabi-addr2line.exe)
+例如：
+arm-linux-androideabi-addr2line -C -f -e libxxx.so 0x#####(address)  出现 ??:0 , 没法展示源代码行数的问题 在Android.mk 文件中:
+LOCAL_CFLAGS := -D__STDC_CONSTANT_MACROS -Wl,-Map=test.map -g  补充2个编译参数 -Wl,-Map=test.map -g .
+      
+      <p>
+        <a href="https://dawnarc.com/2018/03/android-ndkarm-eabi-addr2line-android%E5%BA%94%E7%94%A8%E5%B4%A9%E6%BA%83%E7%9A%84%E8%B0%83%E8%AF%95%E6%96%B9%E6%B3%95/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
         <a class="link-unstyled" href="https://dawnarc.com/2018/03/ue42d%E5%8A%A8%E7%94%BB%E5%BA%8F%E5%88%97%E5%B8%A7paper-sprite/">
           [UE4]2D动画序列帧Paper Sprite
         </a>
@@ -1045,193 +1234,6 @@ https://answers.unrealengine.com/questions/223227/remove-obsolete-mobileprovisio
 </article>
 
           
-            
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2018/03/ue4%E8%BD%AC%E8%BD%BD%E5%9C%A8windows-pc%E4%B8%8A%E4%BD%BF%E7%94%A8remote-build%E6%89%93%E5%8C%85ios-app/">
-          [UE4]转载：在Windows PC上使用Remote Build打包iOS App
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2018-03-08T18:19:02&#43;08:00">
-        
-  March 8, 2018
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        How to setup Remote Build ?
-https://answers.unrealengine.com/questions/450714/how-to-setup-remote-build.html
-[UE4]在Windows PC上打包纯蓝图工程 https://www.jianshu.com/p/7c62ec452ce1
-[UE4]在Windows PC上使用Remote Build打包iOS App（C++或蓝图）
-https://www.jianshu.com/p/8770044771e3
-Building iOS game in Unreal Engine 4 via remote machine
-http://zompi.pl/building-ios-game-in-unreal-engine-4-via-remote-machine/
-如果一切看起来尽在掌控之中，那说明你跑得不够快；如果你身高会中冷箭，说明你走在他们面前；如果你会被他们伤到，说明你走得不够远，还在他们的射程以内。不要停下来解释，只需要继续前进，把他们远远甩在后面。
-      
-      <p>
-        <a href="https://dawnarc.com/2018/03/ue4%E8%BD%AC%E8%BD%BD%E5%9C%A8windows-pc%E4%B8%8A%E4%BD%BF%E7%94%A8remote-build%E6%89%93%E5%8C%85ios-app/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-          
-            
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2018/03/xcode%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C/">
-          [Xcode]常用操作
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2018-03-07T20:29:02&#43;08:00">
-        
-  March 7, 2018
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/xcode">Xcode</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        构建 command + R
-清理工程 command + shift + K
-当前工程根目录的环境变量（.xcworkspace文件所在目录） $(SRCROOT)  头文件搜索路径 Always Search User Paths 是否优先使用User Header Search Paths
-Header Search Paths 编译器的头文件目录
-User Header Search Paths 自己工程的头文件目录
-修改编译输出目录 Build Settings -&gt; Build Locations -&gt; Build Products Path
-修改后需要重启xcode才会生效。
-参考：http://blog.csdn.net/tintinr/article/details/50936313
-iOS 静态库制作（Xcode9.0）
-http://blog.csdn.net/wanna_dance/article/details/78687676
-人们最好在运筹帷幄时胆小一点，并想到所有不良后果；但在必须行动的时候，便要大胆敢为。
-      
-      <p>
-        <a href="https://dawnarc.com/2018/03/xcode%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-          
-            
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2018/03/iosprotobuf2.6%E7%BC%96%E8%AF%91ios%E7%89%88%E6%9C%AC%E9%9D%99%E6%80%81%E5%BA%93/">
-          [iOS]protobuf2.6编译iOS版本静态库
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2018-03-07T19:20:02&#43;08:00">
-        
-  March 7, 2018
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/ios">iOS</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        将以下脚本保存为shell脚本并运行：
-sh build-protobuf-2.6.1.sh  build-protobuf-2.6.1.sh
-#!/bin/bash -x echo &quot;$(tput setaf 2)&quot; echo Building Google Protobuf for Mac OS X / iOS. echo Use 'tail -f build.log' to monitor progress. echo &quot;$(tput sgr0)&quot; # Controls which architectures are build/included in the # universal binaries and libraries this script produces. # Set each to '1' to include, '0' to exclude. BUILD_X86_64_MAC=1 BUILD_X86_64_IOS_SIM=1 BUILD_I386_IOS_SIM=1 BUILD_ARMV7_IPHONE=1 BUILD_ARMV7S_IPHONE=1 BUILD_ARM64_IPHONE=1 PB_VERSION=2.6.1 # Set this to the replacement name for the 'google' namespace.
-      
-      <p>
-        <a href="https://dawnarc.com/2018/03/iosprotobuf2.6%E7%BC%96%E8%AF%91ios%E7%89%88%E6%9C%AC%E9%9D%99%E6%80%81%E5%BA%93/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-          
           
   <div class="pagination-bar">
     <ul class="pagination">
@@ -1315,6 +1317,57 @@ sh build-protobuf-2.6.1.sh  build-protobuf-2.6.1.sh
       <div class="no-result text-color-light text-center">no post found</div>
       <div class="results">
         
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/03/ue4animationblendspace-for-c-/">
+                <h3 class="media-heading">[UE4][Animation]BlendSpace for C&#43;&#43;</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Mar 3, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p><code>FAnimNode_BlendSpacePlayer</code> is the native source of <code>BlendSpace</code> which used in Animation Blueprint.</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/03/ue4umg-slider-related/">
+                <h3 class="media-heading">[UE4]UMG Slider Related</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Mar 3, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><h5 id="how-to-increase-slider-bar-thickness-height-scale-in-y">How to increase slider bar thickness (height, scale in Y)</h5></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/03/opensourcelibraries-and-frameworks-collections/">
+                <h3 class="media-heading">[OpenSource]Libraries and Frameworks Collections</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Mar 3, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><h3 id="math">Math</h3></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
         
           <div class="media">
             
@@ -1437,57 +1490,6 @@ sh build-protobuf-2.6.1.sh  build-protobuf-2.6.1.sh
             <hr>
           </div>
         
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/02/mathcheck-if-a-point-is-inside-regular-hexagon/">
-                <h3 class="media-heading">[Math]Check if a point is inside regular hexagon</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Feb 2, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>Keywords: Calculate point location to check if it&rsquo;s inside hexagon, 计算坐标点是否在六边形内部</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/02/android-ndkhow-to-support-android-9.0-when-building-using-ndk-r12b/">
-                <h3 class="media-heading">[Android NDK]How to support Android 9.0 when building using NDK r12b</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Feb 2, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>.</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/02/ue4texture-related/">
-                <h3 class="media-heading">[UE4]Texture Related</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Feb 2, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><h5 id="is-it-need-to-make-texture-lods">Is it need to make Texture LODs?</h5></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
       </div>
     </div>
     <div class="modal-footer">
@@ -1495,7 +1497,7 @@ sh build-protobuf-2.6.1.sh  build-protobuf-2.6.1.sh
          data-message-zero="no post found"
          data-message-one="1 post found"
          data-message-other="{n} posts found">
-         482 posts found
+         485 posts found
       </p>
     </div>
   </div>

@@ -716,7 +716,7 @@ C++方式
 MyAIController(const FObjectInitializer&amp; ObjectInitializer = FObjectInitializer::Get());  cpp：
 MyAIController::MyAIController(const FObjectInitializer&amp; ObjectInitializer) : Super(ObjectInitializer.SetDefaultSubobjectClass&lt;UCrowdFollowingComponent&gt;(TEXT(&quot;PathFollowingComponent&quot;))) { }  转向抖动问题 使用默认的UCrowdFollowingComponent，角色在转向时会抖动，要解决这个问题，需要将属性UCrowdFollowingComponent::bSuspendCrowdSimulation设置为true。
 完整代码：
-#include &quot;Navigation/CrowdFollowingComponent.h&quot; AMyAIController::AMyAIController(const FObjectInitializer&amp; ObjectInitializer) : Super(ObjectInitializer.SetDefaultSubobjectClass&lt;UCrowdFollowingComponent&gt;(TEXT(&quot;PathFollowingComponent&quot;))) { if (UCrowdFollowingComponent* CrowdComp = Cast&lt;UCrowdFollowingComponent&gt;(GetComponentByClass(UCrowdFollowingComponent::StaticClass()))) { CrowdComp-&gt;SuspendCrowdSteering(true); //CrowdComp-&gt;SetCrowdAnticipateTurns(true); //CrowdComp-&gt;SetCrowdSeparation(true); //CrowdComp-&gt;SetCrowdPathOffset(true); //CrowdComp-&gt;SetCrowdAvoidanceQuality(ECrowdAvoidanceQuality::High); } }  但是`SuspendCrowdSteering` 设置为true后，自动避让面前角色的功能就失效了，如果要处理这个问题，建议重写 UCrowdFollowingComponent 中的转向逻辑，因为其内部没有考虑慢速转向的问题。 Crowd Manager 配置 Project Settings -》Engine -》 Navigation System -》 Crowd Manager Class
+#include &quot;Navigation/CrowdFollowingComponent.h&quot; AMyAIController::AMyAIController(const FObjectInitializer&amp; ObjectInitializer) : Super(ObjectInitializer.SetDefaultSubobjectClass&lt;UCrowdFollowingComponent&gt;(TEXT(&quot;PathFollowingComponent&quot;))) { if (UCrowdFollowingComponent* CrowdComp = Cast&lt;UCrowdFollowingComponent&gt;(GetComponentByClass(UCrowdFollowingComponent::StaticClass()))) { CrowdComp-&gt;SuspendCrowdSteering(true); //CrowdComp-&gt;SetCrowdAnticipateTurns(true); //CrowdComp-&gt;SetCrowdSeparation(true); //CrowdComp-&gt;SetCrowdPathOffset(true); //CrowdComp-&gt;SetCrowdAvoidanceQuality(ECrowdAvoidanceQuality::High); } }  但是`SuspendCrowdSteering` 设置为true后，自动避让面前单位的功能就失效了，如果要处理这个问题，建议重写 UCrowdFollowingComponent 中的转向逻辑，因为其内部没有考虑慢速转向的问题。 Crowd Manager 配置 Project Settings -》Engine -》 Navigation System -》 Crowd Manager Class
       
       <p>
         <a href="https://dawnarc.com/2016/07/ue4%E5%A6%82%E4%BD%95%E5%90%AF%E7%94%A8detour-crowd-ai-controller%E7%BE%A4%E7%BB%84%E7%A7%BB%E5%8A%A8%E6%97%B6%E7%9A%84%E7%BB%95%E8%B7%AF%E9%97%AE%E9%A2%98/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -1033,8 +1033,8 @@ void UCharacterMovementComponent::AddForce( FVector Force )  如果想让物体�
         Component MyActor.h：
 UShapeComponent * CollisionMesh;  Constructor中 Create &amp; Attach MyActor.cpp：
 CollisionMesh = CreateDefaultSubobject&lt;UBoxComponent&gt;(TEXT(&quot;TestCollision&quot;)); if(CollisionMesh) { CollisionMesh-&gt;SetupAttachment(GetRootComponent()); }  Runtime中（非构造） Create &amp; Attach MyActor.cpp：
-CollisionMesh = NewObject&lt;UBoxComponent&gt;(this); if (CollisionMesh) { CollisionMesh-&gt;RegisterComponent(); CollisionMesh-&gt;AttachToComponent(GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform); }  Actor Runtime中Actor和Actor之间相互Attach Actor1 = GetWorld()-&gt;SpawnActor&lt;AMyActor&gt;(AMyActor::StaticClass()); if(Actor1) { Actor1-&gt;AttachToActor(Actor2, FAttachmentTransformRules::KeepRelativeTransform); }  Constructor中 Create &amp; Attach 很少情况下需要在构造函数执行Actor之间的相关Attach。
-ConstructorHelpers::FObjectFinder&lt;UMaterial&gt; DecalMaterialAsset(TEXT(&quot;Material'/Game/TopDownCPP/Blueprints/M_Cursor_Decal.M_Cursor_Decal'&quot;)); if (DecalMaterialAsset.Succeeded()) { DecalMaterialAsset.AttachToActor(MyActor, FAttachmentTransformRules::KeepRelativeTransform); }  AttachToComponent()为引擎的仅次于UObject的子类ActorComponent的函数； AttachToActor为引擎的仅次于UObject的子类Actor的函数。
+CollisionMesh = NewObject&lt;UBoxComponent&gt;(this); if (CollisionMesh) { CollisionMesh-&gt;RegisterComponent(); CollisionMesh-&gt;AttachToComponent(GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform); }  Actor Constructor中 Create &amp; Attach 很少情况下需要在构造函数执行Actor之间的相关Attach。
+ConstructorHelpers::FObjectFinder&lt;UMaterial&gt; DecalMaterialAsset(TEXT(&quot;Material'/Game/TopDownCPP/Blueprints/M_Cursor_Decal.M_Cursor_Decal'&quot;)); if (DecalMaterialAsset.Succeeded()) { DecalMaterialAsset.AttachToActor(MyActor, FAttachmentTransformRules::KeepRelativeTransform); }  Runtime中Actor和Actor之间相互Attach Actor1 = GetWorld()-&gt;SpawnActor&lt;AMyActor&gt;(AMyActor::StaticClass()); if(Actor1) { Actor1-&gt;AttachToActor(Actor2, FAttachmentTransformRules::KeepRelativeTransform); }  AttachToComponent()为引擎的仅次于UObject的子类ActorComponent的函数； AttachToActor为引擎的仅次于UObject的子类Actor的函数。
  通过NewObject创建Component之后，执行Register的目的是为了触发OnComponentCreate等回调。不执行Create相关的Initial回调会导致后续的Attach失效。
  注意：Actor::AttachToActor()和Actor::AttachTo()为4.12的新版API，旧版本的工程迁移至4.12后，编译提示警告：
 AActor::AttachRootComponentToActor已废弃，需要使用AttachToActor替换
@@ -1300,6 +1300,57 @@ float AnimLength = 0.f; if (USkeletalMeshComponent *Mesh = MyActor-&gt;FindCompo
           <div class="media">
             
             <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/03/ue4animationblendspace-for-c-/">
+                <h3 class="media-heading">[UE4][Animation]BlendSpace for C&#43;&#43;</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Mar 3, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p><code>FAnimNode_BlendSpacePlayer</code> is the native source of <code>BlendSpace</code> which used in Animation Blueprint.</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/03/ue4umg-slider-related/">
+                <h3 class="media-heading">[UE4]UMG Slider Related</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Mar 3, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><h5 id="how-to-increase-slider-bar-thickness-height-scale-in-y">How to increase slider bar thickness (height, scale in Y)</h5></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/03/opensourcelibraries-and-frameworks-collections/">
+                <h3 class="media-heading">[OpenSource]Libraries and Frameworks Collections</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Mar 3, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><h3 id="math">Math</h3></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
               <a class="link-unstyled" href="https://dawnarc.com/2019/03/ue4how-to-override-blueprintnativeevent-function-which-without-virtual/">
                 <h3 class="media-heading">[UE4]How to override BlueprintNativeEvent function which without virtual</h3>
               </a>
@@ -1418,57 +1469,6 @@ float AnimLength = 0.f; if (USkeletalMeshComponent *Mesh = MyActor-&gt;FindCompo
             <hr>
           </div>
         
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/02/mathcheck-if-a-point-is-inside-regular-hexagon/">
-                <h3 class="media-heading">[Math]Check if a point is inside regular hexagon</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Feb 2, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>Keywords: Calculate point location to check if it&rsquo;s inside hexagon, 计算坐标点是否在六边形内部</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/02/android-ndkhow-to-support-android-9.0-when-building-using-ndk-r12b/">
-                <h3 class="media-heading">[Android NDK]How to support Android 9.0 when building using NDK r12b</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Feb 2, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>.</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/02/ue4texture-related/">
-                <h3 class="media-heading">[UE4]Texture Related</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Feb 2, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><h5 id="is-it-need-to-make-texture-lods">Is it need to make Texture LODs?</h5></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
       </div>
     </div>
     <div class="modal-footer">
@@ -1476,7 +1476,7 @@ float AnimLength = 0.f; if (USkeletalMeshComponent *Mesh = MyActor-&gt;FindCompo
          data-message-zero="no post found"
          data-message-one="1 post found"
          data-message-other="{n} posts found">
-         482 posts found
+         485 posts found
       </p>
     </div>
   </div>

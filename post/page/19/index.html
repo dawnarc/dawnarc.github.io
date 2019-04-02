@@ -318,6 +318,200 @@ if (!doNotTrack) {
     
     <div class="postShorten-header">
       <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2017/09/openglwindows%E4%B8%8Aopengl%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">
+          [OpenGL]Windows上OpenGL开发环境搭建
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2017-09-05T16:38:28&#43;08:00">
+        
+  September 5, 2017
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/opengl">OpenGL</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        转载请注明出处：https://dawnarc.com
+网上资料很多都是基于Cygwin来搭建的环境，这里介绍一种非Cygwin搭建Windows上的OpenGL开发环境。
+1，OpenGL Loader Generator下载安装
+OpenGL Loader是一个标准规范，定义了如何在运行时期间加载OpenGL相关函数的指针。 这是windows上开发OpenGL程序才需要的lib，因为从1.1版本开始，windows不在对OpenGL 后续版本的 ABI(application binary interface)提供支持（可能是微软的DX出来后与OGL商业竞争吧），所以开发者无法直接获取OGL新版本的相关函数，不过有好心人写了工具，在运行时期间获取OGL的新版函数，这里介绍两个开源库：
+glad
+https://github.com/Dav1dde/glad
+glloadgen
+https://bitbucket.org/alfonse/glloadgen/wiki/Home
+我是用的是glad，这个开源库的开发者还提供了在线生成工具，可以不用下载安装Load Generator，直接在线生成指定版本的OpenGL Loader： http://glad.dav1d.de/
+2，编译OpenGL Loader的静态库
+通过glad生成的代码，编译一个lib， 以便后面的的示例工程调用。因为这些代码开发者不用做修改，只是调用，所以最好编译成lib，而不要直接加到自己的项目代码中。
+3，下载GLM（OpenGL Mathematics）
+这是OpenGL的数学库
+https://github.com/g-truc/glm/releases
+4，下载GLFW
+这是一个提供了OpenGL, OpenGL ES和Vulkan相关接口的跨平台的开源库，有这个库你就可以访问他们的最新API。 https://github.com/glfw/glfw/releases
+5，新建一个C++工程并设置OpenGL相关的头文件和静态库
+指定头文件的目录   指定静态库的目录   在代码需要包含的头文件以及lib：
+#include &lt;KHR/khrplatform.h&gt; #include &lt;glad/glad.h&gt; #include &lt;GLFW/glfw3.h&gt; #pragma comment(lib, &quot;opengl32.lib&quot;) #pragma comment(lib, &quot;glad.lib&quot;) #pragma comment(lib, &quot;glfw3.lib&quot;)  新建的测试工程叫GLTest，目录结构如下： 新加了两个分别叫include和lib的目录，用于存放第三方库的头文件和库文件   完整的测试的代码：
+#pragma once #include &lt;iostream&gt; #include &lt;windows.h&gt; #include &lt;fstream&gt; #include &lt;sstream&gt; #include &lt;string&gt; #include &lt;KHR/khrplatform.
+      
+      <p>
+        <a href="https://dawnarc.com/2017/09/openglwindows%E4%B8%8Aopengl%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2017/09/algorithms%E7%AE%97%E6%B3%95%E9%A2%98%E5%A4%9A%E4%B8%AA%E5%AD%97%E6%AF%8D%E4%BB%BB%E6%84%8F%E7%BB%84%E5%90%88%E5%A4%9A%E4%B8%AA%E6%96%B0%E5%AD%97%E7%AC%A6%E4%B8%B2/">
+          [Algorithms]算法题：多个字母任意组合多个新字符串
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2017-09-03T20:22:28&#43;08:00">
+        
+  September 3, 2017
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/algorithms">Algorithms</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        题目：
+比如一串字符，string s = &ldquo;abcd&rdquo;，假设里面的每个字符都不重复，求出这些字符任意组合后，形成的所有的新字符串。忽略掉顺序，比如ac和ca是同一种。 例子：
+abc的3个字符可以组合的情况为： a b c ab bc ac abc
+代码：
+#include &lt;iostream&gt; #include &lt;string&gt; #include &lt;vector&gt; int main(int argc, char* argv[]) { std::string s(&quot;abcd&quot;); std::vector&lt;std::string&gt; vec; for (size_t i = 0; i &lt; s.length(); i++) { std::string s1(1, s.at(i)); vec.push_back(s1); for (size_t j = i + 1; j &lt; s.length(); j++) { for (size_t k = 0; k &lt; s.length() - j; k++) { std::string s2 = s.
+      
+      <p>
+        <a href="https://dawnarc.com/2017/09/algorithms%E7%AE%97%E6%B3%95%E9%A2%98%E5%A4%9A%E4%B8%AA%E5%AD%97%E6%AF%8D%E4%BB%BB%E6%84%8F%E7%BB%84%E5%90%88%E5%A4%9A%E4%B8%AA%E6%96%B0%E5%AD%97%E7%AC%A6%E4%B8%B2/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2017/09/algorithms%E7%AE%97%E6%B3%95%E9%A2%98%E5%AD%97%E7%AC%A6%E4%B8%B2%E8%BD%AC%E6%8D%A2%E4%B8%BA%E6%95%B4%E6%95%B0%E5%B9%B6%E6%8E%92%E5%BA%8F/">
+          [Algorithms]算法题：字符串转换为整数并排序
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2017-09-03T20:22:28&#43;08:00">
+        
+  September 3, 2017
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/algorithms">Algorithms</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        题目：
+给定一组字符串，字符串中的字符都是数字，比如：&rdquo;343&rdquo;、&rdquo;4521&rdquo;、&rdquo;3&rdquo;，将这些字符串转换为整数后并升序排序。
+代码：
+#include &lt;iostream&gt; #include &lt;string&gt; #include &lt;vector&gt; #include &lt;math.h&gt; int main(int argc, char* argv[]) { std::vector&lt;std::string&gt; StrArr; StrArr.push_back(std::string(&quot;563435&quot;)); StrArr.push_back(std::string(&quot;234234&quot;)); StrArr.push_back(std::string(&quot;454&quot;)); StrArr.push_back(std::string(&quot;5765&quot;)); StrArr.push_back(std::string(&quot;12&quot;)); StrArr.push_back(std::string(&quot;6&quot;)); //字符串转数字 std::vector&lt;int&gt; IntArr; for (std::string&amp; str : StrArr) { size_t len = str.length(); int val = 0; for (size_t i = 0; i &lt; len; i++) { char c = str.at(i); //判断是不是阿拉伯数字 if (c &lt; 48 || c &gt; 57) { continue; } int iv = c - 48; val += pow(10, (len - 1 - i)) * iv; } IntArr.
+      
+      <p>
+        <a href="https://dawnarc.com/2017/09/algorithms%E7%AE%97%E6%B3%95%E9%A2%98%E5%AD%97%E7%AC%A6%E4%B8%B2%E8%BD%AC%E6%8D%A2%E4%B8%BA%E6%95%B4%E6%95%B0%E5%B9%B6%E6%8E%92%E5%BA%8F/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
         <a class="link-unstyled" href="https://dawnarc.com/2017/09/mayapolygon%E5%BB%BA%E6%A8%A1%E7%9A%84%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C%E4%B8%8E%E5%91%BD%E4%BB%A4/">
           [Maya]Polygon建模的常用操作与命令
         </a>
@@ -993,189 +1187,6 @@ Duplicated Special 特殊复制（Ctrl + Shift + D）   打开其参数面板后
 </article>
 
           
-            
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2017/08/maya%E5%9F%BA%E7%A1%80%E6%93%8D%E4%BD%9C%E4%B9%8B%E9%80%89%E6%8B%A9%E7%A7%BB%E5%8A%A8%E6%97%8B%E8%BD%AC%E4%BC%B8%E7%BC%A9/">
-          [Maya]基础操作之：选择、移动、旋转、伸缩
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2017-08-28T16:44:40&#43;08:00">
-        
-  August 28, 2017
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/maya">Maya</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        Keywords：Maya、选择、移动、旋转、伸缩、Select、Move、Rotate、Scale、Lasso
-如下图所示，图标从上到下依次是： Select Tool（快捷键Q） Lasso Tool（套索工具） Paint Selection Tool（选择笔刷工具） Move Tool（快捷键W） Rotate Tool（快捷键E） Scale Tool（快捷键R）   Move Tool 点线面的移动 点移动   线移动   面移动   操作的历史记录 Shift+鼠标右键的命令，每次执行后，都会在Channel Box的Input下面生成一条历史记录。   比如执行一次Extrude Face后，就会多出一条历史记录   可以点击这条记录，展开相关参数，进行编辑   Select Tool 选择 以点选择为例，假设有个模型如下：   选择Select Tool（Q键），然后鼠标右键选择Vertex：   然后鼠标左键框选需要选中的顶点：   被选中的点为红色，未选中的为紫色：   如果需要加选，按住Ctrl + Shift键：     按住Shift键，表示反向选择。比如框选区域内，选中的取消选中，未被选中的变为选中：   Lasso Tool 套索 Lasso套索工具提供了任意选择方式，比如需要选中的点不在一个规则范围内，则可以使用lasso勾画出需要选中的点。     Move Tool 整个物体的移动   将鼠标放在某个箭头上，该箭头会变为金色，此时再拖动鼠标就可以在该坐标轴上移动。
-      
-      <p>
-        <a href="https://dawnarc.com/2017/08/maya%E5%9F%BA%E7%A1%80%E6%93%8D%E4%BD%9C%E4%B9%8B%E9%80%89%E6%8B%A9%E7%A7%BB%E5%8A%A8%E6%97%8B%E8%BD%AC%E4%BC%B8%E7%BC%A9/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-          
-            
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2017/08/maya%E5%B8%B8%E7%94%A8%E5%BF%AB%E6%8D%B7%E9%94%AE%E5%92%8C%E5%9F%BA%E7%A1%80%E6%93%8D%E4%BD%9C/">
-          [Maya]常用快捷键和基础操作
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2017-08-27T16:27:40&#43;08:00">
-        
-  August 27, 2017
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/maya">Maya</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        注意，这里使用的maya版本是2017。
-菜单分类切换 Maya提供了很多功能，不同功能对应的菜单也不同，当切换到某一种功能时，则菜单也会随之改变。maya提供的功能有：
-Modeling（建模）
-Rigging（骨骼绑定）
-Animation（动画）
-FX（特效）
-Rendering（渲染）
-  编辑区视图的切换 将鼠标放在编辑区视图内（红框部分），然后点击下空格键，就会切换成4个小的视图，左上角是顶视角，左下是前视角，右下是右视角。     视图排版 启动Maya后默认显示的视图是一个透视图，如果希望显示两个视图或者4个视图，可以点击屏幕右侧的Panel Layout按钮     如果想选择更多的显示方案，可以右键点击Panel Layout按钮，比如选择3个视图     切换背景色 Alt + B，每按一次，背景色切换一次。   UI工具条的显示与隐藏 点击：Windows -》 UI Elements -》 勾选需要隐藏或者显示的菜单栏   编辑视图的旋转、缩放、平移 旋转：Alt + 鼠标左键。
-缩放：Alt + 鼠标右键；或者鼠标中间滚动。
-平移：Alt + 鼠标中键。
-摄像机视角的Undo和Redo 比如当你编辑视图中对摄像机进行旋转、缩放、平移后，你想回到上次的摄像机视角来查看物体，可以按Alt+Z，然后若想再回到最后一次摄像机视角，按Alt+Y。
-Alt + Z：回到上一次的视图。可多次执行
-Alt + Y： Alt+Z的倒序执行。可多次执行
-创建初始对象时的Interactive Creation 如果勾选了这个选项，那么在创建一个物体时，需要鼠标再编辑场景中手动拖拽出一个模型，并且大小会根据拖拽的距离自动拉伸；如果不勾选，就会在点击创建的时候自动的创建一个模型。   创建基础模型的3种方式 1，Create菜单栏   2，Shelf菜单栏   3，按住Shift + 鼠标右键   技巧：shift+右键时不用将鼠标放在菜单按钮内，只要灰色的连线朝向按钮或者划过按钮，都可以选中，这样你就可以快速拖拽，甚至可以不用等菜单弹出，只需要一个甩动手势，比如右键向上拖拽是选中Edge，那么按住右键朝上方甩一下就可以切换到Edge模式。
-      
-      <p>
-        <a href="https://dawnarc.com/2017/08/maya%E5%B8%B8%E7%94%A8%E5%BF%AB%E6%8D%B7%E9%94%AE%E5%92%8C%E5%9F%BA%E7%A1%80%E6%93%8D%E4%BD%9C/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-          
-            
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2017/08/ue4vs2017%E7%BC%96%E8%AF%91%E6%9E%84%E5%BB%BA%E5%BC%95%E6%93%8E%E4%BB%A3%E7%A0%81could-not-load-file-or-assembly-system.threading.tasks.dataflow/">
-          [UE4]VS2017编译构建引擎代码：Could not load file or assembly &#39;System.Threading.Tasks.Dataflow
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2017-08-25T14:33:40&#43;08:00">
-        
-  August 25, 2017
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        如果用VS2017编译构建引擎代码，在双击GenerateProjectFiles.bat时出现以下错误：
-Setting up Unreal Engine 4 project files... MSBUILD : error MSB1025: An internal failure occurred while running MSBuild. Microsoft.Build.Shared.InternalErrorException: MSB0001: Internal MSBuild Error: Throwing from logger shutdown ============= System.IO.FileNotFoundException: Could not load file or assembly 'System.Threading.Tasks.Dataflow, Version=4.5.24.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a' or one of its dependencies. The system cannot find the file specified. File name: 'System.Threading.Tasks.Dataflow, Version=4.5.24.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a' at Microsoft.Build.BackEnd.Logging.LoggingService.ShutdownComponent() at Microsoft.Build.Evaluation.ProjectCollection.ShutDownLoggingService() WRN: Assembly binding logging is turned OFF. To enable assembly bind failure logging, set the registry value [HKLM\Software\Microsoft\Fusion!
-      
-      <p>
-        <a href="https://dawnarc.com/2017/08/ue4vs2017%E7%BC%96%E8%AF%91%E6%9E%84%E5%BB%BA%E5%BC%95%E6%93%8E%E4%BB%A3%E7%A0%81could-not-load-file-or-assembly-system.threading.tasks.dataflow/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-          
           
   <div class="pagination-bar">
     <ul class="pagination">
@@ -1259,6 +1270,57 @@ Setting up Unreal Engine 4 project files... MSBUILD : error MSB1025: An internal
       <div class="no-result text-color-light text-center">no post found</div>
       <div class="results">
         
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/03/ue4animationblendspace-for-c-/">
+                <h3 class="media-heading">[UE4][Animation]BlendSpace for C&#43;&#43;</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Mar 3, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p><code>FAnimNode_BlendSpacePlayer</code> is the native source of <code>BlendSpace</code> which used in Animation Blueprint.</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/03/ue4umg-slider-related/">
+                <h3 class="media-heading">[UE4]UMG Slider Related</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Mar 3, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><h5 id="how-to-increase-slider-bar-thickness-height-scale-in-y">How to increase slider bar thickness (height, scale in Y)</h5></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/03/opensourcelibraries-and-frameworks-collections/">
+                <h3 class="media-heading">[OpenSource]Libraries and Frameworks Collections</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Mar 3, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><h3 id="math">Math</h3></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
         
           <div class="media">
             
@@ -1381,57 +1443,6 @@ Setting up Unreal Engine 4 project files... MSBUILD : error MSB1025: An internal
             <hr>
           </div>
         
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/02/mathcheck-if-a-point-is-inside-regular-hexagon/">
-                <h3 class="media-heading">[Math]Check if a point is inside regular hexagon</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Feb 2, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>Keywords: Calculate point location to check if it&rsquo;s inside hexagon, 计算坐标点是否在六边形内部</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/02/android-ndkhow-to-support-android-9.0-when-building-using-ndk-r12b/">
-                <h3 class="media-heading">[Android NDK]How to support Android 9.0 when building using NDK r12b</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Feb 2, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>.</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/02/ue4texture-related/">
-                <h3 class="media-heading">[UE4]Texture Related</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Feb 2, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><h5 id="is-it-need-to-make-texture-lods">Is it need to make Texture LODs?</h5></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
       </div>
     </div>
     <div class="modal-footer">
@@ -1439,7 +1450,7 @@ Setting up Unreal Engine 4 project files... MSBUILD : error MSB1025: An internal
          data-message-zero="no post found"
          data-message-one="1 post found"
          data-message-other="{n} posts found">
-         482 posts found
+         485 posts found
       </p>
     </div>
   </div>

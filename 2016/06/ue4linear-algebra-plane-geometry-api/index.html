@@ -381,7 +381,7 @@ if (!doNotTrack) {
 
 <p>keywords：UE4、Linear Algebra、Plane Geometry、线性代数、解析几何</p>
 
-<h5 id="范围判定">范围判定</h5>
+<h3 id="范围判定">范围判定</h3>
 
 <p>检测一个点是否在一个多边形(或矩形)的内部(2D和3D)</p>
 
@@ -390,7 +390,7 @@ FBox::IsInside(const FVector&amp; TestPoint)
 FIntRect::Contains( FIntPoint P )
 </code></pre>
 
-<h5 id="角度计算">角度计算</h5>
+<h3 id="角度计算">角度计算</h3>
 
 <p>计算两个向量的夹角(Get an angle between 2 Vectors)，范围：(0, 180)</p>
 
@@ -450,7 +450,7 @@ float CalculateDirecton(const AActor* ActorA, const AActor* ActorB)
     float&amp; OutSlopePitchDegreeAngle, float&amp; OutSlopeRollDegreeAngle);
 </code></pre>
 
-<h5 id="点坐标计算">点坐标计算</h5>
+<h3 id="点坐标计算">点坐标计算</h3>
 
 <p>计算直线外一点到该直线的最近的点（垂足的坐标）：</p>
 
@@ -468,7 +468,7 @@ float CalculateDirecton(const AActor* ActorA, const AActor* ActorB)
 <pre><code>FVector UKismetMathLibrary::ProjectPointOnToPlane(FVector Point, FVector PlaneBase, FVector PlaneNormal);
 </code></pre>
 
-<h5 id="向量-矢量-计算">向量（矢量）计算</h5>
+<h3 id="向量-矢量-计算">向量（矢量）计算</h3>
 
 <p>向量A投射到以Z轴为法线的平面的投射向量</p>
 
@@ -574,7 +574,7 @@ UFUNCTION(BlueprintPure, Category=&quot;Math|Transform&quot;)
 static FRotator UKismetMathLibrary::InverseTransformRotation(const FTransform&amp; T, FRotator Rotation);
 </code></pre>
 
-<h5 id="插值相关">插值相关</h5>
+<h3 id="插值相关">插值相关</h3>
 
 <p>使用简单弹簧模型来 interpolate 浮点数值（范围从 Current 到 Target）</p>
 
@@ -592,14 +592,16 @@ static FRotator UKismetMathLibrary::InverseTransformRotation(const FTransform&am
 <pre><code>FTransform UKismetMathLibrary::TInterpTo(const FTransform&amp; Current, const FTransform&amp; Target, float DeltaTime, float InterpSpeed);
 </code></pre>
 
-<h5 id="坐标系相关">坐标系相关</h5>
+<h3 id="coordinate-system-related">Coordinate System Related</h3>
 
-<p>世界坐标系转局部（本地）坐标系（World To Local），以Rotation为例：</p>
+<h5 id="rotation-transform">Rotation Transform</h5>
 
-<pre><code>FQuat InverseTransformRotation(const FQuat&amp; Q) const;
+<p>Transform rotation from World Space to Local Space:</p>
+
+<pre><code>FORCEINLINE FQuat FTransform::InverseTransformRotation(const FQuat&amp; Q) const;
 </code></pre>
 
-<p>示例代码：</p>
+<p>example:</p>
 
 <pre><code>FRotator DestWorldRot(100.f, 100.f, 0.f);
 FQuat QuatWorld = DestWorldRot.Quaternion();
@@ -607,20 +609,73 @@ FQuat QuatLocal = MyActor-&gt;GetComponentTransform().InverseTransformRotation(Q
 FRotator RotOffset = QuatLocal.Rotator();
 </code></pre>
 
-<p>局部（本地）坐标系转世界坐标系（Local To World），以Rotation为例：</p>
+<p>Transform rotation from Local Space to World Space:</p>
 
-<pre><code>FQuat FTransform::TransformRotation(const FQuat&amp; Q) const;
+<pre><code>FORCEINLINE FQuat FTransform::TransformRotation(const FQuat&amp; Q) const;
 </code></pre>
 
-<p>示例代码：</p>
+<p>example:</p>
 
 <pre><code>FRotator DestRotOffset(100.f, 100.f, 0.f);
-FRotator DestWorldRot = FTransform(CameraRotOrig).TransformRotation(DestRotOffset.Quaternion()).Rotator();
+FRotator DestRotInWorld = FTransform(CameraRotInWorld).TransformRotation(DestRotOffset.Quaternion()).Rotator();
 </code></pre>
 
-<h5 id="曲线相关">曲线相关</h5>
+<h5 id="location-transform">Location Transform</h5>
 
-<p>贝塞尔曲线</p>
+<p>World To Local:</p>
+
+<pre><code>FORCEINLINE FVector FTransform::InverseTransformPositionNoScale(const FVector &amp;V) const;
+</code></pre>
+
+<p>Blueprint Node:</p>
+
+<pre><code>InverseTransformLocation
+</code></pre>
+
+<p>Local To World:</p>
+
+<pre><code>FORCEINLINE FVector FTransform::TransformPositionNoScale(const FVector&amp; V) const;
+</code></pre>
+
+<div class="alert danger ">
+  <p>If you want only to calculate the Position Offset between two points, Rotation and Scale must be set to Zero. Otherwise the offset Vector would take account of direction. e.g. use <code>FTransform(Comp1-&gt;GetComponentLocation()).InverseTransformPosition(Loc2);</code> rather than <code>Comp1-&gt;GetComponentTransform().InverseTransformPosition(Loc2);</code></p>
+</div>
+
+<h5 id="direction-transform">Direction Transform</h5>
+
+<p>World To Local:</p>
+
+<pre><code>FORCEINLINE FVector FTransform::InverseTransformVectorNoScale(const FVector &amp;V) const
+</code></pre>
+
+<p>example:</p>
+
+<pre><code>//return the offset from Camera's World Rotation to Character's World Rotation.
+FRotator ASBaseCharacter::GetAimOffsets() const
+{
+    const FVector AimDirWS = GetBaseAimRotation().Vector();
+    const FVector AimDirLS = ActorToWorld().InverseTransformVectorNoScale(AimDirWS);
+    const FRotator AimRotLS = AimDirLS.Rotation();
+
+    return AimRotLS;
+}
+</code></pre>
+
+<p>Origin:<br />
+<a href="https://github.com/tomlooman/EpicSurvivalGameSeries/blob/4a6ee9a6081529fadbe0f693b2e4e6729d5ec08d/SurvivalGame/Source/SurvivalGame/Private/Player/SBaseCharacter.cpp#L374">https://github.com/tomlooman/EpicSurvivalGameSeries/blob/4a6ee9a6081529fadbe0f693b2e4e6729d5ec08d/SurvivalGame/Source/SurvivalGame/Private/Player/SBaseCharacter.cpp#L374</a></p>
+
+<p>Local To World:</p>
+
+<pre><code>FORCEINLINE FVector FTransform::TransformVectorNoScale(const FVector&amp; V) const
+</code></pre>
+
+<div class="alert warning ">
+  <p>If you want to calculate the Offset only between two Rotation (take no account of Location and Scale), the simplest way is to minus:<code>FRotator Offset = R2 - R1;</code>, but the result need to be corrected, because degrees may less than -180 or larger than 180.</p>
+</div>
+
+<h3 id="cruve-related">Cruve Related</h3>
+
+<p>Bezier Cruve</p>
 
 <pre><code>/**
  * Generates a list of sample points on a Bezier curve defined by 2 points.
@@ -632,6 +687,18 @@ FRotator DestWorldRot = FTransform(CameraRotOrig).TransformRotation(DestRotOffse
  */
 static CORE_API float FVector::EvaluateBezier(const FVector* ControlPoints, int32 NumPoints, TArray&lt;FVector&gt;&amp; OutPoints);
 </code></pre>
+
+<p>Example:</p>
+
+<pre><code>FVector MyControlPoints[4]; 
+
+// Fill out your control points.
+
+TArray&lt;FVector&gt; OutPoints;
+FVector::EvaluateBezier(MyControlPoints, 2, OutPoints);
+</code></pre>
+
+<p><code>无欲则刚，关心则乱。----《论语》</code></p>
 
               
             </div>
@@ -832,6 +899,57 @@ static CORE_API float FVector::EvaluateBezier(const FVector* ControlPoints, int3
           <div class="media">
             
             <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/03/ue4animationblendspace-for-c-/">
+                <h3 class="media-heading">[UE4][Animation]BlendSpace for C&#43;&#43;</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Mar 3, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p><code>FAnimNode_BlendSpacePlayer</code> is the native source of <code>BlendSpace</code> which used in Animation Blueprint.</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/03/ue4umg-slider-related/">
+                <h3 class="media-heading">[UE4]UMG Slider Related</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Mar 3, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><h5 id="how-to-increase-slider-bar-thickness-height-scale-in-y">How to increase slider bar thickness (height, scale in Y)</h5></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/03/opensourcelibraries-and-frameworks-collections/">
+                <h3 class="media-heading">[OpenSource]Libraries and Frameworks Collections</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Mar 3, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><h3 id="math">Math</h3></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
               <a class="link-unstyled" href="https://dawnarc.com/2019/03/ue4how-to-override-blueprintnativeevent-function-which-without-virtual/">
                 <h3 class="media-heading">[UE4]How to override BlueprintNativeEvent function which without virtual</h3>
               </a>
@@ -950,57 +1068,6 @@ static CORE_API float FVector::EvaluateBezier(const FVector* ControlPoints, int3
             <hr>
           </div>
         
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/02/mathcheck-if-a-point-is-inside-regular-hexagon/">
-                <h3 class="media-heading">[Math]Check if a point is inside regular hexagon</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Feb 2, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>Keywords: Calculate point location to check if it&rsquo;s inside hexagon, 计算坐标点是否在六边形内部</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/02/android-ndkhow-to-support-android-9.0-when-building-using-ndk-r12b/">
-                <h3 class="media-heading">[Android NDK]How to support Android 9.0 when building using NDK r12b</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Feb 2, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>.</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/02/ue4texture-related/">
-                <h3 class="media-heading">[UE4]Texture Related</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Feb 2, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><h5 id="is-it-need-to-make-texture-lods">Is it need to make Texture LODs?</h5></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
       </div>
     </div>
     <div class="modal-footer">
@@ -1008,7 +1075,7 @@ static CORE_API float FVector::EvaluateBezier(const FVector* ControlPoints, int3
          data-message-zero="no post found"
          data-message-one="1 post found"
          data-message-other="{n} posts found">
-         482 posts found
+         485 posts found
       </p>
     </div>
   </div>

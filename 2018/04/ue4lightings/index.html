@@ -8,7 +8,7 @@
 <meta name="generator" content="Hugo 0.53 with theme Tranquilpeak 0.4.3-SNAPSHOT">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="UE4, Lightings">
-<meta name="description" content="keywords：UE4、Lighting、灯光
+<meta name="description" content="keywords：UE4, Lighting, 灯光, 光源距离裁剪
 以下问题都是基于4.18，不排除后续新版本变动。
 Lighting Content Examples https://docs.unrealengine.com/en-us/Resources/ContentExamples/Lighting
 Light Propagation Volumes Light Propagation Volumes
@@ -24,7 +24,7 @@ Lighting Channels https://docs.unrealengine.com/en-us/Engine/Rendering/LightingA
  Lighting Channels是动态的，意思是：静态光(Static Lights)或者Mobility为Static的Static Mesh Actor不受Lighting Channels影响。要使用Lighting Channels，Static Mesh Actor和Lights的Mobility必须设置为Stationary或者Movable。 材质类型影响：Lighting Channels只影响直接光照(direct lighting)下Opaque类型材质，Translucent或者Masked类型材质没有效果。 Lighting Channels对性能开销不大，可以忽略不计。  移动端的Lighting Channels：">
 
 
-<meta property="og:description" content="keywords：UE4、Lighting、灯光
+<meta property="og:description" content="keywords：UE4, Lighting, 灯光, 光源距离裁剪
 以下问题都是基于4.18，不排除后续新版本变动。
 Lighting Content Examples https://docs.unrealengine.com/en-us/Resources/ContentExamples/Lighting
 Light Propagation Volumes Light Propagation Volumes
@@ -44,7 +44,7 @@ Lighting Channels https://docs.unrealengine.com/en-us/Engine/Rendering/LightingA
 <meta property="og:url" content="https://dawnarc.com/2018/04/ue4lightings/">
 <meta property="twitter:url" content="https://dawnarc.com/2018/04/ue4lightings/">
 <meta property="og:site_name" content="玄冬Wong">
-<meta property="og:description" content="keywords：UE4、Lighting、灯光
+<meta property="og:description" content="keywords：UE4, Lighting, 灯光, 光源距离裁剪
 以下问题都是基于4.18，不排除后续新版本变动。
 Lighting Content Examples https://docs.unrealengine.com/en-us/Resources/ContentExamples/Lighting
 Light Propagation Volumes Light Propagation Volumes
@@ -58,7 +58,7 @@ Lighting Channels https://docs.unrealengine.com/en-us/Engine/Rendering/LightingA
 场景中添加两个平行光，A平行光的 Lighting Channels 只开启Channel 0，B平行光只开启Channel 1，然后角色的 Mesh 同时开启 Channel 0 和 Channel 1。
 注意事项：
  Lighting Channels是动态的，意思是：静态光(Static Lights)或者Mobility为Static的Static Mesh Actor不受Lighting Channels影响。要使用Lighting Channels，Static Mesh Actor和Lights的Mobility必须设置为Stationary或者Movable。 材质类型影响：Lighting Channels只影响直接光照(direct lighting)下Opaque类型材质，Translucent或者Masked类型材质没有效果。 Lighting Channels对性能开销不大，可以忽略不计。  移动端的Lighting Channels：">
-<meta name="twitter:description" content="keywords：UE4、Lighting、灯光
+<meta name="twitter:description" content="keywords：UE4, Lighting, 灯光, 光源距离裁剪
 以下问题都是基于4.18，不排除后续新版本变动。
 Lighting Content Examples https://docs.unrealengine.com/en-us/Resources/ContentExamples/Lighting
 Light Propagation Volumes Light Propagation Volumes
@@ -401,7 +401,7 @@ if (!doNotTrack) {
             <div class="main-content-wrap">
               
 
-<p>keywords：UE4、Lighting、灯光</p>
+<p>keywords：UE4, Lighting, 灯光, 光源距离裁剪</p>
 
 <p>以下问题都是基于4.18，不排除后续新版本变动。</p>
 
@@ -446,7 +446,11 @@ if (!doNotTrack) {
 
 <p>另外：Lighting Channels不支持运行时修改，就是说Lighting Channels在Actor创建时(比如BeginPlay)设置好以后，之后就无法再修改。</p>
 
-<h3 id="occlusion-culling-光源距离裁剪">Occlusion Culling 光源距离裁剪</h3>
+<div class="alert warning ">
+  <p>If Character is dark even give it dedicated Light Channel, the reason maybe is: there&rsquo;re some objects casting shadows on the Character, you can disable <code>Cast Shadow</code> on these objects.</p>
+</div>
+
+<h3 id="occlusion-culling">Occlusion Culling</h3>
 
 <p>Project Settings -》 Engine -》 Rendering -》 Culling -》 Min Screen Radius for Lights</p>
 
@@ -462,13 +466,20 @@ if (!doNotTrack) {
 <p>3, <span class="highlight-text red"> Testing in v4.21: Static and Stationary Point Light not work on Android Vulkan without building lighting.  
 Setting up your lighting in SM5, then building lighting, then switch to Android Vulkan, when start game, lighting would works right.</span></p>
 
-<h3 id="物体与摄像机距离超过一定范围时-阴影自动消失的问题">物体与摄像机距离超过一定范围时，阴影自动消失的问题</h3>
+<h3 id="issue-shadows-disappeared-when-the-distance-between-actor-and-camera-increased">Issue: shadows disappeared when the distance between Actor and Camera increased</h3>
 
-<p>这个问题受两个因素影响：</p>
+<p>This issue is affected by two factors：</p>
 
-<p>1，DirectionalLight 的属性 <code>Dynamic Shadow Distance</code>，如果值小于物体到摄像机的直线距离，则阴影消失。</p>
+<ol>
+<li><p>DirectionalLight&rsquo;s perperty <code>Dynamic Shadow Distance</code>, if this value is less than the distance between Actor and Camera, shadows would disappeared.</p></li>
 
-<p>2，引擎配置参数 <code>r.Shadow.RadiusThreshold</code>，表示在屏幕中大小的屏占比 ，该值受 Settings -》 Engine Scalability Settings -》 Shadow 级别控制。</p>
+<li><p>Engine&rsquo;s parameter <code>r.Shadow.RadiusThreshold</code>，which means shadow visibility at camera distances, there&rsquo;re two ways to change this parameter:</p>
+
+<ul>
+<li>For Editor: Settings -&gt; Engine Scalability Settings -&gt; Shadow.</li>
+<li>For Run-time: <code>UKismetSystemLibrary::ExecuteConsoleCommand(GetWorld(), TEXT(&quot;r.Shadow.RadiusThreshold 0.06&quot;))</code>.</li>
+</ul></li>
+</ol>
 
 <p>参考：<br />
 <a href="https://answers.unrealengine.com/questions/707241/object-shadows-disappearing-too-early.html?sort=oldest">https://answers.unrealengine.com/questions/707241/object-shadows-disappearing-too-early.html?sort=oldest</a></p>
@@ -512,9 +523,14 @@ Solution:<br />
 Remove Point Light and add a new Point Light into scene and setting up it.</p>
 
 <p>Issue 2:<br />
-There&rsquo;re some strange block on lighting maps even building lighting again.<br />
+There&rsquo;re some strange block on lightmaps even building lighting again.<br />
 Solution:<br />
 Build -&gt; Lighting Quality -&gt; Production, then building lighting again. There&rsquo;re some bug in Preview level of Lighting Quality.</p>
+
+<p>Issue 3:<br />
+There&rsquo;re some seams on the junction of two StaticMeshActor after lighting building.<br />
+Solution:<br />
+Rotating the StaticMesh 180 degrees, or up lightmap resolution to 128 rather than 64, or disable cascaded shadow maps and use either the <code>Detail Lighting</code> or <code>Lighting Only</code> view modes to see the baked result.</p>
 
 <h5 id="lighting-troubleshooting-guide">Lighting Troubleshooting Guide</h5>
 
@@ -727,6 +743,57 @@ Build -&gt; Lighting Quality -&gt; Production, then building lighting again. The
           <div class="media">
             
             <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/03/ue4animationblendspace-for-c-/">
+                <h3 class="media-heading">[UE4][Animation]BlendSpace for C&#43;&#43;</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Mar 3, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p><code>FAnimNode_BlendSpacePlayer</code> is the native source of <code>BlendSpace</code> which used in Animation Blueprint.</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/03/ue4umg-slider-related/">
+                <h3 class="media-heading">[UE4]UMG Slider Related</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Mar 3, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><h5 id="how-to-increase-slider-bar-thickness-height-scale-in-y">How to increase slider bar thickness (height, scale in Y)</h5></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/03/opensourcelibraries-and-frameworks-collections/">
+                <h3 class="media-heading">[OpenSource]Libraries and Frameworks Collections</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Mar 3, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><h3 id="math">Math</h3></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
               <a class="link-unstyled" href="https://dawnarc.com/2019/03/ue4how-to-override-blueprintnativeevent-function-which-without-virtual/">
                 <h3 class="media-heading">[UE4]How to override BlueprintNativeEvent function which without virtual</h3>
               </a>
@@ -845,57 +912,6 @@ Build -&gt; Lighting Quality -&gt; Production, then building lighting again. The
             <hr>
           </div>
         
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/02/mathcheck-if-a-point-is-inside-regular-hexagon/">
-                <h3 class="media-heading">[Math]Check if a point is inside regular hexagon</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Feb 2, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>Keywords: Calculate point location to check if it&rsquo;s inside hexagon, 计算坐标点是否在六边形内部</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/02/android-ndkhow-to-support-android-9.0-when-building-using-ndk-r12b/">
-                <h3 class="media-heading">[Android NDK]How to support Android 9.0 when building using NDK r12b</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Feb 2, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>.</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/02/ue4texture-related/">
-                <h3 class="media-heading">[UE4]Texture Related</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Feb 2, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><h5 id="is-it-need-to-make-texture-lods">Is it need to make Texture LODs?</h5></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
       </div>
     </div>
     <div class="modal-footer">
@@ -903,7 +919,7 @@ Build -&gt; Lighting Quality -&gt; Production, then building lighting again. The
          data-message-zero="no post found"
          data-message-one="1 post found"
          data-message-other="{n} posts found">
-         482 posts found
+         485 posts found
       </p>
     </div>
   </div>

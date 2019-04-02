@@ -7,58 +7,62 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="generator" content="Hugo 0.53 with theme Tranquilpeak 0.4.3-SNAPSHOT">
 <meta name="author" content="Neil Wang">
-<meta name="keywords" content="">
-<meta name="description" content="keywords：UE4、InverseTransformVector、InverseTransformPosition
-实例代码：
-//返回摄像机Rotation相对角色Rotation的偏移量Offset FRotator ASBaseCharacter::GetAimOffsets() const { const FVector AimDirWS = GetBaseAimRotation().Vector(); const FVector AimDirLS = ActorToWorld().InverseTransformVectorNoScale(AimDirWS); const FRotator AimRotLS = AimDirLS.Rotation(); return AimRotLS; }  https://github.com/tomlooman/EpicSurvivalGameSeries/blob/4a6ee9a6081529fadbe0f693b2e4e6729d5ec08d/SurvivalGame/Source/SurvivalGame/Private/Player/SBaseCharacter.cpp#L374
-如果只是想获取两个Rotation之间的Offset，更简单的办法：
-FRotator R1; FRotator R2; FRotator Offset = R2 - R1;  但这种直接相减的方式，返回的结果Rotation，度数可能会小于-180 或 大于 180，需要手动处理范围限定，但是效率远高于 InverseTransformVector。
-无欲则刚，关心则乱。----《论语》">
+<meta name="keywords" content="Shading, OpenGL, ADS">
+<meta name="description" content="keywords：ambient diffuse specular、Phong Shading、Phong reflection model
+公式概述 ADS光照模型又称为“冯氏反射模型”(Phong reflection model)，为什么叫冯氏：
+裴祥风（Bùi Tường Phong音译, 1942年—1975年），美国电脑CG研究学者，于越南出生。他于1973年在尤他大学取得哲学博士学位，并发明了Phong反射模型及Phong著色法，并广为CG界采用。1975死于白血病。
+ ADS光照模型公式缩写：
+LightIntensity = Ambient &#43; Diffuse &#43; Specular;  参数说明：
+ Ambient 环境光 Diffuse 漫反射 Specular 全反射光 / 镜面光  三个参数渲染效果示例：   三个参数拆解如下：
+Ambient = La * Ka; Diffuse = Ld * Kd * max( dot(s, n), 0.0 ); Specular = Ls * Ks * pow( max( dot(r, v), 0.0 ), f );  参数说明：">
 
 
-<meta property="og:description" content="keywords：UE4、InverseTransformVector、InverseTransformPosition
-实例代码：
-//返回摄像机Rotation相对角色Rotation的偏移量Offset FRotator ASBaseCharacter::GetAimOffsets() const { const FVector AimDirWS = GetBaseAimRotation().Vector(); const FVector AimDirLS = ActorToWorld().InverseTransformVectorNoScale(AimDirWS); const FRotator AimRotLS = AimDirLS.Rotation(); return AimRotLS; }  https://github.com/tomlooman/EpicSurvivalGameSeries/blob/4a6ee9a6081529fadbe0f693b2e4e6729d5ec08d/SurvivalGame/Source/SurvivalGame/Private/Player/SBaseCharacter.cpp#L374
-如果只是想获取两个Rotation之间的Offset，更简单的办法：
-FRotator R1; FRotator R2; FRotator Offset = R2 - R1;  但这种直接相减的方式，返回的结果Rotation，度数可能会小于-180 或 大于 180，需要手动处理范围限定，但是效率远高于 InverseTransformVector。
-无欲则刚，关心则乱。----《论语》">
+<meta property="og:description" content="keywords：ambient diffuse specular、Phong Shading、Phong reflection model
+公式概述 ADS光照模型又称为“冯氏反射模型”(Phong reflection model)，为什么叫冯氏：
+裴祥风（Bùi Tường Phong音译, 1942年—1975年），美国电脑CG研究学者，于越南出生。他于1973年在尤他大学取得哲学博士学位，并发明了Phong反射模型及Phong著色法，并广为CG界采用。1975死于白血病。
+ ADS光照模型公式缩写：
+LightIntensity = Ambient &#43; Diffuse &#43; Specular;  参数说明：
+ Ambient 环境光 Diffuse 漫反射 Specular 全反射光 / 镜面光  三个参数渲染效果示例：   三个参数拆解如下：
+Ambient = La * Ka; Diffuse = Ld * Kd * max( dot(s, n), 0.0 ); Specular = Ls * Ks * pow( max( dot(r, v), 0.0 ), f );  参数说明：">
 <meta property="og:type" content="article">
-<meta property="og:title" content="[UE4][线性代数]世界坐标转局部坐标(World Space to Local Space)">
-<meta name="twitter:title" content="[UE4][线性代数]世界坐标转局部坐标(World Space to Local Space)">
-<meta property="og:url" content="https://dawnarc.com/2018/04/ue4%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0%E4%B8%96%E7%95%8C%E5%9D%90%E6%A0%87%E8%BD%AC%E5%B1%80%E9%83%A8%E5%9D%90%E6%A0%87world-space-to-local-space/">
-<meta property="twitter:url" content="https://dawnarc.com/2018/04/ue4%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0%E4%B8%96%E7%95%8C%E5%9D%90%E6%A0%87%E8%BD%AC%E5%B1%80%E9%83%A8%E5%9D%90%E6%A0%87world-space-to-local-space/">
+<meta property="og:title" content="Shading-ADS光照模型实例(OpenGL实现)">
+<meta name="twitter:title" content="Shading-ADS光照模型实例(OpenGL实现)">
+<meta property="og:url" content="https://dawnarc.com/2018/06/shading-ads%E5%85%89%E7%85%A7%E6%A8%A1%E5%9E%8B%E5%AE%9E%E4%BE%8Bopengl%E5%AE%9E%E7%8E%B0/">
+<meta property="twitter:url" content="https://dawnarc.com/2018/06/shading-ads%E5%85%89%E7%85%A7%E6%A8%A1%E5%9E%8B%E5%AE%9E%E4%BE%8Bopengl%E5%AE%9E%E7%8E%B0/">
 <meta property="og:site_name" content="玄冬Wong">
-<meta property="og:description" content="keywords：UE4、InverseTransformVector、InverseTransformPosition
-实例代码：
-//返回摄像机Rotation相对角色Rotation的偏移量Offset FRotator ASBaseCharacter::GetAimOffsets() const { const FVector AimDirWS = GetBaseAimRotation().Vector(); const FVector AimDirLS = ActorToWorld().InverseTransformVectorNoScale(AimDirWS); const FRotator AimRotLS = AimDirLS.Rotation(); return AimRotLS; }  https://github.com/tomlooman/EpicSurvivalGameSeries/blob/4a6ee9a6081529fadbe0f693b2e4e6729d5ec08d/SurvivalGame/Source/SurvivalGame/Private/Player/SBaseCharacter.cpp#L374
-如果只是想获取两个Rotation之间的Offset，更简单的办法：
-FRotator R1; FRotator R2; FRotator Offset = R2 - R1;  但这种直接相减的方式，返回的结果Rotation，度数可能会小于-180 或 大于 180，需要手动处理范围限定，但是效率远高于 InverseTransformVector。
-无欲则刚，关心则乱。----《论语》">
-<meta name="twitter:description" content="keywords：UE4、InverseTransformVector、InverseTransformPosition
-实例代码：
-//返回摄像机Rotation相对角色Rotation的偏移量Offset FRotator ASBaseCharacter::GetAimOffsets() const { const FVector AimDirWS = GetBaseAimRotation().Vector(); const FVector AimDirLS = ActorToWorld().InverseTransformVectorNoScale(AimDirWS); const FRotator AimRotLS = AimDirLS.Rotation(); return AimRotLS; }  https://github.com/tomlooman/EpicSurvivalGameSeries/blob/4a6ee9a6081529fadbe0f693b2e4e6729d5ec08d/SurvivalGame/Source/SurvivalGame/Private/Player/SBaseCharacter.cpp#L374
-如果只是想获取两个Rotation之间的Offset，更简单的办法：
-FRotator R1; FRotator R2; FRotator Offset = R2 - R1;  但这种直接相减的方式，返回的结果Rotation，度数可能会小于-180 或 大于 180，需要手动处理范围限定，但是效率远高于 InverseTransformVector。
-无欲则刚，关心则乱。----《论语》">
+<meta property="og:description" content="keywords：ambient diffuse specular、Phong Shading、Phong reflection model
+公式概述 ADS光照模型又称为“冯氏反射模型”(Phong reflection model)，为什么叫冯氏：
+裴祥风（Bùi Tường Phong音译, 1942年—1975年），美国电脑CG研究学者，于越南出生。他于1973年在尤他大学取得哲学博士学位，并发明了Phong反射模型及Phong著色法，并广为CG界采用。1975死于白血病。
+ ADS光照模型公式缩写：
+LightIntensity = Ambient &#43; Diffuse &#43; Specular;  参数说明：
+ Ambient 环境光 Diffuse 漫反射 Specular 全反射光 / 镜面光  三个参数渲染效果示例：   三个参数拆解如下：
+Ambient = La * Ka; Diffuse = Ld * Kd * max( dot(s, n), 0.0 ); Specular = Ls * Ks * pow( max( dot(r, v), 0.0 ), f );  参数说明：">
+<meta name="twitter:description" content="keywords：ambient diffuse specular、Phong Shading、Phong reflection model
+公式概述 ADS光照模型又称为“冯氏反射模型”(Phong reflection model)，为什么叫冯氏：
+裴祥风（Bùi Tường Phong音译, 1942年—1975年），美国电脑CG研究学者，于越南出生。他于1973年在尤他大学取得哲学博士学位，并发明了Phong反射模型及Phong著色法，并广为CG界采用。1975死于白血病。
+ ADS光照模型公式缩写：
+LightIntensity = Ambient &#43; Diffuse &#43; Specular;  参数说明：
+ Ambient 环境光 Diffuse 漫反射 Specular 全反射光 / 镜面光  三个参数渲染效果示例：   三个参数拆解如下：
+Ambient = La * Ka; Diffuse = Ld * Kd * max( dot(s, n), 0.0 ); Specular = Ls * Ks * pow( max( dot(r, v), 0.0 ), f );  参数说明：">
 <meta property="og:locale" content="en-us">
 
   
-    <meta property="article:published_time" content="2018-04-13T15:59:02">
+    <meta property="article:published_time" content="2018-06-03T22:30:40">
   
   
-    <meta property="article:modified_time" content="2018-04-13T15:59:02">
+    <meta property="article:modified_time" content="2018-06-03T22:30:40">
   
-  
-  
-    
-      <meta property="article:section" content="UnrealEngine4">
-    
   
   
     
-      <meta property="article:tag" content="UE4">
+      <meta property="article:section" content="Shading">
     
-      <meta property="article:tag" content="Math">
+  
+  
+    
+      <meta property="article:tag" content="Shading">
+    
+      <meta property="article:tag" content="OpenGL">
     
   
 
@@ -83,7 +87,7 @@ FRotator R1; FRotator R2; FRotator Offset = R2 - R1;  但这种直接相减的�
   <meta property="twitter:image" content="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=640">
 
 
-    <title>[UE4][线性代数]世界坐标转局部坐标(World Space to Local Space)</title>
+    <title>Shading-ADS光照模型实例(OpenGL实现)</title>
 
     <link rel="icon" href="https://dawnarc.com/favicon.png">
     
@@ -92,7 +96,7 @@ FRotator R1; FRotator R2; FRotator Offset = R2 - R1;  但这种直接相减的�
       <link rel="publisher" href="https://plus.google.com/111340706178390411568">
     
 
-    <link rel="canonical" href="https://dawnarc.com/2018/04/ue4%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0%E4%B8%96%E7%95%8C%E5%9D%90%E6%A0%87%E8%BD%AC%E5%B1%80%E9%83%A8%E5%9D%90%E6%A0%87world-space-to-local-space/">
+    <link rel="canonical" href="https://dawnarc.com/2018/06/shading-ads%E5%85%89%E7%85%A7%E6%A8%A1%E5%9E%8B%E5%AE%9E%E4%BE%8Bopengl%E5%AE%9E%E7%8E%B0/">
 
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
@@ -148,7 +152,22 @@ if (!doNotTrack) {
     </a>
   
   
-  
+  <script type="text/javascript" async
+  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    displayMath: [['$$','$$'], ['\[','\]']],
+    processEscapes: true,
+    processEnvironments: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre','code'],
+    TeX: { equationNumbers: { autoNumber: "AMS" },
+         extensions: ["AMSmath.js", "AMSsymbols.js"] }
+  }
+});
+</script>
 
 </header>
 
@@ -342,15 +361,15 @@ if (!doNotTrack) {
             <div class="post-header main-content-wrap text-left">
   
     <h1 class="post-title" itemprop="headline">
-      [UE4][线性代数]世界坐标转局部坐标(World Space to Local Space)
+      Shading-ADS光照模型实例(OpenGL实现)
     </h1>
   
   
   <div class="postShorten-meta post-meta">
     
-      <time itemprop="datePublished" datetime="2018-04-13T15:59:02&#43;08:00">
+      <time itemprop="datePublished" datetime="2018-06-03T22:30:40&#43;08:00">
         
-  April 13, 2018
+  June 3, 2018
 
       </time>
     
@@ -359,7 +378,7 @@ if (!doNotTrack) {
   
     <span>in</span>
     
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+      <a class="category-link" href="https://dawnarc.com/categories/shading">Shading</a>
     
   
 
@@ -369,35 +388,201 @@ if (!doNotTrack) {
           
           <div class="post-content markdown" itemprop="articleBody">
             <div class="main-content-wrap">
-              <p>keywords：UE4、InverseTransformVector、InverseTransformPosition</p>
+              
 
-<p>实例代码：</p>
+<p>keywords：ambient diffuse specular、Phong Shading、Phong reflection model</p>
 
-<pre><code>//返回摄像机Rotation相对角色Rotation的偏移量Offset
-FRotator ASBaseCharacter::GetAimOffsets() const
+<h4 id="公式概述">公式概述</h4>
+
+<p>ADS光照模型又称为“冯氏反射模型”(Phong reflection model)，为什么叫冯氏：</p>
+
+<div class="alert info ">
+  <p>裴祥风（Bùi Tường Phong音译, 1942年—1975年），美国电脑CG研究学者，于越南出生。他于1973年在尤他大学取得哲学博士学位，并发明了Phong反射模型及Phong著色法，并广为CG界采用。1975死于白血病。</p>
+</div>
+
+<p>ADS光照模型公式缩写：</p>
+
+<pre><code>LightIntensity = Ambient + Diffuse + Specular;
+</code></pre>
+
+<p>参数说明：</p>
+
+<ul>
+<li>Ambient 环境光</li>
+<li>Diffuse 漫反射</li>
+<li>Specular 全反射光 / 镜面光</li>
+</ul>
+
+<p>三个参数渲染效果示例：
+<figure>
+    <img src="https://dawnarc.com/img/20180603-[Shading]ADS%e5%85%89%e7%85%a7%e6%a8%a1%e5%9e%8b%e5%ae%9e%e4%be%8b%28OpenGL%e5%ae%9e%e7%8e%b0%29/[Shading]ADS%e5%85%89%e7%85%a7%e6%a8%a1%e5%9e%8b%e5%ae%9e%e4%be%8b%28OpenGL%e5%ae%9e%e7%8e%b0%29-04.jpg"/> 
+</figure>
+</p>
+
+<p>三个参数拆解如下：</p>
+
+<pre><code>Ambient = La * Ka;
+Diffuse = Ld * Kd * max( dot(s, n), 0.0 );
+Specular = Ls * Ks * pow( max( dot(r, v), 0.0 ), f );
+</code></pre>
+
+<p>参数说明：</p>
+
+<ul>
+<li>La 环境光强度(Ambient light intensity)</li>
+<li>Ka 材质环境光反射率 / 材质环境光反射系数(Ambient reflectivity)</li>
+<li>Ld 漫射光强度 / 散射光强度(Diffuse light intensity)</li>
+<li>Kd 材质漫反射率 / 材质漫反射系数(Diffuse reflectivity)</li>
+<li>s 顶点 / 曲面点 到光源方向的单位向量(Direction from the surface point to the light source)</li>
+<li>n 顶点 / 曲面点 的法线单位向量(Normal vector at the surface point)</li>
+<li>Ls 镜面光强度 / 全反射光强度(Specular light intensity)</li>
+<li>Ks 材质镜面反射率 / 材质镜面反射系数(Specular reflectivity)</li>
+<li>r 完全反射向量( the vector of perfect reflection)</li>
+<li>v 顶点 / 曲面点 到摄像机方向的向量( the vector towards the viewer)</li>
+<li>f 镜面高光(specular highlights)，值范围在1到200之间，值越小，镜面亮点越大</li>
+</ul>
+
+<figure>
+    <img src="https://dawnarc.com/img/20180603-[Shading]ADS%e5%85%89%e7%85%a7%e6%a8%a1%e5%9e%8b%e5%ae%9e%e4%be%8b%28OpenGL%e5%ae%9e%e7%8e%b0%29/[Shading]ADS%e5%85%89%e7%85%a7%e6%a8%a1%e5%9e%8b%e5%ae%9e%e4%be%8b%28OpenGL%e5%ae%9e%e7%8e%b0%29-02.png"/> 
+</figure>
+
+
+<p>光源出射强度 / 出射光强度(Intensity of the outgoing light ) <code>I</code> 的完整计算公式如下：
+$$
+I = La \cdot Ka+Ld \cdot Kd \cdot \left(\vec{s} \cdot \vec{n}\right)+Ls \cdot Ks \cdot \left(\vec{r} \cdot \vec{v}\right)^f
+$$</p>
+
+<h4 id="渲染实例">渲染实例</h4>
+
+<p>OpenGL API 版本为4.1。</p>
+
+<p>假设不考虑环境光和镜面光，只考虑漫射光，渲染效果：</p>
+
+<figure>
+    <img src="https://dawnarc.com/img/20180603-[Shading]ADS%e5%85%89%e7%85%a7%e6%a8%a1%e5%9e%8b%e5%ae%9e%e4%be%8b%28OpenGL%e5%ae%9e%e7%8e%b0%29/[Shading]ADS%e5%85%89%e7%85%a7%e6%a8%a1%e5%9e%8b%e5%ae%9e%e4%be%8b%28OpenGL%e5%ae%9e%e7%8e%b0%29-01.jpg"/> 
+</figure>
+
+
+<p>shader 代码：<br />
+diffuse.vert</p>
+
+<pre><code>#version 410
+
+layout (location = 0) in vec3 VertexPosition;
+layout (location = 1) in vec3 VertexNormal;
+
+out vec3 LightIntensity;
+
+uniform vec4 LightPosition; // Light position in eye coords.
+uniform vec3 Kd;            // Diffuse reflectivity
+uniform vec3 Ld;            // Diffuse light intensity
+
+uniform mat4 ModelViewMatrix;
+uniform mat3 NormalMatrix;
+uniform mat4 ProjectionMatrix;
+uniform mat4 MVP;
+
+void main()
 {
-    const FVector AimDirWS = GetBaseAimRotation().Vector();
-    const FVector AimDirLS = ActorToWorld().InverseTransformVectorNoScale(AimDirWS);
-    const FRotator AimRotLS = AimDirLS.Rotation();
+    vec3 tnorm = normalize( NormalMatrix * VertexNormal);
+    vec4 eyeCoords = ModelViewMatrix * vec4(VertexPosition,1.0);
+    vec3 s = normalize(vec3(LightPosition - eyeCoords));
 
-    return AimRotLS;
+    LightIntensity = Ld * Kd * max( dot( s, tnorm ), 0.0 );
+
+    gl_Position = MVP * vec4(VertexPosition,1.0);
 }
 </code></pre>
 
-<p><a href="https://github.com/tomlooman/EpicSurvivalGameSeries/blob/4a6ee9a6081529fadbe0f693b2e4e6729d5ec08d/SurvivalGame/Source/SurvivalGame/Private/Player/SBaseCharacter.cpp#L374">https://github.com/tomlooman/EpicSurvivalGameSeries/blob/4a6ee9a6081529fadbe0f693b2e4e6729d5ec08d/SurvivalGame/Source/SurvivalGame/Private/Player/SBaseCharacter.cpp#L374</a></p>
+<p>diffuse.frag</p>
 
-<p>如果只是想获取两个Rotation之间的Offset，更简单的办法：</p>
+<pre><code>#version 410
 
-<pre><code>FRotator R1;
-FRotator R2;
-FRotator Offset = R2 - R1;
+in vec3 LightIntensity;
+
+layout( location = 0 ) out vec4 FragColor;
+
+void main() {
+    FragColor = vec4(LightIntensity, 1.0);
+}
 </code></pre>
 
-<p>但这种直接相减的方式，返回的结果Rotation，度数可能会小于-180 或 大于 180，需要手动处理范围限定，但是效率远高于 <code>InverseTransformVector</code>。</p>
+<p>同时计算环境光、漫反射、镜面反射的渲染效果：
+<figure>
+    <img src="https://dawnarc.com/img/20180603-[Shading]ADS%e5%85%89%e7%85%a7%e6%a8%a1%e5%9e%8b%e5%ae%9e%e4%be%8b%28OpenGL%e5%ae%9e%e7%8e%b0%29/[Shading]ADS%e5%85%89%e7%85%a7%e6%a8%a1%e5%9e%8b%e5%ae%9e%e4%be%8b%28OpenGL%e5%ae%9e%e7%8e%b0%29-03.jpg"/> 
+</figure>
+</p>
+
+<p>shader 代码：<br />
+phong.vert</p>
+
+<pre><code>#version 410
+
+layout (location = 0) in vec3 VertexPosition;
+layout (location = 1) in vec3 VertexNormal;
+
+out vec3 LightIntensity;
+
+struct LightInfo {
+  vec4 Position; // Light position in eye coords.
+  vec3 La;       // Ambient light intensity
+  vec3 Ld;       // Diffuse light intensity
+  vec3 Ls;       // Specular light intensity
+};
+uniform LightInfo Light;
+
+struct MaterialInfo {
+  vec3 Ka;            // Ambient reflectivity
+  vec3 Kd;            // Diffuse reflectivity
+  vec3 Ks;            // Specular reflectivity
+  float Shininess;    // Specular shininess factor
+};
+uniform MaterialInfo Material;
+
+uniform mat4 ModelViewMatrix;
+uniform mat3 NormalMatrix;
+uniform mat4 ProjectionMatrix;
+uniform mat4 MVP;
+
+void main()
+{
+    vec3 tnorm = normalize( NormalMatrix * VertexNormal);
+    vec4 eyeCoords = ModelViewMatrix * vec4(VertexPosition,1.0);
+    vec3 s = normalize(vec3(Light.Position - eyeCoords));
+    vec3 v = normalize(-eyeCoords.xyz);
+    vec3 r = reflect( -s, tnorm );
+    float sDotN = max( dot(s,tnorm), 0.0 );
+    vec3 ambient = Light.La * Material.Ka;
+    vec3 diffuse = Light.Ld * Material.Kd * sDotN;
+    vec3 spec = vec3(0.0);
+    if( sDotN &gt; 0.0 )
+       spec = Light.Ls * Material.Ks *
+              pow( max( dot(r,v), 0.0 ), Material.Shininess );
+
+    LightIntensity = ambient + diffuse + spec;
+    gl_Position = MVP * vec4(VertexPosition,1.0);
+}
+</code></pre>
+
+<p>phong.frag</p>
+
+<pre><code>#version 410
+
+in vec3 LightIntensity;
+
+layout( location = 0 ) out vec4 FragColor;
+
+void main() {
+    FragColor = vec4(LightIntensity, 1.0);
+}
+</code></pre>
+
+<p>demo完整代码：<br />
+<a href="https://github.com/dawnarc/ShadingDemo">https://github.com/dawnarc/ShadingDemo</a></p>
 
 <hr />
 
-<p><code>无欲则刚，关心则乱。----《论语》</code></p>
+<p><code>在各种事物的常理中，爱情是无法改变和阻挡的，因为就本性而言，爱只会自行消亡，任何计谋都难以使它逆转。---意大利·薄伽丘《十日谈》</code></p>
 
               
             </div>
@@ -410,9 +595,9 @@ FRotator Offset = R2 - R1;
                   <div class="post-footer-tags">
                     <span class="text-color-light text-small">TAGGED IN</span><br/>
                     
-  <a class="tag tag--primary tag--small" href="https://dawnarc.com/tags/ue4/">UE4</a>
+  <a class="tag tag--primary tag--small" href="https://dawnarc.com/tags/shading/">Shading</a>
 
-  <a class="tag tag--primary tag--small" href="https://dawnarc.com/tags/math/">Math</a>
+  <a class="tag tag--primary tag--small" href="https://dawnarc.com/tags/opengl/">OpenGL</a>
 
                   </div>
                 
@@ -425,7 +610,7 @@ FRotator Offset = R2 - R1;
           
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2018/04/ue4loadobject%E5%8A%A0%E8%BD%BDuanimblueprint%E5%A4%B1%E8%B4%A5/" data-tooltip="[UE4]LoadObject加载UAnimBlueprint失败">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2018/06/openglglm%E5%B8%B8%E7%94%A8%E5%87%BD%E6%95%B0%E8%A7%A3%E9%87%8A%E8%AF%B4%E6%98%8E/" data-tooltip="[OpenGL]GLM常用函数解释说明">
               
                   <i class="fa fa-angle-left"></i>
                   <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
@@ -433,7 +618,7 @@ FRotator Offset = R2 - R1;
             </li>
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2018/04/ue4animation-blend%E5%8A%A8%E7%94%BB%E8%9E%8D%E5%90%88/" data-tooltip="[UE4]Animation Blend(动画融合)">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2018/05/ue4animationik-related/" data-tooltip="[UE4][Animation]IK Related">
               
                   <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
                   <i class="fa fa-angle-right"></i>
@@ -493,7 +678,7 @@ FRotator Offset = R2 - R1;
           
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2018/04/ue4loadobject%E5%8A%A0%E8%BD%BDuanimblueprint%E5%A4%B1%E8%B4%A5/" data-tooltip="[UE4]LoadObject加载UAnimBlueprint失败">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2018/06/openglglm%E5%B8%B8%E7%94%A8%E5%87%BD%E6%95%B0%E8%A7%A3%E9%87%8A%E8%AF%B4%E6%98%8E/" data-tooltip="[OpenGL]GLM常用函数解释说明">
               
                   <i class="fa fa-angle-left"></i>
                   <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
@@ -501,7 +686,7 @@ FRotator Offset = R2 - R1;
             </li>
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2018/04/ue4animation-blend%E5%8A%A8%E7%94%BB%E8%9E%8D%E5%90%88/" data-tooltip="[UE4]Animation Blend(动画融合)">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2018/05/ue4animationik-related/" data-tooltip="[UE4][Animation]IK Related">
               
                   <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
                   <i class="fa fa-angle-right"></i>
@@ -594,6 +779,57 @@ FRotator Offset = R2 - R1;
       <div class="no-result text-color-light text-center">no post found</div>
       <div class="results">
         
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/03/ue4animationblendspace-for-c-/">
+                <h3 class="media-heading">[UE4][Animation]BlendSpace for C&#43;&#43;</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Mar 3, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p><code>FAnimNode_BlendSpacePlayer</code> is the native source of <code>BlendSpace</code> which used in Animation Blueprint.</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/03/ue4umg-slider-related/">
+                <h3 class="media-heading">[UE4]UMG Slider Related</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Mar 3, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><h5 id="how-to-increase-slider-bar-thickness-height-scale-in-y">How to increase slider bar thickness (height, scale in Y)</h5></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/03/opensourcelibraries-and-frameworks-collections/">
+                <h3 class="media-heading">[OpenSource]Libraries and Frameworks Collections</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Mar 3, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><h3 id="math">Math</h3></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
         
           <div class="media">
             
@@ -716,57 +952,6 @@ FRotator Offset = R2 - R1;
             <hr>
           </div>
         
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/02/mathcheck-if-a-point-is-inside-regular-hexagon/">
-                <h3 class="media-heading">[Math]Check if a point is inside regular hexagon</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Feb 2, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>Keywords: Calculate point location to check if it&rsquo;s inside hexagon, 计算坐标点是否在六边形内部</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/02/android-ndkhow-to-support-android-9.0-when-building-using-ndk-r12b/">
-                <h3 class="media-heading">[Android NDK]How to support Android 9.0 when building using NDK r12b</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Feb 2, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>.</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/02/ue4texture-related/">
-                <h3 class="media-heading">[UE4]Texture Related</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Feb 2, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><h5 id="is-it-need-to-make-texture-lods">Is it need to make Texture LODs?</h5></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
       </div>
     </div>
     <div class="modal-footer">
@@ -774,7 +959,7 @@ FRotator Offset = R2 - R1;
          data-message-zero="no post found"
          data-message-one="1 post found"
          data-message-other="{n} posts found">
-         482 posts found
+         485 posts found
       </p>
     </div>
   </div>
@@ -829,9 +1014,9 @@ $(document).ready(function() {
     
       <script>
         var disqus_config = function () {
-          this.page.url = 'https:\/\/dawnarc.com\/2018\/04\/ue4%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0%E4%B8%96%E7%95%8C%E5%9D%90%E6%A0%87%E8%BD%AC%E5%B1%80%E9%83%A8%E5%9D%90%E6%A0%87world-space-to-local-space\/';
+          this.page.url = 'https:\/\/dawnarc.com\/2018\/06\/shading-ads%E5%85%89%E7%85%A7%E6%A8%A1%E5%9E%8B%E5%AE%9E%E4%BE%8Bopengl%E5%AE%9E%E7%8E%B0\/';
           
-            this.page.identifier = '\/2018\/04\/ue4%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0%E4%B8%96%E7%95%8C%E5%9D%90%E6%A0%87%E8%BD%AC%E5%B1%80%E9%83%A8%E5%9D%90%E6%A0%87world-space-to-local-space\/'
+            this.page.identifier = '\/2018\/06\/shading-ads%E5%85%89%E7%85%A7%E6%A8%A1%E5%9E%8B%E5%AE%9E%E4%BE%8Bopengl%E5%AE%9E%E7%8E%B0\/'
           
         };
         (function() {

@@ -585,6 +585,58 @@ Set <code>Is Focusable</code> enable, and execute <code>SetKeyboardFocus()</code
 <p>Reference:<br />
 <a href="https://answers.unrealengine.com/questions/409215/ui-widget-key-events-onkeydownonkeyup-not-generate.html">https://answers.unrealengine.com/questions/409215/ui-widget-key-events-onkeydownonkeyup-not-generate.html</a></p>
 
+<h5 id="how-to-get-widget-by-class-in-current-userwidget">How to get Widget by Class in current UserWidget</h5>
+
+<p>Get all Widget first.<br />
+use:</p>
+
+<pre><code>void UWidgetTree::GetAllWidgets(TArray&lt;UWidget*&gt;&amp; Widgets) const
+</code></pre>
+
+<p>or:</p>
+
+<pre><code>void ForEachWidget(TFunctionRef&lt;void(UWidget*)&gt; Predicate) const;
+</code></pre>
+
+<p>Then check Widget type:</p>
+
+<pre><code>if(ChildWidget-&gt;IsA(UButton::StaticClass()))
+{
+}
+</code></pre>
+
+<p>Example:</p>
+
+<pre><code>void UMyUserWidget::NativeConstruct()
+{
+    Super::NativeConstruct();
+
+    if (WidgetTree)
+    {
+        TArray&lt;UWidget*&gt; Widgets;
+        WidgetTree-&gt;GetAllWidgets(Widgets);
+
+        for (UWidget* Widget : Widgets)
+        {
+            if (Widget &amp;&amp; Widget-&gt;IsA(UButton::StaticClass()))
+            {
+                if (UButton* Btn = Cast&lt;UButton&gt;(Widget))
+                {
+                    FScriptDelegate Del;
+                    Del.BindUFunction(this, TEXT(&quot;PlayBtnOnClickSound&quot;));
+                    Btn-&gt;OnClicked.Add(Del);
+                }
+            }
+        }
+    }
+}
+</code></pre>
+
+<h5 id="how-to-set-ubutton-s-image-texture-for-normal-hovered-and-pressed-state">How to set UButton&rsquo;s Image Texture for Normal, Hovered and Pressed state</h5>
+
+<pre><code>MyButton-&gt;WidgetStyle.Normal.SetResourceObject(TextureRes);
+</code></pre>
+
 <hr />
 
 <p><code>你讨厌的昨天，是再也回不去的从前。你喜欢的未来，是某一天会怀念的现在。 ---莫书</code></p>
@@ -785,6 +837,57 @@ Set <code>Is Focusable</code> enable, and execute <code>SetKeyboardFocus()</code
           <div class="media">
             
             <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/03/ue4animationblendspace-for-c-/">
+                <h3 class="media-heading">[UE4][Animation]BlendSpace for C&#43;&#43;</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Mar 3, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p><code>FAnimNode_BlendSpacePlayer</code> is the native source of <code>BlendSpace</code> which used in Animation Blueprint.</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/03/ue4umg-slider-related/">
+                <h3 class="media-heading">[UE4]UMG Slider Related</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Mar 3, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><h5 id="how-to-increase-slider-bar-thickness-height-scale-in-y">How to increase slider bar thickness (height, scale in Y)</h5></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/03/opensourcelibraries-and-frameworks-collections/">
+                <h3 class="media-heading">[OpenSource]Libraries and Frameworks Collections</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Mar 3, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><h3 id="math">Math</h3></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
               <a class="link-unstyled" href="https://dawnarc.com/2019/03/ue4how-to-override-blueprintnativeevent-function-which-without-virtual/">
                 <h3 class="media-heading">[UE4]How to override BlueprintNativeEvent function which without virtual</h3>
               </a>
@@ -903,57 +1006,6 @@ Set <code>Is Focusable</code> enable, and execute <code>SetKeyboardFocus()</code
             <hr>
           </div>
         
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/02/mathcheck-if-a-point-is-inside-regular-hexagon/">
-                <h3 class="media-heading">[Math]Check if a point is inside regular hexagon</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Feb 2, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>Keywords: Calculate point location to check if it&rsquo;s inside hexagon, 计算坐标点是否在六边形内部</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/02/android-ndkhow-to-support-android-9.0-when-building-using-ndk-r12b/">
-                <h3 class="media-heading">[Android NDK]How to support Android 9.0 when building using NDK r12b</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Feb 2, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>.</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/02/ue4texture-related/">
-                <h3 class="media-heading">[UE4]Texture Related</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Feb 2, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><h5 id="is-it-need-to-make-texture-lods">Is it need to make Texture LODs?</h5></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
       </div>
     </div>
     <div class="modal-footer">
@@ -961,7 +1013,7 @@ Set <code>Is Focusable</code> enable, and execute <code>SetKeyboardFocus()</code
          data-message-zero="no post found"
          data-message-one="1 post found"
          data-message-other="{n} posts found">
-         482 posts found
+         485 posts found
       </p>
     </div>
   </div>

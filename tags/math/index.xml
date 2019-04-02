@@ -123,33 +123,6 @@ https://www.reddit.com/r/unrealengine/comments/9xfdei/projectile_how_to_avoid_ob
     </item>
     
     <item>
-      <title>[UE4]LoadObject加载UAnimBlueprint失败</title>
-      <link>https://dawnarc.com/2018/04/ue4loadobject%E5%8A%A0%E8%BD%BDuanimblueprint%E5%A4%B1%E8%B4%A5/</link>
-      <pubDate>Sat, 14 Apr 2018 22:10:02 +0800</pubDate>
-      
-      <guid>https://dawnarc.com/2018/04/ue4loadobject%E5%8A%A0%E8%BD%BDuanimblueprint%E5%A4%B1%E8%B4%A5/</guid>
-      <description>keywords：UE4、Dynamic Load、Animation Blueprint、LoadObject、动画蓝图
-问题现象 假如用以下方式加载动画蓝图：
-FString AnimBPStringTest = &amp;quot;AnimBlueprint&#39;/Game/ThirdPerson/Animations/ThirdPerson_AnimBP.ThirdPerson_AnimBP&#39;&amp;quot;; UAnimBlueprint* AnimationBP = LoadObject&amp;lt;UAnimBlueprint&amp;gt;(NULL, *AnimBPStringTest);  在PIE和Standalone模式下都可加载成功，但是一旦打包运行（打包配置中添加了该资源cook）就会加载失败，并提示如下错误：
-LogUObjectGlobals:Warning: Failed to find object &#39;AnimBlueprint /Game/ThirdPerson/Animations/ThirdPerson_AnimBP.ThirdPerson_AnimBP&#39;  解决办法 貌似动画蓝图比较特殊，用LoadObject无法加载，如果要获取动画蓝图Class，可以通过如下方式加载：
-// get the blueprint class reference from the editor FString AnimClassStringTest = &amp;quot;Class&#39;/Game/mixamo/Heidi/IcloneAnimBP.IcloneAnimBP_C&#39;&amp;quot;; // load the class UClass* AnimationClass = LoadObject&amp;lt;UClass&amp;gt;(NULL, *AnimClassStringTest); if (!AnimationClass) return; // assign the anim blueprint class to your skeletal mesh component Skeletal3DMeshComponent-&amp;gt;SetAnimInstanceClass(AnimationClass);  参考：Why can&amp;rsquo;t i dynamically load an animation BP in a packaged game</description>
-    </item>
-    
-    <item>
-      <title>[UE4][线性代数]世界坐标转局部坐标(World Space to Local Space)</title>
-      <link>https://dawnarc.com/2018/04/ue4%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0%E4%B8%96%E7%95%8C%E5%9D%90%E6%A0%87%E8%BD%AC%E5%B1%80%E9%83%A8%E5%9D%90%E6%A0%87world-space-to-local-space/</link>
-      <pubDate>Fri, 13 Apr 2018 15:59:02 +0800</pubDate>
-      
-      <guid>https://dawnarc.com/2018/04/ue4%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0%E4%B8%96%E7%95%8C%E5%9D%90%E6%A0%87%E8%BD%AC%E5%B1%80%E9%83%A8%E5%9D%90%E6%A0%87world-space-to-local-space/</guid>
-      <description>keywords：UE4、InverseTransformVector、InverseTransformPosition
-实例代码：
-//返回摄像机Rotation相对角色Rotation的偏移量Offset FRotator ASBaseCharacter::GetAimOffsets() const { const FVector AimDirWS = GetBaseAimRotation().Vector(); const FVector AimDirLS = ActorToWorld().InverseTransformVectorNoScale(AimDirWS); const FRotator AimRotLS = AimDirLS.Rotation(); return AimRotLS; }  https://github.com/tomlooman/EpicSurvivalGameSeries/blob/4a6ee9a6081529fadbe0f693b2e4e6729d5ec08d/SurvivalGame/Source/SurvivalGame/Private/Player/SBaseCharacter.cpp#L374
-如果只是想获取两个Rotation之间的Offset，更简单的办法：
-FRotator R1; FRotator R2; FRotator Offset = R2 - R1;  但这种直接相减的方式，返回的结果Rotation，度数可能会小于-180 或 大于 180，需要手动处理范围限定，但是效率远高于 InverseTransformVector。
-无欲则刚，关心则乱。----《论语》</description>
-    </item>
-    
-    <item>
       <title>[Math]共轭矩阵、逆矩阵、复矩阵</title>
       <link>https://dawnarc.com/2017/02/math%E5%85%B1%E8%BD%AD%E7%9F%A9%E9%98%B5%E9%80%86%E7%9F%A9%E9%98%B5%E5%A4%8D%E7%9F%A9%E9%98%B5/</link>
       <pubDate>Wed, 22 Feb 2017 14:32:02 +0800</pubDate>
@@ -186,7 +159,7 @@ http://www.cnblogs.com/DreamUp/archive/2010/07/27/1786225.html
       <description>讲之前，先说下如果两个Rotation相加的意义，比如：
 FRotator Rot1(0.f, 90.f, 0.f); FRotator Rot2(90.f,0.f, 0.f); FRotator Result = Rot1 + Rot2;  得到的结果FRotator Result(90.f, 90.f, 0.f)，其意义是： 物体相对空间坐标原点的Rotation为(90.f, 90.f, 0.f)，很好理解。
 如果两个Rotation转换为Martix并相乘，比如：
-FRotator Rot1(0.f, 90.f, 0.f); FRotator Rot2(90.f,0.f, 0.f); FRotator Result =( FRotationMatrix(Rot1) * FRotationMatrix(Rot2)).Rotator;  得到的结果FRotator Result(0.f, 90.f, 90.f)，其意义是： 先将物体作Rot1旋转，即：Yaw方向（水平平面）旋转90度，然后再假设该物体相对坐标轴原点的旋转量为(0, 0, 0)，即没有作任何旋转，但实际Rotation相对坐标轴原点为(0, 90, 0)；然后再将物体进行Rot2旋转，即Pitch方向（垂直于(90, 0, 0)方向的平面）侧翻90度，因为侧翻90度前假设物体的Rotation是(0, 0, 0)，所以侧翻时所在的平面不再是Yaw=90的平面（垂直于(0, 90, 0)方向），而是Yaw=0的平面（垂直于(90, 0, 0)方向）。没做相关配图，这段话理解起来有点绕，最好用空间思维想象下，可以用手掌比划。
+FRotator Rot1(0.f, 90.f, 0.f); FRotator Rot2(90.f,0.f, 0.f); FRotator Result =( FRotationMatrix(Rot1) * FRotationMatrix(Rot2)).Rotator();  得到的结果FRotator Result(0.f, 90.f, 90.f)，其意义是： 先将物体作Rot1旋转，即：Yaw方向（水平平面）旋转90度，然后再假设该物体相对坐标轴原点的旋转量为(0, 0, 0)，即没有作任何旋转，但实际Rotation相对坐标轴原点为(0, 90, 0)；然后再将物体进行Rot2旋转，即Pitch方向（垂直于(90, 0, 0)方向的平面）侧翻90度，因为侧翻90度前假设物体的Rotation是(0, 0, 0)，所以侧翻时所在的平面不再是Yaw=90的平面（垂直于(0, 90, 0)方向），而是Yaw=0的平面（垂直于(90, 0, 0)方向）。没做相关配图，这段话理解起来有点绕，最好用空间思维想象下，可以用手掌比划。
 实际应用： 比如空间中有两个物体：A和B，现在要将A旋转至与B相同的朝向，目前只知道A的相对世界坐标的Rotation Rw(90.f,0.f, 0.f)、B相对A（将A的Rotation当做(0, 0, 0)）的Rotation Rr(0.f, 90.f, 0.f)，求A旋转后的世界坐标Rotation。
 此时的计算公式就是：
 (FRotationMatrix(Rr) * FRotationMatrix(Rw)).Rotator()  注意：矩阵相乘时，两个乘数的前后位置不同则计算的结果也不同，比如上面例子，如果是( FRotationMatrix(Rot2) * FRotationMatrix(Rot1)).</description>

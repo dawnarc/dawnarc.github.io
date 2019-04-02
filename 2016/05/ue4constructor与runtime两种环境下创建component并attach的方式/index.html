@@ -11,8 +11,8 @@
 <meta name="description" content="Component MyActor.h：
 UShapeComponent * CollisionMesh;  Constructor中 Create &amp; Attach MyActor.cpp：
 CollisionMesh = CreateDefaultSubobject&lt;UBoxComponent&gt;(TEXT(&quot;TestCollision&quot;)); if(CollisionMesh) { CollisionMesh-&gt;SetupAttachment(GetRootComponent()); }  Runtime中（非构造） Create &amp; Attach MyActor.cpp：
-CollisionMesh = NewObject&lt;UBoxComponent&gt;(this); if (CollisionMesh) { CollisionMesh-&gt;RegisterComponent(); CollisionMesh-&gt;AttachToComponent(GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform); }  Actor Runtime中Actor和Actor之间相互Attach Actor1 = GetWorld()-&gt;SpawnActor&lt;AMyActor&gt;(AMyActor::StaticClass()); if(Actor1) { Actor1-&gt;AttachToActor(Actor2, FAttachmentTransformRules::KeepRelativeTransform); }  Constructor中 Create &amp; Attach 很少情况下需要在构造函数执行Actor之间的相关Attach。
-ConstructorHelpers::FObjectFinder&lt;UMaterial&gt; DecalMaterialAsset(TEXT(&quot;Material&#39;/Game/TopDownCPP/Blueprints/M_Cursor_Decal.M_Cursor_Decal&#39;&quot;)); if (DecalMaterialAsset.Succeeded()) { DecalMaterialAsset.AttachToActor(MyActor, FAttachmentTransformRules::KeepRelativeTransform); }  AttachToComponent()为引擎的仅次于UObject的子类ActorComponent的函数； AttachToActor为引擎的仅次于UObject的子类Actor的函数。
+CollisionMesh = NewObject&lt;UBoxComponent&gt;(this); if (CollisionMesh) { CollisionMesh-&gt;RegisterComponent(); CollisionMesh-&gt;AttachToComponent(GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform); }  Actor Constructor中 Create &amp; Attach 很少情况下需要在构造函数执行Actor之间的相关Attach。
+ConstructorHelpers::FObjectFinder&lt;UMaterial&gt; DecalMaterialAsset(TEXT(&quot;Material&#39;/Game/TopDownCPP/Blueprints/M_Cursor_Decal.M_Cursor_Decal&#39;&quot;)); if (DecalMaterialAsset.Succeeded()) { DecalMaterialAsset.AttachToActor(MyActor, FAttachmentTransformRules::KeepRelativeTransform); }  Runtime中Actor和Actor之间相互Attach Actor1 = GetWorld()-&gt;SpawnActor&lt;AMyActor&gt;(AMyActor::StaticClass()); if(Actor1) { Actor1-&gt;AttachToActor(Actor2, FAttachmentTransformRules::KeepRelativeTransform); }  AttachToComponent()为引擎的仅次于UObject的子类ActorComponent的函数； AttachToActor为引擎的仅次于UObject的子类Actor的函数。
  通过NewObject创建Component之后，执行Register的目的是为了触发OnComponentCreate等回调。不执行Create相关的Initial回调会导致后续的Attach失效。
  注意：Actor::AttachToActor()和Actor::AttachTo()为4.12的新版API，旧版本的工程迁移至4.12后，编译提示警告：
 AActor::AttachRootComponentToActor已废弃，需要使用AttachToActor替换
@@ -22,8 +22,8 @@ AActor::AttachRootComponentToActor已废弃，需要使用AttachToActor替换
 <meta property="og:description" content="Component MyActor.h：
 UShapeComponent * CollisionMesh;  Constructor中 Create &amp; Attach MyActor.cpp：
 CollisionMesh = CreateDefaultSubobject&lt;UBoxComponent&gt;(TEXT(&quot;TestCollision&quot;)); if(CollisionMesh) { CollisionMesh-&gt;SetupAttachment(GetRootComponent()); }  Runtime中（非构造） Create &amp; Attach MyActor.cpp：
-CollisionMesh = NewObject&lt;UBoxComponent&gt;(this); if (CollisionMesh) { CollisionMesh-&gt;RegisterComponent(); CollisionMesh-&gt;AttachToComponent(GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform); }  Actor Runtime中Actor和Actor之间相互Attach Actor1 = GetWorld()-&gt;SpawnActor&lt;AMyActor&gt;(AMyActor::StaticClass()); if(Actor1) { Actor1-&gt;AttachToActor(Actor2, FAttachmentTransformRules::KeepRelativeTransform); }  Constructor中 Create &amp; Attach 很少情况下需要在构造函数执行Actor之间的相关Attach。
-ConstructorHelpers::FObjectFinder&lt;UMaterial&gt; DecalMaterialAsset(TEXT(&quot;Material&#39;/Game/TopDownCPP/Blueprints/M_Cursor_Decal.M_Cursor_Decal&#39;&quot;)); if (DecalMaterialAsset.Succeeded()) { DecalMaterialAsset.AttachToActor(MyActor, FAttachmentTransformRules::KeepRelativeTransform); }  AttachToComponent()为引擎的仅次于UObject的子类ActorComponent的函数； AttachToActor为引擎的仅次于UObject的子类Actor的函数。
+CollisionMesh = NewObject&lt;UBoxComponent&gt;(this); if (CollisionMesh) { CollisionMesh-&gt;RegisterComponent(); CollisionMesh-&gt;AttachToComponent(GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform); }  Actor Constructor中 Create &amp; Attach 很少情况下需要在构造函数执行Actor之间的相关Attach。
+ConstructorHelpers::FObjectFinder&lt;UMaterial&gt; DecalMaterialAsset(TEXT(&quot;Material&#39;/Game/TopDownCPP/Blueprints/M_Cursor_Decal.M_Cursor_Decal&#39;&quot;)); if (DecalMaterialAsset.Succeeded()) { DecalMaterialAsset.AttachToActor(MyActor, FAttachmentTransformRules::KeepRelativeTransform); }  Runtime中Actor和Actor之间相互Attach Actor1 = GetWorld()-&gt;SpawnActor&lt;AMyActor&gt;(AMyActor::StaticClass()); if(Actor1) { Actor1-&gt;AttachToActor(Actor2, FAttachmentTransformRules::KeepRelativeTransform); }  AttachToComponent()为引擎的仅次于UObject的子类ActorComponent的函数； AttachToActor为引擎的仅次于UObject的子类Actor的函数。
  通过NewObject创建Component之后，执行Register的目的是为了触发OnComponentCreate等回调。不执行Create相关的Initial回调会导致后续的Attach失效。
  注意：Actor::AttachToActor()和Actor::AttachTo()为4.12的新版API，旧版本的工程迁移至4.12后，编译提示警告：
 AActor::AttachRootComponentToActor已废弃，需要使用AttachToActor替换
@@ -37,8 +37,8 @@ AActor::AttachRootComponentToActor已废弃，需要使用AttachToActor替换
 <meta property="og:description" content="Component MyActor.h：
 UShapeComponent * CollisionMesh;  Constructor中 Create &amp; Attach MyActor.cpp：
 CollisionMesh = CreateDefaultSubobject&lt;UBoxComponent&gt;(TEXT(&quot;TestCollision&quot;)); if(CollisionMesh) { CollisionMesh-&gt;SetupAttachment(GetRootComponent()); }  Runtime中（非构造） Create &amp; Attach MyActor.cpp：
-CollisionMesh = NewObject&lt;UBoxComponent&gt;(this); if (CollisionMesh) { CollisionMesh-&gt;RegisterComponent(); CollisionMesh-&gt;AttachToComponent(GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform); }  Actor Runtime中Actor和Actor之间相互Attach Actor1 = GetWorld()-&gt;SpawnActor&lt;AMyActor&gt;(AMyActor::StaticClass()); if(Actor1) { Actor1-&gt;AttachToActor(Actor2, FAttachmentTransformRules::KeepRelativeTransform); }  Constructor中 Create &amp; Attach 很少情况下需要在构造函数执行Actor之间的相关Attach。
-ConstructorHelpers::FObjectFinder&lt;UMaterial&gt; DecalMaterialAsset(TEXT(&quot;Material&#39;/Game/TopDownCPP/Blueprints/M_Cursor_Decal.M_Cursor_Decal&#39;&quot;)); if (DecalMaterialAsset.Succeeded()) { DecalMaterialAsset.AttachToActor(MyActor, FAttachmentTransformRules::KeepRelativeTransform); }  AttachToComponent()为引擎的仅次于UObject的子类ActorComponent的函数； AttachToActor为引擎的仅次于UObject的子类Actor的函数。
+CollisionMesh = NewObject&lt;UBoxComponent&gt;(this); if (CollisionMesh) { CollisionMesh-&gt;RegisterComponent(); CollisionMesh-&gt;AttachToComponent(GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform); }  Actor Constructor中 Create &amp; Attach 很少情况下需要在构造函数执行Actor之间的相关Attach。
+ConstructorHelpers::FObjectFinder&lt;UMaterial&gt; DecalMaterialAsset(TEXT(&quot;Material&#39;/Game/TopDownCPP/Blueprints/M_Cursor_Decal.M_Cursor_Decal&#39;&quot;)); if (DecalMaterialAsset.Succeeded()) { DecalMaterialAsset.AttachToActor(MyActor, FAttachmentTransformRules::KeepRelativeTransform); }  Runtime中Actor和Actor之间相互Attach Actor1 = GetWorld()-&gt;SpawnActor&lt;AMyActor&gt;(AMyActor::StaticClass()); if(Actor1) { Actor1-&gt;AttachToActor(Actor2, FAttachmentTransformRules::KeepRelativeTransform); }  AttachToComponent()为引擎的仅次于UObject的子类ActorComponent的函数； AttachToActor为引擎的仅次于UObject的子类Actor的函数。
  通过NewObject创建Component之后，执行Register的目的是为了触发OnComponentCreate等回调。不执行Create相关的Initial回调会导致后续的Attach失效。
  注意：Actor::AttachToActor()和Actor::AttachTo()为4.12的新版API，旧版本的工程迁移至4.12后，编译提示警告：
 AActor::AttachRootComponentToActor已废弃，需要使用AttachToActor替换
@@ -46,8 +46,8 @@ AActor::AttachRootComponentToActor已废弃，需要使用AttachToActor替换
 <meta name="twitter:description" content="Component MyActor.h：
 UShapeComponent * CollisionMesh;  Constructor中 Create &amp; Attach MyActor.cpp：
 CollisionMesh = CreateDefaultSubobject&lt;UBoxComponent&gt;(TEXT(&quot;TestCollision&quot;)); if(CollisionMesh) { CollisionMesh-&gt;SetupAttachment(GetRootComponent()); }  Runtime中（非构造） Create &amp; Attach MyActor.cpp：
-CollisionMesh = NewObject&lt;UBoxComponent&gt;(this); if (CollisionMesh) { CollisionMesh-&gt;RegisterComponent(); CollisionMesh-&gt;AttachToComponent(GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform); }  Actor Runtime中Actor和Actor之间相互Attach Actor1 = GetWorld()-&gt;SpawnActor&lt;AMyActor&gt;(AMyActor::StaticClass()); if(Actor1) { Actor1-&gt;AttachToActor(Actor2, FAttachmentTransformRules::KeepRelativeTransform); }  Constructor中 Create &amp; Attach 很少情况下需要在构造函数执行Actor之间的相关Attach。
-ConstructorHelpers::FObjectFinder&lt;UMaterial&gt; DecalMaterialAsset(TEXT(&quot;Material&#39;/Game/TopDownCPP/Blueprints/M_Cursor_Decal.M_Cursor_Decal&#39;&quot;)); if (DecalMaterialAsset.Succeeded()) { DecalMaterialAsset.AttachToActor(MyActor, FAttachmentTransformRules::KeepRelativeTransform); }  AttachToComponent()为引擎的仅次于UObject的子类ActorComponent的函数； AttachToActor为引擎的仅次于UObject的子类Actor的函数。
+CollisionMesh = NewObject&lt;UBoxComponent&gt;(this); if (CollisionMesh) { CollisionMesh-&gt;RegisterComponent(); CollisionMesh-&gt;AttachToComponent(GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform); }  Actor Constructor中 Create &amp; Attach 很少情况下需要在构造函数执行Actor之间的相关Attach。
+ConstructorHelpers::FObjectFinder&lt;UMaterial&gt; DecalMaterialAsset(TEXT(&quot;Material&#39;/Game/TopDownCPP/Blueprints/M_Cursor_Decal.M_Cursor_Decal&#39;&quot;)); if (DecalMaterialAsset.Succeeded()) { DecalMaterialAsset.AttachToActor(MyActor, FAttachmentTransformRules::KeepRelativeTransform); }  Runtime中Actor和Actor之间相互Attach Actor1 = GetWorld()-&gt;SpawnActor&lt;AMyActor&gt;(AMyActor::StaticClass()); if(Actor1) { Actor1-&gt;AttachToActor(Actor2, FAttachmentTransformRules::KeepRelativeTransform); }  AttachToComponent()为引擎的仅次于UObject的子类ActorComponent的函数； AttachToActor为引擎的仅次于UObject的子类Actor的函数。
  通过NewObject创建Component之后，执行Register的目的是为了触发OnComponentCreate等回调。不执行Create相关的Initial回调会导致后续的Attach失效。
  注意：Actor::AttachToActor()和Actor::AttachTo()为4.12的新版API，旧版本的工程迁移至4.12后，编译提示警告：
 AActor::AttachRootComponentToActor已废弃，需要使用AttachToActor替换
@@ -415,15 +415,6 @@ if (CollisionMesh)
 
 <h2 id="actor">Actor</h2>
 
-<h5 id="runtime中actor和actor之间相互attach">Runtime中Actor和Actor之间相互Attach</h5>
-
-<pre><code>Actor1 = GetWorld()-&gt;SpawnActor&lt;AMyActor&gt;(AMyActor::StaticClass());
-if(Actor1)
-{
-    Actor1-&gt;AttachToActor(Actor2, FAttachmentTransformRules::KeepRelativeTransform);
-}
-</code></pre>
-
 <h5 id="constructor中-create-attach-1">Constructor中 Create &amp; Attach</h5>
 
 <p>很少情况下需要在构造函数执行Actor之间的相关Attach。</p>
@@ -432,6 +423,15 @@ if(Actor1)
 if (DecalMaterialAsset.Succeeded())
 {
     DecalMaterialAsset.AttachToActor(MyActor, FAttachmentTransformRules::KeepRelativeTransform);
+}
+</code></pre>
+
+<h5 id="runtime中actor和actor之间相互attach">Runtime中Actor和Actor之间相互Attach</h5>
+
+<pre><code>Actor1 = GetWorld()-&gt;SpawnActor&lt;AMyActor&gt;(AMyActor::StaticClass());
+if(Actor1)
+{
+    Actor1-&gt;AttachToActor(Actor2, FAttachmentTransformRules::KeepRelativeTransform);
 }
 </code></pre>
 
@@ -653,6 +653,57 @@ AttachToActor为引擎的仅次于UObject的子类<code>Actor</code>的函数。
           <div class="media">
             
             <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/03/ue4animationblendspace-for-c-/">
+                <h3 class="media-heading">[UE4][Animation]BlendSpace for C&#43;&#43;</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Mar 3, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p><code>FAnimNode_BlendSpacePlayer</code> is the native source of <code>BlendSpace</code> which used in Animation Blueprint.</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/03/ue4umg-slider-related/">
+                <h3 class="media-heading">[UE4]UMG Slider Related</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Mar 3, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><h5 id="how-to-increase-slider-bar-thickness-height-scale-in-y">How to increase slider bar thickness (height, scale in Y)</h5></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/03/opensourcelibraries-and-frameworks-collections/">
+                <h3 class="media-heading">[OpenSource]Libraries and Frameworks Collections</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Mar 3, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><h3 id="math">Math</h3></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
               <a class="link-unstyled" href="https://dawnarc.com/2019/03/ue4how-to-override-blueprintnativeevent-function-which-without-virtual/">
                 <h3 class="media-heading">[UE4]How to override BlueprintNativeEvent function which without virtual</h3>
               </a>
@@ -771,57 +822,6 @@ AttachToActor为引擎的仅次于UObject的子类<code>Actor</code>的函数。
             <hr>
           </div>
         
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/02/mathcheck-if-a-point-is-inside-regular-hexagon/">
-                <h3 class="media-heading">[Math]Check if a point is inside regular hexagon</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Feb 2, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>Keywords: Calculate point location to check if it&rsquo;s inside hexagon, 计算坐标点是否在六边形内部</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/02/android-ndkhow-to-support-android-9.0-when-building-using-ndk-r12b/">
-                <h3 class="media-heading">[Android NDK]How to support Android 9.0 when building using NDK r12b</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Feb 2, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>.</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/02/ue4texture-related/">
-                <h3 class="media-heading">[UE4]Texture Related</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Feb 2, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><h5 id="is-it-need-to-make-texture-lods">Is it need to make Texture LODs?</h5></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
       </div>
     </div>
     <div class="modal-footer">
@@ -829,7 +829,7 @@ AttachToActor为引擎的仅次于UObject的子类<code>Actor</code>的函数。
          data-message-zero="no post found"
          data-message-one="1 post found"
          data-message-other="{n} posts found">
-         482 posts found
+         485 posts found
       </p>
     </div>
   </div>

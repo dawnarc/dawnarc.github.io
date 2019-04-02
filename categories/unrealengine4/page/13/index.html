@@ -321,6 +321,122 @@ if (!doNotTrack) {
     
     <div class="postShorten-header">
       <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2016/10/ue4hud%E7%9A%84canvas%E5%8F%98%E9%87%8F%E4%B8%BAnull%E7%9A%84%E9%97%AE%E9%A2%98/">
+          [UE4]HUD的Canvas变量为NULL的问题
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2016-10-24T23:06:40&#43;08:00">
+        
+  October 24, 2016
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        AHUD中的成员变量Canvas只在PostRender()事件中有效，离开此函数后就会被引擎置空。 要想使用HUD的Canvas，必须重写HUD的两个函数之一：
+/** PostRender is the main draw loop. */ virtual void PostRenderFor(); /** The Main Draw loop for the hud. Gets called before any messaging. Should be subclassed */ virtual void DrawHUD();  其中DrawHUD为HUD独有的函数，而PostRender是所有Actor都有函数。 另外注意：PostRenderFor()不是重写了就会触发，还需要执行AHUD::AddPostRenderedActor()，将需要触发的Actor加入PostRenderActors数组中。
+Canvas的引擎源码注释：
+protected: /** Canvas to Draw HUD on. Only valid during PostRender() event. */ UPROPERTY() UCanvas* Canvas;  
+      
+      <p>
+        <a href="https://dawnarc.com/2016/10/ue4hud%E7%9A%84canvas%E5%8F%98%E9%87%8F%E4%B8%BAnull%E7%9A%84%E9%97%AE%E9%A2%98/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2016/10/ue4tmap%E4%BD%BF%E7%94%A8struct%E5%BD%93%E4%BD%9Ckey%E6%97%B6%E9%9C%80%E8%A6%81%E9%87%8D%E8%BD%BD%E7%9A%84%E6%93%8D%E4%BD%9C%E7%AC%A6/">
+          [UE4]TMap使用Struct当作key时需要重载的操作符
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2016-10-23T17:20:40&#43;08:00">
+        
+  October 23, 2016
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        定义struct：
+struct FMyStruct { // String which identifies our key FString UniqueID; // Some state which doesn't affect struct identity float SomeFloat; explicit FMyStruct(float InFloat) : UniqueID (FGuid::NewGuid().ToString()) , SomeFloat(InFloat) { } }; template &lt;typename ValueType&gt; struct TMyStructMapKeyFuncs : BaseKeyFuncs&lt; TPair&lt;FMyStruct, ValueType&gt;, FString &gt; { private: typedef BaseKeyFuncs&lt; TPair&lt;FMyStruct, ValueType&gt;, FString &gt; Super; public: typedef typename Super::ElementInitType ElementInitType; typedef typename Super::KeyInitType KeyInitType; static KeyInitType GetSetKey(ElementInitType Element) { return Element.Key.UniqueID; } static bool Matches(KeyInitType A, KeyInitType B) { return A.
+      
+      <p>
+        <a href="https://dawnarc.com/2016/10/ue4tmap%E4%BD%BF%E7%94%A8struct%E5%BD%93%E4%BD%9Ckey%E6%97%B6%E9%9C%80%E8%A6%81%E9%87%8D%E8%BD%BD%E7%9A%84%E6%93%8D%E4%BD%9C%E7%AC%A6/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
         <a class="link-unstyled" href="https://dawnarc.com/2016/10/ue4getworldtimermanager.settimer%E5%A6%82%E4%BD%95%E4%BC%A0%E9%80%92%E5%8F%82%E6%95%B0/">
           [UE4]GetWorldTimerManager().SetTimer()如何传递参数
         </a>
@@ -1076,119 +1192,6 @@ bUseFixedFrameRate=True
 </article>
 
             
-              
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2016/10/ue4%E7%B2%92%E5%AD%90%E7%B3%BB%E7%BB%9F%E7%9A%84%E4%BA%8B%E4%BB%B6particle-event/">
-          [UE4]粒子系统的事件(Particle Event)
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2016-10-08T17:56:40&#43;08:00">
-        
-  October 8, 2016
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        粒子发射器中的两个Module：Event Generator和EventRcvr Spawn https://wiki.unrealengine.com/Particle_Events
-      
-      <p>
-        <a href="https://dawnarc.com/2016/10/ue4%E7%B2%92%E5%AD%90%E7%B3%BB%E7%BB%9F%E7%9A%84%E4%BA%8B%E4%BB%B6particle-event/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-            
-              
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2016/10/ue4%E7%94%A8drawdebugline%E7%BB%98%E5%88%B6%E7%9F%A9%E5%BD%A2/">
-          [UE4]用DrawDebugLine绘制矩形
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2016-10-08T01:02:40&#43;08:00">
-        
-  October 8, 2016
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        自己实现的用DrawDebugLine绘制矩形的函数：
-/* Draw rectangle use line @CenterLoc, location of rectangle center @Rot, rotation of rectangle @Angle, angle of diagonal @DiagonalHalve, half of diagonal lenght. */ void DrawDebugTrangle(const FVector&amp; CenterLoc, const FRotator&amp; Rot, float Angle, float DiagonalHalve) { FVector Point1 = CenterLoc + (Rot + FRotator(0.f, Angle, 0.f)).Vector() * DiagonalHalve; FVector Point2 = CenterLoc + (Rot + FRotator(0.f, 90.f + (90.f - Angle), 0.f)).Vector() * DiagonalHalve; FVector Point3 = CenterLoc + (Rot + FRotator(0.
-      
-      <p>
-        <a href="https://dawnarc.com/2016/10/ue4%E7%94%A8drawdebugline%E7%BB%98%E5%88%B6%E7%9F%A9%E5%BD%A2/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-            
             
   <div class="pagination-bar">
     <ul class="pagination">
@@ -1273,6 +1276,57 @@ bUseFixedFrameRate=True
       <div class="no-result text-color-light text-center">no post found</div>
       <div class="results">
         
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/03/ue4animationblendspace-for-c-/">
+                <h3 class="media-heading">[UE4][Animation]BlendSpace for C&#43;&#43;</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Mar 3, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p><code>FAnimNode_BlendSpacePlayer</code> is the native source of <code>BlendSpace</code> which used in Animation Blueprint.</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/03/ue4umg-slider-related/">
+                <h3 class="media-heading">[UE4]UMG Slider Related</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Mar 3, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><h5 id="how-to-increase-slider-bar-thickness-height-scale-in-y">How to increase slider bar thickness (height, scale in Y)</h5></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/03/opensourcelibraries-and-frameworks-collections/">
+                <h3 class="media-heading">[OpenSource]Libraries and Frameworks Collections</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Mar 3, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><h3 id="math">Math</h3></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
         
           <div class="media">
             
@@ -1395,57 +1449,6 @@ bUseFixedFrameRate=True
             <hr>
           </div>
         
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/02/mathcheck-if-a-point-is-inside-regular-hexagon/">
-                <h3 class="media-heading">[Math]Check if a point is inside regular hexagon</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Feb 2, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>Keywords: Calculate point location to check if it&rsquo;s inside hexagon, 计算坐标点是否在六边形内部</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/02/android-ndkhow-to-support-android-9.0-when-building-using-ndk-r12b/">
-                <h3 class="media-heading">[Android NDK]How to support Android 9.0 when building using NDK r12b</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Feb 2, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>.</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/02/ue4texture-related/">
-                <h3 class="media-heading">[UE4]Texture Related</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Feb 2, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><h5 id="is-it-need-to-make-texture-lods">Is it need to make Texture LODs?</h5></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
       </div>
     </div>
     <div class="modal-footer">
@@ -1453,7 +1456,7 @@ bUseFixedFrameRate=True
          data-message-zero="no post found"
          data-message-one="1 post found"
          data-message-other="{n} posts found">
-         482 posts found
+         485 posts found
       </p>
     </div>
   </div>
