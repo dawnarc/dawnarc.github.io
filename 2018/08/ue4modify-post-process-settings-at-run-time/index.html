@@ -8,30 +8,22 @@
 <meta name="generator" content="Hugo 0.53 with theme Tranquilpeak 0.4.3-SNAPSHOT">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="UE4">
-<meta name="description" content="Keywords：运行时期间修改后处理设置, change post process settings when game is running.
-运行时修改Post Process 步骤 1，使用 Camera Component 拉出 Set members in PostProcessSettings 节点。
-Get reference to Camera Component and drag out “Set members in PostProcessSettings” node.   2，选中 Set members in PostProcessSettings 节点，然后再在 Detail 面板中勾选需要修改的属性。比如我想修改曝光亮度。
-select “Set members in PostProcessSettings” node, then checked properties which want to modify in Detail Panel. e.g. Brightness of Exposure.   3，将 Camera 组件的 属性” Post Process Blend Weight” 设置为1，表示完全启用摄像机的 Post Process Settings。0表示完全禁用，0到1的数值表示混合过渡“全完启用”到“完全禁用”之间的渐变效果。">
+<meta name="description" content="Keywords：change post process settings when game is running, 运行时期间修改后处理设置
+Modify properties of Post Process Settings of Camera at run-time 1，Get reference to Camera Component and drag out “Set members in PostProcessSettings” node.   2，Select Set members in PostProcessSettings node, then checked properties which want to modify in Detail Panel. e.g. Brightness of Exposure.   3，Set Post Process Blend Weight to 1 in Camera Component, which means fully enable Post Process Settings of Camera.">
 
 
-<meta property="og:description" content="Keywords：运行时期间修改后处理设置, change post process settings when game is running.
-运行时修改Post Process 步骤 1，使用 Camera Component 拉出 Set members in PostProcessSettings 节点。
-Get reference to Camera Component and drag out “Set members in PostProcessSettings” node.   2，选中 Set members in PostProcessSettings 节点，然后再在 Detail 面板中勾选需要修改的属性。比如我想修改曝光亮度。
-select “Set members in PostProcessSettings” node, then checked properties which want to modify in Detail Panel. e.g. Brightness of Exposure.   3，将 Camera 组件的 属性” Post Process Blend Weight” 设置为1，表示完全启用摄像机的 Post Process Settings。0表示完全禁用，0到1的数值表示混合过渡“全完启用”到“完全禁用”之间的渐变效果。">
+<meta property="og:description" content="Keywords：change post process settings when game is running, 运行时期间修改后处理设置
+Modify properties of Post Process Settings of Camera at run-time 1，Get reference to Camera Component and drag out “Set members in PostProcessSettings” node.   2，Select Set members in PostProcessSettings node, then checked properties which want to modify in Detail Panel. e.g. Brightness of Exposure.   3，Set Post Process Blend Weight to 1 in Camera Component, which means fully enable Post Process Settings of Camera.">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[UE4]Modify Post Process Settings At Run-time">
 <meta name="twitter:title" content="[UE4]Modify Post Process Settings At Run-time">
 <meta property="og:url" content="https://dawnarc.com/2018/08/ue4modify-post-process-settings-at-run-time/">
 <meta property="twitter:url" content="https://dawnarc.com/2018/08/ue4modify-post-process-settings-at-run-time/">
 <meta property="og:site_name" content="玄冬Wong">
-<meta property="og:description" content="Keywords：运行时期间修改后处理设置, change post process settings when game is running.
-运行时修改Post Process 步骤 1，使用 Camera Component 拉出 Set members in PostProcessSettings 节点。
-Get reference to Camera Component and drag out “Set members in PostProcessSettings” node.   2，选中 Set members in PostProcessSettings 节点，然后再在 Detail 面板中勾选需要修改的属性。比如我想修改曝光亮度。
-select “Set members in PostProcessSettings” node, then checked properties which want to modify in Detail Panel. e.g. Brightness of Exposure.   3，将 Camera 组件的 属性” Post Process Blend Weight” 设置为1，表示完全启用摄像机的 Post Process Settings。0表示完全禁用，0到1的数值表示混合过渡“全完启用”到“完全禁用”之间的渐变效果。">
-<meta name="twitter:description" content="Keywords：运行时期间修改后处理设置, change post process settings when game is running.
-运行时修改Post Process 步骤 1，使用 Camera Component 拉出 Set members in PostProcessSettings 节点。
-Get reference to Camera Component and drag out “Set members in PostProcessSettings” node.   2，选中 Set members in PostProcessSettings 节点，然后再在 Detail 面板中勾选需要修改的属性。比如我想修改曝光亮度。
-select “Set members in PostProcessSettings” node, then checked properties which want to modify in Detail Panel. e.g. Brightness of Exposure.   3，将 Camera 组件的 属性” Post Process Blend Weight” 设置为1，表示完全启用摄像机的 Post Process Settings。0表示完全禁用，0到1的数值表示混合过渡“全完启用”到“完全禁用”之间的渐变效果。">
+<meta property="og:description" content="Keywords：change post process settings when game is running, 运行时期间修改后处理设置
+Modify properties of Post Process Settings of Camera at run-time 1，Get reference to Camera Component and drag out “Set members in PostProcessSettings” node.   2，Select Set members in PostProcessSettings node, then checked properties which want to modify in Detail Panel. e.g. Brightness of Exposure.   3，Set Post Process Blend Weight to 1 in Camera Component, which means fully enable Post Process Settings of Camera.">
+<meta name="twitter:description" content="Keywords：change post process settings when game is running, 运行时期间修改后处理设置
+Modify properties of Post Process Settings of Camera at run-time 1，Get reference to Camera Component and drag out “Set members in PostProcessSettings” node.   2，Select Set members in PostProcessSettings node, then checked properties which want to modify in Detail Panel. e.g. Brightness of Exposure.   3，Set Post Process Blend Weight to 1 in Camera Component, which means fully enable Post Process Settings of Camera.">
 <meta property="og:locale" content="en-us">
 
   
@@ -361,52 +353,207 @@ if (!doNotTrack) {
             <div class="main-content-wrap">
               
 
-<p>Keywords：运行时期间修改后处理设置,  change post process settings when game is running.</p>
+<p>Keywords：change post process settings when game is running, 运行时期间修改后处理设置</p>
 
-<h5 id="运行时修改post-process-步骤">运行时修改Post Process 步骤</h5>
+<h5 id="modify-properties-of-post-process-settings-of-camera-at-run-time">Modify properties of Post Process Settings of Camera at run-time</h5>
 
-<p>1，使用 Camera Component 拉出 Set members in PostProcessSettings 节点。<br />
-Get reference to Camera Component and drag out “Set members in PostProcessSettings” node.
+<p>1，Get reference to Camera Component and drag out “Set members in PostProcessSettings” node.
 <figure>
     <img src="https://dawnarc.com/img/20180831-[UE4]Modify%20Post%20Process%20Settings%20At%20Run-time/[UE4]Modify%20Post%20Process%20Settings%20At%20Run-time-01.jpg"/> 
 </figure>
 </p>
 
-<p>2，选中  Set members in PostProcessSettings 节点，然后再在 Detail 面板中勾选需要修改的属性。比如我想修改曝光亮度。<br />
-select “Set members in PostProcessSettings” node, then checked properties which want to modify in Detail Panel. e.g. Brightness of Exposure.
+<p>2，Select <code>Set members in PostProcessSettings</code> node, then checked properties which want to modify in Detail Panel. e.g. <code>Brightness of Exposure</code>.
 <figure>
     <img src="https://dawnarc.com/img/20180831-[UE4]Modify%20Post%20Process%20Settings%20At%20Run-time/[UE4]Modify%20Post%20Process%20Settings%20At%20Run-time-02.jpg"/> 
 </figure>
 </p>
 
-<p>3，将 Camera 组件的 属性” Post Process Blend Weight” 设置为1，表示完全启用摄像机的 Post Process Settings。0表示完全禁用，0到1的数值表示混合过渡“全完启用”到“完全禁用”之间的渐变效果。<br />
-Set “ Post Process Blend Weight” to 1 in Camera Component, which means fully enable Post Process Settings of Camera. Fully disable Post Process Settings of Camera if set this value to 0, value between 0 and 1 means that using a more gradual blend between fully enabled and fully disabled.
+<p>3，Set <code>Post Process Blend Weight</code> to 1 in Camera Component, which means fully enable Post Process Settings of Camera. Fully disable Post Process Settings of Camera if set this value to 0, value between 0 and 1 means that using a more gradual blend between fully enabled and fully disabled.
 <figure>
     <img src="https://dawnarc.com/img/20180831-[UE4]Modify%20Post%20Process%20Settings%20At%20Run-time/[UE4]Modify%20Post%20Process%20Settings%20At%20Run-time-03.jpg"/> 
 </figure>
 </p>
 
-<p>4，禁用场景中的Post Process Volume（后处理体积），因为我们使用摄像机组件来接管后处理。<br />
-Disable Post Process Volume in scene, because we would use Post Process Settings of Camera Component.
+<p>4，Disable Post Process Volume in scene, because we would use Post Process Settings of Camera Component.
 <figure>
     <img src="https://dawnarc.com/img/20180831-[UE4]Modify%20Post%20Process%20Settings%20At%20Run-time/[UE4]Modify%20Post%20Process%20Settings%20At%20Run-time-04.jpg"/> 
 </figure>
 </p>
 
-<p>参考实例：游戏启动后，逐渐修改后处理的曝光亮度效果。<br />
-Example: when game start, modify Exposure Brightness of Post Process gradually.
+<p>Example: when game start, modify Exposure Brightness of Post Process gradually.
 <figure>
     <img src="https://dawnarc.com/img/20180831-[UE4]Modify%20Post%20Process%20Settings%20At%20Run-time/[UE4]Modify%20Post%20Process%20Settings%20At%20Run-time-05.jpg"/> 
 </figure>
 </p>
 
-<h5 id="post-process-volume-不支持动态修改且不支持代码控制-包括蓝图-c">Post Process Volume 不支持动态修改且不支持代码控制（包括蓝图、C++）</h5>
-
-<p>官方给出解释：
-因为 Volume 都是使用 BSP BrushComponent 创建的，这会导致很难使用代码去创建 Volume ，官方很难实现代码控制 Volume 。如果要用代码控制，目前只能使用 Camera Component 的 Post Process Settings。</p>
-
-<p>Creating a PostProcessVolume from C++, anyone done that yet?
+<p><div class="alert success ">
+  <p>Incipient UE4 version doesn’t support manipulate Post Process Volume using C++ or Blueprint, but now supported.</p>
+</div>
+Old answer about why UE4 doesn’t support manipulating Post Process Volume at run-time.
 <a href="https://forums.unrealengine.com/development-discussion/c-gameplay-programming/6490-creating-a-postprocessvolume-from-c-anyone-done-that-yet">https://forums.unrealengine.com/development-discussion/c-gameplay-programming/6490-creating-a-postprocessvolume-from-c-anyone-done-that-yet</a></p>
+
+<h5 id="create-dynamic-material-instance-and-pass-parameters-for-post-process-materials-at-run-time">Create Dynamic Material Instance and pass Parameters for Post Process Materials at run-time</h5>
+
+<p>If just add material for Post Process Materials in Editor, Steps are following:
+<figure>
+    <img src="https://dawnarc.com/img/20180831-[UE4]Modify%20Post%20Process%20Settings%20At%20Run-time/[UE4]Modify%20Post%20Process%20Settings%20At%20Run-time-06.jpg"/> 
+</figure>
+
+<figure>
+    <img src="https://dawnarc.com/img/20180831-[UE4]Modify%20Post%20Process%20Settings%20At%20Run-time/[UE4]Modify%20Post%20Process%20Settings%20At%20Run-time-07.jpg"/> 
+</figure>
+
+<figure>
+    <img src="https://dawnarc.com/img/20180831-[UE4]Modify%20Post%20Process%20Settings%20At%20Run-time/[UE4]Modify%20Post%20Process%20Settings%20At%20Run-time-08.jpg"/> 
+</figure>
+</p>
+
+<p>If want to set parameter of materials of Post Process Volume, Steps are follows:
+1，Add two variables in your Actor (e.g. PlayerController): <code>Post Process Volume Reference</code> and <code>Material Instance Reference</code>.
+<figure>
+    <img src="https://dawnarc.com/img/20180831-[UE4]Modify%20Post%20Process%20Settings%20At%20Run-time/[UE4]Modify%20Post%20Process%20Settings%20At%20Run-time-09.jpg"/> 
+</figure>
+</p>
+
+<p>2，Make a Post Process Settings in <code>BeginPlay</code>
+<figure>
+    <img src="https://dawnarc.com/img/20180831-[UE4]Modify%20Post%20Process%20Settings%20At%20Run-time/[UE4]Modify%20Post%20Process%20Settings%20At%20Run-time-10.jpg"/> 
+</figure>
+
+<figure>
+    <img src="https://dawnarc.com/img/20180831-[UE4]Modify%20Post%20Process%20Settings%20At%20Run-time/[UE4]Modify%20Post%20Process%20Settings%20At%20Run-time-11.jpg"/> 
+</figure>
+</p>
+
+<p>and Enable pin <code>Post Process Materials</code>
+<figure>
+    <img src="https://dawnarc.com/img/20180831-[UE4]Modify%20Post%20Process%20Settings%20At%20Run-time/[UE4]Modify%20Post%20Process%20Settings%20At%20Run-time-12.jpg"/> 
+</figure>
+</p>
+
+<p>then drag out from <code>Post Process Volume Ref</code> and add Node <code>Set Settings</code>
+<figure>
+    <img src="https://dawnarc.com/img/20180831-[UE4]Modify%20Post%20Process%20Settings%20At%20Run-time/[UE4]Modify%20Post%20Process%20Settings%20At%20Run-time-13.jpg"/> 
+</figure>
+</p>
+
+<p>Final BP Node:
+<figure>
+    <img src="https://dawnarc.com/img/20180831-[UE4]Modify%20Post%20Process%20Settings%20At%20Run-time/[UE4]Modify%20Post%20Process%20Settings%20At%20Run-time-14.jpg"/> 
+</figure>
+</p>
+
+<p><div class="alert danger ">
+  <p>The way above would override the all the parameters of Settings of Post Process Volume!!!</p>
+</div>
+If you want to change Post Process Materials only and keep other parameters unchanged, you need to use the way following:
+<figure>
+    <img src="https://dawnarc.com/img/20180831-[UE4]Modify%20Post%20Process%20Settings%20At%20Run-time/[UE4]Modify%20Post%20Process%20Settings%20At%20Run-time-15.jpg"/> 
+</figure>
+</p>
+
+<p>3，Open Level Blueprint:
+<figure>
+    <img src="https://dawnarc.com/img/20180831-[UE4]Modify%20Post%20Process%20Settings%20At%20Run-time/[UE4]Modify%20Post%20Process%20Settings%20At%20Run-time-16.jpg"/> 
+</figure>
+</p>
+
+<p>then select the PostProcessVolume in Level Editor:
+<figure>
+    <img src="https://dawnarc.com/img/20180831-[UE4]Modify%20Post%20Process%20Settings%20At%20Run-time/[UE4]Modify%20Post%20Process%20Settings%20At%20Run-time-17.jpg"/> 
+</figure>
+</p>
+
+<p>then right click in Level Blueprint, then select <code>Create a Reference to PostProcessVolume</code>
+<figure>
+    <img src="https://dawnarc.com/img/20180831-[UE4]Modify%20Post%20Process%20Settings%20At%20Run-time/[UE4]Modify%20Post%20Process%20Settings%20At%20Run-time-18.jpg"/> 
+</figure>
+</p>
+
+<p>then set <code>Post Process Volume Ref</code> to the Reference:
+<figure>
+    <img src="https://dawnarc.com/img/20180831-[UE4]Modify%20Post%20Process%20Settings%20At%20Run-time/[UE4]Modify%20Post%20Process%20Settings%20At%20Run-time-19.jpg"/> 
+</figure>
+</p>
+
+<p>4，Then add expression <code>Constant3Vector</code> in your material:
+<figure>
+    <img src="https://dawnarc.com/img/20180831-[UE4]Modify%20Post%20Process%20Settings%20At%20Run-time/[UE4]Modify%20Post%20Process%20Settings%20At%20Run-time-20.jpg"/> 
+</figure>
+</p>
+
+<p>then convert it to Parameter
+<figure>
+    <img src="https://dawnarc.com/img/20180831-[UE4]Modify%20Post%20Process%20Settings%20At%20Run-time/[UE4]Modify%20Post%20Process%20Settings%20At%20Run-time-21.jpg"/> 
+</figure>
+
+<figure>
+    <img src="https://dawnarc.com/img/20180831-[UE4]Modify%20Post%20Process%20Settings%20At%20Run-time/[UE4]Modify%20Post%20Process%20Settings%20At%20Run-time-22.jpg"/> 
+</figure>
+</p>
+
+<p>5, At last, you can pass parameter (e.g. Character’s Location) to Material Instance
+<figure>
+    <img src="https://dawnarc.com/img/20180831-[UE4]Modify%20Post%20Process%20Settings%20At%20Run-time/[UE4]Modify%20Post%20Process%20Settings%20At%20Run-time-23.jpg"/> 
+</figure>
+</p>
+
+<h5 id="using-c-to-manipulate-post-process-volume">Using C++ to manipulate Post Process Volume</h5>
+
+<p>Header</p>
+
+<pre><code>UPROPERTY(EditDefaultsOnly, Category = &quot;Post Process&quot;)
+    UMaterialInstance* TestMatIns = nullptr;
+
+UPROPERTY()
+    UMaterialInstanceDynamic* TestMatInsDyna = nullptr;
+</code></pre>
+
+<p>CPP</p>
+
+<pre><code>void AMyPlayerController::AddDynaMatForPostProcessVolume()
+{
+    TArray&lt;AActor*&gt; Actors;
+    UGameplayStatics::GetAllActorsOfClass(this, APostProcessVolume::StaticClass(), Actors);
+    if (Actors.Num() &gt; 0)
+    {
+        APostProcessVolume* PPV = Cast&lt;APostProcessVolume&gt;(Actors[0]);
+        if (PPV)
+        {
+            FPostProcessSettings&amp; PostProcessSettings = PPV-&gt;Settings;
+
+            if (TestMatIns)
+            {
+                TestMatInsDyna = UKismetMaterialLibrary::CreateDynamicMaterialInstance(this, TestMatIns);
+                FWeightedBlendable WeightedBlendable;
+                WeightedBlendable.Object = TestMatInsDyna;
+                WeightedBlendable.Weight = 1;
+
+                PostProcessSettings.WeightedBlendables.Array.Add(WeightedBlendable);
+            }
+        }
+    }
+}
+
+void AMyPlayerController::UpdatePawnLocMaterial()
+{
+    if (TestMatInsDyna)
+    {
+        if (APawn* Pawn = GetPawn())
+        {
+            FVector Loc = Pawn-&gt;GetActorLocation();
+            FLinearColor LocParam(Loc.X, Loc.Y, Loc.Z, 0.f);
+            TestMatInsDyna-&gt;SetVectorParameterValue(TEXT(&quot;Location&quot;), LocParam);
+        }
+    }
+}
+</code></pre>
+
+<h5 id="reference">Reference</h5>
+
+<p>Dynamic Post Process Volume (Create Dynamic Material Instance for Post Process Materials)<br />
+<a href="https://www.parallelcube.com/2018/12/09/post-process-volume/">https://www.parallelcube.com/2018/12/09/post-process-volume/</a></p>
 
               
             </div>
@@ -605,6 +752,23 @@ Example: when game start, modify Exposure Brightness of Post Process gradually.
           <div class="media">
             
             <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/04/ue4error-msb3644-.netframeworkversionv4.6.2-were-not-found/">
+                <h3 class="media-heading">[UE4]error MSB3644 .NETFramework,Version=v4.6.2 were not found</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Apr 4, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>When compiling engine source of v4.22,</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
               <a class="link-unstyled" href="https://dawnarc.com/2019/03/ue4animationblendspace-for-c-/">
                 <h3 class="media-heading">[UE4][Animation]BlendSpace for C&#43;&#43;</h3>
               </a>
@@ -707,15 +871,15 @@ Example: when game start, modify Exposure Brightness of Post Process gradually.
           <div class="media">
             
             <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/03/ue4gameplay-examples-collections/">
-                <h3 class="media-heading">[UE4]Gameplay Examples Collections</h3>
+              <a class="link-unstyled" href="https://dawnarc.com/2019/03/ue4gameplay-assets-and-examples-collections/">
+                <h3 class="media-heading">[UE4]Gameplay Assets and Examples Collections</h3>
               </a>
               <span class="media-meta">
                 <span class="media-date text-small">
                   Mar 3, 2019
                 </span>
               </span>
-              <div class="media-content hide-xs font-merryweather"><h5 id="physics">Physics</h5></div>
+              <div class="media-content hide-xs font-merryweather"><h5 id="shoot-game">Shoot Game</h5></div>
             </div>
             <div style="clear:both;"></div>
             <hr>
@@ -755,25 +919,6 @@ Example: when game start, modify Exposure Brightness of Post Process gradually.
             <hr>
           </div>
         
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/02/mayatutorials-collections/">
-                <h3 class="media-heading">[Maya]Tutorials Collections</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Feb 2, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><h5 id="synthesis">Synthesis</h5>
-
-<p>Get Faster in Maya</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
       </div>
     </div>
     <div class="modal-footer">
@@ -781,7 +926,7 @@ Example: when game start, modify Exposure Brightness of Post Process gradually.
          data-message-zero="no post found"
          data-message-one="1 post found"
          data-message-other="{n} posts found">
-         485 posts found
+         486 posts found
       </p>
     </div>
   </div>
