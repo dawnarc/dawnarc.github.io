@@ -321,6 +321,62 @@ if (!doNotTrack) {
     
     <div class="postShorten-header">
       <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2016/08/ue4%E5%B8%B8%E7%94%A8%E8%93%9D%E5%9B%BE%E5%A4%87%E5%BF%98/">
+          [UE4]常用蓝图备忘
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2016-08-01T23:40:40&#43;08:00">
+        
+  August 1, 2016
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+         1，获取场景中现成的对象并修改其坐标 此蓝图为Level BP，其中Character_2、Character_3、Character_4都是之间从内容浏览器中拖进场景中的，不是spawn出来的，然后按下F键来移动3个角色的位置。 3个Character变量是从World Outliner中拖进来的： 
+      
+      <p>
+        <a href="https://dawnarc.com/2016/08/ue4%E5%B8%B8%E7%94%A8%E8%93%9D%E5%9B%BE%E5%A4%87%E5%BF%98/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
         <a class="link-unstyled" href="https://dawnarc.com/2016/08/ue4%E5%BC%95%E6%93%8E%E6%8F%90%E4%BE%9B%E7%9A%84%E9%81%BF%E8%AE%A9%E5%8A%A8%E6%80%81%E9%9A%9C%E7%A2%8D%E7%89%A9%E7%9A%84%E5%AF%BB%E8%B7%AF%E5%8A%9F%E8%83%BD/">
           [UE4]引擎提供的避让动态障碍物的寻路功能
         </a>
@@ -1153,77 +1209,6 @@ void MyObj::MyFunction(FViewport* ViewPort, uint32 val) { }
 </article>
 
             
-              
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2016/06/ue4%E7%A7%BB%E5%8A%A8%E7%89%A9%E4%BD%93%E7%9A%84%E5%87%A0%E7%A7%8D%E6%96%B9%E6%B3%95/">
-          [UE4]移动物体的几种方法
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2016-06-17T13:17:40&#43;08:00">
-        
-  June 17, 2016
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        keywords: UE4、Movement
-1，Actor-&gt;SetActorLocation
-Actor-&gt;SetActorLocation()  2，AActor::AddActorWorldOffset(), AActor::AddActorLocalOffset()
-AddActorWorldOffset与AddActorLocalOffset区别：如果期望Actor沿着某个世界坐标系方向移动，那么使用AddActorWorldOffset并且参数为世界坐标系的DeltaLocation；如果期望Actor沿着当前Actor局部坐标系方向移动，那么使用AddActorLocalOffset并且参数为相对当前Actor的DeltaLocation Offset。
- 如果使用AddActorWorldOffset或者AddActorLocalOffset移动Character，那么MovementMode必须设置为fly，否则当DeltaLocation较小时，角色会始终往下掉（即使禁用物理模拟）。UCharacterMovementComponent::SetMovementMode(EMovementMode::MOVE_Flying);
- 3，Velocity
-ACharacter-&gt;GetCharacterMovement()-&gt;Velocity += FVector(5.f, 5.f, 0.f);  4，将一个Controller（PlayerController或者AIController）possess到一个Actor上，然后调用：
-Controller-&gt;MoveTo();  5，将一个Controller（PlayerController或者AIController）possess到一个Actor上，然后调用
-GetWorld()-&gt;GetNavigationSystem()-&gt;SimpleMoveToLocation(Controller, DestLocation);  注意：如果使用Controller-&gt;MoveTo或者使用NavigationSystem的Move函数，前提条件是你使用了Navigation组件并build了地形，否则无效。
- 6，APawn-&gt;AddMovementInput
-APawn-&gt;AddMovementInput(FVector WorldDirection, float ScaleValue = 1.0f, bool bForce = false);  其中WorldDirection是方向，ScaleValue是速率倍速，bForce表示是否忽略Controller中的IgnoreMoveInput属性值，强制移动。
-7，UCharacterMovementComponent::AddImpulse
-void UCharacterMovementComponent::AddImpulse( FVector Impulse, bool bVelocityChange )  AddImpulse 一般用来做投掷、爆炸、击飞等物理效果。添加的是一个瞬间的力，之后就不需要每帧做处理了。 注意：AddImpulse 作用对象一般都是 StaticMeshComponent ，而不能是 CollisionComponent，否则无效。且 StaticMeshComponent 要开启物理：SetSimulatePhysics(true) ，否则也无效。
-
-8，UCharacterMovementComponent::AddForce
-void UCharacterMovementComponent::AddForce( FVector Force )  如果想让物体保持移动，需要每帧都执行AddForce()函数，也就说如果加速度是实时变化的，那么就可以用AddForce。 两者的区别可以参考：
-      
-      <p>
-        <a href="https://dawnarc.com/2016/06/ue4%E7%A7%BB%E5%8A%A8%E7%89%A9%E4%BD%93%E7%9A%84%E5%87%A0%E7%A7%8D%E6%96%B9%E6%B3%95/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-            
             
   <div class="pagination-bar">
     <ul class="pagination">
@@ -1308,6 +1293,40 @@ void UCharacterMovementComponent::AddForce( FVector Force )  如果想让物体�
       <div class="no-result text-color-light text-center">no post found</div>
       <div class="results">
         
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/04/ue4error-skeletal-mesh-di-function-gettripositionws-has-been-deprecated/">
+                <h3 class="media-heading">[UE4]Error Skeletal Mesh DI Function GetTriPositionWS has been deprecated</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Apr 4, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>When upgrade engine from v4.20 to v4.22, SkeletalMesh Cook failed.</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/04/c-one-std-vector-containing-template-class-of-multiple-types/">
+                <h3 class="media-heading">[C&#43;&#43;]One std vector containing template class of multiple types</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Apr 4, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>keywords: vector, list, element, multiple template types</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
         
           <div class="media">
             
@@ -1445,40 +1464,6 @@ void UCharacterMovementComponent::AddForce( FVector Force )  如果想让物体�
             <hr>
           </div>
         
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/03/musicsfx-assets-collections/">
-                <h3 class="media-heading">[Music]SFX Assets Collections</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Mar 3, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><h3 id="sites">Sites</h3></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/03/versioncontrolgit-push-error-out-of-memory-loading-unknown-object/">
-                <h3 class="media-heading">[VersionControl]git push error - Out of memory loading unknown object</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Mar 3, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>Keywords: git</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
       </div>
     </div>
     <div class="modal-footer">
@@ -1486,7 +1471,7 @@ void UCharacterMovementComponent::AddForce( FVector Force )  如果想让物体�
          data-message-zero="no post found"
          data-message-one="1 post found"
          data-message-other="{n} posts found">
-         486 posts found
+         488 posts found
       </p>
     </div>
   </div>

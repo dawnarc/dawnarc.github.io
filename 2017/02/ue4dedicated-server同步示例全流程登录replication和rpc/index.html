@@ -499,10 +499,9 @@ Since the server can own actors itself, a &ldquo;Run on Owning Client&rdquo; eve
 <li>NM_Standalone：表示当前Actor在独立服务器（单机模式），可以执行客户端、服务端的所有功能。</li>
 <li>NM_DedicatedServer：表示当前Actor在专用服务器上，只能执行服务端相关的功能。</li>
 <li>NM_ListenServer：官方文档上解释的很少，我在官方论坛上问了下得到的几个解释是，<span class="highlight-text red">ListenServer可以被游戏内的某个玩家的机器当作服务器，该服务器拥有操作每个客户端角色的权利。这种模式下，更方便来创建服务器；缺点是承载人数较少。</span>个人理解是ListenServer可能更适合做局域网游戏，因为这种既不需要考虑外挂也不需要考虑承载压力。</li>
-<li>NM_Client：当客户端未连接 Dedicated Server 时，NetMode 为 NM_Standalone， 连接成功之后，客户端的 NetMode 就变成了 NM_Client 。</li>
+<li>NM_Client：当客户端未连接 Dedicated Server 时，NetMode 为 NM_Standalone， 连接成功之后，客户端的 NetMode 就变成了 NM_Client 。
+<span class="highlight-text red">DedicatedServer没有客户端的相关功能，只接收远程客户端的网络请求，适合承载大规模玩家在线。</span>另外连接DedicatedServer的客户端，是没有权限直接修改其他玩家的数据，因为客户端上的大部分Object的Role枚举都是ROLE_AutonomousProxy（如果你逻辑有bug，也是可以被客户端发送非法请求串改其他角色的数据，所以这里所说的没有权限修改，不要以为DedicatedServer可以帮你反外挂），但是在ListenServer的玩家主机上可以，因为他拥有其他所有玩家的实例（Role枚都是ROLE_Authority类型）。UE4的一些API内部有权限检测的逻辑：判断当前Role类型是否为ROLE_Authority，这样避免非法修改数据。</li>
 </ul>
-
-<p><span class="highlight-text red">DedicatedServer没有客户端的相关功能，只接收远程客户端的网络请求，适合承载大规模玩家在线。</span>另外连接DedicatedServer的客户端，是没有权限直接修改其他玩家的数据，因为客户端上的大部分Object的Role枚举都是ROLE_AutonomousProxy（如果你逻辑有bug，也是可以被客户端发送非法请求串改其他角色的数据，所以这里所说的没有权限修改，不要以为DedicatedServer可以帮你反外挂），但是在ListenServer的玩家主机上可以，因为他拥有其他所有玩家的实例（Role枚都是ROLE_Authority类型）。UE4的一些API内部有权限检测的逻辑：判断当前Role类型是否为ROLE_Authority，这样避免非法修改数据。</p>
 
 <h5 id="role">Role</h5>
 
@@ -511,18 +510,39 @@ Since the server can own actors itself, a &ldquo;Run on Owning Client&rdquo; eve
 <ul>
 <li>ROLE_SimulatedProxy：表示当前Actor是一个模拟服务端的Actor状态Object，无法修改服务端上的数据，也没有权限执行远程函数（Reliable标识的UFUNCTION）。DedicatedServer服务器中创建的对象，在服务端都是ROLE_Authority，这些对象映射在客户端上的对象则都是ROLE_SimulatedProxy，<span class="highlight-text green">当然也有办法让这些对象在客户端变成非ROLE_SimulatedProxy类型，具体方法见下文。</span><span class="highlight-text yellow">该类型的对象，如果去执行自身的UFUNCTION(Server)标识的函数，该函数不会执行。</span></li>
 <li>ROLE_AutonomousProxy：与ROLE_SimulatedProxy相似，区别是ROLE_AutonomousProxy有权限执行远程函数，但是远程函数必须是该Object身上的，其他Object上的远程函数没有权限执行。<span class="highlight-text yellow">客户端的ROLE_AutonomousProxy类型对象，其函数若未加UFUNCTION(Server)标识，执行时仍然是在是在客户端。执行UFUNCTION(Server)标识的函数时，Role类型为ROLE_Authority，NetMode类型为NM_DedicatedServer。</span><span class="highlight-text green">ROLE_AutonomousProxy的优点之一是：当对角色执行转向或者位移控制时，会自动请求服务端处理，而ROLE_SimulatedProxy是做不到的，需要手动请求服务端。</span></li>
-<li>ROLE_Authority：最高权限，即可以修改Server上的属性，又可以执行任何Objecct身上的远程函数。<span class="highlight-text green">Standalone服务器中，所有对象都是ROLE_Authority。DedicatedServer服务器中创建的对象，在服务端都是ROLE_Authority。</span></li>
+<li>ROLE_Authority：最高权限，即可以修改Server上的属性，又可以执行任何Objecct身上的远程函数。<span class="highlight-text green">Standalone服务器中，所有对象都是ROLE_Authority。DedicatedServer服务器中创建的对象，在服务端都是ROLE_Authority。</span><br />
+<span class="highlight-text red">如果是Client创建的对象，其Role也是ROLE_Authority，但是这种Actor无法与服务端通信。</span></li>
 </ul>
 
 <div class="alert success ">
   <p>服务端<code>SpawnActor</code>创建的Character，若开启了Replication，则其在客户端会生成一个<code>ROLE_SimulatedProxy</code>的Character，此时在服务端用其对应的PlayerController对其Possess，则该客户端Character的Role会变成<code>ROLE_AutonomousProxy</code>。</p>
 </div>
 
-<span class="highlight-text green">如何让一个ROLE_SimulatedProxy对象变成ROLE_AutonomousProxy，两种方式：</span>
+<p>从执行<code>Possess</code>到<code>Role</code>被修改为<code>ROLE_AutonomousProxy</code>的堆栈：</p>
+
+<pre><code>UE4Editor-Engine.dll!AActor::SetAutonomousProxy(const bool bInAutonomousProxy, const bool bAllowForcePropertyCompare) Line 3268 C++
+UE4Editor-Engine.dll!APawn::PossessedBy(AController * NewController) Line 511   C++
+UE4Editor-Engine.dll!ACharacter::PossessedBy(AController * NewController) Line 822  C++
+UE4Editor-Engine.dll!APlayerController::OnPossess(APawn * PawnToPossess) Line 770   C++
+UE4Editor-Engine.dll!AController::Possess(APawn * InPawn) Line 293  C++
+</code></pre>
+
+<h5 id="hahahugoshortcode-0xc000ad1400-17-hbhb"><span class="highlight-text purple">如何让一个ROLE_SimulatedProxy对象变成ROLE_AutonomousProxy</span></h5>
+
+<p>先补充一个概念：服务端连接（非官方文档，自己通过实践后的理解），比如，<code>AGameModeBase::PostLogin(APlayerController* NewPlayer)</code>中的<code>PlayerController</code>就是拥有服务端连接的对象，<span class="highlight-text green">在服务端，其可以调用Client function且能保证该Client function在客户端执行；在客户端，其也有权限调用 Server function能保证该Server function在服务端执行。</span></p>
+
+<p>两种方式：</p>
 
 <ul>
-<li>设置自己的owner（SetOwner()）为拥有服务器连接（比如，<code>AGameModeBase::PostLogin(APlayerController* NewPlayer)</code>中的<code>PlayerController</code>就是拥有服务器连接的对象）的<code>Actor</code>，或者自己owner的owner为拥有连接的<code>Actor</code>。</li>
-<li>使用拥有服务器连接的<code>PlayerController</code>去<code>Possess</code>一个Character。注意：ROLE_Authority类型的PlayerController才有权限执行<code>Possess</code>。服务端的PlayerController，其Role类型都为ROLE_Authority。</li>
+<li>方式一：3个步骤，缺一不可：
+
+<ul>
+<li>设置自己的owner（SetOwner()）为拥有服务端连接的<code>Actor</code>，这个Actor可以是：服务端的PlayerController，或者已经被该PlayerController执行过Possess过的Character，或者<span class="highlight-text green">执行过SetOwner且Owner为拥有服务端连接</span>的Actor。</li>
+<li>将<code>bReplicates</code>设置为true：<code>Actor-&gt;SetReplicates(true);</code></li>
+<li>将<code>AutonomousProxy</code>设置为true：<code>Actor-&gt;SetAutonomousProxy(true)</code>。</li>
+</ul></li>
+<li>方式二：使用拥有服务端连接的<code>PlayerController</code>去<code>Possess</code>一个Character。注意：ROLE_Authority类型的PlayerController才有权限执行<code>Possess</code>。服务端的PlayerController，其Role类型都为ROLE_Authority。<br />
+上文中的Possess堆栈，内部已经帮你执行了<code>Actor-&gt;SetAutonomousProxy(true)</code>和<code>Actor-&gt;SetReplicates(true);</code>。</li>
 </ul>
 
 <h5 id="netmode-和-role-关系概述">NetMode 和 Role 关系概述</h5>
@@ -535,7 +555,7 @@ Since the server can own actors itself, a &ldquo;Run on Owning Client&rdquo; eve
 <h5 id="client-function-没有在-client-触发的问题">Client function 没有在 Client 触发的问题</h5>
 
 <p><span class="highlight-text red">如果调用 Client function 的对象是在 Server (NM_DedicatedServer) 创建的，默认情况下，该对象上的 Client function 始终会在 Server 执行，且 Client (NM_Client) 不会触发。</span><br />
-<span class="highlight-text green">如何让在Server上创建的对象的Client function只在Client (NM_Client) 执行？答案：SetOwner()，Owner为拥有服务器连接的对象，或者用拥有服务器连接的PlayerController去Possess该对象（如果对象是Pawn的话）。</span><br />
+<span class="highlight-text green">如何让在Server上创建的对象的Client function只在Client (NM_Client) 执行？答案：SetOwner()，Owner为拥有服务端连接的对象，或者被有服务端连接的PlayerController执行过Possess的对象（如果对象是Pawn的话）。</span><br />
 <span class="highlight-text red">如果是非 Server 创建的对象，比如：PlayerController ，那么其内部的 Client function 会在客户端执行。</span><br />
 <span class="highlight-text green">如何在 Server 上获取这个 Client 的 PlayerController : 重写 AGameMode::InitNewPlayer() 或者 AGameMode::PostLogin() ，PlayerController 会作为参数传递进来，将这个 PlayerController 指针保存下来。</span></p>
 
@@ -547,7 +567,7 @@ Since the server can own actors itself, a &ldquo;Run on Owning Client&rdquo; eve
 
 <ul>
 <li>除了对该 Actor 执行 <code>bReplicates = true;</code> 外，还要执行 <code>bNetUseOwnerRelevancy = true;</code></li>
-<li>该 Actor Spawn 之后，需要执行 <code>Actor-&gt;SetOwner(NewOwner);</code>，这个 NewOwner 是一个 Replicated 对象，比如 Character 。<span class="highlight-text red">NewOwner对象拥没拥有服务器连接无所谓。</span>对应的Get接口为：<code>GetOwner()</code>。</li>
+<li>该 Actor Spawn 之后，需要执行 <code>Actor-&gt;SetOwner(NewOwner);</code>，这个 NewOwner 是一个 Replicated 对象，比如 Character 。<span class="highlight-text red">NewOwner对象拥没拥有服务端连接无所谓。</span>对应的Get接口为：<code>GetOwner()</code>。</li>
 </ul>
 
 <h5 id="关键函数">关键函数</h5>
@@ -725,7 +745,7 @@ Replicated属性只允许服务端修改后通知客户端，而不允许客户�
 也就是说你要在HUD中判断当前程序是客户端还是服务端，可以不用考虑DrawHUD()函数。<br />
 <div class="alert danger ">
   <p>凡是只需要客户端执行的逻辑，比如创建材质、修改颜色、加载贴图等等，一定要将这些逻辑单独封装成函数、且不要和数据更新的逻辑混在一起、且要确保这些函数只在客户端执行。<br />
-如何确保某个函数只在客户端执行：最直接最安全的方式是直接判断<code>if(ENetMode::NM_Client == GetNetMode())</code>。优雅一点的方式是通过Client function修饰这些逻辑函数，前提是你能确保这些函数所在的对象一定拥有了服务器连接。</p>
+如何确保某个函数只在客户端执行：最直接最安全的方式是直接判断<code>if(ENetMode::NM_Client == GetNetMode())</code>。优雅一点的方式是通过Client function修饰这些逻辑函数，前提是你能确保这些函数所在的对象一定拥有了服务端连接。</p>
 </div></p>
 
 <p>4，当客户端登陆成功后，客户端所有的对象都会被重置，登陆前设置的对数属性值将变为默认值。<br />
@@ -753,7 +773,36 @@ LogNet: Error: UActorChannel::ProcessBunch: Replicator.ReceivedBunch failed.  Cl
 
 <p>11，编辑器模式下，即使勾选了 <code>Run Dedicated Server</code>，默认是不会自动连接专用服务器的，如果希望游戏启动时就自动连接专用服务器，需要勾选：<code>Auto Connect to Server</code> （Project Settings -&gt; Level Editor -&gt; Play -&gt; Multiplayer Options），如果你自己实现了登陆逻辑，那么就不要勾选这个。如果是为了方便测试跳过登陆，可以勾选这个选项，并实现对应逻辑。</p>
 
-<p>12，当客户端向服务端传递Rotator时，如果Rotator的值范围为：-180到180，那么传递到服务端时会被自动修改为：0到360。</p>
+<p>12，当客户端向服务端传递Rotator时，如果Rotator的值范围为：-180到180，那么传递到服务端时会被自动修改为：0到360。（v4.22）</p>
+
+<p>13，在服务端创建的Actor，如何让其复制到客户端、或者禁止复制到客户端？<br />
+3种情况：</p>
+
+<ul>
+<li><p>只存在于服务端，不复制到客户端</p>
+
+<pre><code>Actor-&gt;SetReplicates(false);
+Actor-&gt;SetAutonomousProxy(false);
+Actor-&gt;bNetUseOwnerRelevancy = false;
+Actor-&gt;SetOwner(nullptr);
+</code></pre></li>
+
+<li><p>存在于服务端，并复制到客户端，但客户端服务端均无权限调用对方的远程函数</p>
+
+<pre><code>Actor-&gt;SetReplicates(true);
+Actor-&gt;SetAutonomousProxy(false);
+Actor-&gt;bNetUseOwnerRelevancy = false;
+Actor-&gt;SetOwner(拥有服务端连接的对象);
+</code></pre></li>
+
+<li><p>存在于服务端，并复制到客户端，客户端服务端都拥有权限调用对方的远程函数</p>
+
+<pre><code>Actor-&gt;SetReplicates(true);
+Actor-&gt;SetAutonomousProxy(true);
+Actor-&gt;bNetUseOwnerRelevancy = true;
+Actor-&gt;SetOwner(拥有服务端连接的对象);
+</code></pre></li>
+</ul>
 
 <h5 id="常见问题">常见问题：</h5>
 
@@ -827,10 +876,29 @@ UE4Editor!__scrt_common_main_seh() [f:\dd\vctools\crt\vcstartup\src\startup\exe_
 kernel32
 ntdll
 </code></pre></li>
+
+<li><p><code>USkeletalMeshComponent::SetSkeletalMesh()</code>和<code>UStaticMeshComponent::SetStaticMesh()</code>不会Replicate。<br />
+在服务端执行这两个函数并不会将修改同步到客户端，官方推荐方式是：修改Mesh的时候，向客户端发送消息，在客户端修改Mesh。这个bug从4.7版本就出现了，且官方也不准备修复，因为不建议在服务端修改Mesh，毕竟只是显示相关的功能。<br />
+跟显示相关的逻辑尽量全部放在客户端，包括创建SkeletalMeshComponent的逻辑。<br />
+参考：change skeletal mesh, blueprint, multiplayer<br />
+<a href="https://answers.unrealengine.com/questions/328659/change-skeletal-mesh-blueprint-multiplayer.html?sort=oldest">https://answers.unrealengine.com/questions/328659/change-skeletal-mesh-blueprint-multiplayer.html?sort=oldest</a></p></li>
+
+<li><p>Client function 和 Multicast function的可执行时机<br />
+同一帧内：在服务端创建的Actor，<code>SpawnActor</code>之后，接着执行<code>SetOwner</code>，然后调用Client function，客户端函数就可以触发。<br />
+但是如果调用 Multicast function，只会在服务端触发，客户端不会触发。什么时候调用 Multicast function才会在客户端触发？<br />
+<span class="highlight-text green">答案：该Actor在客户端的BeginPlay()函数触发的时候，也就是要等这个服务端创建的Actor在客户端Replicate完成之后。</span></p></li>
 </ol>
 
-<p>示例工程下载地址：<br />
-<a href="http://pan.baidu.com/s/1o7MzmRo">http://pan.baidu.com/s/1o7MzmRo</a></p>
+<h5 id="示例工程下载地址">示例工程下载地址</h5>
+
+<p><a href="http://pan.baidu.com/s/1o7MzmRo">http://pan.baidu.com/s/1o7MzmRo</a></p>
+
+<h5 id="rpc相关的引擎函数">RPC相关的引擎函数</h5>
+
+<pre><code>/** Called on client when updated AttachmentReplication value is received for this actor. */
+UFUNCTION()
+virtual void OnRep_AttachmentReplication();
+</code></pre>
 
 <h5 id="参考文章">参考文章</h5>
 
@@ -845,6 +913,9 @@ ntdll
 
 <p>How To Test Dedicated Server Games Via Commandline<br />
 <a href="https://wiki.unrealengine.com/How_To_Test_Dedicated_Server_Games_Via_Commandline">https://wiki.unrealengine.com/How_To_Test_Dedicated_Server_Games_Via_Commandline</a></p>
+
+<p>Networking and Multiplayer<br />
+<a href="https://docs.unrealengine.com/en-us/Gameplay/Networking/Replication">https://docs.unrealengine.com/en-us/Gameplay/Networking/Replication</a></p>
 
 <hr />
 
@@ -1047,6 +1118,40 @@ ntdll
           <div class="media">
             
             <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/04/ue4error-skeletal-mesh-di-function-gettripositionws-has-been-deprecated/">
+                <h3 class="media-heading">[UE4]Error Skeletal Mesh DI Function GetTriPositionWS has been deprecated</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Apr 4, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>When upgrade engine from v4.20 to v4.22, SkeletalMesh Cook failed.</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/04/c-one-std-vector-containing-template-class-of-multiple-types/">
+                <h3 class="media-heading">[C&#43;&#43;]One std vector containing template class of multiple types</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Apr 4, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>keywords: vector, list, element, multiple template types</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
               <a class="link-unstyled" href="https://dawnarc.com/2019/04/ue4error-msb3644-.netframeworkversionv4.6.2-were-not-found/">
                 <h3 class="media-heading">[UE4]error MSB3644 .NETFramework,Version=v4.6.2 were not found</h3>
               </a>
@@ -1180,40 +1285,6 @@ ntdll
             <hr>
           </div>
         
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/03/musicsfx-assets-collections/">
-                <h3 class="media-heading">[Music]SFX Assets Collections</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Mar 3, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><h3 id="sites">Sites</h3></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/03/versioncontrolgit-push-error-out-of-memory-loading-unknown-object/">
-                <h3 class="media-heading">[VersionControl]git push error - Out of memory loading unknown object</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Mar 3, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>Keywords: git</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
       </div>
     </div>
     <div class="modal-footer">
@@ -1221,7 +1292,7 @@ ntdll
          data-message-zero="no post found"
          data-message-one="1 post found"
          data-message-other="{n} posts found">
-         486 posts found
+         488 posts found
       </p>
     </div>
   </div>
