@@ -8,38 +8,34 @@
 <meta name="generator" content="Hugo 0.53 with theme Tranquilpeak 0.4.3-SNAPSHOT">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="">
-<meta name="description" content="一种获取bool值的技巧，在获取bool值的同时有保证代码有可读性。
-比如这种写法，直接将一个指针赋给一个bool值，看上去有点怪，不利于阅读。
-void Test(A* Ptr) { bool b = Ptr; ... }  但是加两个感叹号，就可以清楚表明我是要明确获得一个bool。
-void Test(A* Ptr) { bool b = !!Ptr; ... }  当然用三元运算符? : 也可以，不过要多敲一些字符。
-void Test(A* Ptr) { bool b = Ptr ? true : false; ... }  三种方式的CPU指令数是完全一样，开销相同。
- bool b = !!Ptr; 003EA318 cmp dword ptr [Ptr],0 003EA31C je Test&#43;6Ah (03EA32Ah) 003EA31E mov dword ptr [ebp-0E8h],1 003EA328 jmp Test&#43;74h (03EA334h) 003EA32A mov dword ptr [ebp-0E8h],0 003EA334 mov al,byte ptr [ebp-0E8h] 003EA33A mov byte ptr [b],al  时间是一只藏在黑暗中的温柔的手，在你一出神一恍惚之间，物走星移。----龙应台《目送》">
+<meta name="description" content="网上看到有些代码在判断指针是否为空时，写两个感叹号：
+void Test(A* Ptr) { bool b = !!Ptr; ... }  如果是C&#43;&#43;，极其不推荐这样写，这是从JavaScript，TypeScript转C&#43;&#43;的程序员，在用JS的语法写C&#43;&#43;代码，JS必须这样，但是C&#43;&#43;就不必了。
+Defining double exclamation?
+https://stackoverflow.com/questions/11374810/defining-double-exclamation
+时间是一只藏在黑暗中的温柔的手，在你一出神一恍惚之间，物走星移。----龙应台《目送》">
 
 
-<meta property="og:description" content="一种获取bool值的技巧，在获取bool值的同时有保证代码有可读性。
-比如这种写法，直接将一个指针赋给一个bool值，看上去有点怪，不利于阅读。
-void Test(A* Ptr) { bool b = Ptr; ... }  但是加两个感叹号，就可以清楚表明我是要明确获得一个bool。
-void Test(A* Ptr) { bool b = !!Ptr; ... }  当然用三元运算符? : 也可以，不过要多敲一些字符。
-void Test(A* Ptr) { bool b = Ptr ? true : false; ... }  三种方式的CPU指令数是完全一样，开销相同。
- bool b = !!Ptr; 003EA318 cmp dword ptr [Ptr],0 003EA31C je Test&#43;6Ah (03EA32Ah) 003EA31E mov dword ptr [ebp-0E8h],1 003EA328 jmp Test&#43;74h (03EA334h) 003EA32A mov dword ptr [ebp-0E8h],0 003EA334 mov al,byte ptr [ebp-0E8h] 003EA33A mov byte ptr [b],al  时间是一只藏在黑暗中的温柔的手，在你一出神一恍惚之间，物走星移。----龙应台《目送》">
+<meta property="og:description" content="网上看到有些代码在判断指针是否为空时，写两个感叹号：
+void Test(A* Ptr) { bool b = !!Ptr; ... }  如果是C&#43;&#43;，极其不推荐这样写，这是从JavaScript，TypeScript转C&#43;&#43;的程序员，在用JS的语法写C&#43;&#43;代码，JS必须这样，但是C&#43;&#43;就不必了。
+Defining double exclamation?
+https://stackoverflow.com/questions/11374810/defining-double-exclamation
+时间是一只藏在黑暗中的温柔的手，在你一出神一恍惚之间，物走星移。----龙应台《目送》">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[C&#43;&#43;]两个连续感叹号(双感叹号)的意义">
 <meta name="twitter:title" content="[C&#43;&#43;]两个连续感叹号(双感叹号)的意义">
 <meta property="og:url" content="https://dawnarc.com/2018/02/c-%E4%B8%A4%E4%B8%AA%E8%BF%9E%E7%BB%AD%E6%84%9F%E5%8F%B9%E5%8F%B7%E5%8F%8C%E6%84%9F%E5%8F%B9%E5%8F%B7%E7%9A%84%E6%84%8F%E4%B9%89/">
 <meta property="twitter:url" content="https://dawnarc.com/2018/02/c-%E4%B8%A4%E4%B8%AA%E8%BF%9E%E7%BB%AD%E6%84%9F%E5%8F%B9%E5%8F%B7%E5%8F%8C%E6%84%9F%E5%8F%B9%E5%8F%B7%E7%9A%84%E6%84%8F%E4%B9%89/">
 <meta property="og:site_name" content="玄冬Wong">
-<meta property="og:description" content="一种获取bool值的技巧，在获取bool值的同时有保证代码有可读性。
-比如这种写法，直接将一个指针赋给一个bool值，看上去有点怪，不利于阅读。
-void Test(A* Ptr) { bool b = Ptr; ... }  但是加两个感叹号，就可以清楚表明我是要明确获得一个bool。
-void Test(A* Ptr) { bool b = !!Ptr; ... }  当然用三元运算符? : 也可以，不过要多敲一些字符。
-void Test(A* Ptr) { bool b = Ptr ? true : false; ... }  三种方式的CPU指令数是完全一样，开销相同。
- bool b = !!Ptr; 003EA318 cmp dword ptr [Ptr],0 003EA31C je Test&#43;6Ah (03EA32Ah) 003EA31E mov dword ptr [ebp-0E8h],1 003EA328 jmp Test&#43;74h (03EA334h) 003EA32A mov dword ptr [ebp-0E8h],0 003EA334 mov al,byte ptr [ebp-0E8h] 003EA33A mov byte ptr [b],al  时间是一只藏在黑暗中的温柔的手，在你一出神一恍惚之间，物走星移。----龙应台《目送》">
-<meta name="twitter:description" content="一种获取bool值的技巧，在获取bool值的同时有保证代码有可读性。
-比如这种写法，直接将一个指针赋给一个bool值，看上去有点怪，不利于阅读。
-void Test(A* Ptr) { bool b = Ptr; ... }  但是加两个感叹号，就可以清楚表明我是要明确获得一个bool。
-void Test(A* Ptr) { bool b = !!Ptr; ... }  当然用三元运算符? : 也可以，不过要多敲一些字符。
-void Test(A* Ptr) { bool b = Ptr ? true : false; ... }  三种方式的CPU指令数是完全一样，开销相同。
- bool b = !!Ptr; 003EA318 cmp dword ptr [Ptr],0 003EA31C je Test&#43;6Ah (03EA32Ah) 003EA31E mov dword ptr [ebp-0E8h],1 003EA328 jmp Test&#43;74h (03EA334h) 003EA32A mov dword ptr [ebp-0E8h],0 003EA334 mov al,byte ptr [ebp-0E8h] 003EA33A mov byte ptr [b],al  时间是一只藏在黑暗中的温柔的手，在你一出神一恍惚之间，物走星移。----龙应台《目送》">
+<meta property="og:description" content="网上看到有些代码在判断指针是否为空时，写两个感叹号：
+void Test(A* Ptr) { bool b = !!Ptr; ... }  如果是C&#43;&#43;，极其不推荐这样写，这是从JavaScript，TypeScript转C&#43;&#43;的程序员，在用JS的语法写C&#43;&#43;代码，JS必须这样，但是C&#43;&#43;就不必了。
+Defining double exclamation?
+https://stackoverflow.com/questions/11374810/defining-double-exclamation
+时间是一只藏在黑暗中的温柔的手，在你一出神一恍惚之间，物走星移。----龙应台《目送》">
+<meta name="twitter:description" content="网上看到有些代码在判断指针是否为空时，写两个感叹号：
+void Test(A* Ptr) { bool b = !!Ptr; ... }  如果是C&#43;&#43;，极其不推荐这样写，这是从JavaScript，TypeScript转C&#43;&#43;的程序员，在用JS的语法写C&#43;&#43;代码，JS必须这样，但是C&#43;&#43;就不必了。
+Defining double exclamation?
+https://stackoverflow.com/questions/11374810/defining-double-exclamation
+时间是一只藏在黑暗中的温柔的手，在你一出神一恍惚之间，物走星移。----龙应台《目送》">
 <meta property="og:locale" content="en-us">
 
   
@@ -369,18 +365,7 @@ if (!doNotTrack) {
           
           <div class="post-content markdown" itemprop="articleBody">
             <div class="main-content-wrap">
-              <p>一种获取bool值的技巧，在获取bool值的同时有保证代码有可读性。</p>
-
-<p>比如这种写法，直接将一个指针赋给一个bool值，看上去有点怪，不利于阅读。</p>
-
-<pre><code>void Test(A* Ptr)
-{
-    bool b = Ptr;
-    ...
-}
-</code></pre>
-
-<p>但是加两个感叹号，就可以清楚表明我是要明确获得一个bool。</p>
+              <p>网上看到有些代码在判断指针是否为空时，写两个感叹号：</p>
 
 <pre><code>void Test(A* Ptr)
 {
@@ -389,26 +374,10 @@ if (!doNotTrack) {
 }
 </code></pre>
 
-<p>当然用三元运算符? : 也可以，不过要多敲一些字符。</p>
+<p>如果是C++，极其不推荐这样写，这是从JavaScript，TypeScript转C++的程序员，在用JS的语法写C++代码，JS必须这样，但是C++就不必了。</p>
 
-<pre><code>void Test(A* Ptr)
-{
-    bool b = Ptr ? true : false;
-    ...
-}
-</code></pre>
-
-<p>三种方式的CPU指令数是完全一样，开销相同。</p>
-
-<pre><code>    bool b = !!Ptr;
-003EA318  cmp         dword ptr [Ptr],0  
-003EA31C  je          Test+6Ah (03EA32Ah)  
-003EA31E  mov         dword ptr [ebp-0E8h],1  
-003EA328  jmp         Test+74h (03EA334h)  
-003EA32A  mov         dword ptr [ebp-0E8h],0  
-003EA334  mov         al,byte ptr [ebp-0E8h]  
-003EA33A  mov         byte ptr [b],al
-</code></pre>
+<p>Defining double exclamation?<br />
+<a href="https://stackoverflow.com/questions/11374810/defining-double-exclamation">https://stackoverflow.com/questions/11374810/defining-double-exclamation</a></p>
 
 <hr />
 
@@ -613,6 +582,40 @@ if (!doNotTrack) {
           <div class="media">
             
             <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/04/versioncontrolgit-clone-error-ssl-certificate-problem-self-signed-certificate-in-certificate-chain/">
+                <h3 class="media-heading">[VersionControl]git clone error - SSL certificate problem self signed certificate in certificate chain</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Apr 4, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>Keywords: git, http, clone</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/04/ue4dedicated-server-start-failed-failed-to-load-pxfoundationprofile_x64.dll/">
+                <h3 class="media-heading">[UE4]Dedicated Server Start failed - Failed to load PxFoundationPROFILE_x64.dll</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Apr 4, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>Dedicated Server Startup failed, v4.22</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
               <a class="link-unstyled" href="https://dawnarc.com/2019/04/ue4error-skeletal-mesh-di-function-gettripositionws-has-been-deprecated/">
                 <h3 class="media-heading">[UE4]Error Skeletal Mesh DI Function GetTriPositionWS has been deprecated</h3>
               </a>
@@ -746,40 +749,6 @@ if (!doNotTrack) {
             <hr>
           </div>
         
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/03/math-smoothstep/">
-                <h3 class="media-heading">Math-Smoothstep</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Mar 3, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>Origin Text:</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/03/ue4gameplay-assets-and-examples-collections/">
-                <h3 class="media-heading">[UE4]Gameplay Assets and Examples Collections</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Mar 3, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><h5 id="shoot-game">Shoot Game</h5></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
       </div>
     </div>
     <div class="modal-footer">
@@ -787,7 +756,7 @@ if (!doNotTrack) {
          data-message-zero="no post found"
          data-message-one="1 post found"
          data-message-other="{n} posts found">
-         488 posts found
+         490 posts found
       </p>
     </div>
   </div>
