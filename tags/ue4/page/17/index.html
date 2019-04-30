@@ -321,6 +321,127 @@ if (!doNotTrack) {
     
     <div class="postShorten-header">
       <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2016/06/ue4movement%E4%B8%8Enavigation%E7%9B%B8%E5%85%B3%E7%9A%84api/">
+          [UE4]Movement与Navigation相关的API
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2016-06-19T17:33:02&#43;08:00">
+        
+  June 19, 2016
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        如何修改角色的最大移动速度 if (UCharacterMovementComponent* Movement = MyCharacter-&gt;GetCharacterMovement()) { Movement-&gt;MaxWalkSpeed *= 0.5; }  如何修改角色的当前移动速度 Tick() 中执行：
+GetCharacterMovement()-&gt;Velocity = FVector(0.f, 500.f, 0.f);  如何停止正在移动的Pawn AController::StopMovement()  修改重力加速度(Gravity)  编辑器中设置全局重力加速度
+Project Settings -》 Engine -》 Physics -》 Default Physics Settings -》 Default Gravity Z。
+ 运行时runtime期间设置全局重力加速度：
+AWorldSettings* MyWorldSetting=GetWorldSettings(); MyWorldSetting-&gt;bGlobalGravitySet=true; MyWorldSetting-&gt;GlobalGravityZ = 900.f;  设置单个角色的重力加速度（倍率）
+MyCharacter-&gt;GetCharacterMovement()-&gt;GravityScale = 100.f   飞行模式中的加速减速问题 CharacterMovement默认有一个加速效果（属性值为MaxAcceleration，默认为2048，表示加速率），如果MovementMode设置为Walking模式，当调用Controller-&gt;StopMovement()来立即停止移动； 但是Flying Mode时，即使不再执行AddMovementInput()，Actor仍然会继续滑行一段距离，如果希望此时立即停止不滑行，需要将减速速率（默认为0）设置为加速速率的大小：
+GetCharacterMovement()-&gt;BrakingDecelerationFlying = GetCharacterMovement()-&gt;MaxAcceleration;  设置MovementMode时的注意事项 如果一个Actor被Spawn出来之后，其MovementMode默认状态是Walking，如果此时Spawn的位置在空中，在没有Controller对其Possess的情况下，其静止在空中，当Possess之后，MovementMode会自动变为Falling，如果想让其继续停留在空中(比如飞行类的角色)，此时再手动将其MovementMode设置为Flying。绝对不能在possess之前设置，否则设置状态会被引擎修改掉。
+Controller.StopMovement()和MovementComponent.StopMovementImmediately()的区别 前者只执行：
+PathFollowingComp-&gt;AbortMove(*this, FPathFollowingResultFlags::MovementStop);  后者先执行：
+      
+      <p>
+        <a href="https://dawnarc.com/2016/06/ue4movement%E4%B8%8Enavigation%E7%9B%B8%E5%85%B3%E7%9A%84api/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2016/06/ue4playercontroller%E5%B8%B8%E7%94%A8api/">
+          [UE4]PlayerController常用API
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2016-06-19T10:31:02&#43;08:00">
+        
+  June 19, 2016
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        获取当前的Pawn 一个Controller（包括AIController）只能同时possess一个Pawn。所以GetPawn()返回的就是当前控制的Pawn：
+APawn* Pawn = PC-&gt;GetPawn();  Screen相关 //Convert 2D screen position to World Space 3D position and direction. Returns false if unable to determine value. bool DeprojectScreenPositionToWorld(float ScreenX, float ScreenY, FVector&amp; WorldLocation, FVector&amp; WorldDirection) const; /** Returns hit results from doing a collision query at a certain location on the screen */ bool GetHitResultAtScreenPosition(const FVector2D ScreenPosition, const ECollisionChannel TraceChannel, const FCollisionQueryParams&amp; CollisionQueryParams, FHitResult&amp; HitResult) const; /** * Returns the PlayerState associated with the player at the specified index.
+      
+      <p>
+        <a href="https://dawnarc.com/2016/06/ue4playercontroller%E5%B8%B8%E7%94%A8api/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
         <a class="link-unstyled" href="https://dawnarc.com/2016/06/ue4viewport-resized-event%E8%A7%86%E5%9B%BE%E7%AA%97%E5%8F%A3%E7%9A%84%E5%B0%BA%E5%AF%B8%E4%BF%AE%E6%94%B9%E5%8F%98%E5%8C%96%E6%97%B6%E7%9A%84%E5%9B%9E%E8%B0%83%E4%BA%8B%E4%BB%B6/">
           [UE4]Viewport Resized Event(视图窗口的尺寸修改变化时的回调事件)
         </a>
@@ -1093,134 +1214,6 @@ static const FName NAME_Fixed = FName(TEXT(&quot;Fixed&quot;)); static const FNa
 </article>
 
             
-              
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2016/03/ue4fstring%E5%B8%B8%E7%94%A8api/">
-          [UE4]FString常用API
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2016-03-01T16:45:02&#43;08:00">
-        
-  March 1, 2016
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        将int或float转换为string：
-FString NewString = FString::FromInt(YourInt); FString VeryCleanString = FString::SanitizeFloat(YourFloat);  将FString转换为 TCHAR*：
-FString str; TCHAR *c1 = *str; TCHAR* c2 = str.GetCharArray().GetData();  将string转换为int或者float：
-FString TheString = &quot;123.021&quot;; int32 MyShinyNewInt = FCString::Atoi(*TheString); float MyShinyNewFloat = FCString::Atof(*TheString);  字符串切割：
-FString a(&quot;1,2,3&quot;); TArray&lt;FString&gt; stringArray; a.ParseIntoArray(stringArray, TEXT(&quot;,&quot;), false);  字符串截取：
-FString::Left(int count); FString::Right(int count);  字符串格式化Format：
-FString Path = FString::Printf(TEXT(&quot;StaticMesh'/Game/Shapes/ground_shape_%d.ground_shape_%d'&quot;), i);  如何获取FString转换后char之后的长度 比如用TCHAR_TO_ANSI()将tchar转换为char之后，char的长度如何计算？ 使用FTCHARToANSI::Length()，示例如下：
-FTCHARToANSI Convert(*String); Ar-&gt;Serialize((ANSICHAR*)Convert, Convert.Length());  参考自：https://docs.unrealengine.com/latest/INT/Programming/UnrealArchitecture/StringHandling/CharacterEncoding/index.html
-中文字符的FString 转换 char数组 FString str(TEXT(&quot;笑傲江湖DA&quot;)); const wchar_t* s1 = *str; int LenW = wcslen(s1); int LenC = LenW * 2; //先转换为 char*, 比如 protobuf 不支持 wchar_t，那么可以将中文转换为char，然后储存在protobuf内部。 char* buf = new char[LenC + 1](); memcpy(buf, s1, LenC); //验证char*能否还原为 wchar_t 数组 wchar_t* buf2 = new wchar_t[LenC/2 + 1](); memcpy(buf2, buf, LenC);  TCHAR*、wchar_t、char 转换相关 //char 转换为 TCHAR TCHAR* msg = ANSI_TO_TCHAR(&quot;dddd&quot;); TCHAR* msg2 = UTF8_TO_TCHAR(&quot;dddd&quot;); //TCHAR 转换为 char char* Str4 = TCHAR_TO_UTF8(*Str); char* Str4 = TCHAR_TO_ANSI(*Str); //TCHAR 转换为 wchar_t FSting Str; wchar_t* Str2 = TCHAR_TO_WCHAR(*Str); //wchar_t 转换为 TCHAR wchar_t Str5[] = L&quot;sss&quot;; TCHAR* Str6 = (TCHAR*)Str5;  如果 char* 字符串有中文，转换为 FString 时，必须使用 ANSI_TO_TCHAR() 或者 UTF8_TO_TCHAR()，例如：FString Text = UTF8_TO_TCHAR(&ldquo;牛鼻&rdquo;); 。否则会出现乱码。
-      
-      <p>
-        <a href="https://dawnarc.com/2016/03/ue4fstring%E5%B8%B8%E7%94%A8api/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-            
-              
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2016/02/ue4animation-montage%E5%8A%A8%E7%94%BB%E7%9B%B8%E5%85%B3/">
-          [UE4]Animation Montage动画相关
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2016-02-18T16:40:02&#43;08:00">
-        
-  February 18, 2016
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        C++如何播放Montage动画 假设是在Character内执行，其中MontagePtr为Montage指针：
-float DeathAnimDuration = PlayAnimMontage(MontagePtr) / (GetMesh() &amp;&amp; GetMesh()-&gt;GlobalAnimRateScale &gt; 0 ? GetMesh()-&gt;GlobalAnimRateScale : 1);  如果只是播放Animation Sequence，可以使用 PlayAnimation()
-if (USkeletalMeshComponent *Mesh = GetMesh()) { Mesh-&gt;PlayAnimation(AnimSequence, false); }  注意：PlayAnimation可以直接来播放AnimSequence，但是不能混合动作。比如当播放完攻击动作后，无法自动回到空闲状态，但是通过Montage的Slot可以完成自动切换动作。
- 其他参考：
-How can I play animations strictly from C++?
-https://answers.unrealengine.com/questions/292345/how-can-i-play-animations-strictly-from-c.html
-C++动态播放Montage（通过AnimSequence创建） keywords：UE4, C++, AnimSequence, AnimMontage, Slot, 动态创建, 播放动画
-首先要在动画蓝图中添加Slot节点，默认的Slot名字为DefaultSlot。这个名字会在C++代码中使用   假设已经获取了要播放的AnimSequence对象指针：AnimSeq
-float AnimLength = 0.f; if (USkeletalMeshComponent *Mesh = MyActor-&gt;FindComponentByClass&lt;USkeletalMeshComponent&gt;()) { if (UAnimInstance *AnimInst = Mesh-&gt;GetAnimInstance()) { if (UAnimMontage* Mtg = AnimInst-&gt;PlaySlotAnimationAsDynamicMontage(AnimSeq, TEXT(&quot;DefaultSlot&quot;), 0.
-      
-      <p>
-        <a href="https://dawnarc.com/2016/02/ue4animation-montage%E5%8A%A8%E7%94%BB%E7%9B%B8%E5%85%B3/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-            
             
   <div class="pagination-bar">
     <ul class="pagination">
@@ -1305,6 +1298,74 @@ float AnimLength = 0.f; if (USkeletalMeshComponent *Mesh = MyActor-&gt;FindCompo
       <div class="no-result text-color-light text-center">no post found</div>
       <div class="results">
         
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/04/ue4error-codeworksforandroid-download-failed/">
+                <h3 class="media-heading">[UE4]Error - CodeWorksforAndroid download failed</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Apr 4, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>keywords: UE4, CodeWorksforAndroid, can&rsquo;t download, download error</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/04/ue4android.bat-failed-with-args-silent-update-lib-project-path-javalibsdownloader_library-target-android-28/">
+                <h3 class="media-heading">[UE4]android.bat failed with args --silent update lib-project --path JavaLibsdownloader_library --target android-28</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Apr 4, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>keywords: android sdk, UE4 package error</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/04/versioncontrolgit-commands-in-common/">
+                <h3 class="media-heading">[VersionControl]git commands in common</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Apr 4, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>Keywords: git, pull, branch</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/04/versioncontrolgit-you-are-not-currently-on-a-branch.-please-specify-which-branch-you-want-to-merge-with/">
+                <h3 class="media-heading">[VersionControl]git - You are not currently on a branch. Please specify which branch you want to merge with</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Apr 4, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>Keywords: git, pull, branch</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
         
           <div class="media">
             
@@ -1408,74 +1469,6 @@ float AnimLength = 0.f; if (USkeletalMeshComponent *Mesh = MyActor-&gt;FindCompo
             <hr>
           </div>
         
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/03/ue4umg-slider-related/">
-                <h3 class="media-heading">[UE4]UMG Slider Related</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Mar 3, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><h5 id="how-to-increase-slider-bar-thickness-height-scale-in-y">How to increase slider bar thickness (height, scale in Y)</h5></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/03/opensourcelibraries-and-frameworks-collections/">
-                <h3 class="media-heading">[OpenSource]Libraries and Frameworks Collections</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Mar 3, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><h3 id="math">Math</h3></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/03/ue4how-to-override-blueprintnativeevent-function-which-without-virtual/">
-                <h3 class="media-heading">[UE4]How to override BlueprintNativeEvent function which without virtual</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Mar 3, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>Problem:</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/03/versioncontrolgit-push-error-java-heap-space/">
-                <h3 class="media-heading">[VersionControl]git push error-Java heap space</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Mar 3, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>Keywords: Git</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
       </div>
     </div>
     <div class="modal-footer">
@@ -1483,7 +1476,7 @@ float AnimLength = 0.f; if (USkeletalMeshComponent *Mesh = MyActor-&gt;FindCompo
          data-message-zero="no post found"
          data-message-one="1 post found"
          data-message-other="{n} posts found">
-         490 posts found
+         494 posts found
       </p>
     </div>
   </div>

@@ -321,6 +321,123 @@ if (!doNotTrack) {
     
     <div class="postShorten-header">
       <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2017/08/ue4vs2017%E7%BC%96%E8%AF%91%E6%9E%84%E5%BB%BA%E5%BC%95%E6%93%8E%E4%BB%A3%E7%A0%81could-not-load-file-or-assembly-system.threading.tasks.dataflow/">
+          [UE4]VS2017编译构建引擎代码：Could not load file or assembly &#39;System.Threading.Tasks.Dataflow
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2017-08-25T14:33:40&#43;08:00">
+        
+  August 25, 2017
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        如果用VS2017编译构建引擎代码，在双击GenerateProjectFiles.bat时出现以下错误：
+Setting up Unreal Engine 4 project files... MSBUILD : error MSB1025: An internal failure occurred while running MSBuild. Microsoft.Build.Shared.InternalErrorException: MSB0001: Internal MSBuild Error: Throwing from logger shutdown ============= System.IO.FileNotFoundException: Could not load file or assembly 'System.Threading.Tasks.Dataflow, Version=4.5.24.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a' or one of its dependencies. The system cannot find the file specified. File name: 'System.Threading.Tasks.Dataflow, Version=4.5.24.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a' at Microsoft.Build.BackEnd.Logging.LoggingService.ShutdownComponent() at Microsoft.Build.Evaluation.ProjectCollection.ShutDownLoggingService() WRN: Assembly binding logging is turned OFF. To enable assembly bind failure logging, set the registry value [HKLM\Software\Microsoft\Fusion!
+      
+      <p>
+        <a href="https://dawnarc.com/2017/08/ue4vs2017%E7%BC%96%E8%AF%91%E6%9E%84%E5%BB%BA%E5%BC%95%E6%93%8E%E4%BB%A3%E7%A0%81could-not-load-file-or-assembly-system.threading.tasks.dataflow/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2017/06/ue4%E5%8A%A8%E7%94%BB%E8%93%9D%E5%9B%BE%E7%9A%84%E7%BC%96%E8%BE%91%E5%85%A8%E6%B5%81%E7%A8%8Banimation-blueprint/">
+          [UE4]动画蓝图的编辑全流程(Animation Blueprint)
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2017-06-17T21:45:40&#43;08:00">
+        
+  June 17, 2017
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        Keyword: UE4、Animation Blueprin、Montage Slot、Character Blueprint
+不知从从哪个版本开始，动画蓝图的制作和老版本之间的差距有点大了，这里做下笔记，以备不时之需。。
+UE4版本：4.16
+假设已经将模型和动作导入工程了，这里使用官方模板项目的动作作为例子讲解，只演示待机、跑步的控制逻辑，跳跃的可以看项目模板的动画蓝图。
+1，准备好动作和模型   2，新建一个Blend Space 1D   然后在跳出的菜单中选择骨骼   3，打开Blend Space 1D蓝图，分别将待机、行走、跑步三个动作拖拽到下方面板钟   修改驱动属性名为Speed，默认为None，这个属性名为是后面编辑动画蓝图使用的属性名。   最终效果：   4，将TargetWeightInterpolationSpeedPerSec修改为5.0，修改这个值的原因是为了让角色移动时的静止和移动的过度更加自然   5，新建一个动画蓝图（Animation Blueprin）:   在弹出的菜单钟选择父类和骨骼，父类为：AnimInstance；骨骼就是当前模型的骨骼   6，打开动画蓝图的EventGraph面板   然后再添加一个float属性，名字为Speed，表示角色的即时速度     然后再编辑事件：Event Blueprint Update Animation   7，打开AnimGraph面板   新建一个State Machine     双击State Machine，进入里面编辑。从Entry节点钟拖拽并新建一个State：   将该State命名为Idel/Run   然后双击该State，进入里面编辑：其中Speed，就是之前新建float属性     最后再返回到最外层的AnimGraph面板，将StateMachine链接到Final Animation Pose上   8，新建角色蓝图Character Blueprint：   父类选择工程中的C++ Character class：   然后打开角色蓝图，选中mesh   将Anim Class指定为之前创建的动画蓝图：   将Skeletal Mesh指定为模型的骨骼：   如果默认的骨骼基准坐标、转向和刚体大小、MovementComponent的默认方向不匹配，则需要编辑下Mesh的Transform     9，到此，动画蓝图和角色蓝图编辑完成，可以在C++中使用刚刚新建的角色蓝图。
+      
+      <p>
+        <a href="https://dawnarc.com/2017/06/ue4%E5%8A%A8%E7%94%BB%E8%93%9D%E5%9B%BE%E7%9A%84%E7%BC%96%E8%BE%91%E5%85%A8%E6%B5%81%E7%A8%8Banimation-blueprint/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
         <a class="link-unstyled" href="https://dawnarc.com/2017/06/ue4performance-guidelines-for-mobile-devices/">
           [UE4]Performance Guidelines for Mobile Devices
         </a>
@@ -906,7 +1023,7 @@ https://docs.unrealengine.com/latest/INT/Engine/OpenWorldTools/ProceduralFoliage
 BoxComponent的Overlap事件 1，C++中的代码编写 这里我们演示的例子，是在角色身上创建一个BoxComponent，假设角色的C++ class叫AMyCharacter。 MyCharacter.h头文件中定义：
 //Box对象 UBoxComponent* CollisionMesh; //OverlapBegin事件的回调函数，注意函数签名！ UFUNCTION() void OnTestOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &amp; SweepResult); //OverlapEnd事件的回调函数，注意函数签名！ UFUNCTION() void OnTestOverlapEnd(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);  回调函数一定要加UFUNCTION()，否则无法注册成功，因为注册函数时使用了UE4编译器的反射。
  MyCharacter.cpp的构造函数中：
-//创建BoxComponent CollisionMesh = CreateDefaultSubobject&lt;UBoxComponent&gt;(TEXT(&quot;TestCollision&quot;)); CollisionMesh-&gt;SetBoxExtent(FVector(200.f, 200.f, 96.f)); CollisionMesh-&gt;bDynamicObstacle = true; CollisionMesh-&gt;SetupAttachment(GetRootComponent()); //如果需要Overlap事件，将bGenerateOverlapEvents设置为true。如果不设置，默认也为true。 CollisionMesh-&gt;bGenerateOverlapEvents = true; //注意：要触发Overlap事件，SetCollisionResponseToAllChannels要么不设置，要么设置为ECR_Overlap。 CollisionMesh-&gt;SetCollisionResponseToAllChannels(ECR_Overlap); /*CollisionMesh-&gt;SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block); CollisionMesh-&gt;SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Block); CollisionMesh-&gt;SetCollisionResponseToChannel(ECC_Pawn, ECR_Block); CollisionMesh-&gt;SetNotifyRigidBodyCollision(true); CollisionMesh-&gt;SetSimulatePhysics(true);*/ //要触发Overlap事件，碰对对象需要勾选属性：Generate Overlap Events FScriptDelegate DelegateBegin; DelegateBegin.
+//创建BoxComponent CollisionMesh = CreateDefaultSubobject&lt;UBoxComponent&gt;(TEXT(&quot;TestCollision&quot;)); CollisionMesh-&gt;SetBoxExtent(FVector(200.f, 200.f, 96.f)); CollisionMesh-&gt;bDynamicObstacle = true; CollisionMesh-&gt;SetupAttachment(GetRootComponent()); //如果需要Overlap事件，将bGenerateOverlapEvents设置为true。如果不设置，默认也为true。 CollisionMesh-&gt;bGenerateOverlapEvents = true; //注意：要触发Overlap事件，SetCollisionResponseToAllChannels要么不设置，要么设置为ECR_Overlap。 CollisionMesh-&gt;SetCollisionResponseToAllChannels(ECR_Overlap); /*CollisionMesh-&gt;SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block); CollisionMesh-&gt;SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Block); CollisionMesh-&gt;SetCollisionResponseToChannel(ECC_Pawn, ECR_Block); CollisionMesh-&gt;SetNotifyRigidBodyCollision(true); CollisionMesh-&gt;SetSimulatePhysics(true);*/ //要触发Overlap事件，碰撞对象需要勾选属性：Generate Overlap Events FScriptDelegate DelegateBegin; DelegateBegin.
       
       <p>
         <a href="https://dawnarc.com/2017/05/ue4c-%E5%88%9B%E5%BB%BAboxcollisionboxcomponent%E5%B9%B6%E6%B3%A8%E5%86%8Coverlap%E5%92%8Chit%E4%BA%8B%E4%BB%B6%E5%9B%9E%E8%B0%83%E5%87%BD%E6%95%B0/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -1092,133 +1209,6 @@ BoxComponent的Overlap事件 1，C++中的代码编写 这里我们演示的例�
 </article>
 
             
-              
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2017/04/ue4how-to-spawn-a-simple-cube-in-c-/">
-          [UE4]How to spawn a simple cube in C&#43;&#43;
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2017-04-15T15:04:40&#43;08:00">
-        
-  April 15, 2017
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        How to spawn a simple cube in C++?
-https://answers.unrealengine.com/questions/142180/how-to-spawn-a-simple-cube-in-c.html
-长安，故人问我，道愁肠，?酒只依然。目断秋霄落雁，醉来时响空弦。—辛弃疾《木兰花慢》
-      
-      <p>
-        <a href="https://dawnarc.com/2017/04/ue4how-to-spawn-a-simple-cube-in-c-/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-            
-              
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2017/03/ue4how-can-i-use-ufunctionexec/">
-          [UE4]How can I use UFUNCTION(Exec)
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2017-03-25T14:47:40&#43;08:00">
-        
-  March 25, 2017
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        UE4提供了自定义命令的操作，类似GM，方便测试。
-用法  创建一个继承CheatManager的自定义类，然在GM函数上加上标识：
-UFUNCTION(Exec)  在PlayerController的构造函数中设置CheatClass：
-AMyPlayerController::AMyPlayerController(const FObjectInitializer&amp; ObjectInitializer) : Super::APlayerController(ObjectInitializer) { CheatClass = UMyCheatManager::StaticClass(); }  在命令行（按波浪键，shipping模式下无效）中直接调用该函数了。
-假设函数为：
-UFUNCTION(Exec) void TestFun(FString Str);  按下波浪键后，则输入：
-TestFun HelloWorld   注意事项 只有以下类的方法可以支持Exec标签：
- APawn APlayerController UPlayerInput UCheatManager AGameMode UGameInstance AHUD  参考资料 Using Cheat Manager in Unreal Engine 4
-http://zompi.pl/using-cheat-manager-in-unreal-engine-4/
-家乡在那美的远方
-泪水背着光，安静而悲伤
-肩上剩下的能量，
-还能撑到什么地方。
-----《三国恋》
-      
-      <p>
-        <a href="https://dawnarc.com/2017/03/ue4how-can-i-use-ufunctionexec/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-            
             
   <div class="pagination-bar">
     <ul class="pagination">
@@ -1303,6 +1293,74 @@ http://zompi.pl/using-cheat-manager-in-unreal-engine-4/
       <div class="no-result text-color-light text-center">no post found</div>
       <div class="results">
         
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/04/ue4error-codeworksforandroid-download-failed/">
+                <h3 class="media-heading">[UE4]Error - CodeWorksforAndroid download failed</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Apr 4, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>keywords: UE4, CodeWorksforAndroid, can&rsquo;t download, download error</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/04/ue4android.bat-failed-with-args-silent-update-lib-project-path-javalibsdownloader_library-target-android-28/">
+                <h3 class="media-heading">[UE4]android.bat failed with args --silent update lib-project --path JavaLibsdownloader_library --target android-28</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Apr 4, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>keywords: android sdk, UE4 package error</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/04/versioncontrolgit-commands-in-common/">
+                <h3 class="media-heading">[VersionControl]git commands in common</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Apr 4, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>Keywords: git, pull, branch</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/04/versioncontrolgit-you-are-not-currently-on-a-branch.-please-specify-which-branch-you-want-to-merge-with/">
+                <h3 class="media-heading">[VersionControl]git - You are not currently on a branch. Please specify which branch you want to merge with</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Apr 4, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>Keywords: git, pull, branch</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
         
           <div class="media">
             
@@ -1406,74 +1464,6 @@ http://zompi.pl/using-cheat-manager-in-unreal-engine-4/
             <hr>
           </div>
         
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/03/ue4umg-slider-related/">
-                <h3 class="media-heading">[UE4]UMG Slider Related</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Mar 3, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><h5 id="how-to-increase-slider-bar-thickness-height-scale-in-y">How to increase slider bar thickness (height, scale in Y)</h5></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/03/opensourcelibraries-and-frameworks-collections/">
-                <h3 class="media-heading">[OpenSource]Libraries and Frameworks Collections</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Mar 3, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><h3 id="math">Math</h3></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/03/ue4how-to-override-blueprintnativeevent-function-which-without-virtual/">
-                <h3 class="media-heading">[UE4]How to override BlueprintNativeEvent function which without virtual</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Mar 3, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>Problem:</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/03/versioncontrolgit-push-error-java-heap-space/">
-                <h3 class="media-heading">[VersionControl]git push error-Java heap space</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Mar 3, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>Keywords: Git</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
       </div>
     </div>
     <div class="modal-footer">
@@ -1481,7 +1471,7 @@ http://zompi.pl/using-cheat-manager-in-unreal-engine-4/
          data-message-zero="no post found"
          data-message-one="1 post found"
          data-message-other="{n} posts found">
-         490 posts found
+         494 posts found
       </p>
     </div>
   </div>

@@ -318,6 +318,242 @@ if (!doNotTrack) {
     
     <div class="postShorten-header">
       <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2017/06/ue4%E8%BD%AC%E8%BD%BDuengine-browse%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B/">
+          [UE4]转载：UEngine Browse()执行流程
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2017-06-01T13:00:40&#43;08:00">
+        
+  June 1, 2017
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        原文：http://blog.csdn.net/xiaozhi0999/article/details/51393704
+ue4中，客户端登陆流程如下，调用UEngine::Browse方法，在这个方法中，判断如果是客户端，则创建UPendingNetGame实例，代码如下：
+WorldContext.PendingNetGame = NewObject&lt;UPendingNetGame&gt;(); WorldContext.PendingNetGame-&gt;Initialize(URL); WorldContext.PendingNetGame-&gt;InitNetDriver();  而在InitNetDriver函数中，会向服务器发送 NMT_Hello 协议，我们转到NMT_Hello 的定义，如下：
+DEFINE_CONTROL_CHANNEL_MESSAGE_TWOPARAM(Hello, 0, uint8, uint32); // initial client connection message  参数1：大端还是小端
+参数2：客户端版本号
+客户端处理协议的地方是如下两个函数：
+void UPendingNetGame::NotifyControlMessage(UNetConnection* Connection, uint8 MessageType, class FInBunch&amp; Bunch) void UWorld::NotifyControlMessage(UNetConnection* Connection, uint8 MessageType, class FInBunch&amp; Bunch)  服务器处理协议的地方是下面这个函数：
+void UWorld::NotifyControlMessage(UNetConnection* Connection, uint8 MessageType, class FInBunch&amp; Bunch)  在服务器的协议处理函数，我们可以看到NMT_Hello协议的处理过程，先调用Receive接收消息，然后判断版本号是否一致，不一致发送NMT_Upgrade消息，一致则发送NMT_Challenge消息
+DEFINE_CONTROL_CHANNEL_MESSAGE_ONEPARAM(Challenge, 3, FString); // server sends client challenge string to verify integrity  客户端收到NMT_Challenge消息后，向服务器发送NMT_Login消息，NMT_Login消息携带三个参数，如下：
+DEFINE_CONTROL_CHANNEL_MESSAGE_THREEPARAM(Login, 5, FString, FString, FUniqueNetIdRepl); // client requests to be admitted to the game  参数1：客户端响应
+      
+      <p>
+        <a href="https://dawnarc.com/2017/06/ue4%E8%BD%AC%E8%BD%BDuengine-browse%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2017/06/ue4difference-between-servertravel-and-clienttravel/">
+          [UE4]Difference between ServerTravel and ClientTravel
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2017-06-01T11:05:40&#43;08:00">
+        
+  June 1, 2017
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        Difference：
+ ServerTravel also informs the clients to move along with the server. ClientTravel will be called locally for the client to load a new map. or connect to ip. Browse can load local map via LoadMap ( not for multiplayer ) but there are more things happening in this method. I also want to know more about what it does and what it should be used for. LoadMap should also load a map for a local client  Browse, LoadMap, ServerTravel and ClientTravel?
+      
+      <p>
+        <a href="https://dawnarc.com/2017/06/ue4difference-between-servertravel-and-clienttravel/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2017/06/ue4c-%E8%8E%B7%E5%8F%96%E6%B8%B8%E6%88%8F%E5%BD%93%E5%89%8D%E7%99%BB%E5%BD%95%E7%9A%84%E6%9C%8D%E5%8A%A1%E5%99%A8ip%E5%92%8C%E7%AB%AF%E5%8F%A3/">
+          [UE4]C&#43;&#43;获取游戏当前登录的服务器IP和端口
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2017-06-01T10:40:40&#43;08:00">
+        
+  June 1, 2017
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        接口：
+FString URL = GetWorld()-&gt;GetAddressURL();  碧云天，黄叶地，秋色连波，波上寒烟翠。---范仲淹《苏幕遮》
+      
+      <p>
+        <a href="https://dawnarc.com/2017/06/ue4c-%E8%8E%B7%E5%8F%96%E6%B8%B8%E6%88%8F%E5%BD%93%E5%89%8D%E7%99%BB%E5%BD%95%E7%9A%84%E6%9C%8D%E5%8A%A1%E5%99%A8ip%E5%92%8C%E7%AB%AF%E5%8F%A3/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2017/05/ue4userwidget%E7%9A%84c-%E5%B8%B8%E7%94%A8%E7%88%B6%E7%B1%BB%E5%87%BD%E6%95%B0/">
+          [UE4]UserWidget的C&#43;&#43;常用父类函数
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2017-05-31T14:13:40&#43;08:00">
+        
+  May 31, 2017
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        如果要在widget的C++代码中处理初始化逻辑（比如获取获取某个button对象），建议在NativeConstruct中操作，因为Initialize()需要判定Super::Initialize()的返回值是否为true，如果为false，无法获取内部组件。
+virtual bool Initialize(); virtual void NativePreConstruct(); virtual void NativeConstruct(); virtual void NativeDestruct(); virtual void NativeTick(const FGeometry&amp; MyGeometry, float InDeltaTime); virtual void NativePaint( FPaintContext&amp; InContext ) const; virtual bool NativeIsInteractable() const; virtual bool NativeSupportsKeyboardFocus() const;  渐写到别来，此情深处，红笺为无色。—晏几道《思远人》
+      
+      <p>
+        <a href="https://dawnarc.com/2017/05/ue4userwidget%E7%9A%84c-%E5%B8%B8%E7%94%A8%E7%88%B6%E7%B1%BB%E5%87%BD%E6%95%B0/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
         <a class="link-unstyled" href="https://dawnarc.com/2017/05/mysqlwindows%E4%B8%8A%E5%AE%89%E8%A3%85mysql5.7%E7%BB%BF%E8%89%B2%E7%89%88/">
           [MySQL]Windows上安装MySQL5.7绿色版
         </a>
@@ -837,7 +1073,7 @@ ZBrush提供了直接在模型表面绘制颜色和材质的功能。
 BoxComponent的Overlap事件 1，C++中的代码编写 这里我们演示的例子，是在角色身上创建一个BoxComponent，假设角色的C++ class叫AMyCharacter。 MyCharacter.h头文件中定义：
 //Box对象 UBoxComponent* CollisionMesh; //OverlapBegin事件的回调函数，注意函数签名！ UFUNCTION() void OnTestOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &amp; SweepResult); //OverlapEnd事件的回调函数，注意函数签名！ UFUNCTION() void OnTestOverlapEnd(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);  回调函数一定要加UFUNCTION()，否则无法注册成功，因为注册函数时使用了UE4编译器的反射。
  MyCharacter.cpp的构造函数中：
-//创建BoxComponent CollisionMesh = CreateDefaultSubobject&lt;UBoxComponent&gt;(TEXT(&quot;TestCollision&quot;)); CollisionMesh-&gt;SetBoxExtent(FVector(200.f, 200.f, 96.f)); CollisionMesh-&gt;bDynamicObstacle = true; CollisionMesh-&gt;SetupAttachment(GetRootComponent()); //如果需要Overlap事件，将bGenerateOverlapEvents设置为true。如果不设置，默认也为true。 CollisionMesh-&gt;bGenerateOverlapEvents = true; //注意：要触发Overlap事件，SetCollisionResponseToAllChannels要么不设置，要么设置为ECR_Overlap。 CollisionMesh-&gt;SetCollisionResponseToAllChannels(ECR_Overlap); /*CollisionMesh-&gt;SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block); CollisionMesh-&gt;SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Block); CollisionMesh-&gt;SetCollisionResponseToChannel(ECC_Pawn, ECR_Block); CollisionMesh-&gt;SetNotifyRigidBodyCollision(true); CollisionMesh-&gt;SetSimulatePhysics(true);*/ //要触发Overlap事件，碰对对象需要勾选属性：Generate Overlap Events FScriptDelegate DelegateBegin; DelegateBegin.
+//创建BoxComponent CollisionMesh = CreateDefaultSubobject&lt;UBoxComponent&gt;(TEXT(&quot;TestCollision&quot;)); CollisionMesh-&gt;SetBoxExtent(FVector(200.f, 200.f, 96.f)); CollisionMesh-&gt;bDynamicObstacle = true; CollisionMesh-&gt;SetupAttachment(GetRootComponent()); //如果需要Overlap事件，将bGenerateOverlapEvents设置为true。如果不设置，默认也为true。 CollisionMesh-&gt;bGenerateOverlapEvents = true; //注意：要触发Overlap事件，SetCollisionResponseToAllChannels要么不设置，要么设置为ECR_Overlap。 CollisionMesh-&gt;SetCollisionResponseToAllChannels(ECR_Overlap); /*CollisionMesh-&gt;SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block); CollisionMesh-&gt;SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Block); CollisionMesh-&gt;SetCollisionResponseToChannel(ECC_Pawn, ECR_Block); CollisionMesh-&gt;SetNotifyRigidBodyCollision(true); CollisionMesh-&gt;SetSimulatePhysics(true);*/ //要触发Overlap事件，碰撞对象需要勾选属性：Generate Overlap Events FScriptDelegate DelegateBegin; DelegateBegin.
       
       <p>
         <a href="https://dawnarc.com/2017/05/ue4c-%E5%88%9B%E5%BB%BAboxcollisionboxcomponent%E5%B9%B6%E6%B3%A8%E5%86%8Coverlap%E5%92%8Chit%E4%BA%8B%E4%BB%B6%E5%9B%9E%E8%B0%83%E5%87%BD%E6%95%B0/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -963,239 +1199,6 @@ BoxComponent的Overlap事件 1，C++中的代码编写 这里我们演示的例�
 </article>
 
           
-            
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2017/05/zbrushsurface-noise%E5%99%AA%E6%B3%A2/">
-          [ZBrush]Surface Noise(噪波)
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2017-05-14T15:31:40&#43;08:00">
-        
-  May 14, 2017
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/zbrush">ZBrush</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        keywords: surface noise、噪波
-噪波应用： 一般用来生成石头或者皮肤的表面细节纹理
-注意事项： Noise使用之前需要将模型转换为PolyMesh3D。
-点击Tool -》 Surface -》 Noise。   然后会弹出一个噪波阅览界面，修改Magnify By Mask和Strength来生成噪波。   生成的噪波效果：   还可以点击Lightbox》NoiseMaskers打开ZB提供的现成的噪波贴图：       可以点击Edit，打开编辑面板，调成噪波曲线来调整效果：     面包！面包！我们要面包！---《萌芽》
-      
-      <p>
-        <a href="https://dawnarc.com/2017/05/zbrushsurface-noise%E5%99%AA%E6%B3%A2/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-          
-            
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2017/05/zbrushmirror%E9%95%9C%E5%83%8F%E6%93%8D%E4%BD%9C/">
-          [ZBrush]Mirror镜像操作
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2017-05-07T23:18:40&#43;08:00">
-        
-  May 7, 2017
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/zbrush">ZBrush</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        反向镜像 点击：Tool -》 Deformation -》 Mirror，就可以将模型反向。   Mirror按钮的右上角可以选择镜像基准轴向，可选的有X、Y、Z轴，默认是X轴。
-执行前：   执行后：   轴对称镜像 点击：Tool -》 Geometry -》 Modifier Topology -》 Mirror And Weld，可以将模型左边的部分复制模型右边。   按钮的右上角可以选择镜像基准轴向，可选的有X、Y、Z轴，默认是X轴。
-执行前：   执行后：   如何判定模型的X、Y、Z方向 比如要镜像模型时，如何判断当前模型的朝向。可以按下W键或E键，并保证当前模型是PolyMesh3D，就可以看到Transform线条，红、绿、蓝三种颜色，分别代表X、Y、Z轴。   你瞧，桑丘·潘沙朋友，那边出现了三十多个大得出奇的巨人。---《堂·吉诃德》
-      
-      <p>
-        <a href="https://dawnarc.com/2017/05/zbrushmirror%E9%95%9C%E5%83%8F%E6%93%8D%E4%BD%9C/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-          
-            
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2017/05/zbrushzremesher%E4%BD%BF%E7%94%A8/">
-          [ZBrush]ZRemesher使用
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2017-05-07T21:50:40&#43;08:00">
-        
-  May 7, 2017
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/zbrush">ZBrush</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        Keywords：ZBrush、ZRemesher、Project All
-假如我们的模型的布线被拉的很乱了：   此时点击下：Tool -》 Geometry -》 ZRemesher -》 ZRemesher。   稍微等待一下后（取决于DynaMesh的分辨率），就可以重新生成非常简洁的布线：   ZRemesher控制模型精度的两个参数为：Target Polygons Count、AdaptiveSize。   实际用途： ZRemesher可以用于模型的自动拓扑：先在SubTool复制一个模型，然后使用ZRemesher生成一个低分辨率的模型，然后再使用Project All功能，就可以进行自动拓扑了，可以参见之前的文章： [ZBrush]Project All实例(example) https://dawnarc.com/2017/04/zbrushproject-all%E5%AE%9E%E4%BE%8Bexample/
-金鳞昂首凌霄烁，少年得意浅水游。 ---光叔
-      
-      <p>
-        <a href="https://dawnarc.com/2017/05/zbrushzremesher%E4%BD%BF%E7%94%A8/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-          
-            
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2017/05/zbrush%E5%89%AA%E5%88%87%E5%88%A0%E9%99%A4%E7%9A%84%E5%87%A0%E7%A7%8D%E6%96%B9%E5%BC%8F/">
-          [ZBrush]剪切删除的几种方式
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2017-05-07T20:33:40&#43;08:00">
-        
-  May 7, 2017
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/zbrush">ZBrush</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        Keywords：ZBrush、Delete、Clip、Hide、Close Hole
-使用SelectRect笔刷 1，先点击一下SelectRect笔刷：   然后就会提示你按住Ctrl + Shift来使用，点击OK。   2，然后按住Ctrl + Shift，就可以直接启用刚刚点击的SelectRect笔刷。另外笔刷的Stroke类型建议选择Lasso，它可以选择不规则形状的模型部位。   如果使用过一次后，那么再次按住Ctrl + Shift键，然后点击下Brush，就可以看到历史记录了，然后点击一下就可以选中SelectRect笔刷。   3，按住Ctrl + Shift，然后按住鼠标不放，用套索选择要剪切的部位：   剪切之后，就只能看到用套索选中的部位，其他部分被隐藏了。   如果想反向显示没有被选中的部位，则按住Ctrl + Shift，然后在空白区域拖拽一下鼠标即可：     如果在空白区域不拖拽，只是点击一下，那么模型将还原到剪切前的状态。
-4，圈好需要保留的部分后，再点击Tool-》 Geometry -》 Modify Topology -》 Del Hidden：   5，然后在执行Re-DynaMesh（假设你提前已启用DynaMesh了）：在空白区域拖延一下鼠标：   最后，之前隐藏的部分就被剪切删除了。被剪切掉的空白区域，就会自动被填充一层。   这里除了可以通过执行Re-DynaMesh来填充空洞的区域，还可以通过点击：Tool-》 Geometry -》 Modify Topology -》 Close Holes。两种方式都需要执行Del Hidden，即第4步都要执行，只是第5步有区别。 注意事项：如果使用Close Holes，则可以不启用DynaMesh。   最后补充：按住Ctrl + Shift是选中显示的部位，其余部分隐藏掉；按住Ctrl + Shift + Alt正好相反。   使用ClipRect笔刷 这里我们使用zb自带的一个齿轮模型来演示：   1，用相同方式选中ClipRect笔刷：先点击ClipRect，然后再按住Ctrl + Shift：     2，然后再按住鼠标不放，选中我们要保留的区域：   3，这样就可以一步到位实现剪切删除：   但这样剪切的出来的模型的布线有问题：剪切后的截面，布线很乱，因为ClipRect笔刷做的操作是将待删除的部分压扁，所以被删除部分的布线还遗留在模型上。   针对这种非常不规则的模型，剪切删除时最好使用TrimLasso，用其剪切删除的截面，不会遗留不干净的布线。
-      
-      <p>
-        <a href="https://dawnarc.com/2017/05/zbrush%E5%89%AA%E5%88%87%E5%88%A0%E9%99%A4%E7%9A%84%E5%87%A0%E7%A7%8D%E6%96%B9%E5%BC%8F/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-          
           
   <div class="pagination-bar">
     <ul class="pagination">
@@ -1279,6 +1282,74 @@ BoxComponent的Overlap事件 1，C++中的代码编写 这里我们演示的例�
       <div class="no-result text-color-light text-center">no post found</div>
       <div class="results">
         
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/04/ue4error-codeworksforandroid-download-failed/">
+                <h3 class="media-heading">[UE4]Error - CodeWorksforAndroid download failed</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Apr 4, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>keywords: UE4, CodeWorksforAndroid, can&rsquo;t download, download error</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/04/ue4android.bat-failed-with-args-silent-update-lib-project-path-javalibsdownloader_library-target-android-28/">
+                <h3 class="media-heading">[UE4]android.bat failed with args --silent update lib-project --path JavaLibsdownloader_library --target android-28</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Apr 4, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>keywords: android sdk, UE4 package error</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/04/versioncontrolgit-commands-in-common/">
+                <h3 class="media-heading">[VersionControl]git commands in common</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Apr 4, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>Keywords: git, pull, branch</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/04/versioncontrolgit-you-are-not-currently-on-a-branch.-please-specify-which-branch-you-want-to-merge-with/">
+                <h3 class="media-heading">[VersionControl]git - You are not currently on a branch. Please specify which branch you want to merge with</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Apr 4, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>Keywords: git, pull, branch</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
         
           <div class="media">
             
@@ -1382,74 +1453,6 @@ BoxComponent的Overlap事件 1，C++中的代码编写 这里我们演示的例�
             <hr>
           </div>
         
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/03/ue4umg-slider-related/">
-                <h3 class="media-heading">[UE4]UMG Slider Related</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Mar 3, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><h5 id="how-to-increase-slider-bar-thickness-height-scale-in-y">How to increase slider bar thickness (height, scale in Y)</h5></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/03/opensourcelibraries-and-frameworks-collections/">
-                <h3 class="media-heading">[OpenSource]Libraries and Frameworks Collections</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Mar 3, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><h3 id="math">Math</h3></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/03/ue4how-to-override-blueprintnativeevent-function-which-without-virtual/">
-                <h3 class="media-heading">[UE4]How to override BlueprintNativeEvent function which without virtual</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Mar 3, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>Problem:</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/03/versioncontrolgit-push-error-java-heap-space/">
-                <h3 class="media-heading">[VersionControl]git push error-Java heap space</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Mar 3, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>Keywords: Git</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
       </div>
     </div>
     <div class="modal-footer">
@@ -1457,7 +1460,7 @@ BoxComponent的Overlap事件 1，C++中的代码编写 这里我们演示的例�
          data-message-zero="no post found"
          data-message-one="1 post found"
          data-message-other="{n} posts found">
-         490 posts found
+         494 posts found
       </p>
     </div>
   </div>
