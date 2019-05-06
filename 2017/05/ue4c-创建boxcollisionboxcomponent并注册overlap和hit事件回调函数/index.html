@@ -10,14 +10,14 @@
 <meta name="keywords" content="">
 <meta name="description" content="keywords: UE4、Overlap、Hit、Event、Callback、C&#43;&#43;、Blueprint、Box Collision、BoxComponent、SphereComponent、Trace Channel、碰撞
 BoxComponent的Overlap事件 1，C&#43;&#43;中的代码编写 这里我们演示的例子，是在角色身上创建一个BoxComponent，假设角色的C&#43;&#43; class叫AMyCharacter。 MyCharacter.h头文件中定义：
-//Box对象 UBoxComponent* CollisionMesh; //OverlapBegin事件的回调函数，注意函数签名！ UFUNCTION() void OnTestOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &amp; SweepResult); //OverlapEnd事件的回调函数，注意函数签名！ UFUNCTION() void OnTestOverlapEnd(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);  回调函数一定要加UFUNCTION()，否则无法注册成功，因为注册函数时使用了UE4编译器的反射。
+//Box对象 UBoxComponent* CollisionMesh; //OverlapBegin事件的回调函数，注意函数签名！ UFUNCTION() void OnTestOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &amp; SweepResult); //OverlapEnd事件的回调函数，注意函数签名！ UFUNCTION() void OnTestOverlapEnd(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);  回调函数一定要加UFUNCTION()，否则无法注册成功，因为UE4的代码生成工具需要通过该标识生成相应的代码，变相实现虚拟机编程语言（比如Java、C#）的反射。
  MyCharacter.cpp的构造函数中：
 //创建BoxComponent CollisionMesh = CreateDefaultSubobject&lt;UBoxComponent&gt;(TEXT(&quot;TestCollision&quot;)); CollisionMesh-&gt;SetBoxExtent(FVector(200.f, 200.f, 96.f)); CollisionMesh-&gt;bDynamicObstacle = true; CollisionMesh-&gt;SetupAttachment(GetRootComponent()); //如果需要Overlap事件，将bGenerateOverlapEvents设置为true。如果不设置，默认也为true。 CollisionMesh-&gt;bGenerateOverlapEvents = true; //注意：要触发Overlap事件，SetCollisionResponseToAllChannels要么不设置，要么设置为ECR_Overlap。 CollisionMesh-&gt;SetCollisionResponseToAllChannels(ECR_Overlap); /*CollisionMesh-&gt;SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block); CollisionMesh-&gt;SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Block); CollisionMesh-&gt;SetCollisionResponseToChannel(ECC_Pawn, ECR_Block); CollisionMesh-&gt;SetNotifyRigidBodyCollision(true); CollisionMesh-&gt;SetSimulatePhysics(true);*/ //要触发Overlap事件，碰撞对象需要勾选属性：Generate Overlap Events FScriptDelegate DelegateBegin; DelegateBegin.">
 
 
 <meta property="og:description" content="keywords: UE4、Overlap、Hit、Event、Callback、C&#43;&#43;、Blueprint、Box Collision、BoxComponent、SphereComponent、Trace Channel、碰撞
 BoxComponent的Overlap事件 1，C&#43;&#43;中的代码编写 这里我们演示的例子，是在角色身上创建一个BoxComponent，假设角色的C&#43;&#43; class叫AMyCharacter。 MyCharacter.h头文件中定义：
-//Box对象 UBoxComponent* CollisionMesh; //OverlapBegin事件的回调函数，注意函数签名！ UFUNCTION() void OnTestOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &amp; SweepResult); //OverlapEnd事件的回调函数，注意函数签名！ UFUNCTION() void OnTestOverlapEnd(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);  回调函数一定要加UFUNCTION()，否则无法注册成功，因为注册函数时使用了UE4编译器的反射。
+//Box对象 UBoxComponent* CollisionMesh; //OverlapBegin事件的回调函数，注意函数签名！ UFUNCTION() void OnTestOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &amp; SweepResult); //OverlapEnd事件的回调函数，注意函数签名！ UFUNCTION() void OnTestOverlapEnd(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);  回调函数一定要加UFUNCTION()，否则无法注册成功，因为UE4的代码生成工具需要通过该标识生成相应的代码，变相实现虚拟机编程语言（比如Java、C#）的反射。
  MyCharacter.cpp的构造函数中：
 //创建BoxComponent CollisionMesh = CreateDefaultSubobject&lt;UBoxComponent&gt;(TEXT(&quot;TestCollision&quot;)); CollisionMesh-&gt;SetBoxExtent(FVector(200.f, 200.f, 96.f)); CollisionMesh-&gt;bDynamicObstacle = true; CollisionMesh-&gt;SetupAttachment(GetRootComponent()); //如果需要Overlap事件，将bGenerateOverlapEvents设置为true。如果不设置，默认也为true。 CollisionMesh-&gt;bGenerateOverlapEvents = true; //注意：要触发Overlap事件，SetCollisionResponseToAllChannels要么不设置，要么设置为ECR_Overlap。 CollisionMesh-&gt;SetCollisionResponseToAllChannels(ECR_Overlap); /*CollisionMesh-&gt;SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block); CollisionMesh-&gt;SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Block); CollisionMesh-&gt;SetCollisionResponseToChannel(ECC_Pawn, ECR_Block); CollisionMesh-&gt;SetNotifyRigidBodyCollision(true); CollisionMesh-&gt;SetSimulatePhysics(true);*/ //要触发Overlap事件，碰撞对象需要勾选属性：Generate Overlap Events FScriptDelegate DelegateBegin; DelegateBegin.">
 <meta property="og:type" content="article">
@@ -28,12 +28,12 @@ BoxComponent的Overlap事件 1，C&#43;&#43;中的代码编写 这里我们演�
 <meta property="og:site_name" content="玄冬Wong">
 <meta property="og:description" content="keywords: UE4、Overlap、Hit、Event、Callback、C&#43;&#43;、Blueprint、Box Collision、BoxComponent、SphereComponent、Trace Channel、碰撞
 BoxComponent的Overlap事件 1，C&#43;&#43;中的代码编写 这里我们演示的例子，是在角色身上创建一个BoxComponent，假设角色的C&#43;&#43; class叫AMyCharacter。 MyCharacter.h头文件中定义：
-//Box对象 UBoxComponent* CollisionMesh; //OverlapBegin事件的回调函数，注意函数签名！ UFUNCTION() void OnTestOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &amp; SweepResult); //OverlapEnd事件的回调函数，注意函数签名！ UFUNCTION() void OnTestOverlapEnd(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);  回调函数一定要加UFUNCTION()，否则无法注册成功，因为注册函数时使用了UE4编译器的反射。
+//Box对象 UBoxComponent* CollisionMesh; //OverlapBegin事件的回调函数，注意函数签名！ UFUNCTION() void OnTestOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &amp; SweepResult); //OverlapEnd事件的回调函数，注意函数签名！ UFUNCTION() void OnTestOverlapEnd(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);  回调函数一定要加UFUNCTION()，否则无法注册成功，因为UE4的代码生成工具需要通过该标识生成相应的代码，变相实现虚拟机编程语言（比如Java、C#）的反射。
  MyCharacter.cpp的构造函数中：
 //创建BoxComponent CollisionMesh = CreateDefaultSubobject&lt;UBoxComponent&gt;(TEXT(&quot;TestCollision&quot;)); CollisionMesh-&gt;SetBoxExtent(FVector(200.f, 200.f, 96.f)); CollisionMesh-&gt;bDynamicObstacle = true; CollisionMesh-&gt;SetupAttachment(GetRootComponent()); //如果需要Overlap事件，将bGenerateOverlapEvents设置为true。如果不设置，默认也为true。 CollisionMesh-&gt;bGenerateOverlapEvents = true; //注意：要触发Overlap事件，SetCollisionResponseToAllChannels要么不设置，要么设置为ECR_Overlap。 CollisionMesh-&gt;SetCollisionResponseToAllChannels(ECR_Overlap); /*CollisionMesh-&gt;SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block); CollisionMesh-&gt;SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Block); CollisionMesh-&gt;SetCollisionResponseToChannel(ECC_Pawn, ECR_Block); CollisionMesh-&gt;SetNotifyRigidBodyCollision(true); CollisionMesh-&gt;SetSimulatePhysics(true);*/ //要触发Overlap事件，碰撞对象需要勾选属性：Generate Overlap Events FScriptDelegate DelegateBegin; DelegateBegin.">
 <meta name="twitter:description" content="keywords: UE4、Overlap、Hit、Event、Callback、C&#43;&#43;、Blueprint、Box Collision、BoxComponent、SphereComponent、Trace Channel、碰撞
 BoxComponent的Overlap事件 1，C&#43;&#43;中的代码编写 这里我们演示的例子，是在角色身上创建一个BoxComponent，假设角色的C&#43;&#43; class叫AMyCharacter。 MyCharacter.h头文件中定义：
-//Box对象 UBoxComponent* CollisionMesh; //OverlapBegin事件的回调函数，注意函数签名！ UFUNCTION() void OnTestOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &amp; SweepResult); //OverlapEnd事件的回调函数，注意函数签名！ UFUNCTION() void OnTestOverlapEnd(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);  回调函数一定要加UFUNCTION()，否则无法注册成功，因为注册函数时使用了UE4编译器的反射。
+//Box对象 UBoxComponent* CollisionMesh; //OverlapBegin事件的回调函数，注意函数签名！ UFUNCTION() void OnTestOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &amp; SweepResult); //OverlapEnd事件的回调函数，注意函数签名！ UFUNCTION() void OnTestOverlapEnd(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);  回调函数一定要加UFUNCTION()，否则无法注册成功，因为UE4的代码生成工具需要通过该标识生成相应的代码，变相实现虚拟机编程语言（比如Java、C#）的反射。
  MyCharacter.cpp的构造函数中：
 //创建BoxComponent CollisionMesh = CreateDefaultSubobject&lt;UBoxComponent&gt;(TEXT(&quot;TestCollision&quot;)); CollisionMesh-&gt;SetBoxExtent(FVector(200.f, 200.f, 96.f)); CollisionMesh-&gt;bDynamicObstacle = true; CollisionMesh-&gt;SetupAttachment(GetRootComponent()); //如果需要Overlap事件，将bGenerateOverlapEvents设置为true。如果不设置，默认也为true。 CollisionMesh-&gt;bGenerateOverlapEvents = true; //注意：要触发Overlap事件，SetCollisionResponseToAllChannels要么不设置，要么设置为ECR_Overlap。 CollisionMesh-&gt;SetCollisionResponseToAllChannels(ECR_Overlap); /*CollisionMesh-&gt;SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block); CollisionMesh-&gt;SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Block); CollisionMesh-&gt;SetCollisionResponseToChannel(ECC_Pawn, ECR_Block); CollisionMesh-&gt;SetNotifyRigidBodyCollision(true); CollisionMesh-&gt;SetSimulatePhysics(true);*/ //要触发Overlap事件，碰撞对象需要勾选属性：Generate Overlap Events FScriptDelegate DelegateBegin; DelegateBegin.">
 <meta property="og:locale" content="en-us">
@@ -389,7 +389,7 @@ UFUNCTION()
 </code></pre>
 
 <div class="alert danger ">
-  <p>回调函数一定要加UFUNCTION()，否则无法注册成功，因为注册函数时使用了UE4编译器的反射。</p>
+  <p>回调函数一定要加UFUNCTION()，否则无法注册成功，因为UE4的代码生成工具需要通过该标识生成相应的代码，变相实现虚拟机编程语言（比如Java、C#）的反射。</p>
 </div>
 
 <p>MyCharacter.cpp的构造函数中：</p>
@@ -575,7 +575,7 @@ CollisionMesh-&gt;OnComponentHit.Add(DelegateHit);
 <li>Object Response 表示当前物体与其他物体所对其他 Collision Channel 物体的反应：Ingore(忽略)、Overlaop(重叠)还是Block(阻挡)。</li>
 </ul>
 
-<p>使用示例：<br />
+<p>实际应用：<br />
 假如有三个物体A、B、C，A物体身上有个 CollisionBox，希望这个 CollisionBox 只与物体B发生 Overlap，忽略掉物体C（既不 Overlap 也不 Block ）。<br />
 方式如下：<br />
 新建两个 Collision Channel，分别作为物体B和物体C的 Object Type；然后再新建一个
@@ -593,10 +593,10 @@ GetCollisionComponent()-&gt;SetCollisionResponseToChannel(ECC_Pawn, ECollisionRe
 GetCollisionComponent()-&gt;BodyInstance.SetObjectType(ECollisionChannel::ECC_GameTraceChannel1);
 </code></pre>
 
-<p>其中 <code>ECollisionChannel::ECC_GameTraceChannel1</code> 为 Object Channels，例如：TestCollision。</p>
+<p>其中 <code>ECollisionChannel::ECC_GameTraceChannel1</code> 为 Object Channels，例如：<code>TestCollChannel</code>。</p>
 
-<p>TestCollision 对应哪一个 <code>ECollisionChannel</code>，可以在DefaultEngine.ini找到，例如：<br />
-<code>+DefaultChannelResponses=(Channel=ECC_GameTraceChannel1,Name=&quot;TestCollision&quot;,DefaultResponse=ECR_Block,bTraceType=False,bStaticObject=False)</code></p>
+<p><code>TestCollChannel</code>对应哪一个 <code>ECollisionChannel</code>，可以在DefaultEngine.ini找到，例如：<br />
+<code>+DefaultChannelResponses=(Channel=ECC_GameTraceChannel1,Name=&quot;TestCollChannel&quot;,DefaultResponse=ECR_Block,bTraceType=False,bStaticObject=False)</code></p>
 
 <h5 id="setcollisionprofilename-注意事项">SetCollisionProfileName 注意事项</h5>
 
@@ -647,6 +647,10 @@ this-&gt;OnActorHit.Add(DelegateHit);
  */
 virtual void AActor::NotifyHit(class UPrimitiveComponent* MyComp, AActor* Other, class UPrimitiveComponent* OtherComp, bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult&amp; Hit);
 </code></pre>
+
+<div class="alert danger ">
+  <p>提醒：4.12的碰撞有bug，会导致Hit事件不触发，建议用最新版本</p>
+</div>
 
 <h3 id="actor的overlap事件-两种方式">Actor的Overlap事件（两种方式）</h3>
 
@@ -724,10 +728,12 @@ UPrimitiveComponent::OverlapComponent();
 <pre><code>EventHit
 </code></pre>
 
-<p>更多参考：
+<p>更多参考：<br />
+Events<br />
 <a href="https://docs.unrealengine.com/latest/INT/Engine/Blueprints/UserGuide/Events/index.html#eventhit">https://docs.unrealengine.com/latest/INT/Engine/Blueprints/UserGuide/Events/index.html#eventhit</a></p>
 
-<p>提醒：<font color=red>4.12的碰撞有bug，会导致Hit事件不触发，建议用最新版本</font>。</p>
+<p>Collision Filtering<br />
+<a href="https://www.unrealengine.com/en-US/blog/collision-filtering">https://www.unrealengine.com/en-US/blog/collision-filtering</a></p>
 
 <hr />
 
@@ -932,6 +938,57 @@ UPrimitiveComponent::OverlapComponent();
           <div class="media">
             
             <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/05/c-book-guide-and-list/">
+                <h3 class="media-heading">[C&#43;&#43;]Book Guide and List</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  May 5, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>keywords: C++ Book</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/05/c-equivalent-of-instanceof-object-type-checking-at-run-time/">
+                <h3 class="media-heading">[C&#43;&#43;]Equivalent of instanceof (object type checking at run-time)</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  May 5, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>keywords: C++, instanceof, typeof</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/05/ue4error-ensure-condition-failed-invocationlist-curfunctionindex-indelegate/">
+                <h3 class="media-heading">[UE4]Error - Ensure condition failed InvocationList[ CurFunctionIndex ] != InDelegate</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  May 5, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>keywords: UE4, Bind Function, Error</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
               <a class="link-unstyled" href="https://dawnarc.com/2019/04/ue4error-codeworksforandroid-download-failed/">
                 <h3 class="media-heading">[UE4]Error - CodeWorksforAndroid download failed</h3>
               </a>
@@ -1048,57 +1105,6 @@ UPrimitiveComponent::OverlapComponent();
             <hr>
           </div>
         
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/04/c-one-std-vector-containing-template-class-of-multiple-types/">
-                <h3 class="media-heading">[C&#43;&#43;]One std vector containing template class of multiple types</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Apr 4, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>keywords: vector, list, element, multiple template types</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/04/ue4error-msb3644-.netframeworkversionv4.6.2-were-not-found/">
-                <h3 class="media-heading">[UE4]error MSB3644 .NETFramework,Version=v4.6.2 were not found</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Apr 4, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>When compiling engine source of v4.22,</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/03/ue4animationblendspace-for-c-/">
-                <h3 class="media-heading">[UE4][Animation]BlendSpace for C&#43;&#43;</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Mar 3, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p><code>FAnimNode_BlendSpacePlayer</code> is the native source of <code>BlendSpace</code> which used in Animation Blueprint.</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
       </div>
     </div>
     <div class="modal-footer">
@@ -1106,7 +1112,7 @@ UPrimitiveComponent::OverlapComponent();
          data-message-zero="no post found"
          data-message-one="1 post found"
          data-message-other="{n} posts found">
-         494 posts found
+         497 posts found
       </p>
     </div>
   </div>

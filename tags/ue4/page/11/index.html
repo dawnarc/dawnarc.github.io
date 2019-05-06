@@ -321,6 +321,67 @@ if (!doNotTrack) {
     
     <div class="postShorten-header">
       <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2017/09/ue4getnavigationsystem%E8%BF%94%E5%9B%9Enull%E7%9A%84%E9%97%AE%E9%A2%98/">
+          [UE4]GetNavigationSystem返回NULL的问题
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2017-09-12T15:31:40&#43;08:00">
+        
+  September 12, 2017
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        keywords：UE4、Client、UNavigationSystem、自动寻路、Dedicated Server
+在有独立服务器的情况下，客户端默认关闭了Navigation，导致在客户端获取NavigationSystem时始终返回NULL。
+UNavigationSystem* const NavSys = GetWorld()-&gt;GetNavigationSystem();  解决办法：
+打包之前勾选工程设置的中的Allow Client Side Navigation（Project Settings -》 Engine -》 Navigation System）：   注意事项：
+默认关闭Allow Client Side Navigation，是因为UE4的DedicatedServer默认开启了角色的Movement Replicate，所以可以不用客户端寻路。如果要开启此项，一般是关闭了角色的自动位移同步，自己手动处理客户端和服务端的位移同步。
+天涯旧恨，试看几许消魂？长亭门外山重叠。不尽眼中青，是愁来时节。—张元千《石州慢》
+      
+      <p>
+        <a href="https://dawnarc.com/2017/09/ue4getnavigationsystem%E8%BF%94%E5%9B%9Enull%E7%9A%84%E9%97%AE%E9%A2%98/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
         <a class="link-unstyled" href="https://dawnarc.com/2017/09/ue4%E7%AA%97%E5%8F%A3%E5%8C%96%E5%90%AF%E5%8A%A8%E6%B8%B8%E6%88%8F/">
           [UE4]窗口化启动游戏
         </a>
@@ -1144,68 +1205,12 @@ https://docs.unrealengine.com/latest/INT/Engine/OpenWorldTools/ProceduralFoliage
       
         keywords: UE4、Overlap、Hit、Event、Callback、C++、Blueprint、Box Collision、BoxComponent、SphereComponent、Trace Channel、碰撞
 BoxComponent的Overlap事件 1，C++中的代码编写 这里我们演示的例子，是在角色身上创建一个BoxComponent，假设角色的C++ class叫AMyCharacter。 MyCharacter.h头文件中定义：
-//Box对象 UBoxComponent* CollisionMesh; //OverlapBegin事件的回调函数，注意函数签名！ UFUNCTION() void OnTestOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &amp; SweepResult); //OverlapEnd事件的回调函数，注意函数签名！ UFUNCTION() void OnTestOverlapEnd(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);  回调函数一定要加UFUNCTION()，否则无法注册成功，因为注册函数时使用了UE4编译器的反射。
+//Box对象 UBoxComponent* CollisionMesh; //OverlapBegin事件的回调函数，注意函数签名！ UFUNCTION() void OnTestOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &amp; SweepResult); //OverlapEnd事件的回调函数，注意函数签名！ UFUNCTION() void OnTestOverlapEnd(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);  回调函数一定要加UFUNCTION()，否则无法注册成功，因为UE4的代码生成工具需要通过该标识生成相应的代码，变相实现虚拟机编程语言（比如Java、C#）的反射。
  MyCharacter.cpp的构造函数中：
 //创建BoxComponent CollisionMesh = CreateDefaultSubobject&lt;UBoxComponent&gt;(TEXT(&quot;TestCollision&quot;)); CollisionMesh-&gt;SetBoxExtent(FVector(200.f, 200.f, 96.f)); CollisionMesh-&gt;bDynamicObstacle = true; CollisionMesh-&gt;SetupAttachment(GetRootComponent()); //如果需要Overlap事件，将bGenerateOverlapEvents设置为true。如果不设置，默认也为true。 CollisionMesh-&gt;bGenerateOverlapEvents = true; //注意：要触发Overlap事件，SetCollisionResponseToAllChannels要么不设置，要么设置为ECR_Overlap。 CollisionMesh-&gt;SetCollisionResponseToAllChannels(ECR_Overlap); /*CollisionMesh-&gt;SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block); CollisionMesh-&gt;SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Block); CollisionMesh-&gt;SetCollisionResponseToChannel(ECC_Pawn, ECR_Block); CollisionMesh-&gt;SetNotifyRigidBodyCollision(true); CollisionMesh-&gt;SetSimulatePhysics(true);*/ //要触发Overlap事件，碰撞对象需要勾选属性：Generate Overlap Events FScriptDelegate DelegateBegin; DelegateBegin.
       
       <p>
         <a href="https://dawnarc.com/2017/05/ue4c-%E5%88%9B%E5%BB%BAboxcollisionboxcomponent%E5%B9%B6%E6%B3%A8%E5%86%8Coverlap%E5%92%8Chit%E4%BA%8B%E4%BB%B6%E5%9B%9E%E8%B0%83%E5%87%BD%E6%95%B0/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-            
-              
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2017/05/ue4%E5%A6%82%E4%BD%95%E6%98%BE%E7%A4%BAboxcomponent%E7%9A%84%E8%BE%B9%E6%A1%86%E7%BA%BF/">
-          [UE4]如何显示BoxComponent的边框线
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2017-05-15T22:21:40&#43;08:00">
-        
-  May 15, 2017
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        比如，在角色蓝图中创建个BoxCollision：   在游戏运行过程中，box的边框是看不见的，如果想让边框可见，则不勾选Hidden in Game属性。对应的C++属性也是同名属性。   游戏运行中的效果：   青山遮不住，毕竟东流去。—辛弃疾《菩萨蛮》
-      
-      <p>
-        <a href="https://dawnarc.com/2017/05/ue4%E5%A6%82%E4%BD%95%E6%98%BE%E7%A4%BAboxcomponent%E7%9A%84%E8%BE%B9%E6%A1%86%E7%BA%BF/" class="postShorten-excerpt_link link">Continue reading</a>
         
       </p>
     </div>
@@ -1298,6 +1303,57 @@ BoxComponent的Overlap事件 1，C++中的代码编写 这里我们演示的例�
       <div class="no-result text-color-light text-center">no post found</div>
       <div class="results">
         
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/05/c-book-guide-and-list/">
+                <h3 class="media-heading">[C&#43;&#43;]Book Guide and List</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  May 5, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>keywords: C++ Book</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/05/c-equivalent-of-instanceof-object-type-checking-at-run-time/">
+                <h3 class="media-heading">[C&#43;&#43;]Equivalent of instanceof (object type checking at run-time)</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  May 5, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>keywords: C++, instanceof, typeof</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/05/ue4error-ensure-condition-failed-invocationlist-curfunctionindex-indelegate/">
+                <h3 class="media-heading">[UE4]Error - Ensure condition failed InvocationList[ CurFunctionIndex ] != InDelegate</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  May 5, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>keywords: UE4, Bind Function, Error</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
         
           <div class="media">
             
@@ -1418,57 +1474,6 @@ BoxComponent的Overlap事件 1，C++中的代码编写 这里我们演示的例�
             <hr>
           </div>
         
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/04/c-one-std-vector-containing-template-class-of-multiple-types/">
-                <h3 class="media-heading">[C&#43;&#43;]One std vector containing template class of multiple types</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Apr 4, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>keywords: vector, list, element, multiple template types</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/04/ue4error-msb3644-.netframeworkversionv4.6.2-were-not-found/">
-                <h3 class="media-heading">[UE4]error MSB3644 .NETFramework,Version=v4.6.2 were not found</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Apr 4, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>When compiling engine source of v4.22,</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/03/ue4animationblendspace-for-c-/">
-                <h3 class="media-heading">[UE4][Animation]BlendSpace for C&#43;&#43;</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Mar 3, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p><code>FAnimNode_BlendSpacePlayer</code> is the native source of <code>BlendSpace</code> which used in Animation Blueprint.</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
       </div>
     </div>
     <div class="modal-footer">
@@ -1476,7 +1481,7 @@ BoxComponent的Overlap事件 1，C++中的代码编写 这里我们演示的例�
          data-message-zero="no post found"
          data-message-one="1 post found"
          data-message-other="{n} posts found">
-         494 posts found
+         497 posts found
       </p>
     </div>
   </div>

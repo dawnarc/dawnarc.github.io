@@ -321,6 +321,66 @@ if (!doNotTrack) {
     
     <div class="postShorten-header">
       <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2018/04/ue4loadobject%E5%8A%A0%E8%BD%BDuanimblueprint%E5%A4%B1%E8%B4%A5/">
+          [UE4]LoadObject加载UAnimBlueprint失败
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2018-04-14T22:10:02&#43;08:00">
+        
+  April 14, 2018
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        keywords：UE4、Dynamic Load、Animation Blueprint、LoadObject、动画蓝图
+问题现象 假如用以下方式加载动画蓝图：
+FString AnimBPStringTest = &quot;AnimBlueprint'/Game/ThirdPerson/Animations/ThirdPerson_AnimBP.ThirdPerson_AnimBP'&quot;; UAnimBlueprint* AnimationBP = LoadObject&lt;UAnimBlueprint&gt;(NULL, *AnimBPStringTest);  在PIE和Standalone模式下都可加载成功，但是一旦打包运行（打包配置中添加了该资源cook）就会加载失败，并提示如下错误：
+LogUObjectGlobals:Warning: Failed to find object 'AnimBlueprint /Game/ThirdPerson/Animations/ThirdPerson_AnimBP.ThirdPerson_AnimBP'  解决办法 貌似动画蓝图比较特殊，用LoadObject无法加载，如果要获取动画蓝图Class，可以通过如下方式加载：
+// get the blueprint class reference from the editor FString AnimClassStringTest = &quot;Class'/Game/mixamo/Heidi/IcloneAnimBP.IcloneAnimBP_C'&quot;; // load the class UClass* AnimationClass = LoadObject&lt;UClass&gt;(NULL, *AnimClassStringTest); if (!AnimationClass) return; // assign the anim blueprint class to your skeletal mesh component Skeletal3DMeshComponent-&gt;SetAnimInstanceClass(AnimationClass);  参考：Why can&rsquo;t i dynamically load an animation BP in a packaged game
+      
+      <p>
+        <a href="https://dawnarc.com/2018/04/ue4loadobject%E5%8A%A0%E8%BD%BDuanimblueprint%E5%A4%B1%E8%B4%A5/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
         <a class="link-unstyled" href="https://dawnarc.com/2018/04/ue4animation-blend%E5%8A%A8%E7%94%BB%E8%9E%8D%E5%90%88/">
           [UE4]Animation Blend(动画融合)
         </a>
@@ -700,8 +760,8 @@ void UBags::NativeConstruct() { Super::NativeConstruct(); //获取UMG蓝图摆�
     
     <div class="postShorten-header">
       <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2018/03/ue4c-bindufunction%E6%97%B6%E4%BC%A0%E9%80%92%E5%8F%82%E6%95%B0bindufunction-with-variable-capture-in-c-/">
-          [UE4]C&#43;&#43; BindUFunction时传递参数(BindUFunction with Variable Capture in C&#43;&#43;)
+        <a class="link-unstyled" href="https://dawnarc.com/2018/03/ue4event-delegate-multi-cast-related/">
+          [UE4]Event, Delegate, Multi-cast Related
         </a>
       </h1>
       
@@ -727,15 +787,15 @@ void UBags::NativeConstruct() { Super::NativeConstruct(); //获取UMG蓝图摆�
     </div>
     <div class="postShorten-excerpt" itemprop="articleBody">
       
-        keywords：UE4、BindUFunction、BindUObject、Pass Arguments、Variable
-示例1：
+        keywords：UE4, BindRaw, BindUFunction, BindUObject, Pass Arguments, Variable
+BindUFunction传递参数 示例1：
 void UMyClass::FunctionWithVar(const FString&amp; MyVar, TFunction&lt;void(const FString&amp;)&gt; InFunction) { MyLambdaHandle = OnMyDelegate.BindStatic([MyVar](TFunction&lt;void(const FString&amp;)&gt; callback) {callback(MyVar);}, InFunction); // TODO: You have to track MyLambdaHandle to be able to unregister it when needed }  https://answers.unrealengine.com/questions/715835/bindufunction-with-variable-capture-in-c.html
 示例2：
 使用固定参数绑定
 DECLARE_DELEGATE(RefreshOne); class MyClass { public: MyClass() { one.BindRaw(this, &amp;MyClass::MyFunction, (uint8)1); } void MyFunction(uint8 Val) { // Whatever } void Invoke() { one.Execute(); // Will call this-&gt;MyFunction((uint8)1); } private: RefreshOne one; };  使用动态参数绑定
       
       <p>
-        <a href="https://dawnarc.com/2018/03/ue4c-bindufunction%E6%97%B6%E4%BC%A0%E9%80%92%E5%8F%82%E6%95%B0bindufunction-with-variable-capture-in-c-/" class="postShorten-excerpt_link link">Continue reading</a>
+        <a href="https://dawnarc.com/2018/03/ue4event-delegate-multi-cast-related/" class="postShorten-excerpt_link link">Continue reading</a>
         
       </p>
     </div>
@@ -1183,68 +1243,6 @@ Materials for Mobile Platforms https://docs.unrealengine.com/latest/INT/Platform
 </article>
 
             
-              
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2018/03/ue4xcode-build-project-failed-build.sh-failed-with-exit-code-5/">
-          [UE4]Xcode Build Project Failed - Build.sh failed with exit code 5
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2018-03-12T22:08:02&#43;08:00">
-        
-  March 12, 2018
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        生成Xcode project file之后，打开Xcode并编译运行（Cmd + R ），提示以下错误:
-Command /Users/Shared/EpicGames/UE_4.18/Engine/Build/BatchFiles/Mac/Build.sh failed with exit code 5  解决办法：
-打开Launcher -》 Library -》 点击对应引擎版本下拉框 -》 Verify。然后继续编译Xcode工程（不用清理，如果清理重编，可能还会出现exit code 5的错误）
-感觉是UE4的bug，出现这种问题的环境是：
-Mac OSX 10.13.3，Xcode 9.3，UE4.18 / 4.19
-出现这个问题的原因，是因为我的UE4工程引用的第三方库没有对应的Mac版本（x86_64），所以每次一清理就出现exit code 5的错误，将工程所引用的所有第三方库都编译出对应的Mac版本，即可彻底解决此问题。xcode之前没用过，不知道其他C++工程对于缺少链接库的编译错误，是否都报exit code 5错误。
-你锋芒太露，这是你的弱点，你像把无鞘刀，锋利，但好刀应在刀鞘里。---- 黑泽明《穿心剑》
-      
-      <p>
-        <a href="https://dawnarc.com/2018/03/ue4xcode-build-project-failed-build.sh-failed-with-exit-code-5/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-            
             
   <div class="pagination-bar">
     <ul class="pagination">
@@ -1329,6 +1327,57 @@ Mac OSX 10.13.3，Xcode 9.3，UE4.18 / 4.19
       <div class="no-result text-color-light text-center">no post found</div>
       <div class="results">
         
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/05/c-book-guide-and-list/">
+                <h3 class="media-heading">[C&#43;&#43;]Book Guide and List</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  May 5, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>keywords: C++ Book</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/05/c-equivalent-of-instanceof-object-type-checking-at-run-time/">
+                <h3 class="media-heading">[C&#43;&#43;]Equivalent of instanceof (object type checking at run-time)</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  May 5, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>keywords: C++, instanceof, typeof</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/05/ue4error-ensure-condition-failed-invocationlist-curfunctionindex-indelegate/">
+                <h3 class="media-heading">[UE4]Error - Ensure condition failed InvocationList[ CurFunctionIndex ] != InDelegate</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  May 5, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>keywords: UE4, Bind Function, Error</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
         
           <div class="media">
             
@@ -1449,57 +1498,6 @@ Mac OSX 10.13.3，Xcode 9.3，UE4.18 / 4.19
             <hr>
           </div>
         
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/04/c-one-std-vector-containing-template-class-of-multiple-types/">
-                <h3 class="media-heading">[C&#43;&#43;]One std vector containing template class of multiple types</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Apr 4, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>keywords: vector, list, element, multiple template types</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/04/ue4error-msb3644-.netframeworkversionv4.6.2-were-not-found/">
-                <h3 class="media-heading">[UE4]error MSB3644 .NETFramework,Version=v4.6.2 were not found</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Apr 4, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>When compiling engine source of v4.22,</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/03/ue4animationblendspace-for-c-/">
-                <h3 class="media-heading">[UE4][Animation]BlendSpace for C&#43;&#43;</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Mar 3, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p><code>FAnimNode_BlendSpacePlayer</code> is the native source of <code>BlendSpace</code> which used in Animation Blueprint.</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
       </div>
     </div>
     <div class="modal-footer">
@@ -1507,7 +1505,7 @@ Mac OSX 10.13.3，Xcode 9.3，UE4.18 / 4.19
          data-message-zero="no post found"
          data-message-one="1 post found"
          data-message-other="{n} posts found">
-         494 posts found
+         497 posts found
       </p>
     </div>
   </div>
