@@ -11,29 +11,33 @@
 <meta name="description" content="转载请注明原文出处：https://dawnarc.com
 keywords：UE4、Replication、Relicate、reliable、RPC、RTS Movement、Dedicated Server、属性同步、位移同步、专用服务器、demo、example
 实例的完整工程下载地址见文章底部
-属性同步 步骤：
+属性同步 属性同步基本用法 步骤：
 1，对属性添加UPROPERTY(Replicated)宏：
 //Player display name UPROPERTY(Replicated) FString Alias_;  2，属性所在的class中重写函数GetLifetimeReplicatedProps：
 需要头文件：
 #include &quot;Net/UnrealNetwork.h&quot;  重写函数：
-void AReplTestCharacter::GetLifetimeReplicatedProps(TArray&lt; FLifetimeProperty &gt; &amp; OutLifetimeProps) const { Super::GetLifetimeReplicatedProps(OutLifetimeProps); DOREPLIFETIME(AReplTestCharacter, Alias_); }  RPC（远程执行调用） 步骤：
+void AReplTestCharacter::GetLifetimeReplicatedProps(TArray&lt; FLifetimeProperty &gt; &amp; OutLifetimeProps) const { Super::GetLifetimeReplicatedProps(OutLifetimeProps); DOREPLIFETIME(AReplTestCharacter, Alias_); }  属性同步扩展用法 如何为同步属性添加回调函数？
+用法：
+UPROPERTY(ReplicatedUsing = OnHPChanged) float HealthPoint; UFUNCTION() void OnHPChanged();  ReplicatedUsing只在客户端执行，服务端不执行。客户端相关表现逻辑可以放在ReplicatedUsing回调函数。另外函数需要添加·UFUNCTION·。
+ RPC（远程执行调用） 步骤：
 1，对需要远程执行的函数添加宏UFUNCTION(Server, Reliable, WithValidation)或者UFUNCTION(Client, Reliable)。其中Server表示在客户端调用，在服务端执行；WithValidation表示是否需要验证函数，加上的画需要添加函数：bool MyFun_Validate()，函数体内容写在MyFun_Implementation函数内。cpp中不需要与函数名同名的函数体，只需要实现_Validate和_Implementation两个函数即可。 头文件：
-//移动角色(只在服务端执行的函数) UFUNCTION(Server, Reliable, WithValidation) void ServerMoveToDest(APawn* Panw, const FVector DestLocation); bool ServerMoveToDest_Validate(APawn* Panw, const FVector DestLocation); void ServerMoveToDest_Implementation(APawn* Panw, const FVector DestLocation);  CPP：
-bool AReplTestPlayerController::ServerMoveToDest_Validate(APawn* Panw, const FVector DestLocation) { return true; } void AReplTestPlayerController::ServerMoveToDest_Implementation(APawn* Pawn, const FVector DestLocation) { //logic.">
+//移动角色(只在服务端执行的函数) UFUNCTION(Server, Reliable, WithValidation) void ServerMoveToDest(APawn* Panw, const FVector DestLocation); bool ServerMoveToDest_Validate(APawn* Panw, const FVector DestLocation); void ServerMoveToDest_Implementation(APawn* Panw, const FVector DestLocation);  CPP：">
 
 
 <meta property="og:description" content="转载请注明原文出处：https://dawnarc.com
 keywords：UE4、Replication、Relicate、reliable、RPC、RTS Movement、Dedicated Server、属性同步、位移同步、专用服务器、demo、example
 实例的完整工程下载地址见文章底部
-属性同步 步骤：
+属性同步 属性同步基本用法 步骤：
 1，对属性添加UPROPERTY(Replicated)宏：
 //Player display name UPROPERTY(Replicated) FString Alias_;  2，属性所在的class中重写函数GetLifetimeReplicatedProps：
 需要头文件：
 #include &quot;Net/UnrealNetwork.h&quot;  重写函数：
-void AReplTestCharacter::GetLifetimeReplicatedProps(TArray&lt; FLifetimeProperty &gt; &amp; OutLifetimeProps) const { Super::GetLifetimeReplicatedProps(OutLifetimeProps); DOREPLIFETIME(AReplTestCharacter, Alias_); }  RPC（远程执行调用） 步骤：
+void AReplTestCharacter::GetLifetimeReplicatedProps(TArray&lt; FLifetimeProperty &gt; &amp; OutLifetimeProps) const { Super::GetLifetimeReplicatedProps(OutLifetimeProps); DOREPLIFETIME(AReplTestCharacter, Alias_); }  属性同步扩展用法 如何为同步属性添加回调函数？
+用法：
+UPROPERTY(ReplicatedUsing = OnHPChanged) float HealthPoint; UFUNCTION() void OnHPChanged();  ReplicatedUsing只在客户端执行，服务端不执行。客户端相关表现逻辑可以放在ReplicatedUsing回调函数。另外函数需要添加·UFUNCTION·。
+ RPC（远程执行调用） 步骤：
 1，对需要远程执行的函数添加宏UFUNCTION(Server, Reliable, WithValidation)或者UFUNCTION(Client, Reliable)。其中Server表示在客户端调用，在服务端执行；WithValidation表示是否需要验证函数，加上的画需要添加函数：bool MyFun_Validate()，函数体内容写在MyFun_Implementation函数内。cpp中不需要与函数名同名的函数体，只需要实现_Validate和_Implementation两个函数即可。 头文件：
-//移动角色(只在服务端执行的函数) UFUNCTION(Server, Reliable, WithValidation) void ServerMoveToDest(APawn* Panw, const FVector DestLocation); bool ServerMoveToDest_Validate(APawn* Panw, const FVector DestLocation); void ServerMoveToDest_Implementation(APawn* Panw, const FVector DestLocation);  CPP：
-bool AReplTestPlayerController::ServerMoveToDest_Validate(APawn* Panw, const FVector DestLocation) { return true; } void AReplTestPlayerController::ServerMoveToDest_Implementation(APawn* Pawn, const FVector DestLocation) { //logic.">
+//移动角色(只在服务端执行的函数) UFUNCTION(Server, Reliable, WithValidation) void ServerMoveToDest(APawn* Panw, const FVector DestLocation); bool ServerMoveToDest_Validate(APawn* Panw, const FVector DestLocation); void ServerMoveToDest_Implementation(APawn* Panw, const FVector DestLocation);  CPP：">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[UE4]Dedicated Server同步示例全流程(登录、Replication和RPC)">
 <meta name="twitter:title" content="[UE4]Dedicated Server同步示例全流程(登录、Replication和RPC)">
@@ -43,27 +47,31 @@ bool AReplTestPlayerController::ServerMoveToDest_Validate(APawn* Panw, const FVe
 <meta property="og:description" content="转载请注明原文出处：https://dawnarc.com
 keywords：UE4、Replication、Relicate、reliable、RPC、RTS Movement、Dedicated Server、属性同步、位移同步、专用服务器、demo、example
 实例的完整工程下载地址见文章底部
-属性同步 步骤：
+属性同步 属性同步基本用法 步骤：
 1，对属性添加UPROPERTY(Replicated)宏：
 //Player display name UPROPERTY(Replicated) FString Alias_;  2，属性所在的class中重写函数GetLifetimeReplicatedProps：
 需要头文件：
 #include &quot;Net/UnrealNetwork.h&quot;  重写函数：
-void AReplTestCharacter::GetLifetimeReplicatedProps(TArray&lt; FLifetimeProperty &gt; &amp; OutLifetimeProps) const { Super::GetLifetimeReplicatedProps(OutLifetimeProps); DOREPLIFETIME(AReplTestCharacter, Alias_); }  RPC（远程执行调用） 步骤：
+void AReplTestCharacter::GetLifetimeReplicatedProps(TArray&lt; FLifetimeProperty &gt; &amp; OutLifetimeProps) const { Super::GetLifetimeReplicatedProps(OutLifetimeProps); DOREPLIFETIME(AReplTestCharacter, Alias_); }  属性同步扩展用法 如何为同步属性添加回调函数？
+用法：
+UPROPERTY(ReplicatedUsing = OnHPChanged) float HealthPoint; UFUNCTION() void OnHPChanged();  ReplicatedUsing只在客户端执行，服务端不执行。客户端相关表现逻辑可以放在ReplicatedUsing回调函数。另外函数需要添加·UFUNCTION·。
+ RPC（远程执行调用） 步骤：
 1，对需要远程执行的函数添加宏UFUNCTION(Server, Reliable, WithValidation)或者UFUNCTION(Client, Reliable)。其中Server表示在客户端调用，在服务端执行；WithValidation表示是否需要验证函数，加上的画需要添加函数：bool MyFun_Validate()，函数体内容写在MyFun_Implementation函数内。cpp中不需要与函数名同名的函数体，只需要实现_Validate和_Implementation两个函数即可。 头文件：
-//移动角色(只在服务端执行的函数) UFUNCTION(Server, Reliable, WithValidation) void ServerMoveToDest(APawn* Panw, const FVector DestLocation); bool ServerMoveToDest_Validate(APawn* Panw, const FVector DestLocation); void ServerMoveToDest_Implementation(APawn* Panw, const FVector DestLocation);  CPP：
-bool AReplTestPlayerController::ServerMoveToDest_Validate(APawn* Panw, const FVector DestLocation) { return true; } void AReplTestPlayerController::ServerMoveToDest_Implementation(APawn* Pawn, const FVector DestLocation) { //logic.">
+//移动角色(只在服务端执行的函数) UFUNCTION(Server, Reliable, WithValidation) void ServerMoveToDest(APawn* Panw, const FVector DestLocation); bool ServerMoveToDest_Validate(APawn* Panw, const FVector DestLocation); void ServerMoveToDest_Implementation(APawn* Panw, const FVector DestLocation);  CPP：">
 <meta name="twitter:description" content="转载请注明原文出处：https://dawnarc.com
 keywords：UE4、Replication、Relicate、reliable、RPC、RTS Movement、Dedicated Server、属性同步、位移同步、专用服务器、demo、example
 实例的完整工程下载地址见文章底部
-属性同步 步骤：
+属性同步 属性同步基本用法 步骤：
 1，对属性添加UPROPERTY(Replicated)宏：
 //Player display name UPROPERTY(Replicated) FString Alias_;  2，属性所在的class中重写函数GetLifetimeReplicatedProps：
 需要头文件：
 #include &quot;Net/UnrealNetwork.h&quot;  重写函数：
-void AReplTestCharacter::GetLifetimeReplicatedProps(TArray&lt; FLifetimeProperty &gt; &amp; OutLifetimeProps) const { Super::GetLifetimeReplicatedProps(OutLifetimeProps); DOREPLIFETIME(AReplTestCharacter, Alias_); }  RPC（远程执行调用） 步骤：
+void AReplTestCharacter::GetLifetimeReplicatedProps(TArray&lt; FLifetimeProperty &gt; &amp; OutLifetimeProps) const { Super::GetLifetimeReplicatedProps(OutLifetimeProps); DOREPLIFETIME(AReplTestCharacter, Alias_); }  属性同步扩展用法 如何为同步属性添加回调函数？
+用法：
+UPROPERTY(ReplicatedUsing = OnHPChanged) float HealthPoint; UFUNCTION() void OnHPChanged();  ReplicatedUsing只在客户端执行，服务端不执行。客户端相关表现逻辑可以放在ReplicatedUsing回调函数。另外函数需要添加·UFUNCTION·。
+ RPC（远程执行调用） 步骤：
 1，对需要远程执行的函数添加宏UFUNCTION(Server, Reliable, WithValidation)或者UFUNCTION(Client, Reliable)。其中Server表示在客户端调用，在服务端执行；WithValidation表示是否需要验证函数，加上的画需要添加函数：bool MyFun_Validate()，函数体内容写在MyFun_Implementation函数内。cpp中不需要与函数名同名的函数体，只需要实现_Validate和_Implementation两个函数即可。 头文件：
-//移动角色(只在服务端执行的函数) UFUNCTION(Server, Reliable, WithValidation) void ServerMoveToDest(APawn* Panw, const FVector DestLocation); bool ServerMoveToDest_Validate(APawn* Panw, const FVector DestLocation); void ServerMoveToDest_Implementation(APawn* Panw, const FVector DestLocation);  CPP：
-bool AReplTestPlayerController::ServerMoveToDest_Validate(APawn* Panw, const FVector DestLocation) { return true; } void AReplTestPlayerController::ServerMoveToDest_Implementation(APawn* Pawn, const FVector DestLocation) { //logic.">
+//移动角色(只在服务端执行的函数) UFUNCTION(Server, Reliable, WithValidation) void ServerMoveToDest(APawn* Panw, const FVector DestLocation); bool ServerMoveToDest_Validate(APawn* Panw, const FVector DestLocation); void ServerMoveToDest_Implementation(APawn* Panw, const FVector DestLocation);  CPP：">
 <meta property="og:locale" content="en-us">
 
   
@@ -399,7 +407,9 @@ if (!doNotTrack) {
 
 <p>实例的完整工程下载地址见文章底部</p>
 
-<h5 id="属性同步">属性同步</h5>
+<h3 id="属性同步">属性同步</h3>
+
+<h5 id="属性同步基本用法">属性同步基本用法</h5>
 
 <p>步骤：<br />
 1，对属性添加UPROPERTY(Replicated)宏：</p>
@@ -425,7 +435,24 @@ UPROPERTY(Replicated)
 }
 </code></pre>
 
-<h5 id="rpc-远程执行调用">RPC（远程执行调用）</h5>
+<h5 id="属性同步扩展用法">属性同步扩展用法</h5>
+
+<p>如何为同步属性添加回调函数？</p>
+
+<p>用法：</p>
+
+<pre><code>UPROPERTY(ReplicatedUsing = OnHPChanged)
+    float HealthPoint;
+
+UFUNCTION()
+    void OnHPChanged();
+</code></pre>
+
+<div class="alert info ">
+  <p><code>ReplicatedUsing</code>只在客户端执行，服务端不执行。客户端相关表现逻辑可以放在<code>ReplicatedUsing</code>回调函数。另外函数需要添加·UFUNCTION·。</p>
+</div>
+
+<h3 id="rpc-远程执行调用">RPC（远程执行调用）</h3>
 
 <p>步骤：<br />
 1，对需要远程执行的函数添加宏UFUNCTION(Server, Reliable, WithValidation)或者UFUNCTION(Client, Reliable)。其中Server表示在客户端调用，在服务端执行；WithValidation表示是否需要验证函数，加上的画需要添加函数：bool MyFun_Validate()，函数体内容写在MyFun_Implementation函数内。cpp中不需要与函数名同名的函数体，只需要实现_Validate和_Implementation两个函数即可。
@@ -451,7 +478,7 @@ void AReplTestPlayerController::ServerMoveToDest_Implementation(APawn* Pawn, con
 }
 </code></pre>
 
-<p><strong>三种 RPC 函数区别</strong>：</p>
+<h5 id="三种-rpc-函数区别">三种 RPC 函数区别</h5>
 
 <ul>
 <li>UFUNCTION(Server, Reliable, WithValidation) 客户端请求，服务端执行。<br />
@@ -489,7 +516,7 @@ Since the server can own actors itself, a &ldquo;Run on Owning Client&rdquo; eve
 </figure>
 </p>
 
-<h4 id="同步相关的基础概念">同步相关的基础概念</h4>
+<h3 id="同步相关的基础概念">同步相关的基础概念</h3>
 
 <h5 id="netmode">NetMode</h5>
 
@@ -527,7 +554,9 @@ UE4Editor-Engine.dll!APlayerController::OnPossess(APawn * PawnToPossess) Line 77
 UE4Editor-Engine.dll!AController::Possess(APawn * InPawn) Line 293  C++
 </code></pre>
 
-<h5 id="hahahugoshortcode-0xc000d32f00-17-hbhb"><span class="highlight-text purple">如何让一个ROLE_SimulatedProxy对象变成ROLE_AutonomousProxy</span></h5>
+<h3 id="同步相关的常见问题">同步相关的常见问题</h3>
+
+<h5 id="hahahugoshortcode-0xc00137ca00-18-hbhb"><span class="highlight-text purple">如何让一个ROLE_SimulatedProxy对象变成ROLE_AutonomousProxy</span></h5>
 
 <p>先补充一个概念：服务端连接（非官方文档，自己通过实践后的理解），比如，<code>AGameModeBase::PostLogin(APlayerController* NewPlayer)</code>中的<code>PlayerController</code>就是拥有服务端连接的对象，<span class="highlight-text green">在服务端，其可以调用Client function且能保证该Client function在客户端执行；在客户端，其也有权限调用 Server function且能保证该Server function在服务端执行。</span></p>
 
@@ -952,12 +981,30 @@ ntdll
 如何让<code>Replicated</code>属性同步给所有客户端？执行：<code>bOnlyRelevantToOwner = false;</code>。默认为true，表示只同步给自己的Owner。
 <div class="alert warning ">
   <p>官方文档说在运行时期间修改<code>bOnlyRelevantToOwner</code>对其他客户端无效，需要其他客户端重连才会生效。官方文档不一定准确，待验证。。</p>
+</div>
+<div class="alert success ">
+  <p><code>bOnlyRelevantToOwner</code>的另一个用途：服务端启动时（比如：GameMode的BeginPlay函数中）创建的对象，即使<code>bReplicates = true;</code>，客户端连上来之后，这些对象不会同步到客户端，如何让客户端登陆成功后自动获取到服务端中已经存在的对象？答案：将这些服务端对象的<code>bOnlyRelevantToOwner</code>设置为false。</p>
 </div></p></li>
 
 <li><p><code>Replicated</code>属性如何选择性的同步给指定客户端？<br />
 使用<code>DOREPLIFETIME_CONDITION</code>修饰同步属性，比如<code>COND_SkipOwner</code>就表示同步给除Owner以外的所有客户端。</p>
 
 <pre><code>DOREPLIFETIME_CONDITION(AWeaponModule, CurrWeapon, COND_SkipOwner);
+</code></pre></li>
+
+<li><p><span class="highlight-text red">如果一个Actor没有SetRootComponent，即使开启同步，也不会同步到客户端。</span><br />
+如果Actor不需要任何Component，建议在给其创建一个空白Component作为RootComponent。</p>
+
+<pre><code>AMyActor::AMyActor()
+{
+    bReplicates = true;
+
+    EmptyRootComp = CreateDefaultSubobject&lt;USceneComponent&gt;(TEXT(&quot;EmptyRootComp&quot;));
+    if (EmptyRootComp)
+    {
+        SetRootComponent(EmptyRootComp);
+    }
+}
 </code></pre></li>
 </ol>
 
@@ -1202,6 +1249,23 @@ float NetPriority
           <div class="media">
             
             <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/05/visualstudioproject-directory-structure-lost-in-solution-explorer/">
+                <h3 class="media-heading">[VisualStudio]Project Directory Structure Lost in Solution Explorer</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  May 5, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>keywords: Visual Studio, Solution Explorer, Directory Structure</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
               <a class="link-unstyled" href="https://dawnarc.com/2019/05/c-book-guide-and-list/">
                 <h3 class="media-heading">[C&#43;&#43;]Book Guide and List</h3>
               </a>
@@ -1352,23 +1416,6 @@ float NetPriority
             <hr>
           </div>
         
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/04/ue4error-skeletal-mesh-di-function-gettripositionws-has-been-deprecated/">
-                <h3 class="media-heading">[UE4]Error Skeletal Mesh DI Function GetTriPositionWS has been deprecated</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Apr 4, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>When upgrade engine from v4.20 to v4.22, SkeletalMesh Cook failed.</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
       </div>
     </div>
     <div class="modal-footer">
@@ -1376,7 +1423,7 @@ float NetPriority
          data-message-zero="no post found"
          data-message-one="1 post found"
          data-message-other="{n} posts found">
-         497 posts found
+         498 posts found
       </p>
     </div>
   </div>

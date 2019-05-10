@@ -1083,9 +1083,8 @@ https://docs.unrealengine.com/latest/INT/Engine/OpenWorldTools/ProceduralFoliage
       
         keywords: UE4、Overlap、Hit、Event、Callback、C++、Blueprint、Box Collision、BoxComponent、SphereComponent、Trace Channel、碰撞
 BoxComponent的Overlap事件 1，C++中的代码编写 这里我们演示的例子，是在角色身上创建一个BoxComponent，假设角色的C++ class叫AMyCharacter。 MyCharacter.h头文件中定义：
-//Box对象 UBoxComponent* CollisionMesh; //OverlapBegin事件的回调函数，注意函数签名！ UFUNCTION() void OnTestOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &amp; SweepResult); //OverlapEnd事件的回调函数，注意函数签名！ UFUNCTION() void OnTestOverlapEnd(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);  回调函数一定要加UFUNCTION()，否则无法注册成功，因为UE4的代码生成工具需要通过该标识生成相应的代码，变相实现虚拟机编程语言（比如Java、C#）的反射。
- MyCharacter.cpp的构造函数中：
-//创建BoxComponent CollisionMesh = CreateDefaultSubobject&lt;UBoxComponent&gt;(TEXT(&quot;TestCollision&quot;)); CollisionMesh-&gt;SetBoxExtent(FVector(200.f, 200.f, 96.f)); CollisionMesh-&gt;bDynamicObstacle = true; CollisionMesh-&gt;SetupAttachment(GetRootComponent()); //如果需要Overlap事件，将bGenerateOverlapEvents设置为true。如果不设置，默认也为true。 CollisionMesh-&gt;bGenerateOverlapEvents = true; //注意：要触发Overlap事件，SetCollisionResponseToAllChannels要么不设置，要么设置为ECR_Overlap。 CollisionMesh-&gt;SetCollisionResponseToAllChannels(ECR_Overlap); /*CollisionMesh-&gt;SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block); CollisionMesh-&gt;SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Block); CollisionMesh-&gt;SetCollisionResponseToChannel(ECC_Pawn, ECR_Block); CollisionMesh-&gt;SetNotifyRigidBodyCollision(true); CollisionMesh-&gt;SetSimulatePhysics(true);*/ //要触发Overlap事件，碰撞对象需要勾选属性：Generate Overlap Events FScriptDelegate DelegateBegin; DelegateBegin.
+//Box对象 UBoxComponent* CollisionMesh; //OverlapBegin事件的回调函数，注意函数签名！ UFUNCTION() void OnTestOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &amp; SweepResult); //OverlapEnd事件的回调函数，注意函数签名！ UFUNCTION() void OnTestOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);  旧版本函数签名：
+UFUNCTION() void OnTestOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &amp; SweepResult); UFUNCTION() void OnTestOverlapEnd(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);  回调函数一定要加UFUNCTION()，否则无法注册成功，因为UE4的代码生成工具需要通过该标识生成相应的代码，变相实现虚拟机编程语言（比如Java、C#）的反射。
       
       <p>
         <a href="https://dawnarc.com/2017/05/ue4c-%E5%88%9B%E5%BB%BAboxcollisionboxcomponent%E5%B9%B6%E6%B3%A8%E5%86%8Coverlap%E5%92%8Chit%E4%BA%8B%E4%BB%B6%E5%9B%9E%E8%B0%83%E5%87%BD%E6%95%B0/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -1299,6 +1298,23 @@ BoxComponent的Overlap事件 1，C++中的代码编写 这里我们演示的例�
           <div class="media">
             
             <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/05/visualstudioproject-directory-structure-lost-in-solution-explorer/">
+                <h3 class="media-heading">[VisualStudio]Project Directory Structure Lost in Solution Explorer</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  May 5, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>keywords: Visual Studio, Solution Explorer, Directory Structure</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
               <a class="link-unstyled" href="https://dawnarc.com/2019/05/c-book-guide-and-list/">
                 <h3 class="media-heading">[C&#43;&#43;]Book Guide and List</h3>
               </a>
@@ -1449,23 +1465,6 @@ BoxComponent的Overlap事件 1，C++中的代码编写 这里我们演示的例�
             <hr>
           </div>
         
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/04/ue4error-skeletal-mesh-di-function-gettripositionws-has-been-deprecated/">
-                <h3 class="media-heading">[UE4]Error Skeletal Mesh DI Function GetTriPositionWS has been deprecated</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Apr 4, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>When upgrade engine from v4.20 to v4.22, SkeletalMesh Cook failed.</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
       </div>
     </div>
     <div class="modal-footer">
@@ -1473,7 +1472,7 @@ BoxComponent的Overlap事件 1，C++中的代码编写 这里我们演示的例�
          data-message-zero="no post found"
          data-message-one="1 post found"
          data-message-other="{n} posts found">
-         497 posts found
+         498 posts found
       </p>
     </div>
   </div>

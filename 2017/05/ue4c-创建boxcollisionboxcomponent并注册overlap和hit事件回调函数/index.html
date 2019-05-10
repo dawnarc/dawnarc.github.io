@@ -10,16 +10,14 @@
 <meta name="keywords" content="">
 <meta name="description" content="keywords: UE4、Overlap、Hit、Event、Callback、C&#43;&#43;、Blueprint、Box Collision、BoxComponent、SphereComponent、Trace Channel、碰撞
 BoxComponent的Overlap事件 1，C&#43;&#43;中的代码编写 这里我们演示的例子，是在角色身上创建一个BoxComponent，假设角色的C&#43;&#43; class叫AMyCharacter。 MyCharacter.h头文件中定义：
-//Box对象 UBoxComponent* CollisionMesh; //OverlapBegin事件的回调函数，注意函数签名！ UFUNCTION() void OnTestOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &amp; SweepResult); //OverlapEnd事件的回调函数，注意函数签名！ UFUNCTION() void OnTestOverlapEnd(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);  回调函数一定要加UFUNCTION()，否则无法注册成功，因为UE4的代码生成工具需要通过该标识生成相应的代码，变相实现虚拟机编程语言（比如Java、C#）的反射。
- MyCharacter.cpp的构造函数中：
-//创建BoxComponent CollisionMesh = CreateDefaultSubobject&lt;UBoxComponent&gt;(TEXT(&quot;TestCollision&quot;)); CollisionMesh-&gt;SetBoxExtent(FVector(200.f, 200.f, 96.f)); CollisionMesh-&gt;bDynamicObstacle = true; CollisionMesh-&gt;SetupAttachment(GetRootComponent()); //如果需要Overlap事件，将bGenerateOverlapEvents设置为true。如果不设置，默认也为true。 CollisionMesh-&gt;bGenerateOverlapEvents = true; //注意：要触发Overlap事件，SetCollisionResponseToAllChannels要么不设置，要么设置为ECR_Overlap。 CollisionMesh-&gt;SetCollisionResponseToAllChannels(ECR_Overlap); /*CollisionMesh-&gt;SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block); CollisionMesh-&gt;SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Block); CollisionMesh-&gt;SetCollisionResponseToChannel(ECC_Pawn, ECR_Block); CollisionMesh-&gt;SetNotifyRigidBodyCollision(true); CollisionMesh-&gt;SetSimulatePhysics(true);*/ //要触发Overlap事件，碰撞对象需要勾选属性：Generate Overlap Events FScriptDelegate DelegateBegin; DelegateBegin.">
+//Box对象 UBoxComponent* CollisionMesh; //OverlapBegin事件的回调函数，注意函数签名！ UFUNCTION() void OnTestOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &amp; SweepResult); //OverlapEnd事件的回调函数，注意函数签名！ UFUNCTION() void OnTestOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);  旧版本函数签名：
+UFUNCTION() void OnTestOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &amp; SweepResult); UFUNCTION() void OnTestOverlapEnd(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);  回调函数一定要加UFUNCTION()，否则无法注册成功，因为UE4的代码生成工具需要通过该标识生成相应的代码，变相实现虚拟机编程语言（比如Java、C#）的反射。">
 
 
 <meta property="og:description" content="keywords: UE4、Overlap、Hit、Event、Callback、C&#43;&#43;、Blueprint、Box Collision、BoxComponent、SphereComponent、Trace Channel、碰撞
 BoxComponent的Overlap事件 1，C&#43;&#43;中的代码编写 这里我们演示的例子，是在角色身上创建一个BoxComponent，假设角色的C&#43;&#43; class叫AMyCharacter。 MyCharacter.h头文件中定义：
-//Box对象 UBoxComponent* CollisionMesh; //OverlapBegin事件的回调函数，注意函数签名！ UFUNCTION() void OnTestOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &amp; SweepResult); //OverlapEnd事件的回调函数，注意函数签名！ UFUNCTION() void OnTestOverlapEnd(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);  回调函数一定要加UFUNCTION()，否则无法注册成功，因为UE4的代码生成工具需要通过该标识生成相应的代码，变相实现虚拟机编程语言（比如Java、C#）的反射。
- MyCharacter.cpp的构造函数中：
-//创建BoxComponent CollisionMesh = CreateDefaultSubobject&lt;UBoxComponent&gt;(TEXT(&quot;TestCollision&quot;)); CollisionMesh-&gt;SetBoxExtent(FVector(200.f, 200.f, 96.f)); CollisionMesh-&gt;bDynamicObstacle = true; CollisionMesh-&gt;SetupAttachment(GetRootComponent()); //如果需要Overlap事件，将bGenerateOverlapEvents设置为true。如果不设置，默认也为true。 CollisionMesh-&gt;bGenerateOverlapEvents = true; //注意：要触发Overlap事件，SetCollisionResponseToAllChannels要么不设置，要么设置为ECR_Overlap。 CollisionMesh-&gt;SetCollisionResponseToAllChannels(ECR_Overlap); /*CollisionMesh-&gt;SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block); CollisionMesh-&gt;SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Block); CollisionMesh-&gt;SetCollisionResponseToChannel(ECC_Pawn, ECR_Block); CollisionMesh-&gt;SetNotifyRigidBodyCollision(true); CollisionMesh-&gt;SetSimulatePhysics(true);*/ //要触发Overlap事件，碰撞对象需要勾选属性：Generate Overlap Events FScriptDelegate DelegateBegin; DelegateBegin.">
+//Box对象 UBoxComponent* CollisionMesh; //OverlapBegin事件的回调函数，注意函数签名！ UFUNCTION() void OnTestOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &amp; SweepResult); //OverlapEnd事件的回调函数，注意函数签名！ UFUNCTION() void OnTestOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);  旧版本函数签名：
+UFUNCTION() void OnTestOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &amp; SweepResult); UFUNCTION() void OnTestOverlapEnd(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);  回调函数一定要加UFUNCTION()，否则无法注册成功，因为UE4的代码生成工具需要通过该标识生成相应的代码，变相实现虚拟机编程语言（比如Java、C#）的反射。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[UE4]C&#43;&#43;创建BoxCollision(BoxComponent)并注册Overlap和Hit事件回调函数">
 <meta name="twitter:title" content="[UE4]C&#43;&#43;创建BoxCollision(BoxComponent)并注册Overlap和Hit事件回调函数">
@@ -28,14 +26,12 @@ BoxComponent的Overlap事件 1，C&#43;&#43;中的代码编写 这里我们演�
 <meta property="og:site_name" content="玄冬Wong">
 <meta property="og:description" content="keywords: UE4、Overlap、Hit、Event、Callback、C&#43;&#43;、Blueprint、Box Collision、BoxComponent、SphereComponent、Trace Channel、碰撞
 BoxComponent的Overlap事件 1，C&#43;&#43;中的代码编写 这里我们演示的例子，是在角色身上创建一个BoxComponent，假设角色的C&#43;&#43; class叫AMyCharacter。 MyCharacter.h头文件中定义：
-//Box对象 UBoxComponent* CollisionMesh; //OverlapBegin事件的回调函数，注意函数签名！ UFUNCTION() void OnTestOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &amp; SweepResult); //OverlapEnd事件的回调函数，注意函数签名！ UFUNCTION() void OnTestOverlapEnd(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);  回调函数一定要加UFUNCTION()，否则无法注册成功，因为UE4的代码生成工具需要通过该标识生成相应的代码，变相实现虚拟机编程语言（比如Java、C#）的反射。
- MyCharacter.cpp的构造函数中：
-//创建BoxComponent CollisionMesh = CreateDefaultSubobject&lt;UBoxComponent&gt;(TEXT(&quot;TestCollision&quot;)); CollisionMesh-&gt;SetBoxExtent(FVector(200.f, 200.f, 96.f)); CollisionMesh-&gt;bDynamicObstacle = true; CollisionMesh-&gt;SetupAttachment(GetRootComponent()); //如果需要Overlap事件，将bGenerateOverlapEvents设置为true。如果不设置，默认也为true。 CollisionMesh-&gt;bGenerateOverlapEvents = true; //注意：要触发Overlap事件，SetCollisionResponseToAllChannels要么不设置，要么设置为ECR_Overlap。 CollisionMesh-&gt;SetCollisionResponseToAllChannels(ECR_Overlap); /*CollisionMesh-&gt;SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block); CollisionMesh-&gt;SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Block); CollisionMesh-&gt;SetCollisionResponseToChannel(ECC_Pawn, ECR_Block); CollisionMesh-&gt;SetNotifyRigidBodyCollision(true); CollisionMesh-&gt;SetSimulatePhysics(true);*/ //要触发Overlap事件，碰撞对象需要勾选属性：Generate Overlap Events FScriptDelegate DelegateBegin; DelegateBegin.">
+//Box对象 UBoxComponent* CollisionMesh; //OverlapBegin事件的回调函数，注意函数签名！ UFUNCTION() void OnTestOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &amp; SweepResult); //OverlapEnd事件的回调函数，注意函数签名！ UFUNCTION() void OnTestOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);  旧版本函数签名：
+UFUNCTION() void OnTestOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &amp; SweepResult); UFUNCTION() void OnTestOverlapEnd(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);  回调函数一定要加UFUNCTION()，否则无法注册成功，因为UE4的代码生成工具需要通过该标识生成相应的代码，变相实现虚拟机编程语言（比如Java、C#）的反射。">
 <meta name="twitter:description" content="keywords: UE4、Overlap、Hit、Event、Callback、C&#43;&#43;、Blueprint、Box Collision、BoxComponent、SphereComponent、Trace Channel、碰撞
 BoxComponent的Overlap事件 1，C&#43;&#43;中的代码编写 这里我们演示的例子，是在角色身上创建一个BoxComponent，假设角色的C&#43;&#43; class叫AMyCharacter。 MyCharacter.h头文件中定义：
-//Box对象 UBoxComponent* CollisionMesh; //OverlapBegin事件的回调函数，注意函数签名！ UFUNCTION() void OnTestOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &amp; SweepResult); //OverlapEnd事件的回调函数，注意函数签名！ UFUNCTION() void OnTestOverlapEnd(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);  回调函数一定要加UFUNCTION()，否则无法注册成功，因为UE4的代码生成工具需要通过该标识生成相应的代码，变相实现虚拟机编程语言（比如Java、C#）的反射。
- MyCharacter.cpp的构造函数中：
-//创建BoxComponent CollisionMesh = CreateDefaultSubobject&lt;UBoxComponent&gt;(TEXT(&quot;TestCollision&quot;)); CollisionMesh-&gt;SetBoxExtent(FVector(200.f, 200.f, 96.f)); CollisionMesh-&gt;bDynamicObstacle = true; CollisionMesh-&gt;SetupAttachment(GetRootComponent()); //如果需要Overlap事件，将bGenerateOverlapEvents设置为true。如果不设置，默认也为true。 CollisionMesh-&gt;bGenerateOverlapEvents = true; //注意：要触发Overlap事件，SetCollisionResponseToAllChannels要么不设置，要么设置为ECR_Overlap。 CollisionMesh-&gt;SetCollisionResponseToAllChannels(ECR_Overlap); /*CollisionMesh-&gt;SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block); CollisionMesh-&gt;SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Block); CollisionMesh-&gt;SetCollisionResponseToChannel(ECC_Pawn, ECR_Block); CollisionMesh-&gt;SetNotifyRigidBodyCollision(true); CollisionMesh-&gt;SetSimulatePhysics(true);*/ //要触发Overlap事件，碰撞对象需要勾选属性：Generate Overlap Events FScriptDelegate DelegateBegin; DelegateBegin.">
+//Box对象 UBoxComponent* CollisionMesh; //OverlapBegin事件的回调函数，注意函数签名！ UFUNCTION() void OnTestOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &amp; SweepResult); //OverlapEnd事件的回调函数，注意函数签名！ UFUNCTION() void OnTestOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);  旧版本函数签名：
+UFUNCTION() void OnTestOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &amp; SweepResult); UFUNCTION() void OnTestOverlapEnd(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);  回调函数一定要加UFUNCTION()，否则无法注册成功，因为UE4的代码生成工具需要通过该标识生成相应的代码，变相实现虚拟机编程语言（比如Java、C#）的反射。">
 <meta property="og:locale" content="en-us">
 
   
@@ -381,9 +377,18 @@ UBoxComponent* CollisionMesh;
 
 //OverlapBegin事件的回调函数，注意函数签名！
 UFUNCTION()
-    void OnTestOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &amp; SweepResult);
+    void OnTestOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &amp; SweepResult);
 
 //OverlapEnd事件的回调函数，注意函数签名！
+UFUNCTION()
+    void OnTestOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+</code></pre>
+
+<p>旧版本函数签名：</p>
+
+<pre><code>UFUNCTION()
+    void OnTestOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &amp; SweepResult);
+
 UFUNCTION()
     void OnTestOverlapEnd(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 </code></pre>
@@ -708,9 +713,9 @@ virtual void AActor::NotifyActorBeginOverlap(AActor* OtherActor);
 <pre><code>void UPrimitiveComponent::SetGenerateOverlapEvents(bool bInGenerateOverlapEvents)
 </code></pre>
 
-<h3 id="其他与碰撞相关">其他与碰撞相关：</h3>
+<h3 id="其他与碰撞相关">其他与碰撞相关</h3>
 
-<p>Component自身提供的检测函数有：</p>
+<h5 id="component自身提供的检测函数">Component自身提供的检测函数</h5>
 
 <pre><code>UPrimitiveComponent::LineTraceComponent();
 UPrimitiveComponent::SweepComponent();
@@ -727,6 +732,60 @@ UPrimitiveComponent::OverlapComponent();
 
 <pre><code>EventHit
 </code></pre>
+
+<h5 id="using-pure-c-process-overlap-event-of-skeletalmeshcomponent">Using pure C++ process Overlap Event of SkeletalMeshComponent</h5>
+
+<p>Header：</p>
+
+<pre><code>protected:
+
+UFUNCTION()
+    void OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &amp; SweepResult);
+
+UFUNCTION()
+    void OnOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+</code></pre>
+
+<p>Constructor</p>
+
+<pre><code>GunMesh = CreateDefaultSubobject&lt;USkeletalMeshComponent&gt;(TEXT(&quot;GunMesh&quot;));
+GunMesh-&gt;SetupAttachment(RootComponent);
+static ConstructorHelpers::FObjectFinder&lt;USkeletalMesh&gt; GunAsset(TEXT(&quot;SkeletalMesh'/Game/Assets/Weapons/Meshes/AR4/SK_AR4.SK_AR4'&quot;));
+if (GunAsset.Succeeded())
+{
+    GunMesh-&gt;SetSkeletalMesh(GunAsset.Object);
+}
+GunMesh-&gt;SetRelativeLocation(FVector(200.f, 0.f, 100.f));
+GunMesh-&gt;SetGenerateOverlapEvents(true);
+GunMesh-&gt;SetCollisionProfileName(&quot;OverlapAll&quot;);
+</code></pre>
+
+<p>Register Event：</p>
+
+<pre><code>void ATestTD2Character::BeginPlay()
+{
+    Super::BeginPlay();
+
+    GunMeshComp-&gt;OnComponentBeginOverlap.AddDynamic(this, &amp;ATestTD2Character::OnOverlapBegin);
+
+    GunMeshComp-&gt;OnComponentEndOverlap.AddDynamic(this, &amp;ATestTD2Character::OnOverlapEnd);
+}
+
+
+void ATestTD2Character::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &amp; SweepResult)
+{
+    GEngine-&gt;AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString(&quot;Weapon Overlap Begin ++++++&quot;));
+}
+
+void ATestTD2Character::OnOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+    GEngine-&gt;AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString(&quot;Weapon Overlap End ------&quot;));
+}
+</code></pre>
+
+<div class="alert warning ">
+  <p>If Physics Asset of SkeletalMesh is invalid, Overlap Event of SkeletalMeshComponent would not fire.</p>
+</div>
 
 <p>更多参考：<br />
 Events<br />
@@ -938,6 +997,23 @@ Events<br />
           <div class="media">
             
             <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/05/visualstudioproject-directory-structure-lost-in-solution-explorer/">
+                <h3 class="media-heading">[VisualStudio]Project Directory Structure Lost in Solution Explorer</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  May 5, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>keywords: Visual Studio, Solution Explorer, Directory Structure</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
               <a class="link-unstyled" href="https://dawnarc.com/2019/05/c-book-guide-and-list/">
                 <h3 class="media-heading">[C&#43;&#43;]Book Guide and List</h3>
               </a>
@@ -1088,23 +1164,6 @@ Events<br />
             <hr>
           </div>
         
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/04/ue4error-skeletal-mesh-di-function-gettripositionws-has-been-deprecated/">
-                <h3 class="media-heading">[UE4]Error Skeletal Mesh DI Function GetTriPositionWS has been deprecated</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Apr 4, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>When upgrade engine from v4.20 to v4.22, SkeletalMesh Cook failed.</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
       </div>
     </div>
     <div class="modal-footer">
@@ -1112,7 +1171,7 @@ Events<br />
          data-message-zero="no post found"
          data-message-one="1 post found"
          data-message-other="{n} posts found">
-         497 posts found
+         498 posts found
       </p>
     </div>
   </div>

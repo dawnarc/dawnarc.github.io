@@ -318,6 +318,67 @@ if (!doNotTrack) {
     
     <div class="postShorten-header">
       <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2017/10/mayamerge-vertices%E5%92%8Ctarget-weld%E7%9A%84%E5%8C%BA%E5%88%AB/">
+          [Maya]Merge Vertices和Target Weld的区别
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2017-10-03T00:23:40&#43;08:00">
+        
+  October 3, 2017
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/maya">Maya</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        Maya版本为2018
+Merge Vertices表示将多个顶点合并为一个点，且这个新的顶点的位置可能不是原有顶点的位置。 Target Weld 也是多个点合并为一个点，但是每次只能同时合并两个，且合并过程中需要手动指定起始顶点和目标顶点，而Merge Vertices则不用关心起始顶点和目标顶点。
+以下面的模型为例   两种效果分别为：
+Merge Vertices（合并点的间隔可以设置，这里为了演示将Threshold设置了最大，即合并为一个点）   Target Weld   Merge Vertices和Target Weld快捷键：按住Shift+鼠标右键-》Merge Vertices。     参考：
+Merge Vertices and Target Weld in Maya https://www.youtube.com/watch?v=LsDnWZ4hHTk
+效小节者不能行大威，恶小耻者不能立荣名。---《战国策》
+      
+      <p>
+        <a href="https://dawnarc.com/2017/10/mayamerge-vertices%E5%92%8Ctarget-weld%E7%9A%84%E5%8C%BA%E5%88%AB/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
         <a class="link-unstyled" href="https://dawnarc.com/2017/10/mayamodeling-toolkit-%E6%95%99%E7%A8%8B03symmetry-tool/">
           [Maya]Modeling Toolkit 教程03：Symmetry Tool
         </a>
@@ -1149,72 +1210,6 @@ FCanvasTextItem TextItem(Center2D, FText::FromString(FString(TEXT(&quot;测试�
 </article>
 
           
-            
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2017/09/ue4%E5%88%9B%E5%BB%BA%E8%87%AA%E5%AE%9A%E4%B9%89aicontroller%E7%9A%84%E6%96%B9%E6%B3%95c-/">
-          [UE4]创建自定义AIController的方法(C&#43;&#43;)
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2017-09-13T20:09:02&#43;08:00">
-        
-  September 13, 2017
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        之前写过如何用C++创建自定义PlayerController方式：
-FActorSpawnParameters SpawnInfo; SpawnInfo.Instigator = Instigator; SpawnInfo.ObjectFlags |= RF_Transient; // We never want to save player controllers into a map SpawnInfo.bDeferConstruction = true; AMyPlayerController* NewPC = GetWorld()-&gt;SpawnActor&lt;AMyPlayerController&gt;(AMyPlayerController::StaticClass(), SpawnLocation, SpawnRotation, SpawnInfo);  如果用同样的方式，在服务端创建AIController，会有问题，执行：
-EPathFollowingRequestResult::Type AAIController::MoveToLocation(const FVector&amp; Dest, ...);  返回值是Success，但是没有任何效果。
-原因：
-自己设置FActorSpawnParameters相关参数，对PlayerController可行，但是对AIController，相关参数设置不一样，导致AIController在服务端失效。
-解决办法：
-两种方式
-方式一：AIControllerClass指定 1，先为Character指定AI Controller Class，且禁用AutoPossessPlayer。这段代码可以放在构造函数中，保证在Possess之前设置好。以下3个属性也可以在角色蓝图中指定。
-AutoPossessPlayer = EAutoReceiveInput::Type::Disabled; AutoPossessAI = EAutoPossessAI::PlacedInWorld; AIControllerClass = AMyAIController::StaticClass();  2，Character被Spawn出来后，再执行：
-void APawn::SpawnDefaultController();  如果AutoPossessAI设置为Disable，则接着执行一下Possess：
-void AController::Possess(APawn* InPawn);  方式一：SpawnActor时使用默认FActorSpawnParameters。  AMyAIController* PC = GetWorld()-&gt;SpawnActor&lt;AMyAIController&gt;(AMyAIController::StaticClass(), SpawnLoc, SpawnRot);  不要自己设置FActorSpawnParameters，因为AIController和PlayerController表现不一样。
-      
-      <p>
-        <a href="https://dawnarc.com/2017/09/ue4%E5%88%9B%E5%BB%BA%E8%87%AA%E5%AE%9A%E4%B9%89aicontroller%E7%9A%84%E6%96%B9%E6%B3%95c-/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-          
           
   <div class="pagination-bar">
     <ul class="pagination">
@@ -1298,6 +1293,23 @@ void AController::Possess(APawn* InPawn);  方式一：SpawnActor时使用默认
       <div class="no-result text-color-light text-center">no post found</div>
       <div class="results">
         
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/05/visualstudioproject-directory-structure-lost-in-solution-explorer/">
+                <h3 class="media-heading">[VisualStudio]Project Directory Structure Lost in Solution Explorer</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  May 5, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>keywords: Visual Studio, Solution Explorer, Directory Structure</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
         
           <div class="media">
             
@@ -1452,23 +1464,6 @@ void AController::Possess(APawn* InPawn);  方式一：SpawnActor时使用默认
             <hr>
           </div>
         
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/04/ue4error-skeletal-mesh-di-function-gettripositionws-has-been-deprecated/">
-                <h3 class="media-heading">[UE4]Error Skeletal Mesh DI Function GetTriPositionWS has been deprecated</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Apr 4, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>When upgrade engine from v4.20 to v4.22, SkeletalMesh Cook failed.</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
       </div>
     </div>
     <div class="modal-footer">
@@ -1476,7 +1471,7 @@ void AController::Possess(APawn* InPawn);  方式一：SpawnActor时使用默认
          data-message-zero="no post found"
          data-message-one="1 post found"
          data-message-other="{n} posts found">
-         497 posts found
+         498 posts found
       </p>
     </div>
   </div>
