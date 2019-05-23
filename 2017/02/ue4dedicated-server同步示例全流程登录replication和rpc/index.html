@@ -556,7 +556,7 @@ UE4Editor-Engine.dll!AController::Possess(APawn * InPawn) Line 293  C++
 
 <h3 id="同步相关的常见问题">同步相关的常见问题</h3>
 
-<h5 id="hahahugoshortcode-0xc00137ca00-18-hbhb"><span class="highlight-text purple">如何让一个ROLE_SimulatedProxy对象变成ROLE_AutonomousProxy</span></h5>
+<h5 id="hahahugoshortcode-0xc0011d8f00-18-hbhb"><span class="highlight-text purple">如何让一个ROLE_SimulatedProxy对象变成ROLE_AutonomousProxy</span></h5>
 
 <p>先补充一个概念：服务端连接（非官方文档，自己通过实践后的理解），比如，<code>AGameModeBase::PostLogin(APlayerController* NewPlayer)</code>中的<code>PlayerController</code>就是拥有服务端连接的对象，<span class="highlight-text green">在服务端，其可以调用Client function且能保证该Client function在客户端执行；在客户端，其也有权限调用 Server function且能保证该Server function在服务端执行。</span></p>
 
@@ -1006,6 +1006,22 @@ ntdll
     }
 }
 </code></pre></li>
+
+<li><p>服务端的SkeletalMesh上Socket坐标和客户端不同步的问题。<br />
+问题现象：<br />
+客户端服务端分别获取的<code>GetSocketTransform()</code>值不一致，有很大的误差。<br />
+可能原因：<br />
+1，服务端的Bone Fresh关闭了。<br />
+解决办法：</p>
+
+<pre><code>Mesh-&gt;VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::AlwaysTickPoseAndRefreshBones;
+</code></pre>
+
+<p>2，动画状态不同步，比如：客户端的当前动画是持手枪，但是服务端的当前动画是持狙击。<br />
+解决办法：<br />
+切换动画时确保客户端服务端同时执行。</p></li>
+
+<li><p>射击游戏中，如果子弹是服务端生成，并同步到客户端，并且子弹是真实弹道（不是射线检测），并且在子弹的Hit事件中Destroy自己，那么当子弹速度过快时，且发射口离障碍物很近时，子弹还没来得及同步到客户端，子弹在服务端就已经消掉掉了，从而导致Hit事件只会在服务端触发，不会在客户端触发。而当发射口离障碍物有一定距离时（距离取决与子弹速度），客户端和服务端的Hit会同时触发。</p></li>
 </ol>
 
 <h3 id="示例工程下载地址">示例工程下载地址</h3>
@@ -1249,6 +1265,40 @@ float NetPriority
           <div class="media">
             
             <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/05/ue4scene-props-assets-collections/">
+                <h3 class="media-heading">[UE4]Scene Props Assets Collections</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  May 5, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>keywords: UE4, Scene Props Assets</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/05/ue4android-package-related/">
+                <h3 class="media-heading">[UE4]Android Package Related</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  May 5, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>keywords: UE4, Android Package</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
               <a class="link-unstyled" href="https://dawnarc.com/2019/05/visualstudioproject-directory-structure-lost-in-solution-explorer/">
                 <h3 class="media-heading">[VisualStudio]Project Directory Structure Lost in Solution Explorer</h3>
               </a>
@@ -1382,40 +1432,6 @@ float NetPriority
             <hr>
           </div>
         
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/04/versioncontrolgit-clone-error-ssl-certificate-problem-self-signed-certificate-in-certificate-chain/">
-                <h3 class="media-heading">[VersionControl]git clone error - SSL certificate problem self signed certificate in certificate chain</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Apr 4, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>Keywords: git, http, clone</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/04/ue4dedicated-server-start-failed-failed-to-load-pxfoundationprofile_x64.dll/">
-                <h3 class="media-heading">[UE4]Dedicated Server Start failed - Failed to load PxFoundationPROFILE_x64.dll</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Apr 4, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>Dedicated Server Startup failed, v4.22</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
       </div>
     </div>
     <div class="modal-footer">
@@ -1423,7 +1439,7 @@ float NetPriority
          data-message-zero="no post found"
          data-message-one="1 post found"
          data-message-other="{n} posts found">
-         498 posts found
+         500 posts found
       </p>
     </div>
   </div>
