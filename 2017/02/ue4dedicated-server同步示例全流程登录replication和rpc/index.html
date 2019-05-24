@@ -556,7 +556,7 @@ UE4Editor-Engine.dll!AController::Possess(APawn * InPawn) Line 293  C++
 
 <h3 id="同步相关的常见问题">同步相关的常见问题</h3>
 
-<h5 id="hahahugoshortcode-0xc0011d8f00-18-hbhb"><span class="highlight-text purple">如何让一个ROLE_SimulatedProxy对象变成ROLE_AutonomousProxy</span></h5>
+<h5 id="hahahugoshortcode-0xc000ae0500-18-hbhb"><span class="highlight-text purple">如何让一个ROLE_SimulatedProxy对象变成ROLE_AutonomousProxy</span></h5>
 
 <p>先补充一个概念：服务端连接（非官方文档，自己通过实践后的理解），比如，<code>AGameModeBase::PostLogin(APlayerController* NewPlayer)</code>中的<code>PlayerController</code>就是拥有服务端连接的对象，<span class="highlight-text green">在服务端，其可以调用Client function且能保证该Client function在客户端执行；在客户端，其也有权限调用 Server function且能保证该Server function在服务端执行。</span></p>
 
@@ -610,7 +610,7 @@ TestActor-&gt;SetOwner(NewPlayer);
 
 <ul>
 <li>除了对该 Actor 执行 <code>bReplicates = true;</code> 外，还要执行 <code>bNetUseOwnerRelevancy = true;</code></li>
-<li>该 Actor Spawn 之后，需要执行 <code>Actor-&gt;SetOwner(NewOwner);</code>，这个 NewOwner 是一个 Replicated 对象，比如 Character 。<span class="highlight-text red">NewOwner对象拥没拥有服务端连接无所谓。</span>对应的Get接口为：<code>GetOwner()</code>。</li>
+<li>该 Actor Spawn 之后，需要执行 <code>Actor-&gt;SetOwner(NewOwner);</code>，这个 NewOwner 是一个 Replicated 对象，比如 Character 。<span class="highlight-text green">NewOwner对象必须拥有服务端连接。</span>对应的Get接口为：<code>GetOwner()</code>。</li>
 </ul>
 
 <h5 id="关键函数">关键函数</h5>
