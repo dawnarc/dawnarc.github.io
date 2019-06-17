@@ -556,7 +556,7 @@ UE4Editor-Engine.dll!AController::Possess(APawn * InPawn) Line 293  C++
 
 <h3 id="同步相关的常见问题">同步相关的常见问题</h3>
 
-<h5 id="hahahugoshortcode-0xc000ae0500-18-hbhb"><span class="highlight-text purple">如何让一个ROLE_SimulatedProxy对象变成ROLE_AutonomousProxy</span></h5>
+<h5 id="hahahugoshortcode-0xc000f0c000-18-hbhb"><span class="highlight-text purple">如何让一个ROLE_SimulatedProxy对象变成ROLE_AutonomousProxy</span></h5>
 
 <p>先补充一个概念：服务端连接（非官方文档，自己通过实践后的理解），比如，<code>AGameModeBase::PostLogin(APlayerController* NewPlayer)</code>中的<code>PlayerController</code>就是拥有服务端连接的对象，<span class="highlight-text green">在服务端，其可以调用Client function且能保证该Client function在客户端执行；在客户端，其也有权限调用 Server function且能保证该Server function在服务端执行。</span></p>
 
@@ -613,6 +613,66 @@ TestActor-&gt;SetOwner(NewPlayer);
 <li>该 Actor Spawn 之后，需要执行 <code>Actor-&gt;SetOwner(NewOwner);</code>，这个 NewOwner 是一个 Replicated 对象，比如 Character 。<span class="highlight-text green">NewOwner对象必须拥有服务端连接。</span>对应的Get接口为：<code>GetOwner()</code>。</li>
 </ul>
 
+<h5 id="how-does-engine-check-if-actor-is-relevant-to-connection">How does engine check if Actor is relevant to connection</h5>
+
+<p>Critical Code:<br />
+Engine\Source\Runtime\Engine\Private\ActorReplication.cpp</p>
+
+<pre><code>bool AActor::IsNetRelevantFor(const AActor* RealViewer, const AActor* ViewTarget, const FVector&amp; SrcLocation) const
+{
+    if (bAlwaysRelevant || IsOwnedBy(ViewTarget) || IsOwnedBy(RealViewer) || this == ViewTarget || ViewTarget == Instigator)
+    {
+        return true;
+    }
+    else if ( bNetUseOwnerRelevancy &amp;&amp; Owner)
+    {
+        return Owner-&gt;IsNetRelevantFor(RealViewer, ViewTarget, SrcLocation);
+    }
+    else if ( bOnlyRelevantToOwner )
+    {
+        return false;
+    }
+    else if ( RootComponent &amp;&amp; RootComponent-&gt;GetAttachParent() &amp;&amp; RootComponent-&gt;GetAttachParent()-&gt;GetOwner() &amp;&amp; (Cast&lt;USkeletalMeshComponent&gt;(RootComponent-&gt;GetAttachParent()) || (RootComponent-&gt;GetAttachParent()-&gt;GetOwner() == Owner)) )
+    {
+        return RootComponent-&gt;GetAttachParent()-&gt;GetOwner()-&gt;IsNetRelevantFor(RealViewer, ViewTarget, SrcLocation);
+    }
+    else if( bHidden &amp;&amp; (!RootComponent || !RootComponent-&gt;IsCollisionEnabled()) )
+    {
+        return false;
+    }
+
+    if (!RootComponent)
+    {
+        UE_LOG(LogNet, Warning, TEXT(&quot;Actor %s / %s has no root component in AActor::IsNetRelevantFor. (Make bAlwaysRelevant=true?)&quot;), *GetClass()-&gt;GetName(), *GetName() );
+        return false;
+    }
+
+    return !GetDefault&lt;AGameNetworkManager&gt;()-&gt;bUseDistanceBasedRelevancy ||
+            IsWithinNetRelevancyDistance(SrcLocation);
+}
+</code></pre>
+
+<p>Call Stack:</p>
+
+<pre><code>UE4Editor-Engine.dll!AActor::IsNetRelevantFor(const AActor * RealViewer, const AActor * ViewTarget, const FVector &amp; SrcLocation) Line 320   C++
+[Inline Frame] UE4Editor-Engine.dll!IsActorRelevantToConnection(const AActor *) Line 3661   C++
+UE4Editor-Engine.dll!UNetDriver::ServerReplicateActors_PrioritizeActors(UNetConnection * Connection, const TArray&lt;FNetViewer,FDefaultAllocator&gt; &amp; ConnectionViewers, const TArray&lt;FNetworkObjectInfo *,FDefaultAllocator&gt; ConsiderList, const bool bCPUSaturated, FActorPriority * &amp; OutPriorityList, FActorPriority * * &amp; OutPriorityActors) Line 3780 C++
+UE4Editor-Engine.dll!UNetDriver::ServerReplicateActors(float DeltaSeconds) Line 4359    C++
+UE4Editor-Engine.dll!UNetDriver::TickFlush(float DeltaSeconds) Line 506 C++
+[Inline Frame] UE4Editor-Engine.dll!TMemberFunctionCaller&lt;UNetDriver,void (__cdecl UNetDriver::*)(float)&gt;::operator()(float &amp;) Line 156 C++
+[Inline Frame] UE4Editor-Engine.dll!UE4Tuple_Private::TTupleImpl&lt;TIntegerSequence&lt;unsigned int&gt; &gt;::ApplyAfter(TMemberFunctionCaller&lt;UNetDriver,void (__cdecl UNetDriver::*)(float)&gt; &amp;&amp;) Line 498    C++
+[Inline Frame] UE4Editor-Engine.dll!TBaseUObjectMethodDelegateInstance&lt;0,UNetDriver,TTypeWrapper&lt;void&gt; __cdecl(float)&gt;::Execute(float) Line 617 C++
+UE4Editor-Engine.dll!TBaseUObjectMethodDelegateInstance&lt;0,UNetDriver,void __cdecl(float)&gt;::ExecuteIfSafe(float &lt;Params_0&gt;) Line 679 C++
+UE4Editor-Engine.dll!TBaseMulticastDelegate&lt;void,float&gt;::Broadcast(float &lt;Params_0&gt;) Line 977   C++
+UE4Editor-Engine.dll!UWorld::Tick(ELevelTick TickType, float DeltaSeconds) Line 1720    C++
+UE4Editor-UnrealEd.dll!UEditorEngine::Tick(float DeltaSeconds, bool bIdleMode) Line 1618    C++
+UE4Editor-UnrealEd.dll!UUnrealEdEngine::Tick(float DeltaSeconds, bool bIdleMode) Line 403   C++
+UE4Editor-Win64-DebugGame.exe!FEngineLoop::Tick() Line 3967 C++
+[Inline Frame] UE4Editor-Win64-DebugGame.exe!EngineTick() Line 62   C++
+UE4Editor-Win64-DebugGame.exe!GuardedMain(const wchar_t * CmdLine, HINSTANCE__ * hInInstance, HINSTANCE__ * hPrevInstance, int nCmdShow) Line 168   C++
+UE4Editor-Win64-DebugGame.exe!WinMain(HINSTANCE__ * hInInstance, HINSTANCE__ * hPrevInstance, char * __formal, int nCmdShow) Line 261   C++
+</code></pre>
+
 <h5 id="关键函数">关键函数</h5>
 
 <p>1，客户端登陆</p>
@@ -627,7 +687,7 @@ TestActor-&gt;SetOwner(NewPlayer);
 }
 </code></pre>
 
-<p>拒绝非法登陆请求（2018-08-05更新，未同步到文章末尾的demo工程）：</p>
+<p>拒绝非法登陆请求：</p>
 
 <pre><code>void AFPSGameMode::PreLogin(const FString&amp; Options, const FString&amp; Address, const FUniqueNetIdRepl&amp; UniqueId, FString&amp; ErrorMessage)
 {
@@ -1064,6 +1124,9 @@ float NetPriority
 <p>UE4基础：客户端服务器连接流程<br />
 <a href="http://wangjie.rocks/2019/03/29/ue4-client-ds-connect/">http://wangjie.rocks/2019/03/29/ue4-client-ds-connect/</a></p>
 
+<p>Steam Multiplayer - Advanced Steam Session - Unreal Engine<br />
+<a href="https://www.youtube.com/watch?v=ke3kmK6bvT0">https://www.youtube.com/watch?v=ke3kmK6bvT0</a></p>
+
 <hr />
 
 <p><code>天下事，成于精而败于众，立于诚而倾于奢。</code></p>
@@ -1265,6 +1328,23 @@ float NetPriority
           <div class="media">
             
             <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/06/ue4fbx-export-and-import-related/">
+                <h3 class="media-heading">[UE4]FBX Export and Import Related</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jun 6, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>Keywords: Multiple roots found</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
               <a class="link-unstyled" href="https://dawnarc.com/2019/05/ue4scene-props-assets-collections/">
                 <h3 class="media-heading">[UE4]Scene Props Assets Collections</h3>
               </a>
@@ -1403,23 +1483,6 @@ float NetPriority
             <div class="media-body">
               <a class="link-unstyled" href="https://dawnarc.com/2019/04/versioncontrolgit-commands-in-common/">
                 <h3 class="media-heading">[VersionControl]git commands in common</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Apr 4, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>Keywords: git, pull, branch</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/04/versioncontrolgit-you-are-not-currently-on-a-branch.-please-specify-which-branch-you-want-to-merge-with/">
-                <h3 class="media-heading">[VersionControl]git - You are not currently on a branch. Please specify which branch you want to merge with</h3>
               </a>
               <span class="media-meta">
                 <span class="media-date text-small">

@@ -412,7 +412,9 @@ UFUNCTION() void OnTestOverlapBegin(class AActor* OtherActor, class UPrimitiveCo
 头文件中加入：
 #pragma once #include &quot;GameFramework/Actor.h&quot; #include &quot;FloatingActor.generated.h&quot; DECLARE_LOG_CATEGORY_EXTERN(YourLog, Log, All);  cpp文件中加入：
 #include &quot;FirstProject.h&quot; #include &quot;FloatingActor.h&quot; DEFINE_LOG_CATEGORY(YourLog);  使用
-UE_LOG(YourLog, Warning, TEXT(&quot;Test UE_LOG %d&quot;), rand());  三种方式的输出结果 Does something LogTemp: 1111 LogTemp: Warning: 1111（黄色）  
+UE_LOG(YourLog, Warning, TEXT(&quot;Test UE_LOG %d&quot;), rand());  自定义log时设定log级别：
+DEFINE_LOG_CATEGORY_STATIC(LogGameNetworkManager, Log, All);  其中：LogGameNetworkManager为Log名，Log为运行时log级别，All为编译期间的log级别。
+方式1和方式2的输出结果 Does something LogTemp: 1111 LogTemp: Warning: 1111（黄色）  
       
       <p>
         <a href="https://dawnarc.com/2016/11/ue4ue_log%E7%94%A8%E6%B3%95/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -832,12 +834,9 @@ R1 = {Pitch=0.0 Yaw=45.0 Roll=0.0 } R2 = {Pitch=0.0 Yaw=-135.0 Roll=0.0 } R3 = {
     <div class="postShorten-excerpt" itemprop="articleBody">
       
         keywords：UE4、Linear Algebra、Plane Geometry、线性代数、解析几何
-范围判定 检测一个点是否在一个多边形(或矩形)的内部(2D和3D)
-FBox2D::IsInside(const FVector2D&amp; TestPoint) FBox::IsInside(const FVector&amp; TestPoint) FIntRect::Contains( FIntPoint P )  角度计算 计算两个向量的夹角(Get an angle between 2 Vectors)，范围：(0, 180)
-float AimAtAngle = FMath::RadiansToDegrees(acosf(FVector::DotProduct(PlayerDirection, MouseDirection)));  参考：How to get an angle between 2 Vectors?
+范围判定 检测一个点是否在一个多边形(或矩形)的内部(2D和3D) FBox2D::IsInside(const FVector2D&amp; TestPoint) FBox::IsInside(const FVector&amp; TestPoint) FIntRect::Contains( FIntPoint P )  角度计算 计算两个向量的夹角(Get an angle between 2 Vectors)，范围：(0, 180) float AimAtAngle = FMath::RadiansToDegrees(acosf(FVector::DotProduct(PlayerDirection, MouseDirection)));  参考：How to get an angle between 2 Vectors?
 https://answers.unrealengine.com/questions/31058/how-to-get-an-angle-between-2-vectors.html
-计算方向向量与空间坐标轴（X、Y、Z）的夹角，范围：(-180, 180)
-FRotator Rot = UKismetMathLibrary::MakeRotFromX(TestVector); float Angle = Rot.Yaw; //(-180, 180)  判断角色A在角色B的左边还是右边（或者角色A相对角色B的四个方向），参考自引擎代码：UAnimInstance::CalculateDirection()
+计算方向向量与空间坐标轴（X、Y、Z）的夹角，范围：(-180, 180) FRotator Rot = UKismetMathLibrary::MakeRotFromX(TestVector); float Angle = Rot.Yaw; //(-180, 180)  判断角色A在角色B的左边还是右边（或者角色A相对角色B的四个方向） 参考自引擎代码：UAnimInstance::CalculateDirection()
 //-180到0表示 ActorA 在 ActorB 左边，0到180表示 ActorA 在 ActorB 右边 float CalculateDirecton(const AActor* ActorA, const AActor* ActorB) { FVector TestDire = ActorA-&gt;GetActorLocation() - ActorB-&gt;GetActorLocation(); FMatrix RotMatrix = FRotationMatrix(ActorB-&gt;GetActorRotation()); FVector ForwardVector = RotMatrix.
       
       <p>
@@ -1159,7 +1158,7 @@ FString a(&quot;1,2,3&quot;); TArray&lt;FString&gt; stringArray; a.ParseIntoArra
 FString::Left(int count); FString::Right(int count);  字符串格式化Format：
 FString Path = FString::Printf(TEXT(&quot;StaticMesh'/Game/Shapes/ground_shape_%d.ground_shape_%d'&quot;), i);  如何获取FString转换后char之后的长度 比如用TCHAR_TO_ANSI()将tchar转换为char之后，char的长度如何计算？ 使用FTCHARToANSI::Length()，示例如下：
 FTCHARToANSI Convert(*String); Ar-&gt;Serialize((ANSICHAR*)Convert, Convert.Length());  参考自：https://docs.unrealengine.com/latest/INT/Programming/UnrealArchitecture/StringHandling/CharacterEncoding/index.html
-中文字符的FString 转换 char数组 FString str(TEXT(&quot;笑傲江湖DA&quot;)); const wchar_t* s1 = *str; int LenW = wcslen(s1); int LenC = LenW * 2; //先转换为 char*, 比如 protobuf 不支持 wchar_t，那么可以将中文转换为char，然后储存在protobuf内部。 char* buf = new char[LenC + 1](); memcpy(buf, s1, LenC); //验证char*能否还原为 wchar_t 数组 wchar_t* buf2 = new wchar_t[LenC/2 + 1](); memcpy(buf2, buf, LenC);  TCHAR*、wchar_t、char 转换相关 //char 转换为 TCHAR TCHAR* msg = ANSI_TO_TCHAR(&quot;dddd&quot;); TCHAR* msg2 = UTF8_TO_TCHAR(&quot;dddd&quot;); //TCHAR 转换为 char char* Str4 = TCHAR_TO_UTF8(*Str); char* Str4 = TCHAR_TO_ANSI(*Str); //TCHAR 转换为 wchar_t FSting Str; wchar_t* Str2 = TCHAR_TO_WCHAR(*Str); //wchar_t 转换为 TCHAR wchar_t Str5[] = L&quot;sss&quot;; TCHAR* Str6 = (TCHAR*)Str5;  如果 char* 字符串有中文，转换为 FString 时，必须使用 ANSI_TO_TCHAR() 或者 UTF8_TO_TCHAR()，例如：FString Text = UTF8_TO_TCHAR(&ldquo;牛鼻&rdquo;); 。否则会出现乱码。
+中文字符的FString 转换 char数组 FString str(TEXT(&quot;笑傲江湖DA&quot;)); const wchar_t* s1 = *str; int LenW = wcslen(s1); int LenC = LenW * 2; //先转换为 char*, 比如 protobuf 不支持 wchar_t，那么可以将中文转换为char，然后储存在protobuf内部。 char* buf = new char[LenC + 1](); memcpy(buf, s1, LenC); //验证char*能否还原为 wchar_t 数组 wchar_t* buf2 = new wchar_t[LenC/2 + 1](); memcpy(buf2, buf, LenC);  TCHAR*、wchar_t、char 转换相关 //char 转换为 TCHAR TCHAR* msg = ANSI_TO_TCHAR(&quot;dddd&quot;); TCHAR* msg2 = UTF8_TO_TCHAR(&quot;dddd&quot;); //TCHAR 转换为 char char* Str4 = TCHAR_TO_UTF8(*Str); char* Str4 = TCHAR_TO_ANSI(*Str); //TCHAR 转换为 wchar_t FSting Str; wchar_t* Str2 = TCHAR_TO_WCHAR(*Str); //wchar_t 转换为 TCHAR wchar_t Str5[] = L&quot;sss&quot;; TCHAR* Str6 = (TCHAR*)Str5;  如果 char* 字符串有中文，转换为 FString 时，必须使用 ANSI_TO_TCHAR() 或者 UTF8_TO_TCHAR()，例如：FString Text = UTF8_TO_TCHAR(&ldquo;牛鼻&rdquo;); 。否则会出现乱码。另外，如果汉字是写在代码里面，则代码文件的编码格式需要改成UTF8，否则也会乱码。
       
       <p>
         <a href="https://dawnarc.com/2016/03/ue4fstring%E5%B8%B8%E7%94%A8api/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -1295,6 +1294,23 @@ float AnimLength = 0.f; if (USkeletalMeshComponent *Mesh = MyActor-&gt;FindCompo
       <div class="no-result text-color-light text-center">no post found</div>
       <div class="results">
         
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/06/ue4fbx-export-and-import-related/">
+                <h3 class="media-heading">[UE4]FBX Export and Import Related</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jun 6, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>Keywords: Multiple roots found</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
         
           <div class="media">
             
@@ -1437,23 +1453,6 @@ float AnimLength = 0.f; if (USkeletalMeshComponent *Mesh = MyActor-&gt;FindCompo
             <div class="media-body">
               <a class="link-unstyled" href="https://dawnarc.com/2019/04/versioncontrolgit-commands-in-common/">
                 <h3 class="media-heading">[VersionControl]git commands in common</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Apr 4, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>Keywords: git, pull, branch</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/04/versioncontrolgit-you-are-not-currently-on-a-branch.-please-specify-which-branch-you-want-to-merge-with/">
-                <h3 class="media-heading">[VersionControl]git - You are not currently on a branch. Please specify which branch you want to merge with</h3>
               </a>
               <span class="media-meta">
                 <span class="media-date text-small">

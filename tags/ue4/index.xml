@@ -6,10 +6,19 @@
     <description>Recent content in Ue4 on 玄冬Wong</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 17 May 2019 21:39:02 +0800</lastBuildDate>
+    <lastBuildDate>Mon, 17 Jun 2019 18:09:02 +0800</lastBuildDate>
     
 	<atom:link href="https://dawnarc.com/tags/ue4/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>[UE4]FBX Export and Import Related</title>
+      <link>https://dawnarc.com/2019/06/ue4fbx-export-and-import-related/</link>
+      <pubDate>Mon, 17 Jun 2019 18:09:02 +0800</pubDate>
+      
+      <guid>https://dawnarc.com/2019/06/ue4fbx-export-and-import-related/</guid>
+      <description>&lt;p&gt;Keywords: Multiple roots found&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>[UE4]Scene Props Assets Collections</title>
@@ -219,12 +228,12 @@
     </item>
     
     <item>
-      <title>[UE4]Blog &amp; Articles Collections</title>
-      <link>https://dawnarc.com/2019/01/ue4blog-articles-collections/</link>
+      <title>[UE4]Resources Collections - Tools and Plugins, Documents and Blogs</title>
+      <link>https://dawnarc.com/2019/01/ue4resources-collections-tools-and-plugins-documents-and-blogs/</link>
       <pubDate>Tue, 22 Jan 2019 21:49:02 +0800</pubDate>
       
-      <guid>https://dawnarc.com/2019/01/ue4blog-articles-collections/</guid>
-      <description>&lt;h3 id=&#34;ue4-blog&#34;&gt;UE4 Blog&lt;/h3&gt;</description>
+      <guid>https://dawnarc.com/2019/01/ue4resources-collections-tools-and-plugins-documents-and-blogs/</guid>
+      <description>&lt;h3 id=&#34;ue4-blogs&#34;&gt;UE4 Blogs&lt;/h3&gt;</description>
     </item>
     
     <item>
@@ -509,6 +518,10 @@ https://www.unrealengine.com/marketplace/en-US/profile/Quantum+Theory
 http://sejonf.com/
 https://www.unrealengine.com/marketplace/en-US/profile/Jonathon+Frederick
 https://george_shachnev.artstation.com/
+https://www.unrealengine.com/marketplace/en-US/profile/Jemini+Studio
+https://www.artstation.com/s_grez
+Synty Studios
+https://www.unrealengine.com/marketplace/en-US/profile/Synty+Studios
 Assets Category Foliage &amp;amp; Grass Landscape Ground Pack (Mobile Device Optimized)
 https://www.unrealengine.com/marketplace/en-US/slug/landscape-ground-pack
 Realistic Grass Pack (Mobile Device Optimized)
@@ -518,10 +531,7 @@ https://www.unrealengine.com/marketplace/en-US/slug/plants-low
 tropical Vegetation: Banana Plants (Mobile Device Optimized)
 https://www.unrealengine.com/marketplace/en-US/slug/banana-plants
 interactive Foliage Collection
-https://www.unrealengine.com/marketplace/interactive-foliage-collection
-Bushes &amp;amp; Shrubs
-https://www.unrealengine.com/marketplace/en-US/infinite-bushes-shrubs
-Realistic Grass Pack</description>
+https://www.unrealengine.com/marketplace/interactive-foliage-collection</description>
     </item>
     
     <item>
@@ -665,9 +675,8 @@ ProjectileMovement = CreateDefaultSubobject&amp;lt;UProjectileMovementComponent&
 ProjectileMovement-&amp;gt;Deactivate();  问题2解决方法：
 如何在 Spawn 之后修改 Speed，两种方式：
 UProjectileMovementComponent-&amp;gt;SetVelocityInLocalSpace(FVector NewVelocity);  或者
-UProjectileMovementComponent-&amp;gt;Velocity = NewVelocity;  前者速度方向是相对于 UProjectileMovementComponent本地坐标系 的相对Rotation，后者速度方向是相对于世界坐标系的绝对Rotation。 注意：当使用 UProjectileMovementComponent 后，UPrimitiveComponent::SetSimulatePhysics() 启用物理会与 ProjectileMovement 冲突。如果要使用物理，那么只能去掉 UProjectileMovementComponent ，使用 Add Impulse 来代替。
- 参考：
-Simulate Physics and Projectile Movement Component</description>
+UProjectileMovementComponent-&amp;gt;Velocity = NewVelocity;  Velocity计算方式：
+Velocity = Velocity.GetSafeNormal() * InitialSpeed;  前者速度方向是相对于 UProjectileMovementComponent本地坐标系 的相对Rotation，后者速度方向是相对于世界坐标系的绝对Rotation。 注意：当使用 UProjectileMovementComponent 后，UPrimitiveComponent::SetSimulatePhysics() 启用物理会与 ProjectileMovement 冲突。如果要使用物理，那么只能去掉 UProjectileMovementComponent ，使用 Add Impulse 来代替。</description>
     </item>
     
     <item>
@@ -1478,7 +1487,7 @@ void ATestTD4Character::BeginPlay() { Super::BeginPlay(); for (FSoftObjectPath&a
 问题2：joystick摇杆和UMG button在移动端冲突的问题：按住摇杆时，UMG button按了不起作用。
 原因：UMG button的Is Focusable属性设置为了true。
 解决办法：UMG button的Is Focusable属性设置为false。
-问题3：按住摇杆不放，UMG button点击事件中，摇杆的InputValue被引擎值为0，Button Release后InputValue才恢复为原有值0。
+问题3：按住摇杆不放，UMG button点击事件中，摇杆的InputValue被引擎值为0，Button Release后InputValue才恢复为原有值。
 原因：同上。
 解决办法：同上。
 问题4：Widget的Visibility属性默认为Self Hit Test Invisible，这样，每当有新的Widget AddToViewport时，当前Widget会被自动隐藏。但是默认的Visibility无法响应Widget之外的鼠标或touch事件（比如一个UButton，如果按住UButton不放，然后鼠标或者手指拖拽到UButton之外，那么当松开鼠标或手指时，该button的Release事件无法响应），但是Visibility属性如果设置成Visible，那么就可以响应，但是当新的Widget添加Viewport时，当前Widget不会自动隐藏。
@@ -1739,14 +1748,15 @@ UATHelper: Packaging (Android (ASTC)): clang++.exe: error: no such file or direc
     </item>
     
     <item>
-      <title>[UE4]运行时切换武器(AttachToComponent)</title>
-      <link>https://dawnarc.com/2017/12/ue4%E8%BF%90%E8%A1%8C%E6%97%B6%E5%88%87%E6%8D%A2%E6%AD%A6%E5%99%A8attachtocomponent/</link>
+      <title>[UE4]Switch Weapon at run-time (AttachToComponent)</title>
+      <link>https://dawnarc.com/2017/12/ue4switch-weapon-at-run-time-attachtocomponent/</link>
       <pubDate>Tue, 19 Dec 2017 18:55:02 +0800</pubDate>
       
-      <guid>https://dawnarc.com/2017/12/ue4%E8%BF%90%E8%A1%8C%E6%97%B6%E5%88%87%E6%8D%A2%E6%AD%A6%E5%99%A8attachtocomponent/</guid>
+      <guid>https://dawnarc.com/2017/12/ue4switch-weapon-at-run-time-attachtocomponent/</guid>
       <description>https://github.com/tomlooman/EpicSurvivalGameSeries/blob/4a6ee9a6081529fadbe0f693b2e4e6729d5ec08d/SurvivalGame/Source/SurvivalGame/Private/Items/SWeapon.cpp#L106
 EpicSurvivalGameSeries\SurvivalGame\Source\SurvivalGame\Private\Items\SWeapon.cpp
-void ASWeapon::AttachMeshToPawn(EInventorySlot Slot) { if (MyPawn) { // Remove and hide DetachMeshFromPawn(); USkeletalMeshComponent* PawnMesh = MyPawn-&amp;gt;GetMesh(); FName AttachPoint = MyPawn-&amp;gt;GetInventoryAttachPoint(Slot); Mesh-&amp;gt;SetHiddenInGame(false); Mesh-&amp;gt;AttachToComponent(PawnMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, AttachPoint); } } void ASWeapon::DetachMeshFromPawn() { Mesh-&amp;gt;DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform); Mesh-&amp;gt;SetHiddenInGame(true); }  StaticMeshComponent无法附加到SkeletalMeshComponent上，附加后StaticMeshComponent会出现在场景中的随机位置，而不是父级SkeletalMeshComponent身上，且此时即使设置LocationOffset也无效。
+void ASWeapon::AttachMeshToPawn(EInventorySlot Slot) { if (MyPawn) { // Remove and hide DetachMeshFromPawn(); USkeletalMeshComponent* PawnMesh = MyPawn-&amp;gt;GetMesh(); FName AttachPoint = MyPawn-&amp;gt;GetInventoryAttachPoint(Slot); Mesh-&amp;gt;SetHiddenInGame(false); Mesh-&amp;gt;AttachToComponent(PawnMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, AttachPoint); } } void ASWeapon::DetachMeshFromPawn() { Mesh-&amp;gt;DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform); Mesh-&amp;gt;SetHiddenInGame(true); }  It&amp;rsquo;s better to use FAttachmentTransformRules::SnapToTargetNotIncludingScale when attaching, otherwise maybe there&amp;rsquo;s a big location offset between two actors when using KeepWorldTransform.
+ StaticMeshComponent无法附加到SkeletalMeshComponent上，附加后StaticMeshComponent会出现在场景中的随机位置，而不是父级SkeletalMeshComponent身上，且此时即使设置LocationOffset也无效。
  通过NewObject&amp;lt;USkeletalMeshComponent&amp;gt;(Owner)运行时创建的SkeletalMeshComponent可以附加到父级SkeletalMeshComponent上，但是无法播放父级SkeletalMeshComponent的动画，即使设置了WeaponComp-&amp;gt;SetMasterPoseComponent(PawnMesh)。建议在构造函数中创建后SkeletalMeshComponent，然后再run-time修改SkeletalMesh模型，run-time修改指定SkeletalMeshComponent的SkeletalMesh是没有问题的，且可以正常播放父级的动画。
  念去去、千里烟波，暮霭沉沉楚天阔。----北宋·柳永《雨霖铃》</description>
     </item>
@@ -1915,11 +1925,23 @@ UMG使用步骤如下：
     </item>
     
     <item>
-      <title>[UE4]Character Movement and Networking相关</title>
-      <link>https://dawnarc.com/2017/09/ue4character-movement-and-networking%E7%9B%B8%E5%85%B3/</link>
+      <title>[UE4]Error Detected negative delta time - on AMD systems please install</title>
+      <link>https://dawnarc.com/2017/09/ue4error-detected-negative-delta-time-on-amd-systems-please-install/</link>
       <pubDate>Fri, 15 Sep 2017 10:55:40 +0800</pubDate>
       
-      <guid>https://dawnarc.com/2017/09/ue4character-movement-and-networking%E7%9B%B8%E5%85%B3/</guid>
+      <guid>https://dawnarc.com/2017/09/ue4error-detected-negative-delta-time-on-amd-systems-please-install/</guid>
+      <description>keywords：UE4、Fixed Frame rate、Dedicated Server、Crash
+如果锁定帧率（Project Settings -》 Engine -》 General Settings -》 Use Fixed Frame Rate），专用服务器启动时会报错：
+LogWindows: Error: Fatal error: [File:D:\sdk\UnrealEngine-4.17.1-release\Engine\Source\Runtime\Engine\Private\UnrealEngine.cpp] [Line: 1385] LogWindows: Error: Detected negative delta time - on AMD systems please install http://files.aoaforums.com/I3199-setup.zip.html - DeltaTime:-0.000259, bUseFixedFrameRate:1, bTimeWasManipulatedDebug:1, FixedFrameRate:30.000000  感觉这是个bug，提示我要打AMD的补丁，但是我机器是Intel的U。
+凝碧旧池头，一听管弦凄切，多少梨园声在，总不堪华发。—韩元吉《好事近》</description>
+    </item>
+    
+    <item>
+      <title>[UE4]Movement and Networking Related</title>
+      <link>https://dawnarc.com/2017/09/ue4movement-and-networking-related/</link>
+      <pubDate>Fri, 15 Sep 2017 10:55:40 +0800</pubDate>
+      
+      <guid>https://dawnarc.com/2017/09/ue4movement-and-networking-related/</guid>
       <description>keywords：UE4、Movement Replicate、Networking、Server、Client、Smooth
 引擎对于客户端服务端的位移同步，CharacterMovementComponent::SmoothCorrection()函数中有进行平滑处理。
 其他参考资料：
@@ -1936,18 +1958,6 @@ Dedicated Server 的 Movement 优化 如果仅仅为了性能，不希望服务�
 参考自：How am I able to Replicate movement when using &amp;ldquo;AddMovement Input&amp;rdquo;, but not AddLocalTransform?
 https://answers.unrealengine.com/questions/26116/able-to-replicate-movement-when-using-addmovement.html
 运行时期间断开Actor的Replication 比如一个 Character 一开始是在服务端同步的，当他死亡时，之后相关表现希望不再同步，比如布娃娃系统（可破碎网格），如果继续保持同步，会增加服务端计算开销，且布娃娃此时只是客户端表现，并不会驱动服务端数据，所以希望在执行布娃娃破碎之前，断开该Character在客户端服务端之间的Replication。</description>
-    </item>
-    
-    <item>
-      <title>[UE4]Error Detected negative delta time - on AMD systems please install</title>
-      <link>https://dawnarc.com/2017/09/ue4error-detected-negative-delta-time-on-amd-systems-please-install/</link>
-      <pubDate>Fri, 15 Sep 2017 10:55:40 +0800</pubDate>
-      
-      <guid>https://dawnarc.com/2017/09/ue4error-detected-negative-delta-time-on-amd-systems-please-install/</guid>
-      <description>keywords：UE4、Fixed Frame rate、Dedicated Server、Crash
-如果锁定帧率（Project Settings -》 Engine -》 General Settings -》 Use Fixed Frame Rate），专用服务器启动时会报错：
-LogWindows: Error: Fatal error: [File:D:\sdk\UnrealEngine-4.17.1-release\Engine\Source\Runtime\Engine\Private\UnrealEngine.cpp] [Line: 1385] LogWindows: Error: Detected negative delta time - on AMD systems please install http://files.aoaforums.com/I3199-setup.zip.html - DeltaTime:-0.000259, bUseFixedFrameRate:1, bTimeWasManipulatedDebug:1, FixedFrameRate:30.000000  感觉这是个bug，提示我要打AMD的补丁，但是我机器是Intel的U。
-凝碧旧池头，一听管弦凄切，多少梨园声在，总不堪华发。—韩元吉《好事近》</description>
     </item>
     
     <item>
@@ -2045,16 +2055,17 @@ UNavigationSystem* const NavSys = GetWorld()-&amp;gt;GetNavigationSystem();  解
     </item>
     
     <item>
-      <title>[UE4]窗口化启动游戏</title>
-      <link>https://dawnarc.com/2017/09/ue4%E7%AA%97%E5%8F%A3%E5%8C%96%E5%90%AF%E5%8A%A8%E6%B8%B8%E6%88%8F/</link>
+      <title>[UE4]Run Game In Windowed Mode</title>
+      <link>https://dawnarc.com/2017/09/ue4run-game-in-windowed-mode/</link>
       <pubDate>Tue, 12 Sep 2017 15:22:40 +0800</pubDate>
       
-      <guid>https://dawnarc.com/2017/09/ue4%E7%AA%97%E5%8F%A3%E5%8C%96%E5%90%AF%E5%8A%A8%E6%B8%B8%E6%88%8F/</guid>
+      <guid>https://dawnarc.com/2017/09/ue4run-game-in-windowed-mode/</guid>
       <description>keywords：UE4、Launch Game、Windowed
-命令：
-MyProject.exe -WINDOWED  更多参数说明：
+Command:
+MyProject.exe -WINDOWED  Reference：
 Command-Line Arguments
 https://docs.unrealengine.com/latest/INT/Programming/Basics/CommandLineArguments/index.html
+Windows Package If running game in windows package, you can change to Windowed Mode from Fullscreen Mode by press F11.
 我住长江头，君住长江尾；日日思君不见君，共饮长江水。—李之仪《卜算子》</description>
     </item>
     
@@ -2477,7 +2488,8 @@ https://www.reddit.com/r/unrealengine/comments/6qtxy3/test_blueprint_vs_c_perfor
 Min Screen Radius for Lights
 Min Screen Radius for Early Z Pass
 Min Screen Radius for Cascaded Shadow Maps
-  灯光优化  3种光源的性能消耗从低到高：
+  代码编译优化  使用C++进行向量变换时，尽量使用FTransform::TransformXXX()和FTransform::InverseTransformXXX，而不是FQuat::RotateVector和FQuat::UnrotateVector，因为前者使用了更多的当前硬件支持的矢量汇编指令，榨干了硬件性能，而后者是为了跨平台，老老实实使用C++代码来执行计算公式，虽然也调用了硬件汇编指令，但数量相对较少。
+UE4做了优化，当你使用FTransform::TransformXXX()时，如果当前硬件支持，就走硬件指令，如果不支持，则走FQuat::RotateVector。  灯光优化  3种光源的性能消耗从低到高：
 定向光/平行光(Directional Light) &amp;lt; 点光源(Point Light) &amp;lt; 聚光灯(Spot Light)。</description>
     </item>
     
@@ -2547,7 +2559,9 @@ Specular不同值下的渲染效果：
 头文件中加入：
 #pragma once #include &amp;quot;GameFramework/Actor.h&amp;quot; #include &amp;quot;FloatingActor.generated.h&amp;quot; DECLARE_LOG_CATEGORY_EXTERN(YourLog, Log, All);  cpp文件中加入：
 #include &amp;quot;FirstProject.h&amp;quot; #include &amp;quot;FloatingActor.h&amp;quot; DEFINE_LOG_CATEGORY(YourLog);  使用
-UE_LOG(YourLog, Warning, TEXT(&amp;quot;Test UE_LOG %d&amp;quot;), rand());  三种方式的输出结果 Does something LogTemp: 1111 LogTemp: Warning: 1111（黄色）  </description>
+UE_LOG(YourLog, Warning, TEXT(&amp;quot;Test UE_LOG %d&amp;quot;), rand());  自定义log时设定log级别：
+DEFINE_LOG_CATEGORY_STATIC(LogGameNetworkManager, Log, All);  其中：LogGameNetworkManager为Log名，Log为运行时log级别，All为编译期间的log级别。
+方式1和方式2的输出结果 Does something LogTemp: 1111 LogTemp: Warning: 1111（黄色）  </description>
     </item>
     
     <item>
@@ -2822,16 +2836,6 @@ DrawDebugLine(GameMode-&amp;gt;GetWorld(), StartLocation, EndLocation, FColor::R
     </item>
     
     <item>
-      <title>[UE4][粒子系统]如何设置粒子在场景中的Rotation</title>
-      <link>https://dawnarc.com/2016/10/ue4%E7%B2%92%E5%AD%90%E7%B3%BB%E7%BB%9F%E5%A6%82%E4%BD%95%E8%AE%BE%E7%BD%AE%E7%B2%92%E5%AD%90%E5%9C%A8%E5%9C%BA%E6%99%AF%E4%B8%AD%E7%9A%84rotation/</link>
-      <pubDate>Thu, 06 Oct 2016 18:48:40 +0800</pubDate>
-      
-      <guid>https://dawnarc.com/2016/10/ue4%E7%B2%92%E5%AD%90%E7%B3%BB%E7%BB%9F%E5%A6%82%E4%BD%95%E8%AE%BE%E7%BD%AE%E7%B2%92%E5%AD%90%E5%9C%A8%E5%9C%BA%E6%99%AF%E4%B8%AD%E7%9A%84rotation/</guid>
-      <description>如果想在游戏场景中控制粒子特效的Rotation，需要勾选发射器Required组件中的Use Local Space选项，否则无论设置rotation值多少，其旋转角度始终是默认的初始值。 （查看大图，请复制图片链接在新窗口中打开）
-  </description>
-    </item>
-    
-    <item>
       <title>[UE4]用C&#43;&#43;或蓝图来动态设置粒子系统的相关属性</title>
       <link>https://dawnarc.com/2016/10/ue4%E7%94%A8c-%E6%88%96%E8%93%9D%E5%9B%BE%E6%9D%A5%E5%8A%A8%E6%80%81%E8%AE%BE%E7%BD%AE%E7%B2%92%E5%AD%90%E7%B3%BB%E7%BB%9F%E7%9A%84%E7%9B%B8%E5%85%B3%E5%B1%9E%E6%80%A7/</link>
       <pubDate>Wed, 05 Oct 2016 13:58:40 +0800</pubDate>
@@ -2890,13 +2894,10 @@ for (TActorIterator&amp;lt;ACharacter&amp;gt; ActorItr(GetWorld()); ActorItr; ++
       <pubDate>Sun, 18 Sep 2016 11:59:40 +0800</pubDate>
       
       <guid>https://dawnarc.com/2016/09/ue4particle-related/</guid>
-      <description> Keywords：Warmup Time, no delay, at once, Particle System
+      <description>Keywords：Warmup Time, no delay, at once, Particle System
 Show particle no delay when emitter spawned 默认播放特效时，会有一秒的延迟，如果想让粒子生成后立即播放，需要进行以下设置：
-1，点点击例子系统编辑界面最右侧的黑色空闲区域   2，然后在Detail面板中找到Warmup Time参数，修改为1。默认为0   Ribbon Data Rotation Issue:
-Ribbon data doesn&amp;rsquo;t rotate to the base emitter.
-Solution:
-Uncheck Use Local Space in base emitter and ribbon data
-    </description>
+1，点点击例子系统编辑界面最右侧的黑色空闲区域   2，然后在Detail面板中找到Warmup Time参数，修改为1。默认为0   How to particle&amp;rsquo;s world location and world rotation 如果想在游戏场景中控制粒子特效的Rotation，需要勾选发射器Required组件中的Use Local Space选项，否则无论设置rotation值多少，其旋转角度始终是默认的初始值。 （查看大图，请复制图片链接在新窗口中打开）   If doesn&amp;rsquo;t check Use Local Space, particle would stop at spawned location even it be attached to a moveing Actor.
+ How to let Ribbon Data use velocity of a actor which particle attached it.</description>
     </item>
     
     <item>
@@ -3083,6 +3084,7 @@ F1 ~ F5
 编辑器下查看Mesh网格、灯光、材质复杂度等：
 Alt + 1 ~ 8
 移动物体时，摄像机跟随一起移动（摄像机相对其静止） 按住H键，在移动物体
+全拼或窗口化运行游戏 F11，Development的Windows打包版本也起效。
 更多快捷键说明： http://docs.unrealengine.com/latest/INT/Engine/UI/LevelEditor/Viewports/ViewportControls/index.html</description>
     </item>
     
@@ -3182,12 +3184,9 @@ R1 = {Pitch=0.0 Yaw=45.0 Roll=0.0 } R2 = {Pitch=0.0 Yaw=-135.0 Roll=0.0 } R3 = {
       
       <guid>https://dawnarc.com/2016/06/ue4linear-algebra-plane-geometry-api/</guid>
       <description>keywords：UE4、Linear Algebra、Plane Geometry、线性代数、解析几何
-范围判定 检测一个点是否在一个多边形(或矩形)的内部(2D和3D)
-FBox2D::IsInside(const FVector2D&amp;amp; TestPoint) FBox::IsInside(const FVector&amp;amp; TestPoint) FIntRect::Contains( FIntPoint P )  角度计算 计算两个向量的夹角(Get an angle between 2 Vectors)，范围：(0, 180)
-float AimAtAngle = FMath::RadiansToDegrees(acosf(FVector::DotProduct(PlayerDirection, MouseDirection)));  参考：How to get an angle between 2 Vectors?
+范围判定 检测一个点是否在一个多边形(或矩形)的内部(2D和3D) FBox2D::IsInside(const FVector2D&amp;amp; TestPoint) FBox::IsInside(const FVector&amp;amp; TestPoint) FIntRect::Contains( FIntPoint P )  角度计算 计算两个向量的夹角(Get an angle between 2 Vectors)，范围：(0, 180) float AimAtAngle = FMath::RadiansToDegrees(acosf(FVector::DotProduct(PlayerDirection, MouseDirection)));  参考：How to get an angle between 2 Vectors?
 https://answers.unrealengine.com/questions/31058/how-to-get-an-angle-between-2-vectors.html
-计算方向向量与空间坐标轴（X、Y、Z）的夹角，范围：(-180, 180)
-FRotator Rot = UKismetMathLibrary::MakeRotFromX(TestVector); float Angle = Rot.Yaw; //(-180, 180)  判断角色A在角色B的左边还是右边（或者角色A相对角色B的四个方向），参考自引擎代码：UAnimInstance::CalculateDirection()
+计算方向向量与空间坐标轴（X、Y、Z）的夹角，范围：(-180, 180) FRotator Rot = UKismetMathLibrary::MakeRotFromX(TestVector); float Angle = Rot.Yaw; //(-180, 180)  判断角色A在角色B的左边还是右边（或者角色A相对角色B的四个方向） 参考自引擎代码：UAnimInstance::CalculateDirection()
 //-180到0表示 ActorA 在 ActorB 左边，0到180表示 ActorA 在 ActorB 右边 float CalculateDirecton(const AActor* ActorA, const AActor* ActorB) { FVector TestDire = ActorA-&amp;gt;GetActorLocation() - ActorB-&amp;gt;GetActorLocation(); FMatrix RotMatrix = FRotationMatrix(ActorB-&amp;gt;GetActorRotation()); FVector ForwardVector = RotMatrix.</description>
     </item>
     
@@ -3219,11 +3218,11 @@ PathFollowingComp-&amp;gt;AbortMove(*this, FPathFollowingResultFlags::MovementSt
     </item>
     
     <item>
-      <title>[UE4]PlayerController常用API</title>
-      <link>https://dawnarc.com/2016/06/ue4playercontroller%E5%B8%B8%E7%94%A8api/</link>
+      <title>[UE4]PlayerController API In Common</title>
+      <link>https://dawnarc.com/2016/06/ue4playercontroller-api-in-common/</link>
       <pubDate>Sun, 19 Jun 2016 10:31:02 +0800</pubDate>
       
-      <guid>https://dawnarc.com/2016/06/ue4playercontroller%E5%B8%B8%E7%94%A8api/</guid>
+      <guid>https://dawnarc.com/2016/06/ue4playercontroller-api-in-common/</guid>
       <description>获取当前的Pawn 一个Controller（包括AIController）只能同时possess一个Pawn。所以GetPawn()返回的就是当前控制的Pawn：
 APawn* Pawn = PC-&amp;gt;GetPawn();  Screen相关 //Convert 2D screen position to World Space 3D position and direction. Returns false if unable to determine value. bool DeprojectScreenPositionToWorld(float ScreenX, float ScreenY, FVector&amp;amp; WorldLocation, FVector&amp;amp; WorldDirection) const; /** Returns hit results from doing a collision query at a certain location on the screen */ bool GetHitResultAtScreenPosition(const FVector2D ScreenPosition, const ECollisionChannel TraceChannel, const FCollisionQueryParams&amp;amp; CollisionQueryParams, FHitResult&amp;amp; HitResult) const; /** * Returns the PlayerState associated with the player at the specified index.</description>
     </item>
@@ -3420,7 +3419,7 @@ FString a(&amp;quot;1,2,3&amp;quot;); TArray&amp;lt;FString&amp;gt; stringArray;
 FString::Left(int count); FString::Right(int count);  字符串格式化Format：
 FString Path = FString::Printf(TEXT(&amp;quot;StaticMesh&#39;/Game/Shapes/ground_shape_%d.ground_shape_%d&#39;&amp;quot;), i);  如何获取FString转换后char之后的长度 比如用TCHAR_TO_ANSI()将tchar转换为char之后，char的长度如何计算？ 使用FTCHARToANSI::Length()，示例如下：
 FTCHARToANSI Convert(*String); Ar-&amp;gt;Serialize((ANSICHAR*)Convert, Convert.Length());  参考自：https://docs.unrealengine.com/latest/INT/Programming/UnrealArchitecture/StringHandling/CharacterEncoding/index.html
-中文字符的FString 转换 char数组 FString str(TEXT(&amp;quot;笑傲江湖DA&amp;quot;)); const wchar_t* s1 = *str; int LenW = wcslen(s1); int LenC = LenW * 2; //先转换为 char*, 比如 protobuf 不支持 wchar_t，那么可以将中文转换为char，然后储存在protobuf内部。 char* buf = new char[LenC + 1](); memcpy(buf, s1, LenC); //验证char*能否还原为 wchar_t 数组 wchar_t* buf2 = new wchar_t[LenC/2 + 1](); memcpy(buf2, buf, LenC);  TCHAR*、wchar_t、char 转换相关 //char 转换为 TCHAR TCHAR* msg = ANSI_TO_TCHAR(&amp;quot;dddd&amp;quot;); TCHAR* msg2 = UTF8_TO_TCHAR(&amp;quot;dddd&amp;quot;); //TCHAR 转换为 char char* Str4 = TCHAR_TO_UTF8(*Str); char* Str4 = TCHAR_TO_ANSI(*Str); //TCHAR 转换为 wchar_t FSting Str; wchar_t* Str2 = TCHAR_TO_WCHAR(*Str); //wchar_t 转换为 TCHAR wchar_t Str5[] = L&amp;quot;sss&amp;quot;; TCHAR* Str6 = (TCHAR*)Str5;  如果 char* 字符串有中文，转换为 FString 时，必须使用 ANSI_TO_TCHAR() 或者 UTF8_TO_TCHAR()，例如：FString Text = UTF8_TO_TCHAR(&amp;ldquo;牛鼻&amp;rdquo;); 。否则会出现乱码。</description>
+中文字符的FString 转换 char数组 FString str(TEXT(&amp;quot;笑傲江湖DA&amp;quot;)); const wchar_t* s1 = *str; int LenW = wcslen(s1); int LenC = LenW * 2; //先转换为 char*, 比如 protobuf 不支持 wchar_t，那么可以将中文转换为char，然后储存在protobuf内部。 char* buf = new char[LenC + 1](); memcpy(buf, s1, LenC); //验证char*能否还原为 wchar_t 数组 wchar_t* buf2 = new wchar_t[LenC/2 + 1](); memcpy(buf2, buf, LenC);  TCHAR*、wchar_t、char 转换相关 //char 转换为 TCHAR TCHAR* msg = ANSI_TO_TCHAR(&amp;quot;dddd&amp;quot;); TCHAR* msg2 = UTF8_TO_TCHAR(&amp;quot;dddd&amp;quot;); //TCHAR 转换为 char char* Str4 = TCHAR_TO_UTF8(*Str); char* Str4 = TCHAR_TO_ANSI(*Str); //TCHAR 转换为 wchar_t FSting Str; wchar_t* Str2 = TCHAR_TO_WCHAR(*Str); //wchar_t 转换为 TCHAR wchar_t Str5[] = L&amp;quot;sss&amp;quot;; TCHAR* Str6 = (TCHAR*)Str5;  如果 char* 字符串有中文，转换为 FString 时，必须使用 ANSI_TO_TCHAR() 或者 UTF8_TO_TCHAR()，例如：FString Text = UTF8_TO_TCHAR(&amp;ldquo;牛鼻&amp;rdquo;); 。否则会出现乱码。另外，如果汉字是写在代码里面，则代码文件的编码格式需要改成UTF8，否则也会乱码。</description>
     </item>
     
     <item>

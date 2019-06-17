@@ -22,7 +22,8 @@ https://www.reddit.com/r/unrealengine/comments/6qtxy3/test_blueprint_vs_c_perfor
 Min Screen Radius for Lights
 Min Screen Radius for Early Z Pass
 Min Screen Radius for Cascaded Shadow Maps
-  灯光优化  3种光源的性能消耗从低到高：
+  代码编译优化  使用C&#43;&#43;进行向量变换时，尽量使用FTransform::TransformXXX()和FTransform::InverseTransformXXX，而不是FQuat::RotateVector和FQuat::UnrotateVector，因为前者使用了更多的当前硬件支持的矢量汇编指令，榨干了硬件性能，而后者是为了跨平台，老老实实使用C&#43;&#43;代码来执行计算公式，虽然也调用了硬件汇编指令，但数量相对较少。
+UE4做了优化，当你使用FTransform::TransformXXX()时，如果当前硬件支持，就走硬件指令，如果不支持，则走FQuat::RotateVector。  灯光优化  3种光源的性能消耗从低到高：
 定向光/平行光(Directional Light) &lt; 点光源(Point Light) &lt; 聚光灯(Spot Light)。">
 
 
@@ -40,7 +41,8 @@ https://www.reddit.com/r/unrealengine/comments/6qtxy3/test_blueprint_vs_c_perfor
 Min Screen Radius for Lights
 Min Screen Radius for Early Z Pass
 Min Screen Radius for Cascaded Shadow Maps
-  灯光优化  3种光源的性能消耗从低到高：
+  代码编译优化  使用C&#43;&#43;进行向量变换时，尽量使用FTransform::TransformXXX()和FTransform::InverseTransformXXX，而不是FQuat::RotateVector和FQuat::UnrotateVector，因为前者使用了更多的当前硬件支持的矢量汇编指令，榨干了硬件性能，而后者是为了跨平台，老老实实使用C&#43;&#43;代码来执行计算公式，虽然也调用了硬件汇编指令，但数量相对较少。
+UE4做了优化，当你使用FTransform::TransformXXX()时，如果当前硬件支持，就走硬件指令，如果不支持，则走FQuat::RotateVector。  灯光优化  3种光源的性能消耗从低到高：
 定向光/平行光(Directional Light) &lt; 点光源(Point Light) &lt; 聚光灯(Spot Light)。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[UE4]优化建议与经验">
@@ -62,7 +64,8 @@ https://www.reddit.com/r/unrealengine/comments/6qtxy3/test_blueprint_vs_c_perfor
 Min Screen Radius for Lights
 Min Screen Radius for Early Z Pass
 Min Screen Radius for Cascaded Shadow Maps
-  灯光优化  3种光源的性能消耗从低到高：
+  代码编译优化  使用C&#43;&#43;进行向量变换时，尽量使用FTransform::TransformXXX()和FTransform::InverseTransformXXX，而不是FQuat::RotateVector和FQuat::UnrotateVector，因为前者使用了更多的当前硬件支持的矢量汇编指令，榨干了硬件性能，而后者是为了跨平台，老老实实使用C&#43;&#43;代码来执行计算公式，虽然也调用了硬件汇编指令，但数量相对较少。
+UE4做了优化，当你使用FTransform::TransformXXX()时，如果当前硬件支持，就走硬件指令，如果不支持，则走FQuat::RotateVector。  灯光优化  3种光源的性能消耗从低到高：
 定向光/平行光(Directional Light) &lt; 点光源(Point Light) &lt; 聚光灯(Spot Light)。">
 <meta name="twitter:description" content="keywords：UE4性能优化、Performance Optimization
 内容都是处理项目问题的相关笔记，留给自己做备忘录，也分享出来让别人少走弯路。
@@ -78,7 +81,8 @@ https://www.reddit.com/r/unrealengine/comments/6qtxy3/test_blueprint_vs_c_perfor
 Min Screen Radius for Lights
 Min Screen Radius for Early Z Pass
 Min Screen Radius for Cascaded Shadow Maps
-  灯光优化  3种光源的性能消耗从低到高：
+  代码编译优化  使用C&#43;&#43;进行向量变换时，尽量使用FTransform::TransformXXX()和FTransform::InverseTransformXXX，而不是FQuat::RotateVector和FQuat::UnrotateVector，因为前者使用了更多的当前硬件支持的矢量汇编指令，榨干了硬件性能，而后者是为了跨平台，老老实实使用C&#43;&#43;代码来执行计算公式，虽然也调用了硬件汇编指令，但数量相对较少。
+UE4做了优化，当你使用FTransform::TransformXXX()时，如果当前硬件支持，就走硬件指令，如果不支持，则走FQuat::RotateVector。  灯光优化  3种光源的性能消耗从低到高：
 定向光/平行光(Directional Light) &lt; 点光源(Point Light) &lt; 聚光灯(Spot Light)。">
 <meta property="og:locale" content="en-us">
 
@@ -439,6 +443,13 @@ Min Screen Radius for Early Z Pass<br />
 Min Screen Radius for Cascaded Shadow Maps</p></li>
 </ol>
 
+<h5 id="代码编译优化">代码编译优化</h5>
+
+<ol>
+<li>使用C++进行向量变换时，尽量使用<code>FTransform::TransformXXX()</code>和<code>FTransform::InverseTransformXXX</code>，而不是<code>FQuat::RotateVector</code>和<code>FQuat::UnrotateVector</code>，因为前者使用了更多的当前硬件支持的矢量汇编指令，榨干了硬件性能，而后者是为了跨平台，老老实实使用C++代码来执行计算公式，虽然也调用了硬件汇编指令，但数量相对较少。<br />
+UE4做了优化，当你使用<code>FTransform::TransformXXX()</code>时，如果当前硬件支持，就走硬件指令，如果不支持，则走<code>FQuat::RotateVector</code>。</li>
+</ol>
+
 <h5 id="灯光优化">灯光优化</h5>
 
 <ol>
@@ -543,11 +554,11 @@ Dynamic Shadow Distance 表示在多少距离内使用动态阴影，超过这�
 
 <li><p>只对渲染的 SkinnedMesh执行 Tick 和 RefreshBoneTransforms</p>
 
-<pre><code>USkinnedMeshComponent::MeshComponentUpdateFlag = OnlyTickPoseWhenRendered;
+<pre><code>USkinnedMeshComponent::VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::OnlyTickPoseWhenRendered;
 </code></pre>
 
 <p>默认是<code>AlwaysTickPoseAndRefreshBones</code>，表示不管是否被渲染（在可见区域内），都执行 Tick 和 RefreshBoneTransforms。<br />
-旧版本中<code>MeshComponentUpdateFlag</code>叫做<code>SkinnedMeshUpdateFlag</code>。<br />
+<code>VisibilityBasedAnimTickOption</code>最开始叫做<code>SkinnedMeshUpdateFlag</code>，4.22版本之前改成了<code>MeshComponentUpdateFlag</code>，4.22开始叫做<code>VisibilityBasedAnimTickOption</code>。<br />
 <div class="alert warning ">
   <p>如果关闭动画Tick，和Tick相关的逻辑就会失效，比如<code>Transform (Modify) Bone</code>。</p>
 </div></p></li>
@@ -846,6 +857,23 @@ Project Settings -&gt; Engine -&gt; Animation -&gt; 勾选 Strip Animation Data 
           <div class="media">
             
             <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/06/ue4fbx-export-and-import-related/">
+                <h3 class="media-heading">[UE4]FBX Export and Import Related</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jun 6, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>Keywords: Multiple roots found</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
               <a class="link-unstyled" href="https://dawnarc.com/2019/05/ue4scene-props-assets-collections/">
                 <h3 class="media-heading">[UE4]Scene Props Assets Collections</h3>
               </a>
@@ -984,23 +1012,6 @@ Project Settings -&gt; Engine -&gt; Animation -&gt; 勾选 Strip Animation Data 
             <div class="media-body">
               <a class="link-unstyled" href="https://dawnarc.com/2019/04/versioncontrolgit-commands-in-common/">
                 <h3 class="media-heading">[VersionControl]git commands in common</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Apr 4, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>Keywords: git, pull, branch</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/04/versioncontrolgit-you-are-not-currently-on-a-branch.-please-specify-which-branch-you-want-to-merge-with/">
-                <h3 class="media-heading">[VersionControl]git - You are not currently on a branch. Please specify which branch you want to merge with</h3>
               </a>
               <span class="media-meta">
                 <span class="media-date text-small">

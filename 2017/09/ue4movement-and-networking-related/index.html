@@ -8,29 +8,85 @@
 <meta name="generator" content="Hugo 0.53 with theme Tranquilpeak 0.4.3-SNAPSHOT">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="">
-<meta name="description" content="如果想在游戏场景中控制粒子特效的Rotation，需要勾选发射器Required组件中的Use Local Space选项，否则无论设置rotation值多少，其旋转角度始终是默认的初始值。 （查看大图，请复制图片链接在新窗口中打开）
-  ">
+<meta name="description" content="keywords：UE4、Movement Replicate、Networking、Server、Client、Smooth
+引擎对于客户端服务端的位移同步，CharacterMovementComponent::SmoothCorrection()函数中有进行平滑处理。
+其他参考资料：
+What is the best way to smooth player movement for network hiccups? Interp? Ease? (no physics)
+https://answers.unrealengine.com/questions/479211/what-is-the-best-way-to-smooth-player-movement-for.html
+Authoritative Networked Character Movement
+https://wiki.unrealengine.com/Authoritative_Networked_Character_Movement
+Advanced Topic: Adding New Movement Abilities to Character Movement
+https://docs.unrealengine.com/latest/INT/Gameplay/Networking/CharacterMovementComponent/index.html#advancedtopic:addingnewmovementabilitiestocharactermovement
+Custom Character Movement Component
+https://wiki.unrealengine.com/Custom_Character_Movement_Component
+Dedicated Server 的 Movement 优化 如果仅仅为了性能，不希望服务端实时修正客户端坐标，以客户端发过来的坐标为准，可以开启以下选项：
+[/Script/Engine.GameNetworkManager] MAXPOSITIONERRORSQUARED=625 ClientAuthorativePosition=true  但是这么做会被外挂 hack
+参考自：How am I able to Replicate movement when using &ldquo;AddMovement Input&rdquo;, but not AddLocalTransform?
+https://answers.unrealengine.com/questions/26116/able-to-replicate-movement-when-using-addmovement.html
+运行时期间断开Actor的Replication 比如一个 Character 一开始是在服务端同步的，当他死亡时，之后相关表现希望不再同步，比如布娃娃系统（可破碎网格），如果继续保持同步，会增加服务端计算开销，且布娃娃此时只是客户端表现，并不会驱动服务端数据，所以希望在执行布娃娃破碎之前，断开该Character在客户端服务端之间的Replication。">
 
 
-<meta property="og:description" content="如果想在游戏场景中控制粒子特效的Rotation，需要勾选发射器Required组件中的Use Local Space选项，否则无论设置rotation值多少，其旋转角度始终是默认的初始值。 （查看大图，请复制图片链接在新窗口中打开）
-  ">
+<meta property="og:description" content="keywords：UE4、Movement Replicate、Networking、Server、Client、Smooth
+引擎对于客户端服务端的位移同步，CharacterMovementComponent::SmoothCorrection()函数中有进行平滑处理。
+其他参考资料：
+What is the best way to smooth player movement for network hiccups? Interp? Ease? (no physics)
+https://answers.unrealengine.com/questions/479211/what-is-the-best-way-to-smooth-player-movement-for.html
+Authoritative Networked Character Movement
+https://wiki.unrealengine.com/Authoritative_Networked_Character_Movement
+Advanced Topic: Adding New Movement Abilities to Character Movement
+https://docs.unrealengine.com/latest/INT/Gameplay/Networking/CharacterMovementComponent/index.html#advancedtopic:addingnewmovementabilitiestocharactermovement
+Custom Character Movement Component
+https://wiki.unrealengine.com/Custom_Character_Movement_Component
+Dedicated Server 的 Movement 优化 如果仅仅为了性能，不希望服务端实时修正客户端坐标，以客户端发过来的坐标为准，可以开启以下选项：
+[/Script/Engine.GameNetworkManager] MAXPOSITIONERRORSQUARED=625 ClientAuthorativePosition=true  但是这么做会被外挂 hack
+参考自：How am I able to Replicate movement when using &ldquo;AddMovement Input&rdquo;, but not AddLocalTransform?
+https://answers.unrealengine.com/questions/26116/able-to-replicate-movement-when-using-addmovement.html
+运行时期间断开Actor的Replication 比如一个 Character 一开始是在服务端同步的，当他死亡时，之后相关表现希望不再同步，比如布娃娃系统（可破碎网格），如果继续保持同步，会增加服务端计算开销，且布娃娃此时只是客户端表现，并不会驱动服务端数据，所以希望在执行布娃娃破碎之前，断开该Character在客户端服务端之间的Replication。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="[UE4][粒子系统]如何设置粒子在场景中的Rotation">
-<meta name="twitter:title" content="[UE4][粒子系统]如何设置粒子在场景中的Rotation">
-<meta property="og:url" content="https://dawnarc.com/2016/10/ue4%E7%B2%92%E5%AD%90%E7%B3%BB%E7%BB%9F%E5%A6%82%E4%BD%95%E8%AE%BE%E7%BD%AE%E7%B2%92%E5%AD%90%E5%9C%A8%E5%9C%BA%E6%99%AF%E4%B8%AD%E7%9A%84rotation/">
-<meta property="twitter:url" content="https://dawnarc.com/2016/10/ue4%E7%B2%92%E5%AD%90%E7%B3%BB%E7%BB%9F%E5%A6%82%E4%BD%95%E8%AE%BE%E7%BD%AE%E7%B2%92%E5%AD%90%E5%9C%A8%E5%9C%BA%E6%99%AF%E4%B8%AD%E7%9A%84rotation/">
+<meta property="og:title" content="[UE4]Movement and Networking Related">
+<meta name="twitter:title" content="[UE4]Movement and Networking Related">
+<meta property="og:url" content="https://dawnarc.com/2017/09/ue4movement-and-networking-related/">
+<meta property="twitter:url" content="https://dawnarc.com/2017/09/ue4movement-and-networking-related/">
 <meta property="og:site_name" content="玄冬Wong">
-<meta property="og:description" content="如果想在游戏场景中控制粒子特效的Rotation，需要勾选发射器Required组件中的Use Local Space选项，否则无论设置rotation值多少，其旋转角度始终是默认的初始值。 （查看大图，请复制图片链接在新窗口中打开）
-  ">
-<meta name="twitter:description" content="如果想在游戏场景中控制粒子特效的Rotation，需要勾选发射器Required组件中的Use Local Space选项，否则无论设置rotation值多少，其旋转角度始终是默认的初始值。 （查看大图，请复制图片链接在新窗口中打开）
-  ">
+<meta property="og:description" content="keywords：UE4、Movement Replicate、Networking、Server、Client、Smooth
+引擎对于客户端服务端的位移同步，CharacterMovementComponent::SmoothCorrection()函数中有进行平滑处理。
+其他参考资料：
+What is the best way to smooth player movement for network hiccups? Interp? Ease? (no physics)
+https://answers.unrealengine.com/questions/479211/what-is-the-best-way-to-smooth-player-movement-for.html
+Authoritative Networked Character Movement
+https://wiki.unrealengine.com/Authoritative_Networked_Character_Movement
+Advanced Topic: Adding New Movement Abilities to Character Movement
+https://docs.unrealengine.com/latest/INT/Gameplay/Networking/CharacterMovementComponent/index.html#advancedtopic:addingnewmovementabilitiestocharactermovement
+Custom Character Movement Component
+https://wiki.unrealengine.com/Custom_Character_Movement_Component
+Dedicated Server 的 Movement 优化 如果仅仅为了性能，不希望服务端实时修正客户端坐标，以客户端发过来的坐标为准，可以开启以下选项：
+[/Script/Engine.GameNetworkManager] MAXPOSITIONERRORSQUARED=625 ClientAuthorativePosition=true  但是这么做会被外挂 hack
+参考自：How am I able to Replicate movement when using &ldquo;AddMovement Input&rdquo;, but not AddLocalTransform?
+https://answers.unrealengine.com/questions/26116/able-to-replicate-movement-when-using-addmovement.html
+运行时期间断开Actor的Replication 比如一个 Character 一开始是在服务端同步的，当他死亡时，之后相关表现希望不再同步，比如布娃娃系统（可破碎网格），如果继续保持同步，会增加服务端计算开销，且布娃娃此时只是客户端表现，并不会驱动服务端数据，所以希望在执行布娃娃破碎之前，断开该Character在客户端服务端之间的Replication。">
+<meta name="twitter:description" content="keywords：UE4、Movement Replicate、Networking、Server、Client、Smooth
+引擎对于客户端服务端的位移同步，CharacterMovementComponent::SmoothCorrection()函数中有进行平滑处理。
+其他参考资料：
+What is the best way to smooth player movement for network hiccups? Interp? Ease? (no physics)
+https://answers.unrealengine.com/questions/479211/what-is-the-best-way-to-smooth-player-movement-for.html
+Authoritative Networked Character Movement
+https://wiki.unrealengine.com/Authoritative_Networked_Character_Movement
+Advanced Topic: Adding New Movement Abilities to Character Movement
+https://docs.unrealengine.com/latest/INT/Gameplay/Networking/CharacterMovementComponent/index.html#advancedtopic:addingnewmovementabilitiestocharactermovement
+Custom Character Movement Component
+https://wiki.unrealengine.com/Custom_Character_Movement_Component
+Dedicated Server 的 Movement 优化 如果仅仅为了性能，不希望服务端实时修正客户端坐标，以客户端发过来的坐标为准，可以开启以下选项：
+[/Script/Engine.GameNetworkManager] MAXPOSITIONERRORSQUARED=625 ClientAuthorativePosition=true  但是这么做会被外挂 hack
+参考自：How am I able to Replicate movement when using &ldquo;AddMovement Input&rdquo;, but not AddLocalTransform?
+https://answers.unrealengine.com/questions/26116/able-to-replicate-movement-when-using-addmovement.html
+运行时期间断开Actor的Replication 比如一个 Character 一开始是在服务端同步的，当他死亡时，之后相关表现希望不再同步，比如布娃娃系统（可破碎网格），如果继续保持同步，会增加服务端计算开销，且布娃娃此时只是客户端表现，并不会驱动服务端数据，所以希望在执行布娃娃破碎之前，断开该Character在客户端服务端之间的Replication。">
 <meta property="og:locale" content="en-us">
 
   
-    <meta property="article:published_time" content="2016-10-06T18:48:40">
+    <meta property="article:published_time" content="2017-09-15T10:55:40">
   
   
-    <meta property="article:modified_time" content="2016-10-06T18:48:40">
+    <meta property="article:modified_time" content="2017-09-15T10:55:40">
   
   
   
@@ -65,7 +121,7 @@
   <meta property="twitter:image" content="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=640">
 
 
-    <title>[UE4][粒子系统]如何设置粒子在场景中的Rotation</title>
+    <title>[UE4]Movement and Networking Related</title>
 
     <link rel="icon" href="https://dawnarc.com/favicon.png">
     
@@ -74,7 +130,7 @@
       <link rel="publisher" href="https://plus.google.com/111340706178390411568">
     
 
-    <link rel="canonical" href="https://dawnarc.com/2016/10/ue4%E7%B2%92%E5%AD%90%E7%B3%BB%E7%BB%9F%E5%A6%82%E4%BD%95%E8%AE%BE%E7%BD%AE%E7%B2%92%E5%AD%90%E5%9C%A8%E5%9C%BA%E6%99%AF%E4%B8%AD%E7%9A%84rotation/">
+    <link rel="canonical" href="https://dawnarc.com/2017/09/ue4movement-and-networking-related/">
 
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
@@ -324,15 +380,15 @@ if (!doNotTrack) {
             <div class="post-header main-content-wrap text-left">
   
     <h1 class="post-title" itemprop="headline">
-      [UE4][粒子系统]如何设置粒子在场景中的Rotation
+      [UE4]Movement and Networking Related
     </h1>
   
   
   <div class="postShorten-meta post-meta">
     
-      <time itemprop="datePublished" datetime="2016-10-06T18:48:40&#43;08:00">
+      <time itemprop="datePublished" datetime="2017-09-15T10:55:40&#43;08:00">
         
-  October 6, 2016
+  September 15, 2017
 
       </time>
     
@@ -351,13 +407,61 @@ if (!doNotTrack) {
           
           <div class="post-content markdown" itemprop="articleBody">
             <div class="main-content-wrap">
-              <p>如果想在游戏场景中控制粒子特效的Rotation，需要勾选发射器<strong>Required</strong>组件中的<code>Use Local Space</code>选项，否则无论设置rotation值多少，其旋转角度始终是默认的初始值。
-（查看大图，请复制图片链接在新窗口中打开）</p>
+              
 
-<figure>
-    <img src="https://dawnarc.com/img/20161006-[UE4][%e7%b2%92%e5%ad%90%e7%b3%bb%e7%bb%9f]%e5%a6%82%e4%bd%95%e8%ae%be%e7%bd%ae%e7%b2%92%e5%ad%90%e5%9c%a8%e5%9c%ba%e6%99%af%e4%b8%ad%e7%9a%84Rotation.jpg"/> 
-</figure>
+<p>keywords：UE4、Movement Replicate、Networking、Server、Client、Smooth</p>
 
+<p>引擎对于客户端服务端的位移同步，<code>CharacterMovementComponent::SmoothCorrection()</code>函数中有进行平滑处理。</p>
+
+<p>其他参考资料：<br />
+What is the best way to smooth player movement for network hiccups? Interp? Ease? (no physics)<br />
+<a href="https://answers.unrealengine.com/questions/479211/what-is-the-best-way-to-smooth-player-movement-for.html">https://answers.unrealengine.com/questions/479211/what-is-the-best-way-to-smooth-player-movement-for.html</a></p>
+
+<p>Authoritative Networked Character Movement<br />
+<a href="https://wiki.unrealengine.com/Authoritative_Networked_Character_Movement">https://wiki.unrealengine.com/Authoritative_Networked_Character_Movement</a></p>
+
+<p>Advanced Topic: Adding New Movement Abilities to Character Movement<br />
+<a href="https://docs.unrealengine.com/latest/INT/Gameplay/Networking/CharacterMovementComponent/index.html#advancedtopic:addingnewmovementabilitiestocharactermovement">https://docs.unrealengine.com/latest/INT/Gameplay/Networking/CharacterMovementComponent/index.html#advancedtopic:addingnewmovementabilitiestocharactermovement</a></p>
+
+<p>Custom Character Movement Component<br />
+<a href="https://wiki.unrealengine.com/Custom_Character_Movement_Component">https://wiki.unrealengine.com/Custom_Character_Movement_Component</a></p>
+
+<h5 id="dedicated-server-的-movement-优化">Dedicated Server 的 Movement 优化</h5>
+
+<p>如果仅仅为了性能，不希望服务端实时修正客户端坐标，以客户端发过来的坐标为准，可以开启以下选项：</p>
+
+<pre><code>[/Script/Engine.GameNetworkManager]
+ MAXPOSITIONERRORSQUARED=625
+ ClientAuthorativePosition=true
+</code></pre>
+
+<p>但是这么做会被外挂 hack</p>
+
+<p>参考自：How am I able to Replicate movement when using &ldquo;AddMovement Input&rdquo;, but not AddLocalTransform?<br />
+<a href="https://answers.unrealengine.com/questions/26116/able-to-replicate-movement-when-using-addmovement.html">https://answers.unrealengine.com/questions/26116/able-to-replicate-movement-when-using-addmovement.html</a></p>
+
+<h5 id="运行时期间断开actor的replication">运行时期间断开Actor的Replication</h5>
+
+<p>比如一个 Character 一开始是在服务端同步的，当他死亡时，之后相关表现希望不再同步，比如布娃娃系统（可破碎网格），如果继续保持同步，会增加服务端计算开销，且布娃娃此时只是客户端表现，并不会驱动服务端数据，所以希望在执行布娃娃破碎之前，断开该Character在客户端服务端之间的Replication。</p>
+
+<p>办法如下：<br />
+服务端在执行布娃娃破碎之前，先执行<code>AActor::ForceNetUpdate()</code>，将当前最新状态同步到客户端，然后服务端接着执行<code>AActor::TearOff</code>，表示从此时开启，服务端不再同步当前 Actor 给服务端。<br />
+当服务端执行<code>AActor::TearOff</code>成功后，客户端会触发回调<code>AActor::TornOff()</code>，表示此时客户端可以任意修改当前 Actor 状态，且不会被服务端纠正。</p>
+
+<h5 id="replication-of-bullet-path-in-shoot-game">Replication of bullet path in shoot game</h5>
+
+<p>Suggestion:<br />
+1. <code>bReplicateMovement = true;</code> in constructor of BulletActor;<br />
+2. <code>ProjectileMovement-&gt;InitialSpeed = 0.f;</code> and <code>ProjectileMovement-&gt;MaxSpeed = 0.f;</code> in constructor of BulletActor;<br />
+3. Set real time speed of BulletActor in Server.</p>
+
+<div class="alert warning ">
+  <p>If you set a large value for <code>ProjectileMovement-&gt;InitialSpeed</code> in bullet constructor, and then set <code>Velocity</code> in server, bullet path would jitter at the begining.</p>
+</div>
+
+<hr />
+
+<p><code>人们常常用咄咄逼人来掩饰弱点，真正持久的力量存在于忍受中，只有软骨头才急躁粗暴，他们因此丧失了人的尊严。我等待，我观看。恩惠也许来，也许不来。也许这种既平静又不平静的等待就是恩惠的使者，抑或恩惠本身。──弗兰茨·卡夫卡（FranzKafka）</code></p>
 
               
             </div>
@@ -383,7 +487,7 @@ if (!doNotTrack) {
           
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2016/10/ue4drawdebugline%E7%9A%84%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9/" data-tooltip="[UE4]DrawDebugLine的注意事项">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2017/09/ue4error-detected-negative-delta-time-on-amd-systems-please-install/" data-tooltip="[UE4]Error Detected negative delta time - on AMD systems please install">
               
                   <i class="fa fa-angle-left"></i>
                   <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
@@ -391,7 +495,7 @@ if (!doNotTrack) {
             </li>
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2016/10/ue4%E7%94%A8c-%E6%88%96%E8%93%9D%E5%9B%BE%E6%9D%A5%E5%8A%A8%E6%80%81%E8%AE%BE%E7%BD%AE%E7%B2%92%E5%AD%90%E7%B3%BB%E7%BB%9F%E7%9A%84%E7%9B%B8%E5%85%B3%E5%B1%9E%E6%80%A7/" data-tooltip="[UE4]用C&#43;&#43;或蓝图来动态设置粒子系统的相关属性">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2017/09/ue4error-only-local-player-controllers-can-be-assigned-to-widgets/" data-tooltip="[UE4]Error Only Local Player Controllers can be assigned to widgets">
               
                   <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
                   <i class="fa fa-angle-right"></i>
@@ -451,7 +555,7 @@ if (!doNotTrack) {
           
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2016/10/ue4drawdebugline%E7%9A%84%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9/" data-tooltip="[UE4]DrawDebugLine的注意事项">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2017/09/ue4error-detected-negative-delta-time-on-amd-systems-please-install/" data-tooltip="[UE4]Error Detected negative delta time - on AMD systems please install">
               
                   <i class="fa fa-angle-left"></i>
                   <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
@@ -459,7 +563,7 @@ if (!doNotTrack) {
             </li>
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2016/10/ue4%E7%94%A8c-%E6%88%96%E8%93%9D%E5%9B%BE%E6%9D%A5%E5%8A%A8%E6%80%81%E8%AE%BE%E7%BD%AE%E7%B2%92%E5%AD%90%E7%B3%BB%E7%BB%9F%E7%9A%84%E7%9B%B8%E5%85%B3%E5%B1%9E%E6%80%A7/" data-tooltip="[UE4]用C&#43;&#43;或蓝图来动态设置粒子系统的相关属性">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2017/09/ue4error-only-local-player-controllers-can-be-assigned-to-widgets/" data-tooltip="[UE4]Error Only Local Player Controllers can be assigned to widgets">
               
                   <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
                   <i class="fa fa-angle-right"></i>
@@ -552,6 +656,23 @@ if (!doNotTrack) {
       <div class="no-result text-color-light text-center">no post found</div>
       <div class="results">
         
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/06/ue4fbx-export-and-import-related/">
+                <h3 class="media-heading">[UE4]FBX Export and Import Related</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jun 6, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>Keywords: Multiple roots found</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
         
           <div class="media">
             
@@ -706,23 +827,6 @@ if (!doNotTrack) {
             <hr>
           </div>
         
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/04/versioncontrolgit-you-are-not-currently-on-a-branch.-please-specify-which-branch-you-want-to-merge-with/">
-                <h3 class="media-heading">[VersionControl]git - You are not currently on a branch. Please specify which branch you want to merge with</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Apr 4, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>Keywords: git, pull, branch</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
       </div>
     </div>
     <div class="modal-footer">
@@ -785,9 +889,9 @@ $(document).ready(function() {
     
       <script>
         var disqus_config = function () {
-          this.page.url = 'https:\/\/dawnarc.com\/2016\/10\/ue4%E7%B2%92%E5%AD%90%E7%B3%BB%E7%BB%9F%E5%A6%82%E4%BD%95%E8%AE%BE%E7%BD%AE%E7%B2%92%E5%AD%90%E5%9C%A8%E5%9C%BA%E6%99%AF%E4%B8%AD%E7%9A%84rotation\/';
+          this.page.url = 'https:\/\/dawnarc.com\/2017\/09\/ue4movement-and-networking-related\/';
           
-            this.page.identifier = '\/2016\/10\/ue4%E7%B2%92%E5%AD%90%E7%B3%BB%E7%BB%9F%E5%A6%82%E4%BD%95%E8%AE%BE%E7%BD%AE%E7%B2%92%E5%AD%90%E5%9C%A8%E5%9C%BA%E6%99%AF%E4%B8%AD%E7%9A%84rotation\/'
+            this.page.identifier = '\/2017\/09\/ue4movement-and-networking-related\/'
           
         };
         (function() {

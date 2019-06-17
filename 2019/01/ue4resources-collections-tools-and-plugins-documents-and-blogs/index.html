@@ -7,86 +7,26 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="generator" content="Hugo 0.53 with theme Tranquilpeak 0.4.3-SNAPSHOT">
 <meta name="author" content="Neil Wang">
-<meta name="keywords" content="">
-<meta name="description" content="keywords：UE4、Movement Replicate、Networking、Server、Client、Smooth
-引擎对于客户端服务端的位移同步，CharacterMovementComponent::SmoothCorrection()函数中有进行平滑处理。
-其他参考资料：
-What is the best way to smooth player movement for network hiccups? Interp? Ease? (no physics)
-https://answers.unrealengine.com/questions/479211/what-is-the-best-way-to-smooth-player-movement-for.html
-Authoritative Networked Character Movement
-https://wiki.unrealengine.com/Authoritative_Networked_Character_Movement
-Advanced Topic: Adding New Movement Abilities to Character Movement
-https://docs.unrealengine.com/latest/INT/Gameplay/Networking/CharacterMovementComponent/index.html#advancedtopic:addingnewmovementabilitiestocharactermovement
-Custom Character Movement Component
-https://wiki.unrealengine.com/Custom_Character_Movement_Component
-Dedicated Server 的 Movement 优化 如果仅仅为了性能，不希望服务端实时修正客户端坐标，以客户端发过来的坐标为准，可以开启以下选项：
-[/Script/Engine.GameNetworkManager] MAXPOSITIONERRORSQUARED=625 ClientAuthorativePosition=true  但是这么做会被外挂 hack
-参考自：How am I able to Replicate movement when using &ldquo;AddMovement Input&rdquo;, but not AddLocalTransform?
-https://answers.unrealengine.com/questions/26116/able-to-replicate-movement-when-using-addmovement.html
-运行时期间断开Actor的Replication 比如一个 Character 一开始是在服务端同步的，当他死亡时，之后相关表现希望不再同步，比如布娃娃系统（可破碎网格），如果继续保持同步，会增加服务端计算开销，且布娃娃此时只是客户端表现，并不会驱动服务端数据，所以希望在执行布娃娃破碎之前，断开该Character在客户端服务端之间的Replication。">
+<meta name="keywords" content="UE4, Sequencer">
+<meta name="description" content="UE4 Blogs">
 
 
-<meta property="og:description" content="keywords：UE4、Movement Replicate、Networking、Server、Client、Smooth
-引擎对于客户端服务端的位移同步，CharacterMovementComponent::SmoothCorrection()函数中有进行平滑处理。
-其他参考资料：
-What is the best way to smooth player movement for network hiccups? Interp? Ease? (no physics)
-https://answers.unrealengine.com/questions/479211/what-is-the-best-way-to-smooth-player-movement-for.html
-Authoritative Networked Character Movement
-https://wiki.unrealengine.com/Authoritative_Networked_Character_Movement
-Advanced Topic: Adding New Movement Abilities to Character Movement
-https://docs.unrealengine.com/latest/INT/Gameplay/Networking/CharacterMovementComponent/index.html#advancedtopic:addingnewmovementabilitiestocharactermovement
-Custom Character Movement Component
-https://wiki.unrealengine.com/Custom_Character_Movement_Component
-Dedicated Server 的 Movement 优化 如果仅仅为了性能，不希望服务端实时修正客户端坐标，以客户端发过来的坐标为准，可以开启以下选项：
-[/Script/Engine.GameNetworkManager] MAXPOSITIONERRORSQUARED=625 ClientAuthorativePosition=true  但是这么做会被外挂 hack
-参考自：How am I able to Replicate movement when using &ldquo;AddMovement Input&rdquo;, but not AddLocalTransform?
-https://answers.unrealengine.com/questions/26116/able-to-replicate-movement-when-using-addmovement.html
-运行时期间断开Actor的Replication 比如一个 Character 一开始是在服务端同步的，当他死亡时，之后相关表现希望不再同步，比如布娃娃系统（可破碎网格），如果继续保持同步，会增加服务端计算开销，且布娃娃此时只是客户端表现，并不会驱动服务端数据，所以希望在执行布娃娃破碎之前，断开该Character在客户端服务端之间的Replication。">
+<meta property="og:description" content="UE4 Blogs">
 <meta property="og:type" content="article">
-<meta property="og:title" content="[UE4]Character Movement and Networking相关">
-<meta name="twitter:title" content="[UE4]Character Movement and Networking相关">
-<meta property="og:url" content="https://dawnarc.com/2017/09/ue4character-movement-and-networking%E7%9B%B8%E5%85%B3/">
-<meta property="twitter:url" content="https://dawnarc.com/2017/09/ue4character-movement-and-networking%E7%9B%B8%E5%85%B3/">
+<meta property="og:title" content="[UE4]Resources Collections - Tools and Plugins, Documents and Blogs">
+<meta name="twitter:title" content="[UE4]Resources Collections - Tools and Plugins, Documents and Blogs">
+<meta property="og:url" content="https://dawnarc.com/2019/01/ue4resources-collections-tools-and-plugins-documents-and-blogs/">
+<meta property="twitter:url" content="https://dawnarc.com/2019/01/ue4resources-collections-tools-and-plugins-documents-and-blogs/">
 <meta property="og:site_name" content="玄冬Wong">
-<meta property="og:description" content="keywords：UE4、Movement Replicate、Networking、Server、Client、Smooth
-引擎对于客户端服务端的位移同步，CharacterMovementComponent::SmoothCorrection()函数中有进行平滑处理。
-其他参考资料：
-What is the best way to smooth player movement for network hiccups? Interp? Ease? (no physics)
-https://answers.unrealengine.com/questions/479211/what-is-the-best-way-to-smooth-player-movement-for.html
-Authoritative Networked Character Movement
-https://wiki.unrealengine.com/Authoritative_Networked_Character_Movement
-Advanced Topic: Adding New Movement Abilities to Character Movement
-https://docs.unrealengine.com/latest/INT/Gameplay/Networking/CharacterMovementComponent/index.html#advancedtopic:addingnewmovementabilitiestocharactermovement
-Custom Character Movement Component
-https://wiki.unrealengine.com/Custom_Character_Movement_Component
-Dedicated Server 的 Movement 优化 如果仅仅为了性能，不希望服务端实时修正客户端坐标，以客户端发过来的坐标为准，可以开启以下选项：
-[/Script/Engine.GameNetworkManager] MAXPOSITIONERRORSQUARED=625 ClientAuthorativePosition=true  但是这么做会被外挂 hack
-参考自：How am I able to Replicate movement when using &ldquo;AddMovement Input&rdquo;, but not AddLocalTransform?
-https://answers.unrealengine.com/questions/26116/able-to-replicate-movement-when-using-addmovement.html
-运行时期间断开Actor的Replication 比如一个 Character 一开始是在服务端同步的，当他死亡时，之后相关表现希望不再同步，比如布娃娃系统（可破碎网格），如果继续保持同步，会增加服务端计算开销，且布娃娃此时只是客户端表现，并不会驱动服务端数据，所以希望在执行布娃娃破碎之前，断开该Character在客户端服务端之间的Replication。">
-<meta name="twitter:description" content="keywords：UE4、Movement Replicate、Networking、Server、Client、Smooth
-引擎对于客户端服务端的位移同步，CharacterMovementComponent::SmoothCorrection()函数中有进行平滑处理。
-其他参考资料：
-What is the best way to smooth player movement for network hiccups? Interp? Ease? (no physics)
-https://answers.unrealengine.com/questions/479211/what-is-the-best-way-to-smooth-player-movement-for.html
-Authoritative Networked Character Movement
-https://wiki.unrealengine.com/Authoritative_Networked_Character_Movement
-Advanced Topic: Adding New Movement Abilities to Character Movement
-https://docs.unrealengine.com/latest/INT/Gameplay/Networking/CharacterMovementComponent/index.html#advancedtopic:addingnewmovementabilitiestocharactermovement
-Custom Character Movement Component
-https://wiki.unrealengine.com/Custom_Character_Movement_Component
-Dedicated Server 的 Movement 优化 如果仅仅为了性能，不希望服务端实时修正客户端坐标，以客户端发过来的坐标为准，可以开启以下选项：
-[/Script/Engine.GameNetworkManager] MAXPOSITIONERRORSQUARED=625 ClientAuthorativePosition=true  但是这么做会被外挂 hack
-参考自：How am I able to Replicate movement when using &ldquo;AddMovement Input&rdquo;, but not AddLocalTransform?
-https://answers.unrealengine.com/questions/26116/able-to-replicate-movement-when-using-addmovement.html
-运行时期间断开Actor的Replication 比如一个 Character 一开始是在服务端同步的，当他死亡时，之后相关表现希望不再同步，比如布娃娃系统（可破碎网格），如果继续保持同步，会增加服务端计算开销，且布娃娃此时只是客户端表现，并不会驱动服务端数据，所以希望在执行布娃娃破碎之前，断开该Character在客户端服务端之间的Replication。">
+<meta property="og:description" content="UE4 Blogs">
+<meta name="twitter:description" content="UE4 Blogs">
 <meta property="og:locale" content="en-us">
 
   
-    <meta property="article:published_time" content="2017-09-15T10:55:40">
+    <meta property="article:published_time" content="2019-01-22T21:49:02">
   
   
-    <meta property="article:modified_time" content="2017-09-15T10:55:40">
+    <meta property="article:modified_time" content="2019-01-22T21:49:02">
   
   
   
@@ -113,6 +53,9 @@ https://answers.unrealengine.com/questions/26116/able-to-replicate-movement-when
 
 
 
+  <meta property="og:image" content="https://dawnarc.com/thumbnail/thumbnail-japen-008.jpg">
+  <meta property="twitter:image" content="https://dawnarc.com/thumbnail/thumbnail-japen-008.jpg">
+
 
 
 
@@ -121,7 +64,7 @@ https://answers.unrealengine.com/questions/26116/able-to-replicate-movement-when
   <meta property="twitter:image" content="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=640">
 
 
-    <title>[UE4]Character Movement and Networking相关</title>
+    <title>[UE4]Resources Collections - Tools and Plugins, Documents and Blogs</title>
 
     <link rel="icon" href="https://dawnarc.com/favicon.png">
     
@@ -130,7 +73,7 @@ https://answers.unrealengine.com/questions/26116/able-to-replicate-movement-when
       <link rel="publisher" href="https://plus.google.com/111340706178390411568">
     
 
-    <link rel="canonical" href="https://dawnarc.com/2017/09/ue4character-movement-and-networking%E7%9B%B8%E5%85%B3/">
+    <link rel="canonical" href="https://dawnarc.com/2019/01/ue4resources-collections-tools-and-plugins-documents-and-blogs/">
 
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
@@ -380,15 +323,15 @@ if (!doNotTrack) {
             <div class="post-header main-content-wrap text-left">
   
     <h1 class="post-title" itemprop="headline">
-      [UE4]Character Movement and Networking相关
+      [UE4]Resources Collections - Tools and Plugins, Documents and Blogs
     </h1>
   
   
   <div class="postShorten-meta post-meta">
     
-      <time itemprop="datePublished" datetime="2017-09-15T10:55:40&#43;08:00">
+      <time itemprop="datePublished" datetime="2019-01-22T21:49:02&#43;08:00">
         
-  September 15, 2017
+  January 22, 2019
 
       </time>
     
@@ -407,51 +350,39 @@ if (!doNotTrack) {
           
           <div class="post-content markdown" itemprop="articleBody">
             <div class="main-content-wrap">
-              
+              <h3 id="ue4-blogs">UE4 Blogs</h3>
 
-<p>keywords：UE4、Movement Replicate、Networking、Server、Client、Smooth</p>
+<h5 id="rendering-related">Rendering Related</h5>
 
-<p>引擎对于客户端服务端的位移同步，CharacterMovementComponent::SmoothCorrection()函数中有进行平滑处理。</p>
+<p><a href="https://medium.com/@lordned">https://medium.com/@lordned</a></p>
 
-<p>其他参考资料：<br />
-What is the best way to smooth player movement for network hiccups? Interp? Ease? (no physics)<br />
-<a href="https://answers.unrealengine.com/questions/479211/what-is-the-best-way-to-smooth-player-movement-for.html">https://answers.unrealengine.com/questions/479211/what-is-the-best-way-to-smooth-player-movement-for.html</a></p>
+<p><a href="https://sebh.github.io/">https://sebh.github.io/</a></p>
 
-<p>Authoritative Networked Character Movement<br />
-<a href="https://wiki.unrealengine.com/Authoritative_Networked_Character_Movement">https://wiki.unrealengine.com/Authoritative_Networked_Character_Movement</a></p>
+<p><a href="http://casual-effects.com/">http://casual-effects.com/</a></p>
 
-<p>Advanced Topic: Adding New Movement Abilities to Character Movement<br />
-<a href="https://docs.unrealengine.com/latest/INT/Gameplay/Networking/CharacterMovementComponent/index.html#advancedtopic:addingnewmovementabilitiestocharactermovement">https://docs.unrealengine.com/latest/INT/Gameplay/Networking/CharacterMovementComponent/index.html#advancedtopic:addingnewmovementabilitiestocharactermovement</a></p>
+<h5 id="optimization">Optimization</h5>
 
-<p>Custom Character Movement Component<br />
-<a href="https://wiki.unrealengine.com/Custom_Character_Movement_Component">https://wiki.unrealengine.com/Custom_Character_Movement_Component</a></p>
+<p><a href="https://unrealartoptimization.github.io/book/">https://unrealartoptimization.github.io/book/</a></p>
 
-<h5 id="dedicated-server-的-movement-优化">Dedicated Server 的 Movement 优化</h5>
+<p><a href="http://timhobsonue4.snappages.com/tutorials.htm">http://timhobsonue4.snappages.com/tutorials.htm</a></p>
 
-<p>如果仅仅为了性能，不希望服务端实时修正客户端坐标，以客户端发过来的坐标为准，可以开启以下选项：</p>
+<h3 id="ue4-plugins">UE4 Plugins</h3>
 
-<pre><code>[/Script/Engine.GameNetworkManager]
- MAXPOSITIONERRORSQUARED=625
- ClientAuthorativePosition=true
-</code></pre>
+<h5 id="lua">Lua</h5>
 
-<p>但是这么做会被外挂 hack</p>
+<p>lua dev plugin for unreal engine 4<br />
+<a href="https://github.com/Tencent/sluaunreal">https://github.com/Tencent/sluaunreal</a></p>
 
-<p>参考自：How am I able to Replicate movement when using &ldquo;AddMovement Input&rdquo;, but not AddLocalTransform?<br />
-<a href="https://answers.unrealengine.com/questions/26116/able-to-replicate-movement-when-using-addmovement.html">https://answers.unrealengine.com/questions/26116/able-to-replicate-movement-when-using-addmovement.html</a></p>
+<h3 id="ue4-content-tools-scripts">UE4 Content Tools &amp; Scripts</h3>
 
-<h5 id="运行时期间断开actor的replication">运行时期间断开Actor的Replication</h5>
+<h5 id="ue4-pivot-painter-tool">UE4 Pivot Painter Tool</h5>
 
-<p>比如一个 Character 一开始是在服务端同步的，当他死亡时，之后相关表现希望不再同步，比如布娃娃系统（可破碎网格），如果继续保持同步，会增加服务端计算开销，且布娃娃此时只是客户端表现，并不会驱动服务端数据，所以希望在执行布娃娃破碎之前，断开该Character在客户端服务端之间的Replication。</p>
-
-<p>办法如下：<br />
-服务端在执行布娃娃破碎之前，先执行<code>AActor::ForceNetUpdate()</code>，将当前最新状态同步到客户端，然后服务端接着执行<code>AActor::TearOff</code>，表示从此时开启，服务端不再同步当前 Actor 给服务端。<br />
-当服务端执行<code>AActor::TearOff</code>成功后，客户端会触发回调<code>AActor::TornOff()</code>，表示此时客户端可以任意修改当前 Actor 状态，且不会被服务端纠正。</p>
+<p>Pivot Painter Tool 2.0<br />
+<a href="https://docs.unrealengine.com/en-US/Engine/Content/Tools/PivotPainter/PivotPainter2/index.html">https://docs.unrealengine.com/en-US/Engine/Content/Tools/PivotPainter/PivotPainter2/index.html</a></p>
 
 <hr />
 
-<p><code>人们常常用咄咄逼人来掩饰弱点，真正持久的力量存在于忍受中，只有软骨头才急躁粗暴，他们因此丧失了人的尊严。我等待，我观看。恩惠也许来，也许不来。也许这种既平静又不平静的等待就是恩惠的使者，抑或恩惠本身。──弗兰茨·卡夫卡（FranzKafka）</code></p>
-
+<p><code>最高境界的处世艺术是不妥协却能适应现实，而极端不幸的个人素质是尽管不断地妥协却总是达不到适应现实的要求。——德国社会学家齐美尔（SimmelGeorg）</code></p>
               
             </div>
           </div>
@@ -476,7 +407,7 @@ What is the best way to smooth player movement for network hiccups? Interp? Ease
           
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2017/09/openglshader%E7%BC%96%E8%AF%91%E6%B5%81%E7%A8%8B%E7%A4%BA%E4%BE%8B/" data-tooltip="[OpenGL]Shader编译流程示例">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2019/01/ue4physics-animation-related/" data-tooltip="[UE4]Physics Animation Related">
               
                   <i class="fa fa-angle-left"></i>
                   <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
@@ -484,7 +415,7 @@ What is the best way to smooth player movement for network hiccups? Interp? Ease
             </li>
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2017/09/ue4error-detected-negative-delta-time-on-amd-systems-please-install/" data-tooltip="[UE4]Error Detected negative delta time - on AMD systems please install">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2019/01/versioncontrolinstall-windows-service-for-svn/" data-tooltip="[VersionControl]Install Windows Service for SVN">
               
                   <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
                   <i class="fa fa-angle-right"></i>
@@ -544,7 +475,7 @@ What is the best way to smooth player movement for network hiccups? Interp? Ease
           
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2017/09/openglshader%E7%BC%96%E8%AF%91%E6%B5%81%E7%A8%8B%E7%A4%BA%E4%BE%8B/" data-tooltip="[OpenGL]Shader编译流程示例">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2019/01/ue4physics-animation-related/" data-tooltip="[UE4]Physics Animation Related">
               
                   <i class="fa fa-angle-left"></i>
                   <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
@@ -552,7 +483,7 @@ What is the best way to smooth player movement for network hiccups? Interp? Ease
             </li>
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2017/09/ue4error-detected-negative-delta-time-on-amd-systems-please-install/" data-tooltip="[UE4]Error Detected negative delta time - on AMD systems please install">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2019/01/versioncontrolinstall-windows-service-for-svn/" data-tooltip="[VersionControl]Install Windows Service for SVN">
               
                   <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
                   <i class="fa fa-angle-right"></i>
@@ -645,6 +576,23 @@ What is the best way to smooth player movement for network hiccups? Interp? Ease
       <div class="no-result text-color-light text-center">no post found</div>
       <div class="results">
         
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/06/ue4fbx-export-and-import-related/">
+                <h3 class="media-heading">[UE4]FBX Export and Import Related</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jun 6, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>Keywords: Multiple roots found</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
         
           <div class="media">
             
@@ -799,23 +747,6 @@ What is the best way to smooth player movement for network hiccups? Interp? Ease
             <hr>
           </div>
         
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/04/versioncontrolgit-you-are-not-currently-on-a-branch.-please-specify-which-branch-you-want-to-merge-with/">
-                <h3 class="media-heading">[VersionControl]git - You are not currently on a branch. Please specify which branch you want to merge with</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Apr 4, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>Keywords: git, pull, branch</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
       </div>
     </div>
     <div class="modal-footer">
@@ -878,9 +809,9 @@ $(document).ready(function() {
     
       <script>
         var disqus_config = function () {
-          this.page.url = 'https:\/\/dawnarc.com\/2017\/09\/ue4character-movement-and-networking%E7%9B%B8%E5%85%B3\/';
+          this.page.url = 'https:\/\/dawnarc.com\/2019\/01\/ue4resources-collections-tools-and-plugins-documents-and-blogs\/';
           
-            this.page.identifier = '\/2017\/09\/ue4character-movement-and-networking%E7%9B%B8%E5%85%B3\/'
+            this.page.identifier = '\/2019\/01\/ue4resources-collections-tools-and-plugins-documents-and-blogs\/'
           
         };
         (function() {

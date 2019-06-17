@@ -7,42 +7,30 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="generator" content="Hugo 0.53 with theme Tranquilpeak 0.4.3-SNAPSHOT">
 <meta name="author" content="Neil Wang">
-<meta name="keywords" content="UE4, AttachToComponent">
-<meta name="description" content="https://github.com/tomlooman/EpicSurvivalGameSeries/blob/4a6ee9a6081529fadbe0f693b2e4e6729d5ec08d/SurvivalGame/Source/SurvivalGame/Private/Items/SWeapon.cpp#L106
-EpicSurvivalGameSeries\SurvivalGame\Source\SurvivalGame\Private\Items\SWeapon.cpp
-void ASWeapon::AttachMeshToPawn(EInventorySlot Slot) { if (MyPawn) { // Remove and hide DetachMeshFromPawn(); USkeletalMeshComponent* PawnMesh = MyPawn-&gt;GetMesh(); FName AttachPoint = MyPawn-&gt;GetInventoryAttachPoint(Slot); Mesh-&gt;SetHiddenInGame(false); Mesh-&gt;AttachToComponent(PawnMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, AttachPoint); } } void ASWeapon::DetachMeshFromPawn() { Mesh-&gt;DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform); Mesh-&gt;SetHiddenInGame(true); }  StaticMeshComponent无法附加到SkeletalMeshComponent上，附加后StaticMeshComponent会出现在场景中的随机位置，而不是父级SkeletalMeshComponent身上，且此时即使设置LocationOffset也无效。
- 通过NewObject&lt;USkeletalMeshComponent&gt;(Owner)运行时创建的SkeletalMeshComponent可以附加到父级SkeletalMeshComponent上，但是无法播放父级SkeletalMeshComponent的动画，即使设置了WeaponComp-&gt;SetMasterPoseComponent(PawnMesh)。建议在构造函数中创建后SkeletalMeshComponent，然后再run-time修改SkeletalMesh模型，run-time修改指定SkeletalMeshComponent的SkeletalMesh是没有问题的，且可以正常播放父级的动画。
- 念去去、千里烟波，暮霭沉沉楚天阔。----北宋·柳永《雨霖铃》">
+<meta name="keywords" content="">
+<meta name="description" content="获取当前的Pawn 一个Controller（包括AIController）只能同时possess一个Pawn。所以GetPawn()返回的就是当前控制的Pawn：
+APawn* Pawn = PC-&gt;GetPawn();  Screen相关 //Convert 2D screen position to World Space 3D position and direction. Returns false if unable to determine value. bool DeprojectScreenPositionToWorld(float ScreenX, float ScreenY, FVector&amp; WorldLocation, FVector&amp; WorldDirection) const; /** Returns hit results from doing a collision query at a certain location on the screen */ bool GetHitResultAtScreenPosition(const FVector2D ScreenPosition, const ECollisionChannel TraceChannel, const FCollisionQueryParams&amp; CollisionQueryParams, FHitResult&amp; HitResult) const; /** * Returns the PlayerState associated with the player at the specified index.">
 
 
-<meta property="og:description" content="https://github.com/tomlooman/EpicSurvivalGameSeries/blob/4a6ee9a6081529fadbe0f693b2e4e6729d5ec08d/SurvivalGame/Source/SurvivalGame/Private/Items/SWeapon.cpp#L106
-EpicSurvivalGameSeries\SurvivalGame\Source\SurvivalGame\Private\Items\SWeapon.cpp
-void ASWeapon::AttachMeshToPawn(EInventorySlot Slot) { if (MyPawn) { // Remove and hide DetachMeshFromPawn(); USkeletalMeshComponent* PawnMesh = MyPawn-&gt;GetMesh(); FName AttachPoint = MyPawn-&gt;GetInventoryAttachPoint(Slot); Mesh-&gt;SetHiddenInGame(false); Mesh-&gt;AttachToComponent(PawnMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, AttachPoint); } } void ASWeapon::DetachMeshFromPawn() { Mesh-&gt;DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform); Mesh-&gt;SetHiddenInGame(true); }  StaticMeshComponent无法附加到SkeletalMeshComponent上，附加后StaticMeshComponent会出现在场景中的随机位置，而不是父级SkeletalMeshComponent身上，且此时即使设置LocationOffset也无效。
- 通过NewObject&lt;USkeletalMeshComponent&gt;(Owner)运行时创建的SkeletalMeshComponent可以附加到父级SkeletalMeshComponent上，但是无法播放父级SkeletalMeshComponent的动画，即使设置了WeaponComp-&gt;SetMasterPoseComponent(PawnMesh)。建议在构造函数中创建后SkeletalMeshComponent，然后再run-time修改SkeletalMesh模型，run-time修改指定SkeletalMeshComponent的SkeletalMesh是没有问题的，且可以正常播放父级的动画。
- 念去去、千里烟波，暮霭沉沉楚天阔。----北宋·柳永《雨霖铃》">
+<meta property="og:description" content="获取当前的Pawn 一个Controller（包括AIController）只能同时possess一个Pawn。所以GetPawn()返回的就是当前控制的Pawn：
+APawn* Pawn = PC-&gt;GetPawn();  Screen相关 //Convert 2D screen position to World Space 3D position and direction. Returns false if unable to determine value. bool DeprojectScreenPositionToWorld(float ScreenX, float ScreenY, FVector&amp; WorldLocation, FVector&amp; WorldDirection) const; /** Returns hit results from doing a collision query at a certain location on the screen */ bool GetHitResultAtScreenPosition(const FVector2D ScreenPosition, const ECollisionChannel TraceChannel, const FCollisionQueryParams&amp; CollisionQueryParams, FHitResult&amp; HitResult) const; /** * Returns the PlayerState associated with the player at the specified index.">
 <meta property="og:type" content="article">
-<meta property="og:title" content="[UE4]运行时切换武器(AttachToComponent)">
-<meta name="twitter:title" content="[UE4]运行时切换武器(AttachToComponent)">
-<meta property="og:url" content="https://dawnarc.com/2017/12/ue4%E8%BF%90%E8%A1%8C%E6%97%B6%E5%88%87%E6%8D%A2%E6%AD%A6%E5%99%A8attachtocomponent/">
-<meta property="twitter:url" content="https://dawnarc.com/2017/12/ue4%E8%BF%90%E8%A1%8C%E6%97%B6%E5%88%87%E6%8D%A2%E6%AD%A6%E5%99%A8attachtocomponent/">
+<meta property="og:title" content="[UE4]PlayerController API In Common">
+<meta name="twitter:title" content="[UE4]PlayerController API In Common">
+<meta property="og:url" content="https://dawnarc.com/2016/06/ue4playercontroller-api-in-common/">
+<meta property="twitter:url" content="https://dawnarc.com/2016/06/ue4playercontroller-api-in-common/">
 <meta property="og:site_name" content="玄冬Wong">
-<meta property="og:description" content="https://github.com/tomlooman/EpicSurvivalGameSeries/blob/4a6ee9a6081529fadbe0f693b2e4e6729d5ec08d/SurvivalGame/Source/SurvivalGame/Private/Items/SWeapon.cpp#L106
-EpicSurvivalGameSeries\SurvivalGame\Source\SurvivalGame\Private\Items\SWeapon.cpp
-void ASWeapon::AttachMeshToPawn(EInventorySlot Slot) { if (MyPawn) { // Remove and hide DetachMeshFromPawn(); USkeletalMeshComponent* PawnMesh = MyPawn-&gt;GetMesh(); FName AttachPoint = MyPawn-&gt;GetInventoryAttachPoint(Slot); Mesh-&gt;SetHiddenInGame(false); Mesh-&gt;AttachToComponent(PawnMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, AttachPoint); } } void ASWeapon::DetachMeshFromPawn() { Mesh-&gt;DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform); Mesh-&gt;SetHiddenInGame(true); }  StaticMeshComponent无法附加到SkeletalMeshComponent上，附加后StaticMeshComponent会出现在场景中的随机位置，而不是父级SkeletalMeshComponent身上，且此时即使设置LocationOffset也无效。
- 通过NewObject&lt;USkeletalMeshComponent&gt;(Owner)运行时创建的SkeletalMeshComponent可以附加到父级SkeletalMeshComponent上，但是无法播放父级SkeletalMeshComponent的动画，即使设置了WeaponComp-&gt;SetMasterPoseComponent(PawnMesh)。建议在构造函数中创建后SkeletalMeshComponent，然后再run-time修改SkeletalMesh模型，run-time修改指定SkeletalMeshComponent的SkeletalMesh是没有问题的，且可以正常播放父级的动画。
- 念去去、千里烟波，暮霭沉沉楚天阔。----北宋·柳永《雨霖铃》">
-<meta name="twitter:description" content="https://github.com/tomlooman/EpicSurvivalGameSeries/blob/4a6ee9a6081529fadbe0f693b2e4e6729d5ec08d/SurvivalGame/Source/SurvivalGame/Private/Items/SWeapon.cpp#L106
-EpicSurvivalGameSeries\SurvivalGame\Source\SurvivalGame\Private\Items\SWeapon.cpp
-void ASWeapon::AttachMeshToPawn(EInventorySlot Slot) { if (MyPawn) { // Remove and hide DetachMeshFromPawn(); USkeletalMeshComponent* PawnMesh = MyPawn-&gt;GetMesh(); FName AttachPoint = MyPawn-&gt;GetInventoryAttachPoint(Slot); Mesh-&gt;SetHiddenInGame(false); Mesh-&gt;AttachToComponent(PawnMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, AttachPoint); } } void ASWeapon::DetachMeshFromPawn() { Mesh-&gt;DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform); Mesh-&gt;SetHiddenInGame(true); }  StaticMeshComponent无法附加到SkeletalMeshComponent上，附加后StaticMeshComponent会出现在场景中的随机位置，而不是父级SkeletalMeshComponent身上，且此时即使设置LocationOffset也无效。
- 通过NewObject&lt;USkeletalMeshComponent&gt;(Owner)运行时创建的SkeletalMeshComponent可以附加到父级SkeletalMeshComponent上，但是无法播放父级SkeletalMeshComponent的动画，即使设置了WeaponComp-&gt;SetMasterPoseComponent(PawnMesh)。建议在构造函数中创建后SkeletalMeshComponent，然后再run-time修改SkeletalMesh模型，run-time修改指定SkeletalMeshComponent的SkeletalMesh是没有问题的，且可以正常播放父级的动画。
- 念去去、千里烟波，暮霭沉沉楚天阔。----北宋·柳永《雨霖铃》">
+<meta property="og:description" content="获取当前的Pawn 一个Controller（包括AIController）只能同时possess一个Pawn。所以GetPawn()返回的就是当前控制的Pawn：
+APawn* Pawn = PC-&gt;GetPawn();  Screen相关 //Convert 2D screen position to World Space 3D position and direction. Returns false if unable to determine value. bool DeprojectScreenPositionToWorld(float ScreenX, float ScreenY, FVector&amp; WorldLocation, FVector&amp; WorldDirection) const; /** Returns hit results from doing a collision query at a certain location on the screen */ bool GetHitResultAtScreenPosition(const FVector2D ScreenPosition, const ECollisionChannel TraceChannel, const FCollisionQueryParams&amp; CollisionQueryParams, FHitResult&amp; HitResult) const; /** * Returns the PlayerState associated with the player at the specified index.">
+<meta name="twitter:description" content="获取当前的Pawn 一个Controller（包括AIController）只能同时possess一个Pawn。所以GetPawn()返回的就是当前控制的Pawn：
+APawn* Pawn = PC-&gt;GetPawn();  Screen相关 //Convert 2D screen position to World Space 3D position and direction. Returns false if unable to determine value. bool DeprojectScreenPositionToWorld(float ScreenX, float ScreenY, FVector&amp; WorldLocation, FVector&amp; WorldDirection) const; /** Returns hit results from doing a collision query at a certain location on the screen */ bool GetHitResultAtScreenPosition(const FVector2D ScreenPosition, const ECollisionChannel TraceChannel, const FCollisionQueryParams&amp; CollisionQueryParams, FHitResult&amp; HitResult) const; /** * Returns the PlayerState associated with the player at the specified index.">
 <meta property="og:locale" content="en-us">
 
   
-    <meta property="article:published_time" content="2017-12-19T18:55:02">
+    <meta property="article:published_time" content="2016-06-19T10:31:02">
   
   
-    <meta property="article:modified_time" content="2017-12-19T18:55:02">
+    <meta property="article:modified_time" content="2016-06-19T10:31:02">
   
   
   
@@ -77,7 +65,7 @@ void ASWeapon::AttachMeshToPawn(EInventorySlot Slot) { if (MyPawn) { // Remove a
   <meta property="twitter:image" content="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=640">
 
 
-    <title>[UE4]运行时切换武器(AttachToComponent)</title>
+    <title>[UE4]PlayerController API In Common</title>
 
     <link rel="icon" href="https://dawnarc.com/favicon.png">
     
@@ -86,7 +74,7 @@ void ASWeapon::AttachMeshToPawn(EInventorySlot Slot) { if (MyPawn) { // Remove a
       <link rel="publisher" href="https://plus.google.com/111340706178390411568">
     
 
-    <link rel="canonical" href="https://dawnarc.com/2017/12/ue4%E8%BF%90%E8%A1%8C%E6%97%B6%E5%88%87%E6%8D%A2%E6%AD%A6%E5%99%A8attachtocomponent/">
+    <link rel="canonical" href="https://dawnarc.com/2016/06/ue4playercontroller-api-in-common/">
 
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
@@ -336,15 +324,15 @@ if (!doNotTrack) {
             <div class="post-header main-content-wrap text-left">
   
     <h1 class="post-title" itemprop="headline">
-      [UE4]运行时切换武器(AttachToComponent)
+      [UE4]PlayerController API In Common
     </h1>
   
   
   <div class="postShorten-meta post-meta">
     
-      <time itemprop="datePublished" datetime="2017-12-19T18:55:02&#43;08:00">
+      <time itemprop="datePublished" datetime="2016-06-19T10:31:02&#43;08:00">
         
-  December 19, 2017
+  June 19, 2016
 
       </time>
     
@@ -363,43 +351,114 @@ if (!doNotTrack) {
           
           <div class="post-content markdown" itemprop="articleBody">
             <div class="main-content-wrap">
-              <p><a href="https://github.com/tomlooman/EpicSurvivalGameSeries/blob/4a6ee9a6081529fadbe0f693b2e4e6729d5ec08d/SurvivalGame/Source/SurvivalGame/Private/Items/SWeapon.cpp#L106">https://github.com/tomlooman/EpicSurvivalGameSeries/blob/4a6ee9a6081529fadbe0f693b2e4e6729d5ec08d/SurvivalGame/Source/SurvivalGame/Private/Items/SWeapon.cpp#L106</a></p>
+              
 
-<p>EpicSurvivalGameSeries\SurvivalGame\Source\SurvivalGame\Private\Items\SWeapon.cpp</p>
+<h5 id="获取当前的pawn">获取当前的Pawn</h5>
 
-<pre><code>void ASWeapon::AttachMeshToPawn(EInventorySlot Slot)
+<p>一个Controller（包括AIController）只能同时possess一个Pawn。所以GetPawn()返回的就是当前控制的Pawn：</p>
+
+<pre><code>APawn* Pawn = PC-&gt;GetPawn();
+</code></pre>
+
+<h5 id="screen相关">Screen相关</h5>
+
+<pre><code>//Convert 2D screen position to World Space 3D position and direction. Returns false if unable to determine value.
+bool DeprojectScreenPositionToWorld(float ScreenX, float ScreenY, FVector&amp; WorldLocation, FVector&amp; WorldDirection) const;
+
+/** Returns hit results from doing a collision query at a certain location on the screen */
+bool GetHitResultAtScreenPosition(const FVector2D ScreenPosition, const ECollisionChannel TraceChannel, const FCollisionQueryParams&amp; CollisionQueryParams, FHitResult&amp; HitResult) const;
+
+/**
+ * Returns the PlayerState associated with the player at the specified index.
+ * @param   PlayerIndex     the index [into the local player's GamePlayers array] for the player PlayerState to find
+ * @return  the PlayerState associated with the player at the specified index, or None if the player is not a split-screen player or
+ *          the index was out of range.
+ */
+class APlayerState* GetSplitscreenPlayerByIndex(int32 PlayerIndex = 1) const;
+
+
+/**
+ * After successful world to screen projection, allows custom post-processing of the resulting ScreenLocation.
+ * @return Whether projected location remains valid.
+ */
+virtual bool PostProcessWorldToScreen(FVector WorldLocation, FVector2D&amp; ScreenLocation, bool bPlayerViewportRelative) const;
+
+
+/**
+ * Convert a World Space 3D position into a 2D Screen Space position.
+ * @return true if the world coordinate was successfully projected to the screen.
+ */
+bool ProjectWorldLocationToScreen(FVector WorldLocation, FVector2D&amp; ScreenLocation, bool bPlayerViewportRelative = false) const;
+</code></pre>
+
+<h5 id="鼠标光标固定位置不动">鼠标光标固定位置不动</h5>
+
+<p>假设需求如下：<br />
+右键按住不放，屏幕转向，隐藏鼠标光标，松开右键时再显示鼠标光标，且鼠标光标的位置固定，不要跟随鼠标滑动而移动；<br />
+左键按住不放，光标显示，且光标跟谁鼠标滑动而移动（比如RTS的框选操作）。</p>
+
+<p>解决方案如下：</p>
+
+<pre><code>void AMyPlayerController::OnLeftMousePressed()
 {
-    if (MyPawn)
-    {
-        // Remove and hide
-        DetachMeshFromPawn();
+    //由于光标默认捕获规则是：Viewport中鼠标任意键的按下事件就会永久捕获。
+    //FInputModeGameAndUI默认规则是：捕获时隐藏光标。所以这里需要修改捕获时不隐藏光标，否则按住左键不放时光标会一直隐藏。
+    FInputModeGameAndUI InputMode;
+    InputMode.SetHideCursorDuringCapture(false);
 
-        USkeletalMeshComponent* PawnMesh = MyPawn-&gt;GetMesh();
-        FName AttachPoint = MyPawn-&gt;GetInventoryAttachPoint(Slot);
-        Mesh-&gt;SetHiddenInGame(false);
-        Mesh-&gt;AttachToComponent(PawnMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, AttachPoint);
-    }
+    SetInputMode(InputMode);
 }
 
-
-void ASWeapon::DetachMeshFromPawn()
+void AMyPlayerController::OnLeftMouseReleased()
 {
-    Mesh-&gt;DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
-    Mesh-&gt;SetHiddenInGame(true);
+    //左键松开事件中不用做任何处理
+}
+
+void AMyPlayerController::OnRightMousePressed()
+{
+    //PlayerController的变量，控制是否隐藏光标
+    bShowMouseCursor = false;
+
+    //自定义变量，用来标识是否按住右键
+    bRightMouseHold = true;
+
+    SetInputMode(FInputModeGameOnly());
+}
+
+void AMyPlayerController::OnRightMouseReleased()
+{
+    bShowMouseCursor = true;
+
+    bRightMouseHold = false;
+
+    SetInputMode(FInputModeGameAndUI());
 }
 </code></pre>
 
-<div class="alert danger ">
-  <p>StaticMeshComponent无法附加到SkeletalMeshComponent上，附加后StaticMeshComponent会出现在场景中的随机位置，而不是父级SkeletalMeshComponent身上，且此时即使设置LocationOffset也无效。</p>
-</div>
+<p>修改光标的捕获规则模式：<br />
+Project Settings -&gt; Engine -&gt; Input -&gt; Viewport Properties -&gt; Default Viewport Mouse Capture Mode.<br />
+默认是： Capture Permanently Including Initial Mouse Down，表示鼠标任意键的按下事件捕获，且是永久捕获。</p>
 
-<div class="alert danger ">
-  <p>通过<code>NewObject&lt;USkeletalMeshComponent&gt;(Owner)</code>运行时创建的SkeletalMeshComponent可以附加到父级SkeletalMeshComponent上，但是无法播放父级SkeletalMeshComponent的动画，即使设置了<code>WeaponComp-&gt;SetMasterPoseComponent(PawnMesh)</code>。建议在构造函数中创建后SkeletalMeshComponent，然后再run-time修改SkeletalMesh模型，run-time修改指定SkeletalMeshComponent的SkeletalMesh是没有问题的，且可以正常播放父级的动画。</p>
-</div>
+<h5 id="how-to-show-the-mouse-cursor-at-runtime">How to show the mouse cursor at runtime</h5>
 
-<hr />
+<p>Code:</p>
 
-<p><code>念去去、千里烟波，暮霭沉沉楚天阔。----北宋·柳永《雨霖铃》</code></p>
+<pre><code>APlayerController* PC = GetController();
+if (PC)
+{
+    PC-&gt;bShowMouseCursor = true; 
+    PC-&gt;bEnableClickEvents = true; 
+    PC-&gt;bEnableMouseOverEvents = true;
+}
+</code></pre>
+
+<p>Reference<br />
+<a href="https://forums.unrealengine.com/development-discussion/c-gameplay-programming/47971-how-to-show-the-mouse-cursor-at-runtime-in-c">https://forums.unrealengine.com/development-discussion/c-gameplay-programming/47971-how-to-show-the-mouse-cursor-at-runtime-in-c</a></p>
+
+<h5 id="how-to-get-viewport-size">How to get Viewport size</h5>
+
+<pre><code>void APlayerController::GetViewportSize(int32&amp; SizeX, int32&amp; SizeY) const;
+</code></pre>
 
               
             </div>
@@ -425,7 +484,7 @@ void ASWeapon::DetachMeshFromPawn()
           
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2017/12/ue4android-package-for-engine-source-build/" data-tooltip="[UE4]Android package for engine source build">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2016/06/ue4movement%E4%B8%8Enavigation%E7%9B%B8%E5%85%B3%E7%9A%84api/" data-tooltip="[UE4]Movement与Navigation相关的API">
               
                   <i class="fa fa-angle-left"></i>
                   <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
@@ -433,7 +492,7 @@ void ASWeapon::DetachMeshFromPawn()
             </li>
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2017/12/ue4skeletal-mesh-sockets%E7%94%A8%E6%B3%95/" data-tooltip="[UE4]Skeletal Mesh Sockets用法">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2016/06/ue4viewport-resized-event%E8%A7%86%E5%9B%BE%E7%AA%97%E5%8F%A3%E7%9A%84%E5%B0%BA%E5%AF%B8%E4%BF%AE%E6%94%B9%E5%8F%98%E5%8C%96%E6%97%B6%E7%9A%84%E5%9B%9E%E8%B0%83%E4%BA%8B%E4%BB%B6/" data-tooltip="[UE4]Viewport Resized Event(视图窗口的尺寸修改变化时的回调事件)">
               
                   <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
                   <i class="fa fa-angle-right"></i>
@@ -493,7 +552,7 @@ void ASWeapon::DetachMeshFromPawn()
           
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2017/12/ue4android-package-for-engine-source-build/" data-tooltip="[UE4]Android package for engine source build">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2016/06/ue4movement%E4%B8%8Enavigation%E7%9B%B8%E5%85%B3%E7%9A%84api/" data-tooltip="[UE4]Movement与Navigation相关的API">
               
                   <i class="fa fa-angle-left"></i>
                   <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
@@ -501,7 +560,7 @@ void ASWeapon::DetachMeshFromPawn()
             </li>
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2017/12/ue4skeletal-mesh-sockets%E7%94%A8%E6%B3%95/" data-tooltip="[UE4]Skeletal Mesh Sockets用法">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2016/06/ue4viewport-resized-event%E8%A7%86%E5%9B%BE%E7%AA%97%E5%8F%A3%E7%9A%84%E5%B0%BA%E5%AF%B8%E4%BF%AE%E6%94%B9%E5%8F%98%E5%8C%96%E6%97%B6%E7%9A%84%E5%9B%9E%E8%B0%83%E4%BA%8B%E4%BB%B6/" data-tooltip="[UE4]Viewport Resized Event(视图窗口的尺寸修改变化时的回调事件)">
               
                   <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
                   <i class="fa fa-angle-right"></i>
@@ -594,6 +653,23 @@ void ASWeapon::DetachMeshFromPawn()
       <div class="no-result text-color-light text-center">no post found</div>
       <div class="results">
         
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/06/ue4fbx-export-and-import-related/">
+                <h3 class="media-heading">[UE4]FBX Export and Import Related</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jun 6, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>Keywords: Multiple roots found</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
         
           <div class="media">
             
@@ -748,23 +824,6 @@ void ASWeapon::DetachMeshFromPawn()
             <hr>
           </div>
         
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/04/versioncontrolgit-you-are-not-currently-on-a-branch.-please-specify-which-branch-you-want-to-merge-with/">
-                <h3 class="media-heading">[VersionControl]git - You are not currently on a branch. Please specify which branch you want to merge with</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Apr 4, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>Keywords: git, pull, branch</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
       </div>
     </div>
     <div class="modal-footer">
@@ -827,9 +886,9 @@ $(document).ready(function() {
     
       <script>
         var disqus_config = function () {
-          this.page.url = 'https:\/\/dawnarc.com\/2017\/12\/ue4%E8%BF%90%E8%A1%8C%E6%97%B6%E5%88%87%E6%8D%A2%E6%AD%A6%E5%99%A8attachtocomponent\/';
+          this.page.url = 'https:\/\/dawnarc.com\/2016\/06\/ue4playercontroller-api-in-common\/';
           
-            this.page.identifier = '\/2017\/12\/ue4%E8%BF%90%E8%A1%8C%E6%97%B6%E5%88%87%E6%8D%A2%E6%AD%A6%E5%99%A8attachtocomponent\/'
+            this.page.identifier = '\/2016\/06\/ue4playercontroller-api-in-common\/'
           
         };
         (function() {
