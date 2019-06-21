@@ -960,7 +960,7 @@ PathFollowingComp-&gt;AbortMove(*this, FPathFollowingResultFlags::MovementStop);
         keywords: UE4、Movement
 1，Actor-&gt;SetActorLocation
 Actor-&gt;SetActorLocation()  2，AActor::AddActorWorldOffset(), AActor::AddActorLocalOffset()
-AddActorWorldOffset与AddActorLocalOffset区别：如果期望Actor沿着某个世界坐标系方向移动，那么使用AddActorWorldOffset并且参数为世界坐标系的DeltaLocation；如果期望Actor沿着当前Actor局部坐标系方向移动，那么使用AddActorLocalOffset并且参数为相对当前Actor的DeltaLocation Offset。
+AddActorWorldOffset与AddActorLocalOffset区别：如果期望Actor沿着某个世界坐标系方向移动，那么使用AddActorWorldOffset并且参数为世界坐标系的DeltaLocation；如果期望Actor沿着当前Actor局部坐标系方向移动，那么使用AddActorLocalOffset并且参数为相对当前Actor的DeltaLocation Offset（比如想做螺旋轨迹但又不想计算其世界空间坐标，那么就用LocalOffset）。
  如果使用AddActorWorldOffset或者AddActorLocalOffset移动Character，那么MovementMode必须设置为fly，否则当DeltaLocation较小时，角色会始终往下掉（即使禁用物理模拟）。UCharacterMovementComponent::SetMovementMode(EMovementMode::MOVE_Flying);
  3，Velocity
 ACharacter-&gt;GetCharacterMovement()-&gt;Velocity += FVector(5.f, 5.f, 0.f);  4，将一个Controller（PlayerController或者AIController）possess到一个Actor上，然后调用：
@@ -972,7 +972,7 @@ APawn-&gt;AddMovementInput(FVector WorldDirection, float ScaleValue = 1.0f, bool
 void UCharacterMovementComponent::AddImpulse( FVector Impulse, bool bVelocityChange )  AddImpulse 一般用来做投掷、爆炸、击飞等物理效果。添加的是一个瞬间的力，之后就不需要每帧做处理了。 注意：AddImpulse 作用对象一般都是 StaticMeshComponent ，而不能是 CollisionComponent，否则无效。且 StaticMeshComponent 要开启物理：SetSimulatePhysics(true) ，否则也无效。
 
 8，UCharacterMovementComponent::AddForce
-void UCharacterMovementComponent::AddForce( FVector Force )  如果想让物体保持移动，需要每帧都执行AddForce()函数，也就说如果加速度是实时变化的，那么就可以用AddForce。 两者的区别可以参考：
+void UCharacterMovementComponent::AddForce( FVector Force )  如果想让物体保持移动，需要每帧都执行AddForce()函数，也就说如果加速度是实时变化的，那么就可以用AddForce。 两者的区别：
       
       <p>
         <a href="https://dawnarc.com/2016/06/ue4%E7%A7%BB%E5%8A%A8%E7%89%A9%E4%BD%93%E7%9A%84%E5%87%A0%E7%A7%8D%E6%96%B9%E6%B3%95/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -1298,6 +1298,40 @@ float AnimLength = 0.f; if (USkeletalMeshComponent *Mesh = MyActor-&gt;FindCompo
           <div class="media">
             
             <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/06/ue4numeric-limits/">
+                <h3 class="media-heading">[UE4]Numeric Limits</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jun 6, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>Keywords: UE4, Numeric</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/06/ue4networking-in-advanced/">
+                <h3 class="media-heading">[UE4]Networking in Advanced</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jun 6, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>Keywords: UE4, Networking</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
               <a class="link-unstyled" href="https://dawnarc.com/2019/06/ue4fbx-export-and-import-related/">
                 <h3 class="media-heading">[UE4]FBX Export and Import Related</h3>
               </a>
@@ -1431,40 +1465,6 @@ float AnimLength = 0.f; if (USkeletalMeshComponent *Mesh = MyActor-&gt;FindCompo
             <hr>
           </div>
         
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/04/ue4android.bat-failed-with-args-silent-update-lib-project-path-javalibsdownloader_library-target-android-28/">
-                <h3 class="media-heading">[UE4]android.bat failed with args --silent update lib-project --path JavaLibsdownloader_library --target android-28</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Apr 4, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>keywords: android sdk, UE4 package error</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/04/versioncontrolgit-commands-in-common/">
-                <h3 class="media-heading">[VersionControl]git commands in common</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Apr 4, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>Keywords: git, pull, branch</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
       </div>
     </div>
     <div class="modal-footer">
@@ -1472,7 +1472,7 @@ float AnimLength = 0.f; if (USkeletalMeshComponent *Mesh = MyActor-&gt;FindCompo
          data-message-zero="no post found"
          data-message-one="1 post found"
          data-message-other="{n} posts found">
-         500 posts found
+         502 posts found
       </p>
     </div>
   </div>

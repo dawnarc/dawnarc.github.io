@@ -7,30 +7,26 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="generator" content="Hugo 0.53 with theme Tranquilpeak 0.4.3-SNAPSHOT">
 <meta name="author" content="Neil Wang">
-<meta name="keywords" content="">
-<meta name="description" content="从FStreamableManager::LoadSynchronous到FUObjectHashTables AddObject的堆栈：
-UE4Editor-CoreUObject.dll!HashObject(UObjectBase * Object) Line 904 UE4Editor-CoreUObject.dll!UObjectBase::AddObject(FName InName, EInternalObjectFlags InSetInternalFlags) Line 246 UE4Editor-CoreUObject.dll!UObjectBase::UObjectBase(UClass * InClass, EObjectFlags InFlags, EInternalObjectFlags InInternalFlags, UObject * InOuter, FName InName) Line 102 UE4Editor-CoreUObject.dll!StaticAllocateObject(UClass * InClass, UObject * InOuter, FName InName, EObjectFlags InFlags, EInternalObjectFlags InternalSetFlags, bool bCanRecycleSubobjects, bool * bOutRecycledSubobject) Line 2434 UE4Editor-CoreUObject.dll!StaticConstructObject_Internal(UClass * InClass, UObject * InOuter, FName InName, EObjectFlags InFlags, EInternalObjectFlags InternalSetFlags, UObject * InTemplate, bool bCopyTransientsFromClassDefaults, FObjectInstancingGraph * InInstanceGraph, bool bAssumeTemplateIsArchetype) Line 3161 [Inline Frame] UE4Editor-CoreUObject.">
+<meta name="keywords" content="UE4, Networking">
+<meta name="description" content="Keywords: UE4, Networking">
 
 
-<meta property="og:description" content="从FStreamableManager::LoadSynchronous到FUObjectHashTables AddObject的堆栈：
-UE4Editor-CoreUObject.dll!HashObject(UObjectBase * Object) Line 904 UE4Editor-CoreUObject.dll!UObjectBase::AddObject(FName InName, EInternalObjectFlags InSetInternalFlags) Line 246 UE4Editor-CoreUObject.dll!UObjectBase::UObjectBase(UClass * InClass, EObjectFlags InFlags, EInternalObjectFlags InInternalFlags, UObject * InOuter, FName InName) Line 102 UE4Editor-CoreUObject.dll!StaticAllocateObject(UClass * InClass, UObject * InOuter, FName InName, EObjectFlags InFlags, EInternalObjectFlags InternalSetFlags, bool bCanRecycleSubobjects, bool * bOutRecycledSubobject) Line 2434 UE4Editor-CoreUObject.dll!StaticConstructObject_Internal(UClass * InClass, UObject * InOuter, FName InName, EObjectFlags InFlags, EInternalObjectFlags InternalSetFlags, UObject * InTemplate, bool bCopyTransientsFromClassDefaults, FObjectInstancingGraph * InInstanceGraph, bool bAssumeTemplateIsArchetype) Line 3161 [Inline Frame] UE4Editor-CoreUObject.">
+<meta property="og:description" content="Keywords: UE4, Networking">
 <meta property="og:type" content="article">
-<meta property="og:title" content="[UE4]引擎源码分析之：Load Object">
-<meta name="twitter:title" content="[UE4]引擎源码分析之：Load Object">
-<meta property="og:url" content="https://dawnarc.com/2018/02/ue4%E5%BC%95%E6%93%8E%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%B9%8Bload-object/">
-<meta property="twitter:url" content="https://dawnarc.com/2018/02/ue4%E5%BC%95%E6%93%8E%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%B9%8Bload-object/">
+<meta property="og:title" content="[UE4]Networking in Advanced">
+<meta name="twitter:title" content="[UE4]Networking in Advanced">
+<meta property="og:url" content="https://dawnarc.com/2019/06/ue4networking-in-advanced/">
+<meta property="twitter:url" content="https://dawnarc.com/2019/06/ue4networking-in-advanced/">
 <meta property="og:site_name" content="玄冬Wong">
-<meta property="og:description" content="从FStreamableManager::LoadSynchronous到FUObjectHashTables AddObject的堆栈：
-UE4Editor-CoreUObject.dll!HashObject(UObjectBase * Object) Line 904 UE4Editor-CoreUObject.dll!UObjectBase::AddObject(FName InName, EInternalObjectFlags InSetInternalFlags) Line 246 UE4Editor-CoreUObject.dll!UObjectBase::UObjectBase(UClass * InClass, EObjectFlags InFlags, EInternalObjectFlags InInternalFlags, UObject * InOuter, FName InName) Line 102 UE4Editor-CoreUObject.dll!StaticAllocateObject(UClass * InClass, UObject * InOuter, FName InName, EObjectFlags InFlags, EInternalObjectFlags InternalSetFlags, bool bCanRecycleSubobjects, bool * bOutRecycledSubobject) Line 2434 UE4Editor-CoreUObject.dll!StaticConstructObject_Internal(UClass * InClass, UObject * InOuter, FName InName, EObjectFlags InFlags, EInternalObjectFlags InternalSetFlags, UObject * InTemplate, bool bCopyTransientsFromClassDefaults, FObjectInstancingGraph * InInstanceGraph, bool bAssumeTemplateIsArchetype) Line 3161 [Inline Frame] UE4Editor-CoreUObject.">
-<meta name="twitter:description" content="从FStreamableManager::LoadSynchronous到FUObjectHashTables AddObject的堆栈：
-UE4Editor-CoreUObject.dll!HashObject(UObjectBase * Object) Line 904 UE4Editor-CoreUObject.dll!UObjectBase::AddObject(FName InName, EInternalObjectFlags InSetInternalFlags) Line 246 UE4Editor-CoreUObject.dll!UObjectBase::UObjectBase(UClass * InClass, EObjectFlags InFlags, EInternalObjectFlags InInternalFlags, UObject * InOuter, FName InName) Line 102 UE4Editor-CoreUObject.dll!StaticAllocateObject(UClass * InClass, UObject * InOuter, FName InName, EObjectFlags InFlags, EInternalObjectFlags InternalSetFlags, bool bCanRecycleSubobjects, bool * bOutRecycledSubobject) Line 2434 UE4Editor-CoreUObject.dll!StaticConstructObject_Internal(UClass * InClass, UObject * InOuter, FName InName, EObjectFlags InFlags, EInternalObjectFlags InternalSetFlags, UObject * InTemplate, bool bCopyTransientsFromClassDefaults, FObjectInstancingGraph * InInstanceGraph, bool bAssumeTemplateIsArchetype) Line 3161 [Inline Frame] UE4Editor-CoreUObject.">
+<meta property="og:description" content="Keywords: UE4, Networking">
+<meta name="twitter:description" content="Keywords: UE4, Networking">
 <meta property="og:locale" content="en-us">
 
   
-    <meta property="article:published_time" content="2018-02-03T23:06:02">
+    <meta property="article:published_time" content="2019-06-21T17:00:02">
   
   
-    <meta property="article:modified_time" content="2018-02-03T23:06:02">
+    <meta property="article:modified_time" content="2019-06-21T17:00:02">
   
   
   
@@ -57,6 +53,9 @@ UE4Editor-CoreUObject.dll!HashObject(UObjectBase * Object) Line 904 UE4Editor-Co
 
 
 
+  <meta property="og:image" content="https://dawnarc.com/thumbnail/thumbnail-japen-001.jpg">
+  <meta property="twitter:image" content="https://dawnarc.com/thumbnail/thumbnail-japen-001.jpg">
+
 
 
 
@@ -65,7 +64,7 @@ UE4Editor-CoreUObject.dll!HashObject(UObjectBase * Object) Line 904 UE4Editor-Co
   <meta property="twitter:image" content="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=640">
 
 
-    <title>[UE4]引擎源码分析之：Load Object</title>
+    <title>[UE4]Networking in Advanced</title>
 
     <link rel="icon" href="https://dawnarc.com/favicon.png">
     
@@ -74,7 +73,7 @@ UE4Editor-CoreUObject.dll!HashObject(UObjectBase * Object) Line 904 UE4Editor-Co
       <link rel="publisher" href="https://plus.google.com/111340706178390411568">
     
 
-    <link rel="canonical" href="https://dawnarc.com/2018/02/ue4%E5%BC%95%E6%93%8E%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%B9%8Bload-object/">
+    <link rel="canonical" href="https://dawnarc.com/2019/06/ue4networking-in-advanced/">
 
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
@@ -324,15 +323,15 @@ if (!doNotTrack) {
             <div class="post-header main-content-wrap text-left">
   
     <h1 class="post-title" itemprop="headline">
-      [UE4]引擎源码分析之：Load Object
+      [UE4]Networking in Advanced
     </h1>
   
   
   <div class="postShorten-meta post-meta">
     
-      <time itemprop="datePublished" datetime="2018-02-03T23:06:02&#43;08:00">
+      <time itemprop="datePublished" datetime="2019-06-21T17:00:02&#43;08:00">
         
-  February 3, 2018
+  June 21, 2019
 
       </time>
     
@@ -351,115 +350,133 @@ if (!doNotTrack) {
           
           <div class="post-content markdown" itemprop="articleBody">
             <div class="main-content-wrap">
-              <p>从FStreamableManager::LoadSynchronous到FUObjectHashTables AddObject的堆栈：</p>
+              <p>Keywords: UE4, Networking</p>
 
-<pre><code>UE4Editor-CoreUObject.dll!HashObject(UObjectBase * Object) Line 904 
-UE4Editor-CoreUObject.dll!UObjectBase::AddObject(FName InName, EInternalObjectFlags InSetInternalFlags) Line 246    
-UE4Editor-CoreUObject.dll!UObjectBase::UObjectBase(UClass * InClass, EObjectFlags InFlags, EInternalObjectFlags InInternalFlags, UObject * InOuter, FName InName) Line 102  
-UE4Editor-CoreUObject.dll!StaticAllocateObject(UClass * InClass, UObject * InOuter, FName InName, EObjectFlags InFlags, EInternalObjectFlags InternalSetFlags, bool bCanRecycleSubobjects, bool * bOutRecycledSubobject) Line 2434  
-UE4Editor-CoreUObject.dll!StaticConstructObject_Internal(UClass * InClass, UObject * InOuter, FName InName, EObjectFlags InFlags, EInternalObjectFlags InternalSetFlags, UObject * InTemplate, bool bCopyTransientsFromClassDefaults, FObjectInstancingGraph * InInstanceGraph, bool bAssumeTemplateIsArchetype) Line 3161  
-[Inline Frame] UE4Editor-CoreUObject.dll!NewObject(UObject * Outer, FName) Line 1164    
-UE4Editor-CoreUObject.dll!CreatePackage(UObject * InOuter, const wchar_t * PackageName) Line 645    
-UE4Editor-CoreUObject.dll!GetPackageLinker(UPackage * InOuter, const wchar_t * InLongPackageName, unsigned int LoadFlags, UPackageMap * Sandbox, FGuid * CompatibleGuid) Line 642   
-UE4Editor-CoreUObject.dll!LoadPackageInternal(UPackage * InOuter, const wchar_t * InLongPackageNameOrFilename, unsigned int LoadFlags, FLinkerLoad * ImportLinker) Line 1240    
-UE4Editor-CoreUObject.dll!LoadPackage(UPackage * InOuter, const wchar_t * InLongPackageName, unsigned int LoadFlags) Line 1436  
-UE4Editor-CoreUObject.dll!ResolveName(UObject * &amp; InPackage, FString &amp; InOutName, bool Create, bool Throw, unsigned int LoadFlags) Line 792 
-UE4Editor-CoreUObject.dll!StaticLoadObjectInternal(UClass * ObjectClass, UObject * InOuter, const wchar_t * InName, const wchar_t * Filename, unsigned int LoadFlags, UPackageMap * Sandbox, bool bAllowObjectReconciliation) Line 880  
-UE4Editor-CoreUObject.dll!StaticLoadObject(UClass * ObjectClass, UObject * InOuter, const wchar_t * InName, const wchar_t * Filename, unsigned int LoadFlags, UPackageMap * Sandbox, bool bAllowObjectReconciliation) Line 947  
-UE4Editor-Engine.dll!FStreamableManager::StreamInternal(const FSoftObjectPath &amp; InTargetName, int Priority, TSharedRef&lt;FStreamableHandle,0&gt; Handle) Line 786    
-UE4Editor-Engine.dll!FStreamableManager::StartHandleRequests(TSharedRef&lt;FStreamableHandle,0&gt; Handle) Line 989   
-UE4Editor-Engine.dll!FStreamableManager::RequestAsyncLoad(const TArray&lt;FSoftObjectPath,FDefaultAllocator&gt; &amp; TargetsToStream, TBaseDelegate&lt;void&gt; DelegateToCall, int Priority, bool bManageActiveHandle, bool bStartStalled, const FString &amp; DebugName) Line 936    
-UE4Editor-Engine.dll!FStreamableManager::RequestSyncLoad(const TArray&lt;FSoftObjectPath,FDefaultAllocator&gt; &amp; TargetsToStream, bool bManageActiveHandle, const FString &amp; DebugName) Line 962   
-UE4Editor-Engine.dll!FStreamableManager::RequestSyncLoad(const FSoftObjectPath &amp; TargetToStream, bool bManageActiveHandle, const FString &amp; DebugName) Line 979  
-UE4Editor-Engine.dll!FStreamableManager::LoadSynchronous(const FSoftObjectPath &amp; Target, bool bManageActiveHandle, TSharedPtr&lt;FStreamableHandle,0&gt; * RequestHandlePointer) Line 1012    
+<h3 id="replication-cases">Replication Cases</h3>
+
+<h5 id="disconnect-actor-s-replication-at-run-time">Disconnect Actor&rsquo;s replication at Run-time</h5>
+
+<p>Case:<br />
+A Character is replicated at first, then we want to disable replication when it dies.<br />
+E.g. Ragdoll, if we continue to keep replicating when character dies, it would increase overhead on server and server not care the result of Ragdoll, Ragdoll is just effect on client, so we need disconnect replication before perform Ragdoll computing.</p>
+
+<p>Solution:<br />
+Execute <code>AActor::ForceNetUpdate()</code> to replicate current data to client before Ragdoll computing fired on server, then execute <code>AActor::TearOff</code> on server, from now on, Actor would not be replicaed forever.<br />
+<code>AActor::TornOff()</code> would be fired on client after executing <code>AActor::TearOff</code> on server, it means that Actor can be modified arbitrarily and it would not be corrected by server.</p>
+
+<h5 id="replication-of-bullet-path-in-shoot-game">Replication of bullet path in shoot game</h5>
+
+<p>Suggestion:<br />
+1. <code>bReplicateMovement = true;</code> in constructor of BulletActor;<br />
+2. <code>ProjectileMovement-&gt;InitialSpeed = 0.f;</code> and <code>ProjectileMovement-&gt;MaxSpeed = 0.f;</code> in constructor of BulletActor;<br />
+3. Set real time speed of BulletActor in Server.</p>
+
+<div class="alert warning ">
+  <p>If you set a large value for <code>ProjectileMovement-&gt;InitialSpeed</code> in bullet constructor, and then set <code>Velocity</code> in server, bullet path would jitter at the begining.</p>
+</div>
+
+<h3 id="ue4-networking-documents">UE4 Networking Documents</h3>
+
+<h5 id="online-beacons">Online Beacons</h5>
+
+<p>Online Beacons are a special type of Actor that provide a lightweight way to contact a server and interact with it (via RPCs) without committing to a normal game connection. While the built-in classes can be used as they are in some cases, they are intended to be extended into custom classes that perform project-specific interactions, logic, and information requests.</p>
+
+<p>Docs: Online Beacons<br />
+<a href="https://docs.unrealengine.com/en-US/Gameplay/Networking/OnlineBeacons/index.html">https://docs.unrealengine.com/en-US/Gameplay/Networking/OnlineBeacons/index.html</a></p>
+
+<h5 id="unreal-engine-4-network-compendium">Unreal Engine 4 Network Compendium</h5>
+
+<p><code>Unreal Engine 4 Network Compendium</code> Made by: Cedric &lsquo;eXi&rsquo; Neukirchen<br />
+<a href="http://cedric-neukirchen.net/Downloads/Compendium/UE4_Network_Compendium_by_Cedric_eXi_Neukirchen.pdf">http://cedric-neukirchen.net/Downloads/Compendium/UE4_Network_Compendium_by_Cedric_eXi_Neukirchen.pdf</a></p>
+
+<h3 id="engine-source-analysis-for-networking">Engine Source Analysis for Networking</h3>
+
+<h5 id="properties-used-for-replication-in-common">Properties used for Replication in Common</h5>
+
+<pre><code>/** Square of the max distance from the client's viewpoint that this actor is relevant and will be replicated. */
+UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category=Replication)
+float NetCullDistanceSquared;   
+
+/** Internal - used by UNetDriver */
+UPROPERTY(Transient)
+int32 NetTag;
+
+/** How often (per second) this actor will be considered for replication, used to determine NetUpdateTime */
+UPROPERTY(Category=Replication, EditDefaultsOnly, BlueprintReadWrite)
+float NetUpdateFrequency;
+
+/** Used to determine what rate to throttle down to when replicated properties are changing infrequently */
+UPROPERTY(Category=Replication, EditDefaultsOnly, BlueprintReadWrite)
+float MinNetUpdateFrequency;
+
+/** Priority for this actor when checking for replication in a low bandwidth or saturated situation, higher priority means it is more likely to replicate */
+UPROPERTY(Category=Replication, EditDefaultsOnly, BlueprintReadWrite)
+float NetPriority;
 </code></pre>
 
-<p>UObject从ConditionalCollectGarbage到FUObjectHashTables RemoveObject的堆栈</p>
+<h5 id="how-does-engine-check-if-actor-is-relevant-to-connection">How does engine check if Actor is relevant to connection</h5>
 
-<pre><code>UE4Editor-CoreUObject.dll!UnhashObject(UObjectBase * Object) Line 934   
-UE4Editor-CoreUObject.dll!UObjectBase::LowLevelRename(FName NewName, UObject * NewOuter) Line 259   
-UE4Editor-CoreUObject.dll!UObject::BeginDestroy() Line 721  
-UE4Editor-CoreUObject.dll!UObject::ConditionalBeginDestroy() Line 884   
-UE4Editor-CoreUObject.dll!CollectGarbageInternal(EObjectFlags KeepFlags, bool bPerformFullPurge) Line 1496  
-UE4Editor-CoreUObject.dll!TryCollectGarbage(EObjectFlags KeepFlags, bool bPerformFullPurge) Line 1560   
-UE4Editor-Engine.dll!UEngine::ConditionalCollectGarbage() Line 1072 
-UE4Editor-Engine.dll!UWorld::Tick(ELevelTick TickType, float DeltaSeconds) Line 1612    
-UE4Editor-UnrealEd.dll!UEditorEngine::Tick(float DeltaSeconds, bool bIdleMode) Line 1481    
-UE4Editor-UnrealEd.dll!UUnrealEdEngine::Tick(float DeltaSeconds, bool bIdleMode) Line 401   
-UE4Editor.exe!FEngineLoop::Tick() Line 3320 
-[Inline Frame] UE4Editor.exe!EngineTick() Line 62   
-</code></pre>
+<p>Critical Code:<br />
+Engine\Source\Runtime\Engine\Private\ActorReplication.cpp</p>
 
-<p>执行异步加载的接口：Engine\Source\Runtime\CoreUObject\Private\Serialization\AsyncLoading.cpp</p>
-
-<pre><code>int32 LoadPackageAsync(const FString&amp; InName, const FGuid* InGuid /*= nullptr*/, const TCHAR* InPackageToLoadFrom /*= nullptr*/, FLoadPackageAsyncDelegate InCompletionDelegate /*= FLoadPackageAsyncDelegate()*/, EPackageFlags InPackageFlags /*= PKG_None*/, int32 InPIEInstanceID /*= INDEX_NONE*/, int32 InPackagePriority /*= 0*/)
+<pre><code>bool AActor::IsNetRelevantFor(const AActor* RealViewer, const AActor* ViewTarget, const FVector&amp; SrcLocation) const
 {
-    static bool bOnce = false;
-    if (!bOnce &amp;&amp; GEventDrivenLoaderEnabled)
+    if (bAlwaysRelevant || IsOwnedBy(ViewTarget) || IsOwnedBy(RealViewer) || this == ViewTarget || ViewTarget == Instigator)
     {
-        bOnce = true;
-        FGCObject::StaticInit(); // otherwise this thing is created during async loading, but not associated with a package
+        return true;
+    }
+    else if ( bNetUseOwnerRelevancy &amp;&amp; Owner)
+    {
+        return Owner-&gt;IsNetRelevantFor(RealViewer, ViewTarget, SrcLocation);
+    }
+    else if ( bOnlyRelevantToOwner )
+    {
+        return false;
+    }
+    else if ( RootComponent &amp;&amp; RootComponent-&gt;GetAttachParent() &amp;&amp; RootComponent-&gt;GetAttachParent()-&gt;GetOwner() &amp;&amp; (Cast&lt;USkeletalMeshComponent&gt;(RootComponent-&gt;GetAttachParent()) || (RootComponent-&gt;GetAttachParent()-&gt;GetOwner() == Owner)) )
+    {
+        return RootComponent-&gt;GetAttachParent()-&gt;GetOwner()-&gt;IsNetRelevantFor(RealViewer, ViewTarget, SrcLocation);
+    }
+    else if( bHidden &amp;&amp; (!RootComponent || !RootComponent-&gt;IsCollisionEnabled()) )
+    {
+        return false;
     }
 
-    // The comments clearly state that it should be a package name but we also handle it being a filename as this function is not perf critical
-    // and LoadPackage handles having a filename being passed in as well.
-    FString PackageName;
-    if (FPackageName::IsValidLongPackageName(InName, /*bIncludeReadOnlyRoots*/true))
+    if (!RootComponent)
     {
-        PackageName = InName;
-    }
-    // PackageName got populated by the conditional function
-    else if (!(FPackageName::IsPackageFilename(InName) &amp;&amp; FPackageName::TryConvertFilenameToLongPackageName(InName, PackageName)))
-    {
-        // PackageName will get populated by the conditional function
-        FString ClassName;
-        if (!FPackageName::ParseExportTextPath(PackageName, &amp;ClassName, &amp;PackageName))
-        {
-            UE_LOG(LogStreaming, Fatal, TEXT(&quot;LoadPackageAsync failed to begin to load a package because the supplied package name was neither a valid long package name nor a filename of a map within a content folder: '%s'&quot;), *PackageName);
-        }
+        UE_LOG(LogNet, Warning, TEXT(&quot;Actor %s / %s has no root component in AActor::IsNetRelevantFor. (Make bAlwaysRelevant=true?)&quot;), *GetClass()-&gt;GetName(), *GetName() );
+        return false;
     }
 
-    FString PackageNameToLoad(InPackageToLoadFrom);
-    if (PackageNameToLoad.IsEmpty())
-    {
-        PackageNameToLoad = PackageName;
-    }
-    // Make sure long package name is passed to FAsyncPackage so that it doesn't attempt to 
-    // create a package with short name.
-    if (FPackageName::IsShortPackageName(PackageNameToLoad))
-    {
-        UE_LOG(LogStreaming, Fatal, TEXT(&quot;Async loading code requires long package names (%s).&quot;), *PackageNameToLoad);
-    }
-
-    if ( FCoreDelegates::OnAsyncLoadPackage.IsBound() )
-    {
-        FCoreDelegates::OnAsyncLoadPackage.Broadcast(InName);
-    }
-
-    // Generate new request ID and add it immediately to the global request list (it needs to be there before we exit
-    // this function, otherwise it would be added when the packages are being processed on the async thread).
-    const int32 RequestID = GPackageRequestID.Increment();
-    FAsyncLoadingThread::Get().AddPendingRequest(RequestID);
-
-    // Allocate delegate on Game Thread, it is not safe to copy delegates by value on other threads
-    TUniquePtr&lt;FLoadPackageAsyncDelegate&gt; CompletionDelegatePtr;
-    if (InCompletionDelegate.IsBound())
-    {
-        CompletionDelegatePtr.Reset(new FLoadPackageAsyncDelegate(InCompletionDelegate));
-    }
-
-    // Add new package request
-    FAsyncPackageDesc PackageDesc(RequestID, *PackageName, *PackageNameToLoad, InGuid ? *InGuid : FGuid(), MoveTemp(CompletionDelegatePtr), InPackageFlags, InPIEInstanceID, InPackagePriority);
-    FAsyncLoadingThread::Get().QueuePackage(PackageDesc);
-
-    return RequestID;
+    return !GetDefault&lt;AGameNetworkManager&gt;()-&gt;bUseDistanceBasedRelevancy ||
+            IsWithinNetRelevancyDistance(SrcLocation);
 }
+</code></pre>
+
+<p>Call Stack:</p>
+
+<pre><code>UE4Editor-Engine.dll!AActor::IsNetRelevantFor(const AActor * RealViewer, const AActor * ViewTarget, const FVector &amp; SrcLocation) Line 320   C++
+[Inline Frame] UE4Editor-Engine.dll!IsActorRelevantToConnection(const AActor *) Line 3661   C++
+UE4Editor-Engine.dll!UNetDriver::ServerReplicateActors_PrioritizeActors(UNetConnection * Connection, const TArray&lt;FNetViewer,FDefaultAllocator&gt; &amp; ConnectionViewers, const TArray&lt;FNetworkObjectInfo *,FDefaultAllocator&gt; ConsiderList, const bool bCPUSaturated, FActorPriority * &amp; OutPriorityList, FActorPriority * * &amp; OutPriorityActors) Line 3780 C++
+UE4Editor-Engine.dll!UNetDriver::ServerReplicateActors(float DeltaSeconds) Line 4359    C++
+UE4Editor-Engine.dll!UNetDriver::TickFlush(float DeltaSeconds) Line 506 C++
+[Inline Frame] UE4Editor-Engine.dll!TMemberFunctionCaller&lt;UNetDriver,void (__cdecl UNetDriver::*)(float)&gt;::operator()(float &amp;) Line 156 C++
+[Inline Frame] UE4Editor-Engine.dll!UE4Tuple_Private::TTupleImpl&lt;TIntegerSequence&lt;unsigned int&gt; &gt;::ApplyAfter(TMemberFunctionCaller&lt;UNetDriver,void (__cdecl UNetDriver::*)(float)&gt; &amp;&amp;) Line 498    C++
+[Inline Frame] UE4Editor-Engine.dll!TBaseUObjectMethodDelegateInstance&lt;0,UNetDriver,TTypeWrapper&lt;void&gt; __cdecl(float)&gt;::Execute(float) Line 617 C++
+UE4Editor-Engine.dll!TBaseUObjectMethodDelegateInstance&lt;0,UNetDriver,void __cdecl(float)&gt;::ExecuteIfSafe(float &lt;Params_0&gt;) Line 679 C++
+UE4Editor-Engine.dll!TBaseMulticastDelegate&lt;void,float&gt;::Broadcast(float &lt;Params_0&gt;) Line 977   C++
+UE4Editor-Engine.dll!UWorld::Tick(ELevelTick TickType, float DeltaSeconds) Line 1720    C++
+UE4Editor-UnrealEd.dll!UEditorEngine::Tick(float DeltaSeconds, bool bIdleMode) Line 1618    C++
+UE4Editor-UnrealEd.dll!UUnrealEdEngine::Tick(float DeltaSeconds, bool bIdleMode) Line 403   C++
+UE4Editor-Win64-DebugGame.exe!FEngineLoop::Tick() Line 3967 C++
+[Inline Frame] UE4Editor-Win64-DebugGame.exe!EngineTick() Line 62   C++
+UE4Editor-Win64-DebugGame.exe!GuardedMain(const wchar_t * CmdLine, HINSTANCE__ * hInInstance, HINSTANCE__ * hPrevInstance, int nCmdShow) Line 168   C++
+UE4Editor-Win64-DebugGame.exe!WinMain(HINSTANCE__ * hInInstance, HINSTANCE__ * hPrevInstance, char * __formal, int nCmdShow) Line 261   C++
 </code></pre>
 
 <hr />
 
-<p><code>过寡，众相害之；超凡，则群相仰之。</code></p>
-
+<p><code>我是个过分认真的人，总想给生命一个交代。这种愚蠢的努力简直成了我的噩梦，当然也是最终的救赎。——《像我这样笨拙地生活》</code></p>
               
             </div>
           </div>
@@ -484,7 +501,7 @@ UE4Editor.exe!FEngineLoop::Tick() Line 3320
           
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2018/02/ue4%E5%BC%95%E6%93%8E%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%B9%8Bgarbagecollection/" data-tooltip="[UE4]引擎源码分析之：GarbageCollection">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2019/06/ue4numeric-limits/" data-tooltip="[UE4]Numeric Limits">
               
                   <i class="fa fa-angle-left"></i>
                   <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
@@ -492,7 +509,7 @@ UE4Editor.exe!FEngineLoop::Tick() Line 3320
             </li>
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2018/02/c-%E4%B8%A4%E4%B8%AA%E8%BF%9E%E7%BB%AD%E6%84%9F%E5%8F%B9%E5%8F%B7%E5%8F%8C%E6%84%9F%E5%8F%B9%E5%8F%B7%E7%9A%84%E6%84%8F%E4%B9%89/" data-tooltip="[C&#43;&#43;]两个连续感叹号(双感叹号)的意义">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2019/06/ue4fbx-export-and-import-related/" data-tooltip="[UE4]FBX Export and Import Related">
               
                   <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
                   <i class="fa fa-angle-right"></i>
@@ -552,7 +569,7 @@ UE4Editor.exe!FEngineLoop::Tick() Line 3320
           
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2018/02/ue4%E5%BC%95%E6%93%8E%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%B9%8Bgarbagecollection/" data-tooltip="[UE4]引擎源码分析之：GarbageCollection">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2019/06/ue4numeric-limits/" data-tooltip="[UE4]Numeric Limits">
               
                   <i class="fa fa-angle-left"></i>
                   <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
@@ -560,7 +577,7 @@ UE4Editor.exe!FEngineLoop::Tick() Line 3320
             </li>
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2018/02/c-%E4%B8%A4%E4%B8%AA%E8%BF%9E%E7%BB%AD%E6%84%9F%E5%8F%B9%E5%8F%B7%E5%8F%8C%E6%84%9F%E5%8F%B9%E5%8F%B7%E7%9A%84%E6%84%8F%E4%B9%89/" data-tooltip="[C&#43;&#43;]两个连续感叹号(双感叹号)的意义">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2019/06/ue4fbx-export-and-import-related/" data-tooltip="[UE4]FBX Export and Import Related">
               
                   <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
                   <i class="fa fa-angle-right"></i>
@@ -653,6 +670,40 @@ UE4Editor.exe!FEngineLoop::Tick() Line 3320
       <div class="no-result text-color-light text-center">no post found</div>
       <div class="results">
         
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/06/ue4numeric-limits/">
+                <h3 class="media-heading">[UE4]Numeric Limits</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jun 6, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>Keywords: UE4, Numeric</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/06/ue4networking-in-advanced/">
+                <h3 class="media-heading">[UE4]Networking in Advanced</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jun 6, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>Keywords: UE4, Networking</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
         
           <div class="media">
             
@@ -790,40 +841,6 @@ UE4Editor.exe!FEngineLoop::Tick() Line 3320
             <hr>
           </div>
         
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/04/ue4android.bat-failed-with-args-silent-update-lib-project-path-javalibsdownloader_library-target-android-28/">
-                <h3 class="media-heading">[UE4]android.bat failed with args --silent update lib-project --path JavaLibsdownloader_library --target android-28</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Apr 4, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>keywords: android sdk, UE4 package error</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/04/versioncontrolgit-commands-in-common/">
-                <h3 class="media-heading">[VersionControl]git commands in common</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Apr 4, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>Keywords: git, pull, branch</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
       </div>
     </div>
     <div class="modal-footer">
@@ -831,7 +848,7 @@ UE4Editor.exe!FEngineLoop::Tick() Line 3320
          data-message-zero="no post found"
          data-message-one="1 post found"
          data-message-other="{n} posts found">
-         500 posts found
+         502 posts found
       </p>
     </div>
   </div>
@@ -886,9 +903,9 @@ $(document).ready(function() {
     
       <script>
         var disqus_config = function () {
-          this.page.url = 'https:\/\/dawnarc.com\/2018\/02\/ue4%E5%BC%95%E6%93%8E%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%B9%8Bload-object\/';
+          this.page.url = 'https:\/\/dawnarc.com\/2019\/06\/ue4networking-in-advanced\/';
           
-            this.page.identifier = '\/2018\/02\/ue4%E5%BC%95%E6%93%8E%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%B9%8Bload-object\/'
+            this.page.identifier = '\/2019\/06\/ue4networking-in-advanced\/'
           
         };
         (function() {

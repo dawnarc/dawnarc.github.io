@@ -8,33 +8,29 @@
 <meta name="generator" content="Hugo 0.53 with theme Tranquilpeak 0.4.3-SNAPSHOT">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="">
-<meta name="description" content="Engine\Source\Runtime\CoreUObject\Private\UObject\GarbageCollection.cpp
-垃圾回收的逻辑堆栈（MainThread）：
-UE4Editor-CoreUObject.dll!CollectGarbageInternal(EObjectFlags KeepFlags, bool bPerformFullPurge) Line 1496 UE4Editor-CoreUObject.dll!TryCollectGarbage(EObjectFlags KeepFlags, bool bPerformFullPurge) Line 1560 UE4Editor-Engine.dll!UEngine::PerformGarbageCollectionAndCleanupActors() Line 1134 UE4Editor-Engine.dll!UEngine::ConditionalCollectGarbage() Line 1108 UE4Editor-Engine.dll!UWorld::Tick(ELevelTick TickType, float DeltaSeconds) Line 1612 UE4Editor-UnrealEd.dll!UEditorEngine::Tick(float DeltaSeconds, bool bIdleMode) Line 1481 UE4Editor-UnrealEd.dll!UUnrealEdEngine::Tick(float DeltaSeconds, bool bIdleMode) Line 401 UE4Editor.exe!FEngineLoop::Tick() Line 3320 [Inline Frame] UE4Editor.exe!EngineTick() Line 62  人才的本领叫做技术，天才的创意叫做艺术。">
+<meta name="description" content="Callstack from FStreamableManager::LoadSynchronous to FUObjectHashTables::AddObject:
+UE4Editor-CoreUObject.dll!HashObject(UObjectBase * Object) Line 904 UE4Editor-CoreUObject.dll!UObjectBase::AddObject(FName InName, EInternalObjectFlags InSetInternalFlags) Line 246 UE4Editor-CoreUObject.dll!UObjectBase::UObjectBase(UClass * InClass, EObjectFlags InFlags, EInternalObjectFlags InInternalFlags, UObject * InOuter, FName InName) Line 102 UE4Editor-CoreUObject.dll!StaticAllocateObject(UClass * InClass, UObject * InOuter, FName InName, EObjectFlags InFlags, EInternalObjectFlags InternalSetFlags, bool bCanRecycleSubobjects, bool * bOutRecycledSubobject) Line 2434 UE4Editor-CoreUObject.dll!StaticConstructObject_Internal(UClass * InClass, UObject * InOuter, FName InName, EObjectFlags InFlags, EInternalObjectFlags InternalSetFlags, UObject * InTemplate, bool bCopyTransientsFromClassDefaults, FObjectInstancingGraph * InInstanceGraph, bool bAssumeTemplateIsArchetype) Line 3161 [Inline Frame] UE4Editor-CoreUObject.">
 
 
-<meta property="og:description" content="Engine\Source\Runtime\CoreUObject\Private\UObject\GarbageCollection.cpp
-垃圾回收的逻辑堆栈（MainThread）：
-UE4Editor-CoreUObject.dll!CollectGarbageInternal(EObjectFlags KeepFlags, bool bPerformFullPurge) Line 1496 UE4Editor-CoreUObject.dll!TryCollectGarbage(EObjectFlags KeepFlags, bool bPerformFullPurge) Line 1560 UE4Editor-Engine.dll!UEngine::PerformGarbageCollectionAndCleanupActors() Line 1134 UE4Editor-Engine.dll!UEngine::ConditionalCollectGarbage() Line 1108 UE4Editor-Engine.dll!UWorld::Tick(ELevelTick TickType, float DeltaSeconds) Line 1612 UE4Editor-UnrealEd.dll!UEditorEngine::Tick(float DeltaSeconds, bool bIdleMode) Line 1481 UE4Editor-UnrealEd.dll!UUnrealEdEngine::Tick(float DeltaSeconds, bool bIdleMode) Line 401 UE4Editor.exe!FEngineLoop::Tick() Line 3320 [Inline Frame] UE4Editor.exe!EngineTick() Line 62  人才的本领叫做技术，天才的创意叫做艺术。">
+<meta property="og:description" content="Callstack from FStreamableManager::LoadSynchronous to FUObjectHashTables::AddObject:
+UE4Editor-CoreUObject.dll!HashObject(UObjectBase * Object) Line 904 UE4Editor-CoreUObject.dll!UObjectBase::AddObject(FName InName, EInternalObjectFlags InSetInternalFlags) Line 246 UE4Editor-CoreUObject.dll!UObjectBase::UObjectBase(UClass * InClass, EObjectFlags InFlags, EInternalObjectFlags InInternalFlags, UObject * InOuter, FName InName) Line 102 UE4Editor-CoreUObject.dll!StaticAllocateObject(UClass * InClass, UObject * InOuter, FName InName, EObjectFlags InFlags, EInternalObjectFlags InternalSetFlags, bool bCanRecycleSubobjects, bool * bOutRecycledSubobject) Line 2434 UE4Editor-CoreUObject.dll!StaticConstructObject_Internal(UClass * InClass, UObject * InOuter, FName InName, EObjectFlags InFlags, EInternalObjectFlags InternalSetFlags, UObject * InTemplate, bool bCopyTransientsFromClassDefaults, FObjectInstancingGraph * InInstanceGraph, bool bAssumeTemplateIsArchetype) Line 3161 [Inline Frame] UE4Editor-CoreUObject.">
 <meta property="og:type" content="article">
-<meta property="og:title" content="[UE4]引擎源码分析之：GarbageCollection">
-<meta name="twitter:title" content="[UE4]引擎源码分析之：GarbageCollection">
-<meta property="og:url" content="https://dawnarc.com/2018/02/ue4%E5%BC%95%E6%93%8E%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%B9%8Bgarbagecollection/">
-<meta property="twitter:url" content="https://dawnarc.com/2018/02/ue4%E5%BC%95%E6%93%8E%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%B9%8Bgarbagecollection/">
+<meta property="og:title" content="[UE4]Engine Source Analysis - Load Object">
+<meta name="twitter:title" content="[UE4]Engine Source Analysis - Load Object">
+<meta property="og:url" content="https://dawnarc.com/2018/02/ue4engine-source-analysis-load-object/">
+<meta property="twitter:url" content="https://dawnarc.com/2018/02/ue4engine-source-analysis-load-object/">
 <meta property="og:site_name" content="玄冬Wong">
-<meta property="og:description" content="Engine\Source\Runtime\CoreUObject\Private\UObject\GarbageCollection.cpp
-垃圾回收的逻辑堆栈（MainThread）：
-UE4Editor-CoreUObject.dll!CollectGarbageInternal(EObjectFlags KeepFlags, bool bPerformFullPurge) Line 1496 UE4Editor-CoreUObject.dll!TryCollectGarbage(EObjectFlags KeepFlags, bool bPerformFullPurge) Line 1560 UE4Editor-Engine.dll!UEngine::PerformGarbageCollectionAndCleanupActors() Line 1134 UE4Editor-Engine.dll!UEngine::ConditionalCollectGarbage() Line 1108 UE4Editor-Engine.dll!UWorld::Tick(ELevelTick TickType, float DeltaSeconds) Line 1612 UE4Editor-UnrealEd.dll!UEditorEngine::Tick(float DeltaSeconds, bool bIdleMode) Line 1481 UE4Editor-UnrealEd.dll!UUnrealEdEngine::Tick(float DeltaSeconds, bool bIdleMode) Line 401 UE4Editor.exe!FEngineLoop::Tick() Line 3320 [Inline Frame] UE4Editor.exe!EngineTick() Line 62  人才的本领叫做技术，天才的创意叫做艺术。">
-<meta name="twitter:description" content="Engine\Source\Runtime\CoreUObject\Private\UObject\GarbageCollection.cpp
-垃圾回收的逻辑堆栈（MainThread）：
-UE4Editor-CoreUObject.dll!CollectGarbageInternal(EObjectFlags KeepFlags, bool bPerformFullPurge) Line 1496 UE4Editor-CoreUObject.dll!TryCollectGarbage(EObjectFlags KeepFlags, bool bPerformFullPurge) Line 1560 UE4Editor-Engine.dll!UEngine::PerformGarbageCollectionAndCleanupActors() Line 1134 UE4Editor-Engine.dll!UEngine::ConditionalCollectGarbage() Line 1108 UE4Editor-Engine.dll!UWorld::Tick(ELevelTick TickType, float DeltaSeconds) Line 1612 UE4Editor-UnrealEd.dll!UEditorEngine::Tick(float DeltaSeconds, bool bIdleMode) Line 1481 UE4Editor-UnrealEd.dll!UUnrealEdEngine::Tick(float DeltaSeconds, bool bIdleMode) Line 401 UE4Editor.exe!FEngineLoop::Tick() Line 3320 [Inline Frame] UE4Editor.exe!EngineTick() Line 62  人才的本领叫做技术，天才的创意叫做艺术。">
+<meta property="og:description" content="Callstack from FStreamableManager::LoadSynchronous to FUObjectHashTables::AddObject:
+UE4Editor-CoreUObject.dll!HashObject(UObjectBase * Object) Line 904 UE4Editor-CoreUObject.dll!UObjectBase::AddObject(FName InName, EInternalObjectFlags InSetInternalFlags) Line 246 UE4Editor-CoreUObject.dll!UObjectBase::UObjectBase(UClass * InClass, EObjectFlags InFlags, EInternalObjectFlags InInternalFlags, UObject * InOuter, FName InName) Line 102 UE4Editor-CoreUObject.dll!StaticAllocateObject(UClass * InClass, UObject * InOuter, FName InName, EObjectFlags InFlags, EInternalObjectFlags InternalSetFlags, bool bCanRecycleSubobjects, bool * bOutRecycledSubobject) Line 2434 UE4Editor-CoreUObject.dll!StaticConstructObject_Internal(UClass * InClass, UObject * InOuter, FName InName, EObjectFlags InFlags, EInternalObjectFlags InternalSetFlags, UObject * InTemplate, bool bCopyTransientsFromClassDefaults, FObjectInstancingGraph * InInstanceGraph, bool bAssumeTemplateIsArchetype) Line 3161 [Inline Frame] UE4Editor-CoreUObject.">
+<meta name="twitter:description" content="Callstack from FStreamableManager::LoadSynchronous to FUObjectHashTables::AddObject:
+UE4Editor-CoreUObject.dll!HashObject(UObjectBase * Object) Line 904 UE4Editor-CoreUObject.dll!UObjectBase::AddObject(FName InName, EInternalObjectFlags InSetInternalFlags) Line 246 UE4Editor-CoreUObject.dll!UObjectBase::UObjectBase(UClass * InClass, EObjectFlags InFlags, EInternalObjectFlags InInternalFlags, UObject * InOuter, FName InName) Line 102 UE4Editor-CoreUObject.dll!StaticAllocateObject(UClass * InClass, UObject * InOuter, FName InName, EObjectFlags InFlags, EInternalObjectFlags InternalSetFlags, bool bCanRecycleSubobjects, bool * bOutRecycledSubobject) Line 2434 UE4Editor-CoreUObject.dll!StaticConstructObject_Internal(UClass * InClass, UObject * InOuter, FName InName, EObjectFlags InFlags, EInternalObjectFlags InternalSetFlags, UObject * InTemplate, bool bCopyTransientsFromClassDefaults, FObjectInstancingGraph * InInstanceGraph, bool bAssumeTemplateIsArchetype) Line 3161 [Inline Frame] UE4Editor-CoreUObject.">
 <meta property="og:locale" content="en-us">
 
   
-    <meta property="article:published_time" content="2018-02-04T15:41:02">
+    <meta property="article:published_time" content="2018-02-03T23:06:02">
   
   
-    <meta property="article:modified_time" content="2018-02-04T15:41:02">
+    <meta property="article:modified_time" content="2018-02-03T23:06:02">
   
   
   
@@ -45,8 +41,6 @@ UE4Editor-CoreUObject.dll!CollectGarbageInternal(EObjectFlags KeepFlags, bool bP
   
     
       <meta property="article:tag" content="UE4">
-    
-      <meta property="article:tag" content="GC">
     
   
 
@@ -71,7 +65,7 @@ UE4Editor-CoreUObject.dll!CollectGarbageInternal(EObjectFlags KeepFlags, bool bP
   <meta property="twitter:image" content="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=640">
 
 
-    <title>[UE4]引擎源码分析之：GarbageCollection</title>
+    <title>[UE4]Engine Source Analysis - Load Object</title>
 
     <link rel="icon" href="https://dawnarc.com/favicon.png">
     
@@ -80,7 +74,7 @@ UE4Editor-CoreUObject.dll!CollectGarbageInternal(EObjectFlags KeepFlags, bool bP
       <link rel="publisher" href="https://plus.google.com/111340706178390411568">
     
 
-    <link rel="canonical" href="https://dawnarc.com/2018/02/ue4%E5%BC%95%E6%93%8E%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%B9%8Bgarbagecollection/">
+    <link rel="canonical" href="https://dawnarc.com/2018/02/ue4engine-source-analysis-load-object/">
 
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
@@ -330,15 +324,15 @@ if (!doNotTrack) {
             <div class="post-header main-content-wrap text-left">
   
     <h1 class="post-title" itemprop="headline">
-      [UE4]引擎源码分析之：GarbageCollection
+      [UE4]Engine Source Analysis - Load Object
     </h1>
   
   
   <div class="postShorten-meta post-meta">
     
-      <time itemprop="datePublished" datetime="2018-02-04T15:41:02&#43;08:00">
+      <time itemprop="datePublished" datetime="2018-02-03T23:06:02&#43;08:00">
         
-  February 4, 2018
+  February 3, 2018
 
       </time>
     
@@ -357,14 +351,38 @@ if (!doNotTrack) {
           
           <div class="post-content markdown" itemprop="articleBody">
             <div class="main-content-wrap">
-              <p>Engine\Source\Runtime\CoreUObject\Private\UObject\GarbageCollection.cpp</p>
+              <p>Callstack from <code>FStreamableManager::LoadSynchronous</code> to <code>FUObjectHashTables::AddObject</code>:</p>
 
-<p>垃圾回收的逻辑堆栈（MainThread）：</p>
+<pre><code>UE4Editor-CoreUObject.dll!HashObject(UObjectBase * Object) Line 904 
+UE4Editor-CoreUObject.dll!UObjectBase::AddObject(FName InName, EInternalObjectFlags InSetInternalFlags) Line 246    
+UE4Editor-CoreUObject.dll!UObjectBase::UObjectBase(UClass * InClass, EObjectFlags InFlags, EInternalObjectFlags InInternalFlags, UObject * InOuter, FName InName) Line 102  
+UE4Editor-CoreUObject.dll!StaticAllocateObject(UClass * InClass, UObject * InOuter, FName InName, EObjectFlags InFlags, EInternalObjectFlags InternalSetFlags, bool bCanRecycleSubobjects, bool * bOutRecycledSubobject) Line 2434  
+UE4Editor-CoreUObject.dll!StaticConstructObject_Internal(UClass * InClass, UObject * InOuter, FName InName, EObjectFlags InFlags, EInternalObjectFlags InternalSetFlags, UObject * InTemplate, bool bCopyTransientsFromClassDefaults, FObjectInstancingGraph * InInstanceGraph, bool bAssumeTemplateIsArchetype) Line 3161  
+[Inline Frame] UE4Editor-CoreUObject.dll!NewObject(UObject * Outer, FName) Line 1164    
+UE4Editor-CoreUObject.dll!CreatePackage(UObject * InOuter, const wchar_t * PackageName) Line 645    
+UE4Editor-CoreUObject.dll!GetPackageLinker(UPackage * InOuter, const wchar_t * InLongPackageName, unsigned int LoadFlags, UPackageMap * Sandbox, FGuid * CompatibleGuid) Line 642   
+UE4Editor-CoreUObject.dll!LoadPackageInternal(UPackage * InOuter, const wchar_t * InLongPackageNameOrFilename, unsigned int LoadFlags, FLinkerLoad * ImportLinker) Line 1240    
+UE4Editor-CoreUObject.dll!LoadPackage(UPackage * InOuter, const wchar_t * InLongPackageName, unsigned int LoadFlags) Line 1436  
+UE4Editor-CoreUObject.dll!ResolveName(UObject * &amp; InPackage, FString &amp; InOutName, bool Create, bool Throw, unsigned int LoadFlags) Line 792 
+UE4Editor-CoreUObject.dll!StaticLoadObjectInternal(UClass * ObjectClass, UObject * InOuter, const wchar_t * InName, const wchar_t * Filename, unsigned int LoadFlags, UPackageMap * Sandbox, bool bAllowObjectReconciliation) Line 880  
+UE4Editor-CoreUObject.dll!StaticLoadObject(UClass * ObjectClass, UObject * InOuter, const wchar_t * InName, const wchar_t * Filename, unsigned int LoadFlags, UPackageMap * Sandbox, bool bAllowObjectReconciliation) Line 947  
+UE4Editor-Engine.dll!FStreamableManager::StreamInternal(const FSoftObjectPath &amp; InTargetName, int Priority, TSharedRef&lt;FStreamableHandle,0&gt; Handle) Line 786    
+UE4Editor-Engine.dll!FStreamableManager::StartHandleRequests(TSharedRef&lt;FStreamableHandle,0&gt; Handle) Line 989   
+UE4Editor-Engine.dll!FStreamableManager::RequestAsyncLoad(const TArray&lt;FSoftObjectPath,FDefaultAllocator&gt; &amp; TargetsToStream, TBaseDelegate&lt;void&gt; DelegateToCall, int Priority, bool bManageActiveHandle, bool bStartStalled, const FString &amp; DebugName) Line 936    
+UE4Editor-Engine.dll!FStreamableManager::RequestSyncLoad(const TArray&lt;FSoftObjectPath,FDefaultAllocator&gt; &amp; TargetsToStream, bool bManageActiveHandle, const FString &amp; DebugName) Line 962   
+UE4Editor-Engine.dll!FStreamableManager::RequestSyncLoad(const FSoftObjectPath &amp; TargetToStream, bool bManageActiveHandle, const FString &amp; DebugName) Line 979  
+UE4Editor-Engine.dll!FStreamableManager::LoadSynchronous(const FSoftObjectPath &amp; Target, bool bManageActiveHandle, TSharedPtr&lt;FStreamableHandle,0&gt; * RequestHandlePointer) Line 1012    
+</code></pre>
 
-<pre><code>UE4Editor-CoreUObject.dll!CollectGarbageInternal(EObjectFlags KeepFlags, bool bPerformFullPurge) Line 1496  
+<p>UObject从ConditionalCollectGarbage到FUObjectHashTables RemoveObject的堆栈</p>
+
+<pre><code>UE4Editor-CoreUObject.dll!UnhashObject(UObjectBase * Object) Line 934   
+UE4Editor-CoreUObject.dll!UObjectBase::LowLevelRename(FName NewName, UObject * NewOuter) Line 259   
+UE4Editor-CoreUObject.dll!UObject::BeginDestroy() Line 721  
+UE4Editor-CoreUObject.dll!UObject::ConditionalBeginDestroy() Line 884   
+UE4Editor-CoreUObject.dll!CollectGarbageInternal(EObjectFlags KeepFlags, bool bPerformFullPurge) Line 1496  
 UE4Editor-CoreUObject.dll!TryCollectGarbage(EObjectFlags KeepFlags, bool bPerformFullPurge) Line 1560   
-UE4Editor-Engine.dll!UEngine::PerformGarbageCollectionAndCleanupActors() Line 1134  
-UE4Editor-Engine.dll!UEngine::ConditionalCollectGarbage() Line 1108 
+UE4Editor-Engine.dll!UEngine::ConditionalCollectGarbage() Line 1072 
 UE4Editor-Engine.dll!UWorld::Tick(ELevelTick TickType, float DeltaSeconds) Line 1612    
 UE4Editor-UnrealEd.dll!UEditorEngine::Tick(float DeltaSeconds, bool bIdleMode) Line 1481    
 UE4Editor-UnrealEd.dll!UUnrealEdEngine::Tick(float DeltaSeconds, bool bIdleMode) Line 401   
@@ -372,9 +390,75 @@ UE4Editor.exe!FEngineLoop::Tick() Line 3320
 [Inline Frame] UE4Editor.exe!EngineTick() Line 62   
 </code></pre>
 
+<p>Interface of AsynLoading process：<code>Engine\Source\Runtime\CoreUObject\Private\Serialization\AsyncLoading.cpp</code></p>
+
+<pre><code>int32 LoadPackageAsync(const FString&amp; InName, const FGuid* InGuid /*= nullptr*/, const TCHAR* InPackageToLoadFrom /*= nullptr*/, FLoadPackageAsyncDelegate InCompletionDelegate /*= FLoadPackageAsyncDelegate()*/, EPackageFlags InPackageFlags /*= PKG_None*/, int32 InPIEInstanceID /*= INDEX_NONE*/, int32 InPackagePriority /*= 0*/)
+{
+    static bool bOnce = false;
+    if (!bOnce &amp;&amp; GEventDrivenLoaderEnabled)
+    {
+        bOnce = true;
+        FGCObject::StaticInit(); // otherwise this thing is created during async loading, but not associated with a package
+    }
+
+    // The comments clearly state that it should be a package name but we also handle it being a filename as this function is not perf critical
+    // and LoadPackage handles having a filename being passed in as well.
+    FString PackageName;
+    if (FPackageName::IsValidLongPackageName(InName, /*bIncludeReadOnlyRoots*/true))
+    {
+        PackageName = InName;
+    }
+    // PackageName got populated by the conditional function
+    else if (!(FPackageName::IsPackageFilename(InName) &amp;&amp; FPackageName::TryConvertFilenameToLongPackageName(InName, PackageName)))
+    {
+        // PackageName will get populated by the conditional function
+        FString ClassName;
+        if (!FPackageName::ParseExportTextPath(PackageName, &amp;ClassName, &amp;PackageName))
+        {
+            UE_LOG(LogStreaming, Fatal, TEXT(&quot;LoadPackageAsync failed to begin to load a package because the supplied package name was neither a valid long package name nor a filename of a map within a content folder: '%s'&quot;), *PackageName);
+        }
+    }
+
+    FString PackageNameToLoad(InPackageToLoadFrom);
+    if (PackageNameToLoad.IsEmpty())
+    {
+        PackageNameToLoad = PackageName;
+    }
+    // Make sure long package name is passed to FAsyncPackage so that it doesn't attempt to 
+    // create a package with short name.
+    if (FPackageName::IsShortPackageName(PackageNameToLoad))
+    {
+        UE_LOG(LogStreaming, Fatal, TEXT(&quot;Async loading code requires long package names (%s).&quot;), *PackageNameToLoad);
+    }
+
+    if ( FCoreDelegates::OnAsyncLoadPackage.IsBound() )
+    {
+        FCoreDelegates::OnAsyncLoadPackage.Broadcast(InName);
+    }
+
+    // Generate new request ID and add it immediately to the global request list (it needs to be there before we exit
+    // this function, otherwise it would be added when the packages are being processed on the async thread).
+    const int32 RequestID = GPackageRequestID.Increment();
+    FAsyncLoadingThread::Get().AddPendingRequest(RequestID);
+
+    // Allocate delegate on Game Thread, it is not safe to copy delegates by value on other threads
+    TUniquePtr&lt;FLoadPackageAsyncDelegate&gt; CompletionDelegatePtr;
+    if (InCompletionDelegate.IsBound())
+    {
+        CompletionDelegatePtr.Reset(new FLoadPackageAsyncDelegate(InCompletionDelegate));
+    }
+
+    // Add new package request
+    FAsyncPackageDesc PackageDesc(RequestID, *PackageName, *PackageNameToLoad, InGuid ? *InGuid : FGuid(), MoveTemp(CompletionDelegatePtr), InPackageFlags, InPIEInstanceID, InPackagePriority);
+    FAsyncLoadingThread::Get().QueuePackage(PackageDesc);
+
+    return RequestID;
+}
+</code></pre>
+
 <hr />
 
-<p><code>人才的本领叫做技术，天才的创意叫做艺术。</code></p>
+<p><code>过寡，众相害之；超凡，则群相仰之。</code></p>
 
               
             </div>
@@ -389,8 +473,6 @@ UE4Editor.exe!FEngineLoop::Tick() Line 3320
                     
   <a class="tag tag--primary tag--small" href="https://dawnarc.com/tags/ue4/">UE4</a>
 
-  <a class="tag tag--primary tag--small" href="https://dawnarc.com/tags/gc/">GC</a>
-
                   </div>
                 
               
@@ -402,7 +484,7 @@ UE4Editor.exe!FEngineLoop::Tick() Line 3320
           
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2018/02/ue4uobject-loadconfig/" data-tooltip="[UE4]UObject LoadConfig">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2018/02/ue4engine-source-analysis-garbagecollection/" data-tooltip="[UE4]Engine Source Analysis - GarbageCollection">
               
                   <i class="fa fa-angle-left"></i>
                   <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
@@ -410,7 +492,7 @@ UE4Editor.exe!FEngineLoop::Tick() Line 3320
             </li>
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2018/02/ue4%E5%BC%95%E6%93%8E%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%B9%8Bload-object/" data-tooltip="[UE4]引擎源码分析之：Load Object">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2018/02/c-%E4%B8%A4%E4%B8%AA%E8%BF%9E%E7%BB%AD%E6%84%9F%E5%8F%B9%E5%8F%B7%E5%8F%8C%E6%84%9F%E5%8F%B9%E5%8F%B7%E7%9A%84%E6%84%8F%E4%B9%89/" data-tooltip="[C&#43;&#43;]两个连续感叹号(双感叹号)的意义">
               
                   <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
                   <i class="fa fa-angle-right"></i>
@@ -470,7 +552,7 @@ UE4Editor.exe!FEngineLoop::Tick() Line 3320
           
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2018/02/ue4uobject-loadconfig/" data-tooltip="[UE4]UObject LoadConfig">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2018/02/ue4engine-source-analysis-garbagecollection/" data-tooltip="[UE4]Engine Source Analysis - GarbageCollection">
               
                   <i class="fa fa-angle-left"></i>
                   <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
@@ -478,7 +560,7 @@ UE4Editor.exe!FEngineLoop::Tick() Line 3320
             </li>
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2018/02/ue4%E5%BC%95%E6%93%8E%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%B9%8Bload-object/" data-tooltip="[UE4]引擎源码分析之：Load Object">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2018/02/c-%E4%B8%A4%E4%B8%AA%E8%BF%9E%E7%BB%AD%E6%84%9F%E5%8F%B9%E5%8F%B7%E5%8F%8C%E6%84%9F%E5%8F%B9%E5%8F%B7%E7%9A%84%E6%84%8F%E4%B9%89/" data-tooltip="[C&#43;&#43;]两个连续感叹号(双感叹号)的意义">
               
                   <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
                   <i class="fa fa-angle-right"></i>
@@ -571,6 +653,40 @@ UE4Editor.exe!FEngineLoop::Tick() Line 3320
       <div class="no-result text-color-light text-center">no post found</div>
       <div class="results">
         
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/06/ue4numeric-limits/">
+                <h3 class="media-heading">[UE4]Numeric Limits</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jun 6, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>Keywords: UE4, Numeric</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/06/ue4networking-in-advanced/">
+                <h3 class="media-heading">[UE4]Networking in Advanced</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jun 6, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>Keywords: UE4, Networking</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
         
           <div class="media">
             
@@ -708,40 +824,6 @@ UE4Editor.exe!FEngineLoop::Tick() Line 3320
             <hr>
           </div>
         
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/04/ue4android.bat-failed-with-args-silent-update-lib-project-path-javalibsdownloader_library-target-android-28/">
-                <h3 class="media-heading">[UE4]android.bat failed with args --silent update lib-project --path JavaLibsdownloader_library --target android-28</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Apr 4, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>keywords: android sdk, UE4 package error</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/04/versioncontrolgit-commands-in-common/">
-                <h3 class="media-heading">[VersionControl]git commands in common</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Apr 4, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>Keywords: git, pull, branch</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
       </div>
     </div>
     <div class="modal-footer">
@@ -749,7 +831,7 @@ UE4Editor.exe!FEngineLoop::Tick() Line 3320
          data-message-zero="no post found"
          data-message-one="1 post found"
          data-message-other="{n} posts found">
-         500 posts found
+         502 posts found
       </p>
     </div>
   </div>
@@ -804,9 +886,9 @@ $(document).ready(function() {
     
       <script>
         var disqus_config = function () {
-          this.page.url = 'https:\/\/dawnarc.com\/2018\/02\/ue4%E5%BC%95%E6%93%8E%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%B9%8Bgarbagecollection\/';
+          this.page.url = 'https:\/\/dawnarc.com\/2018\/02\/ue4engine-source-analysis-load-object\/';
           
-            this.page.identifier = '\/2018\/02\/ue4%E5%BC%95%E6%93%8E%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%B9%8Bgarbagecollection\/'
+            this.page.identifier = '\/2018\/02\/ue4engine-source-analysis-load-object\/'
           
         };
         (function() {

@@ -516,6 +516,8 @@ Dynamic Shadow Distance 表示在多少距离内使用动态阴影，超过这�
 <li><p>若场景中有大量单位，比如500个，那么这些单位一定要做材质LOD，并尽可能多的去掉半透明材质（比如在最后两级直接去掉半透明效果），否则性能消耗呈指数级增长。</p></li>
 
 <li><p>如果GPUVisualizer的<code>BasePass</code>耗时较高，那么很大一部分原因是材质复杂度过高。</p></li>
+
+<li><p><span class="highlight-text red">Decal消耗和像素数量有关</span>，程序功能不要乱用贴花，美术铺场景除外。比如程序想用贴花做一个范围标记，如果当标记范围很大时就不要用贴花，使用可以改成划线或者不通透贴图。如果场景需要大量使用贴花，根据视距动态创建和销毁贴花，仅仅<code>SetVisibility</code>是不够的，隐藏后还是会占用大量消耗。</p></li>
 </ol>
 
 <p>Performance Guidelines for Artists and Designers<br />
@@ -558,9 +560,9 @@ Dynamic Shadow Distance 表示在多少距离内使用动态阴影，超过这�
 </code></pre>
 
 <p>默认是<code>AlwaysTickPoseAndRefreshBones</code>，表示不管是否被渲染（在可见区域内），都执行 Tick 和 RefreshBoneTransforms。<br />
-<code>VisibilityBasedAnimTickOption</code>最开始叫做<code>SkinnedMeshUpdateFlag</code>，4.22版本之前改成了<code>MeshComponentUpdateFlag</code>，4.22开始叫做<code>VisibilityBasedAnimTickOption</code>。<br />
+<code>VisibilityBasedAnimTickOption</code>最开始叫做<code>SkinnedMeshUpdateFlag</code>，4.21版本之前改成了<code>MeshComponentUpdateFlag</code>，4.21开始叫做<code>VisibilityBasedAnimTickOption</code>。<br />
 <div class="alert warning ">
-  <p>如果关闭动画Tick，和Tick相关的逻辑就会失效，比如<code>Transform (Modify) Bone</code>。</p>
+  <p>如果关闭动画Tick，和Tick相关的逻辑就会失效，比如<code>Transform (Modify) Bone</code>。但是AnimNotify不受影响。</p>
 </div></p></li>
 
 <li><p>动画蓝图的逻辑尽量直接访问成员变量，引擎默认开启了优化选项：动画蓝图中的成员变量在编译时会被复制到Native Code中，从而避免在运行时进入蓝图虚拟机（Blueprint Virtual Machine）执行蓝图代码，因为蓝图VM运行效率低。<br />
@@ -857,6 +859,40 @@ Project Settings -&gt; Engine -&gt; Animation -&gt; 勾选 Strip Animation Data 
           <div class="media">
             
             <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/06/ue4numeric-limits/">
+                <h3 class="media-heading">[UE4]Numeric Limits</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jun 6, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>Keywords: UE4, Numeric</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/06/ue4networking-in-advanced/">
+                <h3 class="media-heading">[UE4]Networking in Advanced</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jun 6, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>Keywords: UE4, Networking</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
               <a class="link-unstyled" href="https://dawnarc.com/2019/06/ue4fbx-export-and-import-related/">
                 <h3 class="media-heading">[UE4]FBX Export and Import Related</h3>
               </a>
@@ -990,40 +1026,6 @@ Project Settings -&gt; Engine -&gt; Animation -&gt; 勾选 Strip Animation Data 
             <hr>
           </div>
         
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/04/ue4android.bat-failed-with-args-silent-update-lib-project-path-javalibsdownloader_library-target-android-28/">
-                <h3 class="media-heading">[UE4]android.bat failed with args --silent update lib-project --path JavaLibsdownloader_library --target android-28</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Apr 4, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>keywords: android sdk, UE4 package error</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/04/versioncontrolgit-commands-in-common/">
-                <h3 class="media-heading">[VersionControl]git commands in common</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Apr 4, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>Keywords: git, pull, branch</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
       </div>
     </div>
     <div class="modal-footer">
@@ -1031,7 +1033,7 @@ Project Settings -&gt; Engine -&gt; Animation -&gt; 勾选 Strip Animation Data 
          data-message-zero="no post found"
          data-message-one="1 post found"
          data-message-other="{n} posts found">
-         500 posts found
+         502 posts found
       </p>
     </div>
   </div>

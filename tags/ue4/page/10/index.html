@@ -321,6 +321,126 @@ if (!doNotTrack) {
     
     <div class="postShorten-header">
       <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2017/12/ue4android-package-for-engine-source-build/">
+          [UE4]Android package for engine source build
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2017-12-19T19:20:40&#43;08:00">
+        
+  December 19, 2017
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        先设置NDK的环境变量： https://docs.unrealengine.com/latest/INT/Platforms/Android/Reference/index.html#environmentvariables   然后重新运行引擎源码根目录下的Setup.bat。此时会开始下载几百兆的内容，且Excluding没有出现Android字样，如果没有配置NDKROOT，Excluding会包含Android，表示下载内容排除android编译环境。   如果不设置环境变量，也可以通过命令行Setup.bat &ndash;all来下载所有平台的编译文件（包括ios和linux）。
+下载完成后，rebuild一下Development - Android   常见错误 如果不下载android的相关文件，编译安卓版本时可能出现以下错误：
+错误1（出现这个错误的另一个原因是Project Settings的Android-SDK的NDK API Level修改了，UE4默认是android-19）：
+UATHelper: Packaging (Android (ASTC)): clang++.exe: error: no such file or directory: 'C:/UnrealEngine-4.18.1-release/Engine/Build/Android/Prebuilt/bsdsignal/lib/armeabi-v7a/libbsdsignal.a' UATHelper: Packaging (Android (ASTC)): Total build time: 899.04 seconds (Local executor: 890.45 seconds) UATHelper: Packaging (Android (ASTC)): Took 899.2723232s to run UnrealBuildTool.exe, ExitCode=5 UATHelper: Packaging (Android (ASTC)): ERROR: Command failed (Result:5): C:\UnrealEngine-4.18.1-release\Engine\Binaries\DotNET\UnrealBuildTool.exe WarSoul Android Development -Project=G:\Source\Work\project2\ue4_proj\WarSoul\WarSoul.uproject G:\Source\Work\project2\ue4_proj\WarSoul\WarSoul.uproject -NoUBTMakefiles -remoteini=&quot;G:\Source\Work\project2\ue4_pr oj\WarSoul&quot; -skipdeploy -noxge -NoHotReload -ignorejunk.
+      
+      <p>
+        <a href="https://dawnarc.com/2017/12/ue4android-package-for-engine-source-build/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2017/12/ue4switch-weapon-at-run-time-attachtocomponent/">
+          [UE4]Switch Weapon at run-time (AttachToComponent)
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2017-12-19T18:55:02&#43;08:00">
+        
+  December 19, 2017
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        https://github.com/tomlooman/EpicSurvivalGameSeries/blob/4a6ee9a6081529fadbe0f693b2e4e6729d5ec08d/SurvivalGame/Source/SurvivalGame/Private/Items/SWeapon.cpp#L106
+EpicSurvivalGameSeries\SurvivalGame\Source\SurvivalGame\Private\Items\SWeapon.cpp
+void ASWeapon::AttachMeshToPawn(EInventorySlot Slot) { if (MyPawn) { // Remove and hide DetachMeshFromPawn(); USkeletalMeshComponent* PawnMesh = MyPawn-&gt;GetMesh(); FName AttachPoint = MyPawn-&gt;GetInventoryAttachPoint(Slot); Mesh-&gt;SetHiddenInGame(false); Mesh-&gt;AttachToComponent(PawnMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, AttachPoint); } } void ASWeapon::DetachMeshFromPawn() { Mesh-&gt;DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform); Mesh-&gt;SetHiddenInGame(true); }  It&rsquo;s better to use FAttachmentTransformRules::SnapToTargetNotIncludingScale when attaching, otherwise maybe there&rsquo;s a big location offset between two actors when using KeepWorldTransform.
+ StaticMeshComponent无法附加到SkeletalMeshComponent上，附加后StaticMeshComponent会出现在场景中的随机位置，而不是父级SkeletalMeshComponent身上，且此时即使设置LocationOffset也无效。
+ 通过NewObject&lt;USkeletalMeshComponent&gt;(Owner)运行时创建的SkeletalMeshComponent可以附加到父级SkeletalMeshComponent上，但是无法播放父级SkeletalMeshComponent的动画，即使设置了WeaponComp-&gt;SetMasterPoseComponent(PawnMesh)。建议在构造函数中创建后SkeletalMeshComponent，然后再run-time修改SkeletalMesh模型，run-time修改指定SkeletalMeshComponent的SkeletalMesh是没有问题的，且可以正常播放父级的动画。
+ 念去去、千里烟波，暮霭沉沉楚天阔。----北宋·柳永《雨霖铃》
+      
+      <p>
+        <a href="https://dawnarc.com/2017/12/ue4switch-weapon-at-run-time-attachtocomponent/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
         <a class="link-unstyled" href="https://dawnarc.com/2017/12/ue4skeletal-mesh-sockets%E7%94%A8%E6%B3%95/">
           [UE4]Skeletal Mesh Sockets用法
         </a>
@@ -1089,7 +1209,7 @@ LogWindows: Error: Fatal error: [File:D:\sdk\UnrealEngine-4.17.1-release\Engine\
       
         keywords：UE4、Movement Replicate、Networking、Server、Client、Smooth
 引擎对于客户端服务端的位移同步，CharacterMovementComponent::SmoothCorrection()函数中有进行平滑处理。
-其他参考资料：
+Reference 其他参考资料：
 What is the best way to smooth player movement for network hiccups? Interp? Ease? (no physics)
 https://answers.unrealengine.com/questions/479211/what-is-the-best-way-to-smooth-player-movement-for.html
 Authoritative Networked Character Movement
@@ -1102,135 +1222,9 @@ Dedicated Server 的 Movement 优化 如果仅仅为了性能，不希望服务�
 [/Script/Engine.GameNetworkManager] MAXPOSITIONERRORSQUARED=625 ClientAuthorativePosition=true  但是这么做会被外挂 hack
 参考自：How am I able to Replicate movement when using &ldquo;AddMovement Input&rdquo;, but not AddLocalTransform?
 https://answers.unrealengine.com/questions/26116/able-to-replicate-movement-when-using-addmovement.html
-运行时期间断开Actor的Replication 比如一个 Character 一开始是在服务端同步的，当他死亡时，之后相关表现希望不再同步，比如布娃娃系统（可破碎网格），如果继续保持同步，会增加服务端计算开销，且布娃娃此时只是客户端表现，并不会驱动服务端数据，所以希望在执行布娃娃破碎之前，断开该Character在客户端服务端之间的Replication。
       
       <p>
         <a href="https://dawnarc.com/2017/09/ue4movement-and-networking-related/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-            
-              
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2017/09/ue4error-only-local-player-controllers-can-be-assigned-to-widgets/">
-          [UE4]Error Only Local Player Controllers can be assigned to widgets
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2017-09-14T19:39:40&#43;08:00">
-        
-  September 14, 2017
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        服务端错误提示：
-PIE: Error: Only Local Player Controllers can be assigned to widgets. MyPlayerController_0 is not a Local Player Controller.  原因：
-在服务端创建客户端相关的对象时，则会报这个错误，比如创建一个Widget，需要判断下是客户端还是服务端。
-解决办法：
-在创建Widget时判断下是否为服务器，例如：
-void AReplTestPlayerController::BeginPlay() { if (GetNetMode() == NM_Standalone) { if (UClass* BPClass = LoadClass&lt;UMyUserWidget&gt;(NULL, TEXT(&quot;WidgetBlueprint'/Game/TopDownCPP/Blueprints/NewWidgetBlueprint.NewWidgetBlueprint_C'&quot;))) { LoginWidget = CreateWidget&lt;UMyUserWidget&gt;(this, BPClass); if (LoginWidget) { LoginWidget-&gt;AddToViewport(); } } } }  花自飘零水自流。一种相思，两处闲愁。
-此情无计可消除，才下眉头，却上心头。
-----李清照《一剪梅》
-      
-      <p>
-        <a href="https://dawnarc.com/2017/09/ue4error-only-local-player-controllers-can-be-assigned-to-widgets/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-            
-              
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2017/09/ue4%E5%AE%A2%E6%88%B7%E7%AB%AF%E7%99%BB%E9%99%86%E6%97%B6%E5%A6%82%E4%BD%95%E4%BC%A0%E9%80%92%E5%8F%82%E6%95%B0%E7%BB%99%E6%9C%8D%E5%8A%A1%E5%99%A8/">
-          [UE4]客户端登陆时如何传递参数给服务器
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2017-09-14T14:00:40&#43;08:00">
-        
-  September 14, 2017
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        keywords：UE4、Client、Dedicated Server、Passing Arguments、Login、ClientTravel
-客户端发送参数 执行PlayerController-&gt;ClientTravel时，默认Address URL如下：
-FString Address = TEXT(&quot;127.0.0.1:7777&quot;);  登陆时如果需要传递参数，则URL的格式如下：
-FString Address = FString::Printf(TEXT(&quot;127.0.0.1:7777?Param1=%s?Param2=%s&quot;), *Param1, *Param2);  服务端解析参数 先重写GameMode的InitNewPlayer()函数，然后再在该函数内做如下解析：
-FString AMyGameMode::InitNewPlayer(APlayerController* NewPlayerController, const FUniqueNetIdRepl&amp; UniqueId, const FString&amp; Options, const FString&amp; Portal = TEXT(&quot;&quot;)) { FString Param1 = UGameplayStatics::ParseOption(Options, TEXT(&quot;Param1&quot;)); FString Param2 = UGameplayStatics::ParseOption(Options, TEXT(&quot;Param2&quot;)); }  官方文档：Passing Arguments To Server During Connection
-https://wiki.unrealengine.com/Passing_Arguments_To_Server_During_Connection
-明朝且做莫思量，如何过得今宵去？—周紫芝《踏莎行》
-      
-      <p>
-        <a href="https://dawnarc.com/2017/09/ue4%E5%AE%A2%E6%88%B7%E7%AB%AF%E7%99%BB%E9%99%86%E6%97%B6%E5%A6%82%E4%BD%95%E4%BC%A0%E9%80%92%E5%8F%82%E6%95%B0%E7%BB%99%E6%9C%8D%E5%8A%A1%E5%99%A8/" class="postShorten-excerpt_link link">Continue reading</a>
         
       </p>
     </div>
@@ -1323,6 +1317,40 @@ https://wiki.unrealengine.com/Passing_Arguments_To_Server_During_Connection
       <div class="no-result text-color-light text-center">no post found</div>
       <div class="results">
         
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/06/ue4numeric-limits/">
+                <h3 class="media-heading">[UE4]Numeric Limits</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jun 6, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>Keywords: UE4, Numeric</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/06/ue4networking-in-advanced/">
+                <h3 class="media-heading">[UE4]Networking in Advanced</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jun 6, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>Keywords: UE4, Networking</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
         
           <div class="media">
             
@@ -1460,40 +1488,6 @@ https://wiki.unrealengine.com/Passing_Arguments_To_Server_During_Connection
             <hr>
           </div>
         
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/04/ue4android.bat-failed-with-args-silent-update-lib-project-path-javalibsdownloader_library-target-android-28/">
-                <h3 class="media-heading">[UE4]android.bat failed with args --silent update lib-project --path JavaLibsdownloader_library --target android-28</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Apr 4, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>keywords: android sdk, UE4 package error</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/04/versioncontrolgit-commands-in-common/">
-                <h3 class="media-heading">[VersionControl]git commands in common</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Apr 4, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>Keywords: git, pull, branch</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
       </div>
     </div>
     <div class="modal-footer">
@@ -1501,7 +1495,7 @@ https://wiki.unrealengine.com/Passing_Arguments_To_Server_During_Connection
          data-message-zero="no post found"
          data-message-one="1 post found"
          data-message-other="{n} posts found">
-         500 posts found
+         502 posts found
       </p>
     </div>
   </div>

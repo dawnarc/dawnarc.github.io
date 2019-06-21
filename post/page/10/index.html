@@ -318,6 +318,149 @@ if (!doNotTrack) {
     
     <div class="postShorten-header">
       <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2018/05/ue4steam-sdk%E6%8E%A5%E5%85%A5%E7%9B%B8%E5%85%B3/">
+          [UE4]Steam SDK接入相关
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2018-05-09T15:11:02&#43;08:00">
+        
+  May 9, 2018
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        使用第三方plugin Advanced Sessions Plugin
+https://forums.unrealengine.com/community/community-content-tools-and-tutorials/41043-advanced-sessions-plugin
+将该plugin加入工程后，再做以下修改：
+在DefaultEngine.ini的[/Script/Engine.Engine]下添加：
++NetDriverDefinitions=(DefName=&quot;GameNetDriver&quot;,DriverClassName=&quot;OnlineSubsystemSteam.SteamNetDriver&quot;,DriverClassNameFallback=&quot;OnlineSubsystemUtils.IpNetDriver&quot;)  再增加：
+[OnlineSubsystem] DefaultPlatformService=Steam [OnlineSubsystemSteam] bEnabled=true SteamDevAppId=480 [/Script/OnlineSubsystemSteam.SteamNetDriver] NetConnectionClassName=&quot;OnlineSubsystemSteam.SteamNetConnection&quot;  然后启动编辑器后，以Standalone模式运行，且保证电脑上启动了Steam客户端，则启动游戏后会，在游戏屏幕右下角会自动弹出Steam相关菜单。
+如果不使用该plugin，手动编写接入代码，则还需要添加以下配置：
+ 工程名.Build.cs构造函数中添加：
+PublicDependencyModuleNames.AddRange(new string[] { &quot;OnlineSubsystem&quot;, &quot;OnlineSubsystemUtils&quot; }); DynamicallyLoadedModuleNames.Add(&quot;OnlineSubsystemSteam&quot;);  工程名.Target.cs构造函数中添加：
+bUsesSteam = true;   手动接入steam SDK Online Subsystem Steam
+https://docs.unrealengine.com/en-us/Programming/Online/Steam
+Steam, Using the Steam SDK During Development
+https://wiki.unrealengine.com/Steam,_Using_the_Steam_SDK_During_Development
+Integrating Steam SDK – Part 1
+http://orfeasel.com/steam_integration_p1/
+Handling Steam Achievements – Steam Integration Part 2
+http://orfeasel.com/handling-steam-achievements-steam-integration-part-2/
+中文翻译：
+集成 Steam SDK（一）
+      
+      <p>
+        <a href="https://dawnarc.com/2018/05/ue4steam-sdk%E6%8E%A5%E5%85%A5%E7%9B%B8%E5%85%B3/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2018/04/ue4lightings/">
+          [UE4]Lightings
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2018-04-27T14:14:02&#43;08:00">
+        
+  April 27, 2018
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        keywords：UE4, Lighting, 灯光, 光源距离裁剪
+以下问题都是基于4.18，不排除后续新版本变动。
+Lighting Content Examples https://docs.unrealengine.com/en-us/Resources/ContentExamples/Lighting
+Light Propagation Volumes Light Propagation Volumes
+https://docs.unrealengine.com/en-us/Engine/Rendering/LightingAndShadows/LightPropagationVolumes
+Dynamic GI : Getting the Most out of LPV ( Light Propagation Volume )
+https://forums.unrealengine.com/community/community-content-tools-and-tutorials/103572-dynamic-gi-getting-the-most-out-of-lpv-light-propagation-volume
+Lighting Channels https://docs.unrealengine.com/en-us/Engine/Rendering/LightingAndShadows/LightingChannels
+实际应用：
+假设场景中只有一个平行光，且光照强度较大时，那么角色身上接收不到直接光照的部位（比如脖子），会明显发黑，如果增大 SkyBox 光照强度，那么会影响整个场景的亮度。有没办法只增加角色身上的光照亮度？让阴影区域变亮？解决办法是：Lighting Channels。
+解决办法：
+场景中添加两个平行光，A平行光的 Lighting Channels 只开启Channel 0，B平行光只开启Channel 1，然后角色的 Mesh 同时开启 Channel 0 和 Channel 1。
+注意事项：
+ Lighting Channels是动态的，意思是：静态光(Static Lights)或者Mobility为Static的Static Mesh Actor不受Lighting Channels影响。要使用Lighting Channels，Static Mesh Actor和Lights的Mobility必须设置为Stationary或者Movable。 材质类型影响：Lighting Channels只影响直接光照(direct lighting)下Opaque类型材质，Translucent或者Masked类型材质没有效果。 Lighting Channels对性能开销不大，可以忽略不计。  移动端的Lighting Channels：
+      
+      <p>
+        <a href="https://dawnarc.com/2018/04/ue4lightings/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
         <a class="link-unstyled" href="https://dawnarc.com/2018/04/ue4post-process-related/">
           [UE4]Post Process Related
         </a>
@@ -1107,127 +1250,6 @@ Lightmass Character Indirect Detail Volumes(角色细节间接光范围 ) 在上
 </article>
 
           
-            
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2018/04/ue4umg-widget%E4%BD%9C%E4%B8%BA%E5%8F%98%E9%87%8F%E8%AE%BF%E9%97%AE/">
-          [UE4]UMG Widget作为变量访问
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2018-04-01T13:47:02&#43;08:00">
-        
-  April 1, 2018
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        默认情况下，UMG蓝图钟的Widget组件只能在当前UMG蓝图中访问，无法在外部被其他蓝图访问。
-如果要被外部访问，方式如下：
-设计面板（Designer）中勾选Is Variable
-    博观而约取，厚积而薄发。-----《稼说送张琥》
-      
-      <p>
-        <a href="https://dawnarc.com/2018/04/ue4umg-widget%E4%BD%9C%E4%B8%BA%E5%8F%98%E9%87%8F%E8%AE%BF%E9%97%AE/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-          
-            
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2018/03/batchprotobuf-3-protoc-generate-multiple-proto-files/">
-          [Batch]Protobuf 3 protoc generate multiple proto files
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2018-03-31T19:03:02&#43;08:00">
-        
-  March 31, 2018
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/batch">Batch</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        keywords：Protobuf 3、同时生成多个proto文件、通配符
-假设目录结构如下：
-root |-proto |-a.proto |-b.proto |-build |-protoc.exe  protobuf 2.x版本，可以通过通配符指定所有proto模板文件
-protoc --proto_path=./proto/ --cpp_out=dllexport_decl=LIBPROTOC_EXPORT:./build ./proto/*.proto  但是protobuf 3.x版本不识别通配符，不过可以通过BAT或者shell提供的遍历语法，来同时生成多个proto文件。
-windows bat：
-set dir=%cd%/proto set out_cpp=./build for /R %%s in (*.proto) do ( if exist %%s protoc.exe -I=%dir% --cpp_out=%out_cpp% %%s )  Mac and Linux (Shell):
-for i in *.xls ; do [[ -f &quot;$i&quot; ]] || continue xls2csv &quot;$i&quot; &quot;${i%.xls}.csv&quot; done  Reference How to iterate over files in a directory with Bash?
-      
-      <p>
-        <a href="https://dawnarc.com/2018/03/batchprotobuf-3-protoc-generate-multiple-proto-files/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-          
           
   <div class="pagination-bar">
     <ul class="pagination">
@@ -1311,6 +1333,40 @@ for i in *.xls ; do [[ -f &quot;$i&quot; ]] || continue xls2csv &quot;$i&quot; &
       <div class="no-result text-color-light text-center">no post found</div>
       <div class="results">
         
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/06/ue4numeric-limits/">
+                <h3 class="media-heading">[UE4]Numeric Limits</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jun 6, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>Keywords: UE4, Numeric</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/06/ue4networking-in-advanced/">
+                <h3 class="media-heading">[UE4]Networking in Advanced</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jun 6, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>Keywords: UE4, Networking</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
         
           <div class="media">
             
@@ -1448,40 +1504,6 @@ for i in *.xls ; do [[ -f &quot;$i&quot; ]] || continue xls2csv &quot;$i&quot; &
             <hr>
           </div>
         
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/04/ue4android.bat-failed-with-args-silent-update-lib-project-path-javalibsdownloader_library-target-android-28/">
-                <h3 class="media-heading">[UE4]android.bat failed with args --silent update lib-project --path JavaLibsdownloader_library --target android-28</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Apr 4, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>keywords: android sdk, UE4 package error</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/04/versioncontrolgit-commands-in-common/">
-                <h3 class="media-heading">[VersionControl]git commands in common</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Apr 4, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>Keywords: git, pull, branch</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
       </div>
     </div>
     <div class="modal-footer">
@@ -1489,7 +1511,7 @@ for i in *.xls ; do [[ -f &quot;$i&quot; ]] || continue xls2csv &quot;$i&quot; &
          data-message-zero="no post found"
          data-message-one="1 post found"
          data-message-other="{n} posts found">
-         500 posts found
+         502 posts found
       </p>
     </div>
   </div>

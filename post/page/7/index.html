@@ -318,6 +318,130 @@ if (!doNotTrack) {
     
     <div class="postShorten-header">
       <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2018/09/ue4add-custom-collision-for-static-mesh/">
+          [UE4]Add Custom Collision for Static Mesh
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2018-09-27T16:57:02&#43;08:00">
+        
+  September 27, 2018
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        对于结构简单的模型，使用UE4自动生成的Simple Collision没什么问题；如果模型结构复杂，使用Simple Collision不够精准，使用Complex Collision对于实时计算（比如开放世界大场景的游戏项目）的项目来说太耗。
+UE4中自定义碰撞盒 Static Mesh默认打开后：   勾选 Simple Collision   然后选中 Collision，按Delete键删掉   然后点击菜单 Collision -》 Add Box Simplified Collision   然后就可以按W、E、R键修改 Box的坐标、转向、缩放等       缩放比例默认是0.5倍，也可以调整为更小的比例：   如果一个box无法恰好包裹整个物体，可以使用多个Box组合，例如：   官方文档：
+Setting Up Collisions With Static Meshes
+https://docs.unrealengine.com/en-us/Engine/Content/Types/StaticMeshes/HowTo/SettingCollision
+在3DMax、Maya中创建自定义碰撞盒 UE4编辑器中虽然提供了添加自定义碰撞盒的功能，但是编辑起来不够灵活，对于特殊形状的物体，建议在建模软件中创建自定义碰撞盒。
+1，比如U型物体，UE4自动生成的碰撞盒子是这样的：
+简单碰撞   复杂碰撞   2，我们在建模软件中（这里以Maya为例），为U型物体添加三块遮挡方块   将U型物体和3个方块合成一个Group，并且碰撞盒子的命名一定要遵循规则：UCX_主物体名XXX。例如：主物体名称为pCylinder，则碰撞盒子的名称必须为：UCX_pCylinderXXX，否则导入UE4后这3个方块会被当作真实物体而不是碰撞体。   然后导出FBX文件，导入UE4时，去掉勾选：Auto Generate Collision；如果碰撞盒子没有和模型合成一个Group，还需要勾选：Combine Meshes。这里我们已经在Maya进行了Group操作，所以可以不用勾选 Combine Meshes。   导入UE4后，编辑器中打开该物体，然后勾选：Collision -》 Simple Collision   就可以看到3块自定义碰撞盒。   小时候有无数个梦想，现在只想好好生活。
+      
+      <p>
+        <a href="https://dawnarc.com/2018/09/ue4add-custom-collision-for-static-mesh/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2018/09/ue4root-motion/">
+          [UE4]Root Motion
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2018-09-23T21:06:02&#43;08:00">
+        
+  September 23, 2018
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        蓝图设置方式 Root Motion 设置步骤：
+ 先在 AnimSequence 的Asset Detail面板中勾选EnableRootMotion和Force Root Lock。 然后基于该 AnimSequence 新建一个 AnimMontage。 然后再在 AnimationBluerpint 中设置Root Motion Mode为 Root Motion From Montages Only（Class Defaults 面板下，不是Class Settings）。  如果你没有使用UE4的服务器、或者使用了UE4服务器但是没有对动画启用Replication（服务端通过 NetMulticast 播放动画），设置为Root Motion from Enerything没有问题，如果使用了UE4的Replication，且这些动画文件（AnimSequence, Blendspace, AnimMontage, etc.）勾选了EnableRootMotion，那么 Root Motion 也会被同步，影响性能。所以官方文档上的建议是使用默认设置，即：Root Motion Mode设置为Root Motion From Montages Only，只对Montage的Root Motion进行Replication。
+ Root Motion
+https://docs.unrealengine.com/en-US/Engine/Animation/RootMotion
+C++设置方式  v4.5之前的方式： UAnimMontage 的两个属性 bEnableRootMotionTranslation、bEnableRootMotionRotation，任意一个设置为 true 即可。
+AnimMontage.cpp 引擎代码：
+bool bRootMotionEnabled = bEnableRootMotionTranslation || bEnableRootMotionRotation; if (bRootMotionEnabled) { for (FSlotAnimationTrack&amp; Slot : SlotAnimTracks) { for (FAnimSegment&amp; Segment : Slot.
+      
+      <p>
+        <a href="https://dawnarc.com/2018/09/ue4root-motion/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
         <a class="link-unstyled" href="https://dawnarc.com/2018/09/ue4ue4-stylized-enum-and-struct-in-c-/">
           [UE4]UE4 stylized Enum and Struct in C&#43;&#43;
         </a>
@@ -1120,132 +1244,6 @@ https://zh.wikipedia.org/wiki/%E5%90%89%E6%96%87%E6%96%AF%E6%97%8B%E8%BD%AC
 </article>
 
           
-            
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2018/07/mathprojectile-motion-finding-the-optimal-launch-angle/">
-          [Math]Projectile Motion: Finding the Optimal Launch Angle
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2018-07-23T18:21:02&#43;08:00">
-        
-  July 23, 2018
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/math">Math</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        If we want to throw a projectile as far as possible, at what angle should it be launched? This paper focuses on how the answer to this question changes depending on the situation.
-如果你想尽可能远的抛掷物体，以多大的角度抛出最合适？这篇文章用于分析不同测试环境下而导致的不同答案。
-论文地址：Projectile Motion: Finding the Optimal Launch Angle
-https://www.whitman.edu/Documents/Academics/Mathematics/2016/Henelsmith.pdf
-UE4实现：如何绕开障碍物并投掷到指定位置 Projectile: How to avoid obstacle &amp; hit target
-https://www.reddit.com/r/unrealengine/comments/9xfdei/projectile_how_to_avoid_obstacle_hit_target/
-所有的战争都是内战，因为所有的人类都是同胞。——弗朗索瓦·费奈隆（FrancoisFenelon）
-      
-      <p>
-        <a href="https://dawnarc.com/2018/07/mathprojectile-motion-finding-the-optimal-launch-angle/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-          
-            
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2018/07/ue4%E7%89%A9%E7%90%86%E5%92%8C%E5%88%9A%E4%BD%93%E7%9B%B8%E5%85%B3%E7%9A%84%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9simulate-physics-and-rigidbody/">
-          [UE4]物理和刚体相关的注意事项(Simulate Physics and RigidBody)
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2018-07-23T00:27:02&#43;08:00">
-        
-  July 23, 2018
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        UProjectileMovementComponent相关 官方第一人称射击模版项目中，是在构造函数中就设置好了速度：
-ProjectileMovement = CreateDefaultSubobject&lt;UProjectileMovementComponent&gt;(TEXT(&quot;ProjectileComp&quot;)); ProjectileMovement-&gt;UpdatedComponent = CollisionComp; ProjectileMovement-&gt;InitialSpeed = 3000.f; ProjectileMovement-&gt;MaxSpeed = 3000.f; ProjectileMovement-&gt;bRotationFollowsVelocity = true; ProjectileMovement-&gt;bShouldBounce = true;  两个问题：
- 如何停止移动； 如何在运行时期间修改速度；  问题1解决方法：
-默认情况下，Actor spawn之后，就会受到 ProjectileMovement 影响立即移动，如何在 Spawn 之后马上停止移动：
-ProjectileMovement-&gt;Deactivate();  问题2解决方法：
-如何在 Spawn 之后修改 Speed，两种方式：
-UProjectileMovementComponent-&gt;SetVelocityInLocalSpace(FVector NewVelocity);  或者
-UProjectileMovementComponent-&gt;Velocity = NewVelocity;  Velocity计算方式：
-Velocity = Velocity.GetSafeNormal() * InitialSpeed;  前者速度方向是相对于 UProjectileMovementComponent本地坐标系 的相对Rotation，后者速度方向是相对于世界坐标系的绝对Rotation。 注意：当使用 UProjectileMovementComponent 后，UPrimitiveComponent::SetSimulatePhysics() 启用物理会与 ProjectileMovement 冲突。如果要使用物理，那么只能去掉 UProjectileMovementComponent ，使用 Add Impulse 来代替。
-      
-      <p>
-        <a href="https://dawnarc.com/2018/07/ue4%E7%89%A9%E7%90%86%E5%92%8C%E5%88%9A%E4%BD%93%E7%9B%B8%E5%85%B3%E7%9A%84%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9simulate-physics-and-rigidbody/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-          
           
   <div class="pagination-bar">
     <ul class="pagination">
@@ -1329,6 +1327,40 @@ Velocity = Velocity.GetSafeNormal() * InitialSpeed;  前者速度方向是相对
       <div class="no-result text-color-light text-center">no post found</div>
       <div class="results">
         
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/06/ue4numeric-limits/">
+                <h3 class="media-heading">[UE4]Numeric Limits</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jun 6, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>Keywords: UE4, Numeric</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/06/ue4networking-in-advanced/">
+                <h3 class="media-heading">[UE4]Networking in Advanced</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jun 6, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>Keywords: UE4, Networking</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
         
           <div class="media">
             
@@ -1466,40 +1498,6 @@ Velocity = Velocity.GetSafeNormal() * InitialSpeed;  前者速度方向是相对
             <hr>
           </div>
         
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/04/ue4android.bat-failed-with-args-silent-update-lib-project-path-javalibsdownloader_library-target-android-28/">
-                <h3 class="media-heading">[UE4]android.bat failed with args --silent update lib-project --path JavaLibsdownloader_library --target android-28</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Apr 4, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>keywords: android sdk, UE4 package error</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/04/versioncontrolgit-commands-in-common/">
-                <h3 class="media-heading">[VersionControl]git commands in common</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Apr 4, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>Keywords: git, pull, branch</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
       </div>
     </div>
     <div class="modal-footer">
@@ -1507,7 +1505,7 @@ Velocity = Velocity.GetSafeNormal() * InitialSpeed;  前者速度方向是相对
          data-message-zero="no post found"
          data-message-one="1 post found"
          data-message-other="{n} posts found">
-         500 posts found
+         502 posts found
       </p>
     </div>
   </div>

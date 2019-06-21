@@ -8,37 +8,37 @@
 <meta name="generator" content="Hugo 0.53 with theme Tranquilpeak 0.4.3-SNAPSHOT">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="">
-<meta name="description" content="回调函数：
-UFUNCTION() void MyUsefulFunction(int32 x, float y);  .h
-FTimerDelegate TimerDel; FTimerHandle TimerHandle;  .cpp
-int32 MyInt = 10; float MyFloat = 20.f; //Binding the function with specific values TimerDel.BindUFunction(this, FName(&quot;MyUsefulFunction&quot;), MyInt, MyFloat); //Calling MyUsefulFunction after 5 seconds without looping GetWorld()-&gt;GetTimerManager().SetTimer(TimerHandle, TimerDel, 5.f, false);  参考自：https://answers.unrealengine.com/questions/165678/using-settimer-on-a-function-with-parameters.html">
+<meta name="description" content="Port of Memory Management:
+Engine\Source\Runtime\Core\Public\HAL\UnrealMemory.h  New and Destroy in Memory Pool
+Engine\Source\Runtime\Core\Private\HAL\MallocBinned.cpp  Critical Functions in MallocBinned.cpp Initialization of Memory Pool:
+static FPoolInfo* AllocatePoolMemory(FMallocBinned&amp; Allocator, FPoolTable* Table, uint32 PoolSize, uint16 TableIndex) { const uint32 PageSize = Allocator.PageSize; // Must create a new pool. uint32 Blocks = PoolSize / Table-&gt;BlockSize; uint32 Bytes = Blocks * Table-&gt;BlockSize; UPTRINT OsBytes = Align(Bytes, PageSize); checkSlow(Blocks &gt;= 1); checkSlow(Blocks * Table-&gt;BlockSize &lt;= Bytes &amp;&amp; PoolSize &gt;= Bytes); // Allocate memory.">
 
 
-<meta property="og:description" content="回调函数：
-UFUNCTION() void MyUsefulFunction(int32 x, float y);  .h
-FTimerDelegate TimerDel; FTimerHandle TimerHandle;  .cpp
-int32 MyInt = 10; float MyFloat = 20.f; //Binding the function with specific values TimerDel.BindUFunction(this, FName(&quot;MyUsefulFunction&quot;), MyInt, MyFloat); //Calling MyUsefulFunction after 5 seconds without looping GetWorld()-&gt;GetTimerManager().SetTimer(TimerHandle, TimerDel, 5.f, false);  参考自：https://answers.unrealengine.com/questions/165678/using-settimer-on-a-function-with-parameters.html">
+<meta property="og:description" content="Port of Memory Management:
+Engine\Source\Runtime\Core\Public\HAL\UnrealMemory.h  New and Destroy in Memory Pool
+Engine\Source\Runtime\Core\Private\HAL\MallocBinned.cpp  Critical Functions in MallocBinned.cpp Initialization of Memory Pool:
+static FPoolInfo* AllocatePoolMemory(FMallocBinned&amp; Allocator, FPoolTable* Table, uint32 PoolSize, uint16 TableIndex) { const uint32 PageSize = Allocator.PageSize; // Must create a new pool. uint32 Blocks = PoolSize / Table-&gt;BlockSize; uint32 Bytes = Blocks * Table-&gt;BlockSize; UPTRINT OsBytes = Align(Bytes, PageSize); checkSlow(Blocks &gt;= 1); checkSlow(Blocks * Table-&gt;BlockSize &lt;= Bytes &amp;&amp; PoolSize &gt;= Bytes); // Allocate memory.">
 <meta property="og:type" content="article">
-<meta property="og:title" content="[UE4]GetWorldTimerManager().SetTimer()如何传递参数">
-<meta name="twitter:title" content="[UE4]GetWorldTimerManager().SetTimer()如何传递参数">
-<meta property="og:url" content="https://dawnarc.com/2016/10/ue4getworldtimermanager.settimer%E5%A6%82%E4%BD%95%E4%BC%A0%E9%80%92%E5%8F%82%E6%95%B0/">
-<meta property="twitter:url" content="https://dawnarc.com/2016/10/ue4getworldtimermanager.settimer%E5%A6%82%E4%BD%95%E4%BC%A0%E9%80%92%E5%8F%82%E6%95%B0/">
+<meta property="og:title" content="[UE4]Engine Source Analysis - Memory">
+<meta name="twitter:title" content="[UE4]Engine Source Analysis - Memory">
+<meta property="og:url" content="https://dawnarc.com/2018/02/ue4engine-source-analysis-memory/">
+<meta property="twitter:url" content="https://dawnarc.com/2018/02/ue4engine-source-analysis-memory/">
 <meta property="og:site_name" content="玄冬Wong">
-<meta property="og:description" content="回调函数：
-UFUNCTION() void MyUsefulFunction(int32 x, float y);  .h
-FTimerDelegate TimerDel; FTimerHandle TimerHandle;  .cpp
-int32 MyInt = 10; float MyFloat = 20.f; //Binding the function with specific values TimerDel.BindUFunction(this, FName(&quot;MyUsefulFunction&quot;), MyInt, MyFloat); //Calling MyUsefulFunction after 5 seconds without looping GetWorld()-&gt;GetTimerManager().SetTimer(TimerHandle, TimerDel, 5.f, false);  参考自：https://answers.unrealengine.com/questions/165678/using-settimer-on-a-function-with-parameters.html">
-<meta name="twitter:description" content="回调函数：
-UFUNCTION() void MyUsefulFunction(int32 x, float y);  .h
-FTimerDelegate TimerDel; FTimerHandle TimerHandle;  .cpp
-int32 MyInt = 10; float MyFloat = 20.f; //Binding the function with specific values TimerDel.BindUFunction(this, FName(&quot;MyUsefulFunction&quot;), MyInt, MyFloat); //Calling MyUsefulFunction after 5 seconds without looping GetWorld()-&gt;GetTimerManager().SetTimer(TimerHandle, TimerDel, 5.f, false);  参考自：https://answers.unrealengine.com/questions/165678/using-settimer-on-a-function-with-parameters.html">
+<meta property="og:description" content="Port of Memory Management:
+Engine\Source\Runtime\Core\Public\HAL\UnrealMemory.h  New and Destroy in Memory Pool
+Engine\Source\Runtime\Core\Private\HAL\MallocBinned.cpp  Critical Functions in MallocBinned.cpp Initialization of Memory Pool:
+static FPoolInfo* AllocatePoolMemory(FMallocBinned&amp; Allocator, FPoolTable* Table, uint32 PoolSize, uint16 TableIndex) { const uint32 PageSize = Allocator.PageSize; // Must create a new pool. uint32 Blocks = PoolSize / Table-&gt;BlockSize; uint32 Bytes = Blocks * Table-&gt;BlockSize; UPTRINT OsBytes = Align(Bytes, PageSize); checkSlow(Blocks &gt;= 1); checkSlow(Blocks * Table-&gt;BlockSize &lt;= Bytes &amp;&amp; PoolSize &gt;= Bytes); // Allocate memory.">
+<meta name="twitter:description" content="Port of Memory Management:
+Engine\Source\Runtime\Core\Public\HAL\UnrealMemory.h  New and Destroy in Memory Pool
+Engine\Source\Runtime\Core\Private\HAL\MallocBinned.cpp  Critical Functions in MallocBinned.cpp Initialization of Memory Pool:
+static FPoolInfo* AllocatePoolMemory(FMallocBinned&amp; Allocator, FPoolTable* Table, uint32 PoolSize, uint16 TableIndex) { const uint32 PageSize = Allocator.PageSize; // Must create a new pool. uint32 Blocks = PoolSize / Table-&gt;BlockSize; uint32 Bytes = Blocks * Table-&gt;BlockSize; UPTRINT OsBytes = Align(Bytes, PageSize); checkSlow(Blocks &gt;= 1); checkSlow(Blocks * Table-&gt;BlockSize &lt;= Bytes &amp;&amp; PoolSize &gt;= Bytes); // Allocate memory.">
 <meta property="og:locale" content="en-us">
 
   
-    <meta property="article:published_time" content="2016-10-22T17:35:40">
+    <meta property="article:published_time" content="2018-02-07T17:41:02">
   
   
-    <meta property="article:modified_time" content="2016-10-22T17:35:40">
+    <meta property="article:modified_time" content="2018-02-07T17:41:02">
   
   
   
@@ -49,6 +49,8 @@ int32 MyInt = 10; float MyFloat = 20.f; //Binding the function with specific val
   
     
       <meta property="article:tag" content="UE4">
+    
+      <meta property="article:tag" content="GC">
     
   
 
@@ -73,7 +75,7 @@ int32 MyInt = 10; float MyFloat = 20.f; //Binding the function with specific val
   <meta property="twitter:image" content="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=640">
 
 
-    <title>[UE4]GetWorldTimerManager().SetTimer()如何传递参数</title>
+    <title>[UE4]Engine Source Analysis - Memory</title>
 
     <link rel="icon" href="https://dawnarc.com/favicon.png">
     
@@ -82,7 +84,7 @@ int32 MyInt = 10; float MyFloat = 20.f; //Binding the function with specific val
       <link rel="publisher" href="https://plus.google.com/111340706178390411568">
     
 
-    <link rel="canonical" href="https://dawnarc.com/2016/10/ue4getworldtimermanager.settimer%E5%A6%82%E4%BD%95%E4%BC%A0%E9%80%92%E5%8F%82%E6%95%B0/">
+    <link rel="canonical" href="https://dawnarc.com/2018/02/ue4engine-source-analysis-memory/">
 
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
@@ -332,15 +334,15 @@ if (!doNotTrack) {
             <div class="post-header main-content-wrap text-left">
   
     <h1 class="post-title" itemprop="headline">
-      [UE4]GetWorldTimerManager().SetTimer()如何传递参数
+      [UE4]Engine Source Analysis - Memory
     </h1>
   
   
   <div class="postShorten-meta post-meta">
     
-      <time itemprop="datePublished" datetime="2016-10-22T17:35:40&#43;08:00">
+      <time itemprop="datePublished" datetime="2018-02-07T17:41:02&#43;08:00">
         
-  October 22, 2016
+  February 7, 2018
 
       </time>
     
@@ -359,31 +361,199 @@ if (!doNotTrack) {
           
           <div class="post-content markdown" itemprop="articleBody">
             <div class="main-content-wrap">
-              <p>回调函数：</p>
+              
 
-<pre><code>UFUNCTION()
-void MyUsefulFunction(int32 x, float y);
+<p>Port of Memory Management:</p>
+
+<pre><code>Engine\Source\Runtime\Core\Public\HAL\UnrealMemory.h
 </code></pre>
 
-<p>.h</p>
+<p>New and Destroy in Memory Pool</p>
 
-<pre><code>FTimerDelegate TimerDel;
-
-FTimerHandle TimerHandle;
+<pre><code>Engine\Source\Runtime\Core\Private\HAL\MallocBinned.cpp
 </code></pre>
 
-<p>.cpp</p>
+<h3 id="critical-functions-in-mallocbinned-cpp">Critical Functions in MallocBinned.cpp</h3>
 
-<pre><code>int32 MyInt = 10;
-float MyFloat = 20.f;
+<p>Initialization of Memory Pool:</p>
 
-//Binding the function with specific values
-TimerDel.BindUFunction(this, FName(&quot;MyUsefulFunction&quot;), MyInt, MyFloat);
-//Calling MyUsefulFunction after 5 seconds without looping
-GetWorld()-&gt;GetTimerManager().SetTimer(TimerHandle, TimerDel, 5.f, false);
+<pre><code>static FPoolInfo* AllocatePoolMemory(FMallocBinned&amp; Allocator, FPoolTable* Table, uint32 PoolSize, uint16 TableIndex)
+{
+    const uint32 PageSize = Allocator.PageSize;
+
+    // Must create a new pool.
+    uint32 Blocks   = PoolSize / Table-&gt;BlockSize;
+    uint32 Bytes    = Blocks * Table-&gt;BlockSize;
+    UPTRINT OsBytes = Align(Bytes, PageSize);
+
+    checkSlow(Blocks &gt;= 1);
+    checkSlow(Blocks * Table-&gt;BlockSize &lt;= Bytes &amp;&amp; PoolSize &gt;= Bytes);
+
+    // Allocate memory.
+    FFreeMem* Free = nullptr;
+    SIZE_T ActualPoolSize; //TODO: use this to reduce waste?
+    Free = (FFreeMem*)OSAlloc(Allocator, OsBytes, ActualPoolSize);
+
+    checkSlow(!((UPTRINT)Free &amp; (PageSize - 1)));
+    if( !Free )
+    {
+        OutOfMemory(OsBytes);
+    }
+
+    // Create pool in the indirect table.
+    FPoolInfo* Pool;
+    {
+#ifdef USE_FINE_GRAIN_LOCKS
+        FScopeLock PoolInfoLock(&amp;Allocator.AccessGuard);
+#endif
+        Pool = GetPoolInfo(Allocator, (UPTRINT)Free);
+        for (UPTRINT i = (UPTRINT)PageSize, Offset = 0; i &lt; OsBytes; i += PageSize, ++Offset)
+        {
+            FPoolInfo* TrailingPool = GetPoolInfo(Allocator, ((UPTRINT)Free) + i);
+            check(TrailingPool);
+
+            //Set trailing pools to point back to first pool
+            TrailingPool-&gt;SetAllocationSizes(0, 0, Offset, Allocator.BinnedOSTableIndex);
+        }
+
+
+        BINNED_PEAK_STATCOUNTER(Allocator.OsPeak,    BINNED_ADD_STATCOUNTER(Allocator.OsCurrent,    OsBytes));
+        BINNED_PEAK_STATCOUNTER(Allocator.WastePeak, BINNED_ADD_STATCOUNTER(Allocator.WasteCurrent, (OsBytes - Bytes)));
+    }
+
+    // Init pool.
+    Pool-&gt;Link( Table-&gt;FirstPool );
+    Pool-&gt;SetAllocationSizes(Bytes, OsBytes, TableIndex, Allocator.BinnedOSTableIndex);
+    Pool-&gt;Taken      = 0;
+    Pool-&gt;FirstMem   = Free;
+
+#if STATS
+    Table-&gt;NumActivePools++;
+    Table-&gt;MaxActivePools = FMath::Max(Table-&gt;MaxActivePools, Table-&gt;NumActivePools);
+#endif
+    // Create first free item.
+    Free-&gt;NumFreeBlocks = Blocks;
+    Free-&gt;Next          = nullptr;
+
+    return Pool;
+}
 </code></pre>
 
-<p>参考自：<a href="https://answers.unrealengine.com/questions/165678/using-settimer-on-a-function-with-parameters.html">https://answers.unrealengine.com/questions/165678/using-settimer-on-a-function-with-parameters.html</a></p>
+<p>Allocate space for objects in Memory Pool:</p>
+
+<pre><code>static FORCEINLINE FFreeMem* AllocateBlockFromPool(FMallocBinned&amp; Allocator, FPoolTable* Table, FPoolInfo* Pool, uint32 Alignment)
+{
+    // Pick first available block and unlink it.
+    Pool-&gt;Taken++;
+    checkSlow(Pool-&gt;TableIndex &lt; Allocator.BinnedOSTableIndex); // if this is false, FirstMem is actually a size not a pointer
+    checkSlow(Pool-&gt;FirstMem);
+    checkSlow(Pool-&gt;FirstMem-&gt;NumFreeBlocks &gt; 0);
+    checkSlow(Pool-&gt;FirstMem-&gt;NumFreeBlocks &lt; PAGE_SIZE_LIMIT);
+    FFreeMem* Free = (FFreeMem*)((uint8*)Pool-&gt;FirstMem + --Pool-&gt;FirstMem-&gt;NumFreeBlocks * Table-&gt;BlockSize);
+    if( !Pool-&gt;FirstMem-&gt;NumFreeBlocks )
+    {
+        Pool-&gt;FirstMem = Pool-&gt;FirstMem-&gt;Next;
+        if( !Pool-&gt;FirstMem )
+        {
+            // Move to exhausted list.
+            Pool-&gt;Unlink();
+            Pool-&gt;Link( Table-&gt;ExhaustedPool );
+        }
+    }
+    BINNED_PEAK_STATCOUNTER(Allocator.UsedPeak, BINNED_ADD_STATCOUNTER(Allocator.UsedCurrent, Table-&gt;BlockSize));
+    return Align(Free, Alignment);
+}
+</code></pre>
+
+<p>Free memory in Memory Pool (Not in RAM):</p>
+
+<pre><code>/**
+* Releases memory back to the system. This is not protected from multi-threaded access and it's
+* the callers responsibility to Lock AccessGuard before calling this.
+*/
+static void FreeInternal(FMallocBinned&amp; Allocator, void* Ptr)
+{
+    MEM_TIME(MemTime -= FPlatformTime::Seconds());
+    BINNED_DECREMENT_STATCOUNTER(Allocator.CurrentAllocs);
+
+    UPTRINT BasePtr;
+    FPoolInfo* Pool = FindPoolInfo(Allocator, (UPTRINT)Ptr, BasePtr);
+#if PLATFORM_IOS || PLATFORM_MAC
+    if (Pool == NULL)
+    {
+        UE_LOG(LogMemory, Warning, TEXT(&quot;Attempting to free a pointer we didn't allocate!&quot;));
+        return;
+    }
+#endif
+    checkSlow(Pool);
+    checkSlow(Pool-&gt;GetBytes() != 0);
+    if (Pool-&gt;TableIndex &lt; Allocator.BinnedOSTableIndex)
+    {
+        FPoolTable* Table = Allocator.MemSizeToPoolTable[Pool-&gt;TableIndex];
+#ifdef USE_FINE_GRAIN_LOCKS
+        FScopeLock TableLock(&amp;Table-&gt;CriticalSection);
+#endif
+#if STATS
+        Table-&gt;ActiveRequests--;
+#endif
+        // If this pool was exhausted, move to available list.
+        if( !Pool-&gt;FirstMem )
+        {
+            Pool-&gt;Unlink();
+            Pool-&gt;Link( Table-&gt;FirstPool );
+        }
+
+        void* BaseAddress = (void*)BasePtr;
+        uint32 BlockSize = Table-&gt;BlockSize;
+        PTRINT OffsetFromBase = (PTRINT)Ptr - (PTRINT)BaseAddress;
+        check(OffsetFromBase &gt;= 0);
+        uint32 AlignOffset = OffsetFromBase % BlockSize;
+
+        // Patch pointer to include previously applied alignment.
+        Ptr = (void*)((PTRINT)Ptr - (PTRINT)AlignOffset);
+
+        // Free a pooled allocation.
+        FFreeMem* Free      = (FFreeMem*)Ptr;
+        Free-&gt;NumFreeBlocks = 1;
+        Free-&gt;Next          = Pool-&gt;FirstMem;
+        Pool-&gt;FirstMem      = Free;
+        BINNED_ADD_STATCOUNTER(Allocator.UsedCurrent, -(int64)(Table-&gt;BlockSize));
+
+        // Free this pool.
+        checkSlow(Pool-&gt;Taken &gt;= 1);
+        if( --Pool-&gt;Taken == 0 )
+        {
+#if STATS
+            Table-&gt;NumActivePools--;
+#endif
+            // Free the OS memory.
+            SIZE_T OsBytes = Pool-&gt;GetOsBytes(Allocator.PageSize, Allocator.BinnedOSTableIndex);
+            BINNED_ADD_STATCOUNTER(Allocator.OsCurrent,    -(int64)OsBytes);
+            BINNED_ADD_STATCOUNTER(Allocator.WasteCurrent, -(int64)(OsBytes - Pool-&gt;GetBytes()));
+            Pool-&gt;Unlink();
+            Pool-&gt;SetAllocationSizes(0, 0, 0, Allocator.BinnedOSTableIndex);
+            OSFree(Allocator, (void*)BasePtr, OsBytes);
+        }
+    }
+    else
+    {
+        // Free an OS allocation.
+        checkSlow(!((UPTRINT)Ptr &amp; (Allocator.PageSize - 1)));
+        SIZE_T OsBytes = Pool-&gt;GetOsBytes(Allocator.PageSize, Allocator.BinnedOSTableIndex);
+
+        BINNED_ADD_STATCOUNTER(Allocator.UsedCurrent,  -(int64)Pool-&gt;GetBytes());
+        BINNED_ADD_STATCOUNTER(Allocator.OsCurrent,    -(int64)OsBytes);
+        BINNED_ADD_STATCOUNTER(Allocator.WasteCurrent, -(int64)(OsBytes - Pool-&gt;GetBytes()));
+        OSFree(Allocator, (void*)BasePtr, OsBytes);
+    }
+
+    MEM_TIME(MemTime += FPlatformTime::Seconds());
+}
+</code></pre>
+
+<hr />
+
+<p><code>对一个男人来说 最无能为力的事儿就是 在最没有能力的年纪，碰见了，最想照顾一生的姑娘。</code></p>
 
               
             </div>
@@ -398,6 +568,8 @@ GetWorld()-&gt;GetTimerManager().SetTimer(TimerHandle, TimerDel, 5.f, false);
                     
   <a class="tag tag--primary tag--small" href="https://dawnarc.com/tags/ue4/">UE4</a>
 
+  <a class="tag tag--primary tag--small" href="https://dawnarc.com/tags/gc/">GC</a>
+
                   </div>
                 
               
@@ -409,7 +581,7 @@ GetWorld()-&gt;GetTimerManager().SetTimer(TimerHandle, TimerDel, 5.f, false);
           
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2016/10/windows%E6%9C%80%E5%A4%A7%E5%8C%96%E6%9C%80%E5%B0%8F%E5%8C%96%E7%AA%97%E5%8F%A3%E5%8C%96%E7%9A%84%E5%BF%AB%E6%8D%B7%E9%94%AE/" data-tooltip="[Windows]最大化最小化窗口化的快捷键">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2018/02/ue4unreal%E5%95%86%E6%A0%87%E5%8A%A8%E7%94%BBlogo%E8%8E%B7%E5%8F%96%E5%9C%B0%E5%9D%80/" data-tooltip="[UE4]Unreal商标动画logo获取地址">
               
                   <i class="fa fa-angle-left"></i>
                   <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
@@ -417,7 +589,7 @@ GetWorld()-&gt;GetTimerManager().SetTimer(TimerHandle, TimerDel, 5.f, false);
             </li>
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2016/10/ue4pointlight%E7%82%B9%E5%85%89%E6%BA%90%E7%9A%84%E8%A1%B0%E5%87%8F%E5%8F%82%E6%95%B0/" data-tooltip="[UE4]PointLight点光源的衰减参数">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2018/02/ue4live-plugin/" data-tooltip="[UE4]Live Plugin">
               
                   <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
                   <i class="fa fa-angle-right"></i>
@@ -477,7 +649,7 @@ GetWorld()-&gt;GetTimerManager().SetTimer(TimerHandle, TimerDel, 5.f, false);
           
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2016/10/windows%E6%9C%80%E5%A4%A7%E5%8C%96%E6%9C%80%E5%B0%8F%E5%8C%96%E7%AA%97%E5%8F%A3%E5%8C%96%E7%9A%84%E5%BF%AB%E6%8D%B7%E9%94%AE/" data-tooltip="[Windows]最大化最小化窗口化的快捷键">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2018/02/ue4unreal%E5%95%86%E6%A0%87%E5%8A%A8%E7%94%BBlogo%E8%8E%B7%E5%8F%96%E5%9C%B0%E5%9D%80/" data-tooltip="[UE4]Unreal商标动画logo获取地址">
               
                   <i class="fa fa-angle-left"></i>
                   <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
@@ -485,7 +657,7 @@ GetWorld()-&gt;GetTimerManager().SetTimer(TimerHandle, TimerDel, 5.f, false);
             </li>
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2016/10/ue4pointlight%E7%82%B9%E5%85%89%E6%BA%90%E7%9A%84%E8%A1%B0%E5%87%8F%E5%8F%82%E6%95%B0/" data-tooltip="[UE4]PointLight点光源的衰减参数">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2018/02/ue4live-plugin/" data-tooltip="[UE4]Live Plugin">
               
                   <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
                   <i class="fa fa-angle-right"></i>
@@ -578,6 +750,40 @@ GetWorld()-&gt;GetTimerManager().SetTimer(TimerHandle, TimerDel, 5.f, false);
       <div class="no-result text-color-light text-center">no post found</div>
       <div class="results">
         
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/06/ue4numeric-limits/">
+                <h3 class="media-heading">[UE4]Numeric Limits</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jun 6, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>Keywords: UE4, Numeric</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/06/ue4networking-in-advanced/">
+                <h3 class="media-heading">[UE4]Networking in Advanced</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jun 6, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>Keywords: UE4, Networking</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
         
           <div class="media">
             
@@ -715,40 +921,6 @@ GetWorld()-&gt;GetTimerManager().SetTimer(TimerHandle, TimerDel, 5.f, false);
             <hr>
           </div>
         
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/04/ue4android.bat-failed-with-args-silent-update-lib-project-path-javalibsdownloader_library-target-android-28/">
-                <h3 class="media-heading">[UE4]android.bat failed with args --silent update lib-project --path JavaLibsdownloader_library --target android-28</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Apr 4, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>keywords: android sdk, UE4 package error</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/04/versioncontrolgit-commands-in-common/">
-                <h3 class="media-heading">[VersionControl]git commands in common</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Apr 4, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>Keywords: git, pull, branch</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
       </div>
     </div>
     <div class="modal-footer">
@@ -756,7 +928,7 @@ GetWorld()-&gt;GetTimerManager().SetTimer(TimerHandle, TimerDel, 5.f, false);
          data-message-zero="no post found"
          data-message-one="1 post found"
          data-message-other="{n} posts found">
-         500 posts found
+         502 posts found
       </p>
     </div>
   </div>
@@ -811,9 +983,9 @@ $(document).ready(function() {
     
       <script>
         var disqus_config = function () {
-          this.page.url = 'https:\/\/dawnarc.com\/2016\/10\/ue4getworldtimermanager.settimer%E5%A6%82%E4%BD%95%E4%BC%A0%E9%80%92%E5%8F%82%E6%95%B0\/';
+          this.page.url = 'https:\/\/dawnarc.com\/2018\/02\/ue4engine-source-analysis-memory\/';
           
-            this.page.identifier = '\/2016\/10\/ue4getworldtimermanager.settimer%E5%A6%82%E4%BD%95%E4%BC%A0%E9%80%92%E5%8F%82%E6%95%B0\/'
+            this.page.identifier = '\/2018\/02\/ue4engine-source-analysis-memory\/'
           
         };
         (function() {

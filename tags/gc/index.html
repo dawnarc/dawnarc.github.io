@@ -321,8 +321,8 @@ if (!doNotTrack) {
     
     <div class="postShorten-header">
       <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2018/02/ue4%E5%BC%95%E6%93%8E%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%B9%8Bmemory/">
-          [UE4]引擎源码分析之：Memory
+        <a class="link-unstyled" href="https://dawnarc.com/2018/02/ue4engine-source-analysis-memory/">
+          [UE4]Engine Source Analysis - Memory
         </a>
       </h1>
       
@@ -348,13 +348,13 @@ if (!doNotTrack) {
     </div>
     <div class="postShorten-excerpt" itemprop="articleBody">
       
-        内存管理的入口：
-Engine\Source\Runtime\Core\Public\HAL\UnrealMemory.h  内存池中的内存开辟和销毁
-Engine\Source\Runtime\Core\Private\HAL\MallocBinned.cpp  MallocBinned.cpp主要函数 内存池的创建：
-static FPoolInfo* AllocatePoolMemory(FMallocBinned&amp; Allocator, FPoolTable* Table, uint32 PoolSize, uint16 TableIndex) { const uint32 PageSize = Allocator.PageSize; // Must create a new pool. uint32 Blocks = PoolSize / Table-&gt;BlockSize; uint32 Bytes = Blocks * Table-&gt;BlockSize; UPTRINT OsBytes = Align(Bytes, PageSize); checkSlow(Blocks &gt;= 1); checkSlow(Blocks * Table-&gt;BlockSize &lt;= Bytes &amp;&amp; PoolSize &gt;= Bytes); // Allocate memory. FFreeMem* Free = nullptr; SIZE_T ActualPoolSize; //TODO: use this to reduce waste?
+        Port of Memory Management:
+Engine\Source\Runtime\Core\Public\HAL\UnrealMemory.h  New and Destroy in Memory Pool
+Engine\Source\Runtime\Core\Private\HAL\MallocBinned.cpp  Critical Functions in MallocBinned.cpp Initialization of Memory Pool:
+static FPoolInfo* AllocatePoolMemory(FMallocBinned&amp; Allocator, FPoolTable* Table, uint32 PoolSize, uint16 TableIndex) { const uint32 PageSize = Allocator.PageSize; // Must create a new pool. uint32 Blocks = PoolSize / Table-&gt;BlockSize; uint32 Bytes = Blocks * Table-&gt;BlockSize; UPTRINT OsBytes = Align(Bytes, PageSize); checkSlow(Blocks &gt;= 1); checkSlow(Blocks * Table-&gt;BlockSize &lt;= Bytes &amp;&amp; PoolSize &gt;= Bytes); // Allocate memory.
       
       <p>
-        <a href="https://dawnarc.com/2018/02/ue4%E5%BC%95%E6%93%8E%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%B9%8Bmemory/" class="postShorten-excerpt_link link">Continue reading</a>
+        <a href="https://dawnarc.com/2018/02/ue4engine-source-analysis-memory/" class="postShorten-excerpt_link link">Continue reading</a>
         
       </p>
     </div>
@@ -380,8 +380,8 @@ static FPoolInfo* AllocatePoolMemory(FMallocBinned&amp; Allocator, FPoolTable* T
     
     <div class="postShorten-header">
       <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2018/02/ue4%E5%BC%95%E6%93%8E%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%B9%8Bgarbagecollection/">
-          [UE4]引擎源码分析之：GarbageCollection
+        <a class="link-unstyled" href="https://dawnarc.com/2018/02/ue4engine-source-analysis-garbagecollection/">
+          [UE4]Engine Source Analysis - GarbageCollection
         </a>
       </h1>
       
@@ -407,12 +407,12 @@ static FPoolInfo* AllocatePoolMemory(FMallocBinned&amp; Allocator, FPoolTable* T
     </div>
     <div class="postShorten-excerpt" itemprop="articleBody">
       
-        Engine\Source\Runtime\CoreUObject\Private\UObject\GarbageCollection.cpp
-垃圾回收的逻辑堆栈（MainThread）：
+        Source Path:
+Engine\Source\Runtime\CoreUObject\Private\UObject\GarbageCollection.cpp  Callstack of GC in MainThread.h：
 UE4Editor-CoreUObject.dll!CollectGarbageInternal(EObjectFlags KeepFlags, bool bPerformFullPurge) Line 1496 UE4Editor-CoreUObject.dll!TryCollectGarbage(EObjectFlags KeepFlags, bool bPerformFullPurge) Line 1560 UE4Editor-Engine.dll!UEngine::PerformGarbageCollectionAndCleanupActors() Line 1134 UE4Editor-Engine.dll!UEngine::ConditionalCollectGarbage() Line 1108 UE4Editor-Engine.dll!UWorld::Tick(ELevelTick TickType, float DeltaSeconds) Line 1612 UE4Editor-UnrealEd.dll!UEditorEngine::Tick(float DeltaSeconds, bool bIdleMode) Line 1481 UE4Editor-UnrealEd.dll!UUnrealEdEngine::Tick(float DeltaSeconds, bool bIdleMode) Line 401 UE4Editor.exe!FEngineLoop::Tick() Line 3320 [Inline Frame] UE4Editor.exe!EngineTick() Line 62  人才的本领叫做技术，天才的创意叫做艺术。
       
       <p>
-        <a href="https://dawnarc.com/2018/02/ue4%E5%BC%95%E6%93%8E%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%B9%8Bgarbagecollection/" class="postShorten-excerpt_link link">Continue reading</a>
+        <a href="https://dawnarc.com/2018/02/ue4engine-source-analysis-garbagecollection/" class="postShorten-excerpt_link link">Continue reading</a>
         
       </p>
     </div>
@@ -481,6 +481,40 @@ UE4Editor-CoreUObject.dll!CollectGarbageInternal(EObjectFlags KeepFlags, bool bP
       <div class="no-result text-color-light text-center">no post found</div>
       <div class="results">
         
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/06/ue4numeric-limits/">
+                <h3 class="media-heading">[UE4]Numeric Limits</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jun 6, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>Keywords: UE4, Numeric</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/06/ue4networking-in-advanced/">
+                <h3 class="media-heading">[UE4]Networking in Advanced</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jun 6, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>Keywords: UE4, Networking</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
         
           <div class="media">
             
@@ -618,40 +652,6 @@ UE4Editor-CoreUObject.dll!CollectGarbageInternal(EObjectFlags KeepFlags, bool bP
             <hr>
           </div>
         
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/04/ue4android.bat-failed-with-args-silent-update-lib-project-path-javalibsdownloader_library-target-android-28/">
-                <h3 class="media-heading">[UE4]android.bat failed with args --silent update lib-project --path JavaLibsdownloader_library --target android-28</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Apr 4, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>keywords: android sdk, UE4 package error</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/04/versioncontrolgit-commands-in-common/">
-                <h3 class="media-heading">[VersionControl]git commands in common</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Apr 4, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>Keywords: git, pull, branch</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
       </div>
     </div>
     <div class="modal-footer">
@@ -659,7 +659,7 @@ UE4Editor-CoreUObject.dll!CollectGarbageInternal(EObjectFlags KeepFlags, bool bP
          data-message-zero="no post found"
          data-message-one="1 post found"
          data-message-other="{n} posts found">
-         500 posts found
+         502 posts found
       </p>
     </div>
   </div>
