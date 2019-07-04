@@ -318,6 +318,199 @@ if (!doNotTrack) {
     
     <div class="postShorten-header">
       <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2018/05/ue4animationanimation-blueprint-inherit%E5%8A%A8%E7%94%BB%E8%93%9D%E5%9B%BE%E7%BB%A7%E6%89%BF%E4%B8%8E%E5%A4%8D%E7%94%A8/">
+          [UE4][Animation]Animation Blueprint Inherit(动画蓝图继承与复用)
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2018-05-29T12:36:02&#43;08:00">
+        
+  May 29, 2018
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        keyworks：Animation Blueprint Inherit、Animation Blueprint Reuse、蓝图继承、蓝图重用、蓝图复用
+三种方式可以重用动画蓝图逻辑：
+ Blueprint Inherit（蓝图继承） Sub Animation Blueprint Instances Post Process Animation Blueprints  Animation Blueprint Inherit（动画蓝图继承） 角色蓝图继承和动画蓝图继承有部分相似，这里先说下角色蓝图继承
+右键角色蓝图 -》 Create Child Blueprint Class   这样创建出来的子蓝图，其构造函数中会自动生成一个执行父级蓝图构造函数的节点   其他的Event事件中，如果也需要调用父级蓝图的函数，可以右键对应节点 -》 Add call to parent function     动画蓝图也可以使用上述角色蓝图继承的方式。
+但直接右键生成子蓝图的方式创建出来的动画蓝图，无法选择其他骨骼，只能保持和父级动画蓝图的骨骼一样   如果要创建一个与父级动画蓝图骨骼不同的子动画蓝图，可以先新建一个普通的动画蓝图   然后选择需要继承的父级动画蓝图，以及子动画蓝图的骨骼   这样生成出来的子动画蓝图，其Event Graph中，会自动生成一个执行调用父级蓝图的节点：Parent: Blueprint Update Animation   Sub Animation Blueprint Instance   Using Sub Anim Instances
+      
+      <p>
+        <a href="https://dawnarc.com/2018/05/ue4animationanimation-blueprint-inherit%E5%8A%A8%E7%94%BB%E8%93%9D%E5%9B%BE%E7%BB%A7%E6%89%BF%E4%B8%8E%E5%A4%8D%E7%94%A8/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2018/05/ue4animationmultiple-skeleton-meshes-sharing-same-skeleton%E5%A4%9A%E4%B8%AAskeletonmesh%E5%85%B1%E7%94%A8%E4%B8%80%E5%A5%97%E9%AA%A8%E9%AA%BC/">
+          [UE4][Animation]Multiple skeleton meshes sharing same skeleton(多个SkeletonMesh共用一套骨骼)
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2018-05-29T12:30:02&#43;08:00">
+        
+  May 29, 2018
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        keywords：UE4 Animation、Set Master Pose Component、customizable character、动画蓝图、换装
+美术资源制作  每个身体部件（帽子、鞋子等）蒙皮时需要使用同一套骨骼(all pieces need to be skinned to the same skeleton) 每个身体部件导出时，该部件的关节与根关节之间的所有关节都需要选中导出。例如：假设盆骨为根关节（root joint），现在要导出手臂，那么手臂、肩膀、脊椎、盆骨的关节都需要选中导出。  角色蓝图中设置Master Pose 身体各个部件导入UE4之后，打开角色蓝图，为每个部件Add一个Skeleton Mesh Component，并将其Skeleton Mesh属性设置为对应的资源文件。
+      最后在BeginPlay事件中执行Set Master Pose Component
+  这样，角色在播放动画时，每个部件就会跟随角色一起播放，而不会固定不动。
+参考自：How to Setup &ldquo;Master Pose Component&rdquo;
+https://answers.unrealengine.com/questions/228601/how-to-setup-master-pose-component.html
+注意事项：不要在构造函数中执行SetMasterPoseComponent，否则会出现莫名其妙的问题，比如：Mesh的LOD失效。
+ How to make SetMasterPoseComponent work with skeletal meshes with LODs?
+https://answers.unrealengine.com/questions/793802/how-to-make-setmasterposecomponent-work-with-skele.html
+C++接口 Set Master Pose Component蓝图节点对应的C++ API：
+Child-&gt;SetMasterPoseComponent(Body);  有一个传说，说的是有那么一只鸟儿，它一生只唱一次，那歌声比世上所有一切生灵的歌声都更加优美动听。---《荆棘鸟》
+      
+      <p>
+        <a href="https://dawnarc.com/2018/05/ue4animationmultiple-skeleton-meshes-sharing-same-skeleton%E5%A4%9A%E4%B8%AAskeletonmesh%E5%85%B1%E7%94%A8%E4%B8%80%E5%A5%97%E9%AA%A8%E9%AA%BC/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2018/05/ue4sharp-temporal-aa/">
+          [UE4]Sharp Temporal AA
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2018-05-17T14:44:02&#43;08:00">
+        
+  May 17, 2018
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        PC端开启Temporal AA 参考： https://forums.unrealengine.com/development-discussion/rendering/106829-sharp-temporal-aa/page2?134157-Sharp-Temporal-AA=&amp;viewfull=1
+移动端开启Temporal AA Project Settings -》 Engine -》 Rendering -》 Default Settings -》 Anti-Aliasing Method 选择 TemporalAA；
+Project Settings -》 Engine -》 Rendering -》 Mobile -》 Mobile MSAA 选择 NO MSAA，并确保配置DefaultEngine.ini中r.MobileMSAA=0。
+4.19版本有bug，移动端无法开启Temporal AA，4.18没有问题。启用TemporalAA后，在Android设备上容易产生残影（转动屏幕或角色跑动时）。
+ 我希望有个如你一般的人
+如山间清爽的风
+如古城温暖的光
+从清晨到夜晚
+由山野到书房
+只要最后是你
+就好
+——张嘉佳 《从你的全世界路过》
+      
+      <p>
+        <a href="https://dawnarc.com/2018/05/ue4sharp-temporal-aa/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
         <a class="link-unstyled" href="https://dawnarc.com/2018/05/c-how-to-use-erase-of-std-map-correctly/">
           [C&#43;&#43;]How to use erase of std map correctly
         </a>
@@ -886,8 +1079,8 @@ protobuf-build |-jni |- Android.mk |- Application.mk |- google |-protobuf  Andro
     
     <div class="postShorten-header">
       <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2018/04/android-ndk%E9%93%BE%E6%8E%A5%E5%B7%B2%E6%9C%89%E9%9D%99%E6%80%81%E5%BA%93link-prebuilt-static-library/">
-          [Android NDK]链接已有静态库(Link prebuilt static library)
+        <a class="link-unstyled" href="https://dawnarc.com/2018/04/android-ndklink-library-which-is-existed/">
+          [Android NDK]Link Library Which is Existed
         </a>
       </h1>
       
@@ -913,15 +1106,18 @@ protobuf-build |-jni |- Android.mk |- Application.mk |- google |-protobuf  Andro
     </div>
     <div class="postShorten-excerpt" itemprop="articleBody">
       
-        引用静态库头文件：
-LOCAL_C_INCLUDES += ../include/  引用静态库：
+        Keywords: Android NDK,
+Import headers of static libraries:
+LOCAL_C_INCLUDES += ../include/  Import static libraries:
 LOCAL_LDLIBS += ../lib/libMyBoostLib.a  Android.mk：
-LOCAL_PATH := $(call my-dir) include $(CLEAR_VARS) LOCAL_MODULE := helloJNI LOCAL_SRC_FILES := mainActivity.cpp LOCAL_C_INCLUDES := $(LOCAL_PATH)/inc/ LOCAL_LDLIBS := -llog -L$(LOCAL_PATH)/inc/ -lMyLibrary include $(BUILD_SHARED_LIBRARY)  Include prebuilt static library
+LOCAL_PATH := $(call my-dir) include $(CLEAR_VARS) LOCAL_MODULE := helloJNI LOCAL_SRC_FILES := mainActivity.cpp LOCAL_C_INCLUDES := $(LOCAL_PATH)/inc/ LOCAL_LDLIBS := -llog -L$(LOCAL_PATH)/inc/ -lMyLibrary include $(BUILD_SHARED_LIBRARY)  Reference Include prebuilt static library
 https://stackoverflow.com/questions/18983037/include-prebuilt-static-library
+Using Prebuilt Libraries
+https://developer.android.com/ndk/guides/prebuilts
 故兵无常势，水无常形。能因敌变化而取胜者，谓之神。故五行无常胜，四时无常位，日有短长，月有死生。---《孙子兵法·虚实篇》
       
       <p>
-        <a href="https://dawnarc.com/2018/04/android-ndk%E9%93%BE%E6%8E%A5%E5%B7%B2%E6%9C%89%E9%9D%99%E6%80%81%E5%BA%93link-prebuilt-static-library/" class="postShorten-excerpt_link link">Continue reading</a>
+        <a href="https://dawnarc.com/2018/04/android-ndklink-library-which-is-existed/" class="postShorten-excerpt_link link">Continue reading</a>
         
       </p>
     </div>
@@ -1045,196 +1241,6 @@ https://stackoverflow.com/questions/18983037/include-prebuilt-static-library
 </article>
 
           
-            
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2018/04/ue4loadobject%E5%8A%A0%E8%BD%BDuanimblueprint%E5%A4%B1%E8%B4%A5/">
-          [UE4]LoadObject加载UAnimBlueprint失败
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2018-04-14T22:10:02&#43;08:00">
-        
-  April 14, 2018
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        keywords：UE4、Dynamic Load、Animation Blueprint、LoadObject、动画蓝图
-问题现象 假如用以下方式加载动画蓝图：
-FString AnimBPStringTest = &quot;AnimBlueprint'/Game/ThirdPerson/Animations/ThirdPerson_AnimBP.ThirdPerson_AnimBP'&quot;; UAnimBlueprint* AnimationBP = LoadObject&lt;UAnimBlueprint&gt;(NULL, *AnimBPStringTest);  在PIE和Standalone模式下都可加载成功，但是一旦打包运行（打包配置中添加了该资源cook）就会加载失败，并提示如下错误：
-LogUObjectGlobals:Warning: Failed to find object 'AnimBlueprint /Game/ThirdPerson/Animations/ThirdPerson_AnimBP.ThirdPerson_AnimBP'  解决办法 貌似动画蓝图比较特殊，用LoadObject无法加载，如果要获取动画蓝图Class，可以通过如下方式加载：
-// get the blueprint class reference from the editor FString AnimClassStringTest = &quot;Class'/Game/mixamo/Heidi/IcloneAnimBP.IcloneAnimBP_C'&quot;; // load the class UClass* AnimationClass = LoadObject&lt;UClass&gt;(NULL, *AnimClassStringTest); if (!AnimationClass) return; // assign the anim blueprint class to your skeletal mesh component Skeletal3DMeshComponent-&gt;SetAnimInstanceClass(AnimationClass);  参考：Why can&rsquo;t i dynamically load an animation BP in a packaged game
-      
-      <p>
-        <a href="https://dawnarc.com/2018/04/ue4loadobject%E5%8A%A0%E8%BD%BDuanimblueprint%E5%A4%B1%E8%B4%A5/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-          
-            
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2018/04/ue4animation-blend-related/">
-          [UE4]Animation Blend Related
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2018-04-13T11:23:02&#43;08:00">
-        
-  April 13, 2018
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        keywords：UE4、Animation Blend Nodes、动画融合实例
-各个Blend节点的解释：Blend Nodes
-https://docs.unrealengine.com/en-us/Engine/Animation/NodeReference/Blend
-动画融合实例可以参考：
-EpicSurvivalGameSeries\SurvivalGame\Content\AnimStarterPack\Player_AnimBP  该蓝图中实现逻辑：角色握枪动作跟随摄像机方向动态融合。
-项目地址：https://github.com/tomlooman/EpicSurvivalGameSeries
-      Blend Option AlphaBlend.h
-UENUM() enum class EAlphaBlendOption : uint8 { // Linear interpolation Linear = 0, // Cubic-in interpolation Cubic, // Hermite-Cubic HermiteCubic, // Sinusoidal interpolation Sinusoidal, // Quadratic in-out interpolation QuadraticInOut, // Cubic in-out interpolation CubicInOut, // Quartic in-out interpolation QuarticInOut, // Quintic in-out interpolation QuinticInOut, // Circular-in interpolation CircularIn, // Circular-out interpolation CircularOut, // Circular in-out interpolation CircularInOut, // Exponential-in interpolation ExpIn, // Exponential-Out interpolation ExpOut, // Exponential in-out interpolation ExpInOut, // Custom interpolation, will use custom curve inside an FAlphaBlend or linear if none has been set Custom, };  说明
-      
-      <p>
-        <a href="https://dawnarc.com/2018/04/ue4animation-blend-related/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-          
-            
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2018/04/buildcmake%E5%B8%B8%E7%94%A8%E9%85%8D%E7%BD%AE%E9%A1%B9/">
-          [Build]cmake常用配置项
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2018-04-10T12:25:28&#43;08:00">
-        
-  April 10, 2018
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/build">Build</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        设置编译输出路径 在CMakeList.txt中如下设置后，无论是编译可执行文件还是编译静态库，都会输出到指定目录下，而不再是默认的当前目录。
-# etc. etc. set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY &quot;lib/&quot;)  参考自：https://stackoverflow.com/questions/38445335/cmake-library-output-directory-not-affected-by-cmake-library-output-director/38450844
-获取指定目录下的所有源文件 file(GLOB cpp_files ./src/*.cpp) add_library(mylib STATIC ${cpp_files})  打印log if (NOT CMAKE_VERSION VERSION_GREATER &quot;3.0&quot;) message(FATAL_ERROR &quot;cmake version 3.x is required!&quot;) endif()  修改默认的CMAKE_MODULE_PATH目录 CMAKE_MODULE_PATH是供find_package搜索第三方库用的。cmake的默认Modules目录在安装目录中：cmake-3.11.3-win64-x64\share\cmake-3.11\Modules。
-如果要追加Modules目录，有3种方式：
-set(CMAKE_MODULE_PATH &quot;${CMAKE_SOURCE_PATH}:${CMAKE_MODULE_PATH}&quot;) LIST(APPEND CMAKE_MODULE_PATH &quot;${CMAKE_SOURCE_PREFIX}&quot;) set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)  find_package用法 通常情况下，包含第三方库需要写以下内容
-include_directories(&quot;${project_root_path}/include/&quot;) link_directories(./lib) add_executable(myapp myapp.cpp) target_link_libraries(myapp mylib)  如果引用的很多个第三方库，那么类似上面的内容会写很多，且如果自己的多个项目都引用了某个第三方库，那么我每个项目的CmakeList.txt都得写一遍，重复劳动很多。那么有没办法为每个第三方库只定义一次它的头文件和库文件信息，然后在自己的工程中只指定名称即可？（类似编译Java的Maven仓库）答案是当然可以，find_package帮你解决。
-find_package定义在自己工程的CmakeList.txt中：
-find_package( XXX CONFIG REQUIRED )  然后cmake就会在默认的Modules(即CMAKE_MODULE_PATH指定的目录)目录中搜索这个XXX第三方库。
-搜索有两种模式：FindXXX.cmake和XXXConfig.cmake。前者叫做Module模式，后者叫做Config模式。
- Module模式
-搜索CMAKE_MODULE_PATH指定路径下的FindXXX.cmake文件，通过该文件从而找到XXX库的头文件和lib文件位置。FindXXX.cmake中需要定义XXX_INCLUDE_DIRS和XXX_LIBRARIES。 Config模式
-搜索XXX_DIR指定路径下的XXXConfig.cmake文件（XXX_DIR定义在自己工程的CMakeList.txt或者cmake-gui的环境变量中），通过该文件从而找到XXX库的头文件和lib文件位置。XXXConfig.cmake中需要定义XXX_INCLUDE_DIRS和XXX_LIBRARIES  Config模式示例：
-      
-      <p>
-        <a href="https://dawnarc.com/2018/04/buildcmake%E5%B8%B8%E7%94%A8%E9%85%8D%E7%BD%AE%E9%A1%B9/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-          
           
   <div class="pagination-bar">
     <ul class="pagination">
@@ -1322,6 +1328,57 @@ find_package( XXX CONFIG REQUIRED )  然后cmake就会在默认的Modules(即CMA
           <div class="media">
             
             <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/07/ue4modulerules-apis-in-common/">
+                <h3 class="media-heading">[UE4]ModuleRules APIs In Common</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jul 7, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>keywords: UE4, Building</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/07/zigtools-frameworks-examples/">
+                <h3 class="media-heading">[Zig]Tools, Frameworks &amp; Examples</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jul 7, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>keywords: Zig Resources Collections</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/07/c-error-templates-must-have-c-linkage/">
+                <h3 class="media-heading">[C&#43;&#43;]error - templates must have C&#43;&#43; linkage</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jul 7, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>keywords: C++ linkage</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
               <a class="link-unstyled" href="https://dawnarc.com/2019/07/android-ndkerror-to_string-is-not-a-member-of-std/">
                 <h3 class="media-heading">[Android NDK]error &#39;to_string&#39; is not a member of &#39;std&#39;</h3>
               </a>
@@ -1330,7 +1387,7 @@ find_package( XXX CONFIG REQUIRED )  然后cmake就会在默认的Modules(即CMA
                   Jul 7, 2019
                 </span>
               </span>
-              <div class="media-content hide-xs font-merryweather"><p>keywords: Android NDK, to_string, Build Failed</p></div>
+              <div class="media-content hide-xs font-merryweather"><p>keywords: Android NDK, to_string, Build Failed, UE4</p></div>
             </div>
             <div style="clear:both;"></div>
             <hr>
@@ -1438,57 +1495,6 @@ find_package( XXX CONFIG REQUIRED )  然后cmake就会在默认的Modules(即CMA
             <hr>
           </div>
         
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/05/visualstudioproject-directory-structure-lost-in-solution-explorer/">
-                <h3 class="media-heading">[VisualStudio]Project Directory Structure Lost in Solution Explorer</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  May 5, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>keywords: Visual Studio, Solution Explorer, Directory Structure</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/05/c-book-guide-and-list/">
-                <h3 class="media-heading">[C&#43;&#43;]Book Guide and List</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  May 5, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>keywords: C++ Book</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/05/c-equivalent-of-instanceof-object-type-checking-at-run-time/">
-                <h3 class="media-heading">[C&#43;&#43;]Equivalent of instanceof (object type checking at run-time)</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  May 5, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>keywords: C++, instanceof, typeof</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
       </div>
     </div>
     <div class="modal-footer">
@@ -1496,7 +1502,7 @@ find_package( XXX CONFIG REQUIRED )  然后cmake就会在默认的Modules(即CMA
          data-message-zero="no post found"
          data-message-one="1 post found"
          data-message-other="{n} posts found">
-         505 posts found
+         508 posts found
       </p>
     </div>
   </div>

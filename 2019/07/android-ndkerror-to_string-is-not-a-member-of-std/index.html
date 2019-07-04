@@ -8,18 +8,18 @@
 <meta name="generator" content="Hugo 0.53 with theme Tranquilpeak 0.4.3-SNAPSHOT">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="Android NDK, to_string, Build Failed">
-<meta name="description" content="keywords: Android NDK, to_string, Build Failed">
+<meta name="description" content="keywords: Android NDK, to_string, Build Failed, UE4">
 
 
-<meta property="og:description" content="keywords: Android NDK, to_string, Build Failed">
+<meta property="og:description" content="keywords: Android NDK, to_string, Build Failed, UE4">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[Android NDK]error &#39;to_string&#39; is not a member of &#39;std&#39;">
 <meta name="twitter:title" content="[Android NDK]error &#39;to_string&#39; is not a member of &#39;std&#39;">
 <meta property="og:url" content="https://dawnarc.com/2019/07/android-ndkerror-to_string-is-not-a-member-of-std/">
 <meta property="twitter:url" content="https://dawnarc.com/2019/07/android-ndkerror-to_string-is-not-a-member-of-std/">
 <meta property="og:site_name" content="玄冬Wong">
-<meta property="og:description" content="keywords: Android NDK, to_string, Build Failed">
-<meta name="twitter:description" content="keywords: Android NDK, to_string, Build Failed">
+<meta property="og:description" content="keywords: Android NDK, to_string, Build Failed, UE4">
+<meta name="twitter:description" content="keywords: Android NDK, to_string, Build Failed, UE4">
 <meta property="og:locale" content="en-us">
 
   
@@ -53,8 +53,8 @@
 
 
 
-  <meta property="og:image" content="https://dawnarc.com/thumbnail/cover-Tso%20Moriri%20Lake.jpg">
-  <meta property="twitter:image" content="https://dawnarc.com/thumbnail/cover-Tso%20Moriri%20Lake.jpg">
+  <meta property="og:image" content="https://dawnarc.com/thumbnail/thumbnail-japen-016.jpg">
+  <meta property="twitter:image" content="https://dawnarc.com/thumbnail/thumbnail-japen-016.jpg">
 
 
 
@@ -350,7 +350,9 @@ if (!doNotTrack) {
           
           <div class="post-content markdown" itemprop="articleBody">
             <div class="main-content-wrap">
-              <p>keywords: Android NDK, to_string, Build Failed</p>
+              <p>keywords: Android NDK, to_string, Build Failed, UE4</p>
+
+<h5 id="steps-in-common-anroid-ndk-projects">Steps in Common Anroid NDK Projects</h5>
 
 <p>Case:<br />
 Build with Android NDK failed:</p>
@@ -369,10 +371,105 @@ Add C++11 support in <code>Android.mk</code>:</p>
 <pre><code>APP_STL := c++_shared
 </code></pre>
 
+<h5 id="steps-in-ue4-android-packaging">Steps in UE4 Android Packaging</h5>
+
+<p>1, Modify function <code>SetUpSpecificEnvironment</code> which in <code>UEBuildAndroid.cs</code>.<br />
+path:</p>
+
+<pre><code>\Engine\Source\Programs\UnrealBuildTool\Platform\Android\UEBuildAndroid.cs
+</code></pre>
+
+<ul>
+<li><p>Modification 1st:<br />
+Origin:</p>
+
+<pre><code>string GccVersion = &quot;4.6&quot;;
+int NDKVersionInt = ToolChain.GetNdkApiLevelInt();
+if (Directory.Exists(Path.Combine(NDKPath, @&quot;sources/cxx-stl/gnu-libstdc++/4.9&quot;)))
+{
+    GccVersion = &quot;4.9&quot;;
+} else
+if (Directory.Exists(Path.Combine(NDKPath, @&quot;sources/cxx-stl/gnu-libstdc++/4.8&quot;)))
+{
+    GccVersion = &quot;4.8&quot;;
+}
+</code></pre>
+
+<p>New:</p>
+
+<pre><code>string GccVersion = &quot;4.6&quot;;
+int NDKVersionInt = ToolChain.GetNdkApiLevelInt();
+if (Directory.Exists(Path.Combine(NDKPath, @&quot;sources/cxx-stl/llvm-libc++/4.9&quot;)))
+{
+    GccVersion = &quot;4.9&quot;;
+} else
+if (Directory.Exists(Path.Combine(NDKPath, @&quot;sources/cxx-stl/llvm-libc++/4.8&quot;)))
+{
+    GccVersion = &quot;4.8&quot;;
+}
+</code></pre></li>
+
+<li><p>Modification 2nd:<br />
+Origin:</p>
+
+<pre><code>DirectoryReference NdkDir = new DirectoryReference(NDKPath);
+CompileEnvironment.SystemIncludePaths.Add(DirectoryReference.Combine(NdkDir, &quot;sources/cxx-stl/gnu-libstdc++/&quot; + GccVersion + &quot;/include&quot;));
+
+// the toolchain will actually filter these out
+CompileEnvironment.SystemIncludePaths.Add(DirectoryReference.Combine(NdkDir, &quot;sources/cxx-stl/gnu-libstdc++/&quot; + GccVersion + &quot;/libs/armeabi-v7a/include&quot;));
+CompileEnvironment.SystemIncludePaths.Add(DirectoryReference.Combine(NdkDir, &quot;sources/cxx-stl/gnu-libstdc++/&quot; + GccVersion + &quot;/libs/arm64-v8a/include&quot;));
+CompileEnvironment.SystemIncludePaths.Add(DirectoryReference.Combine(NdkDir, &quot;sources/cxx-stl/gnu-libstdc++/&quot; + GccVersion + &quot;/libs/x86/include&quot;));
+CompileEnvironment.SystemIncludePaths.Add(DirectoryReference.Combine(NdkDir, &quot;sources/cxx-stl/gnu-libstdc++/&quot; + GccVersion + &quot;/libs/x86_64/include&quot;));
+
+LinkEnvironment.LibraryPaths.Add(DirectoryReference.Combine(NdkDir, &quot;sources/cxx-stl/gnu-libstdc++/&quot; + GccVersion + &quot;/libs/armeabi-v7a&quot;));
+LinkEnvironment.LibraryPaths.Add(DirectoryReference.Combine(NdkDir, &quot;sources/cxx-stl/gnu-libstdc++/&quot; + GccVersion + &quot;/libs/arm64-v8a&quot;));
+LinkEnvironment.LibraryPaths.Add(DirectoryReference.Combine(NdkDir, &quot;sources/cxx-stl/gnu-libstdc++/&quot; + GccVersion + &quot;/libs/x86&quot;));
+LinkEnvironment.LibraryPaths.Add(DirectoryReference.Combine(NdkDir, &quot;sources/cxx-stl/gnu-libstdc++/&quot; + GccVersion + &quot;/libs/x86_64&quot;));
+</code></pre>
+
+<p>New:</p>
+
+<pre><code>DirectoryReference NdkDir = new DirectoryReference(NDKPath);
+CompileEnvironment.SystemIncludePaths.Add(DirectoryReference.Combine(NdkDir, &quot;sources/cxx-stl/llvm-libc++/include&quot;));
+
+LinkEnvironment.LibraryPaths.Add(DirectoryReference.Combine(NdkDir, &quot;sources/cxx-stl/llvm-libc++/libs/armeabi-v7a&quot;));
+LinkEnvironment.LibraryPaths.Add(DirectoryReference.Combine(NdkDir, &quot;sources/cxx-stl/llvm-libc++/libs/arm64-v8a&quot;));
+LinkEnvironment.LibraryPaths.Add(DirectoryReference.Combine(NdkDir, &quot;sources/cxx-stl/llvm-libc++/libs/x86&quot;));
+LinkEnvironment.LibraryPaths.Add(DirectoryReference.Combine(NdkDir, &quot;sources/cxx-stl/llvm-libc++/libs/x86_64&quot;));
+
+CompileEnvironment.SystemIncludePaths.Add(DirectoryReference.Combine(NdkDir, &quot;sources/cxx-stl/llvm-libc++abi/include&quot;));
+</code></pre></li>
+
+<li><p>Modification 3rd:<br />
+Origin:</p>
+
+<pre><code>LinkEnvironment.AdditionalLibraries.Add(&quot;gnustl_shared&quot;);
+</code></pre>
+
+<p>New:</p>
+
+<pre><code>LinkEnvironment.AdditionalLibraries.Add(&quot;c++_shared&quot;);
+</code></pre></li>
+</ul>
+
+<div class="alert warning ">
+  <p><code>\Engine\Build\Android\Java\jni\Application.mk</code> doesn&rsquo;t take effect any more.</p>
+</div>
+
+<p>2, Change system environment variables of NDK, e.g. the newest NDK version UE4 support is 14b(from v4.21).</p>
+
+<figure>
+    <img src="https://dawnarc.com/img/20190701-[Android%20NDK]error%20%27to_string%27%20is%20not%20a%20member%20of%20%27std%27/[Android%20NDK]error%20%27to_string%27%20is%20not%20a%20member%20of%20%27std%27-01.gif"/> 
+</figure>
+
+
+<h5 id="reference">Reference</h5>
+
 <p>Android ndk std::to_string support<br />
 <a href="https://stackoverflow.com/questions/22774009/android-ndk-stdto-string-support%3E">https://stackoverflow.com/questions/22774009/android-ndk-stdto-string-support%3E</a></p>
 
-<h5 id="reference">Reference</h5>
+<p>error: &lsquo;to_string&rsquo; is not a member of &lsquo;std&rsquo;<br />
+<a href="https://stackoverflow.com/questions/26095886/error-to-string-is-not-a-member-of-std">https://stackoverflow.com/questions/26095886/error-to-string-is-not-a-member-of-std</a></p>
 
 <p>C++ Library Support<br />
 <a href="https://developer.android.com/ndk/guides/cpp-support">https://developer.android.com/ndk/guides/cpp-support</a></p>
@@ -404,7 +501,7 @@ Add C++11 support in <code>Android.mk</code>:</p>
           
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--disabled">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2019/07/c-error-templates-must-have-c-linkage/" data-tooltip="[C&#43;&#43;]error - templates must have C&#43;&#43; linkage">
               
                   <i class="fa fa-angle-left"></i>
                   <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
@@ -472,7 +569,7 @@ Add C++11 support in <code>Android.mk</code>:</p>
           
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--disabled">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2019/07/c-error-templates-must-have-c-linkage/" data-tooltip="[C&#43;&#43;]error - templates must have C&#43;&#43; linkage">
               
                   <i class="fa fa-angle-left"></i>
                   <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
@@ -577,6 +674,57 @@ Add C++11 support in <code>Android.mk</code>:</p>
           <div class="media">
             
             <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/07/ue4modulerules-apis-in-common/">
+                <h3 class="media-heading">[UE4]ModuleRules APIs In Common</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jul 7, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>keywords: UE4, Building</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/07/zigtools-frameworks-examples/">
+                <h3 class="media-heading">[Zig]Tools, Frameworks &amp; Examples</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jul 7, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>keywords: Zig Resources Collections</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/07/c-error-templates-must-have-c-linkage/">
+                <h3 class="media-heading">[C&#43;&#43;]error - templates must have C&#43;&#43; linkage</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jul 7, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>keywords: C++ linkage</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
               <a class="link-unstyled" href="https://dawnarc.com/2019/07/android-ndkerror-to_string-is-not-a-member-of-std/">
                 <h3 class="media-heading">[Android NDK]error &#39;to_string&#39; is not a member of &#39;std&#39;</h3>
               </a>
@@ -585,7 +733,7 @@ Add C++11 support in <code>Android.mk</code>:</p>
                   Jul 7, 2019
                 </span>
               </span>
-              <div class="media-content hide-xs font-merryweather"><p>keywords: Android NDK, to_string, Build Failed</p></div>
+              <div class="media-content hide-xs font-merryweather"><p>keywords: Android NDK, to_string, Build Failed, UE4</p></div>
             </div>
             <div style="clear:both;"></div>
             <hr>
@@ -693,57 +841,6 @@ Add C++11 support in <code>Android.mk</code>:</p>
             <hr>
           </div>
         
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/05/visualstudioproject-directory-structure-lost-in-solution-explorer/">
-                <h3 class="media-heading">[VisualStudio]Project Directory Structure Lost in Solution Explorer</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  May 5, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>keywords: Visual Studio, Solution Explorer, Directory Structure</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/05/c-book-guide-and-list/">
-                <h3 class="media-heading">[C&#43;&#43;]Book Guide and List</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  May 5, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>keywords: C++ Book</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/05/c-equivalent-of-instanceof-object-type-checking-at-run-time/">
-                <h3 class="media-heading">[C&#43;&#43;]Equivalent of instanceof (object type checking at run-time)</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  May 5, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>keywords: C++, instanceof, typeof</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
       </div>
     </div>
     <div class="modal-footer">
@@ -751,7 +848,7 @@ Add C++11 support in <code>Android.mk</code>:</p>
          data-message-zero="no post found"
          data-message-one="1 post found"
          data-message-other="{n} posts found">
-         505 posts found
+         508 posts found
       </p>
     </div>
   </div>

@@ -318,6 +318,192 @@ if (!doNotTrack) {
     
     <div class="postShorten-header">
       <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2016/06/ue4viewport-resized-event%E8%A7%86%E5%9B%BE%E7%AA%97%E5%8F%A3%E7%9A%84%E5%B0%BA%E5%AF%B8%E4%BF%AE%E6%94%B9%E5%8F%98%E5%8C%96%E6%97%B6%E7%9A%84%E5%9B%9E%E8%B0%83%E4%BA%8B%E4%BB%B6/">
+          [UE4]Viewport Resized Event(视图窗口的尺寸修改变化时的回调事件)
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2016-06-18T00:25:02&#43;08:00">
+        
+  June 18, 2016
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        keywords: Viewport, Resize, Callback, Event
+1，在BeginPlay()函数中添加绑定事件：
+GEngine-&gt;GameViewport-&gt;Viewport-&gt;ViewportResizedEvent.AddUObject(this, &amp;MyObj::MyFunction);  2，编写回调逻辑。注意，回调函数必须包含FViewport*和uint32两个参数
+void MyObj::MyFunction(FViewport* ViewPort, uint32 val) { }  
+      
+      <p>
+        <a href="https://dawnarc.com/2016/06/ue4viewport-resized-event%E8%A7%86%E5%9B%BE%E7%AA%97%E5%8F%A3%E7%9A%84%E5%B0%BA%E5%AF%B8%E4%BF%AE%E6%94%B9%E5%8F%98%E5%8C%96%E6%97%B6%E7%9A%84%E5%9B%9E%E8%B0%83%E4%BA%8B%E4%BB%B6/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2016/06/ue4%E7%A7%BB%E5%8A%A8%E7%89%A9%E4%BD%93%E7%9A%84%E5%87%A0%E7%A7%8D%E6%96%B9%E6%B3%95/">
+          [UE4]移动物体的几种方法
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2016-06-17T13:17:40&#43;08:00">
+        
+  June 17, 2016
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        keywords: UE4、Movement
+1，Actor-&gt;SetActorLocation
+Actor-&gt;SetActorLocation()  2，AActor::AddActorWorldOffset(), AActor::AddActorLocalOffset()
+AddActorWorldOffset与AddActorLocalOffset区别：如果期望Actor沿着某个世界坐标系方向移动，那么使用AddActorWorldOffset并且参数为世界坐标系的DeltaLocation；如果期望Actor沿着当前Actor局部坐标系方向移动，那么使用AddActorLocalOffset并且参数为相对当前Actor的DeltaLocation Offset（比如想做螺旋轨迹但又不想计算其世界空间坐标，那么就用LocalOffset）。
+ 如果使用AddActorWorldOffset或者AddActorLocalOffset移动Character，那么MovementMode必须设置为fly，否则当DeltaLocation较小时，角色会始终往下掉（即使禁用物理模拟）。UCharacterMovementComponent::SetMovementMode(EMovementMode::MOVE_Flying);
+ 3，Velocity
+ACharacter-&gt;GetCharacterMovement()-&gt;Velocity += FVector(5.f, 5.f, 0.f);  4，将一个Controller（PlayerController或者AIController）possess到一个Actor上，然后调用：
+Controller-&gt;MoveTo();  5，将一个Controller（PlayerController或者AIController）possess到一个Actor上，然后调用
+GetWorld()-&gt;GetNavigationSystem()-&gt;SimpleMoveToLocation(Controller, DestLocation);  注意：如果使用Controller-&gt;MoveTo或者使用NavigationSystem的Move函数，前提条件是你使用了Navigation组件并build了地形，否则无效。
+ 6，APawn-&gt;AddMovementInput
+APawn-&gt;AddMovementInput(FVector WorldDirection, float ScaleValue = 1.0f, bool bForce = false);  其中WorldDirection是方向，ScaleValue是速率倍速，bForce表示是否忽略Controller中的IgnoreMoveInput属性值，强制移动。
+7，UCharacterMovementComponent::AddImpulse
+void UCharacterMovementComponent::AddImpulse( FVector Impulse, bool bVelocityChange )  AddImpulse 一般用来做投掷、爆炸、击飞等物理效果。添加的是一个瞬间的力，之后就不需要每帧做处理了。 注意：AddImpulse 作用对象一般都是 StaticMeshComponent ，而不能是 CollisionComponent，否则无效。且 StaticMeshComponent 要开启物理：SetSimulatePhysics(true) ，否则也无效。
+
+8，UCharacterMovementComponent::AddForce
+void UCharacterMovementComponent::AddForce( FVector Force )  如果想让物体保持移动，需要每帧都执行AddForce()函数，也就说如果加速度是实时变化的，那么就可以用AddForce。 两者的区别：
+      
+      <p>
+        <a href="https://dawnarc.com/2016/06/ue4%E7%A7%BB%E5%8A%A8%E7%89%A9%E4%BD%93%E7%9A%84%E5%87%A0%E7%A7%8D%E6%96%B9%E6%B3%95/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2016/06/tortoisegitfetch%E5%92%8Cmerge%E6%93%8D%E4%BD%9C/">
+          [TortoiseGit]fetch和merge操作
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2016-06-16T20:14:40&#43;08:00">
+        
+  June 16, 2016
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/versioncontrol">VersionControl</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        右键菜单Merge： Branch选择：FETCH_HEAD
+      
+      <p>
+        <a href="https://dawnarc.com/2016/06/tortoisegitfetch%E5%92%8Cmerge%E6%93%8D%E4%BD%9C/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
         <a class="link-unstyled" href="https://dawnarc.com/2016/06/ue4%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%97%A0%E6%B3%95%E8%B0%83%E7%94%A8findpathtolocationsynchronously%E5%87%BD%E6%95%B0%E7%9A%84%E9%97%AE%E9%A2%98/">
           [UE4]客户端无法调用FindPathToLocationSynchronously函数的问题
         </a>
@@ -1035,186 +1221,6 @@ First things first:
 </article>
 
           
-            
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2016/05/ue4constructor%E4%B8%8Eruntime%E4%B8%A4%E7%A7%8D%E7%8E%AF%E5%A2%83%E4%B8%8B%E5%88%9B%E5%BB%BAcomponent%E5%B9%B6attach%E7%9A%84%E6%96%B9%E5%BC%8F/">
-          [UE4]Constructor与Runtime两种环境下创建Component并Attach的方式
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2016-05-29T15:47:02&#43;08:00">
-        
-  May 29, 2016
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        Component MyActor.h：
-UShapeComponent * CollisionMesh;  Constructor中 Create &amp; Attach MyActor.cpp：
-CollisionMesh = CreateDefaultSubobject&lt;UBoxComponent&gt;(TEXT(&quot;TestCollision&quot;)); if(CollisionMesh) { CollisionMesh-&gt;SetupAttachment(GetRootComponent()); }  Runtime中（非构造） Create &amp; Attach MyActor.cpp：
-CollisionMesh = NewObject&lt;UBoxComponent&gt;(this); if (CollisionMesh) { CollisionMesh-&gt;RegisterComponent(); CollisionMesh-&gt;AttachToComponent(GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform); }  Actor Constructor中 Create &amp; Attach 很少情况下需要在构造函数执行Actor之间的相关Attach。
-ConstructorHelpers::FObjectFinder&lt;UMaterial&gt; DecalMaterialAsset(TEXT(&quot;Material'/Game/TopDownCPP/Blueprints/M_Cursor_Decal.M_Cursor_Decal'&quot;)); if (DecalMaterialAsset.Succeeded()) { DecalMaterialAsset.AttachToActor(MyActor, FAttachmentTransformRules::KeepRelativeTransform); }  Runtime中Actor和Actor之间相互Attach Actor1 = GetWorld()-&gt;SpawnActor&lt;AMyActor&gt;(AMyActor::StaticClass()); if(Actor1) { Actor1-&gt;AttachToActor(Actor2, FAttachmentTransformRules::KeepRelativeTransform); }  AttachToComponent()为引擎的仅次于UObject的子类ActorComponent的函数； AttachToActor为引擎的仅次于UObject的子类Actor的函数。
- 通过NewObject创建Component之后，执行Register的目的是为了触发OnComponentCreate等回调。不执行Create相关的Initial回调会导致后续的Attach失效。
- 注意：Actor::AttachToActor()和Actor::AttachTo()为4.12的新版API，旧版本的工程迁移至4.12后，编译提示警告：
-AActor::AttachRootComponentToActor已废弃，需要使用AttachToActor替换
-获取 ActorComponent 所属的 Actor AActor* GetOwner() const;  GetOwner() 会沿着 ActorComponent 到 RootComponent 之间的从属链一直往上走，找到 RootComponent 并返回 RootComponent 所属的 Actor 对象。
-      
-      <p>
-        <a href="https://dawnarc.com/2016/05/ue4constructor%E4%B8%8Eruntime%E4%B8%A4%E7%A7%8D%E7%8E%AF%E5%A2%83%E4%B8%8B%E5%88%9B%E5%BB%BAcomponent%E5%B9%B6attach%E7%9A%84%E6%96%B9%E5%BC%8F/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-          
-            
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2016/05/ue4c-%E7%9A%84k2-api%E5%92%8C%E6%99%AE%E9%80%9Aapi%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB/">
-          [UE4]C&#43;&#43;的K2 API和普通API有什么区别
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2016-05-29T15:08:02&#43;08:00">
-        
-  May 29, 2016
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        比如我们看到很多API都有一个以K2开头的API，比如 AActor::AttachRootComponentTo对应的有一个API叫
-AActor::K2_AttachRootComponentTo  这些K2的和常规API有什么区别：K2是给蓝图用调换的，如果你使用C++编码，那么这些K2的开头的不需要关心。 蓝图的前身是UDK的Kismet，所以有人认为K2是Kismet 2.0的意思，即蓝图。
-参考：https://answers.unrealengine.com/questions/38197/what-is-k2-functions.html
-      
-      <p>
-        <a href="https://dawnarc.com/2016/05/ue4c-%E7%9A%84k2-api%E5%92%8C%E6%99%AE%E9%80%9Aapi%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-          
-            
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2016/05/ue4fmalloctbbmalloc-scalable_malloc-crash/">
-          [UE4]FMallocTBB：：Malloc  scalable_malloc() crash
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2016-05-28T21:54:02&#43;08:00">
-        
-  May 28, 2016
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        #
-UE4Editor_Core!rml::internal::Block::freePublicObject() UE4Editor_Core!rml::internal::ExtMemoryPool::initTLS() UE4Editor_Core!FMallocTBB::Free() [d:\build\++ue4+release-4.12+compile\sync\engine\source\runtime\core\private\hal\malloctbb.cpp:115] UE4Editor_Core!FMemory::Free() [d:\build\++ue4+release-4.12+compile\sync\engine\source\runtime\core\public\hal\fmemory.inl:49] UE4Editor_MyProject_784_Win64_DebugGame!operator delete[]() [d:\workspace\unreal_project\huaikongxin2\program\client\huaikxcli\source\huaikx\huaikx.cpp:15] UE4Editor_MyProject_784_Win64_DebugGame!HServices::HRecvMsg::~HRecvMsg() [d:\workspace\unreal_project\huaikongxin2\program\client\huaikxcli\source\huaikx\services\network\hrecvmsg.cpp:33] UE4Editor_MyProject_784_Win64_DebugGame!AHGameMode::Tick() [d:\workspace\unreal_project\huaikongxin2\program\client\huaikxcli\source\huaikx\graphics\world\hgamemode.cpp:121] UE4Editor_Engine!AActor::TickActor() [d:\build\++ue4+release-4.12+compile\sync\engine\source\runtime\engine\private\actor.cpp:814] UE4Editor_Engine!FActorTickFunction::ExecuteTick() [d:\build\++ue4+release-4.12+compile\sync\engine\source\runtime\engine\private\actor.cpp:111] UE4Editor_Engine!FTickFunctionTask::DoTask() [d:\build\++ue4+release-4.12+compile\sync\engine\source\runtime\engine\private\ticktaskmanager.cpp:262] UE4Editor_Engine!TGraphTask&lt;FTickFunctionTask&gt;::ExecuteTask() [d:\build\++ue4+release-4.12+compile\sync\engine\source\runtime\core\public\async\taskgraphinterfaces.h:999] UE4Editor_Core!FNamedTaskThread::ProcessTasksNamedThread() [d:\build\++ue4+release-4.12+compile\sync\engine\source\runtime\core\private\async\taskgraph.cpp:932] UE4Editor_Core!FNamedTaskThread::ProcessTasksUntilQuit() [d:\build\++ue4+release-4.12+compile\sync\engine\source\runtime\core\private\async\taskgraph.cpp:679] UE4Editor_Core!FTaskGraphImplementation::WaitUntilTasksComplete() [d:\build\++ue4+release-4.12+compile\sync\engine\source\runtime\core\private\async\taskgraph.cpp:1776] UE4Editor_Engine!FTickTaskSequencer::ReleaseTickGroup() [d:\build\++ue4+release-4.12+compile\sync\engine\source\runtime\engine\private\ticktaskmanager.cpp:530] UE4Editor_Engine!FTickTaskManager::RunTickGroup() [d:\build\++ue4+release-4.12+compile\sync\engine\source\runtime\engine\private\ticktaskmanager.cpp:1435] UE4Editor_Engine!UWorld::RunTickGroup() [d:\build\++ue4+release-4.12+compile\sync\engine\source\runtime\engine\private\leveltick.cpp:704] UE4Editor_Engine!UWorld::Tick() [d:\build\++ue4+release-4.12+compile\sync\engine\source\runtime\engine\private\leveltick.cpp:1197] UE4Editor_UnrealEd!UEditorEngine::Tick() [d:\build\++ue4+release-4.12+compile\sync\engine\source\editor\unrealed\private\editorengine.cpp:1349] UE4Editor_UnrealEd!UUnrealEdEngine::Tick() [d:\build\++ue4+release-4.12+compile\sync\engine\source\editor\unrealed\private\unrealedengine.cpp:368] UE4Editor!FEngineLoop::Tick() [d:\build\++ue4+release-4.12+compile\sync\engine\source\runtime\launch\private\launchengineloop.cpp:2774] UE4Editor!GuardedMain() [d:\build\++ue4+release-4.12+compile\sync\engine\source\runtime\launch\private\launch.cpp:148] UE4Editor!GuardedMainWrapper() [d:\build\++ue4+release-4.12+compile\sync\engine\source\runtime\launch\private\windows\launchwindows.cpp:126] UE4Editor!WinMain() [d:\build\++ue4+release-4.12+compile\sync\engine\source\runtime\launch\private\windows\launchwindows.cpp:200] UE4Editor!__scrt_common_main_seh() [f:\dd\vctools\crt\vcstartup\src\startup\exe_common.inl:264] kernel32 ntdll  #
-UE4Editor-Core.dll!rml::internal::ExtMemoryPool::initTLS(void) UE4Editor-Core.dll!scalable_mallo() UE4Editor-Core.dll!FMallocTBB::Malloc(unsigned __int64 Size, unsigned int Alignment) Line 44 C++ UE4Editor-HuaiKX-6959-Win64-DebugGame.dll!HServices::HRecvMsg::HRecvMsg(int type, const char * data, int len) Line 20 C++ UE4Editor-HuaiKX-6959-Win64-DebugGame.
-      
-      <p>
-        <a href="https://dawnarc.com/2016/05/ue4fmalloctbbmalloc-scalable_malloc-crash/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-          
           
   <div class="pagination-bar">
     <ul class="pagination">
@@ -1302,6 +1308,57 @@ UE4Editor-Core.dll!rml::internal::ExtMemoryPool::initTLS(void) UE4Editor-Core.dl
           <div class="media">
             
             <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/07/ue4modulerules-apis-in-common/">
+                <h3 class="media-heading">[UE4]ModuleRules APIs In Common</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jul 7, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>keywords: UE4, Building</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/07/zigtools-frameworks-examples/">
+                <h3 class="media-heading">[Zig]Tools, Frameworks &amp; Examples</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jul 7, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>keywords: Zig Resources Collections</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/07/c-error-templates-must-have-c-linkage/">
+                <h3 class="media-heading">[C&#43;&#43;]error - templates must have C&#43;&#43; linkage</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jul 7, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>keywords: C++ linkage</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
               <a class="link-unstyled" href="https://dawnarc.com/2019/07/android-ndkerror-to_string-is-not-a-member-of-std/">
                 <h3 class="media-heading">[Android NDK]error &#39;to_string&#39; is not a member of &#39;std&#39;</h3>
               </a>
@@ -1310,7 +1367,7 @@ UE4Editor-Core.dll!rml::internal::ExtMemoryPool::initTLS(void) UE4Editor-Core.dl
                   Jul 7, 2019
                 </span>
               </span>
-              <div class="media-content hide-xs font-merryweather"><p>keywords: Android NDK, to_string, Build Failed</p></div>
+              <div class="media-content hide-xs font-merryweather"><p>keywords: Android NDK, to_string, Build Failed, UE4</p></div>
             </div>
             <div style="clear:both;"></div>
             <hr>
@@ -1418,57 +1475,6 @@ UE4Editor-Core.dll!rml::internal::ExtMemoryPool::initTLS(void) UE4Editor-Core.dl
             <hr>
           </div>
         
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/05/visualstudioproject-directory-structure-lost-in-solution-explorer/">
-                <h3 class="media-heading">[VisualStudio]Project Directory Structure Lost in Solution Explorer</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  May 5, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>keywords: Visual Studio, Solution Explorer, Directory Structure</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/05/c-book-guide-and-list/">
-                <h3 class="media-heading">[C&#43;&#43;]Book Guide and List</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  May 5, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>keywords: C++ Book</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/05/c-equivalent-of-instanceof-object-type-checking-at-run-time/">
-                <h3 class="media-heading">[C&#43;&#43;]Equivalent of instanceof (object type checking at run-time)</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  May 5, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>keywords: C++, instanceof, typeof</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
       </div>
     </div>
     <div class="modal-footer">
@@ -1476,7 +1482,7 @@ UE4Editor-Core.dll!rml::internal::ExtMemoryPool::initTLS(void) UE4Editor-Core.dl
          data-message-zero="no post found"
          data-message-one="1 post found"
          data-message-other="{n} posts found">
-         505 posts found
+         508 posts found
       </p>
     </div>
   </div>
