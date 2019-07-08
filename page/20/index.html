@@ -318,6 +318,253 @@ if (!doNotTrack) {
     
     <div class="postShorten-header">
       <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2017/09/ue4no-owning-connection-for-actor-xxx.-function-xxx-will-not-be-processed/">
+          [UE4]No owning connection for actor XXX. Function XXX will not be processed
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2017-09-12T18:26:40&#43;08:00">
+        
+  September 12, 2017
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        keywords：UE4、Dedicated Server、Replication、独立服务器
+在客户端连接独立服务端的情况下，客户端执行Server函数时提示以下警告：
+LogNet: Warning: UIpNetDriver::ProcesRemoteFunction: No owning connection for actor TopDownCharacter_C_0. Function ServerMoveToDest will not be processed.  原因：
+Client执行Server函数的对象，是在服务端Spawn出来的，不是在客户端创建的，所以提示这个警告。
+比如你在Server端的GameMode中创建了一个Character，且这个Character的Replicated相关属性设置为true，你在客户端用这个Character对象来执行Server函数（即UFUNCTION(Server, Reliable)函数），这时就会提示这个错误。
+UE4独立服务端的规则是，只有在客户端创建的对象才允许执行Server函数，比如PlayerController，这个是引擎自动在客户端创建的对象，它身上的Server函数可以在客户端调用且在服务端执行。
+解决办法：
+如果你的逻辑是要操作某个服务端创建的对象，比如刚刚说的在服务端Spawn出来的Character，可以先通过PlayerController执行Server函数，在其Server函数内部获取服务端的Character对象，然后再执行相关逻辑。
+UE4独立服务器的几个注意要点：
+ Replicated属性只允许服务端修改，而不允许客户端修改。 客户端和客户端之间无法直接通信，只能通过独立服务器广播通知。 客户端要执行服务端函数，则执行对象必须是在客户端Spawn出来的，服务端创建的且复制到客户端的对象，没有权限执行服务端函数。这也很好理解，这是为了保证安全性。  最高贵的复仇是宽容。──维克多·雨果（HugoVictor）
+      
+      <p>
+        <a href="https://dawnarc.com/2017/09/ue4no-owning-connection-for-actor-xxx.-function-xxx-will-not-be-processed/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2017/09/ue4getnavigationsystem%E8%BF%94%E5%9B%9Enull%E7%9A%84%E9%97%AE%E9%A2%98/">
+          [UE4]GetNavigationSystem返回NULL的问题
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2017-09-12T15:31:40&#43;08:00">
+        
+  September 12, 2017
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        keywords：UE4、Client、UNavigationSystem、自动寻路、Dedicated Server
+在有独立服务器的情况下，客户端默认关闭了Navigation，导致在客户端获取NavigationSystem时始终返回NULL。
+UNavigationSystem* const NavSys = GetWorld()-&gt;GetNavigationSystem();  解决办法：
+打包之前勾选工程设置的中的Allow Client Side Navigation（Project Settings -》 Engine -》 Navigation System）：   注意事项：
+默认关闭Allow Client Side Navigation，是因为UE4的DedicatedServer默认开启了角色的Movement Replicate，所以可以不用客户端寻路。如果要开启此项，一般是关闭了角色的自动位移同步，自己手动处理客户端和服务端的位移同步。
+天涯旧恨，试看几许消魂？长亭门外山重叠。不尽眼中青，是愁来时节。—张元千《石州慢》
+      
+      <p>
+        <a href="https://dawnarc.com/2017/09/ue4getnavigationsystem%E8%BF%94%E5%9B%9Enull%E7%9A%84%E9%97%AE%E9%A2%98/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2017/09/ue4run-game-in-windowed-mode/">
+          [UE4]Run Game In Windowed Mode
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2017-09-12T15:22:40&#43;08:00">
+        
+  September 12, 2017
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        keywords：UE4、Launch Game、Windowed
+Command:
+MyProject.exe -WINDOWED  Reference：
+Command-Line Arguments
+https://docs.unrealengine.com/latest/INT/Programming/Basics/CommandLineArguments/index.html
+Windows Package If running game in windows package, you can change to Windowed Mode from Fullscreen Mode by press F11.
+我住长江头，君住长江尾；日日思君不见君，共饮长江水。—李之仪《卜算子》
+      
+      <p>
+        <a href="https://dawnarc.com/2017/09/ue4run-game-in-windowed-mode/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2017/09/algorithms%E7%AE%97%E6%B3%95%E9%A2%98%E8%AE%A1%E7%AE%97%E6%95%B4%E6%95%B0%E6%95%B0%E7%BB%84%E4%B8%AD%E4%BB%BB%E6%84%8F%E4%B8%A4%E4%B8%AA%E5%85%83%E7%B4%A0%E7%BB%84%E5%90%88%E7%9A%84%E5%B7%AE%E5%80%BC%E7%AD%89%E4%BA%8E%E6%8C%87%E5%AE%9A%E5%80%BC%E7%9A%84%E7%BB%84%E5%90%88%E4%B8%AA%E6%95%B0/">
+          [Algorithms]算法题：计算整数数组中，任意两个元素组合的差值，等于指定值的组合个数
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2017-09-12T12:19:28&#43;08:00">
+        
+  September 12, 2017
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/algorithms">Algorithms</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        题目：
+给定一个数组a，再给定一个值k，数组a的任意两个元素组合，他们的差值要求等于k，求出这种组合的对数。比如数组{1, 5, 3, 4, 2}，k=2，那么组合对数等于3，因为符合要求的组合为{1,3}、{4,2}、{5,3}。
+代码：
+#include &lt;iostream&gt; #include &lt;vector&gt; int main(int argc, char* argv[]) { std::vector&lt;int&gt; a; a.push_back(1); a.push_back(5); a.push_back(3); a.push_back(12); a.push_back(4); a.push_back(6); a.push_back(9); a.push_back(2); int k = 3; int count = 0; std::vector&lt;std::vector&lt;int&gt;&gt; paired_eles(a.size(), std::vector&lt;int&gt;()); for (size_t i = 0; i &lt; a.size(); i++) { for (size_t j = i + 1; j &lt; a.size(); j++) { if (abs(a[i] - a[j]) == k) { paired_eles[i].push_back(j); count++; std::cout &lt;&lt; a[i] &lt;&lt; &quot;,&quot; &lt;&lt; a[j] &lt;&lt; std::endl; } } } std::cout &lt;&lt; count &lt;&lt; std::endl; system(&quot;pause&quot;); }  输出结果：
+      
+      <p>
+        <a href="https://dawnarc.com/2017/09/algorithms%E7%AE%97%E6%B3%95%E9%A2%98%E8%AE%A1%E7%AE%97%E6%95%B4%E6%95%B0%E6%95%B0%E7%BB%84%E4%B8%AD%E4%BB%BB%E6%84%8F%E4%B8%A4%E4%B8%AA%E5%85%83%E7%B4%A0%E7%BB%84%E5%90%88%E7%9A%84%E5%B7%AE%E5%80%BC%E7%AD%89%E4%BA%8E%E6%8C%87%E5%AE%9A%E5%80%BC%E7%9A%84%E7%BB%84%E5%90%88%E4%B8%AA%E6%95%B0/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
         <a class="link-unstyled" href="https://dawnarc.com/2017/09/mayaselect/">
           [Maya]Select
         </a>
@@ -988,234 +1235,6 @@ abc的3个字符可以组合的情况为： a b c ab bc ac abc
 </article>
 
           
-            
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2017/09/mayapolygon%E5%BB%BA%E6%A8%A1%E7%9A%84%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C%E4%B8%8E%E5%91%BD%E4%BB%A4/">
-          [Maya]Polygon建模的常用操作与命令
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2017-09-02T18:00:40&#43;08:00">
-        
-  September 2, 2017
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/maya">Maya</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        Maya版本为2018
-Bevel Edge倒角       倒角的大小有参数Fraction控制，默认是0.5（边线的二分之一处），如果改成0.1（边线的十分之一处）则倒角会变小     也可以把Offset as Fraction关掉，通过Offset来设置倒角的大小，效果一样。     Insert Edge Loop插入环形边线 两种方式，一种是在Object Mode模式下，Shift + 鼠标右键 -》 Insert Edge Loop Tool，一种是点击菜单Mesh Tools-》 Insert Edge Loop。     然后在按住鼠标左键在需要插入的位置上拖动。     Edge Ring and Split 插入中线 先选中要插入中线的边   再按住Ctrl键+鼠标右键，选择Edge Ring Utilities，   再选择To Edge Ring and Split。   效果   Extrude Face挤压面 先选中面   然后按住shift+鼠标右键，选择Extrude Face   然后拖动坐标轴   默认是挤压出的面是黏在一起的，如果想让选中的面分开挤压，再按住Ctrl+Shift+鼠标右键，选择Toggle Keep Faces Together。   效果：   如果想合并，再执行一次Toggle Keep Faces Together。
-      
-      <p>
-        <a href="https://dawnarc.com/2017/09/mayapolygon%E5%BB%BA%E6%A8%A1%E7%9A%84%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C%E4%B8%8E%E5%91%BD%E4%BB%A4/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-          
-            
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2017/09/mayaproject%E7%9B%B8%E5%85%B3/">
-          [Maya]Project相关
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2017-09-01T10:52:40&#43;08:00">
-        
-  September 1, 2017
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/maya">Maya</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        生成工程文件目录结构 如果要为工程建一个系统的文件目录结构，点击：File -》 Project Window   然后再点击New为工程命名，然后再点击Accept，   这样就会在指定目录下创建一系列的文件夹，用于存放不同类型的工程文件   多个工程目录之间切换 如果我们有多个工程，需要再不同工程目录之间切换，点击Edit -》 Set Project：   然后再选择指定的工程目录：   十年生死两茫茫，不思量，自难忘。---苏轼《江城子》
-      
-      <p>
-        <a href="https://dawnarc.com/2017/09/mayaproject%E7%9B%B8%E5%85%B3/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-          
-            
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2017/08/mayahotbox/">
-          [Maya]Hotbox
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2017-08-31T21:42:40&#43;08:00">
-        
-  August 31, 2017
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/maya">Maya</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        Maya版本为2018
-Hotbox是maya的招牌功能，用的熟练可以提高建模效率。
-按下空格键不放，会弹出快捷菜单   单击需要的菜单（下图中点击的Mesh Tools），就可以弹出来。好处是不用到屏幕顶部的菜单点击，只在当前鼠标位置附近找到相应菜单。   按住Ctrl或者Shift或者Ctrl+Shift，再按鼠标右键都可以弹出hotbox菜单，选中的组件类型（Vertex、Edge、Face）不同，弹出的菜单也不同。
-选中Vertex 分别按Shift、Ctrl，再按鼠标右键时的菜单：（选中Vertex后，Ctrl+Shift+右键无任何菜单）   选中Edge 分别按Shift、Ctrl，再按鼠标右键时的菜单：   选中Face 分别按Shift、Ctrl，再按鼠标右键时的菜单：   Vertex、Edge、Face三者的Ctrl+鼠标右键相同：   Q、W、E、R（即Select、Move、Rotate、Scale四种模式与点、线、面是否选中无关）+鼠标左键 Q键+鼠标左键，或者Ctrl+Shift+鼠标右键。   W键+鼠标左键   E键+鼠标左键   R键+鼠标左键   见兔而顾犬，未为晚也；亡羊而补牢，未为迟也。---《战国策》
-      
-      <p>
-        <a href="https://dawnarc.com/2017/08/mayahotbox/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-          
-            
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2017/08/mayamove-tool%E5%B8%B8%E7%94%A8%E8%AE%BE%E7%BD%AE%E5%8F%82%E6%95%B0/">
-          [Maya]Move Tool常用设置参数
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2017-08-31T20:25:40&#43;08:00">
-        
-  August 31, 2017
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/maya">Maya</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        双击Move Tool，打开参数菜单。   在Move Snap Settings下有个参数Retain Component Spacing，表示吸附操作时是否保持各个顶点的间距。   假设有这样两个平面物体，左下方的问题的某条边的4个顶点位置相互错开，现在要使用Snap to Points将这4个顶点吸附到右上角物体的边上。   开启Retain Component Spacing后效果：   关闭Retain Component Spacing后效果：   开启关闭Retain Component Spacing的快捷方式：W键按住不放+鼠标左键。   Soft Select 软选择（快捷键：B键）   假设有个球体，选择了部分顶点，并准备移动这些顶点：   如果不开启Soft Select，那么想移动物体表面的某些顶点，效果是这样算的：   开启Soft Select之后，顶点的颜色会发生变化：   然后再移动，相比不开启的效果，模型的变化会比较自然。   如果要调节Soft Select的大小范围，按住B键不放，在拖拽鼠标左键：   Soft Select的Falloff Mode 假设球体的某些面被删掉了   如果Falloff mode为Volume，那么移动时，不会忽略被删掉的面，顶点会整体移动     如果Falloff mode选择Surface，则移动时会忽略断开的顶点。     注意：如果你的Soft Select范围太大，可能Surface和Volume两种模式没有效果，如果要使用Surface模式，需要将范围调整到尽量小的范围。
-      
-      <p>
-        <a href="https://dawnarc.com/2017/08/mayamove-tool%E5%B8%B8%E7%94%A8%E8%AE%BE%E7%BD%AE%E5%8F%82%E6%95%B0/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-          
           
   <div class="pagination-bar">
     <ul class="pagination">
@@ -1237,7 +1256,7 @@ Hotbox是maya的招牌功能，用的熟练可以提高建模效率。
           </li>
         
       
-      <li class="pagination-number">page 20 of 34</li>
+      <li class="pagination-number">page 20 of 35</li>
     </ul>
   </div>
 
@@ -1303,6 +1322,74 @@ Hotbox是maya的招牌功能，用的熟练可以提高建模效率。
           <div class="media">
             
             <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/07/c-pure-llvmclang-compilation-libraries/">
+                <h3 class="media-heading">[C&#43;&#43;]Pure LLVM(Clang) Compilation Libraries</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jul 7, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>keywords: LLVM Clang Compilation Library</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/07/c-clang-compilation-error-expected-unqualified-id/">
+                <h3 class="media-heading">[C&#43;&#43;]Clang Compilation Error - expected unqualified-id</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jul 7, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>keywords: Library Viewer</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/07/android-ndktoolchains-of-llvm-and-gcc/">
+                <h3 class="media-heading">[Android NDK]Toolchains of LLVM and GCC</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jul 7, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>Keywords: Android NDK Toolchains</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/07/c-view-content-of-static-library.lib-and-shared-library.dll/">
+                <h3 class="media-heading">[C&#43;&#43;]View Content of Static Library(.lib) and Shared Library(.dll)</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jul 7, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>keywords: Library Viewer</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
               <a class="link-unstyled" href="https://dawnarc.com/2019/07/ue4modulerules-apis-in-common/">
                 <h3 class="media-heading">[UE4]ModuleRules APIs In Common</h3>
               </a>
@@ -1354,23 +1441,6 @@ Hotbox是maya的招牌功能，用的熟练可以提高建模效率。
           <div class="media">
             
             <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/07/android-ndkerror-to_string-is-not-a-member-of-std/">
-                <h3 class="media-heading">[Android NDK]error &#39;to_string&#39; is not a member of &#39;std&#39;</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Jul 7, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>keywords: Android NDK, to_string, Build Failed, UE4</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
               <a class="link-unstyled" href="https://dawnarc.com/2019/07/ue4build-failed-the-following-modules-are-missing-or-built-with-a-different-engine-version/">
                 <h3 class="media-heading">[UE4]Build Failed - The following modules are missing or built with a different engine version</h3>
               </a>
@@ -1380,6 +1450,23 @@ Hotbox是maya的招牌功能，用的熟练可以提高建模效率。
                 </span>
               </span>
               <div class="media-content hide-xs font-merryweather"><p>keywords: UE4, Plugin Build</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/07/ue4android-ndkerror-to_string-is-not-a-member-of-std/">
+                <h3 class="media-heading">[UE4][Android NDK]error &#39;to_string&#39; is not a member of &#39;std&#39;</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jul 7, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>keywords: Android NDK, to_string, Build Failed, UE4, Unreal Engine 4</p></div>
             </div>
             <div style="clear:both;"></div>
             <hr>
@@ -1402,74 +1489,6 @@ Hotbox是maya的招牌功能，用的熟练可以提高建模效率。
             <hr>
           </div>
         
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/06/ue4networking-in-advanced-engine-source-analysis-high-level-cases/">
-                <h3 class="media-heading">[UE4]Networking in Advanced - Engine Source Analysis &amp; High-Level Cases</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Jun 6, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>Keywords: UE4, Networking</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/06/ue4fbx-export-and-import-related/">
-                <h3 class="media-heading">[UE4]FBX Export and Import Related</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Jun 6, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>Keywords: Multiple roots found</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/05/ue4scene-props-assets-collections/">
-                <h3 class="media-heading">[UE4]Scene Props Assets Collections</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  May 5, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>keywords: UE4, Scene Props Assets</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/05/ue4project-package-related/">
-                <h3 class="media-heading">[UE4]Project Package Related</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  May 5, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>keywords: UE4, Android Package</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
       </div>
     </div>
     <div class="modal-footer">
@@ -1477,7 +1496,7 @@ Hotbox是maya的招牌功能，用的熟练可以提高建模效率。
          data-message-zero="no post found"
          data-message-one="1 post found"
          data-message-other="{n} posts found">
-         508 posts found
+         512 posts found
       </p>
     </div>
   </div>
