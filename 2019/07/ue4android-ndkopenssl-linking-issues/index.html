@@ -7,62 +7,26 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="generator" content="Hugo 0.53 with theme Tranquilpeak 0.4.3-SNAPSHOT">
 <meta name="author" content="Neil Wang">
-<meta name="keywords" content="UE4, GarbageCollect, TSharedPtr, TWeakObjectPtr">
-<meta name="description" content="UE4 的 TSharedPtr、TWeakObjectPtr 模仿自 C&#43;&#43;11 的 shared_ptr 、 weak_ptr 。
-TSharedPtr TSharedPtr 相当于对象的引用计数器。每当对 TSharedPtr 赋值一次，该 TSharedPtr 引用对象计数加一，当引用计数为0时，则该对象被自动销毁。TSharedPtr 可以防止 raw pointer 对象被垃圾回收，。
-用法：
-TSharedPtr&lt;TestClass&gt; ObjPtr = MakeShareable(new TestClass());  如果两个 TSharedPtr 相互赋值，则会导致对象永不释放，导致内存泄漏。
- Uobject 不能使用 TSharedPtr 进行引用计数，非UObject才可以；如果一个非UObject的类想加入GC，那么必须继承FGCObject类。
- TWeakObjectPtr TWeakObjectPtr 保持的对象不能防止被垃圾回收。若引用的对象在其他地方被销毁，则 TWeakObjectPtr 内部的指针自动将被置为NULL，TWeakObjectPtr::IsValid()会返回false。TSharedPtr 则没有这个作用。
-Usage Assignment
-TWeakObjectPtr&lt;AActor&gt; MyWeakActor; MyWeakActor = MyActor;  Get value
-AActor* Actor = MyWeakActor.Get();  or
-if(MyWeakActor.Get()) { ACharacter* Character = Cast&lt;ACharacter&gt;(MyWeakActor); }  if MyActor has been destroyed, MyWeakActor.">
+<meta name="keywords" content="UE4, Android NDK, OpenSSL, libssl.a, libcrypto.a">
+<meta name="description" content="keywords: UE4, Android NDK, OpenSSL, SSL, curl, libcurl.a, libssl.a, libcrypto.a">
 
 
-<meta property="og:description" content="UE4 的 TSharedPtr、TWeakObjectPtr 模仿自 C&#43;&#43;11 的 shared_ptr 、 weak_ptr 。
-TSharedPtr TSharedPtr 相当于对象的引用计数器。每当对 TSharedPtr 赋值一次，该 TSharedPtr 引用对象计数加一，当引用计数为0时，则该对象被自动销毁。TSharedPtr 可以防止 raw pointer 对象被垃圾回收，。
-用法：
-TSharedPtr&lt;TestClass&gt; ObjPtr = MakeShareable(new TestClass());  如果两个 TSharedPtr 相互赋值，则会导致对象永不释放，导致内存泄漏。
- Uobject 不能使用 TSharedPtr 进行引用计数，非UObject才可以；如果一个非UObject的类想加入GC，那么必须继承FGCObject类。
- TWeakObjectPtr TWeakObjectPtr 保持的对象不能防止被垃圾回收。若引用的对象在其他地方被销毁，则 TWeakObjectPtr 内部的指针自动将被置为NULL，TWeakObjectPtr::IsValid()会返回false。TSharedPtr 则没有这个作用。
-Usage Assignment
-TWeakObjectPtr&lt;AActor&gt; MyWeakActor; MyWeakActor = MyActor;  Get value
-AActor* Actor = MyWeakActor.Get();  or
-if(MyWeakActor.Get()) { ACharacter* Character = Cast&lt;ACharacter&gt;(MyWeakActor); }  if MyActor has been destroyed, MyWeakActor.">
+<meta property="og:description" content="keywords: UE4, Android NDK, OpenSSL, SSL, curl, libcurl.a, libssl.a, libcrypto.a">
 <meta property="og:type" content="article">
-<meta property="og:title" content="[UE4] TSharedPtr 与 TWeakObjectPtr 区别">
-<meta name="twitter:title" content="[UE4] TSharedPtr 与 TWeakObjectPtr 区别">
-<meta property="og:url" content="https://dawnarc.com/2018/07/ue4-tsharedptr-%E4%B8%8E-tweakobjectptr-%E5%8C%BA%E5%88%AB/">
-<meta property="twitter:url" content="https://dawnarc.com/2018/07/ue4-tsharedptr-%E4%B8%8E-tweakobjectptr-%E5%8C%BA%E5%88%AB/">
+<meta property="og:title" content="[UE4][Android NDK]OpenSSL Linking Issues">
+<meta name="twitter:title" content="[UE4][Android NDK]OpenSSL Linking Issues">
+<meta property="og:url" content="https://dawnarc.com/2019/07/ue4android-ndkopenssl-linking-issues/">
+<meta property="twitter:url" content="https://dawnarc.com/2019/07/ue4android-ndkopenssl-linking-issues/">
 <meta property="og:site_name" content="玄冬Wong">
-<meta property="og:description" content="UE4 的 TSharedPtr、TWeakObjectPtr 模仿自 C&#43;&#43;11 的 shared_ptr 、 weak_ptr 。
-TSharedPtr TSharedPtr 相当于对象的引用计数器。每当对 TSharedPtr 赋值一次，该 TSharedPtr 引用对象计数加一，当引用计数为0时，则该对象被自动销毁。TSharedPtr 可以防止 raw pointer 对象被垃圾回收，。
-用法：
-TSharedPtr&lt;TestClass&gt; ObjPtr = MakeShareable(new TestClass());  如果两个 TSharedPtr 相互赋值，则会导致对象永不释放，导致内存泄漏。
- Uobject 不能使用 TSharedPtr 进行引用计数，非UObject才可以；如果一个非UObject的类想加入GC，那么必须继承FGCObject类。
- TWeakObjectPtr TWeakObjectPtr 保持的对象不能防止被垃圾回收。若引用的对象在其他地方被销毁，则 TWeakObjectPtr 内部的指针自动将被置为NULL，TWeakObjectPtr::IsValid()会返回false。TSharedPtr 则没有这个作用。
-Usage Assignment
-TWeakObjectPtr&lt;AActor&gt; MyWeakActor; MyWeakActor = MyActor;  Get value
-AActor* Actor = MyWeakActor.Get();  or
-if(MyWeakActor.Get()) { ACharacter* Character = Cast&lt;ACharacter&gt;(MyWeakActor); }  if MyActor has been destroyed, MyWeakActor.">
-<meta name="twitter:description" content="UE4 的 TSharedPtr、TWeakObjectPtr 模仿自 C&#43;&#43;11 的 shared_ptr 、 weak_ptr 。
-TSharedPtr TSharedPtr 相当于对象的引用计数器。每当对 TSharedPtr 赋值一次，该 TSharedPtr 引用对象计数加一，当引用计数为0时，则该对象被自动销毁。TSharedPtr 可以防止 raw pointer 对象被垃圾回收，。
-用法：
-TSharedPtr&lt;TestClass&gt; ObjPtr = MakeShareable(new TestClass());  如果两个 TSharedPtr 相互赋值，则会导致对象永不释放，导致内存泄漏。
- Uobject 不能使用 TSharedPtr 进行引用计数，非UObject才可以；如果一个非UObject的类想加入GC，那么必须继承FGCObject类。
- TWeakObjectPtr TWeakObjectPtr 保持的对象不能防止被垃圾回收。若引用的对象在其他地方被销毁，则 TWeakObjectPtr 内部的指针自动将被置为NULL，TWeakObjectPtr::IsValid()会返回false。TSharedPtr 则没有这个作用。
-Usage Assignment
-TWeakObjectPtr&lt;AActor&gt; MyWeakActor; MyWeakActor = MyActor;  Get value
-AActor* Actor = MyWeakActor.Get();  or
-if(MyWeakActor.Get()) { ACharacter* Character = Cast&lt;ACharacter&gt;(MyWeakActor); }  if MyActor has been destroyed, MyWeakActor.">
+<meta property="og:description" content="keywords: UE4, Android NDK, OpenSSL, SSL, curl, libcurl.a, libssl.a, libcrypto.a">
+<meta name="twitter:description" content="keywords: UE4, Android NDK, OpenSSL, SSL, curl, libcurl.a, libssl.a, libcrypto.a">
 <meta property="og:locale" content="en-us">
 
   
-    <meta property="article:published_time" content="2018-07-04T16:44:02">
+    <meta property="article:published_time" content="2019-07-09T12:28:02">
   
   
-    <meta property="article:modified_time" content="2018-07-04T16:44:02">
+    <meta property="article:modified_time" content="2019-07-09T12:28:02">
   
   
   
@@ -89,6 +53,9 @@ if(MyWeakActor.Get()) { ACharacter* Character = Cast&lt;ACharacter&gt;(MyWeakAct
 
 
 
+  <meta property="og:image" content="https://dawnarc.com/thumbnail/cover-Tso%20Moriri%20Lake.jpg">
+  <meta property="twitter:image" content="https://dawnarc.com/thumbnail/cover-Tso%20Moriri%20Lake.jpg">
+
 
 
 
@@ -97,7 +64,7 @@ if(MyWeakActor.Get()) { ACharacter* Character = Cast&lt;ACharacter&gt;(MyWeakAct
   <meta property="twitter:image" content="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=640">
 
 
-    <title>[UE4] TSharedPtr 与 TWeakObjectPtr 区别</title>
+    <title>[UE4][Android NDK]OpenSSL Linking Issues</title>
 
     <link rel="icon" href="https://dawnarc.com/favicon.png">
     
@@ -106,7 +73,7 @@ if(MyWeakActor.Get()) { ACharacter* Character = Cast&lt;ACharacter&gt;(MyWeakAct
       <link rel="publisher" href="https://plus.google.com/111340706178390411568">
     
 
-    <link rel="canonical" href="https://dawnarc.com/2018/07/ue4-tsharedptr-%E4%B8%8E-tweakobjectptr-%E5%8C%BA%E5%88%AB/">
+    <link rel="canonical" href="https://dawnarc.com/2019/07/ue4android-ndkopenssl-linking-issues/">
 
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
@@ -356,15 +323,15 @@ if (!doNotTrack) {
             <div class="post-header main-content-wrap text-left">
   
     <h1 class="post-title" itemprop="headline">
-      [UE4] TSharedPtr 与 TWeakObjectPtr 区别
+      [UE4][Android NDK]OpenSSL Linking Issues
     </h1>
   
   
   <div class="postShorten-meta post-meta">
     
-      <time itemprop="datePublished" datetime="2018-07-04T16:44:02&#43;08:00">
+      <time itemprop="datePublished" datetime="2019-07-09T12:28:02&#43;08:00">
         
-  July 4, 2018
+  July 9, 2019
 
       </time>
     
@@ -383,117 +350,119 @@ if (!doNotTrack) {
           
           <div class="post-content markdown" itemprop="articleBody">
             <div class="main-content-wrap">
-              
+              <p>keywords: UE4, Android NDK, OpenSSL, SSL, curl, libcurl.a, libssl.a, libcrypto.a</p>
 
-<p>UE4 的 TSharedPtr、TWeakObjectPtr 模仿自 C++11 的 shared_ptr 、 weak_ptr 。</p>
+<h5 id="issue-1-multiple-definition-of-functions-of-ssl">Issue 1: multiple definition of functions of ssl</h5>
 
-<h3 id="tsharedptr">TSharedPtr</h3>
+<p>Error log when building Android package:</p>
 
-<p><code>TSharedPtr</code> 相当于对象的引用计数器。每当对 TSharedPtr 赋值一次，该 TSharedPtr 引用对象计数加一，当引用计数为0时，则该对象被自动销毁。TSharedPtr 可以防止 raw pointer 对象被垃圾回收，。</p>
+<pre><code>D:/sdks/Android/android-ndk-r14b/toolchains/arm-linux-androideabi-4.9/prebuilt/windows-x86_64/lib/gcc/arm-linux-androideabi/4.9.x/../../../../arm-linux-androideabi/bin\ld: error: G:/EpicGames/UnrealEngine4.22/Engine/Source/ThirdParty/libcurl/lib/Android/ARMv7/libcurl.a(s23_clnt.o): multiple definition of 'ssl_fill_hello_random'
+UATHelper: Packaging (Android (ASTC)):     D:/sdks/Android/android-ndk-r14b/toolchains/arm-linux-androideabi-4.9/prebuilt/windows-x86_64/lib/gcc/arm-linux-androideabi/4.9.x/../../../../arm-linux-androideabi/bin\ld: 
+UATHelper: Packaging (Android (ASTC)):     D:/sdks/Android/android-ndk-r14b/toolchains/arm-linux-androideabi-4.9/prebuilt/windows-x86_64/lib/gcc/arm-linux-androideabi/4.9.x/../../../../arm-linux-androideabi/bin\ld: error: G:/EpicGames/UnrealEngine4.22/Engine/Source/ThirdParty/libcurl/lib/Android/ARMv7/libcurl.a(s3_both.o): multiple definition of 'ssl3_do_write'
+UATHelper: Packaging (Android (ASTC)):     D:/sdks/Android/android-ndk-r14b/toolchains/arm-linux-androideabi-4.9/prebuilt/windows-x86_64/lib/gcc/arm-linux-androideabi/4.9.x/../../../../arm-linux-androideabi/bin\ld: 
+UATHelper: Packaging (Android (ASTC)):     D:/sdks/Android/android-ndk-r14b/toolchains/arm-linux-androideabi-4.9/prebuilt/windows-x86_64/lib/gcc/arm-linux-androideabi/4.9.x/../../../../arm-linux-androideabi/bin\ld: error: G:/EpicGames/UnrealEngine4.22/Engine/Source/ThirdParty/libcurl/lib/Android/ARMv7/libcurl.a(s3_both.o): multiple definition of 'ssl3_output_cert_chain'
+UATHelper: Packaging (Android (ASTC)):     D:/sdks/Android/android-ndk-r14b/toolchains/arm-linux-androideabi-4.9/prebuilt/windows-x86_64/lib/gcc/arm-linux-androideabi/4.9.x/../../../../arm-linux-androideabi/bin\ld:
+UATHelper: Packaging (Android (ASTC)):     D:/sdks/Android/android-ndk-r14b/toolchains/arm-linux-androideabi-4.9/prebuilt/windows-x86_64/lib/gcc/arm-linux-androideabi/4.9.x/../../../../arm-linux-androideabi/bin\ld: error: G:/EpicGames/UnrealEngine4.22/Engine/Source/ThirdParty/libcurl/lib/Android/ARMv7/libcurl.a(s3_both.o): multiple definition of 'ssl_cert_type'
 
-<p>用法：</p>
-
-<pre><code>TSharedPtr&lt;TestClass&gt; ObjPtr = MakeShareable(new TestClass());
+PackagingResults: Error: G:/EpicGames/UnrealEngine422_spatialos/Engine/Source/ThirdParty/libcurl/lib/Android/ARMv7/libcurl.a(err.o): multiple definition of 'ERR_unload_strings'
+PackagingResults: Error: G:/EpicGames/UnrealEngine422_spatialos/Engine/Source/ThirdParty/libcurl/lib/Android/ARMv7/libcurl.a(err.o): multiple definition of 'ERR_put_error'
+PackagingResults: Error: G:/EpicGames/UnrealEngine422_spatialos/Engine/Source/ThirdParty/libcurl/lib/Android/ARMv7/libcurl.a(err.o): multiple definition of 'ERR_get_state'
+PackagingResults: Error: G:/EpicGames/UnrealEngine422_spatialos/Engine/Source/ThirdParty/libcurl/lib/Android/ARMv7/libcurl.a(err.o): multiple definition of 'ERR_clear_error'
+PackagingResults: Error: G:/EpicGames/UnrealEngine422_spatialos/Engine/Source/ThirdParty/libcurl/lib/Android/ARMv7/libcurl.a(err.o): multiple definition of 'ERR_get_error'
+PackagingResults: Error: G:/EpicGames/UnrealEngine422_spatialos/Engine/Source/ThirdParty/libcurl/lib/Android/ARMv7/libcurl.a(err.o): multiple definition of 'ERR_get_error_line'
+PackagingResults: Error: G:/EpicGames/UnrealEngine422_spatialos/Engine/Source/ThirdParty/libcurl/lib/Android/ARMv7/libcurl.a(err.o): multiple definition of 'ERR_get_error_line_data'
+PackagingResults: Error: G:/EpicGames/UnrealEngine422_spatialos/Engine/Source/ThirdParty/libcurl/lib/Android/ARMv7/libcurl.a(err.o): multiple definition of 'ERR_peek_error'
+PackagingResults: Error: G:/EpicGames/UnrealEngine422_spatialos/Engine/Source/ThirdParty/libcurl/lib/Android/ARMv7/libcurl.a(err.o): multiple definition of 'ERR_peek_error_line'
 </code></pre>
 
+<p>Cause:<br />
 <div class="alert danger ">
-  <p>如果两个 TSharedPtr 相互赋值，则会导致对象永不释放，导致内存泄漏。</p>
+  <p><code>libcurl.a</code> included in engine has included openssl library.</p>
 </div>
+<code>libcurl.a</code> path:</p>
 
-<div class="alert warning ">
-  <p>Uobject 不能使用 TSharedPtr 进行引用计数，非UObject才可以；如果一个非UObject的类想加入GC，那么必须继承FGCObject类。</p>
-</div>
-
-<h3 id="tweakobjectptr">TWeakObjectPtr</h3>
-
-<p><code>TWeakObjectPtr</code> 保持的对象不能防止被垃圾回收。若引用的对象在其他地方被销毁，则 <code>TWeakObjectPtr</code> 内部的指针自动将被置为NULL，TWeakObjectPtr::IsValid()会返回false。<code>TSharedPtr</code> 则没有这个作用。</p>
-
-<h5 id="usage">Usage</h5>
-
-<p>Assignment</p>
-
-<pre><code>TWeakObjectPtr&lt;AActor&gt; MyWeakActor;
-MyWeakActor = MyActor;
+<pre><code>\Engine\Source\ThirdParty\libcurl\lib\Android\ARM64\libcurl.a
 </code></pre>
 
-<p>Get value</p>
+<p>Solution:<br />
+Replace <code>libcurl.a</code> with a pure curl library.<br />
+Download curl sources:<br />
+<a href="https://github.com/dawnarc/libcurl_in_pure_llvm">https://github.com/dawnarc/libcurl_in_pure_llvm</a></p>
 
-<pre><code>AActor* Actor = MyWeakActor.Get();
+<h5 id="issue-2-undefined-reference-to-x509-store-ctx-get-chain">Issue 2: undefined reference to &lsquo;X509_STORE_CTX_get_chain&rsquo;</h5>
+
+<p>Error log when building Android package:</p>
+
+<pre><code>G:\EpicGames\UnrealEngine4.22\Engine\Source\Runtime\Online\SSL\Private/SslCertificateManager.cpp:183: error: undefined reference to 'X509_STORE_CTX_get_chain'
+G:\EpicGames\UnrealEngine4.22\Engine\Source\Runtime\Online\SSL\Private/SslCertificateManager.cpp:184: error: undefined reference to 'sk_num'
+G:\EpicGames\UnrealEngine4.22\Engine\Source\Runtime\Online\SSL\Private/SslCertificateManager.cpp:211: error: undefined reference to 'sk_value'
+G:\EpicGames\UnrealEngine4.22\Engine\Source\Runtime\Online\SSL\Private/SslManager.cpp:44: error: undefined reference to 'SSL_load_error_strings'
+G:\EpicGames\UnrealEngine4.22\Engine\Source\Runtime\Online\SSL\Private/SslManager.cpp:46: error: undefined reference to 'SSL_library_init'
+G:\EpicGames\UnrealEngine4.22\Engine\Source\Runtime\Online\SSL\Private/SslManager.cpp:47: error: undefined reference to 'OPENSSL_add_all_algorithms_noconf'
+G:\EpicGames\UnrealEngine4.22\Engine\Source\Runtime\Online\SSL\Private/SslManager.cpp:66: error: undefined reference to 'EVP_cleanup'
+G:\EpicGames\UnrealEngine4.22\Engine\Source\Runtime\Online\SSL\Private/SslManager.cpp:67: error: undefined reference to 'CRYPTO_cleanup_all_ex_data'
+G:\EpicGames\UnrealEngine4.22\Engine\Source\Runtime\Online\SSL\Private/SslManager.cpp:68: error: undefined reference to 'ERR_free_strings'
+G:\EpicGames\UnrealEngine4.22\Engine\Source\Runtime\Online\SSL\Private/SslManager.cpp:70: error: undefined reference to 'CONF_modules_free'
+G:\EpicGames\UnrealEngine4.22\Engine\Source\Runtime\Online\SSL\Private/SslManager.cpp:82: error: undefined reference to 'SSLv23_client_method'
+clang++: error: linker command failed with exit code 1 (use -v to see invocation)
 </code></pre>
 
-<p>or</p>
+<p>Cause:<br />
+OpenSSL version used in engine is too old, so new functions of ssl don&rsquo;t support in UE4.</p>
 
-<pre><code>if(MyWeakActor.Get())
+<p>Old ssl library path:</p>
+
+<pre><code>\Engine\Source\ThirdParty\OpenSSL\1_0_2h\lib\Android\ARM64\libssl.a
+</code></pre>
+
+<p>Solution:<br />
+Modify building configuration.<br />
+Building configuration path:</p>
+
+<pre><code>\Engine\Source\ThirdParty\OpenSSL\OpenSSL.Build.cs
+</code></pre>
+
+<p>Origin:</p>
+
+<pre><code>else if (Target.Platform == UnrealTargetPlatform.Android)
 {
-    ACharacter* Character = Cast&lt;ACharacter&gt;(MyWeakActor);
+    string IncludePath = OpenSSL101sPath + &quot;/include/Android&quot;;
+    PublicIncludePaths.Add(IncludePath);
+
+    // unneeded since included in libcurl
+    // string LibPath = Path.Combine(OpenSSL101sPath, &quot;lib&quot;, PlatformSubdir);
+    //PublicLibraryPaths.Add(LibPath);
 }
 </code></pre>
 
-<p>if <code>MyActor</code> has been destroyed, <code>MyWeakActor.Get()</code> would return <code>nullptr</code></p>
+<p>New:</p>
 
-<pre><code>MyActor-&gt;Destroy();
-bool IsValid = MyWeakActor.Get() != nullptr;    //false
+<pre><code>else if (Target.Platform == UnrealTargetPlatform.Android)
+{
+    string IncludePath = OpenSSL111Path + &quot;/include/Android/ARMv7&quot;;
+    string LibraryPath = OpenSSL111Path + &quot;/lib/Android&quot;;
+
+    PublicIncludePaths.Add(IncludePath);
+
+    PublicAdditionalLibraries.Add(LibraryPath + &quot;/libssl.a&quot;);
+    PublicAdditionalLibraries.Add(LibraryPath + &quot;/libcrypto.a&quot;);
+}
 </code></pre>
 
-<div class="alert danger ">
-  <p>if <code>MyActor</code> has been destroyed, <code>Cast&lt;AMyCharacter&gt;(MyActor)</code> would cause crash after a while, but <code>Cast&lt;AMyCharacter&gt;(MyWeakActor)</code> would not.</p>
-</div>
+<p>then replace <code>libssl.a</code> with new version building library.<br />
+destination directory:</p>
 
-<h5 id="remove-in-array">Remove in Array</h5>
-
-<p>Examples:</p>
-
-<pre><code>APawn* TestPawn = GetWorld()-&gt;SpawnActor&lt;APawn&gt;(MyPawnClass, FVector(100.f, 100.f, 0.f), FRotator::ZeroRotator);
-APawn* MyPawn = GetWorld()-&gt;SpawnActor&lt;APawn&gt;(MyPawnClass, FVector(200.f, 200.f, 0.f), FRotator::ZeroRotator);
-
-TestArray.Add(TWeakObjectPtr&lt;APawn&gt;(TestPawn));
-TestArray.Add(TWeakObjectPtr&lt;APawn&gt;(MyPawn));
-
-int Num = TestArray.Num();  // 2
-
-TWeakObjectPtr&lt;APawn&gt; WeakPtr1(TestPawn);
-TestArray.Remove(WeakPtr1);
-int Num = TestArray.Num();  // 1
-
-TWeakObjectPtr&lt;APawn&gt; WeakPtr2(TestPawn);
-TestArray.Remove(WeakPtr2);
-int Num2 = TestArray.Num(); // 1
+<pre><code>\Engine\Source\ThirdParty\OpenSSL\1.1.1\Lib\Android
 </code></pre>
 
-<h3 id="tweakptr">TWeakPtr</h3>
+<p>Download NDK library of 1.1.1 ssh:<br />
+<a href="https://github.com/leenjewel/openssl_for_ios_and_android/releases/tag/android_openssl-1.1.1a">https://github.com/leenjewel/openssl_for_ios_and_android/releases/tag/android_openssl-1.1.1a</a></p>
 
-<p>Difference between TWeakPtr and TWeakObjectPtr:</p>
-
-<div class="alert danger ">
-  <p>TWeakObjectPtr is for weak pointers to UObjects, TWeakPtr for pointers to everything else.<br />
-Since UObjects are garbage collected and shared pointers are reference counted, we cannot have the same weak pointer type for all, unfortunately.</p>
-</div>
-
-<p>Difference between TWeakPtr and TWeakObjectPtr?<br />
-<a href="https://answers.unrealengine.com/questions/298868/difference-between-tweakptr-and-tweakobjectptr.html">https://answers.unrealengine.com/questions/298868/difference-between-tweakptr-and-tweakobjectptr.html</a></p>
-
-<h3 id="tuniqueptr-unique-pointers">TUniquePtr (Unique Pointers)</h3>
-
-<p>A Unique Pointer solely and explicitly owns the object it references. Since there can only be one Unique Pointer to a given resource, Unique Pointers can transfer ownership, but cannot share it. Any attempts to copy a Unique Pointer will result in a compile error. When a Unique Pointer is goes out of scope, it will automatically delete the object it references.</p>
-
-<h3 id="reference">Reference</h3>
-
-<p>UE4 TSharedPtr和UObject的垃圾回收<br />
-<a href="http://www.v5xy.com/?p=808">http://www.v5xy.com/?p=808</a></p>
-
-<p>There&rsquo;s a Huge Difference, One Will Always Crash<br />
-<a href="https://answers.unrealengine.com/questions/48818/whats-the-difference-between-using-tweakobjectptr.html">https://answers.unrealengine.com/questions/48818/whats-the-difference-between-using-tweakobjectptr.html</a></p>
-
-<p>what is a &ldquo;weak object pointer&rdquo;?<br />
-<a href="https://answers.unrealengine.com/questions/201186/what-is-a-weak-object-pointer.html">https://answers.unrealengine.com/questions/201186/what-is-a-weak-object-pointer.html</a></p>
-
-<p>Unreal Smart Pointer Library<br />
-<a href="https://docs.unrealengine.com/en-US/Programming/UnrealArchitecture/SmartPointerLibrary/index.html">https://docs.unrealengine.com/en-US/Programming/UnrealArchitecture/SmartPointerLibrary/index.html</a></p>
+<h5 id="issue-3">Issue 3:</h5>
 
 <hr />
 
-<p><code>已识乾坤大，犹怜草木青。长空送鸟印，留幻与人灵。</code> &mdash;-马一浮《旷怡亭口占》</p>
-
+<p><code>扛得住事儿，就是才华横溢。</code></p>
               
             </div>
           </div>
@@ -518,7 +487,7 @@ Since UObjects are garbage collected and shared pointers are reference counted, 
           
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2018/07/c-c-11-shared_ptr-%E4%B8%8E-weak_ptr-%E5%8C%BA%E5%88%AB/" data-tooltip="[C&#43;&#43;]C&#43;&#43;11 shared_ptr 与 weak_ptr 区别">
+                <a class="post-action-btn btn btn--disabled">
               
                   <i class="fa fa-angle-left"></i>
                   <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
@@ -526,7 +495,7 @@ Since UObjects are garbage collected and shared pointers are reference counted, 
             </li>
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2018/07/ue4error-c3668-utexturecubeupdateresourcew/" data-tooltip="[UE4]error C3668: &#39;UTextureCube::UpdateResourceW&#39;">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2019/07/artbook-guide-and-list/" data-tooltip="[Art]Book Guide and List">
               
                   <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
                   <i class="fa fa-angle-right"></i>
@@ -586,7 +555,7 @@ Since UObjects are garbage collected and shared pointers are reference counted, 
           
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2018/07/c-c-11-shared_ptr-%E4%B8%8E-weak_ptr-%E5%8C%BA%E5%88%AB/" data-tooltip="[C&#43;&#43;]C&#43;&#43;11 shared_ptr 与 weak_ptr 区别">
+                <a class="post-action-btn btn btn--disabled">
               
                   <i class="fa fa-angle-left"></i>
                   <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
@@ -594,7 +563,7 @@ Since UObjects are garbage collected and shared pointers are reference counted, 
             </li>
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2018/07/ue4error-c3668-utexturecubeupdateresourcew/" data-tooltip="[UE4]error C3668: &#39;UTextureCube::UpdateResourceW&#39;">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2019/07/artbook-guide-and-list/" data-tooltip="[Art]Book Guide and List">
               
                   <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
                   <i class="fa fa-angle-right"></i>
@@ -691,6 +660,40 @@ Since UObjects are garbage collected and shared pointers are reference counted, 
           <div class="media">
             
             <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/07/ue4android-ndkopenssl-linking-issues/">
+                <h3 class="media-heading">[UE4][Android NDK]OpenSSL Linking Issues</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jul 7, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>keywords: UE4, Android NDK, OpenSSL, SSL, curl, libcurl.a, libssl.a, libcrypto.a</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/07/artbook-guide-and-list/">
+                <h3 class="media-heading">[Art]Book Guide and List</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jul 7, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>keywords: Art Book</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
               <a class="link-unstyled" href="https://dawnarc.com/2019/07/c-pure-llvmclang-compilation-libraries/">
                 <h3 class="media-heading">[C&#43;&#43;]Pure LLVM(Clang) Compilation Libraries</h3>
               </a>
@@ -716,7 +719,7 @@ Since UObjects are garbage collected and shared pointers are reference counted, 
                   Jul 7, 2019
                 </span>
               </span>
-              <div class="media-content hide-xs font-merryweather"><p>keywords: Library Viewer</p></div>
+              <div class="media-content hide-xs font-merryweather"><p>keywords: Clang Compilation Error</p></div>
             </div>
             <div style="clear:both;"></div>
             <hr>
@@ -824,40 +827,6 @@ Since UObjects are garbage collected and shared pointers are reference counted, 
             <hr>
           </div>
         
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/07/ue4android-ndkerror-to_string-is-not-a-member-of-std/">
-                <h3 class="media-heading">[UE4][Android NDK]error &#39;to_string&#39; is not a member of &#39;std&#39;</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Jul 7, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>keywords: Android NDK, to_string, Build Failed, UE4, Unreal Engine 4</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/06/ue4numeric-limits/">
-                <h3 class="media-heading">[UE4]Numeric Limits</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Jun 6, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>Keywords: UE4, Numeric</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
       </div>
     </div>
     <div class="modal-footer">
@@ -865,7 +834,7 @@ Since UObjects are garbage collected and shared pointers are reference counted, 
          data-message-zero="no post found"
          data-message-one="1 post found"
          data-message-other="{n} posts found">
-         512 posts found
+         514 posts found
       </p>
     </div>
   </div>
@@ -920,9 +889,9 @@ $(document).ready(function() {
     
       <script>
         var disqus_config = function () {
-          this.page.url = 'https:\/\/dawnarc.com\/2018\/07\/ue4-tsharedptr-%E4%B8%8E-tweakobjectptr-%E5%8C%BA%E5%88%AB\/';
+          this.page.url = 'https:\/\/dawnarc.com\/2019\/07\/ue4android-ndkopenssl-linking-issues\/';
           
-            this.page.identifier = '\/2018\/07\/ue4-tsharedptr-%E4%B8%8E-tweakobjectptr-%E5%8C%BA%E5%88%AB\/'
+            this.page.identifier = '\/2019\/07\/ue4android-ndkopenssl-linking-issues\/'
           
         };
         (function() {

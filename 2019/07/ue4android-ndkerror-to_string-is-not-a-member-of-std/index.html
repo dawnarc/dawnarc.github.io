@@ -53,8 +53,8 @@
 
 
 
-  <meta property="og:image" content="https://dawnarc.com/thumbnail/thumbnail-japen-016.jpg">
-  <meta property="twitter:image" content="https://dawnarc.com/thumbnail/thumbnail-japen-016.jpg">
+  <meta property="og:image" content="https://dawnarc.com/thumbnail/thumbnail-japen-017.jpg">
+  <meta property="twitter:image" content="https://dawnarc.com/thumbnail/thumbnail-japen-017.jpg">
 
 
 
@@ -374,7 +374,7 @@ Build with Android NDK failed:</p>
 
 <div class="alert danger ">
   <p>It doesn&rsquo;t take effect if add <code>APP_STL := gnustl_static</code> in <code>Application.mk</code>, because gnustl is the C++ standard library of GCC and it doesn&rsquo;t support C++11 fully.<br />
-<code>c++_static</code> and <code>c++_shared</code> means using <code>libc++</code>, it&rsquo;s the C++ standard library of LLVM, not GCC.</p>
+<code>c++_static</code> and <code>c++_shared</code> means using <code>libc++</code> which is the C++ standard library of LLVM, not GCC.</p>
 </div>
 
 <div class="alert warning ">
@@ -475,6 +475,45 @@ Origin:</p>
 <div class="alert info ">
   <p>NDK Environment variables using in UEBuildAndroid.cs called <code>NDKROOT</code>.</p>
 </div></p>
+
+<p>3, Modify <code>PhysX3</code></p>
+
+<p>Source Path:</p>
+
+<pre><code>\Engine\Source\ThirdParty\PhysX3\PxShared\include\foundation\unix\PxUnixIntrinsics.h
+</code></pre>
+
+<p>Add <code>#include &lt;cmath&gt;</code> in the top of source.<br />
+Orgin:</p>
+
+<pre><code>#if PX_ANDROID
+    // If cmath is included after math.h, it will undefine isfinite. If that's the case, use the version in the std namespace instead.
+    #ifndef isfinite
+        using std::isfinite;
+    #endif
+#endif
+</code></pre>
+
+<p>New:</p>
+
+<pre><code>#if PX_ANDROID
+    // If cmath is included after math.h, it will undefine isfinite. If that's the case, use the version in the std namespace instead.
+    #ifndef isfinite
+        #include &lt;cmath&gt;
+        using std::isfinite;
+    #endif
+#endif
+</code></pre>
+
+<p>4, Remove plugin <code>OnlineSubsystemGooglePlay</code> and third party <code>GooglePlay</code>.<br />
+Directory:</p>
+
+<pre><code>\Engine\Plugins\Online\Android\OnlineSubsystemGooglePlay\
+
+\Engine\Source\ThirdParty\GooglePlay\
+</code></pre>
+
+<p>Or replace them with newest version of these third parties sources if you want need them.</p>
 
 <h5 id="reference">Reference</h5>
 
@@ -687,6 +726,40 @@ Origin:</p>
           <div class="media">
             
             <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/07/ue4android-ndkopenssl-linking-issues/">
+                <h3 class="media-heading">[UE4][Android NDK]OpenSSL Linking Issues</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jul 7, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>keywords: UE4, Android NDK, OpenSSL, SSL, curl, libcurl.a, libssl.a, libcrypto.a</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/07/artbook-guide-and-list/">
+                <h3 class="media-heading">[Art]Book Guide and List</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jul 7, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>keywords: Art Book</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
               <a class="link-unstyled" href="https://dawnarc.com/2019/07/c-pure-llvmclang-compilation-libraries/">
                 <h3 class="media-heading">[C&#43;&#43;]Pure LLVM(Clang) Compilation Libraries</h3>
               </a>
@@ -712,7 +785,7 @@ Origin:</p>
                   Jul 7, 2019
                 </span>
               </span>
-              <div class="media-content hide-xs font-merryweather"><p>keywords: Library Viewer</p></div>
+              <div class="media-content hide-xs font-merryweather"><p>keywords: Clang Compilation Error</p></div>
             </div>
             <div style="clear:both;"></div>
             <hr>
@@ -820,40 +893,6 @@ Origin:</p>
             <hr>
           </div>
         
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/07/ue4android-ndkerror-to_string-is-not-a-member-of-std/">
-                <h3 class="media-heading">[UE4][Android NDK]error &#39;to_string&#39; is not a member of &#39;std&#39;</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Jul 7, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>keywords: Android NDK, to_string, Build Failed, UE4, Unreal Engine 4</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/06/ue4numeric-limits/">
-                <h3 class="media-heading">[UE4]Numeric Limits</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Jun 6, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>Keywords: UE4, Numeric</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
       </div>
     </div>
     <div class="modal-footer">
@@ -861,7 +900,7 @@ Origin:</p>
          data-message-zero="no post found"
          data-message-one="1 post found"
          data-message-other="{n} posts found">
-         512 posts found
+         514 posts found
       </p>
     </div>
   </div>

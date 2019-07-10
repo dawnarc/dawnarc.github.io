@@ -318,6 +318,122 @@ if (!doNotTrack) {
     
     <div class="postShorten-header">
       <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2018/04/ue4android-ndk%E6%89%93%E5%8C%85%E7%89%88%E6%9C%AC%E6%89%A7%E8%A1%8Cprotobuf%E7%9A%84parsefromarray%E5%87%BD%E6%95%B0%E5%B4%A9%E6%BA%83/">
+          [UE4]Android NDK打包版本执行protobuf的ParseFromArray函数崩溃
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2018-04-21T22:01:02&#43;08:00">
+        
+  April 21, 2018
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        keywords：UE4、protobuf-lite、Android NDK、ParseFromArray、Crash
+protobuf与android ndk编译后，集成到UE4中执行时，每当执行ParseFromArray时就会崩溃（Windows版本没有问题）：
+MessageTest msg; bool rs = msg.ParseFromArray(buffer, buffer_size);  解决办法：将ParseFromArray()函数内部的代码复制出来，放在工程的代码中，然后再执行。
+protobuf 2.x #ifndef __ProtobufHelper_H__ #define __ProtobufHelper_H__ #include &lt;google/protobuf/message_lite.h&gt; #include &lt;google/protobuf/io/coded_stream.h&gt; class ProtobufHelper { public: static bool Parse(::google::protobuf::MessageLite&amp; Message, const char* Data, int Size) { ::google::protobuf::io::CodedInputStream input(reinterpret_cast&lt;const uint8*&gt;(Data), Size); return Message.MergePartialFromCodedStream(&amp;input) &amp;&amp; input.ConsumedEntireMessage(); } }; #endif  protobuf 3.x #ifndef __ProtobufHelper_H__ #define __ProtobufHelper_H__ #include &lt;google/protobuf/message_lite.h&gt; #include &lt;google/protobuf/io/coded_stream.h&gt; #include &quot;CoreMinimal.h&quot; class ProtobufHelper { public: static bool Parse(::google::protobuf::MessageLite&amp; Message, const void* Data, int Size) { ::google::protobuf::io::CodedInputStream input(static_cast&lt;const uint8*&gt;(Data), Size); Message.
+      
+      <p>
+        <a href="https://dawnarc.com/2018/04/ue4android-ndk%E6%89%93%E5%8C%85%E7%89%88%E6%9C%AC%E6%89%A7%E8%A1%8Cprotobuf%E7%9A%84parsefromarray%E5%87%BD%E6%95%B0%E5%B4%A9%E6%BA%83/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2018/04/c-%E8%AF%BB%E5%86%99%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%96%87%E4%BB%B6%E5%92%8C%E6%96%87%E6%9C%AC%E6%96%87%E4%BB%B6/">
+          [C&#43;&#43;]读写二进制文件和文本文件
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2018-04-20T17:45:40&#43;08:00">
+        
+  April 20, 2018
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/c&#43;&#43;">C&#43;&#43;</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        ifstream,ofstream读写二进制文件 #include &lt;iostream&gt; #include &lt;fstream&gt; using namespace std; int main(int argc, char** argv) { int a[5] = {1,2,3,4,5}; int b[5]; ofstream ouF; ouF.open(&quot;./me.dat&quot;, std::ofstream::binary); ouF.write(reinterpret_cast&lt;const char*&gt;(a), sizeof(int)*5); ouF.close(); ifstream inF; inF.open(&quot;./me.dat&quot;, std::ifstream::binary); inF.read(reinterpret_cast&lt;char*&gt;(b), sizeof(int)*5); inF.close(); for (int i = 0; i &lt; 5; i++) { cout &lt;&lt; b[i] &lt;&lt; endl; } return 0; }  参考自：https://blog.csdn.net/bendanban/article/details/30039193
+C模式读写二进制文件 //采用C模式写二进制文件 void DataWrite_CMode() { //准备数据 double pos[200]; for(int i = 0; i &lt; 200; i ++ ) pos[i] = i ; //写出数据 FILE *fid; fid = fopen(&quot;binary.
+      
+      <p>
+        <a href="https://dawnarc.com/2018/04/c-%E8%AF%BB%E5%86%99%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%96%87%E4%BB%B6%E5%92%8C%E6%96%87%E6%9C%AC%E6%96%87%E4%BB%B6/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
         <a class="link-unstyled" href="https://dawnarc.com/2018/04/android-ndkprotobuf-lite-3.5%E7%BC%96%E8%AF%91/">
           [Android NDK]protobuf-lite 3.5编译
         </a>
@@ -1105,134 +1221,6 @@ void UBags::NativeConstruct() { Super::NativeConstruct(); //获取UMG蓝图摆�
 </article>
 
           
-            
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2018/03/ue4event-delegate-multi-cast-related/">
-          [UE4]Event, Delegate, Multi-cast Related
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2018-03-30T18:26:02&#43;08:00">
-        
-  March 30, 2018
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        keywords：UE4, BindRaw, BindUFunction, BindUObject, Pass Arguments, Variable
-BindUFunction传递参数 示例1：
-void UMyClass::FunctionWithVar(const FString&amp; MyVar, TFunction&lt;void(const FString&amp;)&gt; InFunction) { MyLambdaHandle = OnMyDelegate.BindStatic([MyVar](TFunction&lt;void(const FString&amp;)&gt; callback) {callback(MyVar);}, InFunction); // TODO: You have to track MyLambdaHandle to be able to unregister it when needed }  https://answers.unrealengine.com/questions/715835/bindufunction-with-variable-capture-in-c.html
-示例2：
-使用固定参数绑定
-DECLARE_DELEGATE(RefreshOne); class MyClass { public: MyClass() { one.BindRaw(this, &amp;MyClass::MyFunction, (uint8)1); } void MyFunction(uint8 Val) { // Whatever } void Invoke() { one.Execute(); // Will call this-&gt;MyFunction((uint8)1); } private: RefreshOne one; };  使用动态参数绑定
-      
-      <p>
-        <a href="https://dawnarc.com/2018/03/ue4event-delegate-multi-cast-related/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-          
-            
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2018/03/android-ndkarm-eabi-addr2line-android%E5%BA%94%E7%94%A8%E5%B4%A9%E6%BA%83%E7%9A%84%E8%B0%83%E8%AF%95%E6%96%B9%E6%B3%95/">
-          [Android NDK]arm-eabi-addr2line android应用崩溃的调试方法
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2018-03-29T18:04:02&#43;08:00">
-        
-  March 29, 2018
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/android">Android</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        原文：https://blog.csdn.net/tommy_wxie/article/details/12841735
-1.将ndk中的arm-linux-androideabi-addr2line可执行文件的路径加入配置文件~/.bashrc中，例如：
-export PATH=$PATH:~/dlna/android-ndk-r6b/toolchains/arm-linux-androideabi-4.4.3/prebuilt/linux-x86/bin  2.使配置生效：
-source ~/.bashrc  3.使用工具。例如：
-arm-linux-androideabi-addr2line -C -f -e ~/workspace/DLNA/libs/armeabi/libctrlpt.so 0003deb4  其中，0003deb4为堆栈信息中pc的值。
-android应用崩溃的调试方法 有两种方法可以分析 crash 的堆栈信息
-1，google提供了一个python脚本，可以从 https://github.com/maxme/android-ndk-stacktrace-analyzer 下载这个python脚本，然后使用 adb logcat -d &gt; logfile 导出 crash 的log,使用 arm-eabi-objdump 位于build/prebuilt/linux-x86/arm-eabi-4.2.1/bin下面把so或exe转换成汇编代码，如：arm-eabi-objdump -S mylib.so &gt; mylib.asm,使用脚本
-python parse_stack.py &lt;asm-file&gt; &lt;logcat-file&gt;  2，直接使用NDK下面的arm-linux-androideabi-addr2line
-(D:\android-ndk-r8\toolchains\arm-linux- androideabi-4.4.3\prebuilt\windows\bin\arm-linux-androideabi-addr2line.exe)
-例如：
-arm-linux-androideabi-addr2line -C -f -e libxxx.so 0x#####(address)  出现 ??:0 , 没法展示源代码行数的问题 在Android.mk 文件中:
-LOCAL_CFLAGS := -D__STDC_CONSTANT_MACROS -Wl,-Map=test.map -g  补充2个编译参数 -Wl,-Map=test.map -g .
-      
-      <p>
-        <a href="https://dawnarc.com/2018/03/android-ndkarm-eabi-addr2line-android%E5%BA%94%E7%94%A8%E5%B4%A9%E6%BA%83%E7%9A%84%E8%B0%83%E8%AF%95%E6%96%B9%E6%B3%95/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-          
           
   <div class="pagination-bar">
     <ul class="pagination">
@@ -1320,6 +1308,40 @@ LOCAL_CFLAGS := -D__STDC_CONSTANT_MACROS -Wl,-Map=test.map -g  补充2个编译�
           <div class="media">
             
             <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/07/ue4android-ndkopenssl-linking-issues/">
+                <h3 class="media-heading">[UE4][Android NDK]OpenSSL Linking Issues</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jul 7, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>keywords: UE4, Android NDK, OpenSSL, SSL, curl, libcurl.a, libssl.a, libcrypto.a</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/07/artbook-guide-and-list/">
+                <h3 class="media-heading">[Art]Book Guide and List</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jul 7, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>keywords: Art Book</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
               <a class="link-unstyled" href="https://dawnarc.com/2019/07/c-pure-llvmclang-compilation-libraries/">
                 <h3 class="media-heading">[C&#43;&#43;]Pure LLVM(Clang) Compilation Libraries</h3>
               </a>
@@ -1345,7 +1367,7 @@ LOCAL_CFLAGS := -D__STDC_CONSTANT_MACROS -Wl,-Map=test.map -g  补充2个编译�
                   Jul 7, 2019
                 </span>
               </span>
-              <div class="media-content hide-xs font-merryweather"><p>keywords: Library Viewer</p></div>
+              <div class="media-content hide-xs font-merryweather"><p>keywords: Clang Compilation Error</p></div>
             </div>
             <div style="clear:both;"></div>
             <hr>
@@ -1453,40 +1475,6 @@ LOCAL_CFLAGS := -D__STDC_CONSTANT_MACROS -Wl,-Map=test.map -g  补充2个编译�
             <hr>
           </div>
         
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/07/ue4android-ndkerror-to_string-is-not-a-member-of-std/">
-                <h3 class="media-heading">[UE4][Android NDK]error &#39;to_string&#39; is not a member of &#39;std&#39;</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Jul 7, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>keywords: Android NDK, to_string, Build Failed, UE4, Unreal Engine 4</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/06/ue4numeric-limits/">
-                <h3 class="media-heading">[UE4]Numeric Limits</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Jun 6, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>Keywords: UE4, Numeric</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
       </div>
     </div>
     <div class="modal-footer">
@@ -1494,7 +1482,7 @@ LOCAL_CFLAGS := -D__STDC_CONSTANT_MACROS -Wl,-Map=test.map -g  补充2个编译�
          data-message-zero="no post found"
          data-message-one="1 post found"
          data-message-other="{n} posts found">
-         512 posts found
+         514 posts found
       </p>
     </div>
   </div>
