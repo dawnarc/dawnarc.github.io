@@ -318,6 +318,131 @@ if (!doNotTrack) {
     
     <div class="postShorten-header">
       <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2018/03/ue4touchinterface-zorder/">
+          [UE4]TouchInterface ZOrder
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2018-03-31T19:03:02&#43;08:00">
+        
+  March 31, 2018
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        顺序从低到高 Player Screen
++ Player Screen Widgets
+Viewport
++ Touch Interface
++ Viewport Widgets
+实际应用 比如创建一个UserWidget，一般是AddToViewport，这样会导致UMG遮挡TouchInterface输入，如果希望TouchInterface优先UMG接收Input事件，那么可以将该UserWidget添加到PlayerScreen中：
+LoginWidget-&gt;AddToPlayerScreen();  其他参考 Default Touch Interface ZOrder
+https://forums.unrealengine.com/development-discussion/android-development/78992-default-touch-interface-zorder
+你的视角决定你的观点，你的态度决定你的未来
+      
+      <p>
+        <a href="https://dawnarc.com/2018/03/ue4touchinterface-zorder/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2018/03/ue4umgcreate-widget-dynamically-using-c-/">
+          [UE4][UMG]Create Widget Dynamically using C&#43;&#43;
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2018-03-31T19:03:02&#43;08:00">
+        
+  March 31, 2018
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        keyworkds：UE4、C++动态创建Widget、Runtime Create Widget
+动态创建 CanvasPanel 并在内部动态创建 Button 在空白蓝图中创建一个 CanvasPanel 并在内部创建一个 Button。假设空白UMG蓝图的默认 CanvasPanel 是动态创建，而不是新建UMG蓝图时自带的那个。
+示例：
+void UMyUserWidget::NativeConstruct() { Super::NativeConstruct(); auto MyCanvas = WidgetTree-&gt;ConstructWidget&lt;UCanvasPanel&gt;(UCanvasPanel::StaticClass()); if(MyCanvas) { auto MyButton = WidgetTree-&gt;ConstructWidget&lt;UButton&gt;(UButton::StaticClass()); MyCanvas-&gt;AddChild(MyButton); WidgetTree-&gt;RootWidget = MyCanvas; } }  动态填充 HorizontalBoxSlot 这里假设把 HorizontalBoxSlot 当作一个背包，然后往这个背包中动态添加道具对象。
+示例：
+void UBags::NativeConstruct() { Super::NativeConstruct(); //获取UMG蓝图摆放好的 HorizontalBoxSlot UHorizontalBox* HorBox = Cast&lt;UHorizontalBox&gt;(GetWidgetFromName(FName(&quot;HorizontalBox_62&quot;))); if (HorBox) { //加载道具蓝图 class if (UClass* MyWidgetClass = LoadClass&lt;UMyItemWidget&gt;(NULL, TEXT(&quot;WidgetBlueprint'/Game/UI/ItemBP.ItemBP_C'&quot;))) { for (int i = 0; i &lt; 5; i++) { UMyItemWidget* Item = WidgetTree-&gt;ConstructWidget&lt;UMyItemWidget&gt;(MyWidgetClass); UPanelSlot* Slot = HorBox-&gt;AddChild(Item); if (UHorizontalBoxSlot* HorSlot = Cast&lt;UHorizontalBoxSlot&gt;(Slot)) { //设置大小为填充 FSlateChildSize Size(ESlateSizeRule::Type::Fill); HorSlot-&gt;SetSize(Size); //横向居中对其 HorSlot-&gt;SetHorizontalAlignment(EHorizontalAlignment::HAlign_Center); //纵向居中对其 HorSlot-&gt;SetVerticalAlignment(EVerticalAlignment::VAlign_Center); } } } } }  动态填充 UniformGridPanel void UMyUserWidget::NativeConstruct() { Super::NativeConstruct(); //获取UMG蓝图摆放好的 HorizontalBoxSlot UUniformGridPanel* UniGrid = Cast&lt;UUniformGridPanel&gt;(GetWidgetFromName(FName(&quot;UniformGridPanel_01&quot;))); if (UniGrid) { UButton* MyButton = WidgetTree-&gt;ConstructWidget&lt;UButton&gt;(UButton::StaticClass()); if(UUniformGridSlot* Slot = UniGrid-&gt;AddChildToUniformGrid(MyButton)) { //设置单元格的纵向和横向位置 Slot-&gt;SetRow(5); Slot-&gt;SetColumn(5); } } }  批量获取并设置 UniformGridPanel 单元格位置 TArray&lt;UPanelSlot*&gt; Slots = UniformGridPanel-&gt;GetSlots(); int index = 0; for (UPanelSlot* Slot : Slots) { UUniformGridSlot * UniSlot = Cast&lt;UUniformGridSlot&gt;(Slot); if (UniSlot) { UniSlot-&gt;SetRow(index); UniSlot-&gt;SetColumn(1); } index++; }  运行时期间修改Widget屏幕位置 Modify widget&rsquo;s screen position at run-time:
+      
+      <p>
+        <a href="https://dawnarc.com/2018/03/ue4umgcreate-widget-dynamically-using-c-/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
         <a class="link-unstyled" href="https://dawnarc.com/2018/03/ue4event-delegate-multi-cast-related/">
           [UE4]Event, Delegate, Multi-cast Related
         </a>
@@ -1112,133 +1237,6 @@ https://home.gamer.com.tw/creationDetail.php?sn=3315244
 </article>
 
           
-            
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2018/03/ue4%E5%88%A0%E9%99%A4%E6%97%A7%E7%9A%84mobileprovision%E6%96%87%E4%BB%B6clean-ios-mobileprovision-history/">
-          [UE4]删除旧的mobileprovision文件(clean ios mobileprovision history)
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2018-03-08T18:24:02&#43;08:00">
-        
-  March 8, 2018
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        清除mobileprovision [Windows]
- C:\Users\&lt;you&gt;\AppData\Local\Apple Computer\MobileDevice\Provisioning Profiles  [Mac]
-~/Library/MobileDevice/Provisioning Profiles /Library/MobileDevice/Provisioning Profiles  参考：Remove obsolete mobileprovision profiles (iOS)
-https://answers.unrealengine.com/questions/223227/remove-obsolete-mobileprovision-profiles-ios.html
-清除Certificate [Windows]
-运行（Win +R ） -》输入certmgr.msc，回车 -》 个人 -》 证书 -》删除和Mac相关的证书  当你凝视深渊时，深渊也在凝视着你。----尼采《善恶的彼岸》
-      
-      <p>
-        <a href="https://dawnarc.com/2018/03/ue4%E5%88%A0%E9%99%A4%E6%97%A7%E7%9A%84mobileprovision%E6%96%87%E4%BB%B6clean-ios-mobileprovision-history/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-          
-            
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2018/03/ue4%E8%BD%AC%E8%BD%BD%E5%9C%A8windows-pc%E4%B8%8A%E4%BD%BF%E7%94%A8remote-build%E6%89%93%E5%8C%85ios-app/">
-          [UE4]转载：在Windows PC上使用Remote Build打包iOS App
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2018-03-08T18:19:02&#43;08:00">
-        
-  March 8, 2018
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        How to setup Remote Build ?
-https://answers.unrealengine.com/questions/450714/how-to-setup-remote-build.html
-[UE4]在Windows PC上打包纯蓝图工程
-https://www.jianshu.com/p/7c62ec452ce1
-[UE4]在Windows PC上使用Remote Build打包iOS App（C++或蓝图）
-https://www.jianshu.com/p/8770044771e3
-Building iOS game in Unreal Engine 4 via remote machine
-http://zompi.pl/building-ios-game-in-unreal-engine-4-via-remote-machine/
-UE4持续集成打包（Mac脚本自动化打包）
-https://blog.csdn.net/xlyrh/article/details/89553655
-如果一切看起来尽在掌控之中，那说明你跑得不够快；如果你身高会中冷箭，说明你走在他们面前；如果你会被他们伤到，说明你走得不够远，还在他们的射程以内。不要停下来解释，只需要继续前进，把他们远远甩在后面。
-      
-      <p>
-        <a href="https://dawnarc.com/2018/03/ue4%E8%BD%AC%E8%BD%BD%E5%9C%A8windows-pc%E4%B8%8A%E4%BD%BF%E7%94%A8remote-build%E6%89%93%E5%8C%85ios-app/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-          
           
   <div class="pagination-bar">
     <ul class="pagination">
@@ -1322,6 +1320,40 @@ https://blog.csdn.net/xlyrh/article/details/89553655
       <div class="no-result text-color-light text-center">no post found</div>
       <div class="results">
         
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/07/literaturecontents-collections/">
+                <h3 class="media-heading">[Literature]Contents Collections</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jul 7, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>Keywords: Literature, Contents, Collections</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
+        
+          <div class="media">
+            
+            <div class="media-body">
+              <a class="link-unstyled" href="https://dawnarc.com/2019/07/unitygameplay-assets-and-examples-collections/">
+                <h3 class="media-heading">[Unity]Gameplay Assets and Examples Collections</h3>
+              </a>
+              <span class="media-meta">
+                <span class="media-date text-small">
+                  Jul 7, 2019
+                </span>
+              </span>
+              <div class="media-content hide-xs font-merryweather"><p>Keywords: Unity, Gameplay, Examples</p></div>
+            </div>
+            <div style="clear:both;"></div>
+            <hr>
+          </div>
         
           <div class="media">
             
@@ -1459,40 +1491,6 @@ https://blog.csdn.net/xlyrh/article/details/89553655
             <hr>
           </div>
         
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/07/c-error-templates-must-have-c-linkage/">
-                <h3 class="media-heading">[C&#43;&#43;]error - templates must have C&#43;&#43; linkage</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Jul 7, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>keywords: C++ linkage</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
-          <div class="media">
-            
-            <div class="media-body">
-              <a class="link-unstyled" href="https://dawnarc.com/2019/07/ue4build-failed-the-following-modules-are-missing-or-built-with-a-different-engine-version/">
-                <h3 class="media-heading">[UE4]Build Failed - The following modules are missing or built with a different engine version</h3>
-              </a>
-              <span class="media-meta">
-                <span class="media-date text-small">
-                  Jul 7, 2019
-                </span>
-              </span>
-              <div class="media-content hide-xs font-merryweather"><p>keywords: UE4, Plugin Build</p></div>
-            </div>
-            <div style="clear:both;"></div>
-            <hr>
-          </div>
-        
       </div>
     </div>
     <div class="modal-footer">
@@ -1500,7 +1498,7 @@ https://blog.csdn.net/xlyrh/article/details/89553655
          data-message-zero="no post found"
          data-message-one="1 post found"
          data-message-other="{n} posts found">
-         514 posts found
+         516 posts found
       </p>
     </div>
   </div>
