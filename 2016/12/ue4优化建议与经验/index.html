@@ -517,7 +517,7 @@ Dynamic Shadow Distance 表示在多少距离内使用动态阴影，超过这�
 
 <li><p>如果GPUVisualizer的<code>BasePass</code>耗时较高，那么很大一部分原因是材质复杂度过高。</p></li>
 
-<li><p><span class="highlight-text red">Decal消耗和像素数量有关</span>，程序功能不要乱用贴花，美术铺场景除外。比如程序想用贴花做一个范围标记，如果当标记范围很大时就不要用贴花，使用可以改成划线或者不通透贴图。如果场景需要大量使用贴花，根据视距动态创建和销毁贴花，仅仅<code>SetVisibility</code>是不够的，隐藏后还是会占用大量消耗。</p></li>
+<li><p><span class="highlight-text yellow">Decal消耗和像素数量有关</span>，<span class="highlight-text red">程序功能绝对不要乱用贴花</span>，美术铺场景除外。比如程序想用贴花做一个范围标记，如果当标记范围很大时绝对不要用贴花，可以改成划线或者不通透贴图。如果场景需要大量使用贴花，根据视距动态创建和销毁贴花，仅仅<code>SetVisibility</code>是不够的，隐藏后还是会有巨大的开销。</p></li>
 </ol>
 
 <p>Performance Guidelines for Artists and Designers<br />
@@ -526,7 +526,7 @@ Dynamic Shadow Distance 表示在多少距离内使用动态阴影，超过这�
 <h4 id="植被优化">植被优化</h4>
 
 <ol>
-<li><p>地形编辑时，使用Instanced Static Meshes。Intancing会增加GPU的开销，但是可以显著降低CPU的开销。注意：Instancing不会减少CPU draw call次数，要减少draw call次数，需要减少材质种类，提高材质复用率。</p></li>
+<li><p>地形编辑时，使用Instanced Static Meshes。Intancing会增加GPU的开销，但是可以显著降低CPU的开销。注意：实际应用中，Instancing并不能作为减少CPU draw call次数的主要途径，因为实际的游戏场景不可能全是instanced mesh。要减少draw call次数，需要减少材质种类，提高材质复用率。</p></li>
 
 <li><p>当Instanced Mesh的数量较多时（比如百万级），一帧内执行<code>RemoveInstance</code>或者<code>UpdateInstanceTransform</code>数次，帧率会狂泻。<br />
 优化办法：操作Instanced Mesh之前，将<code>UHierarchicalInstancedStaticMeshComponent::bAutoRebuildTreeOnInstanceChanges</code>设置为false，然后执行你需要的各种Instanced Mesh操作，操作玩之后，然后将<code>bAutoRebuildTreeOnInstanceChanges</code>设置为true，然后执行<code>BuildTreeIfOutdated(true, false);</code>，这样可以显著减少因操作百万级Instanced Mesh而导致的性能损失。</p></li>

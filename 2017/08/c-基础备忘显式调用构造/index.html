@@ -355,7 +355,9 @@ if (!doNotTrack) {
           
           <div class="post-content markdown" itemprop="articleBody">
             <div class="main-content-wrap">
-              <p>最近两年一直在使用UE4 Stylized C++，标准C++的一些基础都快忘了。。。</p>
+              
+
+<p>最近两年一直在使用UE4 Stylized C++，标准C++的一些基础都快忘了。。。</p>
 
 <p>示例代码：</p>
 
@@ -415,6 +417,37 @@ int main(int argc, char* argv[])
     return 0;
 }
 </code></pre>
+
+<h5 id="how-to-call-a-parent-class-function-from-derived-class-function">How to call a parent class function from derived class function?</h5>
+
+<pre><code>class left {
+public:
+    void foo();
+};
+
+class right {
+public:
+    void foo();
+};
+
+class bottom : public left, public right {
+public:
+    void foo()
+    {
+        //base::foo();// ambiguous
+        left::foo();
+        right::foo();
+
+        // and when foo() is not called for 'this':
+        bottom b;
+        b.left::foo();  // calls b.foo() from 'left'
+        b.right::foo();  // call b.foo() from 'right'
+    }
+};
+</code></pre>
+
+<p>Reference:<br />
+<a href="https://stackoverflow.com/questions/357307/how-to-call-a-parent-class-function-from-derived-class-function">https://stackoverflow.com/questions/357307/how-to-call-a-parent-class-function-from-derived-class-function</a></p>
 
 <hr />
 

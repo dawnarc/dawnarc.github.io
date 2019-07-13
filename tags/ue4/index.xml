@@ -730,10 +730,12 @@ Velocity = Velocity.GetSafeNormal() * InitialSpeed;  前者速度方向是相对
       
       <guid>https://dawnarc.com/2018/07/ue4-tsharedptr-tweakobjectptr-and-tuniqueptr/</guid>
       <description>UE4 的 TSharedPtr、TWeakObjectPtr 模仿自 C++11 的 shared_ptr 、 weak_ptr 。
-TSharedPtr TSharedPtr 相当于对象的引用计数器。每当对 TSharedPtr 赋值一次，该 TSharedPtr 引用对象计数加一，当引用计数为0时，则该对象被自动销毁。TSharedPtr 可以防止 raw pointer 对象被垃圾回收，。
+TSharedPtr TSharedPtr 相当于对象的引用计数器。每当对 TSharedPtr 赋值一次，该 TSharedPtr 引用对象计数加一，当引用计数为0时，则该对象被自动销毁。
 用法：
 TSharedPtr&amp;lt;TestClass&amp;gt; ObjPtr = MakeShareable(new TestClass());  如果两个 TSharedPtr 相互赋值，则会导致对象永不释放，导致内存泄漏。
- Uobject 不能使用 TSharedPtr 进行引用计数，非UObject才可以；如果一个非UObject的类想加入GC，那么必须继承FGCObject类。
+ TSharedPtr无法对继承自UObject的对象指针进行计数，raw pointers才可以。
+ 如果raw pointers想加入GC，那么指针所指对象必须继承FGCObject类。
+因为C++11已经有一套 smart points，为了和UE4的垃圾回收区分开，所以TSharedPtr作用对象不包括raw pointers。
  TWeakObjectPtr TWeakObjectPtr 保持的对象不能防止被垃圾回收。若引用的对象在其他地方被销毁，则 TWeakObjectPtr 内部的指针自动将被置为NULL，TWeakObjectPtr::IsValid()会返回false。TSharedPtr 则没有这个作用。
 Usage Assignment
 TWeakObjectPtr&amp;lt;AActor&amp;gt; MyWeakActor; MyWeakActor = MyActor;  Get value
@@ -1539,7 +1541,8 @@ void ATestTD4Character::BeginPlay() { Super::BeginPlay(); for (FSoftObjectPath&a
 参考：Virtual Joystick conflicts UMG Buttons
 https://answers.unrealengine.com/questions/211064/virtual-joystick-conflicts-umg-buttons.html
 以上问题在4.18到4.21版本中验证过，后续新版本中是否仍存在，需要自己验证。
- 念念不忘，必有回响。----陈念萱</description>
+ \Engine\Source\Runtime\UMG\Public\Components\SlateWrapperTypes.h
+/** Is an entity visible? */ UENUM(BlueprintType) enum class ESlateVisibility : uint8 { /** Default widget visibility - visible and can interact with the cursor */ Visible, /** Not visible and takes up no space in the layout; can never be clicked on because it takes up no space.</description>
     </item>
     
     <item>
@@ -2073,16 +2076,13 @@ void AController::Possess(APawn* InPawn);  方式一：SpawnActor时使用默认
       <pubDate>Tue, 12 Sep 2017 18:26:40 +0800</pubDate>
       
       <guid>https://dawnarc.com/2017/09/ue4no-owning-connection-for-actor-xxx.-function-xxx-will-not-be-processed/</guid>
-      <description>keywords：UE4、Dedicated Server、Replication、独立服务器
-在客户端连接独立服务端的情况下，客户端执行Server函数时提示以下警告：
-LogNet: Warning: UIpNetDriver::ProcesRemoteFunction: No owning connection for actor TopDownCharacter_C_0. Function ServerMoveToDest will not be processed.  原因：
-Client执行Server函数的对象，是在服务端Spawn出来的，不是在客户端创建的，所以提示这个警告。
-比如你在Server端的GameMode中创建了一个Character，且这个Character的Replicated相关属性设置为true，你在客户端用这个Character对象来执行Server函数（即UFUNCTION(Server, Reliable)函数），这时就会提示这个错误。
-UE4独立服务端的规则是，只有在客户端创建的对象才允许执行Server函数，比如PlayerController，这个是引擎自动在客户端创建的对象，它身上的Server函数可以在客户端调用且在服务端执行。
-解决办法：
-如果你的逻辑是要操作某个服务端创建的对象，比如刚刚说的在服务端Spawn出来的Character，可以先通过PlayerController执行Server函数，在其Server函数内部获取服务端的Character对象，然后再执行相关逻辑。
-UE4独立服务器的几个注意要点：
- Replicated属性只允许服务端修改，而不允许客户端修改。 客户端和客户端之间无法直接通信，只能通过独立服务器广播通知。 客户端要执行服务端函数，则执行对象必须是在客户端Spawn出来的，服务端创建的且复制到客户端的对象，没有权限执行服务端函数。这也很好理解，这是为了保证安全性。  最高贵的复仇是宽容。──维克多·雨果（HugoVictor）</description>
+      <description>keywords：UE4, Dedicated Server, Replication
+Issue Client execute a server function failed:
+LogNet: Warning: UIpNetDriver::ProcesRemoteFunction: No owning connection for actor TopDownCharacter_C_0. Function ServerMoveToDest will not be processed.  Cause:
+Because the Actor which invoking server function on client doesn&amp;rsquo;t have Connection.
+Solution:
+How to let object have Connection?
+ For Characters, possess it by PlayerController on server after spawning this Actor on server. Fow Actors, Set a Owner which has Connection for it.</description>
     </item>
     
     <item>
