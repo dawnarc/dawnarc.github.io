@@ -321,66 +321,6 @@ if (!doNotTrack) {
     
     <div class="postShorten-header">
       <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2018/05/ue44.19%E7%BC%96%E8%AF%91substance-plugin%E6%8A%A5%E9%94%99/">
-          [UE4]4.19编译Substance Plugin报错
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2018-05-10T10:49:02&#43;08:00">
-        
-  May 10, 2018
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        问题现象 4.19版本启用Substance Plugin后，Generate Visual Studio Project Files时报错：
-Exception while generating include data for UE4Editor: Unable to instantiate module 'SubstanceCore': System.NullReferenceException: La référence d'objet n'est pas définie à une instance d'un objet.à UnrealBuildTool.Rules.SubstanceCore..ctor(ReadOnlyTargetRules Target) dans d:\3D\UE4.19\UnrealEngine-release\Engine\Plugins\Substance\Source\SubstanceCore\SubstanceCore.Build.cs:ligne 116(referenced via UE4Editor.Target.cs - Substance.uplugin) 解决办法 修改：UE_4.19\Engine\Plugins\Marketplace\Substance\Source\SubstanceCore\SubstanceCore.Build.cs
-将116行到124行注掉，并追加一行：
-IncludePS4Files = false;  参考自：https://forum.allegorithmic.com/index.php?topic=23285.0
-你简单，世界就是童话；心复杂，世界就是迷宫。
-      
-      <p>
-        <a href="https://dawnarc.com/2018/05/ue44.19%E7%BC%96%E8%AF%91substance-plugin%E6%8A%A5%E9%94%99/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-            
-              
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
         <a class="link-unstyled" href="https://dawnarc.com/2018/05/ue4steam-sdk%E6%8E%A5%E5%85%A5%E7%9B%B8%E5%85%B3/">
           [UE4]Steam SDK接入相关
         </a>
@@ -1211,16 +1151,16 @@ https://forums.unrealengine.com/development-discussion/android-development/78992
     
     <div class="postShorten-header">
       <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2018/03/ue4umgcreate-widget-dynamically-using-c-/">
-          [UE4][UMG]Create Widget Dynamically using C&#43;&#43;
+        <a class="link-unstyled" href="https://dawnarc.com/2018/03/ue4event-delegate-multi-cast-related/">
+          [UE4]Event, Delegate, Multi-cast Related
         </a>
       </h1>
       
   <div class="postShorten-meta post-meta">
     
-      <time itemprop="datePublished" datetime="2018-03-31T19:03:02&#43;08:00">
+      <time itemprop="datePublished" datetime="2018-03-30T18:26:02&#43;08:00">
         
-  March 31, 2018
+  March 30, 2018
 
       </time>
     
@@ -1238,15 +1178,79 @@ https://forums.unrealengine.com/development-discussion/android-development/78992
     </div>
     <div class="postShorten-excerpt" itemprop="articleBody">
       
-        keyworkds：UE4、C++动态创建Widget、Runtime Create Widget
-动态创建 CanvasPanel 并在内部动态创建 Button 在空白蓝图中创建一个 CanvasPanel 并在内部创建一个 Button。假设空白UMG蓝图的默认 CanvasPanel 是动态创建，而不是新建UMG蓝图时自带的那个。
-示例：
-void UMyUserWidget::NativeConstruct() { Super::NativeConstruct(); auto MyCanvas = WidgetTree-&gt;ConstructWidget&lt;UCanvasPanel&gt;(UCanvasPanel::StaticClass()); if(MyCanvas) { auto MyButton = WidgetTree-&gt;ConstructWidget&lt;UButton&gt;(UButton::StaticClass()); MyCanvas-&gt;AddChild(MyButton); WidgetTree-&gt;RootWidget = MyCanvas; } }  动态填充 HorizontalBoxSlot 这里假设把 HorizontalBoxSlot 当作一个背包，然后往这个背包中动态添加道具对象。
-示例：
-void UBags::NativeConstruct() { Super::NativeConstruct(); //获取UMG蓝图摆放好的 HorizontalBoxSlot UHorizontalBox* HorBox = Cast&lt;UHorizontalBox&gt;(GetWidgetFromName(FName(&quot;HorizontalBox_62&quot;))); if (HorBox) { //加载道具蓝图 class if (UClass* MyWidgetClass = LoadClass&lt;UMyItemWidget&gt;(NULL, TEXT(&quot;WidgetBlueprint'/Game/UI/ItemBP.ItemBP_C'&quot;))) { for (int i = 0; i &lt; 5; i++) { UMyItemWidget* Item = WidgetTree-&gt;ConstructWidget&lt;UMyItemWidget&gt;(MyWidgetClass); UPanelSlot* Slot = HorBox-&gt;AddChild(Item); if (UHorizontalBoxSlot* HorSlot = Cast&lt;UHorizontalBoxSlot&gt;(Slot)) { //设置大小为填充 FSlateChildSize Size(ESlateSizeRule::Type::Fill); HorSlot-&gt;SetSize(Size); //横向居中对其 HorSlot-&gt;SetHorizontalAlignment(EHorizontalAlignment::HAlign_Center); //纵向居中对其 HorSlot-&gt;SetVerticalAlignment(EVerticalAlignment::VAlign_Center); } } } } }  动态填充 UniformGridPanel void UMyUserWidget::NativeConstruct() { Super::NativeConstruct(); //获取UMG蓝图摆放好的 HorizontalBoxSlot UUniformGridPanel* UniGrid = Cast&lt;UUniformGridPanel&gt;(GetWidgetFromName(FName(&quot;UniformGridPanel_01&quot;))); if (UniGrid) { UButton* MyButton = WidgetTree-&gt;ConstructWidget&lt;UButton&gt;(UButton::StaticClass()); if(UUniformGridSlot* Slot = UniGrid-&gt;AddChildToUniformGrid(MyButton)) { //设置单元格的纵向和横向位置 Slot-&gt;SetRow(5); Slot-&gt;SetColumn(5); } } }  批量获取并设置 UniformGridPanel 单元格位置 TArray&lt;UPanelSlot*&gt; Slots = UniformGridPanel-&gt;GetSlots(); int index = 0; for (UPanelSlot* Slot : Slots) { UUniformGridSlot * UniSlot = Cast&lt;UUniformGridSlot&gt;(Slot); if (UniSlot) { UniSlot-&gt;SetRow(index); UniSlot-&gt;SetColumn(1); } index++; }  运行时期间修改Widget屏幕位置 Modify widget&rsquo;s screen position at run-time:
+        keywords：UE4, BindRaw, BindUFunction, BindUObject, Pass Arguments, Variable
+BindUFunction传递参数 示例1：
+void UMyClass::FunctionWithVar(const FString&amp; MyVar, TFunction&lt;void(const FString&amp;)&gt; InFunction) { MyLambdaHandle = OnMyDelegate.BindStatic([MyVar](TFunction&lt;void(const FString&amp;)&gt; callback) {callback(MyVar);}, InFunction); // TODO: You have to track MyLambdaHandle to be able to unregister it when needed }  https://answers.unrealengine.com/questions/715835/bindufunction-with-variable-capture-in-c.html
+示例2：
+使用固定参数绑定
+DECLARE_DELEGATE(RefreshOne); class MyClass { public: MyClass() { one.BindRaw(this, &amp;MyClass::MyFunction, (uint8)1); } void MyFunction(uint8 Val) { // Whatever } void Invoke() { one.Execute(); // Will call this-&gt;MyFunction((uint8)1); } private: RefreshOne one; };  使用动态参数绑定
       
       <p>
-        <a href="https://dawnarc.com/2018/03/ue4umgcreate-widget-dynamically-using-c-/" class="postShorten-excerpt_link link">Continue reading</a>
+        <a href="https://dawnarc.com/2018/03/ue4event-delegate-multi-cast-related/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2018/03/ue42d%E5%8A%A8%E7%94%BB%E5%BA%8F%E5%88%97%E5%B8%A7paper-sprite/">
+          [UE4]2D动画序列帧Paper Sprite
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2018-03-27T11:23:02&#43;08:00">
+        
+  March 27, 2018
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        Paper 2D Sprites
+http://api.unrealengine.com/CHN/Engine/Paper2D/Sprites/index.html
+Paper 2D Import Options
+http://api.unrealengine.com/CHN/Engine/Paper2D/Importing/index.html
+VaTexAtlas：一款支持TexturePacker json数据导入UE4插件
+https://github.com/ufna/VaTexAtlas
+UMG Animation
+https://docs.unrealengine.com/latest/INT/Engine/UMG/UserGuide/Animation/index.html
+甚爱必大费，多藏必厚亡。 ----老子《道德经》
+      
+      <p>
+        <a href="https://dawnarc.com/2018/03/ue42d%E5%8A%A8%E7%94%BB%E5%BA%8F%E5%88%97%E5%B8%A7paper-sprite/" class="postShorten-excerpt_link link">Continue reading</a>
         
       </p>
     </div>
@@ -1517,7 +1521,7 @@ void UBags::NativeConstruct() { Super::NativeConstruct(); //获取UMG蓝图摆�
          data-message-zero="no post found"
          data-message-one="1 post found"
          data-message-other="{n} posts found">
-         516 posts found
+         514 posts found
       </p>
     </div>
   </div>

@@ -7,34 +7,42 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="generator" content="Hugo 0.53 with theme Tranquilpeak 0.4.3-SNAPSHOT">
 <meta name="author" content="Neil Wang">
-<meta name="keywords" content="UE4, Sequencer">
-<meta name="description" content="Pivot
+<meta name="keywords" content="UE4, Animation">
+<meta name="description" content="Reference: Master pose vs copy pose vs mesh merge in UE4
+https://iluvanimation.blogspot.tw/2017/04/master-pose-vs-copy-pose-vs-mesh-merge.html
+Since I get this question so often, I&rsquo;m just writing quick summary for each.
+When you have different parts of bodies, and you want to allow players to pick which part they want, we have multiple choices, and people are wondering what are the main differences.
+Say you have head, upper body, lower body, and how do you allow them to pick and what are the differences?">
 
-How to set Pivot Offset">
 
-
-<meta property="og:description" content="Pivot
-
-How to set Pivot Offset">
+<meta property="og:description" content="Reference: Master pose vs copy pose vs mesh merge in UE4
+https://iluvanimation.blogspot.tw/2017/04/master-pose-vs-copy-pose-vs-mesh-merge.html
+Since I get this question so often, I&rsquo;m just writing quick summary for each.
+When you have different parts of bodies, and you want to allow players to pick which part they want, we have multiple choices, and people are wondering what are the main differences.
+Say you have head, upper body, lower body, and how do you allow them to pick and what are the differences?">
 <meta property="og:type" content="article">
-<meta property="og:title" content="[UE4]Editor Related">
-<meta name="twitter:title" content="[UE4]Editor Related">
-<meta property="og:url" content="https://dawnarc.com/2019/01/ue4editor-related/">
-<meta property="twitter:url" content="https://dawnarc.com/2019/01/ue4editor-related/">
+<meta property="og:title" content="[UE4][Animation]Difference between Master Pose, Copy Pose and Mesh merge">
+<meta name="twitter:title" content="[UE4][Animation]Difference between Master Pose, Copy Pose and Mesh merge">
+<meta property="og:url" content="https://dawnarc.com/2018/05/ue4animationdifference-between-master-pose-copy-pose-and-mesh-merge/">
+<meta property="twitter:url" content="https://dawnarc.com/2018/05/ue4animationdifference-between-master-pose-copy-pose-and-mesh-merge/">
 <meta property="og:site_name" content="玄冬Wong">
-<meta property="og:description" content="Pivot
-
-How to set Pivot Offset">
-<meta name="twitter:description" content="Pivot
-
-How to set Pivot Offset">
+<meta property="og:description" content="Reference: Master pose vs copy pose vs mesh merge in UE4
+https://iluvanimation.blogspot.tw/2017/04/master-pose-vs-copy-pose-vs-mesh-merge.html
+Since I get this question so often, I&rsquo;m just writing quick summary for each.
+When you have different parts of bodies, and you want to allow players to pick which part they want, we have multiple choices, and people are wondering what are the main differences.
+Say you have head, upper body, lower body, and how do you allow them to pick and what are the differences?">
+<meta name="twitter:description" content="Reference: Master pose vs copy pose vs mesh merge in UE4
+https://iluvanimation.blogspot.tw/2017/04/master-pose-vs-copy-pose-vs-mesh-merge.html
+Since I get this question so often, I&rsquo;m just writing quick summary for each.
+When you have different parts of bodies, and you want to allow players to pick which part they want, we have multiple choices, and people are wondering what are the main differences.
+Say you have head, upper body, lower body, and how do you allow them to pick and what are the differences?">
 <meta property="og:locale" content="en-us">
 
   
-    <meta property="article:published_time" content="2019-01-18T22:05:02">
+    <meta property="article:published_time" content="2018-05-29T16:50:02">
   
   
-    <meta property="article:modified_time" content="2019-01-18T22:05:02">
+    <meta property="article:modified_time" content="2018-05-29T16:50:02">
   
   
   
@@ -45,6 +53,8 @@ How to set Pivot Offset">
   
     
       <meta property="article:tag" content="UE4">
+    
+      <meta property="article:tag" content="Animation">
     
   
 
@@ -61,9 +71,6 @@ How to set Pivot Offset">
 
 
 
-  <meta property="og:image" content="https://dawnarc.com/thumbnail/thumbnail-japen-010.jpg">
-  <meta property="twitter:image" content="https://dawnarc.com/thumbnail/thumbnail-japen-010.jpg">
-
 
 
 
@@ -72,7 +79,7 @@ How to set Pivot Offset">
   <meta property="twitter:image" content="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=640">
 
 
-    <title>[UE4]Editor Related</title>
+    <title>[UE4][Animation]Difference between Master Pose, Copy Pose and Mesh merge</title>
 
     <link rel="icon" href="https://dawnarc.com/favicon.png">
     
@@ -81,7 +88,7 @@ How to set Pivot Offset">
       <link rel="publisher" href="https://plus.google.com/111340706178390411568">
     
 
-    <link rel="canonical" href="https://dawnarc.com/2019/01/ue4editor-related/">
+    <link rel="canonical" href="https://dawnarc.com/2018/05/ue4animationdifference-between-master-pose-copy-pose-and-mesh-merge/">
 
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
@@ -331,15 +338,15 @@ if (!doNotTrack) {
             <div class="post-header main-content-wrap text-left">
   
     <h1 class="post-title" itemprop="headline">
-      [UE4]Editor Related
+      [UE4][Animation]Difference between Master Pose, Copy Pose and Mesh merge
     </h1>
   
   
   <div class="postShorten-meta post-meta">
     
-      <time itemprop="datePublished" datetime="2019-01-18T22:05:02&#43;08:00">
+      <time itemprop="datePublished" datetime="2018-05-29T16:50:02&#43;08:00">
         
-  January 18, 2019
+  May 29, 2018
 
       </time>
     
@@ -358,158 +365,73 @@ if (!doNotTrack) {
           
           <div class="post-content markdown" itemprop="articleBody">
             <div class="main-content-wrap">
-              <h3 id="pivot">Pivot</h3>
+              
 
-<h5 id="how-to-set-pivot-offset">How to set Pivot Offset</h5>
+<p>Reference: Master pose vs copy pose vs mesh merge in UE4<br />
+<a href="https://iluvanimation.blogspot.tw/2017/04/master-pose-vs-copy-pose-vs-mesh-merge.html">https://iluvanimation.blogspot.tw/2017/04/master-pose-vs-copy-pose-vs-mesh-merge.html</a></p>
 
-<p><figure>
-    <img src="https://dawnarc.com/img/20190118-[UE4]Editor%20Related/[UE4]Editor%20Related-01.jpg"/> 
-</figure>
+<p>Since I get this question so often, I&rsquo;m just writing quick summary for each.</p>
 
-<figure>
-    <img src="https://dawnarc.com/img/20190118-[UE4]Editor%20Related/[UE4]Editor%20Related-02.jpg"/> 
-</figure>
-</p>
+<p>When you have different parts of bodies, and you want to allow players to pick which part they want, we have multiple choices, and people are wondering what are the main differences.</p>
 
-<h5 id="how-to-override-events-of-components-in-blueprint">How to override Events of Components in Blueprint</h5>
+<p>Say you have head, upper body, lower body, and how do you allow them to pick and what are the differences?</p>
 
-<p>Right click component -&gt; Add Event
-<figure>
-    <img src="https://dawnarc.com/img/20190118-[UE4]Editor%20Related/[UE4]Editor%20Related-03.jpg"/> 
-</figure>
-</p>
+<h5 id="1-master-pose-component">1. Master Pose Component</h5>
 
-<h5 id="how-to-change-pivot-location-rotation-scale-in-mesh-editor">How to change pivot (Location, Rotation, Scale) in Mesh Editor</h5>
+<ul>
+<li>This is Blueprint callable action that you set <code>Child-&gt;SetMaseterPoseComponent(Body)</code>, then <strong>Body</strong> becomes the master of <strong>Child</strong>, which means <strong>Child</strong> will follow whatever <strong>Body</strong> does.</li>
+<li>Behind of scene, <strong>Child</strong> does not have any bone transform buffer and it doesn&rsquo;t run any animation system even if you set AnimBP on the <strong>Child</strong>, and it just uses <strong>Body&rsquo;s</strong> bone transform buffer when rendered. This makes very light weight attachment system. Only component that has to run animation is <strong>Body</strong>, and all attachment will just use <strong>Body&rsquo;s</strong> bone transform.</li>
+<li>This does not reduce render cost. You still render # of components separate (and more drawcalls if you have more sections for each), but this reduces game thread cost.</li>
+<li>Limitation
 
-<p>Export mesh and reimport it, and set the Transform parameters in FBX import panel
-<figure>
-    <img src="https://dawnarc.com/img/20190118-[UE4]Editor%20Related/[UE4]Editor%20Related-15.jpg"/> 
-</figure>
-</p>
+<ul>
+<li><strong>Child</strong> has to have SUBSET of exact matching structure. You can&rsquo;t have any other extra joint or skip the joint. Since there is no bone buffer for that extra joint, that will render in the origin of the mesh.</li>
+<li>You can&rsquo;t run any other animation or physics on the <strong>Child</strong>.</li>
+</ul></li>
+</ul>
 
-<p>Or, reimport asset in Mesh Editor
-<figure>
-    <img src="https://dawnarc.com/img/20190118-[UE4]Editor%20Related/[UE4]Editor%20Related-16.jpg"/> 
-</figure>
-</p>
+<h5 id="2-copy-pose-from-mesh">2. Copy Pose From Mesh</h5>
 
-<h3 id="optimization">Optimization</h3>
-
-<h5 id="how-to-open-optimization-viewmodes">How to open optimization Viewmodes</h5>
+<ul>
+<li>This is anim graph node that you can use on AnimBP of the <strong>Child</strong>.</li>
+<li>It allows you to copy from any SkeletalMeshComponent. You also want to make sure the SkeletalMeshComponent (I&rsquo;ll call this <strong>Body</strong>) you copy from ALREADY has ticked. Otherwise you&rsquo;re going to copy last frame&rsquo;s animation. To ensure this, you can just attach <strong>Child</strong> to the <strong>Body</strong>. Once you attach, it will ensure parent ticks first before child.</li>
+</ul>
 
 <figure>
-    <img src="https://dawnarc.com/img/20190118-[UE4]Editor%20Related/[UE4]Editor%20Related-04.jpg"/> 
+    <img src="https://dawnarc.com/img/20180529-[UE4][Animation]Master%20Pose,%20Copy%20Pose,%20Mesh%20merge%e5%8c%ba%e5%88%ab/[UE4][Animation]Master%20Pose,%20Copy%20Pose,%20Mesh%20merge%e5%8c%ba%e5%88%ab-01.jpg"/> 
 </figure>
 
 
-<h5 id="how-to-open-buffer-visualization">How to open Buffer Visualization</h5>
+<ul>
+<li>This only copies the bones that matching, and everything else will stay on reference pose.</li>
+<li>Or you can choose to play animation on top of the copied transform as illustrated above.</li>
+<li>Limitation
 
-<figure>
-    <img src="https://dawnarc.com/img/20190118-[UE4]Editor%20Related/[UE4]Editor%20Related-05.jpg"/> 
-</figure>
+<ul>
+<li>If <strong>Body</strong> has physics on them, you&rsquo;d like to make sure to run this AFTER your parent blends physics with it, which means it has to tick in Post Physics, but that means you can&rsquo;t have any physics on the <strong>Child</strong>. I did not test this but in theory, you can have the <strong>Child</strong> to have physics, but not both of them at the same time.</li>
+<li>Of course more expensive than Master Pose because this runs animation on each Child.</li>
+</ul></li>
+</ul>
 
+<h5 id="3-mesh-merge">3. Mesh merge.</h5>
 
-<h3 id="mesh">Mesh</h3>
+<ul>
+<li>Mesh merge allows you to create SkeletalMesh from multiple meshes</li>
+<li>It has high initial cost of creating the SkeletalMesh</li>
+<li>Rendering cost is cheap since you can only render one mesh as opposed to multiple meshes</li>
+<li>Main <strong>Body</strong> has to contain all the animations because the merged mesh will only use the skeleton that&rsquo;s set, and it will has to contain all the joints you&rsquo;d need to animate. Say you have extra joints for certain body parts, you still have to have all animations on the <strong>Body</strong>.</li>
+<li>Morphtarget is not supported</li>
+<li>You only run one animation on the merged mesh.</li>
+</ul>
 
-<h5 id="how-to-customize-screen-size-of-lod">How to customize screen size of LOD</h5>
+<p>I think this sums up the main points. I hope this helps.</p>
 
-<p>1st way:<br />
-Screen Size that can&rsquo;t be modify
-<figure>
-    <img src="https://dawnarc.com/img/20190118-[UE4]Editor%20Related/[UE4]Editor%20Related-07.jpg"/> 
-</figure>
-
-Uncheck <code>Auto Compute LOD Distance</code> allow to modify <code>Screen Size</code>
-<figure>
-    <img src="https://dawnarc.com/img/20190118-[UE4]Editor%20Related/[UE4]Editor%20Related-08.jpg"/> 
-</figure>
-</p>
-
-<p>2nd way:<br />
-Uncheck <code>Auto Compute LOD Distance</code> when import FBX asset.
-<figure>
-    <img src="https://dawnarc.com/img/20190118-[UE4]Editor%20Related/[UE4]Editor%20Related-09.jpg"/> 
-</figure>
-</p>
-
-<h3 id="edit-menu">Edit Menu</h3>
-
-<h5 id="how-to-use-small-toobar-icons">How to use small Toobar Icons</h5>
-
-<p>Edit -&gt; Editor Preferences -&gt; Appearance -&gt; Check <code>Use Small Tool Bar Icons</code></p>
-
-<h5 id="move-directory-in-editor">Move directory in Editor</h5>
-
-<div class="alert danger ">
-  <p>Right clicking on the folder and selecting &ldquo;Fix Up Redirectors in Folder&rdquo; before trying to move it, otherwise reference of assets would be lost.</p>
-</div>
-
-<figure>
-    <img src="https://dawnarc.com/img/20190118-[UE4]Editor%20Related/[UE4]Editor%20Related-06.jpg"/> 
-</figure>
-
-
-<h3 id="blueprint">Blueprint</h3>
-
-<h5 id="how-to-add-exec-pin-on-macro-in-blueprint">How to add Exec Pin on Macro in Blueprint</h5>
-
-<p>By default, Blueprint Macro has no <code>Exec</code> Pin:
-<figure>
-    <img src="https://dawnarc.com/img/20190118-[UE4]Editor%20Related/[UE4]Editor%20Related-10.jpg"/> 
-</figure>
-
-<figure>
-    <img src="https://dawnarc.com/img/20190118-[UE4]Editor%20Related/[UE4]Editor%20Related-11.jpg"/> 
-</figure>
-
-You can add an input and output parameter which type is <code>Exec</code>:
-<figure>
-    <img src="https://dawnarc.com/img/20190118-[UE4]Editor%20Related/[UE4]Editor%20Related-12.jpg"/> 
-</figure>
-
-<figure>
-    <img src="https://dawnarc.com/img/20190118-[UE4]Editor%20Related/[UE4]Editor%20Related-13.jpg"/> 
-</figure>
-</p>
-
-<p>Macros<br />
-<a href="https://docs.unrealengine.com/en-us/Engine/Blueprints/UserGuide/Macros">https://docs.unrealengine.com/en-us/Engine/Blueprints/UserGuide/Macros</a></p>
-
-<h3 id="animation">Animation</h3>
-
-<h5 id="fbx-has-no-animation-data-recommend-to-remove-v4-22">FBX has no animation data, recommend to remove (v4.22)</h5>
-
-<p>Issue:<br />
-When import animation assets from FBX, there&rsquo;s warning log:</p>
-
-<pre><code>XXX has no animation data, recommend to remove
-</code></pre>
-
-<p>Solution:<br />
-Check <code>Import Bone Tracks</code></p>
-
-<figure>
-    <img src="https://dawnarc.com/img/20190118-[UE4]Editor%20Related/[UE4]Editor%20Related-14.jpg"/> 
-</figure>
-
-
-<h5 id="animation-length-is-too-long-when-import-from-fbx">Animation length is too long when import from FBX</h5>
-
-<p>Solution:<br />
-Select <code>Exported Time</code> in <code>Animation Legnth</code>
-<figure>
-    <img src="https://dawnarc.com/img/20190118-[UE4]Editor%20Related/[UE4]Editor%20Related-17.jpg"/> 
-</figure>
-</p>
-
-<h5 id="reference">Reference</h5>
-
-<p>Unreal Editor Manual<br />
-<a href="https://docs.unrealengine.com/en-us/Engine/Editor">https://docs.unrealengine.com/en-us/Engine/Editor</a></p>
+<p>With recent changes(future release of 4.17), preview animation in persona with additional meshes will use Copy Pose from Mesh since that supports both Master/Copy Pose from Mesh and we care less about performance in editor than in runtime. Also you can create custom DataAsset that supports preview and you can support your custom mesh preview. Again for 4.17 but it&rsquo;s coming. :)</p>
 
 <hr />
 
-<p><code>善，没有理由战胜不了恶，只要天使们能像黑手党那样组织起来。──库尔特·冯内古特（KurtVonnegut）《没有国家的人》</code></p>
+<p><code>千古功名一纸书,不过扬灰于尘土。---花香蘑菇《君临臣下》</code></p>
+
               
             </div>
           </div>
@@ -523,6 +445,8 @@ Select <code>Exported Time</code> in <code>Animation Legnth</code>
                     
   <a class="tag tag--primary tag--small" href="https://dawnarc.com/tags/ue4/">UE4</a>
 
+  <a class="tag tag--primary tag--small" href="https://dawnarc.com/tags/animation/">Animation</a>
+
                   </div>
                 
               
@@ -534,7 +458,7 @@ Select <code>Exported Time</code> in <code>Animation Legnth</code>
           
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2019/01/versioncontrolinstall-windows-service-for-svn/" data-tooltip="[VersionControl]Install Windows Service for SVN">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2018/05/ue4animationik-related/" data-tooltip="[UE4][Animation]IK Related">
               
                   <i class="fa fa-angle-left"></i>
                   <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
@@ -542,7 +466,7 @@ Select <code>Exported Time</code> in <code>Animation Legnth</code>
             </li>
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2019/01/techarttools-plugins-collections-for-art-making/" data-tooltip="[TechArt]Tools &amp; Plugins Collections for Art Making">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2018/05/ue4animationanimation-blueprint-inherit%E5%8A%A8%E7%94%BB%E8%93%9D%E5%9B%BE%E7%BB%A7%E6%89%BF%E4%B8%8E%E5%A4%8D%E7%94%A8/" data-tooltip="[UE4][Animation]Animation Blueprint Inherit(动画蓝图继承与复用)">
               
                   <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
                   <i class="fa fa-angle-right"></i>
@@ -602,7 +526,7 @@ Select <code>Exported Time</code> in <code>Animation Legnth</code>
           
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2019/01/versioncontrolinstall-windows-service-for-svn/" data-tooltip="[VersionControl]Install Windows Service for SVN">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2018/05/ue4animationik-related/" data-tooltip="[UE4][Animation]IK Related">
               
                   <i class="fa fa-angle-left"></i>
                   <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
@@ -610,7 +534,7 @@ Select <code>Exported Time</code> in <code>Animation Legnth</code>
             </li>
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2019/01/techarttools-plugins-collections-for-art-making/" data-tooltip="[TechArt]Tools &amp; Plugins Collections for Art Making">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2018/05/ue4animationanimation-blueprint-inherit%E5%8A%A8%E7%94%BB%E8%93%9D%E5%9B%BE%E7%BB%A7%E6%89%BF%E4%B8%8E%E5%A4%8D%E7%94%A8/" data-tooltip="[UE4][Animation]Animation Blueprint Inherit(动画蓝图继承与复用)">
               
                   <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
                   <i class="fa fa-angle-right"></i>
@@ -881,7 +805,7 @@ Select <code>Exported Time</code> in <code>Animation Legnth</code>
          data-message-zero="no post found"
          data-message-one="1 post found"
          data-message-other="{n} posts found">
-         516 posts found
+         514 posts found
       </p>
     </div>
   </div>
@@ -936,9 +860,9 @@ $(document).ready(function() {
     
       <script>
         var disqus_config = function () {
-          this.page.url = 'https:\/\/dawnarc.com\/2019\/01\/ue4editor-related\/';
+          this.page.url = 'https:\/\/dawnarc.com\/2018\/05\/ue4animationdifference-between-master-pose-copy-pose-and-mesh-merge\/';
           
-            this.page.identifier = '\/2019\/01\/ue4editor-related\/'
+            this.page.identifier = '\/2018\/05\/ue4animationdifference-between-master-pose-copy-pose-and-mesh-merge\/'
           
         };
         (function() {

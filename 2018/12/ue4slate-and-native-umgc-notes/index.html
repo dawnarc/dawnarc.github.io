@@ -8,18 +8,18 @@
 <meta name="generator" content="Hugo 0.53 with theme Tranquilpeak 0.4.3-SNAPSHOT">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="UE4, UMG, zoom">
-<meta name="description" content="How to scale or zoom a widget?">
+<meta name="description" content="Keywords: UE4, Native UMG, Slate, Common API, Usage, Case">
 
 
-<meta property="og:description" content="How to scale or zoom a widget?">
+<meta property="og:description" content="Keywords: UE4, Native UMG, Slate, Common API, Usage, Case">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[UE4]Slate and Native UMG(C&#43;&#43;) Notes">
 <meta name="twitter:title" content="[UE4]Slate and Native UMG(C&#43;&#43;) Notes">
 <meta property="og:url" content="https://dawnarc.com/2018/12/ue4slate-and-native-umgc-notes/">
 <meta property="twitter:url" content="https://dawnarc.com/2018/12/ue4slate-and-native-umgc-notes/">
 <meta property="og:site_name" content="玄冬Wong">
-<meta property="og:description" content="How to scale or zoom a widget?">
-<meta name="twitter:description" content="How to scale or zoom a widget?">
+<meta property="og:description" content="Keywords: UE4, Native UMG, Slate, Common API, Usage, Case">
+<meta name="twitter:description" content="Keywords: UE4, Native UMG, Slate, Common API, Usage, Case">
 <meta property="og:locale" content="en-us">
 
   
@@ -350,30 +350,14 @@ if (!doNotTrack) {
           
           <div class="post-content markdown" itemprop="articleBody">
             <div class="main-content-wrap">
-              <h5 id="how-to-scale-or-zoom-a-widget">How to scale or zoom a widget?</h5>
+              <p>Keywords: UE4, Native UMG, Slate, Common API, Usage, Case</p>
 
-<p>For Mouse Zoom:</p>
+<h3 id="native-umg-apis-in-common">Native UMG APIs In Common</h3>
 
-<ul>
-<li>override onMouseWheel</li>
-<li>add Wheel Delta to Panning Canvas&rsquo; Render Transform Scale</li>
-<li>clamp min result to something above 0 (widgets flip if scaled below 0) and max to your desired max zoom</li>
-<li>Set Render Scale of the Panning Canvas with the result of the above</li>
-</ul>
+<h5 id="how-to-set-ubutton-s-image-texture-for-normal-hovered-and-pressed-state">How to set UButton&rsquo;s Image Texture for Normal, Hovered and Pressed state</h5>
 
-<p>Reference: How to scale/zoom a widget with blueprints?<br />
-<a href="https://answers.unrealengine.com/questions/815202/how-to-scalezoom-a-widget-with-blueprints.html">https://answers.unrealengine.com/questions/815202/how-to-scalezoom-a-widget-with-blueprints.html</a></p>
-
-<h5 id="how-to-clip-widget-display-area">How to clip widget display area?</h5>
-
-<p>Steps:</p>
-
-<ul>
-<li>Add a CanvasPanel as the parent of your target widget</li>
-<li>set the <code>Clipping</code> of CanvasPanel to <code>Clip to Bounds</code></li>
-</ul>
-
-<p>then the part outside CanvasPanel of your target widget would be clipped.</p>
+<pre><code>MyButton-&gt;WidgetStyle.Normal.SetResourceObject(TextureRes);
+</code></pre>
 
 <h5 id="how-to-get-the-size-of-widget">How to get the size of widget</h5>
 
@@ -495,40 +479,144 @@ auto  screenSize = geometry.LocalToAbsolute(localSize) - screenPosition; // BotR
 }
 </code></pre>
 
-<h3 id="uwidgetlayoutlibrary">UWidgetLayoutLibrary</h3>
+<h5 id="modify-widget-s-position-at-run-time">Modify Widget&rsquo;s Position at Run-time</h5>
 
-<h5 id="how-to-get-the-scale-of-viewport">How to get the scale of viewport</h5>
+<p>Modify widget&rsquo;s screen position at run-time:</p>
 
-<pre><code>FVector2D UWidgetLayoutLibrary::GetViewportScale(UObject* WorldContextObject);
+<pre><code>void UWidget::SetRenderTranslation(FVector2D Translation)
 </code></pre>
 
-<h5 id="how-to-get-the-viewport-size">How to get the viewport size</h5>
+<h5 id="nativeconstruct-s-trigger-timing">NativeConstruct&rsquo;s trigger timing</h5>
 
-<pre><code>FVector2D UWidgetLayoutLibrary::GetViewportSize(UObject* WorldContextObject);
-
-void APlayerController::GetViewportSize(int32&amp; SizeX, int32&amp; SizeY) const;
+<pre><code>if(UMyUserWidget* Widget = WidgetTree-&gt;ConstructWidget&lt;UMyUserWidget&gt;(UMyUserWidget::StaticClass()))
+{
+    //UMyUserWidget::NativeConstruct() would trigger after be AddChild
+    MyCanvasPanel-&gt;AddChild(Widget);
+}
 </code></pre>
 
-<h5 id="how-to-get-the-geometry-of-all-widgets-in-viewport-or-playerscreen">How to get the Geometry of all widgets in Viewport or PlayerScreen</h5>
+<div class="alert info ">
+  <p><code>UMyUserWidget::NativeConstruct()</code> would trigger after be <code>AddChild</code></p>
+</div>
 
-<pre><code>FGeometry UWidgetLayoutLibrary::GetViewportWidgetGeometry(UObject* WorldContextObject);
+<h3 id="native-umg-cases">Native UMG Cases</h3>
 
-FGeometry UWidgetLayoutLibrary::GetPlayerScreenWidgetGeometry(APlayerController* PlayerController);
+<h5 id="create-canvaspanel-as-root-wdiget-at-run-time-and-add-button-inside-it">Create CanvasPanel As Root Wdiget at Run-time and Add Button Inside It.</h5>
+
+<pre><code>void UMyUserWidget::NativeConstruct()
+{
+    Super::NativeConstruct();
+
+    auto MyCanvas = WidgetTree-&gt;ConstructWidget&lt;UCanvasPanel&gt;(UCanvasPanel::StaticClass());
+    if(MyCanvas)
+    {
+        auto MyButton = WidgetTree-&gt;ConstructWidget&lt;UButton&gt;(UButton::StaticClass());
+        MyCanvas-&gt;AddChild(MyButton);
+
+        WidgetTree-&gt;RootWidget = MyCanvas;
+    }
+}
 </code></pre>
 
-<h5 id="how-to-get-mouse-position">How to get mouse position</h5>
+<p>Reference: Create widget in pure C++<br />
+<a href="https://answers.unrealengine.com/questions/470481/create-widget-in-pure-c.html">https://answers.unrealengine.com/questions/470481/create-widget-in-pure-c.html</a></p>
 
-<pre><code>//Gets the platform's mouse cursor position.  This is the 'absolute' desktop location of the mouse.
-FVector2D UWidgetLayoutLibrary::GetMousePositionOnPlatform();
+<h5 id="filling-horizontalboxslot-at-run-time">Filling HorizontalBoxSlot At Run-time</h5>
 
-//Gets the platform's mouse cursor position in the local space of the viewport widget.
-FVector2D UWidgetLayoutLibrary::GetMousePositionOnViewport(UObject* WorldContextObject);
+<pre><code>void UBags::NativeConstruct()
+{
+    Super::NativeConstruct();
+
+    //Get HorizontalBox in Widget Blueprint.
+    UHorizontalBox* HorBox = Cast&lt;UHorizontalBox&gt;(GetWidgetFromName(FName(&quot;HorizontalBox_62&quot;)));
+    if (HorBox)
+    {
+        //Load Item Blueprint
+        if (UClass* MyWidgetClass = LoadClass&lt;UMyItemWidget&gt;(NULL, TEXT(&quot;WidgetBlueprint'/Game/UI/ItemBP.ItemBP_C'&quot;)))
+        {
+            for (int i = 0; i &lt; 5; i++)
+            {
+                UMyItemWidget* Item = WidgetTree-&gt;ConstructWidget&lt;UMyItemWidget&gt;(MyWidgetClass);
+                UPanelSlot* Slot = HorBox-&gt;AddChild(Item);
+                if (UHorizontalBoxSlot* HorSlot = Cast&lt;UHorizontalBoxSlot&gt;(Slot))
+                {
+                    //Set Size Mode as Fill
+                    FSlateChildSize Size(ESlateSizeRule::Type::Fill);
+                    HorSlot-&gt;SetSize(Size);
+
+                    //Set Align as Center in Horizontal direction.
+                    HorSlot-&gt;SetHorizontalAlignment(EHorizontalAlignment::HAlign_Center);
+
+                    //Set Align as Center in Vertical direction.
+                    HorSlot-&gt;SetVerticalAlignment(EVerticalAlignment::VAlign_Center);
+                }
+            }
+        }
+    }
+}
 </code></pre>
 
-<h5 id="how-to-removes-all-widgets-from-the-viewport">How to removes all widgets from the viewport</h5>
+<h5 id="filling-uniformgridpanel-at-run-time">Filling UniformGridPanel At Run-time</h5>
 
-<pre><code>void UWidgetLayoutLibrary::RemoveAllWidgets(UObject* WorldContextObject);
+<pre><code>void UMyUserWidget::NativeConstruct()
+{
+    Super::NativeConstruct();
+
+    //Get UniformGridPanel in Widget Blueprint.
+    UUniformGridPanel* UniGrid = Cast&lt;UUniformGridPanel&gt;(GetWidgetFromName(FName(&quot;UniformGridPanel_01&quot;)));
+    if (UniGrid)
+    {
+        UButton* MyButton = WidgetTree-&gt;ConstructWidget&lt;UButton&gt;(UButton::StaticClass());
+        if(UUniformGridSlot* Slot = UniGrid-&gt;AddChildToUniformGrid(MyButton))
+        {
+            //Set the horizontal index and vertical index of Grid.
+            Slot-&gt;SetRow(5);
+            Slot-&gt;SetColumn(5);
+        }
+    }
+}
 </code></pre>
+
+<h5 id="get-and-set-index-of-grid-of-uniformgridpanel-in-batch">Get And Set index of Grid of UniformGridPanel In Batch</h5>
+
+<pre><code>TArray&lt;UPanelSlot*&gt; Slots = UniformGridPanel-&gt;GetSlots();
+int  index = 0;
+for (UPanelSlot* Slot : Slots)
+{
+    UUniformGridSlot * UniSlot = Cast&lt;UUniformGridSlot&gt;(Slot);
+    if (UniSlot)
+    {
+        UniSlot-&gt;SetRow(index);
+        UniSlot-&gt;SetColumn(1);
+    }
+    index++;
+}
+</code></pre>
+
+<h5 id="how-to-scale-or-zoom-a-widget">How to scale or zoom a widget?</h5>
+
+<p>For Mouse Zoom:</p>
+
+<ul>
+<li>override onMouseWheel</li>
+<li>add Wheel Delta to Panning Canvas&rsquo; Render Transform Scale</li>
+<li>clamp min result to something above 0 (widgets flip if scaled below 0) and max to your desired max zoom</li>
+<li>Set Render Scale of the Panning Canvas with the result of the above</li>
+</ul>
+
+<p>Reference: How to scale/zoom a widget with blueprints?<br />
+<a href="https://answers.unrealengine.com/questions/815202/how-to-scalezoom-a-widget-with-blueprints.html">https://answers.unrealengine.com/questions/815202/how-to-scalezoom-a-widget-with-blueprints.html</a></p>
+
+<h5 id="how-to-clip-widget-display-area">How to clip widget display area?</h5>
+
+<p>Steps:</p>
+
+<ul>
+<li>Add a CanvasPanel as the parent of your target widget</li>
+<li>set the <code>Clipping</code> of CanvasPanel to <code>Clip to Bounds</code></li>
+</ul>
+
+<p>then the part outside CanvasPanel of your target widget would be clipped.</p>
 
 <h5 id="how-to-alter-widget-self-s-anchor-to-the-center-of-itself">How to alter widget self&rsquo;s anchor to the center of itself.</h5>
 
@@ -634,11 +722,6 @@ use:</p>
 }
 </code></pre>
 
-<h5 id="how-to-set-ubutton-s-image-texture-for-normal-hovered-and-pressed-state">How to set UButton&rsquo;s Image Texture for Normal, Hovered and Pressed state</h5>
-
-<pre><code>MyButton-&gt;WidgetStyle.Normal.SetResourceObject(TextureRes);
-</code></pre>
-
 <h5 id="how-to-make-widgetcomponent-look-like-billboard">How to make WidgetComponent look like billboard?</h5>
 
 <pre><code>UWidgetComponent::SetWidgetSpace(EWidgetSpace::Screen);
@@ -654,6 +737,41 @@ use:</p>
     WidgetComp-&gt;SetVisibility(true);
     WidgetComp-&gt;SetWidgetSpace(EWidgetSpace::Screen);
 }
+</code></pre>
+
+<h3 id="uwidgetlayoutlibrary">UWidgetLayoutLibrary</h3>
+
+<h5 id="how-to-get-the-scale-of-viewport">How to get the scale of viewport</h5>
+
+<pre><code>FVector2D UWidgetLayoutLibrary::GetViewportScale(UObject* WorldContextObject);
+</code></pre>
+
+<h5 id="how-to-get-the-viewport-size">How to get the viewport size</h5>
+
+<pre><code>FVector2D UWidgetLayoutLibrary::GetViewportSize(UObject* WorldContextObject);
+
+void APlayerController::GetViewportSize(int32&amp; SizeX, int32&amp; SizeY) const;
+</code></pre>
+
+<h5 id="how-to-get-the-geometry-of-all-widgets-in-viewport-or-playerscreen">How to get the Geometry of all widgets in Viewport or PlayerScreen</h5>
+
+<pre><code>FGeometry UWidgetLayoutLibrary::GetViewportWidgetGeometry(UObject* WorldContextObject);
+
+FGeometry UWidgetLayoutLibrary::GetPlayerScreenWidgetGeometry(APlayerController* PlayerController);
+</code></pre>
+
+<h5 id="how-to-get-mouse-position">How to get mouse position</h5>
+
+<pre><code>//Gets the platform's mouse cursor position.  This is the 'absolute' desktop location of the mouse.
+FVector2D UWidgetLayoutLibrary::GetMousePositionOnPlatform();
+
+//Gets the platform's mouse cursor position in the local space of the viewport widget.
+FVector2D UWidgetLayoutLibrary::GetMousePositionOnViewport(UObject* WorldContextObject);
+</code></pre>
+
+<h5 id="how-to-removes-all-widgets-from-the-viewport">How to removes all widgets from the viewport</h5>
+
+<pre><code>void UWidgetLayoutLibrary::RemoveAllWidgets(UObject* WorldContextObject);
 </code></pre>
 
 <hr />
@@ -1030,7 +1148,7 @@ use:</p>
          data-message-zero="no post found"
          data-message-one="1 post found"
          data-message-other="{n} posts found">
-         516 posts found
+         514 posts found
       </p>
     </div>
   </div>
