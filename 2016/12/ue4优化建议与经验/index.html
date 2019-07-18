@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.53 with theme Tranquilpeak 0.4.6-BETA">
+<meta name="generator" content="Hugo 0.55.6 with theme Tranquilpeak 0.4.6-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="UE4性能优化, UE4, Performance, Optimization">
 <meta name="description" content="keywords：UE4性能优化、Performance Optimization
@@ -396,7 +396,12 @@ if (!doNotTrack) {
     
       <time itemprop="datePublished" datetime="2016-12-09T19:17:02&#43;08:00">
         
-  December 9, 2016
+  
+  
+  
+  
+    Friday, 19:17, Dec 9, 2016
+  
 
       </time>
     
@@ -526,7 +531,7 @@ Dynamic Shadow Distance 表示在多少距离内使用动态阴影，超过这�
 <h4 id="植被优化">植被优化</h4>
 
 <ol>
-<li><p>地形编辑时，使用Instanced Static Meshes。Intancing会增加GPU的开销，但是可以显著降低CPU的开销。注意：实际应用中，Instancing并不能作为减少CPU draw call次数的主要途径，因为实际的游戏场景不可能全是instanced mesh。要减少draw call次数，需要减少材质种类，提高材质复用率。</p></li>
+<li><p>地形编辑时，使用Instanced Static Meshes。Intancing会增加GPU的开销，但是可以显著降低CPU的开销。注意：实际应用中，Instancing并不能作为减少CPU draw call次数的主要途径，因为实际的游戏场景不可能全是instanced mesh，即使是满屏的植被，也并非一定要用instanced mesh。要减少draw call次数，需要减少材质种类，提高材质复用率。</p></li>
 
 <li><p>当Instanced Mesh的数量较多时（比如百万级），一帧内执行<code>RemoveInstance</code>或者<code>UpdateInstanceTransform</code>数次，帧率会狂泻。<br />
 优化办法：操作Instanced Mesh之前，将<code>UHierarchicalInstancedStaticMeshComponent::bAutoRebuildTreeOnInstanceChanges</code>设置为false，然后执行你需要的各种Instanced Mesh操作，操作玩之后，然后将<code>bAutoRebuildTreeOnInstanceChanges</code>设置为true，然后执行<code>BuildTreeIfOutdated(true, false);</code>，这样可以显著减少因操作百万级Instanced Mesh而导致的性能损失。</p></li>

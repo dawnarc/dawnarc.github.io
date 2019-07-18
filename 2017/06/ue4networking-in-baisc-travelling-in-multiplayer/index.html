@@ -5,52 +5,28 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.53 with theme Tranquilpeak 0.4.6-BETA">
+<meta name="generator" content="Hugo 0.55.6 with theme Tranquilpeak 0.4.6-BETA">
 <meta name="author" content="Neil Wang">
-<meta name="keywords" content="">
-<meta name="description" content="keywords：UE4、Client、Dedicated Server、Passing Arguments、Login、ClientTravel
-客户端发送参数 执行PlayerController-&gt;ClientTravel时，默认Address URL如下：
-FString Address = TEXT(&quot;127.0.0.1:7777&quot;);  登陆时如果需要传递参数，则URL的格式如下：
-FString Address = FString::Printf(TEXT(&quot;127.0.0.1:7777?Param1=%s?Param2=%s&quot;), *Param1, *Param2);  服务端解析参数 先重写GameMode的InitNewPlayer()函数，然后再在该函数内做如下解析：
-FString AMyGameMode::InitNewPlayer(APlayerController* NewPlayerController, const FUniqueNetIdRepl&amp; UniqueId, const FString&amp; Options, const FString&amp; Portal = TEXT(&quot;&quot;)) { FString Param1 = UGameplayStatics::ParseOption(Options, TEXT(&quot;Param1&quot;)); FString Param2 = UGameplayStatics::ParseOption(Options, TEXT(&quot;Param2&quot;)); }  官方文档：Passing Arguments To Server During Connection
-https://wiki.unrealengine.com/Passing_Arguments_To_Server_During_Connection
-明朝且做莫思量，如何过得今宵去？—周紫芝《踏莎行》">
+<meta name="keywords" content="UE4, Networking">
+<meta name="description" content="Keywords: UE4, Networking, Dedicated Server,ClientTravel, ServerTravel, UEngine::Browse">
 
 
-<meta property="og:description" content="keywords：UE4、Client、Dedicated Server、Passing Arguments、Login、ClientTravel
-客户端发送参数 执行PlayerController-&gt;ClientTravel时，默认Address URL如下：
-FString Address = TEXT(&quot;127.0.0.1:7777&quot;);  登陆时如果需要传递参数，则URL的格式如下：
-FString Address = FString::Printf(TEXT(&quot;127.0.0.1:7777?Param1=%s?Param2=%s&quot;), *Param1, *Param2);  服务端解析参数 先重写GameMode的InitNewPlayer()函数，然后再在该函数内做如下解析：
-FString AMyGameMode::InitNewPlayer(APlayerController* NewPlayerController, const FUniqueNetIdRepl&amp; UniqueId, const FString&amp; Options, const FString&amp; Portal = TEXT(&quot;&quot;)) { FString Param1 = UGameplayStatics::ParseOption(Options, TEXT(&quot;Param1&quot;)); FString Param2 = UGameplayStatics::ParseOption(Options, TEXT(&quot;Param2&quot;)); }  官方文档：Passing Arguments To Server During Connection
-https://wiki.unrealengine.com/Passing_Arguments_To_Server_During_Connection
-明朝且做莫思量，如何过得今宵去？—周紫芝《踏莎行》">
+<meta property="og:description" content="Keywords: UE4, Networking, Dedicated Server,ClientTravel, ServerTravel, UEngine::Browse">
 <meta property="og:type" content="article">
-<meta property="og:title" content="[UE4]客户端登陆时如何传递参数给服务器">
-<meta name="twitter:title" content="[UE4]客户端登陆时如何传递参数给服务器">
-<meta property="og:url" content="https://dawnarc.com/2017/09/ue4%E5%AE%A2%E6%88%B7%E7%AB%AF%E7%99%BB%E9%99%86%E6%97%B6%E5%A6%82%E4%BD%95%E4%BC%A0%E9%80%92%E5%8F%82%E6%95%B0%E7%BB%99%E6%9C%8D%E5%8A%A1%E5%99%A8/">
-<meta property="twitter:url" content="https://dawnarc.com/2017/09/ue4%E5%AE%A2%E6%88%B7%E7%AB%AF%E7%99%BB%E9%99%86%E6%97%B6%E5%A6%82%E4%BD%95%E4%BC%A0%E9%80%92%E5%8F%82%E6%95%B0%E7%BB%99%E6%9C%8D%E5%8A%A1%E5%99%A8/">
+<meta property="og:title" content="[UE4]Networking in Baisc - Travelling in Multiplayer">
+<meta name="twitter:title" content="[UE4]Networking in Baisc - Travelling in Multiplayer">
+<meta property="og:url" content="https://dawnarc.com/2017/06/ue4networking-in-baisc-travelling-in-multiplayer/">
+<meta property="twitter:url" content="https://dawnarc.com/2017/06/ue4networking-in-baisc-travelling-in-multiplayer/">
 <meta property="og:site_name" content="玄冬Wong">
-<meta property="og:description" content="keywords：UE4、Client、Dedicated Server、Passing Arguments、Login、ClientTravel
-客户端发送参数 执行PlayerController-&gt;ClientTravel时，默认Address URL如下：
-FString Address = TEXT(&quot;127.0.0.1:7777&quot;);  登陆时如果需要传递参数，则URL的格式如下：
-FString Address = FString::Printf(TEXT(&quot;127.0.0.1:7777?Param1=%s?Param2=%s&quot;), *Param1, *Param2);  服务端解析参数 先重写GameMode的InitNewPlayer()函数，然后再在该函数内做如下解析：
-FString AMyGameMode::InitNewPlayer(APlayerController* NewPlayerController, const FUniqueNetIdRepl&amp; UniqueId, const FString&amp; Options, const FString&amp; Portal = TEXT(&quot;&quot;)) { FString Param1 = UGameplayStatics::ParseOption(Options, TEXT(&quot;Param1&quot;)); FString Param2 = UGameplayStatics::ParseOption(Options, TEXT(&quot;Param2&quot;)); }  官方文档：Passing Arguments To Server During Connection
-https://wiki.unrealengine.com/Passing_Arguments_To_Server_During_Connection
-明朝且做莫思量，如何过得今宵去？—周紫芝《踏莎行》">
-<meta name="twitter:description" content="keywords：UE4、Client、Dedicated Server、Passing Arguments、Login、ClientTravel
-客户端发送参数 执行PlayerController-&gt;ClientTravel时，默认Address URL如下：
-FString Address = TEXT(&quot;127.0.0.1:7777&quot;);  登陆时如果需要传递参数，则URL的格式如下：
-FString Address = FString::Printf(TEXT(&quot;127.0.0.1:7777?Param1=%s?Param2=%s&quot;), *Param1, *Param2);  服务端解析参数 先重写GameMode的InitNewPlayer()函数，然后再在该函数内做如下解析：
-FString AMyGameMode::InitNewPlayer(APlayerController* NewPlayerController, const FUniqueNetIdRepl&amp; UniqueId, const FString&amp; Options, const FString&amp; Portal = TEXT(&quot;&quot;)) { FString Param1 = UGameplayStatics::ParseOption(Options, TEXT(&quot;Param1&quot;)); FString Param2 = UGameplayStatics::ParseOption(Options, TEXT(&quot;Param2&quot;)); }  官方文档：Passing Arguments To Server During Connection
-https://wiki.unrealengine.com/Passing_Arguments_To_Server_During_Connection
-明朝且做莫思量，如何过得今宵去？—周紫芝《踏莎行》">
+<meta property="og:description" content="Keywords: UE4, Networking, Dedicated Server,ClientTravel, ServerTravel, UEngine::Browse">
+<meta name="twitter:description" content="Keywords: UE4, Networking, Dedicated Server,ClientTravel, ServerTravel, UEngine::Browse">
 <meta property="og:locale" content="en-us">
 
   
-    <meta property="article:published_time" content="2017-09-14T14:00:40">
+    <meta property="article:published_time" content="2017-06-01T11:05:40">
   
   
-    <meta property="article:modified_time" content="2017-09-14T14:00:40">
+    <meta property="article:modified_time" content="2017-06-01T11:05:40">
   
   
   
@@ -85,7 +61,7 @@ https://wiki.unrealengine.com/Passing_Arguments_To_Server_During_Connection
   <meta property="twitter:image" content="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=640">
 
 
-    <title>[UE4]客户端登陆时如何传递参数给服务器</title>
+    <title>[UE4]Networking in Baisc - Travelling in Multiplayer</title>
 
     <link rel="icon" href="https://dawnarc.com/favicon.png">
     
@@ -94,7 +70,7 @@ https://wiki.unrealengine.com/Passing_Arguments_To_Server_During_Connection
       <link rel="publisher" href="https://plus.google.com/111340706178390411568">
     
 
-    <link rel="canonical" href="https://dawnarc.com/2017/09/ue4%E5%AE%A2%E6%88%B7%E7%AB%AF%E7%99%BB%E9%99%86%E6%97%B6%E5%A6%82%E4%BD%95%E4%BC%A0%E9%80%92%E5%8F%82%E6%95%B0%E7%BB%99%E6%9C%8D%E5%8A%A1%E5%99%A8/">
+    <link rel="canonical" href="https://dawnarc.com/2017/06/ue4networking-in-baisc-travelling-in-multiplayer/">
 
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
@@ -344,15 +320,20 @@ if (!doNotTrack) {
             <div class="post-header main-content-wrap text-left">
   
     <h1 class="post-title" itemprop="headline">
-      [UE4]客户端登陆时如何传递参数给服务器
+      [UE4]Networking in Baisc - Travelling in Multiplayer
     </h1>
   
   
   <div class="postShorten-meta post-meta">
     
-      <time itemprop="datePublished" datetime="2017-09-14T14:00:40&#43;08:00">
+      <time itemprop="datePublished" datetime="2017-06-01T11:05:40&#43;08:00">
         
-  September 14, 2017
+  
+  
+  
+  
+    Thursday, 11:05, Jun 1, 2017
+  
 
       </time>
     
@@ -371,25 +352,51 @@ if (!doNotTrack) {
           
           <div class="post-content markdown" itemprop="articleBody">
             <div class="main-content-wrap">
-              
+              <p>Keywords: UE4, Networking, Dedicated Server,ClientTravel, ServerTravel, UEngine::Browse</p>
 
-<p>keywords：UE4、Client、Dedicated Server、Passing Arguments、Login、ClientTravel</p>
+<h3 id="notices">Notices</h3>
 
-<h5 id="客户端发送参数">客户端发送参数</h5>
+<h5 id="difference-between-servertravel-and-clienttravel">Difference between ServerTravel and ClientTravel</h5>
 
-<p>执行PlayerController-&gt;ClientTravel时，默认Address URL如下：</p>
+<ul>
+<li>ServerTravel also informs the clients to move along with the server.</li>
+<li>ClientTravel will be called locally for the client to load a new map. or connect to ip.</li>
+<li>Browse can load local map via LoadMap ( not for multiplayer ) but there are more things happening in this method. I also want to know more about what it does and what it should be used for.</li>
+<li>LoadMap should also load a map for a local client</li>
+</ul>
+
+<p>Browse, LoadMap, ServerTravel and ClientTravel?<br />
+<a href="https://answers.unrealengine.com/questions/122565/browse-servertravel-and-clienttravel.html">https://answers.unrealengine.com/questions/122565/browse-servertravel-and-clienttravel.html</a></p>
+
+<p>What&rsquo;s the different between absolute travel and relative travel?<br />
+<a href="https://answers.unrealengine.com/questions/101284/what-the-different-between-absolute-travel-and-rel.html">https://answers.unrealengine.com/questions/101284/what-the-different-between-absolute-travel-and-rel.html</a></p>
+
+<p>What is the difference between ServerTravel and OpenLevel?<br />
+<a href="https://answers.unrealengine.com/questions/55477/the-difference-of-the-two-functions.html">https://answers.unrealengine.com/questions/55477/the-difference-of-the-two-functions.html</a></p>
+
+<p>PlayerController-&gt;ClientTravel() (Connect to remote server)<br />
+<a href="https://answers.unrealengine.com/questions/29017/gamemode-multiplayer-c.html">https://answers.unrealengine.com/questions/29017/gamemode-multiplayer-c.html</a></p>
+
+<p>Seamless and non-seamless travel<br />
+<a href="https://docs.unrealengine.com/latest/INT/Gameplay/Networking/Travelling">https://docs.unrealengine.com/latest/INT/Gameplay/Networking/Travelling</a></p>
+
+<h3 id="cases">Cases</h3>
+
+<h5 id="how-to-pass-arguments-from-client-to-server">How to pass arguments from Client to Server</h5>
+
+<p>When execute <code>PlayerController-&gt;ClientTravel</code>, default URL is like this:</p>
 
 <pre><code>FString Address = TEXT(&quot;127.0.0.1:7777&quot;);
 </code></pre>
 
-<p>登陆时如果需要传递参数，则URL的格式如下：</p>
+<p>If want to pass arguments to Server when logining, URL format is like this:</p>
 
 <pre><code>FString Address = FString::Printf(TEXT(&quot;127.0.0.1:7777?Param1=%s?Param2=%s&quot;), *Param1, *Param2);
 </code></pre>
 
-<h5 id="服务端解析参数">服务端解析参数</h5>
+<h5 id="how-to-parse-arguments-sent-by-client-on-server">How to parse arguments sent by Client on Server</h5>
 
-<p>先重写GameMode的InitNewPlayer()函数，然后再在该函数内做如下解析：</p>
+<p>Overrice function <code>InitNewPlayer()</code> in <code>GameMode</code>, then parse arguments like this:</p>
 
 <pre><code>FString AMyGameMode::InitNewPlayer(APlayerController* NewPlayerController, const FUniqueNetIdRepl&amp; UniqueId, const FString&amp; Options, const FString&amp; Portal = TEXT(&quot;&quot;))
 {
@@ -398,13 +405,61 @@ if (!doNotTrack) {
 }
 </code></pre>
 
-<p>官方文档：Passing Arguments To Server During Connection<br />
+<p>Official Doc: Passing Arguments To Server During Connection<br />
 <a href="https://wiki.unrealengine.com/Passing_Arguments_To_Server_During_Connection">https://wiki.unrealengine.com/Passing_Arguments_To_Server_During_Connection</a></p>
+
+<h5 id="how-does-server-informs-clients-which-are-connected-to-server-to-travel-map">How does Server informs Clients which are connected to Server to travel map</h5>
+
+<p>Execute <code>ClientTravel</code> on Server:</p>
+
+<pre><code>void AMyGameModeBase::PostLogin(APlayerController* NewPlayer)
+{
+    Super::PostLogin(NewPlayer);
+
+    FString URL = TEXT(&quot;/Game/Maps/TestMap&quot;);
+    NewPlayer-&gt;ClientTravel(URL, TRAVEL_Absolute);
+
+}
+</code></pre>
+
+<div class="alert warning ">
+  <p>This way works right for travelling to new map, but Client would also disconnect to Server. It means that the <code>NetMode</code> of all Actors in Client would be set as <code>NM_Standalone</code>.</p>
+</div>
+
+<h5 id="how-to-use-servertravel">How to use ServerTravel</h5>
+
+<div class="alert success ">
+  <p>A common use case is starting a server in a lobby level. Clients connect to this lobby level and choose loadout and character, for example. When ready, the server triggers a ServerTravel, which transitions all clients into the main game level.</p>
+</div>
+
+<p>When ServerTravel is triggered, the server tells all clients to begin to ClientTravel to the map specified. If the ServerTravel is seamless then the client maintains its connection to the server. If it’s not seamless then all the clients disconnect from the server and reconnect once they have loaded the map. Internally, the server does a similar process: it loads in the new level, usually a game world for all the clients to play on, and begins accepting player spawn requests once ready.</p>
+
+<p>Reference: Map travel<br />
+<a href="https://docs.improbable.io/unreal/alpha/content/map-travel#in-native-unreal-1">https://docs.improbable.io/unreal/alpha/content/map-travel#in-native-unreal-1</a></p>
+
+<h3 id="api-related">API Related</h3>
+
+<h5 id="clienttravel">ClientTravel</h5>
+
+<p>See the usage of <code>APlayerController-&gt;ClientTravel()</code> in Offical Project <strong>ShooterGame</strong>.</p>
+
+<h5 id="seamless-travel">Seamless travel</h5>
+
+<p>After seamless travel <code>AGameModeBase::GenericPlayerInitialization(AController* Controller)</code> and <code>AGameModeBase::HandleStartingNewPlayer()</code>, Gets called for the client.</p>
+
+<p>Related<br />
+<a href="https://answers.unrealengine.com/questions/251940/post-login-event-not-firing-on-active-clients-afte.html">https://answers.unrealengine.com/questions/251940/post-login-event-not-firing-on-active-clients-afte.html</a></p>
+
+<h3 id="reference">Reference</h3>
+
+<h5 id="official-docs">Official Docs</h5>
+
+<p>Travelling in Multiplayer<br />
+<a href="https://docs.unrealengine.com/en-US/Gameplay/Networking/Travelling/index.html">https://docs.unrealengine.com/en-US/Gameplay/Networking/Travelling/index.html</a></p>
 
 <hr />
 
-<p><code>明朝且做莫思量，如何过得今宵去？—周紫芝《踏莎行》</code></p>
-
+<p><code>山舞银蛇，原驰蜡象，欲与天公试比高。须晴日，看红装素裹，分外妖娆。----毛泽东《沁园春·雪》</code></p>
               
             </div>
           </div>
@@ -429,7 +484,7 @@ if (!doNotTrack) {
           
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2017/09/ue4error-only-local-player-controllers-can-be-assigned-to-widgets/" data-tooltip="[UE4]Error Only Local Player Controllers can be assigned to widgets">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2017/06/ue4%E8%BD%AC%E8%BD%BDuengine-browse%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B/" data-tooltip="[UE4]转载：UEngine Browse()执行流程">
               
                   <i class="fa fa-angle-left"></i>
                   <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
@@ -437,7 +492,7 @@ if (!doNotTrack) {
             </li>
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2017/09/ue4hud%E4%B8%AD%E7%BB%98%E5%88%B6%E6%96%87%E6%9C%ACfont%E5%AD%97%E4%BD%93%E8%93%9D%E5%9B%BE%E4%BD%BF%E7%94%A8/" data-tooltip="[UE4]HUD中绘制文本(Font字体蓝图使用)">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2017/06/ue4c-%E8%8E%B7%E5%8F%96%E6%B8%B8%E6%88%8F%E5%BD%93%E5%89%8D%E7%99%BB%E5%BD%95%E7%9A%84%E6%9C%8D%E5%8A%A1%E5%99%A8ip%E5%92%8C%E7%AB%AF%E5%8F%A3/" data-tooltip="[UE4]C&#43;&#43;获取游戏当前登录的服务器IP和端口">
               
                   <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
                   <i class="fa fa-angle-right"></i>
@@ -497,7 +552,7 @@ if (!doNotTrack) {
           
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2017/09/ue4error-only-local-player-controllers-can-be-assigned-to-widgets/" data-tooltip="[UE4]Error Only Local Player Controllers can be assigned to widgets">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2017/06/ue4%E8%BD%AC%E8%BD%BDuengine-browse%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B/" data-tooltip="[UE4]转载：UEngine Browse()执行流程">
               
                   <i class="fa fa-angle-left"></i>
                   <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
@@ -505,7 +560,7 @@ if (!doNotTrack) {
             </li>
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2017/09/ue4hud%E4%B8%AD%E7%BB%98%E5%88%B6%E6%96%87%E6%9C%ACfont%E5%AD%97%E4%BD%93%E8%93%9D%E5%9B%BE%E4%BD%BF%E7%94%A8/" data-tooltip="[UE4]HUD中绘制文本(Font字体蓝图使用)">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2017/06/ue4c-%E8%8E%B7%E5%8F%96%E6%B8%B8%E6%88%8F%E5%BD%93%E5%89%8D%E7%99%BB%E5%BD%95%E7%9A%84%E6%9C%8D%E5%8A%A1%E5%99%A8ip%E5%92%8C%E7%AB%AF%E5%8F%A3/" data-tooltip="[UE4]C&#43;&#43;获取游戏当前登录的服务器IP和端口">
               
                   <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
                   <i class="fa fa-angle-right"></i>
@@ -633,9 +688,9 @@ $(document).ready(function() {
     
       <script>
         var disqus_config = function () {
-          this.page.url = 'https:\/\/dawnarc.com\/2017\/09\/ue4%E5%AE%A2%E6%88%B7%E7%AB%AF%E7%99%BB%E9%99%86%E6%97%B6%E5%A6%82%E4%BD%95%E4%BC%A0%E9%80%92%E5%8F%82%E6%95%B0%E7%BB%99%E6%9C%8D%E5%8A%A1%E5%99%A8\/';
+          this.page.url = 'https:\/\/dawnarc.com\/2017\/06\/ue4networking-in-baisc-travelling-in-multiplayer\/';
           
-            this.page.identifier = '\/2017\/09\/ue4%E5%AE%A2%E6%88%B7%E7%AB%AF%E7%99%BB%E9%99%86%E6%97%B6%E5%A6%82%E4%BD%95%E4%BC%A0%E9%80%92%E5%8F%82%E6%95%B0%E7%BB%99%E6%9C%8D%E5%8A%A1%E5%99%A8\/'
+            this.page.identifier = '\/2017\/06\/ue4networking-in-baisc-travelling-in-multiplayer\/'
           
         };
         (function() {
