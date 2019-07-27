@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.55.6 with theme Tranquilpeak 0.4.6-BETA">
+<meta name="author" content="Neil Wang">
+<meta name="keywords" content="">
+<meta name="description" content="keywords: Virtual Functions, VTables">
+
+
+<meta property="og:description" content="keywords: Virtual Functions, VTables">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[C&#43;&#43;]How Are Virtual Functions Implemented At a Deep Level">
+<meta name="twitter:title" content="[C&#43;&#43;]How Are Virtual Functions Implemented At a Deep Level">
+<meta property="og:url" content="https://dawnarc.com/2019/07/c-how-are-virtual-functions-implemented-at-a-deep-level/">
+<meta property="twitter:url" content="https://dawnarc.com/2019/07/c-how-are-virtual-functions-implemented-at-a-deep-level/">
+<meta property="og:site_name" content="玄冬Wong">
+<meta property="og:description" content="keywords: Virtual Functions, VTables">
+<meta name="twitter:description" content="keywords: Virtual Functions, VTables">
+<meta property="og:locale" content="en-us">
+
+  
+    <meta property="article:published_time" content="2019-07-25T18:39:40">
+  
+  
+    <meta property="article:modified_time" content="2019-07-25T18:39:40">
+  
+  
+  
+    
+      <meta property="article:section" content="C&#43;&#43;">
+    
+  
+  
+    
+      <meta property="article:tag" content="C&#43;&#43;">
+    
+  
+
+
+<meta name="twitter:card" content="summary">
+
+  <meta name="twitter:site" content="@dawn_arc">
+
+
+  <meta name="twitter:creator" content="@dawn_arc">
+
+
+
+
+
+
+  <meta property="og:image" content="https://dawnarc.com/thumbnail/thumbnail-japen-015.jpg">
+  <meta property="twitter:image" content="https://dawnarc.com/thumbnail/thumbnail-japen-015.jpg">
+
+
+
+
+
+  <meta property="og:image" content="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=640">
+  <meta property="twitter:image" content="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=640">
+
+
+    <title>[C&#43;&#43;]How Are Virtual Functions Implemented At a Deep Level</title>
+
+    <link rel="icon" href="https://dawnarc.com/favicon.png">
+    
+
+    
+      <link rel="publisher" href="https://plus.google.com/111340706178390411568">
+    
+
+    <link rel="canonical" href="https://dawnarc.com/2019/07/c-how-are-virtual-functions-implemented-at-a-deep-level/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/jquery.fancybox.min.css" integrity="sha256-vuXZ9LGmmwtjqFX1F+EKin1ThZMub58gKULUyf0qECk=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/helpers/jquery.fancybox-thumbs.min.css" integrity="sha256-SEa4XYAHihTcEP1f5gARTB2K26Uk8PsndQYHQC1f4jU=" crossorigin="anonymous" />
+    
+    
+    <link rel="stylesheet" href="https://dawnarc.com/css/style-twzjdbqhmnnacqs0pwwdzcdbt8yhv8giawvjqjmyfoqnvazl0dalmnhdkvp7.min.css" />
+    
+    
+      
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/solarized-light.min.css">
+      
+    
+
+    
+      
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-78064851-2', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="4">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="https://dawnarc.com/">玄冬Wong</a>
+  </div>
+  
+    
+      <a class="header-right-picture "
+         href="https://dawnarc.com/#about">
+    
+    
+    
+      
+        <img class="header-picture" src="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=90" alt="Author&#39;s picture" />
+      
+    
+    </a>
+  
+  
+  
+  
+</header>
+
+      <nav id="sidebar" data-behavior="4">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="https://dawnarc.com/#about">
+          <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=110" alt="Author&#39;s picture" />
+        </a>
+        <h4 class="sidebar-profile-name">Neil Wang</h4>
+        
+          <h5 class="sidebar-profile-bio">久长唯有品格</h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/categories">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+      
+      <span class="sidebar-button-desc">Categories</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/tags">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+      
+      <span class="sidebar-button-desc">Tags</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/archives">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+      
+      <span class="sidebar-button-desc">Archives</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/#about">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+      
+      <span class="sidebar-button-desc">About</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+      
+      <span class="sidebar-button-desc">Home</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/index.xml">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://stackoverflow.com/users/1645289/protoss" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-stack-overflow"></i>
+      
+      <span class="sidebar-button-desc">Stack Overflow</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://www.artstation.com/artist/dawnarc" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-artstation"></i>
+      
+      <span class="sidebar-button-desc">ArtStation</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://www.facebook.com/koanland" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-facebook"></i>
+      
+      <span class="sidebar-button-desc">Facebook</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/dawnarc" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://www.linkedin.com/in/dawnarc/" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-linkedin"></i>
+      
+      <span class="sidebar-button-desc">Linkedin</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://www.pinterest.com/wangaiguo/" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-pinterest"></i>
+      
+      <span class="sidebar-button-desc">Pinterest</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://steamcommunity.com/id/dawnarc" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-steam"></i>
+      
+      <span class="sidebar-button-desc">Steam</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://twitter.com/dawn_arc" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-twitter"></i>
+      
+      <span class="sidebar-button-desc">Twitter</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://weibo.com/koanland" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-weibo"></i>
+      
+      <span class="sidebar-button-desc">Weibo</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+
+    </ul>
+  </div>
+</nav>
+
+      
+
+      <div id="main" data-behavior="4"
+        class="
+               hasCoverMetaIn
+               ">
+        <article class="post" itemscope itemType="http://schema.org/BlogPosting">
+          
+          
+            <div class="post-header main-content-wrap text-left">
+  
+    <h1 class="post-title" itemprop="headline">
+      [C&#43;&#43;]How Are Virtual Functions Implemented At a Deep Level
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2019-07-25T18:39:40&#43;08:00">
+        
+  
+  
+  
+  
+    Thursday, 18:39, Jul 25, 2019
+  
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/c&#43;&#43;">C&#43;&#43;</a>
+    
+  
+
+  </div>
+
+</div>
+          
+          <div class="post-content markdown" itemprop="articleBody">
+            <div class="main-content-wrap">
+              <p>keywords: Virtual Functions, VTables</p>
+
+<h5 id="we-all-know-what-virtual-functions-are-in-c-but-how-are-they-implemented-at-a-deep-level">We all know what virtual functions are in C++, but how are they implemented at a deep level?</h5>
+
+<p>This is an array with pointers to functions, which are implementations of a particular virtual function. An index in this array represents particular index of a virtual function defined for a class. This includes pure virtual functions.</p>
+
+<p>When a polymorphic class derives from another polymorphic class, we may have the following situations:</p>
+
+<ul>
+<li>The deriving class does not add new virtual functions nor overrides any. In this case this class shares the vtable with the base class.</li>
+<li>The deriving class adds and overrides virtual methods. In this case it gets its own vtable, where the added virtual functions have index starting past the last derived one.</li>
+<li>Multiple polymorphic classes in the inheritance. In this case we have an index-shift between second and next bases and the index of it in the derived class</li>
+</ul>
+
+<h5 id="can-the-vtable-be-modified-or-even-directly-accessed-at-runtime">Can the vtable be modified or even directly accessed at runtime?</h5>
+
+<p>Not standard way - there&rsquo;s no API to access them. Compilers may have some extensions or private APIs to access them, but that may be only an extension.</p>
+
+<h5 id="does-the-vtable-exist-for-all-classes-or-only-those-that-have-at-least-one-virtual-function">Does the vtable exist for all classes, or only those that have at least one virtual function?</h5>
+
+<p>Only those that have at least one virtual function (be it even destructor) or derive at least one class that has its vtable (&ldquo;is polymorphic&rdquo;).</p>
+
+<h5 id="do-abstract-classes-simply-have-a-null-for-the-function-pointer-of-at-least-one-entry">Do abstract classes simply have a NULL for the function pointer of at least one entry?</h5>
+
+<p>That&rsquo;s a possible implementation, but rather not practiced. Instead there is usually a function that prints something like &ldquo;pure virtual function called&rdquo; and does abort(). The call to that may occur if you try to call the abstract method in the constructor or destructor.</p>
+
+<h5 id="does-having-a-single-virtual-function-slow-down-the-whole-class-or-only-the-call-to-the-function-that-is-virtual-and-does-the-speed-get-affected-if-the-virtual-function-is-actually-overwritten-or-not-or-does-this-have-no-effect-so-long-as-it-is-virtual">Does having a single virtual function slow down the whole class? Or only the call to the function that is virtual? And does the speed get affected if the virtual function is actually overwritten or not, or does this have no effect so long as it is virtual.</h5>
+
+<p>The slowdown is only dependent on whether the call is resolved as direct call or as a virtual call. And nothing else matters. :)</p>
+
+<p>If you call a virtual function through a pointer or reference to an object, then it will be always implemented as virtual call - because the compiler can never know what kind of object will be assigned to this pointer in runtime, and whether it is of a class in which this method is overridden or not. Only in two cases the compiler can resolve the call to a virtual function as a direct call:</p>
+
+<ul>
+<li>If you call the method through a value (a variable or result of a function that returns a value) - in this case the compiler has no doubts what the actual class of the object is, and can &ldquo;hard-resolve&rdquo; it at compile time.</li>
+<li>If the virtual method is declared final in the class to which you have a pointer or reference through which you call it (<span class="highlight-text red">only in C++11</span>). In this case compiler knows that this method cannot undergo any further overriding and it can only be the method from this class.</li>
+</ul>
+
+<p>Note though that virtual calls have only overhead of dereferencing two pointers. Using RTTI (although only available for polymorphic classes) is slower than calling virtual methods, should you find a case to implement the same thing two such ways. For example, defining <code>virtual bool HasHoof() { return false; }</code> and then override only as <code>bool Horse::HasHoof() { return true; }</code> would provide you with ability to call if (anim-&gt;HasHoof()) that will be faster than trying <code>if(dynamic_cast&lt;Horse*&gt;(anim))</code>. This is because <code>dynamic_cast</code> has to walk through the class hierarchy in some cases even recursively to see if there can be built the path from the actual pointer type and the desired class type. While the virtual call is always the same - dereferencing two pointers.</p>
+
+<p>Origin:<br />
+<a href="https://stackoverflow.com/questions/99297/how-are-virtual-functions-and-vtable-implemented">https://stackoverflow.com/questions/99297/how-are-virtual-functions-and-vtable-implemented</a></p>
+
+<hr />
+
+<p><code>It's enough for me to be sure that you and I exist at this moment. ― Gabriel García Márquez, One Hundred Years of Solitude</code></p>
+              
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+                
+                
+                  <div class="post-footer-tags">
+                    <span class="text-color-light text-small">TAGGED IN</span><br/>
+                    
+  <a class="tag tag--primary tag--small" href="https://dawnarc.com/tags/c&#43;&#43;/">C&#43;&#43;</a>
+
+                  </div>
+                
+              
+            
+            <div class="post-actions-wrap">
+  
+      <nav >
+        <ul class="post-actions post-action-nav">
+          
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2019/07/c-execution-order-of-constructor-and-deconstrutor-in-inheritance/" data-tooltip="[C&#43;&#43;]Execution Order of Constructor and Deconstrutor in Inheritance">
+              
+                  <i class="fa fa-angle-left"></i>
+                  <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+                </a>
+            </li>
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2019/07/unityshaderlab-collections/" data-tooltip="[Unity]ShaderLab Collections">
+              
+                  <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+                  <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+          
+        </ul>
+      </nav>
+    <ul class="post-actions post-action-share" >
+      
+        <li class="post-action hide-lg hide-md hide-sm">
+          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
+            <i class="fa fa-share-alt"></i>
+          </a>
+        </li>
+        
+      
+      
+        <li class="post-action">
+          <a class="post-action-btn btn btn--default" href="#disqus_thread">
+            <i class="fa fa-comment-o"></i>
+          </a>
+        </li>
+      
+      <li class="post-action">
+        
+          <a class="post-action-btn btn btn--default" href="#">
+        
+          <i class="fa fa-list"></i>
+        </a>
+      </li>
+    </ul>
+  
+</div>
+
+            
+              
+                <div id="disqus_thread">
+  <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+              
+            
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2019 Neil Wang. All Rights Reserved. Powered by <A href="https://gohugo.io/"> Hugo</A>.
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+        <div class="post-actions-wrap">
+  
+      <nav >
+        <ul class="post-actions post-action-nav">
+          
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2019/07/c-execution-order-of-constructor-and-deconstrutor-in-inheritance/" data-tooltip="[C&#43;&#43;]Execution Order of Constructor and Deconstrutor in Inheritance">
+              
+                  <i class="fa fa-angle-left"></i>
+                  <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+                </a>
+            </li>
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2019/07/unityshaderlab-collections/" data-tooltip="[Unity]ShaderLab Collections">
+              
+                  <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+                  <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+          
+        </ul>
+      </nav>
+    <ul class="post-actions post-action-share" >
+      
+        <li class="post-action hide-lg hide-md hide-sm">
+          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
+            <i class="fa fa-share-alt"></i>
+          </a>
+        </li>
+        
+      
+      
+        <li class="post-action">
+          <a class="post-action-btn btn btn--default" href="#disqus_thread">
+            <i class="fa fa-comment-o"></i>
+          </a>
+        </li>
+      
+      <li class="post-action">
+        
+          <a class="post-action-btn btn btn--default" href="#">
+        
+          <i class="fa fa-list"></i>
+        </a>
+      </li>
+    </ul>
+  
+</div>
+
+      </div>
+      <div id="share-options-bar" class="share-options-bar" data-behavior="4">
+  <i id="btn-close-shareoptions" class="fa fa-close"></i>
+  <ul class="share-options">
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-remove"></i>
+    </div>
+    
+      <img id="about-card-picture" src="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=110" alt="Author&#39;s picture" />
+    
+    <h4 id="about-card-name">Neil Wang</h4>
+    
+      <div id="about-card-bio">久长唯有品格</div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        To Be Marvelous
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker"></i>
+        <br/>
+        Yichang·Hubei
+      </div>
+    
+  </div>
+</div>
+
+    
+
+    
+  
+    
+      <div id="cover" style="background-image:url('https://dawnarc.com/cover-v1.2.0.jpg');"></div>
+    
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.7/js/jquery.fancybox.min.js" integrity="sha256-GEAnjcTqVP+vBp3SSc8bEDQqvWAZMiHyUSIorrWwH50=" crossorigin="anonymous"></script>
+
+
+<script src="https://dawnarc.com/js/script-pcw6v3xilnxydl1vddzazdverrnn9ctynvnxgwho987mfyqkuylcb1nlt.min.js"></script>
+
+
+<script lang="javascript">
+window.onload = updateMinWidth;
+window.onresize = updateMinWidth;
+document.getElementById("sidebar").addEventListener("transitionend", updateMinWidth);
+function updateMinWidth() {
+  var sidebar = document.getElementById("sidebar");
+  var main = document.getElementById("main");
+  main.style.minWidth = "";
+  var w1 = getComputedStyle(main).getPropertyValue("min-width");
+  var w2 = getComputedStyle(sidebar).getPropertyValue("width");
+  var w3 = getComputedStyle(sidebar).getPropertyValue("left");
+  main.style.minWidth = `calc(${w1} - ${w2} - ${w3})`;
+}
+</script>
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+  
+    
+      <script>
+        var disqus_config = function () {
+          this.page.url = 'https:\/\/dawnarc.com\/2019\/07\/c-how-are-virtual-functions-implemented-at-a-deep-level\/';
+          
+            this.page.identifier = '\/2019\/07\/c-how-are-virtual-functions-implemented-at-a-deep-level\/'
+          
+        };
+        (function() {
+          
+          
+          if (window.location.hostname == "localhost") {
+            return;
+          }
+          var d = document, s = d.createElement('script');
+          var disqus_shortname = 'dawnarc';
+          s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+          s.setAttribute('data-timestamp', +new Date());
+          (d.head || d.body).appendChild(s);
+        })();
+      </script>
+    
+  
+
+
+
+
+    
+  </body>
+</html>
+

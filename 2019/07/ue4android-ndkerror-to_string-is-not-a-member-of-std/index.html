@@ -520,6 +520,34 @@ Directory:</p>
 
 <p>Or replace them with newest version of these third parties sources if using them.</p>
 
+<p>5, Application would crash on startup, this issue may cause by missing <code>libc++_shared.so</code>.<br />
+Solution:<br />
+Modify source:</p>
+
+<pre><code>\Engine\Source\Programs\UnrealBuildTool\Platform\Android\UEDeployAndroid.cs
+</code></pre>
+
+<p>Add following code inside function <code>CopySTL</code>:</p>
+
+<pre><code>// copy libc++_shared.so
+string SourceSTLSONameLLVM = Environment.ExpandEnvironmentVariables(&quot;%NDKROOT%/sources/cxx-stl/llvm-libc++/libs/&quot;) + NDKArch + &quot;/libc++_shared.so&quot;;
+string FinalSTLSONameLLVM = UE4BuildPath + &quot;/libs/&quot; + NDKArch + &quot;/libc++_shared.so&quot;;
+
+// remove from location for Ant if previously copied
+string WrongSTLSOName = UE4BuildPath + &quot;/libs/&quot; + NDKArch + &quot;/libgnustl_shared.so&quot;;
+SafeDeleteFile(WrongSTLSOName);
+
+// check to see if libgnustl_shared.so is newer than last time we copied
+bool bFileExists = File.Exists(FinalSTLSONameLLVM);
+TimeSpan Diff = File.GetLastWriteTimeUtc(FinalSTLSONameLLVM) - File.GetLastWriteTimeUtc(SourceSTLSONameLLVM);
+if (!bFileExists || Diff.TotalSeconds &lt; -1 || Diff.TotalSeconds &gt; 1)
+{
+    SafeDeleteFile(FinalSTLSOName);
+    Directory.CreateDirectory(Path.GetDirectoryName(FinalSTLSONameLLVM));
+    File.Copy(SourceSTLSONameLLVM, FinalSTLSONameLLVM, true);
+}
+</code></pre>
+
 <h5 id="reference">Reference</h5>
 
 <p>Android ndk std::to_string support<br />

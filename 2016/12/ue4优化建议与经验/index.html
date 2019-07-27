@@ -537,6 +537,8 @@ Dynamic Shadow Distance 表示在多少距离内使用动态阴影，超过这�
 优化办法：操作Instanced Mesh之前，将<code>UHierarchicalInstancedStaticMeshComponent::bAutoRebuildTreeOnInstanceChanges</code>设置为false，然后执行你需要的各种Instanced Mesh操作，操作玩之后，然后将<code>bAutoRebuildTreeOnInstanceChanges</code>设置为true，然后执行<code>BuildTreeIfOutdated(true, false);</code>，这样可以显著减少因操作百万级Instanced Mesh而导致的性能损失。</p></li>
 
 <li><p>如果植被材质消耗成为瓶颈时，宁可增加面数，也不要使用 Translucent 材质，Masked酌情使用。比如一根草的面片，其整个形状全部使用三角面拼出来，而不要用一个三角面再加 Mask 或者 Translucent 材质的方式。</p></li>
+
+<li><p>为Instanced Mesh设置合适的<code>Cull Distance</code>。</p></li>
 </ol>
 
 <h5 id="物理与碰撞优化">物理与碰撞优化</h5>
@@ -567,7 +569,7 @@ Dynamic Shadow Distance 表示在多少距离内使用动态阴影，超过这�
 <p>默认是<code>AlwaysTickPoseAndRefreshBones</code>，表示不管是否被渲染（在可见区域内），都执行 Tick 和 RefreshBoneTransforms。<br />
 <code>VisibilityBasedAnimTickOption</code>最开始叫做<code>SkinnedMeshUpdateFlag</code>，4.21版本之前改成了<code>MeshComponentUpdateFlag</code>，4.21开始叫做<code>VisibilityBasedAnimTickOption</code>。<br />
 <div class="alert warning ">
-  <p>如果关闭动画Tick，和Tick相关的逻辑就会失效，比如<code>Transform (Modify) Bone</code>。但是AnimNotify不受影响。</p>
+  <p>如果关闭动画Tick，动画蓝图内Tick事件中的逻辑会失效；如果关闭RefreshBoneTransforms，则骨骼变换的逻辑会失效，比如<code>Transform (Modify) Bone</code>。AnimNotify不受这个选项影响。</p>
 </div></p></li>
 
 <li><p>动画蓝图的逻辑尽量直接访问成员变量，引擎默认开启了优化选项：动画蓝图中的成员变量在编译时会被复制到Native Code中，从而避免在运行时进入蓝图虚拟机（Blueprint Virtual Machine）执行蓝图代码，因为蓝图VM运行效率低。<br />
