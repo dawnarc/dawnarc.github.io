@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.55.6 with theme Tranquilpeak 0.4.6-BETA">
+<meta name="generator" content="Hugo 0.56.3 with theme Tranquilpeak 0.4.6-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="UE4, Networking">
 <meta name="description" content="Keywords: UE4, Networking, Dedicated Server,ClientTravel, ServerTravel, UEngine::Browse">
@@ -450,6 +450,90 @@ if (!doNotTrack) {
 <p>Related<br />
 <a href="https://answers.unrealengine.com/questions/251940/post-login-event-not-firing-on-active-clients-afte.html">https://answers.unrealengine.com/questions/251940/post-login-event-not-firing-on-active-clients-afte.html</a></p>
 
+<h5 id="travelling-api-in-gamemode">Travelling API in GameMode</h5>
+
+<p>ClientTravel:</p>
+
+<pre><code>APlayerController* AGameModeBase::ProcessClientTravel(FString&amp; FURL, FGuid NextMapGuid, bool bSeamless, bool bAbsolute)
+{
+    // We call PreClientTravel directly on any local PlayerPawns (ie listen server)
+    APlayerController* LocalPlayerController = nullptr;
+    for (FConstPlayerControllerIterator Iterator = GetWorld()-&gt;GetPlayerControllerIterator(); Iterator; ++Iterator)
+    {
+        if (APlayerController* PlayerController = Iterator-&gt;Get())
+        {
+            if (Cast&lt;UNetConnection&gt;(PlayerController-&gt;Player) != nullptr)
+            {
+                // Remote player
+                PlayerController-&gt;ClientTravel(FURL, TRAVEL_Relative, bSeamless, NextMapGuid);
+            }
+            else
+            {
+                // Local player
+                LocalPlayerController = PlayerController;
+                PlayerController-&gt;PreClientTravel(FURL, bAbsolute ? TRAVEL_Absolute : TRAVEL_Relative, bSeamless);
+            }
+        }
+    }
+
+    return LocalPlayerController;
+}
+</code></pre>
+
+<p>ServerTravel:</p>
+
+<pre><code>void AGameModeBase::ProcessServerTravel(const FString&amp; URL, bool bAbsolute)
+{
+#if WITH_SERVER_CODE
+    StartToLeaveMap();
+
+    // Force an old style load screen if the server has been up for a long time so that TimeSeconds doesn't overflow and break everything
+    bool bSeamless = (bUseSeamlessTravel &amp;&amp; GetWorld()-&gt;TimeSeconds &lt; 172800.0f); // 172800 seconds == 48 hours
+
+    FString NextMap;
+    if (URL.ToUpper().Contains(TEXT(&quot;?RESTART&quot;)))
+    {
+        NextMap = UWorld::RemovePIEPrefix(GetOutermost()-&gt;GetName());
+    }
+    else
+    {
+        int32 OptionStart = URL.Find(TEXT(&quot;?&quot;));
+        if (OptionStart == INDEX_NONE)
+        {
+            NextMap = URL;
+        }
+        else
+        {
+            NextMap = URL.Left(OptionStart);
+        }
+    }
+
+    FGuid NextMapGuid = UEngine::GetPackageGuid(FName(*NextMap), GetWorld()-&gt;IsPlayInEditor());
+
+    // Notify clients we're switching level and give them time to receive.
+    FString URLMod = URL;
+    APlayerController* LocalPlayer = ProcessClientTravel(URLMod, NextMapGuid, bSeamless, bAbsolute);
+
+    UE_LOG(LogGameMode, Log, TEXT(&quot;ProcessServerTravel: %s&quot;), *URL);
+    UWorld* World = GetWorld();
+    check(World);
+    World-&gt;NextURL = URL;
+    ENetMode NetMode = GetNetMode();
+
+    if (bSeamless)
+    {
+        World-&gt;SeamlessTravel(World-&gt;NextURL, bAbsolute);
+        World-&gt;NextURL = TEXT(&quot;&quot;);
+    }
+    // Switch immediately if not networking.
+    else if (NetMode != NM_DedicatedServer &amp;&amp; NetMode != NM_ListenServer)
+    {
+        World-&gt;NextSwitchCountdown = 0.0f;
+    }
+#endif // WITH_SERVER_CODE
+}
+</code></pre>
+
 <h3 id="reference">Reference</h3>
 
 <h5 id="official-docs">Official Docs</h5>
@@ -539,7 +623,7 @@ if (!doNotTrack) {
         </article>
         <footer id="footer" class="main-content-wrap">
   <span class="copyrights">
-    &copy; 2019 Neil Wang. All Rights Reserved. Powered by <A href="https://gohugo.io/"> Hugo</A>.
+    &copy; 2019 Neil Wang. All Rights Reserved. Powered by <A href="https://gohugo.io/"> Hugo</A>. Theme by <A href="https://github.com/kakawait/hugo-tranquilpeak-theme/"> Tranquilpeak</A>.
   </span>
 </footer>
 

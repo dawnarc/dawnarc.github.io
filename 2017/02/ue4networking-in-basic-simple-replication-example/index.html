@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.55.6 with theme Tranquilpeak 0.4.6-BETA">
+<meta name="generator" content="Hugo 0.56.3 with theme Tranquilpeak 0.4.6-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="UE4, Networking">
 <meta name="description" content="转载请注明原文出处：https://dawnarc.com
@@ -596,8 +596,8 @@ TestActor-&gt;SetOwner(NewPlayer);
 <h5 id="netmode-和-role-关系概述">NetMode 和 Role 关系概述</h5>
 
 <ul>
-<li>当 NetMode 为 NM_Standalone 或者 NM_DedicatedServer 时，所有对象的 Role 都为 ROLE_Authority 。</li>
-<li>当 NetMode 为 NM_Client 时，服务端 Spawn 出来的所有 Character 对象，在每个客户端的 Role 都为 ROLE_SimulatedProxy；当前客户端 PlayerController 对象的 Role 为 ROLE_AutonomousProxy ，当前客户端无法获取其他客户端的PlayerController，如果使用其他客户端的 Character 执行 Character::GetController()，则返回NULL。</li>
+<li>当 NetMode 为<code>NM_Standalone</code>或者<code>NM_DedicatedServer</code>时，所有对象的<code>Role</code>都为<code>ROLE_Authority</code>。</li>
+<li>当 NetMode 为 <code>NM_Client</code> 时，服务端 Spawn 出来的所有 Character 对象，在每个客户端的<code>Role</code>都为 <code>ROLE_SimulatedProxy</code>；<span class="highlight-text yellow">PlayerController 比较特殊：当客户端连接服务器成功后，PlayerController 的 Role 自动变为 ROLE_AutonomousProxy ；</span><br /></li>
 </ul>
 
 <h5 id="client-function-没有在-client-触发的问题">Client function 没有在 Client 触发的问题</h5>
@@ -803,7 +803,7 @@ Replicated属性只允许服务端修改后通知客户端，而不允许客户�
 
 <p>6，服务端的AIController::MoveToLocation()的效果相当于客户端UNavigationSystem::SimpleMoveToLocation()。AIController::MoveToLocation()内部有去调用NavigationSystem相关的接口。</p>
 
-<p>7，客户端的PlayerController可以不用Possess玩家角色，因为客户端相关数据都是以服务端为准，操作角色也是在服务端完成，一般只需要对该角色绑定摄像机即可。Possess的意义之一是为了给其赋予访问服务端函数的权限。</p>
+<p>7，客户端的PlayerController可以不用Possess玩家角色，因为客户端相关数据都是以服务端为准，操作角色也是在服务端完成，一般只需要对该角色绑定摄像机即可。Possess的意义之一是为了给 Pawn 赋予访问服务端函数的权限。</p>
 
 <p>8，如果_Validate()函数返回false，则服务器会会认为客户端非法，并主动断开该客户端。断开客户端时服务端会打印：</p>
 
@@ -811,7 +811,7 @@ Replicated属性只允许服务端修改后通知客户端，而不允许客户�
 LogNet: Error: UActorChannel::ProcessBunch: Replicator.ReceivedBunch failed.  Closing connection. RepObj: ReplTestPlayerController /Game/TopDownCPP/Maps/TopDownExampleMap.TopDownExampleMap:PersistentLevel.ReplTestPlayerController_1, Channel: 2
 </code></pre>
 
-<p>9，当前客户端只能获取当前控制角色的Controller，无法获取其他客户端的Controller，比如玩家A在玩家B的角色为C1，那么调用C1-&gt;GetController()时返回NULL。</p>
+<p>9，<span class="highlight-text red">当前客户端只能获取当前控制角色的Controller，无法获取其他客户端的Controller，比如玩家A在玩家B的角色为C1，那么调用C1->GetController()时返回NULL。</span></p>
 
 <p>10，动画同步<br />
 角色X在客户端A播放一个攻击动作，并且角色X在客户端B的视野内，此时需要客户端B也能同步看到角色X的动画，流程如下：<br />
@@ -1012,22 +1012,6 @@ ntdll
 
 <p><a href="http://pan.baidu.com/s/1o7MzmRo">http://pan.baidu.com/s/1o7MzmRo</a></p>
 
-<h3 id="rpc相关的引擎api">RPC相关的引擎API</h3>
-
-<p>回调函数</p>
-
-<pre><code>/** Called on client when updated AttachmentReplication value is received for this actor. */
-UFUNCTION()
-virtual void OnRep_AttachmentReplication();
-</code></pre>
-
-<p>相关属性</p>
-
-<pre><code>//Priority for this actor when checking for replication in a low bandwidth or saturated situation, higher priority means it is more likely to replicate
-UPROPERTY(Category=Replication, EditDefaultsOnly, BlueprintReadWrite)
-float NetPriority
-</code></pre>
-
 <h3 id="参考文章">参考文章</h3>
 
 <p>属性同步：<br />
@@ -1128,7 +1112,7 @@ float NetPriority
         </article>
         <footer id="footer" class="main-content-wrap">
   <span class="copyrights">
-    &copy; 2019 Neil Wang. All Rights Reserved. Powered by <A href="https://gohugo.io/"> Hugo</A>.
+    &copy; 2019 Neil Wang. All Rights Reserved. Powered by <A href="https://gohugo.io/"> Hugo</A>. Theme by <A href="https://github.com/kakawait/hugo-tranquilpeak-theme/"> Tranquilpeak</A>.
   </span>
 </footer>
 

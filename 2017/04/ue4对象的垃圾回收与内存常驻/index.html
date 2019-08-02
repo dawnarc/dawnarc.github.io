@@ -5,21 +5,21 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.55.6 with theme Tranquilpeak 0.4.6-BETA">
+<meta name="generator" content="Hugo 0.56.3 with theme Tranquilpeak 0.4.6-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="UE4, Memory, GC, Persist, 垃圾回收, 内存管理">
 <meta name="description" content="keywords：UE4, Memory Persist, GC, 垃圾回收, 内存管理
 防止GC的办法 一个UObject类型的变量，即使是static，默认也会被GC掉。
  要防止该对象被GC，有4种方式：
  作为成员变量并标记为UPROPERTY()； 创建对象后 AddToRoot() ；（退出游戏时需要RemoveFromRoot()） FStreamableManager Load资源时，bManageActiveHandle 设置为true； FGCObjectScopeGuard 在指定代码区域内保持对象；  Uobject不能使用TSharedPtr进行引用计数，非UObject才可以；如果一个非UObject的类想加入GC，那么必须继承FGCObject类。
- UPROPERTY()用法 URPOPERTY() UObject* MyObj;  AddToRoot()用法 UMyObject* MyObj = NewObject&lt;UMyObject&gt;(); MyObj.AddToRoot();  FStreamableManager 用法 FSoftObjectPath AssetPath(TEXT(&quot;/Game/Mannequin/Animations/ThirdPersonWalk.ThirdPersonWalk&quot;)); FStreamableManager&amp; AssetLoader = UAssetManager::GetStreamableManager(); //hold object in memory. TSharedPtr&lt;FStreamableHandle&gt; Handle = AssetLoader.RequestSyncLoad(AssetPath, true); UObject* Obj = Handle-&gt;GetLoadedAsset(); //free memory of object. Handle-&gt;ReleaseHandle();  FGCObjectScopeGuard 用法 { FGCObjectScopeGuard(UObject* GladOS = NewObject&lt;...&gt;(...)); GladOS-&gt;SpawnCell(); RunGC(); GladOS-&gt;IsStillAlive(); // Object will not be removed by GC }  GC 常见问题  官方论坛上有人说 NewObject() 或者 LoadObject() 创建的对象才会自动被 GC ， SpawnActor 创建的对象会被自动 AddToRoot ，不会被 GC。不知早期的版本是否确实如此，但是目前版本不是这样，即使是 SpawnActor ，默认也会被 GC。  参考资料 虚幻4垃圾回收剖析">
+ UPROPERTY()用法 URPOPERTY() UObject* MyObj;  AddToRoot()用法 UMyObject* MyObj = NewObject&lt;UMyObject&gt;(); MyObj.AddToRoot();  FStreamableManager 用法 FSoftObjectPath AssetPath(TEXT(&quot;/Game/Mannequin/Animations/ThirdPersonWalk.ThirdPersonWalk&quot;)); FStreamableManager&amp; AssetLoader = UAssetManager::GetStreamableManager(); //hold object in memory. TSharedPtr&lt;FStreamableHandle&gt; Handle = AssetLoader.RequestSyncLoad(AssetPath, true); UObject* Obj = Handle-&gt;GetLoadedAsset(); //free memory of object. Handle-&gt;ReleaseHandle();  FGCObjectScopeGuard 用法 { FGCObjectScopeGuard(UObject* GladOS = NewObject&lt;...&gt;(...)); GladOS-&gt;SpawnCell(); RunGC(); GladOS-&gt;IsStillAlive(); // Object will not be removed by GC }  GC 常见问题  官方论坛上有人说 NewObject() 或者 LoadObject() 创建的对象才会自动被 GC ， SpawnActor 创建的对象会被自动 AddToRoot ，不会被 GC。不知早期的版本是否确实如此，但是目前版本不是这样，即使是 SpawnActor ，默认也会被 GC。  参考资料 UE4 Garbage Collection">
 
 
 <meta property="og:description" content="keywords：UE4, Memory Persist, GC, 垃圾回收, 内存管理
 防止GC的办法 一个UObject类型的变量，即使是static，默认也会被GC掉。
  要防止该对象被GC，有4种方式：
  作为成员变量并标记为UPROPERTY()； 创建对象后 AddToRoot() ；（退出游戏时需要RemoveFromRoot()） FStreamableManager Load资源时，bManageActiveHandle 设置为true； FGCObjectScopeGuard 在指定代码区域内保持对象；  Uobject不能使用TSharedPtr进行引用计数，非UObject才可以；如果一个非UObject的类想加入GC，那么必须继承FGCObject类。
- UPROPERTY()用法 URPOPERTY() UObject* MyObj;  AddToRoot()用法 UMyObject* MyObj = NewObject&lt;UMyObject&gt;(); MyObj.AddToRoot();  FStreamableManager 用法 FSoftObjectPath AssetPath(TEXT(&quot;/Game/Mannequin/Animations/ThirdPersonWalk.ThirdPersonWalk&quot;)); FStreamableManager&amp; AssetLoader = UAssetManager::GetStreamableManager(); //hold object in memory. TSharedPtr&lt;FStreamableHandle&gt; Handle = AssetLoader.RequestSyncLoad(AssetPath, true); UObject* Obj = Handle-&gt;GetLoadedAsset(); //free memory of object. Handle-&gt;ReleaseHandle();  FGCObjectScopeGuard 用法 { FGCObjectScopeGuard(UObject* GladOS = NewObject&lt;...&gt;(...)); GladOS-&gt;SpawnCell(); RunGC(); GladOS-&gt;IsStillAlive(); // Object will not be removed by GC }  GC 常见问题  官方论坛上有人说 NewObject() 或者 LoadObject() 创建的对象才会自动被 GC ， SpawnActor 创建的对象会被自动 AddToRoot ，不会被 GC。不知早期的版本是否确实如此，但是目前版本不是这样，即使是 SpawnActor ，默认也会被 GC。  参考资料 虚幻4垃圾回收剖析">
+ UPROPERTY()用法 URPOPERTY() UObject* MyObj;  AddToRoot()用法 UMyObject* MyObj = NewObject&lt;UMyObject&gt;(); MyObj.AddToRoot();  FStreamableManager 用法 FSoftObjectPath AssetPath(TEXT(&quot;/Game/Mannequin/Animations/ThirdPersonWalk.ThirdPersonWalk&quot;)); FStreamableManager&amp; AssetLoader = UAssetManager::GetStreamableManager(); //hold object in memory. TSharedPtr&lt;FStreamableHandle&gt; Handle = AssetLoader.RequestSyncLoad(AssetPath, true); UObject* Obj = Handle-&gt;GetLoadedAsset(); //free memory of object. Handle-&gt;ReleaseHandle();  FGCObjectScopeGuard 用法 { FGCObjectScopeGuard(UObject* GladOS = NewObject&lt;...&gt;(...)); GladOS-&gt;SpawnCell(); RunGC(); GladOS-&gt;IsStillAlive(); // Object will not be removed by GC }  GC 常见问题  官方论坛上有人说 NewObject() 或者 LoadObject() 创建的对象才会自动被 GC ， SpawnActor 创建的对象会被自动 AddToRoot ，不会被 GC。不知早期的版本是否确实如此，但是目前版本不是这样，即使是 SpawnActor ，默认也会被 GC。  参考资料 UE4 Garbage Collection">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[UE4]对象的垃圾回收与内存常驻">
 <meta name="twitter:title" content="[UE4]对象的垃圾回收与内存常驻">
@@ -30,12 +30,12 @@
 防止GC的办法 一个UObject类型的变量，即使是static，默认也会被GC掉。
  要防止该对象被GC，有4种方式：
  作为成员变量并标记为UPROPERTY()； 创建对象后 AddToRoot() ；（退出游戏时需要RemoveFromRoot()） FStreamableManager Load资源时，bManageActiveHandle 设置为true； FGCObjectScopeGuard 在指定代码区域内保持对象；  Uobject不能使用TSharedPtr进行引用计数，非UObject才可以；如果一个非UObject的类想加入GC，那么必须继承FGCObject类。
- UPROPERTY()用法 URPOPERTY() UObject* MyObj;  AddToRoot()用法 UMyObject* MyObj = NewObject&lt;UMyObject&gt;(); MyObj.AddToRoot();  FStreamableManager 用法 FSoftObjectPath AssetPath(TEXT(&quot;/Game/Mannequin/Animations/ThirdPersonWalk.ThirdPersonWalk&quot;)); FStreamableManager&amp; AssetLoader = UAssetManager::GetStreamableManager(); //hold object in memory. TSharedPtr&lt;FStreamableHandle&gt; Handle = AssetLoader.RequestSyncLoad(AssetPath, true); UObject* Obj = Handle-&gt;GetLoadedAsset(); //free memory of object. Handle-&gt;ReleaseHandle();  FGCObjectScopeGuard 用法 { FGCObjectScopeGuard(UObject* GladOS = NewObject&lt;...&gt;(...)); GladOS-&gt;SpawnCell(); RunGC(); GladOS-&gt;IsStillAlive(); // Object will not be removed by GC }  GC 常见问题  官方论坛上有人说 NewObject() 或者 LoadObject() 创建的对象才会自动被 GC ， SpawnActor 创建的对象会被自动 AddToRoot ，不会被 GC。不知早期的版本是否确实如此，但是目前版本不是这样，即使是 SpawnActor ，默认也会被 GC。  参考资料 虚幻4垃圾回收剖析">
+ UPROPERTY()用法 URPOPERTY() UObject* MyObj;  AddToRoot()用法 UMyObject* MyObj = NewObject&lt;UMyObject&gt;(); MyObj.AddToRoot();  FStreamableManager 用法 FSoftObjectPath AssetPath(TEXT(&quot;/Game/Mannequin/Animations/ThirdPersonWalk.ThirdPersonWalk&quot;)); FStreamableManager&amp; AssetLoader = UAssetManager::GetStreamableManager(); //hold object in memory. TSharedPtr&lt;FStreamableHandle&gt; Handle = AssetLoader.RequestSyncLoad(AssetPath, true); UObject* Obj = Handle-&gt;GetLoadedAsset(); //free memory of object. Handle-&gt;ReleaseHandle();  FGCObjectScopeGuard 用法 { FGCObjectScopeGuard(UObject* GladOS = NewObject&lt;...&gt;(...)); GladOS-&gt;SpawnCell(); RunGC(); GladOS-&gt;IsStillAlive(); // Object will not be removed by GC }  GC 常见问题  官方论坛上有人说 NewObject() 或者 LoadObject() 创建的对象才会自动被 GC ， SpawnActor 创建的对象会被自动 AddToRoot ，不会被 GC。不知早期的版本是否确实如此，但是目前版本不是这样，即使是 SpawnActor ，默认也会被 GC。  参考资料 UE4 Garbage Collection">
 <meta name="twitter:description" content="keywords：UE4, Memory Persist, GC, 垃圾回收, 内存管理
 防止GC的办法 一个UObject类型的变量，即使是static，默认也会被GC掉。
  要防止该对象被GC，有4种方式：
  作为成员变量并标记为UPROPERTY()； 创建对象后 AddToRoot() ；（退出游戏时需要RemoveFromRoot()） FStreamableManager Load资源时，bManageActiveHandle 设置为true； FGCObjectScopeGuard 在指定代码区域内保持对象；  Uobject不能使用TSharedPtr进行引用计数，非UObject才可以；如果一个非UObject的类想加入GC，那么必须继承FGCObject类。
- UPROPERTY()用法 URPOPERTY() UObject* MyObj;  AddToRoot()用法 UMyObject* MyObj = NewObject&lt;UMyObject&gt;(); MyObj.AddToRoot();  FStreamableManager 用法 FSoftObjectPath AssetPath(TEXT(&quot;/Game/Mannequin/Animations/ThirdPersonWalk.ThirdPersonWalk&quot;)); FStreamableManager&amp; AssetLoader = UAssetManager::GetStreamableManager(); //hold object in memory. TSharedPtr&lt;FStreamableHandle&gt; Handle = AssetLoader.RequestSyncLoad(AssetPath, true); UObject* Obj = Handle-&gt;GetLoadedAsset(); //free memory of object. Handle-&gt;ReleaseHandle();  FGCObjectScopeGuard 用法 { FGCObjectScopeGuard(UObject* GladOS = NewObject&lt;...&gt;(...)); GladOS-&gt;SpawnCell(); RunGC(); GladOS-&gt;IsStillAlive(); // Object will not be removed by GC }  GC 常见问题  官方论坛上有人说 NewObject() 或者 LoadObject() 创建的对象才会自动被 GC ， SpawnActor 创建的对象会被自动 AddToRoot ，不会被 GC。不知早期的版本是否确实如此，但是目前版本不是这样，即使是 SpawnActor ，默认也会被 GC。  参考资料 虚幻4垃圾回收剖析">
+ UPROPERTY()用法 URPOPERTY() UObject* MyObj;  AddToRoot()用法 UMyObject* MyObj = NewObject&lt;UMyObject&gt;(); MyObj.AddToRoot();  FStreamableManager 用法 FSoftObjectPath AssetPath(TEXT(&quot;/Game/Mannequin/Animations/ThirdPersonWalk.ThirdPersonWalk&quot;)); FStreamableManager&amp; AssetLoader = UAssetManager::GetStreamableManager(); //hold object in memory. TSharedPtr&lt;FStreamableHandle&gt; Handle = AssetLoader.RequestSyncLoad(AssetPath, true); UObject* Obj = Handle-&gt;GetLoadedAsset(); //free memory of object. Handle-&gt;ReleaseHandle();  FGCObjectScopeGuard 用法 { FGCObjectScopeGuard(UObject* GladOS = NewObject&lt;...&gt;(...)); GladOS-&gt;SpawnCell(); RunGC(); GladOS-&gt;IsStillAlive(); // Object will not be removed by GC }  GC 常见问题  官方论坛上有人说 NewObject() 或者 LoadObject() 创建的对象才会自动被 GC ， SpawnActor 创建的对象会被自动 AddToRoot ，不会被 GC。不知早期的版本是否确实如此，但是目前版本不是这样，即使是 SpawnActor ，默认也会被 GC。  参考资料 UE4 Garbage Collection">
 <meta property="og:locale" content="en-us">
 
   
@@ -434,10 +434,15 @@ Handle-&gt;ReleaseHandle();
 
 <h5 id="参考资料">参考资料</h5>
 
+<p>UE4 Garbage Collection<br />
+<a href="https://gist.github.com/LordNed/650de717daca23aaf8fc2932bf3f9123">https://gist.github.com/LordNed/650de717daca23aaf8fc2932bf3f9123</a></p>
+
 <p>虚幻4垃圾回收剖析<br />
 <a href="http://www.cnblogs.com/ghl_carmack/p/6112118.html">http://www.cnblogs.com/ghl_carmack/p/6112118.html</a></p>
 
-<p>转载：UE4内存管理 – 实践<br />
+<h3 id="转载-ue4内存管理-实践">转载：UE4内存管理 – 实践</h3>
+
+<p>原文：<br />
 <a href="http://blog.csdn.net/yangxuan0261/article/details/52075581">http://blog.csdn.net/yangxuan0261/article/details/52075581</a></p>
 
 <p>原文内容如下：</p>
@@ -684,7 +689,7 @@ virtual void OnComponentDestroyed(bool bDestroyingHierarchy) override;//立即�
         </article>
         <footer id="footer" class="main-content-wrap">
   <span class="copyrights">
-    &copy; 2019 Neil Wang. All Rights Reserved. Powered by <A href="https://gohugo.io/"> Hugo</A>.
+    &copy; 2019 Neil Wang. All Rights Reserved. Powered by <A href="https://gohugo.io/"> Hugo</A>. Theme by <A href="https://github.com/kakawait/hugo-tranquilpeak-theme/"> Tranquilpeak</A>.
   </span>
 </footer>
 
