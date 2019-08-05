@@ -468,7 +468,9 @@ Spot Light: They are the most expensive on the graphics processor.<br />
 不考虑显存等其他因素的开销，单考虑GPU消耗，Spot Light 比 Point Light贵。</p>
 </div>
 Unity早期文档：灯光 Light<br />
-<a href="http://www.ceeger.com/Components/class-Light.html">http://www.ceeger.com/Components/class-Light.html</a></p></li>
+<a href="http://www.ceeger.com/Components/class-Light.html">http://www.ceeger.com/Components/class-Light.html</a><br />
+感谢知乎网友<code>刘相敬</code>给的指导建议：<br />
+<span class="highlight-text green">不考虑阴影的情况下点光源的衰减计算比聚光灯简单很多，只和距离相关，射灯要计算距离衰减和内外角衰减，有cos sin指令，代价相对来说会大很多，但是实际使用过程中射灯照亮区域远小于点光源，反而在绝大多数场景消耗比点光源低。当然这个是基于延迟渲染和ClusterBased裁剪后的灯光来说的，实际Unity Forward渲染是不裁剪光源的，所有像素都会计算一遍点光源和射灯光照，所以射灯消耗会远大于点光源（Forward Add中渲染），Unity的默认射灯没有内外角一说，依靠一张贴图来做衰减模拟，所以Unity的射灯比点光源多了一次采样环节。</span></p></li>
 
 <li><p>在建构光照贴图时，若场景中没有给予Lightmass Importance Volume，会对整个场景做间接光照的采样，产生Indirect Lighting Cache，这对大型游戏场景是相当的浪费，像是游戏角色到不了的中、远景不需要产生Indirect Lighting Cache，这时候就可以在场景中置入Lightmass Importance Volume，指定特定区域内才会产生Indirect Lighting Cache，节省不少建构光照的时间。</p></li>
 
@@ -524,7 +526,7 @@ Dynamic Shadow Distance 表示在多少距离内使用动态阴影，超过这�
 
 <li><p><span class="highlight-text yellow">Decal消耗和像素数量有关</span>，<span class="highlight-text red">程序功能绝对不要乱用贴花</span>，美术铺场景除外。比如程序想用贴花做一个范围标记，如果当标记范围很大时绝对不要用贴花，可以改成划线或者不通透贴图。如果场景需要大量使用贴花，根据视距动态创建和销毁贴花，仅仅<code>SetVisibility</code>是不够的，隐藏后还是会有巨大的开销。</p></li>
 
-<li><p>场景中的材质种类要提前规划好，拼场景时只在规划好的材质中选择。如果同屏的材质种类较多，会增加draw call。</p></li>
+<li><p>场景中的材质种类要提前规划好，拼场景时只在规划好的材质中选择。如果同屏的材质种类较多，会增加draw call。特别是场景美术用网上素材东拼西凑，很容易导致材质种类数量急剧上涨。</p></li>
 </ol>
 
 <p>Performance Guidelines for Artists and Designers<br />
