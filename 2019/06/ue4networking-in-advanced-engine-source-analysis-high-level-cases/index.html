@@ -224,16 +224,6 @@ if (!doNotTrack) {
 
   <li class="sidebar-button">
     
-      <a class="sidebar-button-link " href="https://www.artstation.com/artist/dawnarc" target="_blank" rel="noopener">
-    
-      <i class="sidebar-button-icon fa fa-lg fa-artstation"></i>
-      
-      <span class="sidebar-button-desc">ArtStation</span>
-    </a>
-  </li>
-
-  <li class="sidebar-button">
-    
       <a class="sidebar-button-link " href="https://www.facebook.com/koanland" target="_blank" rel="noopener">
     
       <i class="sidebar-button-icon fa fa-lg fa-facebook"></i>
@@ -249,6 +239,16 @@ if (!doNotTrack) {
       <i class="sidebar-button-icon fa fa-lg fa-github"></i>
       
       <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://www.instagram.com/dawn_arc/" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-instagram"></i>
+      
+      <span class="sidebar-button-desc">Instagram</span>
     </a>
   </li>
 
@@ -382,12 +382,27 @@ Execute <code>AActor::ForceNetUpdate()</code> to replicate current data to clien
 
 <h3 id="ue4-networking-documents">UE4 Networking Documents</h3>
 
-<h5 id="online-beacons">Online Beacons</h5>
+<h5 id="online-beacons-docs">Online Beacons Docs</h5>
 
 <p>Online Beacons are a special type of Actor that provide a lightweight way to contact a server and interact with it (via RPCs) without committing to a normal game connection. While the built-in classes can be used as they are in some cases, they are intended to be extended into custom classes that perform project-specific interactions, logic, and information requests.</p>
 
 <p>Docs: Online Beacons<br />
 <a href="https://docs.unrealengine.com/en-US/Gameplay/Networking/OnlineBeacons/index.html">https://docs.unrealengine.com/en-US/Gameplay/Networking/OnlineBeacons/index.html</a></p>
+
+<h5 id="what-are-online-beacons-and-how-do-they-work">What are &ldquo;online beacons&rdquo; and how do they work?</h5>
+
+<p>The idea behind beacons was to provide a lightweight way to contact a server before actually connecting &ldquo;for real&rdquo;.</p>
+
+<p>Ideally you make a connection, send an RPC, get a response, and disconnect. You can ask things like &ldquo;who is in the game&rdquo; or &ldquo;please make room for me, I&rsquo;m about to join&rdquo;. Traditionally, connecting to a server involved a full map load which can be frustrating to users if they do all that work only to be denied entry to an almost full game because someone got into the game first. Now you can make contact while still in the main menu, for example, and test multiple servers to pick the best one before joining. Or to inquire about information about a game in progress to &ldquo;spectate&rdquo; without being actually connected with an APlayerController and all that entails.</p>
+
+<p>Gears 3 used beacons to reserve space in game. That way we could test many servers for space and travel to only one, knowing that you were definitely going to get into the game. It avoided contention when thousands of users all received the same 20-50 search results but only 10 could join per match. However, in UE3, this was TCP/IP and the protocol had to be implemented manually not using any reflection by UObject.</p>
+
+<p>In UE4, we decided that our already existing network code was so robust and powerful, why reinvent the wheel? So I made the AOnlineBeacon class to leverage all the RPC and replication power of AActor.</p>
+
+<p>Traditionally, actor replication and spawning has always been server initiated, meaning that you had to connect before you got a copy of an actor that the server also knew about. I wanted clients to be able to create an actor that would initiate contact with the server and fire a delegate when a connection has been made so that higher level code could make an RPC. Otherwise you&rsquo;d need to make a connection with the server, wait for the server to send you an actor you could RPC with, then switch to that. Unwieldy in my opinion.</p>
+
+<p>Origin:<br />
+<a href="https://answers.unrealengine.com/questions/467973/what-are-online-beacons-and-how-do-they-work.html">https://answers.unrealengine.com/questions/467973/what-are-online-beacons-and-how-do-they-work.html</a></p>
 
 <h5 id="unreal-engine-4-network-compendium">Unreal Engine 4 Network Compendium</h5>
 
@@ -600,7 +615,7 @@ void SetRemoteRoleForBackwardsCompat(const ENetRole InRemoteRole) { RemoteRole =
         </article>
         <footer id="footer" class="main-content-wrap">
   <span class="copyrights">
-    &copy; 2019 Neil Wang. All Rights Reserved. Powered by <A href="https://gohugo.io/"> Hugo</A>. Theme by <A href="https://github.com/kakawait/hugo-tranquilpeak-theme/"> Tranquilpeak</A>.
+    &copy; 2019 Neil Wang. All Rights Reserved. Powered by <A href="https://gohugo.io/"> Hugo</A> | Theme created by <A href="https://github.com/kakawait/hugo-tranquilpeak-theme/"> Tranquilpeak</A>.
   </span>
 </footer>
 

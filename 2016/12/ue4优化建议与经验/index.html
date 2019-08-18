@@ -23,8 +23,9 @@ Min Screen Radius for Lights
 Min Screen Radius for Early Z Pass
 Min Screen Radius for Cascaded Shadow Maps
   代码编译优化  使用C&#43;&#43;进行向量变换时，尽量使用FTransform::TransformXXX()和FTransform::InverseTransformXXX，而不是FQuat::RotateVector和FQuat::UnrotateVector，因为前者使用了更多的当前硬件支持的矢量汇编指令，榨干了硬件性能，而后者是为了跨平台，老老实实使用C&#43;&#43;代码来执行计算公式，虽然也调用了硬件汇编指令，但数量相对较少。
-UE4做了优化，当你使用FTransform::TransformXXX()时，如果当前硬件支持，就走硬件指令，如果不支持，则走FQuat::RotateVector。  灯光优化  3种光源的性能消耗从低到高：
-定向光/平行光(Directional Light) &lt; 点光源(Point Light) &lt; 聚光灯(Spot Light)。">
+UE4做了优化，当你使用FTransform::TransformXXX()时，如果当前硬件支持，就走硬件指令，如果不支持，则走FQuat::RotateVector。
+ VS2019针对C&#43;&#43;代码编译速度、以及CPUAVX/AVX2指令集下的矢量计算进行了更深入的优化，并且微软Xbox ATG团队使用UE4的Infiltratordemo工程对优化后的效果进行了基准测试：
+ 编译速度方面：完整编译速度，VS2019(16.2)是VS2017(15.9)的3.5倍，增量编译速度，VS2019(16.2)是VS2017(15.9)的1.6倍； 代码优化方面：以游戏帧率作为测试标准，VS 16.">
 
 
 <meta property="og:description" content="keywords：UE4性能优化、Performance Optimization
@@ -42,8 +43,9 @@ Min Screen Radius for Lights
 Min Screen Radius for Early Z Pass
 Min Screen Radius for Cascaded Shadow Maps
   代码编译优化  使用C&#43;&#43;进行向量变换时，尽量使用FTransform::TransformXXX()和FTransform::InverseTransformXXX，而不是FQuat::RotateVector和FQuat::UnrotateVector，因为前者使用了更多的当前硬件支持的矢量汇编指令，榨干了硬件性能，而后者是为了跨平台，老老实实使用C&#43;&#43;代码来执行计算公式，虽然也调用了硬件汇编指令，但数量相对较少。
-UE4做了优化，当你使用FTransform::TransformXXX()时，如果当前硬件支持，就走硬件指令，如果不支持，则走FQuat::RotateVector。  灯光优化  3种光源的性能消耗从低到高：
-定向光/平行光(Directional Light) &lt; 点光源(Point Light) &lt; 聚光灯(Spot Light)。">
+UE4做了优化，当你使用FTransform::TransformXXX()时，如果当前硬件支持，就走硬件指令，如果不支持，则走FQuat::RotateVector。
+ VS2019针对C&#43;&#43;代码编译速度、以及CPUAVX/AVX2指令集下的矢量计算进行了更深入的优化，并且微软Xbox ATG团队使用UE4的Infiltratordemo工程对优化后的效果进行了基准测试：
+ 编译速度方面：完整编译速度，VS2019(16.2)是VS2017(15.9)的3.5倍，增量编译速度，VS2019(16.2)是VS2017(15.9)的1.6倍； 代码优化方面：以游戏帧率作为测试标准，VS 16.">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[UE4]优化建议与经验">
 <meta name="twitter:title" content="[UE4]优化建议与经验">
@@ -65,8 +67,9 @@ Min Screen Radius for Lights
 Min Screen Radius for Early Z Pass
 Min Screen Radius for Cascaded Shadow Maps
   代码编译优化  使用C&#43;&#43;进行向量变换时，尽量使用FTransform::TransformXXX()和FTransform::InverseTransformXXX，而不是FQuat::RotateVector和FQuat::UnrotateVector，因为前者使用了更多的当前硬件支持的矢量汇编指令，榨干了硬件性能，而后者是为了跨平台，老老实实使用C&#43;&#43;代码来执行计算公式，虽然也调用了硬件汇编指令，但数量相对较少。
-UE4做了优化，当你使用FTransform::TransformXXX()时，如果当前硬件支持，就走硬件指令，如果不支持，则走FQuat::RotateVector。  灯光优化  3种光源的性能消耗从低到高：
-定向光/平行光(Directional Light) &lt; 点光源(Point Light) &lt; 聚光灯(Spot Light)。">
+UE4做了优化，当你使用FTransform::TransformXXX()时，如果当前硬件支持，就走硬件指令，如果不支持，则走FQuat::RotateVector。
+ VS2019针对C&#43;&#43;代码编译速度、以及CPUAVX/AVX2指令集下的矢量计算进行了更深入的优化，并且微软Xbox ATG团队使用UE4的Infiltratordemo工程对优化后的效果进行了基准测试：
+ 编译速度方面：完整编译速度，VS2019(16.2)是VS2017(15.9)的3.5倍，增量编译速度，VS2019(16.2)是VS2017(15.9)的1.6倍； 代码优化方面：以游戏帧率作为测试标准，VS 16.">
 <meta name="twitter:description" content="keywords：UE4性能优化、Performance Optimization
 内容都是处理项目问题的相关笔记，留给自己做备忘录，也分享出来让别人少走弯路。
 零散记录  GPUProfile来统计性能消耗的时候，在editor模式下不是很准，因为编辑器的消耗也算进去了，如果要用，最好以Game模式来查看。
@@ -82,8 +85,9 @@ Min Screen Radius for Lights
 Min Screen Radius for Early Z Pass
 Min Screen Radius for Cascaded Shadow Maps
   代码编译优化  使用C&#43;&#43;进行向量变换时，尽量使用FTransform::TransformXXX()和FTransform::InverseTransformXXX，而不是FQuat::RotateVector和FQuat::UnrotateVector，因为前者使用了更多的当前硬件支持的矢量汇编指令，榨干了硬件性能，而后者是为了跨平台，老老实实使用C&#43;&#43;代码来执行计算公式，虽然也调用了硬件汇编指令，但数量相对较少。
-UE4做了优化，当你使用FTransform::TransformXXX()时，如果当前硬件支持，就走硬件指令，如果不支持，则走FQuat::RotateVector。  灯光优化  3种光源的性能消耗从低到高：
-定向光/平行光(Directional Light) &lt; 点光源(Point Light) &lt; 聚光灯(Spot Light)。">
+UE4做了优化，当你使用FTransform::TransformXXX()时，如果当前硬件支持，就走硬件指令，如果不支持，则走FQuat::RotateVector。
+ VS2019针对C&#43;&#43;代码编译速度、以及CPUAVX/AVX2指令集下的矢量计算进行了更深入的优化，并且微软Xbox ATG团队使用UE4的Infiltratordemo工程对优化后的效果进行了基准测试：
+ 编译速度方面：完整编译速度，VS2019(16.2)是VS2017(15.9)的3.5倍，增量编译速度，VS2019(16.2)是VS2017(15.9)的1.6倍； 代码优化方面：以游戏帧率作为测试标准，VS 16.">
 <meta property="og:locale" content="en-us">
 
   
@@ -289,16 +293,6 @@ if (!doNotTrack) {
 
   <li class="sidebar-button">
     
-      <a class="sidebar-button-link " href="https://www.artstation.com/artist/dawnarc" target="_blank" rel="noopener">
-    
-      <i class="sidebar-button-icon fa fa-lg fa-artstation"></i>
-      
-      <span class="sidebar-button-desc">ArtStation</span>
-    </a>
-  </li>
-
-  <li class="sidebar-button">
-    
       <a class="sidebar-button-link " href="https://www.facebook.com/koanland" target="_blank" rel="noopener">
     
       <i class="sidebar-button-icon fa fa-lg fa-facebook"></i>
@@ -314,6 +308,16 @@ if (!doNotTrack) {
       <i class="sidebar-button-icon fa fa-lg fa-github"></i>
       
       <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://www.instagram.com/dawn_arc/" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-instagram"></i>
+      
+      <span class="sidebar-button-desc">Instagram</span>
     </a>
   </li>
 
@@ -443,16 +447,25 @@ if (!doNotTrack) {
 <a href="https://www.reddit.com/r/unrealengine/comments/6qtxy3/test_blueprint_vs_c_performance_vs_nativized_bp/">https://www.reddit.com/r/unrealengine/comments/6qtxy3/test_blueprint_vs_c_performance_vs_nativized_bp/</a></p></li>
 
 <li><p>开启<code>Occlusion Culling</code> (Project Settings -&gt; Engine -&gt; Rendering -&gt; Occlusion Culling，默认已开启)。如果需要强化遮挡剔除的力度（代价是剔除效果比较突兀）以提升渲染效率，将以下属性值增大：<br />
-Min Screen Radius for Lights<br />
-Min Screen Radius for Early Z Pass<br />
-Min Screen Radius for Cascaded Shadow Maps</p></li>
+<code>Min Screen Radius for Lights</code><br />
+<code>Min Screen Radius for Early Z Pass</code><br />
+<code>Min Screen Radius for Cascaded Shadow Maps</code></p></li>
 </ol>
 
 <h5 id="代码编译优化">代码编译优化</h5>
 
 <ol>
-<li>使用C++进行向量变换时，尽量使用<code>FTransform::TransformXXX()</code>和<code>FTransform::InverseTransformXXX</code>，而不是<code>FQuat::RotateVector</code>和<code>FQuat::UnrotateVector</code>，因为前者使用了更多的当前硬件支持的矢量汇编指令，榨干了硬件性能，而后者是为了跨平台，老老实实使用C++代码来执行计算公式，虽然也调用了硬件汇编指令，但数量相对较少。<br />
-UE4做了优化，当你使用<code>FTransform::TransformXXX()</code>时，如果当前硬件支持，就走硬件指令，如果不支持，则走<code>FQuat::RotateVector</code>。</li>
+<li><p>使用C++进行向量变换时，尽量使用<code>FTransform::TransformXXX()</code>和<code>FTransform::InverseTransformXXX</code>，而不是<code>FQuat::RotateVector</code>和<code>FQuat::UnrotateVector</code>，因为前者使用了更多的当前硬件支持的矢量汇编指令，榨干了硬件性能，而后者是为了跨平台，老老实实使用C++代码来执行计算公式，虽然也调用了硬件汇编指令，但数量相对较少。<br />
+UE4做了优化，当你使用<code>FTransform::TransformXXX()</code>时，如果当前硬件支持，就走硬件指令，如果不支持，则走<code>FQuat::RotateVector</code>。</p></li>
+
+<li><p>VS2019针对C++代码编译速度、以及CPU<code>AVX/AVX2</code>指令集下的矢量计算进行了更深入的优化，并且微软Xbox ATG团队使用UE4的<code>Infiltrator</code>demo工程对优化后的效果进行了基准测试：</p>
+
+<ul>
+<li>编译速度方面：完整编译速度，VS2019(16.2)是VS2017(15.9)的3.5倍，增量编译速度，VS2019(16.2)是VS2017(15.9)的1.6倍；</li>
+<li>代码优化方面：以游戏帧率作为测试标准，VS 16.2相对16.0提升了2%到3%，而16.0相对15.9最大可以提升2.8%，也就是说使用VS2019编译代码，相比VS2017，可以让游戏运行时帧率提升5%左右。</li>
+</ul>
+
+<p>更多详情见微软C++团队博客：<a href="URL" title="https://devblogs.microsoft.com/cppblog">C++ Team Blog</a>。</p></li>
 </ol>
 
 <h5 id="灯光优化">灯光优化</h5>
@@ -752,7 +765,7 @@ Project Settings -&gt; Engine -&gt; Animation -&gt; 勾选 Strip Animation Data 
         </article>
         <footer id="footer" class="main-content-wrap">
   <span class="copyrights">
-    &copy; 2019 Neil Wang. All Rights Reserved. Powered by <A href="https://gohugo.io/"> Hugo</A>. Theme by <A href="https://github.com/kakawait/hugo-tranquilpeak-theme/"> Tranquilpeak</A>.
+    &copy; 2019 Neil Wang. All Rights Reserved. Powered by <A href="https://gohugo.io/"> Hugo</A> | Theme created by <A href="https://github.com/kakawait/hugo-tranquilpeak-theme/"> Tranquilpeak</A>.
   </span>
 </footer>
 
