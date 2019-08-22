@@ -321,6 +321,140 @@ if (!doNotTrack) {
     
     <div class="postShorten-header">
       <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2018/09/ue4add-custom-collision-for-static-mesh/">
+          [UE4]Add Custom Collision for Static Mesh
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2018-09-27T16:57:02&#43;08:00">
+        
+  
+  
+  
+  
+    Thursday, 16:57, Sep 27, 2018
+  
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        对于结构简单的模型，使用UE4自动生成的Simple Collision没什么问题；如果模型结构复杂，使用Simple Collision不够精准，使用Complex Collision对于实时计算（比如开放世界大场景的游戏项目）的项目来说太耗。
+UE4中自定义碰撞盒 Static Mesh默认打开后：   勾选 Simple Collision   然后选中 Collision，按Delete键删掉   然后点击菜单 Collision -》 Add Box Simplified Collision   然后就可以按W、E、R键修改 Box的坐标、转向、缩放等       缩放比例默认是0.5倍，也可以调整为更小的比例：   如果一个box无法恰好包裹整个物体，可以使用多个Box组合，例如：   官方文档：
+Setting Up Collisions With Static Meshes
+https://docs.unrealengine.com/en-us/Engine/Content/Types/StaticMeshes/HowTo/SettingCollision
+在3DMax、Maya中创建自定义碰撞盒 UE4编辑器中虽然提供了添加自定义碰撞盒的功能，但是编辑起来不够灵活，对于特殊形状的物体，建议在建模软件中创建自定义碰撞盒。
+1，比如U型物体，UE4自动生成的碰撞盒子是这样的：
+简单碰撞   复杂碰撞   2，我们在建模软件中（这里以Maya为例），为U型物体添加三块遮挡方块   将U型物体和3个方块合成一个Group，并且碰撞盒子的命名一定要遵循规则：UCX_主物体名XXX。例如：主物体名称为pCylinder，则碰撞盒子的名称必须为：UCX_pCylinderXXX，否则导入UE4后这3个方块会被当作真实物体而不是碰撞体。   然后导出FBX文件，导入UE4时，去掉勾选：Auto Generate Collision；如果碰撞盒子没有和模型合成一个Group，还需要勾选：Combine Meshes。这里我们已经在Maya进行了Group操作，所以可以不用勾选 Combine Meshes。   导入UE4后，编辑器中打开该物体，然后勾选：Collision -》 Simple Collision   就可以看到3块自定义碰撞盒。   小时候有无数个梦想，现在只想好好生活。
+      
+      <p>
+        <a href="https://dawnarc.com/2018/09/ue4add-custom-collision-for-static-mesh/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2018/09/ue4root-motion/">
+          [UE4]Root Motion
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2018-09-23T21:06:02&#43;08:00">
+        
+  
+  
+  
+  
+    Sunday, 21:06, Sep 23, 2018
+  
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        蓝图设置方式 Root Motion 设置步骤：
+ 先在 AnimSequence 的Asset Detail面板中勾选EnableRootMotion和Force Root Lock。 然后基于该 AnimSequence 新建一个 AnimMontage。 然后再在 AnimationBluerpint 中设置Root Motion Mode为 Root Motion From Montages Only（Class Defaults 面板下，不是Class Settings）。  如果你没有使用UE4的服务器、或者使用了UE4服务器但是没有对动画启用Replication（服务端通过 NetMulticast 播放动画），设置为Root Motion from Enerything没有问题，如果使用了UE4的Replication，且这些动画文件（AnimSequence, Blendspace, AnimMontage, etc.）勾选了EnableRootMotion，那么 Root Motion 也会被同步，影响性能。所以官方文档上的建议是使用默认设置，即：Root Motion Mode设置为Root Motion From Montages Only，只对Montage的Root Motion进行Replication。
+ Root Motion
+https://docs.unrealengine.com/en-US/Engine/Animation/RootMotion
+C++设置方式  v4.5之前的方式： UAnimMontage 的两个属性 bEnableRootMotionTranslation、bEnableRootMotionRotation，任意一个设置为 true 即可。
+AnimMontage.cpp 引擎代码：
+bool bRootMotionEnabled = bEnableRootMotionTranslation || bEnableRootMotionRotation; if (bRootMotionEnabled) { for (FSlotAnimationTrack&amp; Slot : SlotAnimTracks) { for (FAnimSegment&amp; Segment : Slot.
+      
+      <p>
+        <a href="https://dawnarc.com/2018/09/ue4root-motion/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
         <a class="link-unstyled" href="https://dawnarc.com/2018/09/ue4ue4-stylized-enum-and-struct-in-c-/">
           [UE4]UE4 stylized Enum and Struct in C&#43;&#43;
         </a>
@@ -1169,142 +1303,6 @@ Say you have head, upper body, lower body, and how do you allow them to pick and
       
       <p>
         <a href="https://dawnarc.com/2018/05/ue4animationanimation-blueprint-inherit%E5%8A%A8%E7%94%BB%E8%93%9D%E5%9B%BE%E7%BB%A7%E6%89%BF%E4%B8%8E%E5%A4%8D%E7%94%A8/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-            
-              
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2018/05/ue4animationmultiple-skeleton-meshes-sharing-same-skeleton%E5%A4%9A%E4%B8%AAskeletonmesh%E5%85%B1%E7%94%A8%E4%B8%80%E5%A5%97%E9%AA%A8%E9%AA%BC/">
-          [UE4][Animation]Multiple skeleton meshes sharing same skeleton(多个SkeletonMesh共用一套骨骼)
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2018-05-29T12:30:02&#43;08:00">
-        
-  
-  
-  
-  
-    Tuesday, 12:30, May 29, 2018
-  
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        keywords：UE4 Animation、Set Master Pose Component、customizable character、动画蓝图、换装
-美术资源制作  每个身体部件（帽子、鞋子等）蒙皮时需要使用同一套骨骼(all pieces need to be skinned to the same skeleton) 每个身体部件导出时，该部件的关节与根关节之间的所有关节都需要选中导出。例如：假设盆骨为根关节（root joint），现在要导出手臂，那么手臂、肩膀、脊椎、盆骨的关节都需要选中导出。  角色蓝图中设置Master Pose 身体各个部件导入UE4之后，打开角色蓝图，为每个部件Add一个Skeleton Mesh Component，并将其Skeleton Mesh属性设置为对应的资源文件。
-      最后在BeginPlay事件中执行Set Master Pose Component
-  这样，角色在播放动画时，每个部件就会跟随角色一起播放，而不会固定不动。
-参考自：How to Setup &ldquo;Master Pose Component&rdquo;
-https://answers.unrealengine.com/questions/228601/how-to-setup-master-pose-component.html
-注意事项：不要在构造函数中执行SetMasterPoseComponent，否则会出现莫名其妙的问题，比如：Mesh的LOD失效。
- How to make SetMasterPoseComponent work with skeletal meshes with LODs?
-https://answers.unrealengine.com/questions/793802/how-to-make-setmasterposecomponent-work-with-skele.html
-C++接口 Set Master Pose Component蓝图节点对应的C++ API：
-Child-&gt;SetMasterPoseComponent(Body);  有一个传说，说的是有那么一只鸟儿，它一生只唱一次，那歌声比世上所有一切生灵的歌声都更加优美动听。---《荆棘鸟》
-      
-      <p>
-        <a href="https://dawnarc.com/2018/05/ue4animationmultiple-skeleton-meshes-sharing-same-skeleton%E5%A4%9A%E4%B8%AAskeletonmesh%E5%85%B1%E7%94%A8%E4%B8%80%E5%A5%97%E9%AA%A8%E9%AA%BC/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-            
-              
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2018/05/ue4anti-aliasing-notes/">
-          [UE4]Anti-Aliasing Notes
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2018-05-17T14:44:02&#43;08:00">
-        
-  
-  
-  
-  
-    Thursday, 14:44, May 17, 2018
-  
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        Keywords: UE4, Anti-Aliasing, Temporal AA
-How to change Anti-Aliasing method on desktop devices Project Settings -&gt; Engine -&gt; Rendering -&gt; Default Settings -&gt; Anti-Aliasing Method.
-Default Anti-Aliasing method is Temporal AA.
- Post-process Anti-aliasing was removed from Post Process Volume.
- How to modify parameters of Temporal AA at run-time r.TemporalAACurrentFrameWeight 0.2 r.TemporalAASamples 4 r.Tonemapper.Sharpen 0.8 // Somewhere between 0.5 and 1.0 seems like a sweet spot.  Reference:
-      
-      <p>
-        <a href="https://dawnarc.com/2018/05/ue4anti-aliasing-notes/" class="postShorten-excerpt_link link">Continue reading</a>
         
       </p>
     </div>

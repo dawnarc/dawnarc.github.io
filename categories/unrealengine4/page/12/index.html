@@ -321,6 +321,137 @@ if (!doNotTrack) {
     
     <div class="postShorten-header">
       <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2017/06/ue4%E8%BD%AC%E8%BD%BDuengine-browse%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B/">
+          [UE4]转载：UEngine Browse()执行流程
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2017-06-01T13:00:40&#43;08:00">
+        
+  
+  
+  
+  
+    Thursday, 13:00, Jun 1, 2017
+  
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        原文：http://blog.csdn.net/xiaozhi0999/article/details/51393704
+ue4中，客户端登陆流程如下，调用UEngine::Browse方法，在这个方法中，判断如果是客户端，则创建UPendingNetGame实例，代码如下：
+WorldContext.PendingNetGame = NewObject&lt;UPendingNetGame&gt;(); WorldContext.PendingNetGame-&gt;Initialize(URL); WorldContext.PendingNetGame-&gt;InitNetDriver();  而在InitNetDriver函数中，会向服务器发送 NMT_Hello 协议，我们转到NMT_Hello 的定义，如下：
+DEFINE_CONTROL_CHANNEL_MESSAGE_TWOPARAM(Hello, 0, uint8, uint32); // initial client connection message  参数1：大端还是小端
+参数2：客户端版本号
+客户端处理协议的地方是如下两个函数：
+void UPendingNetGame::NotifyControlMessage(UNetConnection* Connection, uint8 MessageType, class FInBunch&amp; Bunch) void UWorld::NotifyControlMessage(UNetConnection* Connection, uint8 MessageType, class FInBunch&amp; Bunch)  服务器处理协议的地方是下面这个函数：
+void UWorld::NotifyControlMessage(UNetConnection* Connection, uint8 MessageType, class FInBunch&amp; Bunch)  在服务器的协议处理函数，我们可以看到NMT_Hello协议的处理过程，先调用Receive接收消息，然后判断版本号是否一致，不一致发送NMT_Upgrade消息，一致则发送NMT_Challenge消息
+DEFINE_CONTROL_CHANNEL_MESSAGE_ONEPARAM(Challenge, 3, FString); // server sends client challenge string to verify integrity  客户端收到NMT_Challenge消息后，向服务器发送NMT_Login消息，NMT_Login消息携带三个参数，如下：
+DEFINE_CONTROL_CHANNEL_MESSAGE_THREEPARAM(Login, 5, FString, FString, FUniqueNetIdRepl); // client requests to be admitted to the game  参数1：客户端响应
+      
+      <p>
+        <a href="https://dawnarc.com/2017/06/ue4%E8%BD%AC%E8%BD%BDuengine-browse%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2017/06/ue4networking-in-baisc-travelling-in-multiplayer/">
+          [UE4]Networking in Baisc - Travelling in Multiplayer
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2017-06-01T11:05:40&#43;08:00">
+        
+  
+  
+  
+  
+    Thursday, 11:05, Jun 1, 2017
+  
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        <p>Keywords: UE4, Networking, Dedicated Server,ClientTravel, ServerTravel, UEngine::Browse</p>
+      
+      <p>
+        <a href="https://dawnarc.com/2017/06/ue4networking-in-baisc-travelling-in-multiplayer/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
         <a class="link-unstyled" href="https://dawnarc.com/2017/06/ue4c-%E8%8E%B7%E5%8F%96%E6%B8%B8%E6%88%8F%E5%BD%93%E5%89%8D%E7%99%BB%E5%BD%95%E7%9A%84%E6%9C%8D%E5%8A%A1%E5%99%A8ip%E5%92%8C%E7%AB%AF%E5%8F%A3/">
           [UE4]C&#43;&#43;获取游戏当前登录的服务器IP和端口
         </a>
@@ -1153,160 +1284,6 @@ https://dawnarc.com/2019/06/ue4networking-in-advanced-engine-source-analysis-hig
       
       <p>
         <a href="https://dawnarc.com/2017/02/ue4dedicated-server%E5%90%8C%E6%AD%A5%E7%A4%BA%E4%BE%8B%E5%85%A8%E6%B5%81%E7%A8%8B%E7%99%BB%E5%BD%95replication%E5%92%8Crpc/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-            
-              
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2017/02/ue4networking-in-basic-simple-replication-example/">
-          [UE4]Networking in Basic - Simple Replication Example
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2017-02-25T20:33:40&#43;08:00">
-        
-  
-  
-  
-  
-    Saturday, 20:33, Feb 25, 2017
-  
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        转载请注明原文出处：https://dawnarc.com
-keywords：UE4, Replication, Relicate, Reliable, RPC, RTS Movement, Dedicated Server
-实例的完整工程下载地址见文章底部
-属性同步 属性同步基本用法 步骤：
-1，对属性添加UPROPERTY(Replicated)宏：
-//Player display name UPROPERTY(Replicated) FString Alias_;  2，属性所在的class中重写函数GetLifetimeReplicatedProps：
-需要头文件：
-#include &quot;Net/UnrealNetwork.h&quot;  重写函数：
-void AReplTestCharacter::GetLifetimeReplicatedProps(TArray&lt; FLifetimeProperty &gt; &amp; OutLifetimeProps) const { Super::GetLifetimeReplicatedProps(OutLifetimeProps); DOREPLIFETIME(AReplTestCharacter, Alias_); }  属性同步扩展用法 如何为同步属性添加回调函数？
-用法：
-UPROPERTY(ReplicatedUsing = OnHPChanged) float HealthPoint; UFUNCTION() void OnHPChanged();  ReplicatedUsing只在客户端执行，服务端不执行。客户端相关表现逻辑可以放在ReplicatedUsing回调函数。另外函数需要添加UFUNCTION。
- RPC（远程执行调用） 步骤：
-1，对需要远程执行的函数添加宏UFUNCTION(Server, Reliable, WithValidation)或者UFUNCTION(Client, Reliable)。其中Server表示在客户端调用，在服务端执行；WithValidation表示是否需要验证函数，加上的画需要添加函数：bool MyFun_Validate()，函数体内容写在MyFun_Implementation函数内。cpp中不需要与函数名同名的函数体，只需要实现_Validate和_Implementation两个函数即可。 头文件：
-//移动角色(只在服务端执行的函数) UFUNCTION(Server, Reliable, WithValidation) void ServerMoveToDest(APawn* Panw, const FVector DestLocation); bool ServerMoveToDest_Validate(APawn* Panw, const FVector DestLocation); void ServerMoveToDest_Implementation(APawn* Panw, const FVector DestLocation);  CPP：
-      
-      <p>
-        <a href="https://dawnarc.com/2017/02/ue4networking-in-basic-simple-replication-example/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-            
-              
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2017/02/ue4%E5%A6%82%E4%BD%95%E7%BC%96%E8%AF%91%E9%83%A8%E7%BD%B2%E7%8B%AC%E7%AB%8B%E4%B8%93%E7%94%A8%E6%9C%8D%E5%8A%A1%E7%AB%AFstandalone-dedicated-server/">
-          [UE4]如何编译部署独立专用服务端(Standalone Dedicated Server)
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2017-02-25T20:33:40&#43;08:00">
-        
-  
-  
-  
-  
-    Saturday, 20:33, Feb 25, 2017
-  
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        下面步骤假设是以development模式来构建，步骤和shipping模式没差异。
-下面步骤中假设我们自己的UE4工程名叫：MyProject
-1，下载源码及编译 需要现在unrealengine官网上注册并加入github开发组才有权限进入下面地址。
-https://github.com/EpicGames/UnrealEngine/tags
-注意：编译专用服务器，只能用源码编译版本的引擎，安装版本的引擎无法编译Server。
- 打开页面后下载一个最新的release版本，解压出来后先运行Setup.bat，会自动下载资源文件，大概有几个G，下载完以后，然后再运行GenerateProjectFiles.bat，会生成VS工程文件，这里假设你已经安装好了VS，我用的vs2015旗舰版，生成完以后打开VS，build类型选择debuggame editor或者development editor，并编译。
-2，切换工程的UE4版本 右键点击你的UE4工程文件MyProject.uproject -》 Switch Unreal Engine version，选择刚刚编译出来的UE4，切换版本以后，再右击*.uproject并选择：Generate Visual Studio project files，最后启动VS，启动VS之后再选择一种build类型来编译工程并启动，这里测试用的是development editor类型。
-3，cook client content 上面第二步编译并启动运行工程后，这一步来打包客户端（官方文档上叫cook client content），方法和正常客户端版本打包的步骤一样：
-Package Project -》 Windows -》 Windows x64。   有人可能会问，安装版本的UE4为什么有没PS4、Xbox等打包选项？是的，只有源码编译的UE4才有这些选项。
-这里我们假设打包时选择的输出目录为：D:/PackageTest/，那么输出的客户端exe文件就在D:/PackageTest/WindowsNoEditor/MyProject/Binariesk/Win64/MyProject.exe
-这个目录位置会在后面步骤中用到。
-如果不cook client content，则后面启动服务端时会报错： Error: The global shader cache file &lsquo;F:/EpicGames/UnrealEngine/Engine/GlobalShaderCache-PCD3D_SM5.bin&rsquo; is missing.
-
-还有一个纯蓝图UE4工程的构建bug问题：
-这个问题v4.7版本时还存在，当前最新版本不知道解决没有。
-问题现象是：如果用VS构建之前不添加一个自定义的C++代码，那么构建出来的版本会有问题。
-解决办法：在VS构建server版本之前，在UE4 Editor中添加一个C++代码，这个代码随意，只要是C++代码就行（比如添加一个自定义HUD的class），内容默认，不需要编辑。
-添加C++方法是：File -》 Add Code to Project。
-由于我这里演示的是C++工程，所以不需要添加再添加C++ class。
-打包之前记得GameMode和Map是否设置正确了，如果不使用默认的话。   如果这里不设置，默认为空，则客户端进入服务端后会黑屏。
-      
-      <p>
-        <a href="https://dawnarc.com/2017/02/ue4%E5%A6%82%E4%BD%95%E7%BC%96%E8%AF%91%E9%83%A8%E7%BD%B2%E7%8B%AC%E7%AB%8B%E4%B8%93%E7%94%A8%E6%9C%8D%E5%8A%A1%E7%AB%AFstandalone-dedicated-server/" class="postShorten-excerpt_link link">Continue reading</a>
         
       </p>
     </div>

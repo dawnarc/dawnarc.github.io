@@ -321,6 +321,160 @@ if (!doNotTrack) {
     
     <div class="postShorten-header">
       <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2017/02/ue4networking-in-basic-simple-replication-example/">
+          [UE4]Networking in Basic - Simple Replication Example
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2017-02-25T20:33:40&#43;08:00">
+        
+  
+  
+  
+  
+    Saturday, 20:33, Feb 25, 2017
+  
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        转载请注明原文出处：https://dawnarc.com
+keywords：UE4, Replication, Relicate, Reliable, RPC, RTS Movement, Dedicated Server
+实例的完整工程下载地址见文章底部
+属性同步 属性同步基本用法 步骤：
+1，对属性添加UPROPERTY(Replicated)宏：
+//Player display name UPROPERTY(Replicated) FString Alias_;  2，属性所在的class中重写函数GetLifetimeReplicatedProps：
+需要头文件：
+#include &quot;Net/UnrealNetwork.h&quot;  重写函数：
+void AReplTestCharacter::GetLifetimeReplicatedProps(TArray&lt; FLifetimeProperty &gt; &amp; OutLifetimeProps) const { Super::GetLifetimeReplicatedProps(OutLifetimeProps); DOREPLIFETIME(AReplTestCharacter, Alias_); }  属性同步扩展用法 如何为同步属性添加回调函数？
+用法：
+UPROPERTY(ReplicatedUsing = OnHPChanged) float HealthPoint; UFUNCTION() void OnHPChanged();  ReplicatedUsing只在客户端执行，服务端不执行。客户端相关表现逻辑可以放在ReplicatedUsing回调函数。另外函数需要添加UFUNCTION。
+ RPC（远程执行调用） 步骤：
+1，对需要远程执行的函数添加宏UFUNCTION(Server, Reliable, WithValidation)或者UFUNCTION(Client, Reliable)。其中Server表示在客户端调用，在服务端执行；WithValidation表示是否需要验证函数，加上的画需要添加函数：bool MyFun_Validate()，函数体内容写在MyFun_Implementation函数内。cpp中不需要与函数名同名的函数体，只需要实现_Validate和_Implementation两个函数即可。 头文件：
+//移动角色(只在服务端执行的函数) UFUNCTION(Server, Reliable, WithValidation) void ServerMoveToDest(APawn* Panw, const FVector DestLocation); bool ServerMoveToDest_Validate(APawn* Panw, const FVector DestLocation); void ServerMoveToDest_Implementation(APawn* Panw, const FVector DestLocation);  CPP：
+      
+      <p>
+        <a href="https://dawnarc.com/2017/02/ue4networking-in-basic-simple-replication-example/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2017/02/ue4%E5%A6%82%E4%BD%95%E7%BC%96%E8%AF%91%E9%83%A8%E7%BD%B2%E7%8B%AC%E7%AB%8B%E4%B8%93%E7%94%A8%E6%9C%8D%E5%8A%A1%E7%AB%AFstandalone-dedicated-server/">
+          [UE4]如何编译部署独立专用服务端(Standalone Dedicated Server)
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2017-02-25T20:33:40&#43;08:00">
+        
+  
+  
+  
+  
+    Saturday, 20:33, Feb 25, 2017
+  
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        下面步骤假设是以development模式来构建，步骤和shipping模式没差异。
+下面步骤中假设我们自己的UE4工程名叫：MyProject
+1，下载源码及编译 需要现在unrealengine官网上注册并加入github开发组才有权限进入下面地址。
+https://github.com/EpicGames/UnrealEngine/tags
+注意：编译专用服务器，只能用源码编译版本的引擎，安装版本的引擎无法编译Server。
+ 打开页面后下载一个最新的release版本，解压出来后先运行Setup.bat，会自动下载资源文件，大概有几个G，下载完以后，然后再运行GenerateProjectFiles.bat，会生成VS工程文件，这里假设你已经安装好了VS，我用的vs2015旗舰版，生成完以后打开VS，build类型选择debuggame editor或者development editor，并编译。
+2，切换工程的UE4版本 右键点击你的UE4工程文件MyProject.uproject -》 Switch Unreal Engine version，选择刚刚编译出来的UE4，切换版本以后，再右击*.uproject并选择：Generate Visual Studio project files，最后启动VS，启动VS之后再选择一种build类型来编译工程并启动，这里测试用的是development editor类型。
+3，cook client content 上面第二步编译并启动运行工程后，这一步来打包客户端（官方文档上叫cook client content），方法和正常客户端版本打包的步骤一样：
+Package Project -》 Windows -》 Windows x64。   有人可能会问，安装版本的UE4为什么有没PS4、Xbox等打包选项？是的，只有源码编译的UE4才有这些选项。
+这里我们假设打包时选择的输出目录为：D:/PackageTest/，那么输出的客户端exe文件就在D:/PackageTest/WindowsNoEditor/MyProject/Binariesk/Win64/MyProject.exe
+这个目录位置会在后面步骤中用到。
+如果不cook client content，则后面启动服务端时会报错： Error: The global shader cache file &lsquo;F:/EpicGames/UnrealEngine/Engine/GlobalShaderCache-PCD3D_SM5.bin&rsquo; is missing.
+
+还有一个纯蓝图UE4工程的构建bug问题：
+这个问题v4.7版本时还存在，当前最新版本不知道解决没有。
+问题现象是：如果用VS构建之前不添加一个自定义的C++代码，那么构建出来的版本会有问题。
+解决办法：在VS构建server版本之前，在UE4 Editor中添加一个C++代码，这个代码随意，只要是C++代码就行（比如添加一个自定义HUD的class），内容默认，不需要编辑。
+添加C++方法是：File -》 Add Code to Project。
+由于我这里演示的是C++工程，所以不需要添加再添加C++ class。
+打包之前记得GameMode和Map是否设置正确了，如果不使用默认的话。   如果这里不设置，默认为空，则客户端进入服务端后会黑屏。
+      
+      <p>
+        <a href="https://dawnarc.com/2017/02/ue4%E5%A6%82%E4%BD%95%E7%BC%96%E8%AF%91%E9%83%A8%E7%BD%B2%E7%8B%AC%E7%AB%8B%E4%B8%93%E7%94%A8%E6%9C%8D%E5%8A%A1%E7%AB%AFstandalone-dedicated-server/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
         <a class="link-unstyled" href="https://dawnarc.com/2017/02/ue4overlap%E6%A3%80%E6%B5%8B%E7%9A%84%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7%E5%87%BD%E6%95%B0/">
           [UE4]Overlap检测的常用工具函数
         </a>
@@ -618,17 +772,16 @@ exec: error : one or more of the modules specified using the '-module' argument 
  如果角色身上有很多Component需要Attach，尽量在使用时Attach，不要一加载就全部attach，否则当场景中角色很多时，会有严重性能问题。
 比如：场景中有几百个角色，但不是每个角色都需要摄像机和弹簧臂，那么在构造函数中就不要创建摄像机和弹簧臂组件。
  面数对UE4来说不敏感，即使在移动端。ipad 4上，50万的三角面，也能够以30fps帧率稳定运行，移动端主要对贴图大小、材质复杂度较为敏感。
- C++ 比 蓝图快100到1000倍
+  代码编译优化  C++ 比 蓝图快100到1000倍
 [Test] Blueprint vs C++ Performance vs Nativized BP
 https://www.reddit.com/r/unrealengine/comments/6qtxy3/test_blueprint_vs_c_performance_vs_nativized_bp/
- 开启Occlusion Culling (Project Settings -&gt; Engine -&gt; Rendering -&gt; Occlusion Culling，默认已开启)。如果需要增大以屏占比基准的剔除强度（代价是剔除效果比较突兀）以提升渲染效率，将以下属性值增大：
-Min Screen Radius for Lights
-Min Screen Radius for Early Z Pass
-Min Screen Radius for Cascaded Shadow Maps
-  代码编译优化  使用C++进行向量变换时，尽量使用FTransform::TransformXXX()和FTransform::InverseTransformXXX，而不是FQuat::RotateVector和FQuat::UnrotateVector，因为前者使用了更多的当前硬件支持的矢量汇编指令，榨干了硬件性能，而后者是为了跨平台，老老实实使用C++代码来执行计算公式，虽然也调用了硬件汇编指令，但数量相对较少。
+ 使用C++进行向量变换时，尽量使用FTransform::TransformXXX()和FTransform::InverseTransformXXX，而不是FQuat::RotateVector和FQuat::UnrotateVector，因为前者使用了更多的当前硬件支持的矢量汇编指令，榨干了硬件性能，而后者是为了跨平台，老老实实使用C++代码来执行计算公式，虽然也调用了硬件汇编指令，但数量相对较少。
 UE4做了优化，当你使用FTransform::TransformXXX()时，如果当前硬件支持，就走硬件指令，如果不支持，则走FQuat::RotateVector。
  VS2019针对C++代码编译速度、以及CPUAVX/AVX2指令集下的矢量计算进行了更深入的优化，并且微软Xbox ATG团队使用UE4的demo工程Infiltrator对优化后的效果进行了基准测试：
- 编译速度方面：完整编译速度，VS2019(16.2)是VS2017(15.9)的3.5倍，增量编译速度，VS2019(16.2)是VS2017(15.9)的1.6倍； 代码优化方面：以游戏帧率作为测试标准，VS 16.
+ 编译速度方面：完整编译速度，VS2019(16.2)是VS2017(15.9)的3.5倍，增量编译速度，VS2019(16.2)是VS2017(15.9)的1.6倍； 代码优化方面：以游戏帧率作为测试标准，VS 16.2相对16.0提升了2%到3%，而16.0相对15.9最大可以提升2.8%，也就是说使用VS2019编译代码，相比VS2017，可以让游戏运行时帧率提升5%左右。  更多详情见微软C++团队博客：C++ Team Blog。
+  视距裁切（剔除）  开启Occlusion Culling (Project Settings -&gt; Engine -&gt; Rendering -&gt; Occlusion Culling，默认已开启)。如果需要增大以屏占比基准的剔除强度（代价是剔除效果比较突兀）以提升渲染效率，将以下属性值增大：
+Min Screen Radius for Lights
+Min Screen Radius for Early Z Pass
       
       <p>
         <a href="https://dawnarc.com/2016/12/ue4%E4%BC%98%E5%8C%96%E5%BB%BA%E8%AE%AE%E4%B8%8E%E7%BB%8F%E9%AA%8C/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -1152,132 +1305,6 @@ MeshComponent中类似函数还有ToggleActive()
       
       <p>
         <a href="https://dawnarc.com/2016/10/ue4%E5%9C%BA%E6%99%AF%E4%B8%ADactor%E5%90%8D%E5%AD%97%E4%B8%8E%E8%AF%A6%E7%BB%86%E4%BF%A1%E6%81%AF%E9%9D%A2%E6%9D%BF%E4%B8%AD%E7%9A%84name%E4%B8%8D%E4%B8%80%E8%87%B4%E7%9A%84%E9%97%AE%E9%A2%98/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-            
-              
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2016/10/ue4hud%E7%9A%84canvas%E5%8F%98%E9%87%8F%E4%B8%BAnull%E7%9A%84%E9%97%AE%E9%A2%98/">
-          [UE4]HUD的Canvas变量为NULL的问题
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2016-10-24T23:06:40&#43;08:00">
-        
-  
-  
-  
-  
-    Monday, 23:06, Oct 24, 2016
-  
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        AHUD中的成员变量Canvas只在PostRender()事件中有效，离开此函数后就会被引擎置空。 要想使用HUD的Canvas，必须重写HUD的两个函数之一：
-/** PostRender is the main draw loop. */ virtual void PostRenderFor(); /** The Main Draw loop for the hud. Gets called before any messaging. Should be subclassed */ virtual void DrawHUD();  其中DrawHUD为HUD独有的函数，而PostRender是所有Actor都有函数。 另外注意：PostRenderFor()不是重写了就会触发，还需要执行AHUD::AddPostRenderedActor()，将需要触发的Actor加入PostRenderActors数组中。
-Canvas的引擎源码注释：
-protected: /** Canvas to Draw HUD on. Only valid during PostRender() event. */ UPROPERTY() UCanvas* Canvas;  
-      
-      <p>
-        <a href="https://dawnarc.com/2016/10/ue4hud%E7%9A%84canvas%E5%8F%98%E9%87%8F%E4%B8%BAnull%E7%9A%84%E9%97%AE%E9%A2%98/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-            
-              
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2016/10/ue4tmap%E4%BD%BF%E7%94%A8struct%E5%BD%93%E4%BD%9Ckey%E6%97%B6%E9%9C%80%E8%A6%81%E9%87%8D%E8%BD%BD%E7%9A%84%E6%93%8D%E4%BD%9C%E7%AC%A6/">
-          [UE4]TMap使用Struct当作key时需要重载的操作符
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2016-10-23T17:20:40&#43;08:00">
-        
-  
-  
-  
-  
-    Sunday, 17:20, Oct 23, 2016
-  
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        定义struct：
-struct FMyStruct { // String which identifies our key FString UniqueID; // Some state which doesn't affect struct identity float SomeFloat; explicit FMyStruct(float InFloat) : UniqueID (FGuid::NewGuid().ToString()) , SomeFloat(InFloat) { } }; template &lt;typename ValueType&gt; struct TMyStructMapKeyFuncs : BaseKeyFuncs&lt; TPair&lt;FMyStruct, ValueType&gt;, FString &gt; { private: typedef BaseKeyFuncs&lt; TPair&lt;FMyStruct, ValueType&gt;, FString &gt; Super; public: typedef typename Super::ElementInitType ElementInitType; typedef typename Super::KeyInitType KeyInitType; static KeyInitType GetSetKey(ElementInitType Element) { return Element.Key.UniqueID; } static bool Matches(KeyInitType A, KeyInitType B) { return A.
-      
-      <p>
-        <a href="https://dawnarc.com/2016/10/ue4tmap%E4%BD%BF%E7%94%A8struct%E5%BD%93%E4%BD%9Ckey%E6%97%B6%E9%9C%80%E8%A6%81%E9%87%8D%E8%BD%BD%E7%9A%84%E6%93%8D%E4%BD%9C%E7%AC%A6/" class="postShorten-excerpt_link link">Continue reading</a>
         
       </p>
     </div>
