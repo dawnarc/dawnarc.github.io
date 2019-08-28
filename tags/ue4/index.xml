@@ -6,10 +6,19 @@
     <description>Recent content in UE4 on 玄冬Wong</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 22 Aug 2019 02:10:02 +0800</lastBuildDate>
+    <lastBuildDate>Wed, 28 Aug 2019 20:13:02 +0800</lastBuildDate>
     
 	<atom:link href="https://dawnarc.com/tags/ue4/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>[UE4]Procedural Foliage Volume Notes</title>
+      <link>https://dawnarc.com/2019/08/ue4procedural-foliage-volume-notes/</link>
+      <pubDate>Wed, 28 Aug 2019 20:13:02 +0800</pubDate>
+      
+      <guid>https://dawnarc.com/2019/08/ue4procedural-foliage-volume-notes/</guid>
+      <description>&lt;p&gt;Keyworks: UE4, Procedural Foliage Volume&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>[UE4]Landscape Editor Notes</title>
@@ -604,10 +613,10 @@ https://www.unrealengine.com/marketplace/interactive-foliage-collection</descrip
       <guid>https://dawnarc.com/2018/10/ue4lnk2019-unresolved-external-symbol-getprivatestaticclass/</guid>
       <description>UE4 Plugin Link Error:
 Error LNK2019 unresolved external symbol &amp;quot;private: static class UClass * __cdecl UMyComponent::GetPrivateStaticClass(void)&amp;quot; (?GetPrivateStaticClass@UMyComponent@@CAPEAVUClass@@XZ) referenced in function &amp;quot;class UMyComponent * __cdecl NewObject&amp;lt;class UMyComponent&amp;gt;(class UObject *)&amp;quot; (??$NewObject@VUMyComponent@@@@YAPEAVUMyComponent@@PEAVUObject@@@Z) ClimbWall  Reason:
-Maybe you removed UE4&amp;rsquo;s macro in your header.
+Maybe you removed UE4&amp;rsquo;s macro in your headers.
 Solution:
-Add UE4 stylized macro in header, e.g.:
-UCLASS() class TESTPLUGIN_API UMyComponent : public UActorComponent { GENERATED_BODY() }  </description>
+Add UE4 stylized macro MYPROJ_API in headers, e.g.:
+UCLASS() class MYPROJ_API UMyComponent : public UActorComponent { GENERATED_BODY() }  </description>
     </item>
     
     <item>
@@ -2061,7 +2070,7 @@ LogNet: Warning: UIpNetDriver::ProcesRemoteFunction: No owning connection for ac
 Because the Actor which invoking server function on client doesn&amp;rsquo;t have Connection.
 Solution:
 How to let object have Connection?
- For Characters, possess it by PlayerController on server after spawning this Actor on server. For Actors, Set a Owner which has Connection for it.</description>
+ For Characters, possess it by PlayerController on server after spawning this Actor on server. For Actors, Set a Owner which has Connection for it on server.</description>
     </item>
     
     <item>
@@ -2515,23 +2524,7 @@ exec: error : one or more of the modules specified using the &#39;-module&#39; a
       <pubDate>Fri, 09 Dec 2016 19:17:02 +0800</pubDate>
       
       <guid>https://dawnarc.com/2016/12/ue4%E4%BC%98%E5%8C%96%E5%BB%BA%E8%AE%AE%E4%B8%8E%E7%BB%8F%E9%AA%8C/</guid>
-      <description>keywords：UE4性能优化、Performance Optimization
-内容都是处理项目问题的相关笔记，留给自己做备忘录，也分享出来让别人少走弯路。
-零散记录  GPUProfile来统计性能消耗的时候，在editor模式下不是很准，因为编辑器的消耗也算进去了，如果要用，最好以Game模式来查看。
- UE4不支持640X480的分辨率，如果在这个分辨率下运行程序，会导致程序崩溃（4.4版本，不知最新版本是否仍有此问题）。
- 如果角色身上有很多Component需要Attach，尽量在使用时Attach，不要一加载就全部attach，否则当场景中角色很多时，会有严重性能问题。
-比如：场景中有几百个角色，但不是每个角色都需要摄像机和弹簧臂，那么在构造函数中就不要创建摄像机和弹簧臂组件。
- 面数对UE4来说不敏感，即使在移动端。ipad 4上，50万的三角面，也能够以30fps帧率稳定运行，移动端主要对贴图大小、材质复杂度较为敏感。
-  代码编译优化  C++ 比 蓝图快100到1000倍
-[Test] Blueprint vs C++ Performance vs Nativized BP
-https://www.reddit.com/r/unrealengine/comments/6qtxy3/test_blueprint_vs_c_performance_vs_nativized_bp/
- 使用C++进行向量变换时，尽量使用FTransform::TransformXXX()和FTransform::InverseTransformXXX，而不是FQuat::RotateVector和FQuat::UnrotateVector，因为前者使用了更多的当前硬件支持的矢量汇编指令，榨干了硬件性能，而后者是为了跨平台，老老实实使用C++代码来执行计算公式，虽然也调用了硬件汇编指令，但数量相对较少。
-UE4做了优化，当你使用FTransform::TransformXXX()时，如果当前硬件支持，就走硬件指令，如果不支持，则走FQuat::RotateVector。
- VS2019针对C++代码编译速度、以及CPUAVX/AVX2指令集下的矢量计算进行了更深入的优化，并且微软Xbox ATG团队使用UE4的demo工程Infiltrator对优化后的效果进行了基准测试：
- 编译速度方面：完整编译速度，VS2019(16.2)是VS2017(15.9)的3.5倍，增量编译速度，VS2019(16.2)是VS2017(15.9)的1.6倍； 代码优化方面：以游戏帧率作为测试标准，VS 16.2相对16.0提升了2%到3%，而16.0相对15.9最大可以提升2.8%，也就是说使用VS2019编译代码，相比VS2017，可以让游戏运行时帧率提升5%左右。  更多详情见微软C++团队博客：C++ Team Blog。
-  视距裁剪（剔除）  开启Occlusion Culling (Project Settings -&amp;gt; Engine -&amp;gt; Rendering -&amp;gt; Occlusion Culling，默认已开启)。如果需要增大以屏占比基准的剔除强度（代价是剔除效果比较突兀）以提升渲染效率，将以下属性值增大：
-Min Screen Radius for Lights
-Min Screen Radius for Early Z Pass</description>
+      <description>&lt;p&gt;keywords：UE4性能优化、Performance Optimization&lt;/p&gt;</description>
     </item>
     
     <item>
