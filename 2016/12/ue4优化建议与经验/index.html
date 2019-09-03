@@ -393,6 +393,16 @@ UE4做了优化，当你使用<code>FTransform::TransformXXX()</code>时，如�
 <p>更多详情见微软C++团队博客：<a href="URL" title="https://devblogs.microsoft.com/cppblog">C++ Team Blog</a>。</p></li>
 </ol>
 
+<h5 id="代码算法优化-仅限ue4-api相关">代码算法优化（仅限UE4 API相关）</h5>
+
+<ol>
+<li><p>清空TArray时，如果该TArray对象还会继续使用，使用<code>Reset()</code>代替<code>Empty()</code>，因为前者不会销毁内存空间。</p></li>
+
+<li><p>TArray移除元素时，如果对元素的顺序不关心，可以使用<code>RemoveAtSwap()</code>代替<code>RemoveAt()</code>，前者是用数组末尾的元素来填补内存空洞（移除元素后产生的无效内存空间），而后者是对空洞后的所有元素平移。时间复杂度，前者为O(RemovedCount)，后者为O(ArrayNum)。</p></li>
+
+<li><p><code>TSoftObjectPtr</code>内部使用了RTTI的<code>dynamic_cast</code>，这个操作很贵，避免在run-time大规模使用，尤其是服务端。如果非要在run-time中频繁使用，个人建议做法：自己建一个map当作资源加载管理的缓存，key是资源路径，value是一个自定义结构体，其中保存了对象指针和资源类型枚举，获取的时候根据枚举值<code>static_cast</code>强转。</p></li>
+</ol>
+
 <h5 id="视距裁剪-剔除">视距裁剪（剔除）</h5>
 
 <ol>
@@ -433,7 +443,7 @@ Unity早期文档：灯光 Light<br />
 
 <li><p>关闭<code>Support Global clip plane for Planar Reflections</code>，默认关闭，开启后消耗巨大。</p></li>
 
-<li><p>AO性能优化。默认AO是关闭的，在超大型场景中，一般灯光会是性能瓶颈之一，特别是动态光场景下。此时关闭AO可以大幅提高帧率。开启AO后（Project Settings -&gt; Engine -&gt; Rendering -&gt; Default Settings -&gt; <code>Ambient Occlusion</code>），引擎默认的AO为SSAO(Screen Space Ambient Occlusion), SSAO无法进行预计算，所以GPU性能开销较大，可以修改为DFAO(Distance Field Ambient Occlusion)以提升性能，因为DFAO可以预计算，代价是增加显存开销。<br />
+<li><p>AO性能优化。在超大型场景中，一般灯光会是性能瓶颈之一，特别是动态光场景下。此时关闭AO可以大幅提高帧率（AO默认为开启，早期版本默认是关闭的）。开启AO后（Project Settings -&gt; Engine -&gt; Rendering -&gt; Default Settings -&gt; <code>Ambient Occlusion</code>），引擎默认的AO为SSAO(Screen Space Ambient Occlusion), SSAO无法进行预计算，所以GPU性能开销较大，可以修改为DFAO(Distance Field Ambient Occlusion)以提升性能，因为DFAO可以预计算，代价是增加显存开销。<br />
 DFAO开启方式：<br />
 Distance Field Ambient Occlusion<br />
 <a href="https://docs.unrealengine.com/en-us/Engine/Rendering/LightingAndShadows/DistanceFieldAmbientOcclusion">https://docs.unrealengine.com/en-us/Engine/Rendering/LightingAndShadows/DistanceFieldAmbientOcclusion</a><br />

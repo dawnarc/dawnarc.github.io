@@ -580,7 +580,7 @@ AssetLoader.Unload(FSoftObjectPath(AssetPath));
   <p><ul>
 <li>加载角色蓝图时，蓝图中引用的SkeletalMesh会被自动加载。</li>
 <li>加载材质蓝图（Material）时，材质中纹理样本（Texture Sample）引用的贴图会自动被加载，即使这个节点悬空没有连到材质节点上。</li>
-<li>加载特效（ParticleSystem）时，特效中粒子发射器（Emitter）引用的材质蓝图会自动被加载，包括材质（Material）与材质实例（MaterialInstanceConstant）。</li>
+<li>加载特效（ParticleSystem）时，特效中粒子发射器（Emitter）引用的材质蓝图会自动被加载，包括材质（Material）与材质实例（MaterialInstanceConstant），并且该材质引用的所有贴图也会自动被加载。</li>
 </ul></p>
 </div></p>
 
@@ -612,7 +612,7 @@ AssetLoader.Unload(FSoftObjectPath(AssetPath));
 
 <li><p>bManageActiveHandle为true时，即使切换关卡，该资源也不会被销毁，类似AddToRoot()的效果。</p></li>
 
-<li><p><code>TSoftObjectPtr</code>内部使用了RTTI的<code>dynamic_cast</code>，这个操作很贵，避免在run-time大规模使用，尤其是服务端。</p></li>
+<li><p><code>TSoftObjectPtr</code>内部使用了RTTI的<code>dynamic_cast</code>，这个操作很贵，避免在run-time大规模使用，尤其是服务端。如果非要在run-time中频繁使用，个人建议做法：自己建一个map当作资源加载管理的缓存，key是资源路径，value是一个自定义结构体，其中保存了对象指针和资源类型枚举，获取的时候根据枚举值<code>static_cast</code>强转。</p></li>
 </ul>
 
 <h3 id="参考">参考</h3>
