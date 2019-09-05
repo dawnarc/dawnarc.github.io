@@ -7,36 +7,36 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="generator" content="Hugo 0.56.3 with theme Tranquilpeak 0.4.6-BETA">
 <meta name="author" content="Neil Wang">
-<meta name="keywords" content="Unity, Plugins, Tools">
-<meta name="description" content="Keywords: Unity, Plugins, Tools">
+<meta name="keywords" content="Rendering, Occlusion Culling, Hierarchial Z-Buffer, HZB">
+<meta name="description" content="Keywords: Graphics, Rendering, Occlusion Culling, Hierarchial Z-Buffer, HZB">
 
 
-<meta property="og:description" content="Keywords: Unity, Plugins, Tools">
+<meta property="og:description" content="Keywords: Graphics, Rendering, Occlusion Culling, Hierarchial Z-Buffer, HZB">
 <meta property="og:type" content="article">
-<meta property="og:title" content="[Unity]Tools and Plugins, Documents and Blogs">
-<meta name="twitter:title" content="[Unity]Tools and Plugins, Documents and Blogs">
-<meta property="og:url" content="https://dawnarc.com/2019/07/unitytools-and-plugins-documents-and-blogs/">
-<meta property="twitter:url" content="https://dawnarc.com/2019/07/unitytools-and-plugins-documents-and-blogs/">
+<meta property="og:title" content="[Rendering]Occlusion Culling (Hierarchial Z-Buffer Visibility)">
+<meta name="twitter:title" content="[Rendering]Occlusion Culling (Hierarchial Z-Buffer Visibility)">
+<meta property="og:url" content="https://dawnarc.com/2019/09/renderingocclusion-culling-hierarchial-z-buffer-visibility/">
+<meta property="twitter:url" content="https://dawnarc.com/2019/09/renderingocclusion-culling-hierarchial-z-buffer-visibility/">
 <meta property="og:site_name" content="玄冬Wong">
-<meta property="og:description" content="Keywords: Unity, Plugins, Tools">
-<meta name="twitter:description" content="Keywords: Unity, Plugins, Tools">
+<meta property="og:description" content="Keywords: Graphics, Rendering, Occlusion Culling, Hierarchial Z-Buffer, HZB">
+<meta name="twitter:description" content="Keywords: Graphics, Rendering, Occlusion Culling, Hierarchial Z-Buffer, HZB">
 <meta property="og:locale" content="en-us">
 
   
-    <meta property="article:published_time" content="2019-07-23T13:18:02">
+    <meta property="article:published_time" content="2019-09-05T16:18:02">
   
   
-    <meta property="article:modified_time" content="2019-07-23T13:18:02">
+    <meta property="article:modified_time" content="2019-09-05T16:18:02">
   
-  
-  
-    
-      <meta property="article:section" content="Unity">
-    
   
   
     
-      <meta property="article:tag" content="Unity">
+      <meta property="article:section" content="Rendering">
+    
+  
+  
+    
+      <meta property="article:tag" content="Rendering">
     
   
 
@@ -53,8 +53,8 @@
 
 
 
-  <meta property="og:image" content="https://dawnarc.com/thumbnail/thumbnail-japen-018.jpg">
-  <meta property="twitter:image" content="https://dawnarc.com/thumbnail/thumbnail-japen-018.jpg">
+  <meta property="og:image" content="https://dawnarc.com/thumbnail/cover-big-blue.jpg">
+  <meta property="twitter:image" content="https://dawnarc.com/thumbnail/cover-big-blue.jpg">
 
 
 
@@ -64,7 +64,7 @@
   <meta property="twitter:image" content="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=640">
 
 
-    <title>[Unity]Tools and Plugins, Documents and Blogs</title>
+    <title>[Rendering]Occlusion Culling (Hierarchial Z-Buffer Visibility)</title>
 
     <link rel="icon" href="https://dawnarc.com/favicon.png">
     
@@ -73,7 +73,7 @@
       <link rel="publisher" href="https://plus.google.com/111340706178390411568">
     
 
-    <link rel="canonical" href="https://dawnarc.com/2019/07/unitytools-and-plugins-documents-and-blogs/">
+    <link rel="canonical" href="https://dawnarc.com/2019/09/renderingocclusion-culling-hierarchial-z-buffer-visibility/">
 
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
@@ -323,19 +323,19 @@ if (!doNotTrack) {
             <div class="post-header main-content-wrap text-left">
   
     <h1 class="post-title" itemprop="headline">
-      [Unity]Tools and Plugins, Documents and Blogs
+      [Rendering]Occlusion Culling (Hierarchial Z-Buffer Visibility)
     </h1>
   
   
   <div class="postShorten-meta post-meta">
     
-      <time itemprop="datePublished" datetime="2019-07-23T13:18:02&#43;08:00">
+      <time itemprop="datePublished" datetime="2019-09-05T16:18:02&#43;08:00">
         
   
   
   
   
-    Tuesday, 13:18, Jul 23, 2019
+    Thursday, 16:18, Sep 5, 2019
   
 
       </time>
@@ -345,7 +345,7 @@ if (!doNotTrack) {
   
     <span>in</span>
     
-      <a class="category-link" href="https://dawnarc.com/categories/unity">Unity</a>
+      <a class="category-link" href="https://dawnarc.com/categories/rendering">Rendering</a>
     
   
 
@@ -355,60 +355,41 @@ if (!doNotTrack) {
           
           <div class="post-content markdown" itemprop="articleBody">
             <div class="main-content-wrap">
-              <p>Keywords: Unity, Plugins, Tools</p>
+              <p>Keywords: Graphics, Rendering, Occlusion Culling, Hierarchial Z-Buffer, HZB</p>
 
-<h3 id="rendering">Rendering</h3>
+<h3 id="occlusion-culling">Occlusion Culling</h3>
 
-<h5 id="scriptable-render-pipeline">Scriptable Render Pipeline</h5>
+<h5 id="hzb-hierarchical-z-buffer">HZB (Hierarchical Z-Buffer)</h5>
 
-<p>The Scriptable Render Pipeline (SRP) is a new Unity feature in active development.<br />
-<a href="https://github.com/Unity-Technologies/ScriptableRenderPipeline">https://github.com/Unity-Technologies/ScriptableRenderPipeline</a></p>
+<p>Hierarchical Z-Buffer Occlusion Culling<br />
+<a href="https://www.nickdarnell.com/hierarchical-z-buffer-occlusion-culling/">https://www.nickdarnell.com/hierarchical-z-buffer-occlusion-culling/</a></p>
 
-<h3 id="tools-plugins">Tools &amp; Plugins</h3>
+<p>Hierarchical-Z map based occlusion culling<br />
+<a href="http://rastergrid.com/blog/2010/10/hierarchical-z-map-based-occlusion-culling/">http://rastergrid.com/blog/2010/10/hierarchical-z-map-based-occlusion-culling/</a></p>
 
-<h5 id="maps-textures">Maps &amp; Textures</h5>
+<p>Visibility and Occlusion Culling<br />
+<a href="https://www.cs.purdue.edu/homes/aliaga/cs535-14/lec-visibility.pdf">https://www.cs.purdue.edu/homes/aliaga/cs535-14/lec-visibility.pdf</a></p>
 
-<p>vertex normal editor for Unity<br />
-<a href="https://github.com/unity3d-jp/NormalPainter">https://github.com/unity3d-jp/NormalPainter</a></p>
+<p>Visibility Culling<br />
+<a href="http://www.cse.ohio-state.edu/~hwshen/788/sp01/Culling.ppt">http://www.cse.ohio-state.edu/~hwshen/788/sp01/Culling.ppt</a></p>
 
-<p>A tiny, GPU-based Bent Normal and Ambient Occlusion baker for Unity.<br />
-<a href="https://github.com/Fewes/BNAO">https://github.com/Fewes/BNAO</a></p>
+<h3 id="research-papers">Research Papers</h3>
 
-<h5 id="assets-manager">Assets Manager</h5>
+<p>Image Space Occlusion Culling Image Space Occlusion Culling<br />
+<a href="http://www.cs.tau.ac.il/~dcor/Graphics/adv-slides/short-image-based-culling.pdf">http://www.cs.tau.ac.il/~dcor/Graphics/adv-slides/short-image-based-culling.pdf</a></p>
 
-<p>An Asset Dependency Graph for Unity<br />
-<a href="https://github.com/Unity-Harry/Unity-AssetDependencyGraph">https://github.com/Unity-Harry/Unity-AssetDependencyGraph</a></p>
+<p>Space-Time Hierarchical Occlusion Culling for Micropolygon Rendering with Motion Blur<br />
+<a href="http://graphics.stanford.edu/papers/tzpyramid/tzpyramid.pdf">http://graphics.stanford.edu/papers/tzpyramid/tzpyramid.pdf</a></p>
 
-<h5 id="ui-layout">UI Layout</h5>
+<p>Visibility Culling using Hierarchical Occlusion Maps<br />
+<a href="https://www.cs.drexel.edu/~david/Classes/Papers/p77-zhang.pdf">https://www.cs.drexel.edu/~david/Classes/Papers/p77-zhang.pdf</a></p>
 
-<p>A set of components and tools to solve notched/cutout phones layout problems for Unity.<br />
-<a href="https://github.com/5argon/NotchSolution">https://github.com/5argon/NotchSolution</a></p>
-
-<h5 id="landscape-scene">Landscape &amp; Scene</h5>
-
-<p>R.A.M 2019 - River Auto Material 2019<br />
-<a href="https://assetstore.unity.com/packages/tools/terrain/r-a-m-2019-river-auto-material-2019-145937">https://assetstore.unity.com/packages/tools/terrain/r-a-m-2019-river-auto-material-2019-145937</a></p>
-
-<h3 id="examples">Examples</h3>
-
-<h5 id="deform">Deform</h5>
-
-<p>A fully-featured deformer system for Unity.<br />
-<a href="https://github.com/keenanwoodall/Deform">https://github.com/keenanwoodall/Deform</a></p>
-
-<h5 id="mesh">Mesh</h5>
-
-<p>Marching-Cubes-Improved. This is my implementation of the Marching Cubes algorithm in Unity.<br />
-<a href="https://github.com/Eldemarkki/Marching-Cubes-Improved">https://github.com/Eldemarkki/Marching-Cubes-Improved</a></p>
-
-<h5 id="motion">Motion</h5>
-
-<p>ProceduralMotionTrack, Simple procedural motion with Unity Timeline.<br />
-<a href="https://github.com/keijiro/ProceduralMotionTrack">https://github.com/keijiro/ProceduralMotionTrack</a></p>
+<p>Hierarchical Z-Buffer Visibility<br />
+<a href="https://www.cs.princeton.edu/courses/archive/spring01/cs598b/papers/greene93.pdf">https://www.cs.princeton.edu/courses/archive/spring01/cs598b/papers/greene93.pdf</a></p>
 
 <hr />
 
-<p><code>哪儿有贫穷，哪儿就有爱情。----马尔克斯《百年孤独》</code></p>
+<p><code>如果有天堂，应该是图书馆的模样。 -豪尔赫·路易斯·博尔赫斯</code></p>
               
             </div>
           </div>
@@ -420,7 +401,7 @@ if (!doNotTrack) {
                   <div class="post-footer-tags">
                     <span class="text-color-light text-small">TAGGED IN</span><br/>
                     
-  <a class="tag tag--primary tag--small" href="https://dawnarc.com/tags/unity/">Unity</a>
+  <a class="tag tag--primary tag--small" href="https://dawnarc.com/tags/rendering/">Rendering</a>
 
                   </div>
                 
@@ -433,7 +414,7 @@ if (!doNotTrack) {
           
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2019/07/versioncontrolgithow-to-override-global-usernameusing-local-user/" data-tooltip="[VersionControl][Git]How To Override Global Username(Using Local User)">
+                <a class="post-action-btn btn btn--disabled">
               
                   <i class="fa fa-angle-left"></i>
                   <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
@@ -441,7 +422,7 @@ if (!doNotTrack) {
             </li>
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2019/07/animationcontents-collections/" data-tooltip="[Animation]Contents Collections">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2019/08/ue4procedural-foliage-volume-notes/" data-tooltip="[UE4]Procedural Foliage Volume Notes">
               
                   <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
                   <i class="fa fa-angle-right"></i>
@@ -501,7 +482,7 @@ if (!doNotTrack) {
           
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2019/07/versioncontrolgithow-to-override-global-usernameusing-local-user/" data-tooltip="[VersionControl][Git]How To Override Global Username(Using Local User)">
+                <a class="post-action-btn btn btn--disabled">
               
                   <i class="fa fa-angle-left"></i>
                   <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
@@ -509,7 +490,7 @@ if (!doNotTrack) {
             </li>
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2019/07/animationcontents-collections/" data-tooltip="[Animation]Contents Collections">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2019/08/ue4procedural-foliage-volume-notes/" data-tooltip="[UE4]Procedural Foliage Volume Notes">
               
                   <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
                   <i class="fa fa-angle-right"></i>
@@ -637,9 +618,9 @@ $(document).ready(function() {
     
       <script>
         var disqus_config = function () {
-          this.page.url = 'https:\/\/dawnarc.com\/2019\/07\/unitytools-and-plugins-documents-and-blogs\/';
+          this.page.url = 'https:\/\/dawnarc.com\/2019\/09\/renderingocclusion-culling-hierarchial-z-buffer-visibility\/';
           
-            this.page.identifier = '\/2019\/07\/unitytools-and-plugins-documents-and-blogs\/'
+            this.page.identifier = '\/2019\/09\/renderingocclusion-culling-hierarchial-z-buffer-visibility\/'
           
         };
         (function() {
