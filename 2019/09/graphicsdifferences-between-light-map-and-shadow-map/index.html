@@ -7,31 +7,31 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="generator" content="Hugo 0.56.3 with theme Tranquilpeak 0.4.6-BETA">
 <meta name="author" content="Neil Wang">
-<meta name="keywords" content="Rendering, Occlusion Culling, Hierarchial Z-Buffer, HZB">
-<meta name="description" content="Keywords: Graphics, Rendering, Occlusion Culling, Hierarchial Z-Buffer, HZB">
+<meta name="keywords" content="Rendering, Lightmap">
+<meta name="description" content="Keywords: Graphics, Rendering, Lightmap, Shadow Map, Differences">
 
 
-<meta property="og:description" content="Keywords: Graphics, Rendering, Occlusion Culling, Hierarchial Z-Buffer, HZB">
+<meta property="og:description" content="Keywords: Graphics, Rendering, Lightmap, Shadow Map, Differences">
 <meta property="og:type" content="article">
-<meta property="og:title" content="[Rendering]Occlusion Culling (Hierarchial Z-Buffer Visibility)">
-<meta name="twitter:title" content="[Rendering]Occlusion Culling (Hierarchial Z-Buffer Visibility)">
-<meta property="og:url" content="https://dawnarc.com/2019/09/renderingocclusion-culling-hierarchial-z-buffer-visibility/">
-<meta property="twitter:url" content="https://dawnarc.com/2019/09/renderingocclusion-culling-hierarchial-z-buffer-visibility/">
+<meta property="og:title" content="[Graphics]Differences Between Light Map and Shadow Map">
+<meta name="twitter:title" content="[Graphics]Differences Between Light Map and Shadow Map">
+<meta property="og:url" content="https://dawnarc.com/2019/09/graphicsdifferences-between-light-map-and-shadow-map/">
+<meta property="twitter:url" content="https://dawnarc.com/2019/09/graphicsdifferences-between-light-map-and-shadow-map/">
 <meta property="og:site_name" content="玄冬Wong">
-<meta property="og:description" content="Keywords: Graphics, Rendering, Occlusion Culling, Hierarchial Z-Buffer, HZB">
-<meta name="twitter:description" content="Keywords: Graphics, Rendering, Occlusion Culling, Hierarchial Z-Buffer, HZB">
+<meta property="og:description" content="Keywords: Graphics, Rendering, Lightmap, Shadow Map, Differences">
+<meta name="twitter:description" content="Keywords: Graphics, Rendering, Lightmap, Shadow Map, Differences">
 <meta property="og:locale" content="en-us">
 
   
-    <meta property="article:published_time" content="2019-09-05T16:18:02">
+    <meta property="article:published_time" content="2019-09-08T22:20:02">
   
   
-    <meta property="article:modified_time" content="2019-09-05T16:18:02">
+    <meta property="article:modified_time" content="2019-09-08T22:20:02">
   
   
   
     
-      <meta property="article:section" content="Rendering">
+      <meta property="article:section" content="Graphics">
     
   
   
@@ -53,8 +53,8 @@
 
 
 
-  <meta property="og:image" content="https://dawnarc.com/thumbnail/cover-big-blue.jpg">
-  <meta property="twitter:image" content="https://dawnarc.com/thumbnail/cover-big-blue.jpg">
+  <meta property="og:image" content="https://dawnarc.com/thumbnail/cover-toronto.jpg">
+  <meta property="twitter:image" content="https://dawnarc.com/thumbnail/cover-toronto.jpg">
 
 
 
@@ -64,7 +64,7 @@
   <meta property="twitter:image" content="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=640">
 
 
-    <title>[Rendering]Occlusion Culling (Hierarchial Z-Buffer Visibility)</title>
+    <title>[Graphics]Differences Between Light Map and Shadow Map</title>
 
     <link rel="icon" href="https://dawnarc.com/favicon.png">
     
@@ -73,7 +73,7 @@
       <link rel="publisher" href="https://plus.google.com/111340706178390411568">
     
 
-    <link rel="canonical" href="https://dawnarc.com/2019/09/renderingocclusion-culling-hierarchial-z-buffer-visibility/">
+    <link rel="canonical" href="https://dawnarc.com/2019/09/graphicsdifferences-between-light-map-and-shadow-map/">
 
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
@@ -323,19 +323,19 @@ if (!doNotTrack) {
             <div class="post-header main-content-wrap text-left">
   
     <h1 class="post-title" itemprop="headline">
-      [Rendering]Occlusion Culling (Hierarchial Z-Buffer Visibility)
+      [Graphics]Differences Between Light Map and Shadow Map
     </h1>
   
   
   <div class="postShorten-meta post-meta">
     
-      <time itemprop="datePublished" datetime="2019-09-05T16:18:02&#43;08:00">
+      <time itemprop="datePublished" datetime="2019-09-08T22:20:02&#43;08:00">
         
   
   
   
   
-    Thursday, 16:18, Sep 5, 2019
+    Sunday, 22:20, Sep 8, 2019
   
 
       </time>
@@ -345,7 +345,7 @@ if (!doNotTrack) {
   
     <span>in</span>
     
-      <a class="category-link" href="https://dawnarc.com/categories/rendering">Rendering</a>
+      <a class="category-link" href="https://dawnarc.com/categories/graphics">Graphics</a>
     
   
 
@@ -355,41 +355,62 @@ if (!doNotTrack) {
           
           <div class="post-content markdown" itemprop="articleBody">
             <div class="main-content-wrap">
-              <p>Keywords: Graphics, Rendering, Occlusion Culling, Hierarchial Z-Buffer, HZB</p>
+              <p>Keywords: Graphics, Rendering, Lightmap, Shadow Map, Differences</p>
 
-<h3 id="occlusion-culling">Occlusion Culling</h3>
+<h5 id="quoted-1">Quoted 1</h5>
 
-<h5 id="hzb-hierarchical-z-buffer">HZB (Hierarchical Z-Buffer)</h5>
+<p>Light maps only for static objects. Plus, it can bake shadow, lighting, global illumination, ambient occlusion etc. onto the light maps because it&rsquo;s pre-calculated.</p>
 
-<p>Hierarchical Z-Buffer Occlusion Culling<br />
-<a href="https://www.nickdarnell.com/hierarchical-z-buffer-occlusion-culling/">https://www.nickdarnell.com/hierarchical-z-buffer-occlusion-culling/</a></p>
+<p>Shadow maps are only for dynamic/moving objects (you can use it for static objects, but you will get performance problems if there are many objects around) and only for shadows</p>
 
-<p>Hierarchical-Z map based occlusion culling<br />
-<a href="http://rastergrid.com/blog/2010/10/hierarchical-z-map-based-occlusion-culling/">http://rastergrid.com/blog/2010/10/hierarchical-z-map-based-occlusion-culling/</a></p>
+<p>Origin: Light Map / Shadow Map differences?<br />
+<a href="https://polycount.com/discussion/105160/light-map-shadow-map-differences">https://polycount.com/discussion/105160/light-map-shadow-map-differences</a></p>
 
-<p>Visibility and Occlusion Culling<br />
-<a href="https://www.cs.purdue.edu/homes/aliaga/cs535-14/lec-visibility.pdf">https://www.cs.purdue.edu/homes/aliaga/cs535-14/lec-visibility.pdf</a></p>
+<h5 id="quoted-2">Quoted 2</h5>
 
-<p>Visibility Culling<br />
-<a href="http://www.cse.ohio-state.edu/~hwshen/788/sp01/Culling.ppt">http://www.cse.ohio-state.edu/~hwshen/788/sp01/Culling.ppt</a></p>
+<p><strong>adam:</strong></p>
 
-<h3 id="research-papers">Research Papers</h3>
+<p>From the past few years working on different engines (source, unreal, idtech, infernal) here&rsquo;s my take:</p>
 
-<p>Image Space Occlusion Culling Image Space Occlusion Culling<br />
-<a href="http://www.cs.tau.ac.il/~dcor/Graphics/adv-slides/short-image-based-culling.pdf">http://www.cs.tau.ac.il/~dcor/Graphics/adv-slides/short-image-based-culling.pdf</a></p>
+<p>&lsquo;lightmap&rsquo; is a general term describing the medium at which baked lighting is applied: lighting thats baked to an image, or group of images, which are then multiplied overtop of existing geometry to create shadows. Baking them, as oppose to dynamic (real-time) or vertex lighting generally results in soft, more accurate shadows at the cost of texture memory.</p>
 
-<p>Space-Time Hierarchical Occlusion Culling for Micropolygon Rendering with Motion Blur<br />
-<a href="http://graphics.stanford.edu/papers/tzpyramid/tzpyramid.pdf">http://graphics.stanford.edu/papers/tzpyramid/tzpyramid.pdf</a></p>
+<p>&lsquo;ao maps&rsquo; and &lsquo;shadowmaps&rsquo; are more specific types of lightmaps pertaining to the method at which their shadows are created. An AO map is a lightmap who&rsquo;s baked information can come from a highpoly (or sometimes low poly) to generate non-directional shadows (see multiple descriptions in replies above this one). A &lsquo;shadowmap&rsquo; is a lightmap that was created / baked by casting shadows from specific light sources, and generally results in soft(er) lighting than other alternatives (real-time/dynamic/vertex) depending on the proximity of the objecting casting shadows to the source of light. Generally both types have lots of options (number of light bounces, buffer, ray distances, etc).</p>
 
-<p>Visibility Culling using Hierarchical Occlusion Maps<br />
-<a href="https://www.cs.drexel.edu/~david/Classes/Papers/p77-zhang.pdf">https://www.cs.drexel.edu/~david/Classes/Papers/p77-zhang.pdf</a></p>
+<p><strong>Brice Vandemoortele:</strong></p>
 
-<p>Hierarchical Z-Buffer Visibility<br />
-<a href="https://www.cs.princeton.edu/courses/archive/spring01/cs598b/papers/greene93.pdf">https://www.cs.princeton.edu/courses/archive/spring01/cs598b/papers/greene93.pdf</a></p>
+<p>as kawe mentioned there is a big difference between ao/light maps and shadow maps.
+AO/light maps contains color information (more light, less light, color bounce etc) while shadow maps store depth information (usually the depth of the scene viewed from the light).
+That&rsquo;s the common definition of shadow map, and that&rsquo;s how a programmer is likely to understand it. Now of course you can bake shadows into a texture, but that&rsquo;s not a shadow map.</p>
+
+<p><strong>SHEPEIRO:</strong></p>
+
+<p>i think brice hit the nail on the head for shadow maps bang-on.</p>
+
+<p>AO maps- i would take that as the map you bake out to overlay on a t-page to darken areas and small details across the objects surface, this contains only shadows generated by that object as it is created in isolation. it could be a map generated across a whole scene to simulate AO between objects BUT this is unlikely these days as it is generally more effecient to bake this sort of lighting into vertices due to memory constraints and the fact that it wouldnt look much better infact could look worse.</p>
+
+<p>lightmaps- these are scene wide maps (or collections of maps) that can describe the complex lighting solutions, they can as Adam pointed out multiply over the diffuse to darken areas down, but most that i have worked with actually add light.</p>
+
+<p>hdr lightmaps- these are lightmaps that use higher range textures (very expensive) or stretched normal bit textures ( artefacting/banding issues due to compression and stretching of values)</p>
+
+<p>directional lightmaps- these use multiple maps to not only describe colour and intensity but direction aswell. much like a normal map, a directional lightmap will usually have three seperate textures, each channel in the texture describes a direction and each texture a colour value (rgb), but these can be swapped about depending on engine.</p>
+
+<p>Origin: Baking map - AO, lightmap, shadowmap - what is a difference.<br />
+<a href="https://polycount.com/discussion/62770/baking-map-ao-lightmap-shadowmap-what-is-a-difference">https://polycount.com/discussion/62770/baking-map-ao-lightmap-shadowmap-what-is-a-difference</a></p>
+
+<h5 id="quoted-3">Quoted 3</h5>
+
+<p>A shadowmap could be considered the same thing as a shadow buffer, which is in the light properties in Blender. These are your standard dynamic BGE shadows. They are good for dynamic scenes and lights. Shadow buffers are really depth buffers rendered from the camera’s point of view, and are used to compute shadows.</p>
+
+<p>Alternatively, a shadowmap could be a texture that records how much contribution each point on a surface receives from a light. Basically, it records shadows, but is pre-baked. I don’t think this kind of shadowmap is possible in Blender, but could be implemented with a custom shader. Good for static lights and scenes that are too large for Blender’s shadow buffers to be practical.</p>
+
+<p>A lightmap is a (usually pre-baked) texture that stores the overall lighting for a surface, potentially including AO, indirect lighting, and sometimes even shadows and sunlight. Light maps are added to the total lighting(they are often mixed with dynamic lights) for a surface. They are good for static AO and indirect lighting, but not always good for direct(directly from a light source) lighting, as they are incompatible with normal maps. I think this kind of lightmap was added to Blender in the Harmony branch, but I’ve never played around with it, so I don’t know how the new lightmaps work exactly, or how to enable them.</p>
+
+<p>Dynamic Light/Lightmap/Shadowmap<br />
+<a href="https://blenderartists.org/t/dynamic-light-lightmap-shadowmap/543844">https://blenderartists.org/t/dynamic-light-lightmap-shadowmap/543844</a></p>
 
 <hr />
 
-<p><code>如果有天堂，应该是图书馆的模样。 -豪尔赫·路易斯·博尔赫斯</code></p>
+<p><code>我假装无情，其实是痛恨自己的深情。我以为人生的意义在于四处游荡流亡，其实只是掩饰至今没有找到愿意驻足的地方。——伊塔洛·卡尔维诺《看不见的城市》</code></p>
               
             </div>
           </div>
@@ -422,7 +443,7 @@ if (!doNotTrack) {
             </li>
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2019/08/ue4procedural-foliage-volume-notes/" data-tooltip="[UE4]Procedural Foliage Volume Notes">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2019/09/graphicsshadow-mapping-shadow-volume/" data-tooltip="[Graphics]Shadow Mapping &amp; Shadow volume">
               
                   <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
                   <i class="fa fa-angle-right"></i>
@@ -490,7 +511,7 @@ if (!doNotTrack) {
             </li>
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2019/08/ue4procedural-foliage-volume-notes/" data-tooltip="[UE4]Procedural Foliage Volume Notes">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2019/09/graphicsshadow-mapping-shadow-volume/" data-tooltip="[Graphics]Shadow Mapping &amp; Shadow volume">
               
                   <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
                   <i class="fa fa-angle-right"></i>
@@ -618,9 +639,9 @@ $(document).ready(function() {
     
       <script>
         var disqus_config = function () {
-          this.page.url = 'https:\/\/dawnarc.com\/2019\/09\/renderingocclusion-culling-hierarchial-z-buffer-visibility\/';
+          this.page.url = 'https:\/\/dawnarc.com\/2019\/09\/graphicsdifferences-between-light-map-and-shadow-map\/';
           
-            this.page.identifier = '\/2019\/09\/renderingocclusion-culling-hierarchial-z-buffer-visibility\/'
+            this.page.identifier = '\/2019\/09\/graphicsdifferences-between-light-map-and-shadow-map\/'
           
         };
         (function() {

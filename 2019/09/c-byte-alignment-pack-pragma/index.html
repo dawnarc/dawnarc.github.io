@@ -7,38 +7,36 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="generator" content="Hugo 0.56.3 with theme Tranquilpeak 0.4.6-BETA">
 <meta name="author" content="Neil Wang">
-<meta name="keywords" content="Rendering, Anti-Aliasing">
-<meta name="description" content="Keywords: Graphics, Rendering, Anti-Aliasing, FXAA, MSAA, TXAA">
+<meta name="keywords" content="">
+<meta name="description" content="keywords: C&#43;&#43;, Byte Alignment, pack pragma">
 
 
-<meta property="og:description" content="Keywords: Graphics, Rendering, Anti-Aliasing, FXAA, MSAA, TXAA">
+<meta property="og:description" content="keywords: C&#43;&#43;, Byte Alignment, pack pragma">
 <meta property="og:type" content="article">
-<meta property="og:title" content="[Rendering]Anti-Aliasing Notes - FXAA, MSAA and TXAA">
-<meta name="twitter:title" content="[Rendering]Anti-Aliasing Notes - FXAA, MSAA and TXAA">
-<meta property="og:url" content="https://dawnarc.com/2019/08/renderinganti-aliasing-notes-fxaa-msaa-and-txaa/">
-<meta property="twitter:url" content="https://dawnarc.com/2019/08/renderinganti-aliasing-notes-fxaa-msaa-and-txaa/">
+<meta property="og:title" content="[C&#43;&#43;]Byte Alignment (pack pragma)">
+<meta name="twitter:title" content="[C&#43;&#43;]Byte Alignment (pack pragma)">
+<meta property="og:url" content="https://dawnarc.com/2019/09/c-byte-alignment-pack-pragma/">
+<meta property="twitter:url" content="https://dawnarc.com/2019/09/c-byte-alignment-pack-pragma/">
 <meta property="og:site_name" content="玄冬Wong">
-<meta property="og:description" content="Keywords: Graphics, Rendering, Anti-Aliasing, FXAA, MSAA, TXAA">
-<meta name="twitter:description" content="Keywords: Graphics, Rendering, Anti-Aliasing, FXAA, MSAA, TXAA">
+<meta property="og:description" content="keywords: C&#43;&#43;, Byte Alignment, pack pragma">
+<meta name="twitter:description" content="keywords: C&#43;&#43;, Byte Alignment, pack pragma">
 <meta property="og:locale" content="en-us">
 
   
-    <meta property="article:published_time" content="2019-08-19T22:42:02">
+    <meta property="article:published_time" content="2019-09-06T15:36:40">
   
   
-    <meta property="article:modified_time" content="2019-08-19T22:42:02">
+    <meta property="article:modified_time" content="2019-09-06T15:36:40">
   
-  
-  
-    
-      <meta property="article:section" content="Rendering">
-    
   
   
     
-      <meta property="article:tag" content="Rendering">
+      <meta property="article:section" content="C&#43;&#43;">
     
-      <meta property="article:tag" content="Anti-Aliasing">
+  
+  
+    
+      <meta property="article:tag" content="C&#43;&#43;">
     
   
 
@@ -55,8 +53,8 @@
 
 
 
-  <meta property="og:image" content="https://dawnarc.com/thumbnail/thumbnail-japen-008.jpg">
-  <meta property="twitter:image" content="https://dawnarc.com/thumbnail/thumbnail-japen-008.jpg">
+  <meta property="og:image" content="https://dawnarc.com/thumbnail/thumbnail-japen-001.jpg">
+  <meta property="twitter:image" content="https://dawnarc.com/thumbnail/thumbnail-japen-001.jpg">
 
 
 
@@ -66,7 +64,7 @@
   <meta property="twitter:image" content="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=640">
 
 
-    <title>[Rendering]Anti-Aliasing Notes - FXAA, MSAA and TXAA</title>
+    <title>[C&#43;&#43;]Byte Alignment (pack pragma)</title>
 
     <link rel="icon" href="https://dawnarc.com/favicon.png">
     
@@ -75,7 +73,7 @@
       <link rel="publisher" href="https://plus.google.com/111340706178390411568">
     
 
-    <link rel="canonical" href="https://dawnarc.com/2019/08/renderinganti-aliasing-notes-fxaa-msaa-and-txaa/">
+    <link rel="canonical" href="https://dawnarc.com/2019/09/c-byte-alignment-pack-pragma/">
 
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
@@ -325,19 +323,19 @@ if (!doNotTrack) {
             <div class="post-header main-content-wrap text-left">
   
     <h1 class="post-title" itemprop="headline">
-      [Rendering]Anti-Aliasing Notes - FXAA, MSAA and TXAA
+      [C&#43;&#43;]Byte Alignment (pack pragma)
     </h1>
   
   
   <div class="postShorten-meta post-meta">
     
-      <time itemprop="datePublished" datetime="2019-08-19T22:42:02&#43;08:00">
+      <time itemprop="datePublished" datetime="2019-09-06T15:36:40&#43;08:00">
         
   
   
   
   
-    Monday, 22:42, Aug 19, 2019
+    Friday, 15:36, Sep 6, 2019
   
 
       </time>
@@ -347,7 +345,7 @@ if (!doNotTrack) {
   
     <span>in</span>
     
-      <a class="category-link" href="https://dawnarc.com/categories/rendering">Rendering</a>
+      <a class="category-link" href="https://dawnarc.com/categories/c&#43;&#43;">C&#43;&#43;</a>
     
   
 
@@ -357,79 +355,91 @@ if (!doNotTrack) {
           
           <div class="post-content markdown" itemprop="articleBody">
             <div class="main-content-wrap">
-              <p>Keywords: Graphics, Rendering, Anti-Aliasing, FXAA, MSAA, TXAA</p>
+              <p>keywords: C++, Byte Alignment, pack pragma</p>
 
-<h3 id="overview">Overview</h3>
+<h5 id="example">Example</h5>
 
-<div class="alert success ">
-  <p><ul>
-<li>TXAA looks like shit.</li>
-<li>FXAA when implemented well looks good.</li>
-<li>MSAA is a good one but you need 8xMSAA depending on the game.</li>
-<li>SSAA is superior to everything.</li>
-<li>DSR makes things blurry.</li>
-</ul></p>
-</div>
+<p>Testing code:</p>
 
-<p>Origin:<br />
-<a href="https://www.techpowerup.com/forums/threads/fxaa-msaa-and-txaa.226583/">https://www.techpowerup.com/forums/threads/fxaa-msaa-and-txaa.226583/</a></p>
+<pre><code>class C1
+{
+    char a;
+    char b;
+    int c;
+};
 
-<h3 id="anti-aliasing-methods">Anti-Aliasing Methods</h3>
+class C2
+{
+    char a;
+    int c;
+    char b;
+};
 
-<h5 id="fxaa-fast-approximate-anti-aliasing">FXAA (Fast Approximate Anti-Aliasing)</h5>
+class C3
+{
+    char a;
+    char b;
+    int c;
 
-<p>FXAA WhitePaper<br />
-<a href="https://developer.download.nvidia.cn/assets/gamedev/files/sdk/11/FXAA_WhitePaper.pdf">https://developer.download.nvidia.cn/assets/gamedev/files/sdk/11/FXAA_WhitePaper.pdf</a></p>
+    void fun1() {}
+};
 
-<p>Fast approximate anti-aliasing<br />
-<a href="https://en.wikipedia.org/wiki/Fast_approximate_anti-aliasing">https://en.wikipedia.org/wiki/Fast_approximate_anti-aliasing</a></p>
+class C4
+{
+    char a;
+    char b;
+    int c;
 
-<h5 id="msaa-multisampling-anti-aliasing">MSAA (MultiSampling Anti-Aliasing)</h5>
+    virtual void fun1() {}
+};
 
-<p>Multisample anti-aliasing<br />
-<a href="https://en.wikipedia.org/wiki/Multisample_anti-aliasing">https://en.wikipedia.org/wiki/Multisample_anti-aliasing</a></p>
+class C5
+{
+    char a;
+    char b;
+    int c;
 
-<h5 id="txaa-temporal-anti-aliasing">TXAA (Temporal Anti-Aliasing)</h5>
+    virtual void fun1() = 0;
+};
 
-<p>Temporal anti-aliasing<br />
-<a href="https://en.wikipedia.org/wiki/Temporal_anti-aliasing">https://en.wikipedia.org/wiki/Temporal_anti-aliasing</a></p>
+int main(int argc, char* args[])
+{
+    printf(&quot;C1 size:%d\n&quot;, sizeof(C1));
+    printf(&quot;C2 size:%d\n&quot;, sizeof(C2));
+    printf(&quot;C3 size:%d\n&quot;, sizeof(C3));
+    printf(&quot;C4 size:%d\n&quot;, sizeof(C4));
+    printf(&quot;C5 size:%d\n&quot;, sizeof(C5));
+}
+</code></pre>
 
-<h5 id="ssaa-supersampling-anti-aliasing">SSAA (Supersampling Anti-Aliasing)</h5>
+<p>Output(x64):</p>
 
-<p>Supersampling<br />
-<a href="https://en.wikipedia.org/wiki/Supersampling">https://en.wikipedia.org/wiki/Supersampling</a></p>
+<pre><code>C1 size:8
+C2 size:12
+C3 size:8
+C4 size:16
+C5 size:16
+</code></pre>
 
-<h5 id="dsr-dynamic-super-resolution">DSR (Dynamic Super Resolution)</h5>
+<p>Output(x86):</p>
 
-<p>One of the more intriguing capabilities Nvidia introduced with the GeForce GTX 970 and 980 is a feature called <code>Dynamic Super Resolution</code>, or DSR, for short. DSR is a way for a fast GPU to offer improved image quality on a lower-resolution display. Nvidia bills it as a means of getting 4K quality on a 2K display.</p>
+<pre><code>C1 size:8
+C2 size:12
+C3 size:8
+C4 size:12
+C5 size:12
+</code></pre>
 
-<p>Maxwell’s Dynamic Super Resolution explored<br />
-<a href="https://techreport.com/review/27102/maxwell-dynamic-super-resolution-explored">https://techreport.com/review/27102/maxwell-dynamic-super-resolution-explored</a></p>
+<h5 id="what-s-the-default-value-in-bytes-used-of-packing">What&rsquo;s the default value in bytes used of packing.</h5>
 
-<p>GeForce 600 series<br />
-<a href="https://en.wikipedia.org/wiki/GeForce_600_series#DSR">https://en.wikipedia.org/wiki/GeForce_600_series#DSR</a></p>
+<p>(Optional) Specifies the value, in bytes, to be used for packing. <span class="highlight-text green">If the compiler option /Zp isn't set for the module, the default value for n is 8</span>. Valid values are 1, 2, 4, 8, and 16. The alignment of a member is on a boundary that&rsquo;s either a multiple of n, or a multiple of the size of the member, whichever is smaller.</p>
 
-<p>DSR | Technology | GeForce<br />
-<a href="https://www.geforce.com/hardware/technology/dsr/technology">https://www.geforce.com/hardware/technology/dsr/technology</a></p>
-
-<h5 id="csaa-coverage-sampling-anti-aliasing">CSAA (Coverage Sampling Anti-Aliasing)</h5>
-
-<p>Coverage Sampled Antialiasing<br />
-<a href="https://developer.download.nvidia.com/SDK/9.5/Samples/DEMOS/Direct3D9/src/CSAATutorial/docs/CSAATutorial.pdf">https://developer.download.nvidia.com/SDK/9.5/Samples/DEMOS/Direct3D9/src/CSAATutorial/docs/CSAATutorial.pdf</a></p>
-
-<h5 id="eqaa-enhanced-quality-anti-aliasing">EQAA (Enhanced Quality Anti-Aliasing)</h5>
-
-<p>EQAA Modes for AMD 6900 Series Graphics Cards<br />
-<a href="https://developer.amd.com/wordpress/media/2012/10/EQAA%2520Modes%2520for%2520AMD%2520HD%25206900%2520Series%2520Cards.pdf">https://developer.amd.com/wordpress/media/2012/10/EQAA%2520Modes%2520for%2520AMD%2520HD%25206900%2520Series%2520Cards.pdf</a></p>
-
-<h3 id="anti-aliasing-papers">Anti-Aliasing Papers</h3>
-
-<p>Filtering Approaches for Real-Time Anti-Aliasing<br />
-<a href="http://iryoku.com/aacourse/downloads/Filtering-Approaches-for-Real-Time-Anti-Aliasing.pdf">http://iryoku.com/aacourse/downloads/Filtering-Approaches-for-Real-Time-Anti-Aliasing.pdf</a></p>
+<p>Origin: pack pragma<br />
+<a href="https://docs.microsoft.com/en-us/cpp/preprocessor/pack?view=vs-2019">https://docs.microsoft.com/en-us/cpp/preprocessor/pack?view=vs-2019</a></p>
 
 <hr />
 
-<p><code>真实的、永恒的、最高级的快乐，只能从三样东西中取得：工作、自我克制和爱。  ——罗曼·罗兰</code></p>
+<p><code>Never give up, not because you still have tomorrow to try, but because you may not have tomorrow to try.</code></p>
               
             </div>
           </div>
@@ -441,9 +451,7 @@ if (!doNotTrack) {
                   <div class="post-footer-tags">
                     <span class="text-color-light text-small">TAGGED IN</span><br/>
                     
-  <a class="tag tag--primary tag--small" href="https://dawnarc.com/tags/rendering/">Rendering</a>
-
-  <a class="tag tag--primary tag--small" href="https://dawnarc.com/tags/anti-aliasing/">Anti-Aliasing</a>
+  <a class="tag tag--primary tag--small" href="https://dawnarc.com/tags/c&#43;&#43;/">C&#43;&#43;</a>
 
                   </div>
                 
@@ -456,7 +464,7 @@ if (!doNotTrack) {
           
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2019/08/ue4landscape-editor-notes/" data-tooltip="[UE4]Landscape Editor Notes">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2019/09/graphicslight-mapping/" data-tooltip="[Graphics]Light Mapping">
               
                   <i class="fa fa-angle-left"></i>
                   <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
@@ -464,7 +472,7 @@ if (!doNotTrack) {
             </li>
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2019/08/visualstudiogame-performance-and-compilation-time-improvements-in-vs2019/" data-tooltip="[VisualStudio]Game performance and compilation time improvements in VS2019">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2019/09/ue4networking-in-advanced-replication-graph/" data-tooltip="[UE4]Networking in Advanced - Replication Graph">
               
                   <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
                   <i class="fa fa-angle-right"></i>
@@ -524,7 +532,7 @@ if (!doNotTrack) {
           
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2019/08/ue4landscape-editor-notes/" data-tooltip="[UE4]Landscape Editor Notes">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2019/09/graphicslight-mapping/" data-tooltip="[Graphics]Light Mapping">
               
                   <i class="fa fa-angle-left"></i>
                   <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
@@ -532,7 +540,7 @@ if (!doNotTrack) {
             </li>
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2019/08/visualstudiogame-performance-and-compilation-time-improvements-in-vs2019/" data-tooltip="[VisualStudio]Game performance and compilation time improvements in VS2019">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2019/09/ue4networking-in-advanced-replication-graph/" data-tooltip="[UE4]Networking in Advanced - Replication Graph">
               
                   <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
                   <i class="fa fa-angle-right"></i>
@@ -660,9 +668,9 @@ $(document).ready(function() {
     
       <script>
         var disqus_config = function () {
-          this.page.url = 'https:\/\/dawnarc.com\/2019\/08\/renderinganti-aliasing-notes-fxaa-msaa-and-txaa\/';
+          this.page.url = 'https:\/\/dawnarc.com\/2019\/09\/c-byte-alignment-pack-pragma\/';
           
-            this.page.identifier = '\/2019\/08\/renderinganti-aliasing-notes-fxaa-msaa-and-txaa\/'
+            this.page.identifier = '\/2019\/09\/c-byte-alignment-pack-pragma\/'
           
         };
         (function() {
