@@ -128,10 +128,7 @@ if (!doNotTrack) {
       
     
     </a>
-  
-  
-  
-  
+    
 </header>
 
       <nav id="sidebar" data-behavior="4">
@@ -518,7 +515,7 @@ Dynamic Shadow Distance 表示在多少距离内使用动态阴影，超过这�
 <li><p>如果场景中物体类型（WorldStatic、WorldDynamic、Pawn等）很多，且每种数量也很多，则Collision 的 Object Response 通道设置的越少越好，把可以设置为 Ignore 的通道都设置为 Ignore 。如果场景中的物体类型比较单一，即使这种类型的物体在场景中有数百个，Object Response 即使都设置为Block 或者 Overlap，对性能也没有影响。</p></li>
 
 <li><p>如果是大型RTS游戏，场景有海量单位时（比如星际2中大规模的虫族小狗），能不用UE4的 Collision 就不要用 Collision，否则帧数狂泻。<br />
-建议自己实现一个简易的自定义Collision，比如球形Collision，然后计算该 Collision 与单位之间的直线距离，来判断是否是否发生了碰撞，并且降低检测间隔，比如 0.1秒一次。</p></li>
+建议自己实现一个简易的自定义Collision，比如球形Collision，然后计算该 Collision 与单位之间的直线距离，来判断是否是否发生了碰撞，并且降低检测间隔，比如 0.1秒一次。用此种方式，如果单位数量较多时，还需要自己写一个类似<code>Distance Filed</code>的八叉树来缓存单位列表，以降低计算单位间距时遍历单位列表的循环次数。</p></li>
 </ol>
 
 <h5 id="动画优化">动画优化</h5>
@@ -597,6 +594,8 @@ Project Settings -&gt; Engine -&gt; Animation -&gt; 勾选 Strip Animation Data 
 <li><p>Server模式下Detach角色身上所有的装饰性组件</p></li>
 
 <li><p>AnimInstance的<code>Root Motion Mode</code>不要修改为<code>Root Motion from Everyting</code>，尽量使用默认值<code>Root Motion from Montage Only</code>，以减少服务器的动画同步计算量。</p></li>
+
+<li><p>4.20提供了针对Dedicated Server优化的新特性：Replication Graph，可以初略地理解为针对网络通信的LOD（不过Replication Graph提供了不止网络层面的LOD，更多特性见官方文档）。没有这特特性之前，调用Multicast函数，几公里外的Actor也会触发Multicast，而实际上这种Actor可能不需要即时更新数据或者等到出现在视距内时再手动<code>ForceNetUpdate()</code>。有了Replication Graph之后，这种手动优化方式可以交给引擎自己管理。</p></li>
 </ol>
 
 <h5 id="参考资料">参考资料</h5>
@@ -887,6 +886,8 @@ $(document).ready(function() {
       </script>
     
   
+
+
 
 
 

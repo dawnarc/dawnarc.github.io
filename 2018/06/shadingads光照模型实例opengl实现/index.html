@@ -25,10 +25,10 @@ LightIntensity = Ambient &#43; Diffuse &#43; Specular;  参数说明：
  Ambient 环境光 Diffuse 漫反射 Specular 全反射光 / 镜面光  三个参数渲染效果示例：   三个参数拆解如下：
 Ambient = La * Ka; Diffuse = Ld * Kd * max( dot(s, n), 0.0 ); Specular = Ls * Ks * pow( max( dot(r, v), 0.0 ), f );  参数说明：">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Shading-ADS光照模型实例(OpenGL实现)">
-<meta name="twitter:title" content="Shading-ADS光照模型实例(OpenGL实现)">
-<meta property="og:url" content="https://dawnarc.com/2018/06/shading-ads%E5%85%89%E7%85%A7%E6%A8%A1%E5%9E%8B%E5%AE%9E%E4%BE%8Bopengl%E5%AE%9E%E7%8E%B0/">
-<meta property="twitter:url" content="https://dawnarc.com/2018/06/shading-ads%E5%85%89%E7%85%A7%E6%A8%A1%E5%9E%8B%E5%AE%9E%E4%BE%8Bopengl%E5%AE%9E%E7%8E%B0/">
+<meta property="og:title" content="[Shading]ADS光照模型实例(OpenGL实现)">
+<meta name="twitter:title" content="[Shading]ADS光照模型实例(OpenGL实现)">
+<meta property="og:url" content="https://dawnarc.com/2018/06/shadingads%E5%85%89%E7%85%A7%E6%A8%A1%E5%9E%8B%E5%AE%9E%E4%BE%8Bopengl%E5%AE%9E%E7%8E%B0/">
+<meta property="twitter:url" content="https://dawnarc.com/2018/06/shadingads%E5%85%89%E7%85%A7%E6%A8%A1%E5%9E%8B%E5%AE%9E%E4%BE%8Bopengl%E5%AE%9E%E7%8E%B0/">
 <meta property="og:site_name" content="玄冬Wong">
 <meta property="og:description" content="keywords：ambient diffuse specular、Phong Shading、Phong reflection model
 公式概述 ADS光照模型又称为“冯氏反射模型”(Phong reflection model)，为什么叫冯氏：
@@ -87,7 +87,7 @@ Ambient = La * Ka; Diffuse = Ld * Kd * max( dot(s, n), 0.0 ); Specular = Ls * Ks
   <meta property="twitter:image" content="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=640">
 
 
-    <title>Shading-ADS光照模型实例(OpenGL实现)</title>
+    <title>[Shading]ADS光照模型实例(OpenGL实现)</title>
 
     <link rel="icon" href="https://dawnarc.com/favicon.png">
     
@@ -96,7 +96,7 @@ Ambient = La * Ka; Diffuse = Ld * Kd * max( dot(s, n), 0.0 ); Specular = Ls * Ks
       <link rel="publisher" href="https://plus.google.com/111340706178390411568">
     
 
-    <link rel="canonical" href="https://dawnarc.com/2018/06/shading-ads%E5%85%89%E7%85%A7%E6%A8%A1%E5%9E%8B%E5%AE%9E%E4%BE%8Bopengl%E5%AE%9E%E7%8E%B0/">
+    <link rel="canonical" href="https://dawnarc.com/2018/06/shadingads%E5%85%89%E7%85%A7%E6%A8%A1%E5%9E%8B%E5%AE%9E%E4%BE%8Bopengl%E5%AE%9E%E7%8E%B0/">
 
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
@@ -150,25 +150,7 @@ if (!doNotTrack) {
       
     
     </a>
-  
-  
-  <script type="text/javascript" async
-  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML">
-</script>
-<script type="text/x-mathjax-config">
-MathJax.Hub.Config({
-  tex2jax: {
-    inlineMath: [['$','$'], ['\\(','\\)']],
-    displayMath: [['$$','$$'], ['\[','\]']],
-    processEscapes: true,
-    processEnvironments: true,
-    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre','code'],
-    TeX: { equationNumbers: { autoNumber: "AMS" },
-         extensions: ["AMSmath.js", "AMSsymbols.js"] }
-  }
-});
-</script>
-  
+    
 </header>
 
       <nav id="sidebar" data-behavior="4">
@@ -361,7 +343,7 @@ MathJax.Hub.Config({
             <div class="post-header main-content-wrap text-left">
   
     <h1 class="post-title" itemprop="headline">
-      Shading-ADS光照模型实例(OpenGL实现)
+      [Shading]ADS光照模型实例(OpenGL实现)
     </h1>
   
   
@@ -393,9 +375,7 @@ MathJax.Hub.Config({
           
           <div class="post-content markdown" itemprop="articleBody">
             <div class="main-content-wrap">
-              
-
-<p>keywords：ambient diffuse specular、Phong Shading、Phong reflection model</p>
+              <p>keywords：ambient diffuse specular、Phong Shading、Phong reflection model</p>
 
 <h4 id="公式概述">公式概述</h4>
 
@@ -452,10 +432,11 @@ Specular = Ls * Ks * pow( max( dot(r, v), 0.0 ), f );
 </figure>
 
 
-<p>光源出射强度 / 出射光强度(Intensity of the outgoing light ) <code>I</code> 的完整计算公式如下：
-$$
+<p>光源出射强度 / 出射光强度(Intensity of the outgoing light ) <code>I</code> 的完整计算公式如下：</p>
+
+<p><span  class="math">\[
 I = La \cdot Ka+Ld \cdot Kd \cdot \left(\vec{s} \cdot \vec{n}\right)+Ls \cdot Ks \cdot \left(\vec{r} \cdot \vec{v}\right)^f
-$$</p>
+\]</span></p>
 
 <h4 id="渲染实例">渲染实例</h4>
 
@@ -468,7 +449,7 @@ $$</p>
 </figure>
 
 
-<p>shader 代码：<br />
+<p>shader 代码：<br>
 diffuse.vert</p>
 
 <pre><code>#version 410
@@ -518,7 +499,7 @@ void main() {
 </figure>
 </p>
 
-<p>shader 代码：<br />
+<p>shader 代码：<br>
 phong.vert</p>
 
 <pre><code>#version 410
@@ -582,10 +563,10 @@ void main() {
 }
 </code></pre>
 
-<p>demo完整代码：<br />
+<p>demo完整代码：<br>
 <a href="https://github.com/dawnarc/ShadingDemo">https://github.com/dawnarc/ShadingDemo</a></p>
 
-<hr />
+<hr>
 
 <p><code>在各种事物的常理中，爱情是无法改变和阻挡的，因为就本性而言，爱只会自行消亡，任何计谋都难以使它逆转。---意大利·薄伽丘《十日谈》</code></p>
 
@@ -819,9 +800,9 @@ $(document).ready(function() {
     
       <script>
         var disqus_config = function () {
-          this.page.url = 'https:\/\/dawnarc.com\/2018\/06\/shading-ads%E5%85%89%E7%85%A7%E6%A8%A1%E5%9E%8B%E5%AE%9E%E4%BE%8Bopengl%E5%AE%9E%E7%8E%B0\/';
+          this.page.url = 'https:\/\/dawnarc.com\/2018\/06\/shadingads%E5%85%89%E7%85%A7%E6%A8%A1%E5%9E%8B%E5%AE%9E%E4%BE%8Bopengl%E5%AE%9E%E7%8E%B0\/';
           
-            this.page.identifier = '\/2018\/06\/shading-ads%E5%85%89%E7%85%A7%E6%A8%A1%E5%9E%8B%E5%AE%9E%E4%BE%8Bopengl%E5%AE%9E%E7%8E%B0\/'
+            this.page.identifier = '\/2018\/06\/shadingads%E5%85%89%E7%85%A7%E6%A8%A1%E5%9E%8B%E5%AE%9E%E4%BE%8Bopengl%E5%AE%9E%E7%8E%B0\/'
           
         };
         (function() {
@@ -840,6 +821,13 @@ $(document).ready(function() {
       </script>
     
   
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.0/dist/katex.min.css" integrity="sha384-BdGj8xC2eZkQaxoQ8nSLefg4AV4/AwB3Fj+8SUSo7pnKP6Eoy18liIKTPn9oBYNG" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.0/dist/katex.min.js" integrity="sha384-JiKN5O8x9Hhs/UE5cT5AAJqieYlOZbGT3CHws/y97o3ty4R7/O5poG9F3JoiOYw1" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.0/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"
+    onload="renderMathInElement(document.body);"></script>
 
 
 
