@@ -375,6 +375,68 @@ Execute <code>fmt</code> command to use Unix line ending in source files:</p>
 <p>Origin:<br />
 <a href="https://github.com/ziglang/zig/issues/544">https://github.com/ziglang/zig/issues/544</a></p>
 
+<h5 id="glfw3-h-171-12-note-gl-gl-h-file-not-found">glfw3.h:171:12: note: &lsquo;GL/gl.h&rsquo; file not found</h5>
+
+<p>Building Error:</p>
+
+<pre><code>glfw3.h:171:12: note: 'GL/gl.h' file not found
+</code></pre>
+
+<p>Solution:<br />
+Add define <code>GLFW_INCLUDE_NONE</code> in <code>glfw3.h</code>:</p>
+
+<pre><code>#if !defined(GLFW_INCLUDE_NONE)
+ #define GLFW_INCLUDE_NONE
+#endif
+</code></pre>
+
+<h5 id="lld-error-undefined-symbol-imp-calloc">lld: error: undefined symbol: __imp_calloc</h5>
+
+<p>Building Error:</p>
+
+<pre><code>lld: error: undefined symbol: __imp_calloc
+&gt;&gt;&gt; referenced by glfw3.lib(window.c.obj):($LN21)
+&gt;&gt;&gt; referenced by glfw3.lib(input.c.obj):($LN7)
+&gt;&gt;&gt; referenced by glfw3.lib(input.c.obj):($LN9)
+&gt;&gt;&gt; referenced by glfw3.lib(win32_init.c.obj):($LN7)
+&gt;&gt;&gt; referenced by glfw3.lib(win32_init.c.obj):($LN7)
+&gt;&gt;&gt; referenced by glfw3.lib(win32_monitor.c.obj):($LN35)
+&gt;&gt;&gt; referenced by glfw3.lib(monitor.c.obj):($LN4)
+&gt;&gt;&gt; referenced by glfw3.lib(monitor.c.obj):($LN4)
+&gt;&gt;&gt; referenced by glfw3.lib(monitor.c.obj):($LN4)
+&gt;&gt;&gt; referenced by glfw3.lib(monitor.c.obj):($LN4)
+&gt;&gt;&gt; referenced 13 more times
+</code></pre>
+
+<p>Solution:<br />
+Turn of <code>-DUSE_MSVC_RUNTIME_LIBRARY_DLL=ON</code> when building with cmake.<br />
+cmake command:</p>
+
+<pre><code>cmake -DBUILD_SHARED_LIBS=OFF -DGLFW_BUILD_EXAMPLES=OFF -DGLFW_BUILD_TESTS=OFF -DGLFW_BUILD_DOCS=OFF -DUSE_MSVC_RUNTIME_LIBRARY_DLL=OFF -G &quot;Visual Studio 16 2019&quot; -A x64
+MSBuild GLFW.sln /p:Configuration=Release /p:Platform=x64
+</code></pre>
+
+<p>Origin:<br />
+Link errors when linking with C static library (GLFW) on Windows<br />
+<a href="https://github.com/ziglang/zig/issues/2911">https://github.com/ziglang/zig/issues/2911</a></p>
+
+<h5 id="lld-error-undefined-symbol-imp-translatemessage">lld: error: undefined symbol: __imp_TranslateMessage</h5>
+
+<p>Building Error:</p>
+
+<pre><code>D:\workspace\zigdev\glfw_test&gt;zig build
+lld: error: undefined symbol: __imp_TranslateMessage
+&gt;&gt;&gt; referenced by glfw3.lib(win32_init.obj):($LN40)
+&gt;&gt;&gt; referenced by glfw3.lib(win32_window.obj):($LN33)
+</code></pre>
+
+<p>Solution:<br />
+Add dependency of <code>User32</code> in <code>build.zip</code>:</p>
+
+<pre><code>exe.addLibPath(&quot;D:/Program_Filesx86/Windows Kits/10/Lib/10.0.18362.0/um/x64&quot;);
+exe.linkSystemLibrary(&quot;User32&quot;);
+</code></pre>
+
 <hr />
 
 <p><code>诸将易得耳，至如信者，国士无双。——司马迁《史记·淮阴侯列传》</code></p>
