@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.56.3 with theme Tranquilpeak 0.4.6-BETA">
+<meta name="generator" content="Hugo 0.58.3 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="C&#43;&#43;, Map, Struct as Key">
 <meta name="description" content="keywords: C&#43;&#43;, std map, struct as key">
@@ -85,7 +85,7 @@
     
     
       
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/solarized-light.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/solarized-light.min.css">
       
     
 
@@ -354,6 +354,8 @@ if (!doNotTrack) {
             <div class="main-content-wrap">
               <p>keywords: C++, std map, struct as key</p>
 
+<h5 id="std-map">std::map</h5>
+
 <p>override operator <code>operator==</code> and <code>operator&lt;</code>.</p>
 
 <p>Exmaple:</p>
@@ -381,6 +383,58 @@ m.insert(p);
 <p>Origin:<br />
 How can I use a struct as key in a std::map?<br />
 <a href="https://stackoverflow.com/questions/7204283/how-can-i-use-a-struct-as-key-in-a-stdmap">https://stackoverflow.com/questions/7204283/how-can-i-use-a-struct-as-key-in-a-stdmap</a></p>
+
+<h5 id="std-unordered-map">std:unordered_map</h5>
+
+<p>Exmaple:</p>
+
+<pre><code>struct Key
+{
+  std::string first;
+  std::string second;
+  int         third;
+
+  bool operator==(const Key &amp;other) const
+  { return (first == other.first
+            &amp;&amp; second == other.second
+            &amp;&amp; third == other.third);
+  }
+};
+
+namespace std {
+
+template &lt;&gt;
+struct hash&lt;Key&gt;
+{
+    std::size_t operator()(const Key&amp; k) const
+    {
+        using std::size_t;
+        using std::hash;
+        using std::string;
+
+        // Compute individual hash values for first,
+        // second and third and combine them using XOR
+        // and bit shifting:
+
+        return ((hash&lt;string&gt;()(k.first)
+        ^ (hash&lt;string&gt;()(k.second) &lt;&lt; 1)) &gt;&gt; 1)
+        ^ (hash&lt;int&gt;()(k.third) &lt;&lt; 1);
+        }
+    };
+}
+
+int main()
+{
+  std::unordered_map&lt;Key,std::string&gt; m6 = {
+    { {&quot;John&quot;, &quot;Doe&quot;, 12}, &quot;example&quot;},
+    { {&quot;Mary&quot;, &quot;Sue&quot;, 21}, &quot;another&quot;}
+  };
+}
+</code></pre>
+
+<p>Origin:<br />
+C++ unordered_map using a custom class type as the key<br />
+<a href="https://stackoverflow.com/questions/17016175/c-unordered-map-using-a-custom-class-type-as-the-key">https://stackoverflow.com/questions/17016175/c-unordered-map-using-a-custom-class-type-as-the-key</a></p>
 
 <hr />
 
@@ -573,7 +627,9 @@ How can I use a struct as key in a std::map?<br />
     
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
+	<link rel="stylesheet"
+      href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/solarized-light.min.css">
+	<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.7/js/jquery.fancybox.min.js" integrity="sha256-GEAnjcTqVP+vBp3SSc8bEDQqvWAZMiHyUSIorrWwH50=" crossorigin="anonymous"></script>
 
