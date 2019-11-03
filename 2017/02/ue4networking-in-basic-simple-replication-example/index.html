@@ -538,7 +538,7 @@ Since the server can own actors itself, a &ldquo;Run on Owning Client&rdquo; eve
 
 <ul>
 <li>ROLE_SimulatedProxy：表示当前Actor是一个模拟服务端的Actor状态Object，无法修改服务端上的数据，也没有权限执行远程函数（Reliable标识的UFUNCTION）。DedicatedServer服务器中创建的对象，在服务端都是ROLE_Authority，这些对象映射在客户端上的对象则都是ROLE_SimulatedProxy，<span class="highlight-text green">当然也有办法让这些对象在客户端变成非ROLE_SimulatedProxy类型，具体方法见下文。</span><span class="highlight-text yellow">该类型的对象，如果去执行自身的UFUNCTION(Server)标识的函数，该函数不会执行。</span></li>
-<li>ROLE_AutonomousProxy：与ROLE_SimulatedProxy相似，区别是ROLE_AutonomousProxy有权限执行远程函数，但是远程函数必须是该Object身上的，其他Object上的远程函数没有权限执行。<span class="highlight-text yellow">客户端的ROLE_AutonomousProxy类型对象，其函数若未加UFUNCTION(Server)标识，执行时仍然是在是在客户端。执行UFUNCTION(Server)标识的函数时，Role类型为ROLE_Authority，NetMode类型为NM_DedicatedServer。</span><span class="highlight-text green">ROLE_AutonomousProxy的优点之一是：当对角色执行转向或者位移控制时，会自动请求服务端处理，而ROLE_SimulatedProxy是做不到的，需要手动请求服务端。</span></li>
+<li>ROLE_AutonomousProxy：与ROLE_SimulatedProxy相似，区别是ROLE_AutonomousProxy有权限执行远程函数，但是远程函数必须是该Object身上的，其他Object上的远程函数没有权限执行。<span class="highlight-text yellow">客户端的ROLE_AutonomousProxy类型对象，其函数若未加UFUNCTION(Server)标识，执行时仍然是在是在客户端。执行UFUNCTION(Server)标识的函数时，在服务端触发执行，Role类型为ROLE_Authority，NetMode类型为NM_DedicatedServer。</span><span class="highlight-text green">ROLE_AutonomousProxy的优点之一是：当对角色执行转向或者位移控制时，会自动请求服务端处理，而ROLE_SimulatedProxy是做不到的，需要手动请求服务端。</span></li>
 <li>ROLE_Authority：最高权限，即可以修改Server上的属性，又可以执行任何Objecct身上的远程函数。<span class="highlight-text green">Standalone服务器中，所有对象都是ROLE_Authority。DedicatedServer服务器中创建的对象，在服务端都是ROLE_Authority。</span><br />
 <span class="highlight-text red">如果是Client创建的对象，其Role也是ROLE_Authority，但是这种Actor无法与服务端通信。</span></li>
 </ul>

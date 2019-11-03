@@ -385,7 +385,7 @@ Build with Android NDK failed:</p>
 
 <h5 id="steps-in-ue4-android-packaging">Steps in UE4 Android Packaging</h5>
 
-<p>1, Modify function <code>SetUpSpecificEnvironment</code> which in <code>UEBuildAndroid.cs</code>.<br />
+<p>1, Modify function <code>SetUpSpecificEnvironment</code> which was in <code>UEBuildAndroid.cs</code>.<br />
 path:</p>
 
 <pre><code>\Engine\Source\Programs\UnrealBuildTool\Platform\Android\UEBuildAndroid.cs
@@ -486,7 +486,7 @@ Origin:</p>
 </code></pre>
 
 <p>Add <code>#include &lt;cmath&gt;</code> in the top of source.<br />
-Orgin:</p>
+Origin:</p>
 
 <pre><code>#if PX_ANDROID
     // If cmath is included after math.h, it will undefine isfinite. If that's the case, use the version in the std namespace instead.
@@ -517,7 +517,7 @@ Directory:</p>
 
 <p>Or replace them with newest version of these third parties sources if using them.</p>
 
-<p>5, Application would crash on startup, this issue may cause by missing <code>libc++_shared.so</code>.<br />
+<p>5, Application would crash on startup, it is probably caused by missing <code>libc++_shared.so</code>.<br />
 Solution:<br />
 Modify source:</p>
 
@@ -543,6 +543,19 @@ if (!bFileExists || Diff.TotalSeconds &lt; -1 || Diff.TotalSeconds &gt; 1)
     Directory.CreateDirectory(Path.GetDirectoryName(FinalSTLSONameLLVM));
     File.Copy(SourceSTLSONameLLVM, FinalSTLSONameLLVM, true);
 }
+</code></pre>
+
+<p>6, If want to use a version of NDK higher than maximum version which defined in UE4, following source needs to be modified:</p>
+
+<pre><code>\Engine\Source\Programs\UnrealBuildTool\Platform\Android\AndroidToolChain.cs
+</code></pre>
+
+<p>Limitation of Minimum and Maxmum version of NDK:</p>
+
+<pre><code>// Android NDK toolchain that must be used for C++ compiling
+readonly int MinimumNDKToolchain = 140100;
+readonly int MaximumNDKToolchain = 180100;
+readonly int RecommendedNDKToolchain = 140100;
 </code></pre>
 
 <h5 id="reference">Reference</h5>

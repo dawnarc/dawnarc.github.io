@@ -7,26 +7,26 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="generator" content="Hugo 0.58.3 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
-<meta name="keywords" content="Graphics, Rendering, Occlusion Culling, Hierarchial Z-Buffer, HZB">
-<meta name="description" content="Keywords: Graphics, Rendering, Occlusion Culling, Hierarchial Z-Buffer, HZB">
+<meta name="keywords" content="Rendering, Lightmap">
+<meta name="description" content="Keywords: Graphics, Rendering, Lightmap">
 
 
-<meta property="og:description" content="Keywords: Graphics, Rendering, Occlusion Culling, Hierarchial Z-Buffer, HZB">
+<meta property="og:description" content="Keywords: Graphics, Rendering, Lightmap">
 <meta property="og:type" content="article">
-<meta property="og:title" content="[Graphics]Occlusion Culling (Hierarchial Z-Buffer Visibility)">
-<meta name="twitter:title" content="[Graphics]Occlusion Culling (Hierarchial Z-Buffer Visibility)">
-<meta property="og:url" content="https://dawnarc.com/2019/09/graphicsocclusion-culling-hierarchial-z-buffer-visibility/">
-<meta property="twitter:url" content="https://dawnarc.com/2019/09/graphicsocclusion-culling-hierarchial-z-buffer-visibility/">
+<meta property="og:title" content="[Graphics]Light Mapping Notes">
+<meta name="twitter:title" content="[Graphics]Light Mapping Notes">
+<meta property="og:url" content="https://dawnarc.com/2019/09/graphicslight-mapping-notes/">
+<meta property="twitter:url" content="https://dawnarc.com/2019/09/graphicslight-mapping-notes/">
 <meta property="og:site_name" content="玄冬Wong">
-<meta property="og:description" content="Keywords: Graphics, Rendering, Occlusion Culling, Hierarchial Z-Buffer, HZB">
-<meta name="twitter:description" content="Keywords: Graphics, Rendering, Occlusion Culling, Hierarchial Z-Buffer, HZB">
+<meta property="og:description" content="Keywords: Graphics, Rendering, Lightmap">
+<meta name="twitter:description" content="Keywords: Graphics, Rendering, Lightmap">
 <meta property="og:locale" content="en-us">
 
   
-    <meta property="article:published_time" content="2019-09-05T16:18:02">
+    <meta property="article:published_time" content="2019-09-08T18:30:02">
   
   
-    <meta property="article:modified_time" content="2019-09-05T16:18:02">
+    <meta property="article:modified_time" content="2019-09-08T18:30:02">
   
   
   
@@ -35,8 +35,6 @@
     
   
   
-    
-      <meta property="article:tag" content="Graphics">
     
       <meta property="article:tag" content="Rendering">
     
@@ -55,8 +53,8 @@
 
 
 
-  <meta property="og:image" content="https://dawnarc.com/thumbnail/thumbnail-japen-003.jpg">
-  <meta property="twitter:image" content="https://dawnarc.com/thumbnail/thumbnail-japen-003.jpg">
+  <meta property="og:image" content="https://dawnarc.com/thumbnail/thumbnail-japen-018.jpg">
+  <meta property="twitter:image" content="https://dawnarc.com/thumbnail/thumbnail-japen-018.jpg">
 
 
 
@@ -66,7 +64,7 @@
   <meta property="twitter:image" content="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=640">
 
 
-    <title>[Graphics]Occlusion Culling (Hierarchial Z-Buffer Visibility)</title>
+    <title>[Graphics]Light Mapping Notes</title>
 
     <link rel="icon" href="https://dawnarc.com/favicon.png">
     
@@ -75,7 +73,7 @@
       <link rel="publisher" href="https://plus.google.com/111340706178390411568">
     
 
-    <link rel="canonical" href="https://dawnarc.com/2019/09/graphicsocclusion-culling-hierarchial-z-buffer-visibility/">
+    <link rel="canonical" href="https://dawnarc.com/2019/09/graphicslight-mapping-notes/">
 
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
@@ -322,19 +320,19 @@ if (!doNotTrack) {
             <div class="post-header main-content-wrap text-left">
   
     <h1 class="post-title" itemprop="headline">
-      [Graphics]Occlusion Culling (Hierarchial Z-Buffer Visibility)
+      [Graphics]Light Mapping Notes
     </h1>
   
   
   <div class="postShorten-meta post-meta">
     
-      <time itemprop="datePublished" datetime="2019-09-05T16:18:02&#43;08:00">
+      <time itemprop="datePublished" datetime="2019-09-08T18:30:02&#43;08:00">
         
   
   
   
   
-    Thursday, 16:18, Sep 5, 2019
+    Sunday, 18:30, Sep 8, 2019
   
 
       </time>
@@ -354,41 +352,33 @@ if (!doNotTrack) {
           
           <div class="post-content markdown" itemprop="articleBody">
             <div class="main-content-wrap">
-              <p>Keywords: Graphics, Rendering, Occlusion Culling, Hierarchial Z-Buffer, HZB</p>
+              <p>Keywords: Graphics, Rendering, Lightmap</p>
 
-<h3 id="occlusion-culling">Occlusion Culling</h3>
+<h5 id="overview">Overview</h5>
 
-<h5 id="hzb-hierarchical-z-buffer">HZB (Hierarchical Z-Buffer)</h5>
+<p>A <code>lightmap</code> is a data structure used in <code>lightmapping</code>, a form of <code>surface caching</code> in which the brightness of surfaces in a virtual scene is pre-calculated and stored in texture maps for later use. Lightmaps are most commonly applied to static objects in applications that use real-time 3D computer graphics, such as video games, in order to provide lighting effects such as <code>global illumination</code> at a relatively low computational cost.</p>
 
-<p>Hierarchical Z-Buffer Occlusion Culling<br />
-<a href="https://www.nickdarnell.com/hierarchical-z-buffer-occlusion-culling/">https://www.nickdarnell.com/hierarchical-z-buffer-occlusion-culling/</a></p>
+<p>Quoted from: Lightmap<br />
+<a href="https://en.wikipedia.org/wiki/Lightmap">https://en.wikipedia.org/wiki/Lightmap</a></p>
 
-<p>Hierarchical-Z map based occlusion culling<br />
-<a href="http://rastergrid.com/blog/2010/10/hierarchical-z-map-based-occlusion-culling/">http://rastergrid.com/blog/2010/10/hierarchical-z-map-based-occlusion-culling/</a></p>
+<h5 id="documents">Documents</h5>
 
-<p>Visibility and Occlusion Culling<br />
-<a href="https://www.cs.purdue.edu/homes/aliaga/cs535-14/lec-visibility.pdf">https://www.cs.purdue.edu/homes/aliaga/cs535-14/lec-visibility.pdf</a></p>
+<p>Lightmap<br />
+<a href="https://en.wikipedia.org/wiki/Lightmap">https://en.wikipedia.org/wiki/Lightmap</a></p>
 
-<p>Visibility Culling<br />
-<a href="http://www.cse.ohio-state.edu/~hwshen/788/sp01/Culling.ppt">http://www.cse.ohio-state.edu/~hwshen/788/sp01/Culling.ppt</a></p>
+<h5 id="tutorials">Tutorials</h5>
 
-<h3 id="research-papers">Research Papers</h3>
+<p>Tutorial 15 : Lightmaps<br />
+<a href="http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-15-lightmaps/">http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-15-lightmaps/</a></p>
 
-<p>Image Space Occlusion Culling Image Space Occlusion Culling<br />
-<a href="http://www.cs.tau.ac.il/~dcor/Graphics/adv-slides/short-image-based-culling.pdf">http://www.cs.tau.ac.il/~dcor/Graphics/adv-slides/short-image-based-culling.pdf</a></p>
+<h5 id="blogs">Blogs</h5>
 
-<p>Space-Time Hierarchical Occlusion Culling for Micropolygon Rendering with Motion Blur<br />
-<a href="http://graphics.stanford.edu/papers/tzpyramid/tzpyramid.pdf">http://graphics.stanford.edu/papers/tzpyramid/tzpyramid.pdf</a></p>
-
-<p>Visibility Culling using Hierarchical Occlusion Maps<br />
-<a href="https://www.cs.drexel.edu/~david/Classes/Papers/p77-zhang.pdf">https://www.cs.drexel.edu/~david/Classes/Papers/p77-zhang.pdf</a></p>
-
-<p>Hierarchical Z-Buffer Visibility<br />
-<a href="https://www.cs.princeton.edu/courses/archive/spring01/cs598b/papers/greene93.pdf">https://www.cs.princeton.edu/courses/archive/spring01/cs598b/papers/greene93.pdf</a></p>
+<p>Light Mapping - Theory and Implementation<br />
+<a href="https://www.flipcode.com/archives/Light_Mapping_Theory_and_Implementation.shtml">https://www.flipcode.com/archives/Light_Mapping_Theory_and_Implementation.shtml</a></p>
 
 <hr />
 
-<p><code>如果有天堂，应该是图书馆的模样。 -豪尔赫·路易斯·博尔赫斯</code></p>
+<p><code>凡是过往，皆为序章。（What's past is prologue） -威廉·莎士比亚《暴风雨》</code></p>
               
             </div>
           </div>
@@ -400,8 +390,6 @@ if (!doNotTrack) {
                   <div class="post-footer-tags">
                     <span class="text-color-light text-small">TAGGED IN</span><br/>
                     
-  <a class="tag tag--primary tag--small" href="https://dawnarc.com/tags/graphics/">Graphics</a>
-
   <a class="tag tag--primary tag--small" href="https://dawnarc.com/tags/rendering/">Rendering</a>
 
                   </div>
@@ -415,7 +403,7 @@ if (!doNotTrack) {
           
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2019/09/ue4networking-in-advanced-replication-graph/" data-tooltip="[UE4]Networking in Advanced - Replication Graph">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2019/09/graphicsshadow-mapping-shadow-volume/" data-tooltip="[Graphics]Shadow Mapping &amp; Shadow Volume">
               
                   <i class="fa fa-angle-left"></i>
                   <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
@@ -423,7 +411,7 @@ if (!doNotTrack) {
             </li>
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2019/08/ue4procedural-foliage-volume-notes/" data-tooltip="[UE4]Procedural Foliage Volume Notes">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2019/09/c-byte-alignment-pack-pragma/" data-tooltip="[C&#43;&#43;]Byte Alignment (pack pragma)">
               
                   <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
                   <i class="fa fa-angle-right"></i>
@@ -483,7 +471,7 @@ if (!doNotTrack) {
           
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2019/09/ue4networking-in-advanced-replication-graph/" data-tooltip="[UE4]Networking in Advanced - Replication Graph">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2019/09/graphicsshadow-mapping-shadow-volume/" data-tooltip="[Graphics]Shadow Mapping &amp; Shadow Volume">
               
                   <i class="fa fa-angle-left"></i>
                   <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
@@ -491,7 +479,7 @@ if (!doNotTrack) {
             </li>
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2019/08/ue4procedural-foliage-volume-notes/" data-tooltip="[UE4]Procedural Foliage Volume Notes">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2019/09/c-byte-alignment-pack-pragma/" data-tooltip="[C&#43;&#43;]Byte Alignment (pack pragma)">
               
                   <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
                   <i class="fa fa-angle-right"></i>
@@ -621,9 +609,9 @@ $(document).ready(function() {
     
       <script>
         var disqus_config = function () {
-          this.page.url = 'https:\/\/dawnarc.com\/2019\/09\/graphicsocclusion-culling-hierarchial-z-buffer-visibility\/';
+          this.page.url = 'https:\/\/dawnarc.com\/2019\/09\/graphicslight-mapping-notes\/';
           
-            this.page.identifier = '\/2019\/09\/graphicsocclusion-culling-hierarchial-z-buffer-visibility\/'
+            this.page.identifier = '\/2019\/09\/graphicslight-mapping-notes\/'
           
         };
         (function() {

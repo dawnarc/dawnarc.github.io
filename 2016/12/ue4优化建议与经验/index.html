@@ -452,7 +452,7 @@ DFAO相关的两个优化选项：</p>
 <br /></li>
 </ul></li>
 
-<li><p>如果场景中有大量点光源和聚光灯且都是动态的，此时通过<code>Distance Field</code>动态地对LightComponet执行<code>SetVisibility</code>和<code>SetHiddenInGame</code>，那么性能可提高30%到60%。这个结论是基于对官方商城一款付费插件 <a href="https://devblogs.microsoft.com/cppblog">Dynamic Lighting Portal System (Performance Booster)</a> 的源码研读。引擎本身有对灯光<code>Occlusion Culling</code>，至于为什么<code>SetVisibility</code>和<code>SetHiddenInGame</code>之后还能有这么大性能提升，估计需要仔细研究UE4渲染相关代码，如果有谁知道底层原因，麻烦文章下方赐教。</p></li>
+<li><p>如果场景中有大量点光源和聚光灯且都是动态的，此时通过<code>Distance Field</code>动态地对LightComponet执行<code>SetVisibility</code>和<code>SetHiddenInGame</code>，那么性能可提高30%到60%。这个结论是基于对官方商城一款付费插件 <a href="https://devblogs.microsoft.com/cppblog">Dynamic Lighting Portal System (Performance Booster)</a> 的源码研读。引擎本身有对灯光<code>Occlusion Culling</code>，至于为什么<code>SetVisibility</code>和<code>SetHiddenInGame</code>之后还能有这么大性能提升，估计需要仔细研究UE4渲染相关代码，个人不成熟的推测：以deferred shading为例，每个光源的在image space处理像素时，即使某个光源没有对当前像素产生明显影响，但是对应的计算过程仍然执行了，可能渲染层并没有因上层应用是游戏项目还是影视动画渲染而去做专门优化，而这个插件通过将灯光隐藏并禁用后，那么在处理各个像素光照信息时，这些光源的计算逻辑直接跳过了，所以可以大幅提升性能。</p></li>
 </ol>
 
 <h5 id="阴影优化">阴影优化</h5>
