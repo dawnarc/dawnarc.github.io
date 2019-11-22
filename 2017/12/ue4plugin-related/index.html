@@ -23,10 +23,10 @@
 2，在 Plugins 添加 plugin 信息：包括 Name 和 Enabled；
 { &quot;FileVersion&quot;: 3, &quot;EngineAssociation&quot;: &quot;4.20&quot;, &quot;Category&quot;: &quot;&quot;, &quot;Description&quot;: &quot;&quot;, &quot;Modules&quot;: [ { &quot;Name&quot;: &quot;MyProj&quot;, &quot;Type&quot;: &quot;Runtime&quot;, &quot;LoadingPhase&quot;: &quot;Default&quot;, &quot;AdditionalDependencies&quot;: [ &quot;UMG&quot;, &quot;Engine&quot;, &quot;CoreUObject&quot;, &quot;AIModule&quot;, &quot;ApexDestruction&quot;, &quot;MyPlugin&quot; ] } ], &quot;Plugins&quot;: [ { &quot;Name&quot;: &quot;ApexDestruction&quot;, &quot;Enabled&quot;: true }, { &quot;Name&quot;: &quot;MyPlugin&quot;, &quot;Enabled&quot;: true } ] }  往 Plugin 中添加 C&#43;&#43; 代码（2018-08-13更新） 貌似没有好的办法，只能手动添加 C&#43;&#43; 类文件">
 <meta property="og:type" content="article">
-<meta property="og:title" content="[UE4]Plugin相关">
-<meta name="twitter:title" content="[UE4]Plugin相关">
-<meta property="og:url" content="https://dawnarc.com/2017/12/ue4plugin%E7%9B%B8%E5%85%B3/">
-<meta property="twitter:url" content="https://dawnarc.com/2017/12/ue4plugin%E7%9B%B8%E5%85%B3/">
+<meta property="og:title" content="[UE4]Plugin Related">
+<meta name="twitter:title" content="[UE4]Plugin Related">
+<meta property="og:url" content="https://dawnarc.com/2017/12/ue4plugin-related/">
+<meta property="twitter:url" content="https://dawnarc.com/2017/12/ue4plugin-related/">
 <meta property="og:site_name" content="玄冬Wong">
 <meta property="og:description" content="Plugin在构造函数中加载的问题 在GameMode构造函数中加载（LoadObject或者ConstructorHelpers::FObjectFinder）蓝图，该蓝图使用了plugin（这里我使用了一个叫Swipe的插件），如果在构造函数中加载，则会报错：
 /Game/Demo/Female/Blueprints/FemaleCharBP : Can&#39;t find file for asset. /Script/Swipe Failed to load /Script/Swipe.SwipeComponent Referenced by K2Node_ComponentBoundEvent_2 Failed to load /Script/Swipe.SwipeComponent Referenced by K2Node_ComponentBoundEvent_3 Failed to load /Script/Swipe.SwipeComponent Referenced by SCS_Node_1  另外一种解决办法：给C&#43;&#43;的GameMode套一个蓝图，然后在该蓝图中设置DefaultPawnClass、PlayerControllerClass等GameMode属性，此时即使这些PawnClass或者PlayerControllerClass蓝图使用了plugin，也不会报错。
@@ -81,7 +81,7 @@
   <meta property="twitter:image" content="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=640">
 
 
-    <title>[UE4]Plugin相关</title>
+    <title>[UE4]Plugin Related</title>
 
     <link rel="icon" href="https://dawnarc.com/favicon.png">
     
@@ -90,7 +90,7 @@
       <link rel="publisher" href="https://plus.google.com/111340706178390411568">
     
 
-    <link rel="canonical" href="https://dawnarc.com/2017/12/ue4plugin%E7%9B%B8%E5%85%B3/">
+    <link rel="canonical" href="https://dawnarc.com/2017/12/ue4plugin-related/">
 
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
@@ -337,7 +337,7 @@ if (!doNotTrack) {
             <div class="post-header main-content-wrap text-left">
   
     <h1 class="post-title" itemprop="headline">
-      [UE4]Plugin相关
+      [UE4]Plugin Related
     </h1>
   
   
@@ -439,7 +439,177 @@ Failed to load /Script/Swipe.SwipeComponent Referenced by SCS_Node_1
 <p>Adding an Actor class to plugin?<br />
 <a href="https://forums.unrealengine.com/development-discussion/c-gameplay-programming/50761-adding-an-actor-class-to-plugin">https://forums.unrealengine.com/development-discussion/c-gameplay-programming/50761-adding-an-actor-class-to-plugin</a></p>
 
-<h5 id="参考资料">参考资料</h5>
+<h3 id="issues">Issues</h3>
+
+<h5 id="warning-modules-must-specify-an-explicit-precompiled-header">Warning: Modules must specify an explicit precompiled header</h5>
+
+<p>Warning at building project:</p>
+
+<pre><code>MyPlugin.Build.cs: warning: Modules must specify an explicit precompiled header (eg. PrivatePCHHeaderFile = &quot;Private/MyProjPrivatePCH.h&quot;) from UE 4.21 onwards.
+</code></pre>
+
+<p>Reason:<br />
+plugin&rsquo;s configuration had changed from 4.21 onwards.</p>
+
+<p>Solution:</p>
+
+<p>Replace <code>MyProj\Plugins\MyPlugin\Source\MyPlugin\MyPlugin.Build.cs</code> with following contents:</p>
+
+<pre><code>using UnrealBuildTool;
+
+public class MyPlugin : ModuleRules
+{
+    public MyPlugin(ReadOnlyTargetRules Target) : base(Target)
+    {
+        PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
+
+        PublicIncludePaths.AddRange(
+            new string[] {
+                // ... add public include paths required here ...
+            }
+            );
+
+
+        PrivateIncludePaths.AddRange(
+            new string[] {
+                &quot;MyPlugin/Private&quot;,
+                // ... add other private include paths required here ...
+            }
+            );
+
+
+        PublicDependencyModuleNames.AddRange(
+            new string[]
+            {
+                &quot;Core&quot;,
+                // ... add other public dependencies that you statically link with here ...
+            }
+            );
+
+
+        PrivateDependencyModuleNames.AddRange(
+            new string[]
+            {
+                &quot;CoreUObject&quot;,
+                &quot;Engine&quot;,
+                &quot;Slate&quot;,
+                &quot;SlateCore&quot;,
+                // ... add private dependencies that you statically link with here ...  
+            }
+            );
+
+
+        DynamicallyLoadedModuleNames.AddRange(
+            new string[]
+            {
+                // ... add any modules that your module loads dynamically here ...
+            }
+            );
+    }
+}
+</code></pre>
+
+<h5 id="error-expected-myplugin-h-to-be-first-header-included">Error: Expected MyPlugin.h to be first header included.</h5>
+
+<p>Error at building project:</p>
+
+<pre><code>MyPlugin.cpp(1): error: Expected MyPlugin.h to be first header included.
+</code></pre>
+
+<p>Reason:<br />
+The rules of cpp sources in plugin had changed from 4.21 onwards.</p>
+
+<p>Solution:<br />
+Using the following template sources in plugin, replace string <code>MyPlugin</code> with <code>YourPlugin</code>.</p>
+
+<p><code>MyProj\Plugins\MyPlugin\Source\MyPlugin\Public\MyPlugin.h</code></p>
+
+<pre><code>#pragma once
+
+#include &quot;CoreMinimal.h&quot;
+#include &quot;Modules/ModuleManager.h&quot;
+
+DECLARE_LOG_CATEGORY_EXTERN(MyPlugin,Log,All);
+
+class FMyPluginModule : public IModuleInterface
+{
+public:
+
+    /** IModuleInterface implementation */
+    virtual void StartupModule() override;
+    virtual void ShutdownModule() override;
+};
+</code></pre>
+
+<p><code>MyProj\Plugins\MyPlugin\Source\MyPlugin\Private\MyPlugin.cpp</code></p>
+
+<pre><code>#include &quot;MyPlugin.h&quot;
+
+#define LOCTEXT_NAMESPACE &quot;FMyPluginModule&quot;
+DEFINE_LOG_CATEGORY(MyPlugin);
+void FMyPluginModule::StartupModule()
+{
+    // This code will execute after your module is loaded into memory; the exact timing is specified in the .uplugin file per-module
+}
+
+void FMyPluginModule::ShutdownModule()
+{
+    // This function may be called during shutdown to clean up your module.  For modules that support dynamic reloading,
+    // we call this function before unloading the module.
+}
+
+#undef LOCTEXT_NAMESPACE
+
+IMPLEMENT_MODULE(FMyPluginModule, MyPlugin)
+</code></pre>
+
+<h5 id="fatal-error-c1852-sharedpch-engine-h-pch-is-not-a-valid-precompiled-header-file">Fatal error C1852: SharedPCH.Engine.h.pch is not a valid precompiled header file</h5>
+
+<p>Error at building project:</p>
+
+<pre><code>MyProj\Plugins\MyPlugin\Intermediate\Build\Win64\UE4Editor\Development\MyPlugin\Module.MyPlugin.gen.cpp: fatal error C1852: 'D:\MyProj\Intermediate\Build\Win64\MyProjEditor\Development\Engine\SharedPCH.Engine.h.pch' is not a valid precompiled header file
+</code></pre>
+
+<p>Reason:<br />
+Maybe caused by cache files of building.</p>
+
+<p>Solution:<br />
+Remove directory <code>[Project]/Intermediate</code> and <code>[Project]/Saved</code>, then regenerate project files.</p>
+
+<p>Error at building project:</p>
+
+<pre><code>Module.OpenCV.cpp.obj : error LNK2019: unresolved external symbol &quot;__declspec(dllimport) public: static bool __cdecl FRHIResource::Bypass(void)&quot; (__imp_?Bypass@FRHIResource@@SA_NXZ) referenced in function &quot;public: __cdecl TRefCountPtr&lt;class FRHITexture2D&gt;::~TRefCountPtr&lt;class FRHITexture2D&gt;(void)&quot; (??1?$TRefCountPtr@VFRHITexture2D@@@@QEAA@XZ)
+Module.OpenCV.cpp.obj : error LNK2019: unresolved external symbol &quot;__declspec(dllimport) public: static enum ENamedThreads::Type __cdecl FRenderCommand::GetDesiredThread(void)&quot; (__imp_?GetDesiredThread@FRenderCommand@@SA?AW4Type@ENamedThreads@@XZ) referenced in function &quot;private: class TRefCountPtr&lt;class FGraphEvent&gt; __cdecl TGraphTask&lt;class `protected: void __cdecl AWebcamReader::UpdateTextureRegions(class UTexture2D *,int,unsigned int,struct FUpdateTextureRegion2D *,unsigned int,unsigned int,unsigned char *,bool)'::`5'::EURCMacro_UpdateTextureRegionsData&gt;::Setup(class TArray&lt;class TRefCountPtr&lt;class FGraphEvent&gt;,class TInlineAllocator&lt;4,class FDefaultAllocator&gt; &gt; const *,enum ENamedThreads::Type)&quot; (?Setup@?$TGraphTask@VEURCMacro_UpdateTextureRegionsData@?4??UpdateTextureRegions@AWebcamReader@@IEAAXPEAVUTexture2D@@HIPEAUFUpdateTextureRegion2D@@IIPEAE_N@Z@@@AEAA?AV?$TRefCountPtr@VFGraphEvent@@@@PEBV?$TArray@V?$TRefCountPtr@VFGraphEvent@@@@V?$TInlineAllocator@$03VFDefaultAllocator@@@@@@W4Type@ENamedThreads@@@Z)
+Module.OpenCV.cpp.obj : error LNK2019: unresolved external symbol &quot;__declspec(dllimport) public: static enum ESubsequentsMode::Type __cdecl FRenderCommand::GetSubsequentsMode(void)&quot; (__imp_?GetSubsequentsMode@FRenderCommand@@SA?AW4Type@ESubsequentsMode@@XZ) referenced in function &quot;public: static class TGraphTask&lt;class `protected: void __cdecl AWebcamReader::UpdateTextureRegions(class UTexture2D *,int,unsigned int,struct FUpdateTextureRegion2D *,unsigned int,unsigned int,unsigned char *,bool)'::`5'::EURCMacro_UpdateTextureRegionsData&gt;::FConstructor __cdecl TGraphTask&lt;class `protected: void __cdecl AWebcamReader::UpdateTextureRegions(class UTexture2D *,int,unsigned int,struct FUpdateTextureRegion2D *,unsigned int,unsigned int,unsigned char *,bool)'::`5'::EURCMacro_UpdateTextureRegionsData&gt;::CreateTask(class TArray&lt;class TRefCountPtr&lt;class FGraphEvent&gt;,class TInlineAllocator&lt;4,class FDefaultAllocator&gt; &gt; const *,enum ENamedThreads::Type)&quot; (?CreateTask@?$TGraphTask@VEURCMacro_UpdateTextureRegionsData@?4??UpdateTextureRegions@AWebcamReader@@IEAAXPEAVUTexture2D@@HIPEAUFUpdateTextureRegion2D@@IIPEAE_N@Z@@@SA?AVFConstructor@1@PEBV?$TArray@V?$TRefCountPtr@VFGraphEvent@@@@V?$TInlineAllocator@$03VFDefaultAllocator@@@@@@W4Type@ENamedThreads@@@Z)
+Module.OpenCV.cpp.obj : error LNK2019: unresolved external symbol &quot;__declspec(dllimport) class FRHICommandListImmediate &amp; __cdecl GetImmediateCommandList_ForRenderCommand(void)&quot; (__imp_?GetImmediateCommandList_ForRenderCommand@@YAAEAVFRHICommandListImmediate@@XZ) referenced in function &quot;public: void __cdecl `protected: void __cdecl AWebcamReader::UpdateTextureRegions(class UTexture2D *,int,unsigned int,struct FUpdateTextureRegion2D *,unsigned int,unsigned int,unsigned char *,bool)'::`5'::EURCMacro_UpdateTextureRegionsData::DoTask(enum ENamedThreads::Type,class TRefCountPtr&lt;class FGraphEvent&gt; const &amp;)&quot; (?DoTask@EURCMacro_UpdateTextureRegionsData@?4??UpdateTextureRegions@AWebcamReader@@IEAAXPEAVUTexture2D@@HIPEAUFUpdateTextureRegion2D@@IIPEAE_N@Z@QEAAXW4Type@ENamedThreads@@AEBV?$TRefCountPtr@VFGraphEvent@@@@@Z)
+Module.OpenCV.cpp.obj : error LNK2001: unresolved external symbol &quot;__declspec(dllimport) bool GRHINeedsExtraDeletionLatency&quot; (__imp_?GRHINeedsExtraDeletionLatency@@3_NA)
+Module.OpenCV.cpp.obj : error LNK2001: unresolved external symbol &quot;__declspec(dllimport) private: static class TLockFreePointerListUnordered&lt;class FRHIResource,64&gt; FRHIResource::PendingDeletes&quot; (__imp_?PendingDeletes@FRHIResource@@0V?$TLockFreePointerListUnordered@VFRHIResource@@$0EA@@@A)
+Module.OpenCV.cpp.obj : error LNK2001: unresolved external symbol &quot;__declspec(dllimport) class FDynamicRHI * GDynamicRHI&quot; (__imp_?GDynamicRHI@@3PEAVFDynamicRHI@@EA)
+Module.OpenCV.cpp.obj : error LNK2001: unresolved external symbol &quot;__declspec(dllimport) class FRHICommandListExecutor GRHICommandList&quot; (__imp_?GRHICommandList@@3VFRHICommandListExecutor@@A)
+Module.OpenCV.cpp.obj : error LNK2001: unresolved external symbol &quot;__declspec(dllimport) bool GIsThreadedRendering&quot; (__imp_?GIsThreadedRendering@@3_NA)
+Module.OpenCV.cpp.obj : error LNK2001: unresolved external symbol &quot;__declspec(dllimport) class TAtomic&lt;bool&gt; GMainThreadBlockedOnRenderThread&quot; (__imp_?GMainThreadBlockedOnRenderThread@@3V?$TAtomic@_N@@A)
+</code></pre>
+
+<p>Reason:<br />
+Miss required <code>PublicDependencyModuleNames</code>: <code>RHI</code> and <code>RenderCore</code>.</p>
+
+<p>Solution:<br />
+Add module names in <code>MyPlugin.Build.cs</code></p>
+
+<pre><code>PublicDependencyModuleNames.AddRange(
+    new string[]
+    {
+        &quot;Core&quot;,
+        &quot;RHI&quot;,
+        &quot;RenderCore&quot;,
+    }
+    );
+</code></pre>
+
+<p>Origin:<br />
+<a href="https://usagi.hatenablog.jp/entry/2018/09/11/205922">https://usagi.hatenablog.jp/entry/2018/09/11/205922</a></p>
+
+<h3 id="reference">Reference</h3>
 
 <p>How to Install a Plugin on Unreal Engine 4<br />
 <a href="https://idkudk.blogspot.jp/2015/02/how-to-install-plugin-on-unreal-engine-4.html">https://idkudk.blogspot.jp/2015/02/how-to-install-plugin-on-unreal-engine-4.html</a></p>
@@ -681,9 +851,9 @@ $(document).ready(function() {
     
       <script>
         var disqus_config = function () {
-          this.page.url = 'https:\/\/dawnarc.com\/2017\/12\/ue4plugin%E7%9B%B8%E5%85%B3\/';
+          this.page.url = 'https:\/\/dawnarc.com\/2017\/12\/ue4plugin-related\/';
           
-            this.page.identifier = '\/2017\/12\/ue4plugin%E7%9B%B8%E5%85%B3\/'
+            this.page.identifier = '\/2017\/12\/ue4plugin-related\/'
           
         };
         (function() {

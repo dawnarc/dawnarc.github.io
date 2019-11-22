@@ -8,18 +8,18 @@
 <meta name="generator" content="Hugo 0.58.3 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="UE4, Sequencer">
-<meta name="description" content=".">
+<meta name="description" content="Keywords: UE4, Build.cs">
 
 
-<meta property="og:description" content=".">
+<meta property="og:description" content="Keywords: UE4, Build.cs">
 <meta property="og:type" content="article">
-<meta property="og:title" content="[UE4][Build.cs]Get the current Project Directory">
-<meta name="twitter:title" content="[UE4][Build.cs]Get the current Project Directory">
-<meta property="og:url" content="https://dawnarc.com/2019/01/ue4build.csget-the-current-project-directory/">
-<meta property="twitter:url" content="https://dawnarc.com/2019/01/ue4build.csget-the-current-project-directory/">
+<meta property="og:title" content="[UE4]Build.cs Notes">
+<meta name="twitter:title" content="[UE4]Build.cs Notes">
+<meta property="og:url" content="https://dawnarc.com/2019/01/ue4build.cs-notes/">
+<meta property="twitter:url" content="https://dawnarc.com/2019/01/ue4build.cs-notes/">
 <meta property="og:site_name" content="玄冬Wong">
-<meta property="og:description" content=".">
-<meta name="twitter:description" content=".">
+<meta property="og:description" content="Keywords: UE4, Build.cs">
+<meta name="twitter:description" content="Keywords: UE4, Build.cs">
 <meta property="og:locale" content="en-us">
 
   
@@ -64,7 +64,7 @@
   <meta property="twitter:image" content="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=640">
 
 
-    <title>[UE4][Build.cs]Get the current Project Directory</title>
+    <title>[UE4]Build.cs Notes</title>
 
     <link rel="icon" href="https://dawnarc.com/favicon.png">
     
@@ -73,7 +73,7 @@
       <link rel="publisher" href="https://plus.google.com/111340706178390411568">
     
 
-    <link rel="canonical" href="https://dawnarc.com/2019/01/ue4build.csget-the-current-project-directory/">
+    <link rel="canonical" href="https://dawnarc.com/2019/01/ue4build.cs-notes/">
 
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
@@ -320,7 +320,7 @@ if (!doNotTrack) {
             <div class="post-header main-content-wrap text-left">
   
     <h1 class="post-title" itemprop="headline">
-      [UE4][Build.cs]Get the current Project Directory
+      [UE4]Build.cs Notes
     </h1>
   
   
@@ -352,22 +352,44 @@ if (!doNotTrack) {
           
           <div class="post-content markdown" itemprop="articleBody">
             <div class="main-content-wrap">
-              <p>.</p>
+              <p>Keywords: UE4, Build.cs</p>
 
-<h5 id="new-way">New way</h5>
+<h5 id="how-to-get-the-current-project-directory">How to get the current project directory</h5>
 
-<pre><code>public string ProjectRoot
-{
-    get
+<p>New way</p>
+
+<pre><code>using System.IO;
+using UnrealBuildTool;  
+
+public class MyProject : ModuleRules  
+{  
+    private string ProjectRoot
     {
-        return System.IO.Path.GetFullPath(System.IO.Path.Combine(ModuleDirectory, &quot;../../&quot;));
+        get
+        {
+            return Path.GetFullPath(Path.Combine(ModuleDirectory, &quot;../../&quot;));
+        }
     }
+
+    private string ThirdPartyPath
+    { 
+        get 
+        { 
+            return Path.GetFullPath(Path.Combine(ModuleDirectory, ProjectRoot, &quot;ThirdParty&quot;)); 
+        } 
+    }
+
+    public MyProject(ReadOnlyTargetRules Target) : base(Target)
+    {  
+
+    }  
 }
 </code></pre>
 
-<p><a href="https://answers.unrealengine.com/questions/237166/how-can-i-get-the-current-project-path-within-the.html">https://answers.unrealengine.com/questions/237166/how-can-i-get-the-current-project-path-within-the.html</a></p>
+<p>Reference:<br />
+<a href="https://answers.unrealengine.com/questions/237166/how-can-i-get-the-current-project-path-within-the.html">https://answers.unrealengine.com/questions/237166/how-can-i-get-the-current-project-path-within-the.html</a></p>
 
-<h5 id="old-way-removed-in-4-21">Old way (Removed in 4.21)</h5>
+<p>Old way (Removed in 4.21)</p>
 
 <pre><code>using System.IO;  
 using UnrealBuildTool;  
@@ -396,9 +418,119 @@ public class MyProject : ModuleRules
 }
 </code></pre>
 
+<h5 id="how-to-include-third-party-libraries">How to include third party libraries</h5>
+
+<p>Example:</p>
+
+<pre><code>using UnrealBuildTool;
+using System.IO;
+
+public class TestTD : ModuleRules
+{
+    private string ProjectRoot
+    {
+        get
+        {
+            return Path.GetFullPath(Path.Combine(ModuleDirectory, &quot;../../&quot;));
+        }
+    }
+
+    private string ThirdPartyPath
+    { 
+        get 
+        { 
+            return Path.GetFullPath(Path.Combine(ModuleDirectory, ProjectRoot, &quot;ThirdParty&quot;)); 
+        } 
+    }
+
+    public TestTD(ReadOnlyTargetRules Target) : base(Target)
+    {
+        PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
+
+        PublicDependencyModuleNames.AddRange(new string[] { &quot;Core&quot;, &quot;CoreUObject&quot;, &quot;Engine&quot;, &quot;InputCore&quot;, &quot;HeadMountedDisplay&quot;, &quot;NavigationSystem&quot;, &quot;AIModule&quot; });
+
+        LoadOpenCV(Target);
+    }
+
+    public bool LoadOpenCV(ReadOnlyTargetRules Target)
+    {   
+        // Start OpenCV linking here!
+        bool isLibrarySupported = false;
+
+        //Library path
+        string PlatformString = null;
+        string libSuffix = null;
+        switch (Target.Platform)
+        {
+            case UnrealTargetPlatform.Win64:
+                {
+                    PlatformString = &quot;Win64&quot;;
+                    libSuffix = &quot;.lib&quot;;
+                    break;
+                }
+            case UnrealTargetPlatform.Android:
+                {
+                    PlatformString = &quot;Android&quot;;
+                    libSuffix = &quot;.a&quot;;
+                    break;
+                }
+        }
+
+        bool isdebug = Target.Configuration == UnrealTargetConfiguration.Debug;
+        string DebugLibNameFlag = &quot;&quot;;
+        if(isdebug)
+        {
+            DebugLibNameFlag = &quot;d&quot;;
+        }
+
+        if (null != PlatformString)
+        {
+            //LibrariesPath value for Windows in Debug: D:\MyProj\ThirdParty\OpenCV\Libraries\Win64\opencv_world348d.lib
+            string LibrariesPath = Path.Combine(ThirdPartyPath, &quot;OpenCV&quot;, &quot;Libraries&quot;, PlatformString, &quot;opencv_world348&quot; + DebugLibNameFlag + libSuffix);
+            PublicAdditionalLibraries.Add(LibrariesPath);
+
+            System.Console.WriteLine(&quot;++++++++++++ Set OpenCV Libraries: &quot; + LibrariesPath + &quot;\r&quot;);
+        }
+
+        //Include path
+        string IncludePath = Path.Combine(ThirdPartyPath, &quot;OpenCV&quot;, &quot;Includes&quot;);
+        PublicIncludePaths.Add(IncludePath);
+
+        System.Console.WriteLine(&quot;++++++++++++ Set OpenCV Includes: &quot; + IncludePath + &quot;\r&quot;);
+
+        PublicDefinitions.Add(string.Format(&quot;WITH_OPENCV_BINDING={0}&quot;, isLibrarySupported ? 1 : 0));
+
+        return isLibrarySupported;
+    }
+}
+</code></pre>
+
+<p>If want to include a number of libraries, you can do like this:</p>
+
+<pre><code>// Add static library search path 
+PublicLibraryPaths.Add(LibPath);
+
+PublicAdditionalLibraries.Add(&quot;opencv_calib3d340.lib&quot;);
+PublicAdditionalLibraries.Add(&quot;opencv_core340.lib&quot;);
+PublicAdditionalLibraries.Add(&quot;opencv_cudaarithm340.lib&quot;);
+PublicAdditionalLibraries.Add(&quot;opencv_cudabgsegm340.lib&quot;);
+
+// Add shared library search path
+PublicRuntimeLibraryPaths.Add(DllPath);
+
+PublicDelayLoadDLLs.Add(&quot;opencv_calib3d340.dll&quot;);
+PublicDelayLoadDLLs.Add(&quot;opencv_core340.dll&quot;);
+PublicDelayLoadDLLs.Add(&quot;opencv_cudaarithm340.dll&quot;);
+PublicDelayLoadDLLs.Add(&quot;opencv_cudabgsegm340.dll&quot;);
+</code></pre>
+
+<p>Reference:<br />
+[UE4]UnrealBuildTool APIs in common<br />
+<a href="https://dawnarc.com/2019/07/ue4unrealbuildtool-apis-in-common/">https://dawnarc.com/2019/07/ue4unrealbuildtool-apis-in-common/</a></p>
+
 <hr />
 
-<p><code>我年轻时，听一位教授讲：“人生都只有一个想法，终其一生不过是不断丰富它。”我当时觉得：“一辈子只围绕一个念头转？这未免也太反动了！”五十岁时，我明白他是对的：我这一辈子都在追随一个想法，问题是我从来都不知道是哪个。</code>──翁贝托·埃科《密涅瓦火柴盒》</p>
+<p><code>我年轻时，听一位教授讲：“人生都只有一个想法，终其一生不过是不断丰富它。”我当时觉得：“一辈子只围绕一个念头转？这未免也太反动了！”五十岁时，我明白他是对的：我这一辈子都在追随一个想法，问题是我从来都不知道是哪个。──翁贝托·埃科《密涅瓦火柴盒》</code></p>
               
             </div>
           </div>
@@ -629,9 +761,9 @@ $(document).ready(function() {
     
       <script>
         var disqus_config = function () {
-          this.page.url = 'https:\/\/dawnarc.com\/2019\/01\/ue4build.csget-the-current-project-directory\/';
+          this.page.url = 'https:\/\/dawnarc.com\/2019\/01\/ue4build.cs-notes\/';
           
-            this.page.identifier = '\/2019\/01\/ue4build.csget-the-current-project-directory\/'
+            this.page.identifier = '\/2019\/01\/ue4build.cs-notes\/'
           
         };
         (function() {
