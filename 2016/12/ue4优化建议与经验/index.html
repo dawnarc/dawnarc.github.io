@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.58.3 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.60.1 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="UE4性能优化, UE4, Performance, Optimization">
 <meta name="description" content="keywords：UE4性能优化、Performance Optimization">
@@ -354,291 +354,297 @@ if (!doNotTrack) {
           <div class="post-content markdown" itemprop="articleBody">
             <div class="main-content-wrap">
               <p>keywords：UE4性能优化、Performance Optimization</p>
-
 <p>内容都是处理项目问题的相关笔记，留给自己做备忘录，也分享出来让别人少走弯路。</p>
-
-<h5 id="零散记录">零散记录</h5>
-
+<h5 id="heading">零散记录</h5>
 <ol>
-<li><p>GPUProfile来统计性能消耗的时候，在editor模式下不是很准，因为编辑器的消耗也算进去了，如果要用，最好以Game模式来查看。</p></li>
-
-<li><p>UE4不支持640X480的分辨率，如果在这个分辨率下运行程序，会导致程序崩溃（4.4版本，不知最新版本是否仍有此问题）。</p></li>
-
-<li><p>如果角色身上有很多Component需要Attach，尽量在使用时Attach，不要一加载就全部attach，否则当场景中角色很多时，会有严重性能问题。<br />
-比如：场景中有几百个角色，但不是每个角色都需要摄像机和弹簧臂，那么在构造函数中就不要创建摄像机和弹簧臂组件。</p></li>
-
-<li><p>面数对UE4来说不敏感，即使在移动端。ipad 4上，50万的三角面，也能够以30fps帧率稳定运行，移动端主要对贴图大小、材质复杂度较为敏感。</p></li>
+<li>
+<p>GPUProfile来统计性能消耗的时候，在editor模式下不是很准，因为编辑器的消耗也算进去了，如果要用，最好以Game模式来查看。</p>
+</li>
+<li>
+<p>UE4不支持640X480的分辨率，如果在这个分辨率下运行程序，会导致程序崩溃（4.4版本，不知最新版本是否仍有此问题）。</p>
+</li>
+<li>
+<p>如果角色身上有很多Component需要Attach，尽量在使用时Attach，不要一加载就全部attach，否则当场景中角色很多时，会有严重性能问题。<br>
+比如：场景中有几百个角色，但不是每个角色都需要摄像机和弹簧臂，那么在构造函数中就不要创建摄像机和弹簧臂组件。</p>
+</li>
+<li>
+<p>面数对UE4来说不敏感，即使在移动端。ipad 4上，50万的三角面，也能够以30fps帧率稳定运行，移动端主要对贴图大小、材质复杂度较为敏感。</p>
+</li>
 </ol>
-
-<h5 id="代码编译优化">代码编译优化</h5>
-
+<h5 id="heading1">代码编译优化</h5>
 <ol>
-<li><p>C++ 比 蓝图快100到1000倍<br />
-[Test] Blueprint vs C++ Performance vs Nativized BP<br />
-<a href="https://www.reddit.com/r/unrealengine/comments/6qtxy3/test_blueprint_vs_c_performance_vs_nativized_bp/">https://www.reddit.com/r/unrealengine/comments/6qtxy3/test_blueprint_vs_c_performance_vs_nativized_bp/</a><br />
-感谢知乎网友<code>金木研</code>指正：以上结果是在编辑器模式下的测试结果（没有native蓝图），如果打包并将蓝图转换为native code，那么蓝图和C++的性能差距不超过两倍。大概在4.18（具体版本号忘了）之前，蓝图转native code的算法不够优化，比如一个加法操作，会被翻译成一个单独函数，这样导致执行堆栈特别长，后来Epic对蓝图转native的算法在不断改进，目前的版本已足够优化。</p></li>
-
-<li><p>使用C++进行向量变换时，尽量使用<code>FTransform::TransformXXX()</code>和<code>FTransform::InverseTransformXXX</code>，而不是<code>FQuat::RotateVector</code>和<code>FQuat::UnrotateVector</code>，因为前者使用了更多的当前硬件支持的矢量汇编指令，榨干了硬件性能，而后者是为了跨平台，老老实实使用C++代码来执行计算公式，虽然也调用了硬件汇编指令，但数量相对较少。<br />
-UE4做了优化，当你使用<code>FTransform::TransformXXX()</code>时，如果当前硬件支持，就走硬件指令，如果不支持，则走<code>FQuat::RotateVector</code>。</p></li>
-
-<li><p>VS2019针对C++代码编译速度、以及CPU<code>AVX/AVX2</code>指令集下的矢量计算进行了更深入的优化，并且微软Xbox ATG团队使用UE4的demo工程<strong>Infiltrator</strong>对优化后的效果进行了基准测试：</p>
-
+<li>
+<p>C++ 比 蓝图快100到1000倍<br>
+[Test] Blueprint vs C++ Performance vs Nativized BP<br>
+<a href="https://www.reddit.com/r/unrealengine/comments/6qtxy3/test_blueprint_vs_c_performance_vs_nativized_bp/">https://www.reddit.com/r/unrealengine/comments/6qtxy3/test_blueprint_vs_c_performance_vs_nativized_bp/</a><br>
+感谢知乎网友<code>金木研</code>指正：以上结果是在编辑器模式下的测试结果（没有native蓝图），如果打包并将蓝图转换为native code，那么蓝图和C++的性能差距不超过两倍。大概在4.18（具体版本号忘了）之前，蓝图转native code的算法不够优化，比如一个加法操作，会被翻译成一个单独函数，这样导致执行堆栈特别长，后来Epic对蓝图转native的算法在不断改进，目前的版本已足够优化。</p>
+</li>
+<li>
+<p>使用C++进行向量变换时，尽量使用<code>FTransform::TransformXXX()</code>和<code>FTransform::InverseTransformXXX</code>，而不是<code>FQuat::RotateVector</code>和<code>FQuat::UnrotateVector</code>，因为前者使用了更多的当前硬件支持的矢量汇编指令，榨干了硬件性能，而后者是为了跨平台，老老实实使用C++代码来执行计算公式，虽然也调用了硬件汇编指令，但数量相对较少。<br>
+UE4做了优化，当你使用<code>FTransform::TransformXXX()</code>时，如果当前硬件支持，就走硬件指令，如果不支持，则走<code>FQuat::RotateVector</code>。</p>
+</li>
+<li>
+<p>VS2019针对C++代码编译速度、以及CPU<code>AVX/AVX2</code>指令集下的矢量计算进行了更深入的优化，并且微软Xbox ATG团队使用UE4的demo工程<strong>Infiltrator</strong>对优化后的效果进行了基准测试：</p>
 <ul>
 <li>编译速度方面：完整编译速度，VS2019(16.2)是VS2017(15.9)的3.5倍，增量编译速度，VS2019(16.2)是VS2017(15.9)的1.6倍；</li>
 <li>代码优化方面：以游戏帧率作为测试标准，VS 16.2相对16.0提升了2%到3%，而16.0相对15.9最大可以提升2.8%，也就是说使用VS2019编译代码，相比VS2017，可以让游戏运行时帧率提升5%左右。</li>
 </ul>
-
-<p>更多详情见微软C++团队博客：<a href="https://devblogs.microsoft.com/cppblog">C++ Team Blog</a>。</p></li>
+<p>更多详情见微软C++团队博客：<a href="https://devblogs.microsoft.com/cppblog">C++ Team Blog</a>。</p>
+</li>
 </ol>
-
-<h5 id="代码算法优化-仅限ue4-api相关">代码算法优化（仅限UE4 API相关）</h5>
-
+<h5 id="ue4-api">代码算法优化（仅限UE4 API相关）</h5>
 <ol>
-<li><p>清空TArray时，如果该TArray对象还会继续使用，使用<code>Reset()</code>代替<code>Empty()</code>，因为前者不会销毁内存空间。</p></li>
-
-<li><p>TArray移除元素时，如果对元素的顺序不关心，可以使用<code>RemoveAtSwap()</code>代替<code>RemoveAt()</code>，前者是用数组末尾的元素来填补内存空洞（移除元素后产生的无效内存空间），而后者是对空洞后的所有元素平移。时间复杂度，前者为O(RemovedCount)，后者为O(ArrayNum)。</p></li>
-
-<li><p><code>TSoftObjectPtr</code>内部使用了RTTI的<code>dynamic_cast</code>，这个操作很贵，避免在run-time大规模使用，尤其是服务端。如果非要在run-time中频繁使用，个人建议做法：自己建一个map当作资源加载管理的缓存，key是资源路径，value是一个自定义结构体，其中保存了对象指针和资源类型枚举，获取的时候根据枚举值<code>static_cast</code>强转。</p></li>
+<li>
+<p>清空TArray时，如果该TArray对象还会继续使用，使用<code>Reset()</code>代替<code>Empty()</code>，因为前者不会销毁内存空间。</p>
+</li>
+<li>
+<p>TArray移除元素时，如果对元素的顺序不关心，可以使用<code>RemoveAtSwap()</code>代替<code>RemoveAt()</code>，前者是用数组末尾的元素来填补内存空洞（移除元素后产生的无效内存空间），而后者是对空洞后的所有元素平移。时间复杂度，前者为O(RemovedCount)，后者为O(ArrayNum)。</p>
+</li>
+<li>
+<p><code>TSoftObjectPtr</code>内部使用了RTTI的<code>dynamic_cast</code>，这个操作很贵，避免在run-time大规模使用，尤其是服务端。如果非要在run-time中频繁使用，个人建议做法：自己建一个map当作资源加载管理的缓存，key是资源路径，value是一个自定义结构体，其中保存了对象指针和资源类型枚举，获取的时候根据枚举值<code>static_cast</code>强转。</p>
+</li>
 </ol>
-
-<h5 id="视距裁剪-剔除">视距裁剪（剔除）</h5>
-
+<h5 id="heading2">视距裁剪（剔除）</h5>
 <ol>
-<li><p>开启<code>Occlusion Culling</code> (Project Settings -&gt; Engine -&gt; Rendering -&gt; Occlusion Culling，默认已开启)。如果需要增大以屏占比基准的剔除强度（代价是剔除效果比较突兀）以提升渲染效率，将以下属性值增大：<br />
-<code>Min Screen Radius for Lights</code><br />
-<code>Min Screen Radius for Early Z Pass</code><br />
-<code>Min Screen Radius for Cascaded Shadow Maps</code></p></li>
-
-<li><p>使用<code>Cull Distance Volume</code>进行细粒度的视距裁剪。Project Settings中的<code>Occlusion Culling</code>只能通过一个临界阀值来控制视距裁剪，而<code>Cull Distance Volume</code>可以设置多级裁剪参数。</p></li>
+<li>
+<p>开启<code>Occlusion Culling</code> (Project Settings -&gt; Engine -&gt; Rendering -&gt; Occlusion Culling，默认已开启)。如果需要增大以屏占比基准的剔除强度（代价是剔除效果比较突兀）以提升渲染效率，将以下属性值增大：<br>
+<code>Min Screen Radius for Lights</code><br>
+<code>Min Screen Radius for Early Z Pass</code><br>
+<code>Min Screen Radius for Cascaded Shadow Maps</code></p>
+</li>
+<li>
+<p>使用<code>Cull Distance Volume</code>进行细粒度的视距裁剪。Project Settings中的<code>Occlusion Culling</code>只能通过一个临界阀值来控制视距裁剪，而<code>Cull Distance Volume</code>可以设置多级裁剪参数。</p>
+</li>
 </ol>
-
-<h5 id="灯光优化">灯光优化</h5>
-
+<h5 id="heading3">灯光优化</h5>
 <ol>
-<li><p>3种光源的性能消耗从低到高：<br />
-定向光/平行光(Directional Light) &lt; 点光源(Point Light) &lt; 聚光灯(Spot Light)。<br />
-当光源数量在场景中达到一定量级时，3种灯光的性能差距也是数量级上差距。<br />
+<li>
+<p>3种光源的性能消耗从低到高：<br>
+定向光/平行光(Directional Light) &lt; 点光源(Point Light) &lt; 聚光灯(Spot Light)。<br>
+当光源数量在场景中达到一定量级时，3种灯光的性能差距也是数量级上差距。<br>
 <div class="alert info ">
-  <p>Point Light 和 Spot Light 的消耗到底谁高谁低，UE4官方文档上貌似没找到明确解释。可能两种灯光在不同使用场景下，消耗对比也不一样。Unity早期官方文档给出了两种灯光在GPU上的消耗说明：<br />
-Point Light: They have an average cost on the graphics processor (though point light shadows are the most expensive).<br />
-Spot Light: They are the most expensive on the graphics processor.<br />
+  <p>Point Light 和 Spot Light 的消耗到底谁高谁低，UE4官方文档上貌似没找到明确解释。可能两种灯光在不同使用场景下，消耗对比也不一样。Unity早期官方文档给出了两种灯光在GPU上的消耗说明：<br>
+Point Light: They have an average cost on the graphics processor (though point light shadows are the most expensive).<br>
+Spot Light: They are the most expensive on the graphics processor.<br>
 不考虑显存等其他因素的开销，单考虑GPU消耗，Spot Light 比 Point Light贵。</p>
 </div>
-Unity早期文档：灯光 Light<br />
-<a href="http://www.ceeger.com/Components/class-Light.html">http://www.ceeger.com/Components/class-Light.html</a><br />
-感谢知乎网友<code>刘相敬</code>给的指导建议：<br />
-<span class="highlight-text green">不考虑阴影的情况下点光源的衰减计算比聚光灯简单很多，只和距离相关，射灯要计算距离衰减和内外角衰减，有cos sin指令，代价相对来说会大很多，但是实际使用过程中射灯照亮区域远小于点光源，反而在绝大多数场景消耗比点光源低。当然这个是基于延迟渲染和ClusterBased裁剪后的灯光来说的，实际Unity Forward渲染是不裁剪光源的，所有像素都会计算一遍点光源和射灯光照，所以射灯消耗会远大于点光源（Forward Add中渲染），Unity的默认射灯没有内外角一说，依靠一张贴图来做衰减模拟，所以Unity的射灯比点光源多了一次采样环节。</span></p></li>
-
-<li><p>在建构光照贴图时，若场景中没有给予Lightmass Importance Volume，会对整个场景做间接光照的采样，产生Indirect Lighting Cache，这对大型游戏场景是相当的浪费，像是游戏角色到不了的中、远景不需要产生Indirect Lighting Cache，这时候就可以在场景中置入Lightmass Importance Volume，指定特定区域内才会产生Indirect Lighting Cache，节省不少建构光照的时间。</p></li>
-
-<li><p>点光源和聚光灯尽量不要开启<code>Cast Volumetric Shadow</code>；默认只有平行光开启了此选项。开启后的性能消耗为不开启的性能消耗三倍。不开启表示阴影计算方式使用<code>Shadow Mapping</code>，开启表示使用<code>Shadow Volume</code>，前者的阴影计算没有后者精准，但是计算量小。</p></li>
-
-<li><p>如果开启体积雾，建议将灯光改成静态光，这样在Build Lighting时会生成预计算的体积雾相关数据，这样可以显著提升体积雾性能。体积雾性能消耗巨大。</p></li>
-
-<li><p>如果场景没有静态光 Static Light（全是动态光 Movable Light 或者固定光 Stationary Light），则要禁用 Static Lighting，以节省 Static Lighting 相关的开销（比如 LightMaps和ShadowMaps的相关计算）。禁用方式：Project Settings -&gt; Engine -&gt; Rendering -&gt; Lighting -&gt; disable <code>Allow Static Lighting</code>。<div class="alert success ">
+Unity早期文档：灯光 Light<br>
+<a href="http://www.ceeger.com/Components/class-Light.html">http://www.ceeger.com/Components/class-Light.html</a><br>
+感谢知乎网友<code>刘相敬</code>给的指导建议：<br>
+<span class="highlight-text green">不考虑阴影的情况下点光源的衰减计算比聚光灯简单很多，只和距离相关，射灯要计算距离衰减和内外角衰减，有cos sin指令，代价相对来说会大很多，但是实际使用过程中射灯照亮区域远小于点光源，反而在绝大多数场景消耗比点光源低。当然这个是基于延迟渲染和ClusterBased裁剪后的灯光来说的，实际Unity Forward渲染是不裁剪光源的，所有像素都会计算一遍点光源和射灯光照，所以射灯消耗会远大于点光源（Forward Add中渲染），Unity的默认射灯没有内外角一说，依靠一张贴图来做衰减模拟，所以Unity的射灯比点光源多了一次采样环节。</span></p>
+</li>
+<li>
+<p>在建构光照贴图时，若场景中没有给予Lightmass Importance Volume，会对整个场景做间接光照的采样，产生Indirect Lighting Cache，这对大型游戏场景是相当的浪费，像是游戏角色到不了的中、远景不需要产生Indirect Lighting Cache，这时候就可以在场景中置入Lightmass Importance Volume，指定特定区域内才会产生Indirect Lighting Cache，节省不少建构光照的时间。</p>
+</li>
+<li>
+<p>点光源和聚光灯尽量不要开启<code>Cast Volumetric Shadow</code>；默认只有平行光开启了此选项。开启后的性能消耗为不开启的性能消耗三倍。不开启表示阴影计算方式使用<code>Shadow Mapping</code>，开启表示使用<code>Shadow Volume</code>，前者的阴影计算没有后者精准，但是计算量小。</p>
+</li>
+<li>
+<p>如果开启体积雾，建议将灯光改成静态光，这样在Build Lighting时会生成预计算的体积雾相关数据，这样可以显著提升体积雾性能。体积雾性能消耗巨大。</p>
+</li>
+<li>
+<p>如果场景没有静态光 Static Light（全是动态光 Movable Light 或者固定光 Stationary Light），则要禁用 Static Lighting，以节省 Static Lighting 相关的开销（比如 LightMaps和ShadowMaps的相关计算）。禁用方式：Project Settings -&gt; Engine -&gt; Rendering -&gt; Lighting -&gt; disable <code>Allow Static Lighting</code>。<div class="alert success ">
   <p>当全动态灯光为性能瓶颈时，禁用Static Lighting可以提升性能。测试用例：我的某个游戏场景，Lighting是瓶颈之一，<code>r.ScreenPercentage</code> 修改为400进行压力测试，关闭 Static Lighting 后帧率提升了20帧。因为没有静态光，禁用后光影效果亦无任何损失。</p>
-</div></p></li>
-
-<li><p>关闭<code>Support Global clip plane for Planar Reflections</code>，默认关闭，开启后消耗巨大。</p></li>
-
-<li><p>AO性能优化。在超大型场景中，一般灯光会是性能瓶颈之一，特别是动态光场景下。此时关闭AO可以大幅提高帧率（AO默认为开启，早期版本默认是关闭的）。开启AO后（Project Settings -&gt; Engine -&gt; Rendering -&gt; Default Settings -&gt; <code>Ambient Occlusion</code>），引擎默认的AO为SSAO(Screen Space Ambient Occlusion), SSAO无法进行预计算，所以GPU性能开销较大，可以修改为DFAO(Distance Field Ambient Occlusion)以提升性能，因为DFAO可以预计算，代价是增加显存开销。<br />
-DFAO开启方式：<br />
-Distance Field Ambient Occlusion<br />
-<a href="https://docs.unrealengine.com/en-us/Engine/Rendering/LightingAndShadows/DistanceFieldAmbientOcclusion">https://docs.unrealengine.com/en-us/Engine/Rendering/LightingAndShadows/DistanceFieldAmbientOcclusion</a><br />
+</div></p>
+</li>
+<li>
+<p>关闭<code>Support Global clip plane for Planar Reflections</code>，默认关闭，开启后消耗巨大。</p>
+</li>
+<li>
+<p>AO性能优化。在超大型场景中，一般灯光会是性能瓶颈之一，特别是动态光场景下。此时关闭AO可以大幅提高帧率（AO默认为开启，早期版本默认是关闭的）。开启AO后（Project Settings -&gt; Engine -&gt; Rendering -&gt; Default Settings -&gt; <code>Ambient Occlusion</code>），引擎默认的AO为SSAO(Screen Space Ambient Occlusion), SSAO无法进行预计算，所以GPU性能开销较大，可以修改为DFAO(Distance Field Ambient Occlusion)以提升性能，因为DFAO可以预计算，代价是增加显存开销。<br>
+DFAO开启方式：<br>
+Distance Field Ambient Occlusion<br>
+<a href="https://docs.unrealengine.com/en-us/Engine/Rendering/LightingAndShadows/DistanceFieldAmbientOcclusion">https://docs.unrealengine.com/en-us/Engine/Rendering/LightingAndShadows/DistanceFieldAmbientOcclusion</a><br>
 DFAO相关的两个优化选项：</p>
-
 <ul>
 <li>Compress Mesh Distance Fields: 通过压缩<code>Distance Fields volume texture</code>来减少显存占用，代价是当使用Level Streaming时会出现Hitch</li>
-<li>Eight Bit Mesh Distance Fields: 将<code>Distance Fields volume texture</code>从16位格式压缩为8位格式，代价是AO视觉效果变粗燥。
-<br /></li>
-</ul></li>
-
-<li><p>如果场景中有大量点光源和聚光灯且都是动态的，此时通过<code>Distance Field</code>动态地对LightComponet执行<code>SetVisibility</code>和<code>SetHiddenInGame</code>，那么性能可提高30%到60%。这个结论是基于对官方商城一款付费插件 <a href="https://devblogs.microsoft.com/cppblog">Dynamic Lighting Portal System (Performance Booster)</a> 的源码研读。引擎本身有对灯光<code>Occlusion Culling</code>，至于为什么<code>SetVisibility</code>和<code>SetHiddenInGame</code>之后还能有这么大性能提升，估计需要仔细研究UE4渲染相关代码，个人不成熟的推测：以deferred shading为例，每个光源的在image space处理像素时，即使某个光源没有对当前像素产生明显影响，但是对应的计算过程仍然执行了，可能渲染层并没有因上层应用是游戏项目还是影视动画渲染而去做专门优化，而这个插件通过将灯光隐藏并禁用后，那么在处理各个像素光照信息时，这些光源的计算逻辑直接跳过了，所以可以大幅提升性能。</p></li>
+<li>Eight Bit Mesh Distance Fields: 将<code>Distance Fields volume texture</code>从16位格式压缩为8位格式，代价是AO视觉效果变粗燥。</li>
+</ul>
+</li>
+<li>
+<p>如果场景中有大量点光源和聚光灯且都是动态的，此时通过<code>Distance Field</code>动态地对LightComponet执行<code>SetVisibility</code>和<code>SetHiddenInGame</code>，那么性能可提高30%到60%。这个结论是基于对官方商城一款付费插件 <a href="https://devblogs.microsoft.com/cppblog">Dynamic Lighting Portal System (Performance Booster)</a> 的源码研读。引擎本身有对灯光<code>Occlusion Culling</code>，至于为什么<code>SetVisibility</code>和<code>SetHiddenInGame</code>之后还能有这么大性能提升，估计需要仔细研究UE4渲染相关代码，个人不成熟的推测：以deferred shading为例，每个光源的在image space处理像素时，即使某个光源没有对当前像素产生明显影响，但是对应的计算过程仍然执行了，可能渲染层并没有因上层应用是游戏项目还是影视动画渲染而去做专门优化，而这个插件通过将灯光隐藏并禁用后，那么在处理各个像素光照信息时，这些光源的计算逻辑直接跳过了，所以可以大幅提升性能。</p>
+</li>
 </ol>
-
-<h5 id="阴影优化">阴影优化</h5>
-
+<h5 id="heading4">阴影优化</h5>
 <ol>
-<li>如果使用了非静态的Directional Light（Stationary 或者 Movable），场景中有大量单位时，一定要开启<code>Dynamic Shadow Distance</code>（默认为0，表示关闭）。<br />
-测试用例： 500 个 Actor 同屏，摄像机高度4000，Stationary类型的 Directional Light 的属性<code>Dynamic Shadow Distance StationaryLight</code>的值要大于摄像机到Actor的直线距离（注意：是到每个Actor的直线距离，所以值尽量要设置的大一些，比如5000），否则帧率从200 fps 下降到 100 fps。<br />
-<code>Dynamic Shadow Distance</code>开启后能提升性能的原因：<br />
-Dynamic Shadow Distance 表示在多少距离内使用动态阴影，超过这个距离之外Fade成静态阴影，而Fade成静态阴影后就可以提升性能。<br /></li>
-
-<li><p>逻辑控制Cast Shadow<br />
-虽然灯光提供了属性<code>DistanceField Shadow Distance</code>来控制阴影根据摄像机距离投射，但是这种做法是一刀切。比如：假设性能瓶颈是大量怪物的阴影投射，远处山体和建筑的树木的阴影投射对性能影响很小，此时使用<code>DistanceField Shadow Distance</code>就会导致场景的表现效果大打折扣。推荐做法是，程序逻辑上控制：如果是怪物对象，只对离摄像机一定距离内的怪物开启阴影。<br />
+<li>
+<p>如果使用了非静态的Directional Light（Stationary 或者 Movable），场景中有大量单位时，一定要开启<code>Dynamic Shadow Distance</code>（默认为0，表示关闭）。<br>
+测试用例： 500 个 Actor 同屏，摄像机高度4000，Stationary类型的 Directional Light 的属性<code>Dynamic Shadow Distance StationaryLight</code>的值要大于摄像机到Actor的直线距离（注意：是到每个Actor的直线距离，所以值尽量要设置的大一些，比如5000），否则帧率从200 fps 下降到 100 fps。<br>
+<code>Dynamic Shadow Distance</code>开启后能提升性能的原因：<br>
+Dynamic Shadow Distance 表示在多少距离内使用动态阴影，超过这个距离之外Fade成静态阴影，而Fade成静态阴影后就可以提升性能。</p>
+</li>
+<li>
+<p>逻辑控制Cast Shadow<br>
+虽然灯光提供了属性<code>DistanceField Shadow Distance</code>来控制阴影根据摄像机距离投射，但是这种做法是一刀切。比如：假设性能瓶颈是大量怪物的阴影投射，远处山体和建筑的树木的阴影投射对性能影响很小，此时使用<code>DistanceField Shadow Distance</code>就会导致场景的表现效果大打折扣。推荐做法是，程序逻辑上控制：如果是怪物对象，只对离摄像机一定距离内的怪物开启阴影。<br>
 物体投射阴影的开关：</p>
-
-<pre><code>void UPrimitiveComponent::SetCastShadow(bool NewCastShadow)
-</code></pre></li>
-
-<li><p>开启动态光之后消耗巨大，若既想启用动态光，又想保证性能，可以将阴影级别较低，默认是级别3（Epic），可以改成级别2（High）。</p></li>
-</ol>
-
-<h5 id="材质优化">材质优化</h5>
-
-<ol>
-<li><p>材质类型的性能，从快到慢：Opaque -&gt; Masked -&gt; Translucent。</p></li>
-
-<li><p>若场景中有大量单位，比如500个，那么这些单位一定要做材质LOD，并尽可能多的去掉半透明材质（比如在最后两级直接去掉半透明效果），否则性能消耗呈指数级增长。</p></li>
-
-<li><p>如果GPUVisualizer的<code>BasePass</code>耗时较高，那么很大一部分原因是材质复杂度过高。</p></li>
-
-<li><p><span class="highlight-text yellow">Decal消耗和像素数量有关</span>，<span class="highlight-text red">程序功能绝对不要乱用贴花</span>，美术铺场景除外。比如程序想用贴花做一个范围标记，如果当标记范围很大时绝对不要用贴花，可以改成划线或者不通透贴图。如果场景需要大量使用贴花，根据视距动态创建和销毁贴花，仅仅<code>SetVisibility</code>是不够的，隐藏后还是会有巨大的开销（不过也可能是编辑器在地形编辑这块有bug，因为UE4场景编辑器有很多bug，特别当升级引擎版本后，旧版本中创建的地形在新版本中可能出现各种莫名其妙的bug）。</p></li>
-
-<li><p>场景中的材质种类要提前规划好，拼场景时只在规划好的材质中选择。如果同屏的材质种类较多，会增加draw call。特别是场景美术用网上素材东拼西凑，很容易导致材质种类数量急剧上涨。</p></li>
-</ol>
-
-<p>Performance Guidelines for Artists and Designers<br />
-<a href="https://docs.unrealengine.com/latest/INT/Engine/Performance/Guidelines/">https://docs.unrealengine.com/latest/INT/Engine/Performance/Guidelines/</a></p>
-
-<h4 id="植被优化">植被优化</h4>
-
-<ol>
-<li><p>地形编辑时，使用Instanced Static Meshes。Intancing会增加GPU的开销，但是可以显著降低CPU的开销。注意：实际应用中，Instancing并不能作为减少CPU draw call次数的主要途径，因为实际的游戏场景不可能全是instanced mesh，即使是满屏的植被，也并非一定要用instanced mesh。要减少draw call次数，需要减少材质种类，提高材质复用率。</p></li>
-
-<li><p>当Instanced Mesh的数量较多时（比如百万级），一帧内执行<code>RemoveInstance</code>或者<code>UpdateInstanceTransform</code>数次，帧率会狂泻。<br />
-优化办法：操作Instanced Mesh之前，将<code>UHierarchicalInstancedStaticMeshComponent::bAutoRebuildTreeOnInstanceChanges</code>设置为false，然后执行你需要的各种Instanced Mesh操作，操作玩之后，然后将<code>bAutoRebuildTreeOnInstanceChanges</code>设置为true，然后执行<code>BuildTreeIfOutdated(true, false);</code>，这样可以显著减少因操作百万级Instanced Mesh而导致的性能损失。</p></li>
-
-<li><p>如果植被材质消耗成为瓶颈时，宁可增加面数，也不要使用 Translucent 材质，Masked酌情使用。比如一根草的面片，其整个形状全部使用三角面拼出来，而不要用一个三角面再加 Mask 或者 Translucent 材质的方式。</p></li>
-
-<li><p>为Instanced Mesh设置合适的<code>Cull Distance</code>。</p></li>
-</ol>
-
-<h5 id="物理与碰撞优化">物理与碰撞优化</h5>
-
-<ol>
-<li><p>BoxComponent的 Generate Overlap Events 设置为false。如果不需要Overlap事件，那么就将该属性设置设置为false，默认为true。当BoxCompont达到一定量级时，开启Generate Overlap Events的性能消耗是关闭情况下的两倍。</p></li>
-
-<li><p>如果不需要物理，将 <code>Simulate Physics</code> 设置为false。</p></li>
-
-<li><p>如果不需要Hit事件，将 <code>Simulation Generates Hit Events</code> 设置为false。</p></li>
-
-<li><p>如果场景中物体类型（WorldStatic、WorldDynamic、Pawn等）很多，且每种数量也很多，则Collision 的 Object Response 通道设置的越少越好，把可以设置为 Ignore 的通道都设置为 Ignore 。如果场景中的物体类型比较单一，即使这种类型的物体在场景中有数百个，Object Response 即使都设置为Block 或者 Overlap，对性能也没有影响。</p></li>
-
-<li><p>如果是大型RTS游戏，场景有海量单位时（比如星际2中大规模的虫族小狗），能不用UE4的 Collision 就不要用 Collision，否则帧数狂泻。<br />
-建议自己实现一个简易的自定义Collision，比如球形Collision，然后计算该 Collision 与单位之间的直线距离，来判断是否是否发生了碰撞，并且降低检测间隔，比如 0.1秒一次。用此种方式，如果单位数量较多时，还需要自己写一个类似<code>Distance Filed</code>的八叉树来缓存单位列表，以降低计算单位间距时遍历单位列表的循环次数。</p></li>
-</ol>
-
-<h5 id="动画优化">动画优化</h5>
-
-<ol>
-<li><p>打开角色蓝图 -》 MeshComponent -》 Detail 面板中的 Optimization 类别下 -》 勾选 <code>Enable Update Rate Optimizations</code>。</p></li>
-
-<li><p>只对渲染的 SkinnedMesh执行 Tick 和 RefreshBoneTransforms</p>
-
-<pre><code>USkinnedMeshComponent::VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::OnlyTickPoseWhenRendered;
+<pre><code> void UPrimitiveComponent::SetCastShadow(bool NewCastShadow)
 </code></pre>
-
-<p>默认是<code>AlwaysTickPoseAndRefreshBones</code>，表示不管是否被渲染（在可见区域内），都执行 Tick 和 RefreshBoneTransforms。<br />
-<code>VisibilityBasedAnimTickOption</code>最开始叫做<code>SkinnedMeshUpdateFlag</code>，4.21版本之前改成了<code>MeshComponentUpdateFlag</code>，4.21开始叫做<code>VisibilityBasedAnimTickOption</code>。<br />
+</li>
+<li>
+<p>开启动态光之后消耗巨大，若既想启用动态光，又想保证性能，可以将阴影级别较低，默认是级别3（Epic），可以改成级别2（High）。</p>
+</li>
+</ol>
+<h5 id="heading5">材质优化</h5>
+<ol>
+<li>
+<p>材质类型的性能，从快到慢：Opaque -&gt; Masked -&gt; Translucent。</p>
+</li>
+<li>
+<p>若场景中有大量单位，比如500个，那么这些单位一定要做材质LOD，并尽可能多的去掉半透明材质（比如在最后两级直接去掉半透明效果），否则性能消耗呈指数级增长。</p>
+</li>
+<li>
+<p>如果GPUVisualizer的<code>BasePass</code>耗时较高，那么很大一部分原因是材质复杂度过高。</p>
+</li>
+<li>
+<p><span class="highlight-text yellow">Decal消耗和像素数量有关</span>，<span class="highlight-text red">程序功能绝对不要乱用贴花</span>，美术铺场景除外。比如程序想用贴花做一个范围标记，如果当标记范围很大时绝对不要用贴花，可以改成划线或者不通透贴图。如果场景需要大量使用贴花，根据视距动态创建和销毁贴花，仅仅<code>SetVisibility</code>是不够的，隐藏后还是会有巨大的开销（不过也可能是编辑器在地形编辑这块有bug，因为UE4场景编辑器有很多bug，特别当升级引擎版本后，旧版本中创建的地形在新版本中可能出现各种莫名其妙的bug）。</p>
+</li>
+<li>
+<p>场景中的材质种类要提前规划好，拼场景时只在规划好的材质中选择。如果同屏的材质种类较多，会增加draw call。特别是场景美术用网上素材东拼西凑，很容易导致材质种类数量急剧上涨。</p>
+</li>
+</ol>
+<p>Performance Guidelines for Artists and Designers<br>
+<a href="https://docs.unrealengine.com/latest/INT/Engine/Performance/Guidelines/">https://docs.unrealengine.com/latest/INT/Engine/Performance/Guidelines/</a></p>
+<h4 id="heading6">植被优化</h4>
+<ol>
+<li>
+<p>地形编辑时，使用Instanced Static Meshes。Intancing会增加GPU的开销，但是可以显著降低CPU的开销。注意：实际应用中，Instancing并不能作为减少CPU draw call次数的主要途径，因为实际的游戏场景不可能全是instanced mesh，即使是满屏的植被，也并非一定要用instanced mesh。要减少draw call次数，需要减少材质种类，提高材质复用率。</p>
+</li>
+<li>
+<p>当Instanced Mesh的数量较多时（比如百万级），一帧内执行<code>RemoveInstance</code>或者<code>UpdateInstanceTransform</code>数次，帧率会狂泻。<br>
+优化办法：操作Instanced Mesh之前，将<code>UHierarchicalInstancedStaticMeshComponent::bAutoRebuildTreeOnInstanceChanges</code>设置为false，然后执行你需要的各种Instanced Mesh操作，操作玩之后，然后将<code>bAutoRebuildTreeOnInstanceChanges</code>设置为true，然后执行<code>BuildTreeIfOutdated(true, false);</code>，这样可以显著减少因操作百万级Instanced Mesh而导致的性能损失。</p>
+</li>
+<li>
+<p>如果植被材质消耗成为瓶颈时，宁可增加面数，也不要使用 Translucent 材质，Masked酌情使用。比如一根草的面片，其整个形状全部使用三角面拼出来，而不要用一个三角面再加 Mask 或者 Translucent 材质的方式。</p>
+</li>
+<li>
+<p>为Instanced Mesh设置合适的<code>Cull Distance</code>。</p>
+</li>
+</ol>
+<h5 id="heading7">物理与碰撞优化</h5>
+<ol>
+<li>
+<p>BoxComponent的 Generate Overlap Events 设置为false。如果不需要Overlap事件，那么就将该属性设置设置为false，默认为true。当BoxCompont达到一定量级时，开启Generate Overlap Events的性能消耗是关闭情况下的两倍。</p>
+</li>
+<li>
+<p>如果不需要物理，将 <code>Simulate Physics</code> 设置为false。</p>
+</li>
+<li>
+<p>如果不需要Hit事件，将 <code>Simulation Generates Hit Events</code> 设置为false。</p>
+</li>
+<li>
+<p>如果场景中物体类型（WorldStatic、WorldDynamic、Pawn等）很多，且每种数量也很多，则Collision 的 Object Response 通道设置的越少越好，把可以设置为 Ignore 的通道都设置为 Ignore 。如果场景中的物体类型比较单一，即使这种类型的物体在场景中有数百个，Object Response 即使都设置为Block 或者 Overlap，对性能也没有影响。</p>
+</li>
+<li>
+<p>如果是大型RTS游戏，场景有海量单位时（比如星际2中大规模的虫族小狗），能不用UE4的 Collision 就不要用 Collision，否则帧数狂泻。<br>
+建议自己实现一个简易的自定义Collision，比如球形Collision，然后计算该 Collision 与单位之间的直线距离，来判断是否是否发生了碰撞，并且降低检测间隔，比如 0.1秒一次。用此种方式，如果单位数量较多时，还需要自己写一个类似<code>Distance Filed</code>的八叉树来缓存单位列表，以降低计算单位间距时遍历单位列表的循环次数。</p>
+</li>
+</ol>
+<h5 id="heading8">动画优化</h5>
+<ol>
+<li>
+<p>打开角色蓝图 -》 MeshComponent -》 Detail 面板中的 Optimization 类别下 -》 勾选 <code>Enable Update Rate Optimizations</code>。</p>
+</li>
+<li>
+<p>只对渲染的 SkinnedMesh执行 Tick 和 RefreshBoneTransforms</p>
+<pre><code> USkinnedMeshComponent::VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::OnlyTickPoseWhenRendered;
+</code></pre>
+<p>默认是<code>AlwaysTickPoseAndRefreshBones</code>，表示不管是否被渲染（在可见区域内），都执行 Tick 和 RefreshBoneTransforms。<br>
+<code>VisibilityBasedAnimTickOption</code>最开始叫做<code>SkinnedMeshUpdateFlag</code>，4.21版本之前改成了<code>MeshComponentUpdateFlag</code>，4.21开始叫做<code>VisibilityBasedAnimTickOption</code>。<br>
 <div class="alert warning ">
   <p>如果关闭动画Tick，动画蓝图内Tick事件中的逻辑会失效；如果关闭RefreshBoneTransforms，则骨骼变换的逻辑会失效，比如<code>Transform (Modify) Bone</code>。AnimNotify不受这个选项影响。</p>
-</div></p></li>
-
-<li><p>动画蓝图的逻辑尽量直接访问成员变量，引擎默认开启了优化选项：动画蓝图中的成员变量在编译时会被复制到Native Code中，从而避免在运行时进入蓝图虚拟机（Blueprint Virtual Machine）执行蓝图代码，因为蓝图VM运行效率低。<br />
-默认会被编译优化的参数类型包括：<br />
-member variables;<br />
-negated boolean member variables;<br />
-members of a nested structure;<br />
-具体说明见官方文档：<br />
-Animation Optimization<br />
-<a href="https://docs.unrealengine.com/en-us/Engine/Animation/Optimization">https://docs.unrealengine.com/en-us/Engine/Animation/Optimization</a><br />
-Animation Fast Path Optimization<br />
-<a href="https://docs.unrealengine.com/en-us/Engine/Animation/Optimization/FastPath">https://docs.unrealengine.com/en-us/Engine/Animation/Optimization/FastPath</a></p></li>
+</div></p>
+</li>
+<li>
+<p>动画蓝图的逻辑尽量直接访问成员变量，引擎默认开启了优化选项：动画蓝图中的成员变量在编译时会被复制到Native Code中，从而避免在运行时进入蓝图虚拟机（Blueprint Virtual Machine）执行蓝图代码，因为蓝图VM运行效率低。<br>
+默认会被编译优化的参数类型包括：<br>
+member variables;<br>
+negated boolean member variables;<br>
+members of a nested structure;<br>
+具体说明见官方文档：<br>
+Animation Optimization<br>
+<a href="https://docs.unrealengine.com/en-us/Engine/Animation/Optimization">https://docs.unrealengine.com/en-us/Engine/Animation/Optimization</a><br>
+Animation Fast Path Optimization<br>
+<a href="https://docs.unrealengine.com/en-us/Engine/Animation/Optimization/FastPath">https://docs.unrealengine.com/en-us/Engine/Animation/Optimization/FastPath</a></p>
+</li>
 </ol>
-
-<h5 id="ui优化">UI优化</h5>
-
+<h5 id="ui">UI优化</h5>
 <ol>
-<li><p>能用HUD解决的就不要用UMG，等到需要显示时才创建Widget对象，不显示时则销毁，UMG对象较多时性能消耗巨大。<br />
-比如场景内有一千个单位，每个单位上都创建有WidgetComponent，即使这些WidgetComponent没有显示任何东西，也会产生巨大的GPU开销。</p></li>
-
-<li><p>不能使用UMG来修改鼠标光标，因为UMG来制作响应速度较高的显示逻辑时，会有肉眼可见的明显延迟（由此可见UMG的性能消耗有多高），可以使用Hardware Cursors来代替UMG制作光标。</p></li>
+<li>
+<p>能用HUD解决的就不要用UMG，等到需要显示时才创建Widget对象，不显示时则销毁，UMG对象较多时性能消耗巨大。<br>
+比如场景内有一千个单位，每个单位上都创建有WidgetComponent，即使这些WidgetComponent没有显示任何东西，也会产生巨大的GPU开销。</p>
+</li>
+<li>
+<p>不能使用UMG来修改鼠标光标，因为UMG来制作响应速度较高的显示逻辑时，会有肉眼可见的明显延迟（由此可见UMG的性能消耗有多高），可以使用Hardware Cursors来代替UMG制作光标。</p>
+</li>
 </ol>
-
-<p>Epic Games工程师分享：如何在移动平台上做UE4的UI优化？<br />
+<p>Epic Games工程师分享：如何在移动平台上做UE4的UI优化？<br>
 <a href="http://youxiputao.com/articles/11743">http://youxiputao.com/articles/11743</a></p>
-
-<h5 id="位移优化">位移优化</h5>
-
+<h5 id="heading9">位移优化</h5>
 <ol>
 <li>海量Pawn（比如500个）单位移动，如果是在 Tick 中使用 AddMovementInput 移动，帧率直接下降一半（比如从90帧下降到40多帧）。对于无法移动的单位，最好停止执行 AddMovementInput() ，以提升性能。</li>
 </ol>
-
-<h5 id="特效优化">特效优化</h5>
-
+<h5 id="heading10">特效优化</h5>
 <ol>
 <li>尽量不要使用 Volume domain，使用后会显著增加GPU开销。可以通过 <code>profilegpu</code> 检测 Volume 开销。</li>
 </ol>
-
-<h5 id="ai优化">AI优化</h5>
-
+<h5 id="ai">AI优化</h5>
 <ol>
-<li>如果角色不需要 Controller ，就不要给它 Spawn Controller。如果一个角色长时间停止，则先给他<code>Unpossesed()</code> ，等到可移动时再<code>PossessedBy()</code>。<br />
+<li>如果角色不需要 Controller ，就不要给它 Spawn Controller。如果一个角色长时间停止，则先给他<code>Unpossesed()</code> ，等到可移动时再<code>PossessedBy()</code>。<br>
 测试：500个角色，AI Controller Class 设置为：null、 AIController、PlayerController 的帧数分别为 120 fps、 100 fps、75 fps。</li>
 </ol>
-
-<h5 id="dedicated-server优化">Dedicated Server优化</h5>
-
+<h5 id="dedicated-server">Dedicated Server优化</h5>
 <ol>
-<li><p>服务端cook时剥离动画数据<br />
-Project Settings -&gt; Engine -&gt; Animation -&gt; 勾选 Strip Animation Data on Dedicated Server.<br />
-如果在动画中添加了触发修改数据的 Notify Event，勾选此选项会有问题。请确保动画中挂载的 Notify 只是表现相关，不涉及游戏逻辑。</p></li>
-
-<li><p>Server模式下禁用角色物理模拟<br />
-<code>FBodyInstance-&gt;bSimulatePhysics</code> 设置为false。默认为false。<br />
-<code>SkeletalMeshComponent::bEnablePhysicsOnDedicatedServer</code> 设置为 false ， 默认为 true 。但这样会导致物理验算以客户端为准，有被外挂hack的风险。bEnablePhysicsOnDedicatedServer 在 run-time 修改不生效。</p></li>
-
-<li><p>Server模式下禁用 Collision<br />
-<code>UPrimitiveComponent-&gt;bGenerateOverlapEvents</code> 设置为false，角色蓝图中的 CollisionComponent 默认为true。</p></li>
-
-<li><p>Server模式下Detach角色身上所有的装饰性组件。</p></li>
-
-<li><p>AnimInstance的<code>Root Motion Mode</code>不要修改为<code>Root Motion from Everyting</code>，尽量使用默认值<code>Root Motion from Montage Only</code>，以减少服务器的动画同步计算量。</p></li>
-
-<li><p>4.20提供了针对Dedicated Server优化的新特性：Replication Graph，可以初略地理解为针对网络通信的LOD（不过Replication Graph提供了不止网络层面的LOD，更多特性见官方文档）。没有这个特性之前，服务端调用Multicast函数，几公里外的玩家也会收到Multicast，而实际上这种远距离玩家可能不需要即时更新数据，或者等到出现在视距内时再手动<code>ForceNetUpdate()</code>。有了Replication Graph之后，这种手动优化方式可以交给引擎自己管理。</p></li>
+<li>
+<p>服务端cook时剥离动画数据<br>
+Project Settings -&gt; Engine -&gt; Animation -&gt; 勾选 Strip Animation Data on Dedicated Server.<br>
+如果在动画中添加了触发修改数据的 Notify Event，勾选此选项会有问题。请确保动画中挂载的 Notify 只是表现相关，不涉及游戏逻辑。</p>
+</li>
+<li>
+<p>Server模式下禁用角色物理模拟<br>
+<code>FBodyInstance-&gt;bSimulatePhysics</code> 设置为false。默认为false。<br>
+<code>SkeletalMeshComponent::bEnablePhysicsOnDedicatedServer</code> 设置为 false ， 默认为 true 。但这样会导致物理验算以客户端为准，有被外挂hack的风险。bEnablePhysicsOnDedicatedServer 在 run-time 修改不生效。</p>
+</li>
+<li>
+<p>Server模式下禁用 Collision<br>
+<code>UPrimitiveComponent-&gt;bGenerateOverlapEvents</code> 设置为false，角色蓝图中的 CollisionComponent 默认为true。</p>
+</li>
+<li>
+<p>Server模式下Detach角色身上所有的装饰性组件。</p>
+</li>
+<li>
+<p>AnimInstance的<code>Root Motion Mode</code>不要修改为<code>Root Motion from Everyting</code>，尽量使用默认值<code>Root Motion from Montage Only</code>，以减少服务器的动画同步计算量。</p>
+</li>
+<li>
+<p>4.20提供了针对Dedicated Server优化的新特性：Replication Graph，可以初略地理解为针对网络通信的LOD（不过Replication Graph提供了不止网络层面的LOD，更多特性见官方文档）。没有这个特性之前，服务端调用Multicast函数，几公里外的玩家也会收到Multicast，而实际上这种远距离玩家可能不需要即时更新数据，或者等到出现在视距内时再手动<code>ForceNetUpdate()</code>。有了Replication Graph之后，这种手动优化方式可以交给引擎自己管理。</p>
+</li>
 </ol>
-
-<h5 id="参考资料">参考资料</h5>
-
-<p>Performance and Profiling<br />
+<h5 id="heading11">参考资料</h5>
+<p>Performance and Profiling<br>
 <a href="https://docs.unrealengine.com/en-us/Engine/Performance">https://docs.unrealengine.com/en-us/Engine/Performance</a></p>
-
-<p>通过优化在UE4中实现良好性能和高质量视觉效果<br />
+<p>通过优化在UE4中实现良好性能和高质量视觉效果<br>
 <a href="http://gad.qq.com/program/translateview/7160166">http://gad.qq.com/program/translateview/7160166</a></p>
-
-<p>CPU Profiling<br />
+<p>CPU Profiling<br>
 <a href="https://docs.unrealengine.com/en-us/Engine/Performance/CPU">https://docs.unrealengine.com/en-us/Engine/Performance/CPU</a></p>
-
-<p>GPU Profiling<br />
+<p>GPU Profiling<br>
 <a href="https://docs.unrealengine.com/en-us/Engine/Performance/GPU">https://docs.unrealengine.com/en-us/Engine/Performance/GPU</a></p>
-
-<p>Unreal Engine 4 Optimization Tutorial, Part 1-4<br />
-<a href="https://software.intel.com/en-us/articles/unreal-engine-4-optimization-tutorial-part-1">https://software.intel.com/en-us/articles/unreal-engine-4-optimization-tutorial-part-1</a><br />
-<a href="https://software.intel.com/en-us/articles/unreal-engine-4-optimization-tutorial-part-2">https://software.intel.com/en-us/articles/unreal-engine-4-optimization-tutorial-part-2</a><br />
-<a href="https://software.intel.com/en-us/articles/unreal-engine-4-optimization-tutorial-part-3">https://software.intel.com/en-us/articles/unreal-engine-4-optimization-tutorial-part-3</a><br />
+<p>Unreal Engine 4 Optimization Tutorial, Part 1-4<br>
+<a href="https://software.intel.com/en-us/articles/unreal-engine-4-optimization-tutorial-part-1">https://software.intel.com/en-us/articles/unreal-engine-4-optimization-tutorial-part-1</a><br>
+<a href="https://software.intel.com/en-us/articles/unreal-engine-4-optimization-tutorial-part-2">https://software.intel.com/en-us/articles/unreal-engine-4-optimization-tutorial-part-2</a><br>
+<a href="https://software.intel.com/en-us/articles/unreal-engine-4-optimization-tutorial-part-3">https://software.intel.com/en-us/articles/unreal-engine-4-optimization-tutorial-part-3</a><br>
 <a href="https://software.intel.com/en-us/articles/unreal-engine-4-optimization-tutorial-part-4">https://software.intel.com/en-us/articles/unreal-engine-4-optimization-tutorial-part-4</a></p>
-
-<p>Optimizing and Profiling Games with Unreal Engine 4<br />
+<p>Optimizing and Profiling Games with Unreal Engine 4<br>
 <a href="http://vincentloignon.com/blog/optimizing-and-profiling-games-with-unreal-engine-4/">http://vincentloignon.com/blog/optimizing-and-profiling-games-with-unreal-engine-4/</a></p>
-
-<p>Dynamic Lighting Portal System (Performance Booster)<br />
+<p>Dynamic Lighting Portal System (Performance Booster)<br>
 <a href="https://www.unrealengine.com/marketplace/dynamic-lighting-portal-system-performance-booster">https://www.unrealengine.com/marketplace/dynamic-lighting-portal-system-performance-booster</a></p>
-
-<p>Performance Optimization: Shadows Triggering Zones<br />
+<p>Performance Optimization: Shadows Triggering Zones<br>
 <a href="https://www.unrealengine.com/marketplace/performance-optimization-shadows-triggering-zones">https://www.unrealengine.com/marketplace/performance-optimization-shadows-triggering-zones</a></p>
-
-<p>Low-Level Memory Tracker(New feature in v4.18)<br />
+<p>Low-Level Memory Tracker(New feature in v4.18)<br>
 <a href="https://docs.unrealengine.com/en-US/Programming/Development/Tools/LowLevelMemoryTracker/index.html">https://docs.unrealengine.com/en-US/Programming/Development/Tools/LowLevelMemoryTracker/index.html</a></p>
-
-<p>Unreal Insights(New feature in v4.23)<br />
+<p>Unreal Insights(New feature in v4.23)<br>
 <a href="https://www.youtube.com/watch?v=TygjPe9XHTw">https://www.youtube.com/watch?v=TygjPe9XHTw</a></p>
-
-<p>Virtual Texturing(New feature in v4.23)<br />
+<p>Virtual Texturing(New feature in v4.23)<br>
 <a href="https://www.youtube.com/watch?v=fhoZ2qMAfa4">https://www.youtube.com/watch?v=fhoZ2qMAfa4</a></p>
-
-<hr />
-
+<hr>
 <p><code>嗜欲深者天机浅 ---《庄子·大宗师》</code></p>
               
             </div>

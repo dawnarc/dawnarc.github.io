@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.58.3 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.60.1 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="UE4, InstancedFoliageActor, InstancedStaticMeshComponent">
 <meta name="description" content="Keywords：InstancedFoliageActor, AInstancedFoliageActor,">
@@ -353,13 +353,9 @@ if (!doNotTrack) {
           <div class="post-content markdown" itemprop="articleBody">
             <div class="main-content-wrap">
               <p>Keywords：InstancedFoliageActor, AInstancedFoliageActor,</p>
-
 <p>UInstancedStaticMeshComponent, InstancedStaticMeshComponent, Instanced Foliage, Instanced Static Mesh, Remove and Add at Run-time</p>
-
 <h5 id="add-and-remove-instance">Add and Remove Instance</h5>
-
 <p>1, Use Foliage Painter to create Instanced Foliage Mesh</p>
-
 <p><figure>
     <img src="https://dawnarc.com/img/20190218-[UE4]Remove%20and%20Add%20Instanced%20Foliage%20Mesh%20at%20Run-time/[UE4]Remove%20and%20Add%20Instanced%20Foliage%20Mesh%20at%20Run-time-01.jpg"/> 
 </figure>
@@ -368,11 +364,8 @@ if (!doNotTrack) {
     <img src="https://dawnarc.com/img/20190218-[UE4]Remove%20and%20Add%20Instanced%20Foliage%20Mesh%20at%20Run-time/[UE4]Remove%20and%20Add%20Instanced%20Foliage%20Mesh%20at%20Run-time-02.jpg"/> 
 </figure>
 </p>
-
 <p>2, Test code</p>
-
 <p>GameMode:</p>
-
 <pre><code>UCLASS(minimalapi)
 class ATestProjGameMode : public AGameModeBase
 {
@@ -400,9 +393,7 @@ private:
     TMap&lt;FString, TArray&lt;FTransform&gt;&gt; TransformMap;
 };
 </code></pre>
-
 <p>Begin Play</p>
-
 <pre><code>void ATestProjGameMode::BeginPlay()
 {
     Super::BeginPlay();
@@ -424,14 +415,11 @@ private:
     }
 }
 </code></pre>
-
 <figure>
     <img src="https://dawnarc.com/img/20190218-[UE4]Remove%20and%20Add%20Instanced%20Foliage%20Mesh%20at%20Run-time/[UE4]Remove%20and%20Add%20Instanced%20Foliage%20Mesh%20at%20Run-time-03.jpg"/> 
 </figure>
 
-
 <p>Remove all Foliage</p>
-
 <pre><code>void ATestProjGameMode::RemoveAllFoliage()
 {
     TransformMap.Empty();
@@ -460,18 +448,14 @@ private:
     }
 }
 </code></pre>
-
 <figure>
     <img src="https://dawnarc.com/img/20190218-[UE4]Remove%20and%20Add%20Instanced%20Foliage%20Mesh%20at%20Run-time/[UE4]Remove%20and%20Add%20Instanced%20Foliage%20Mesh%20at%20Run-time-04.jpg"/> 
 </figure>
 
-
 <div class="alert success ">
   <p>Another way to hide Instance: set Scale of Instance to Zero, using <code>UInstancedStaticMeshComponent::UpdateInstanceTransform(int32 InstanceIndex, const FTransform&amp; NewInstanceTransform)</code></p>
 </div>
-
 <p>Add all Foliage</p>
-
 <pre><code>void ATestProjGameMode::AddAllFoliage()
 {
     for (UActorComponent* Comp : InstancedStaticMeshCompArray)
@@ -486,25 +470,20 @@ private:
                     InstancedComp-&gt;AddInstance(Trans);
                 }
             }
-
+			
         }
     }
 }
 </code></pre>
-
 <figure>
     <img src="https://dawnarc.com/img/20190218-[UE4]Remove%20and%20Add%20Instanced%20Foliage%20Mesh%20at%20Run-time/[UE4]Remove%20and%20Add%20Instanced%20Foliage%20Mesh%20at%20Run-time-05.jpg"/> 
 </figure>
 
-
 <div class="alert success ">
   <p>These code are applicable to not only Foliage Painter, but also ProceduralFoliageVolume.</p>
 </div>
-
 <h5 id="how-to-get-staticmesh-and-materials-of-instaced-mesh">How to get StaticMesh and Materials of Instaced Mesh</h5>
-
 <p>e.g. code:</p>
-
 <pre><code>void ATestProjGameMode::BeginPlay()
 {
     Super::BeginPlay();
@@ -515,7 +494,7 @@ private:
         {
             //Get the all InstancedStaticMeshComponent in current Level.
             TArray&lt;UActorComponent*&gt; InstancedStaticMeshCompArray = Iter-&gt;GetComponentsByClass(UInstancedStaticMeshComponent::StaticClass());
-
+			
             for (UActorComponent* ActorComp : InstancedStaticMeshCompArray)
             {
                 if (UInstancedStaticMeshComponent* InstancedComp = Cast&lt;UInstancedStaticMeshComponent&gt;(ActorComp))
@@ -530,9 +509,7 @@ private:
     }
 }
 </code></pre>
-
 <h5 id="how-to-set-transform-of-instaced-mesh">How to set Transform of Instaced Mesh</h5>
-
 <pre><code>void ATestProjGameMode::BeginPlay()
 {
     Super::BeginPlay();
@@ -543,7 +520,7 @@ private:
         {
             //Get the all InstancedStaticMeshComponent in current Level.
             TArray&lt;UActorComponent*&gt; InstancedStaticMeshCompArray = Iter-&gt;GetComponentsByClass(UInstancedStaticMeshComponent::StaticClass());
-
+			
             for (UActorComponent* ActorComp : InstancedStaticMeshCompArray)
             {
                 if (UInstancedStaticMeshComponent* InstancedComp = Cast&lt;UInstancedStaticMeshComponent&gt;(ActorComp))
@@ -561,18 +538,13 @@ private:
     }
 }
 </code></pre>
-
 <h5 id="optimization">Optimization</h5>
-
-<p>1, Issue:<br />
-If Instanced Mesh count is too large, e.g. one million, execute <code>RemoveInstance</code> or <code>UpdateInstanceTransform</code> multiple times at one frame, frame rate would drop violently.<br />
-Solution:<br />
-Set <code>bAutoRebuildTreeOnInstanceChanges</code> to false before manipulate Instanced Mesh, then execute all the operation of Instanced Mesh you want, then set <code>bAutoRebuildTreeOnInstanceChanges</code> to true, then execute <code>BuildTreeIfOutdated(true, false);</code>, thus frame rate dropping isn&rsquo;t as violent as before.</p>
-
+<p>1, Issue:<br>
+If Instanced Mesh count is too large, e.g. one million, execute <code>RemoveInstance</code> or <code>UpdateInstanceTransform</code> multiple times at one frame, frame rate would drop violently.<br>
+Solution:<br>
+Set <code>bAutoRebuildTreeOnInstanceChanges</code> to false before manipulate Instanced Mesh, then execute all the operation of Instanced Mesh you want, then set <code>bAutoRebuildTreeOnInstanceChanges</code> to true, then execute <code>BuildTreeIfOutdated(true, false);</code>, thus frame rate dropping isn't as violent as before.</p>
 <h5 id="reference">Reference</h5>
-
 <p>Get locations of foliage instances</p>
-
 <pre><code>for (TActorIterator&lt;AInstancedFoliageActor&gt; ActorItr(GetWorld()); ActorItr; ++ActorItr)
 {
     AInstancedFoliageActor* FoliageMesh = *ActorItr;
@@ -603,12 +575,9 @@ Set <code>bAutoRebuildTreeOnInstanceChanges</code> to false before manipulate In
     }
 }
 </code></pre>
-
-<p>How to get locations of foliage instances?<br />
+<p>How to get locations of foliage instances?<br>
 <a href="https://forums.unrealengine.com/development-discussion/c-gameplay-programming/1474454-how-to-get-locations-of-foliage-instances">https://forums.unrealengine.com/development-discussion/c-gameplay-programming/1474454-how-to-get-locations-of-foliage-instances</a></p>
-
-<hr />
-
+<hr>
 <p><code>真正的强者，不是没有眼泪的人，而是含着眼泪奔跑的人。</code></p>
               
             </div>

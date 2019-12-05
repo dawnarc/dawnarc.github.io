@@ -5,19 +5,19 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.58.3 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.60.1 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="UE4, protobuf-lite, Android NDK, ParseFromArray, Crash">
 <meta name="description" content="keywords：UE4、protobuf-lite、Android NDK、ParseFromArray、Crash
 protobuf与android ndk编译后，集成到UE4中执行时，每当执行ParseFromArray时就会崩溃（Windows版本没有问题）：
-MessageTest msg; bool rs = msg.ParseFromArray(buffer, buffer_size);  解决办法：将ParseFromArray()函数内部的代码复制出来，放在工程的代码中，然后再执行。
-protobuf 2.x #ifndef __ProtobufHelper_H__ #define __ProtobufHelper_H__ #include &lt;google/protobuf/message_lite.h&gt; #include &lt;google/protobuf/io/coded_stream.h&gt; class ProtobufHelper { public: static bool Parse(::google::protobuf::MessageLite&amp; Message, const char* Data, int Size) { ::google::protobuf::io::CodedInputStream input(reinterpret_cast&lt;const uint8*&gt;(Data), Size); return Message.MergePartialFromCodedStream(&amp;input) &amp;&amp; input.ConsumedEntireMessage(); } }; #endif  protobuf 3.x #ifndef __ProtobufHelper_H__ #define __ProtobufHelper_H__ #include &lt;google/protobuf/message_lite.h&gt; #include &lt;google/protobuf/io/coded_stream.h&gt; #include &quot;CoreMinimal.h&quot; class ProtobufHelper { public: static bool Parse(::google::protobuf::MessageLite&amp; Message, const void* Data, int Size) { ::google::protobuf::io::CodedInputStream input(static_cast&lt;const uint8*&gt;(Data), Size); Message.">
+MessageTest msg;bool rs = msg.ParseFromArray(buffer, buffer_size); 解决办法：将ParseFromArray()函数内部的代码复制出来，放在工程的代码中，然后再执行。
+protobuf 2.x #ifndef	__ProtobufHelper_H__#define	__ProtobufHelper_H__#include &lt;google/protobuf/message_lite.h&gt;#include &lt;google/protobuf/io/coded_stream.h&gt;class ProtobufHelper{public:static bool Parse(::google::protobuf::MessageLite&amp; Message, const char* Data, int Size){::google::protobuf::io::CodedInputStream input(reinterpret_cast&lt;const uint8*&gt;(Data), Size);return Message.MergePartialFromCodedStream(&amp;input) &amp;&amp; input.ConsumedEntireMessage();}};#endif protobuf 3.x #ifndef	__ProtobufHelper_H__#define	__ProtobufHelper_H__#include &lt;google/protobuf/message_lite.h&gt;#include &lt;google/protobuf/io/coded_stream.h&gt;#include &quot;CoreMinimal.h&quot;class ProtobufHelper{public:static bool Parse(::google::protobuf::MessageLite&amp; Message, const void* Data, int Size){::google::protobuf::io::CodedInputStream input(static_cast&lt;const uint8*&gt;(Data), Size);Message.">
 
 
 <meta property="og:description" content="keywords：UE4、protobuf-lite、Android NDK、ParseFromArray、Crash
 protobuf与android ndk编译后，集成到UE4中执行时，每当执行ParseFromArray时就会崩溃（Windows版本没有问题）：
-MessageTest msg; bool rs = msg.ParseFromArray(buffer, buffer_size);  解决办法：将ParseFromArray()函数内部的代码复制出来，放在工程的代码中，然后再执行。
-protobuf 2.x #ifndef __ProtobufHelper_H__ #define __ProtobufHelper_H__ #include &lt;google/protobuf/message_lite.h&gt; #include &lt;google/protobuf/io/coded_stream.h&gt; class ProtobufHelper { public: static bool Parse(::google::protobuf::MessageLite&amp; Message, const char* Data, int Size) { ::google::protobuf::io::CodedInputStream input(reinterpret_cast&lt;const uint8*&gt;(Data), Size); return Message.MergePartialFromCodedStream(&amp;input) &amp;&amp; input.ConsumedEntireMessage(); } }; #endif  protobuf 3.x #ifndef __ProtobufHelper_H__ #define __ProtobufHelper_H__ #include &lt;google/protobuf/message_lite.h&gt; #include &lt;google/protobuf/io/coded_stream.h&gt; #include &quot;CoreMinimal.h&quot; class ProtobufHelper { public: static bool Parse(::google::protobuf::MessageLite&amp; Message, const void* Data, int Size) { ::google::protobuf::io::CodedInputStream input(static_cast&lt;const uint8*&gt;(Data), Size); Message.">
+MessageTest msg;bool rs = msg.ParseFromArray(buffer, buffer_size); 解决办法：将ParseFromArray()函数内部的代码复制出来，放在工程的代码中，然后再执行。
+protobuf 2.x #ifndef	__ProtobufHelper_H__#define	__ProtobufHelper_H__#include &lt;google/protobuf/message_lite.h&gt;#include &lt;google/protobuf/io/coded_stream.h&gt;class ProtobufHelper{public:static bool Parse(::google::protobuf::MessageLite&amp; Message, const char* Data, int Size){::google::protobuf::io::CodedInputStream input(reinterpret_cast&lt;const uint8*&gt;(Data), Size);return Message.MergePartialFromCodedStream(&amp;input) &amp;&amp; input.ConsumedEntireMessage();}};#endif protobuf 3.x #ifndef	__ProtobufHelper_H__#define	__ProtobufHelper_H__#include &lt;google/protobuf/message_lite.h&gt;#include &lt;google/protobuf/io/coded_stream.h&gt;#include &quot;CoreMinimal.h&quot;class ProtobufHelper{public:static bool Parse(::google::protobuf::MessageLite&amp; Message, const void* Data, int Size){::google::protobuf::io::CodedInputStream input(static_cast&lt;const uint8*&gt;(Data), Size);Message.">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[UE4]Android NDK打包版本执行protobuf的ParseFromArray函数崩溃">
 <meta name="twitter:title" content="[UE4]Android NDK打包版本执行protobuf的ParseFromArray函数崩溃">
@@ -26,12 +26,12 @@ protobuf 2.x #ifndef __ProtobufHelper_H__ #define __ProtobufHelper_H__ #include 
 <meta property="og:site_name" content="玄冬Wong">
 <meta property="og:description" content="keywords：UE4、protobuf-lite、Android NDK、ParseFromArray、Crash
 protobuf与android ndk编译后，集成到UE4中执行时，每当执行ParseFromArray时就会崩溃（Windows版本没有问题）：
-MessageTest msg; bool rs = msg.ParseFromArray(buffer, buffer_size);  解决办法：将ParseFromArray()函数内部的代码复制出来，放在工程的代码中，然后再执行。
-protobuf 2.x #ifndef __ProtobufHelper_H__ #define __ProtobufHelper_H__ #include &lt;google/protobuf/message_lite.h&gt; #include &lt;google/protobuf/io/coded_stream.h&gt; class ProtobufHelper { public: static bool Parse(::google::protobuf::MessageLite&amp; Message, const char* Data, int Size) { ::google::protobuf::io::CodedInputStream input(reinterpret_cast&lt;const uint8*&gt;(Data), Size); return Message.MergePartialFromCodedStream(&amp;input) &amp;&amp; input.ConsumedEntireMessage(); } }; #endif  protobuf 3.x #ifndef __ProtobufHelper_H__ #define __ProtobufHelper_H__ #include &lt;google/protobuf/message_lite.h&gt; #include &lt;google/protobuf/io/coded_stream.h&gt; #include &quot;CoreMinimal.h&quot; class ProtobufHelper { public: static bool Parse(::google::protobuf::MessageLite&amp; Message, const void* Data, int Size) { ::google::protobuf::io::CodedInputStream input(static_cast&lt;const uint8*&gt;(Data), Size); Message.">
+MessageTest msg;bool rs = msg.ParseFromArray(buffer, buffer_size); 解决办法：将ParseFromArray()函数内部的代码复制出来，放在工程的代码中，然后再执行。
+protobuf 2.x #ifndef	__ProtobufHelper_H__#define	__ProtobufHelper_H__#include &lt;google/protobuf/message_lite.h&gt;#include &lt;google/protobuf/io/coded_stream.h&gt;class ProtobufHelper{public:static bool Parse(::google::protobuf::MessageLite&amp; Message, const char* Data, int Size){::google::protobuf::io::CodedInputStream input(reinterpret_cast&lt;const uint8*&gt;(Data), Size);return Message.MergePartialFromCodedStream(&amp;input) &amp;&amp; input.ConsumedEntireMessage();}};#endif protobuf 3.x #ifndef	__ProtobufHelper_H__#define	__ProtobufHelper_H__#include &lt;google/protobuf/message_lite.h&gt;#include &lt;google/protobuf/io/coded_stream.h&gt;#include &quot;CoreMinimal.h&quot;class ProtobufHelper{public:static bool Parse(::google::protobuf::MessageLite&amp; Message, const void* Data, int Size){::google::protobuf::io::CodedInputStream input(static_cast&lt;const uint8*&gt;(Data), Size);Message.">
 <meta name="twitter:description" content="keywords：UE4、protobuf-lite、Android NDK、ParseFromArray、Crash
 protobuf与android ndk编译后，集成到UE4中执行时，每当执行ParseFromArray时就会崩溃（Windows版本没有问题）：
-MessageTest msg; bool rs = msg.ParseFromArray(buffer, buffer_size);  解决办法：将ParseFromArray()函数内部的代码复制出来，放在工程的代码中，然后再执行。
-protobuf 2.x #ifndef __ProtobufHelper_H__ #define __ProtobufHelper_H__ #include &lt;google/protobuf/message_lite.h&gt; #include &lt;google/protobuf/io/coded_stream.h&gt; class ProtobufHelper { public: static bool Parse(::google::protobuf::MessageLite&amp; Message, const char* Data, int Size) { ::google::protobuf::io::CodedInputStream input(reinterpret_cast&lt;const uint8*&gt;(Data), Size); return Message.MergePartialFromCodedStream(&amp;input) &amp;&amp; input.ConsumedEntireMessage(); } }; #endif  protobuf 3.x #ifndef __ProtobufHelper_H__ #define __ProtobufHelper_H__ #include &lt;google/protobuf/message_lite.h&gt; #include &lt;google/protobuf/io/coded_stream.h&gt; #include &quot;CoreMinimal.h&quot; class ProtobufHelper { public: static bool Parse(::google::protobuf::MessageLite&amp; Message, const void* Data, int Size) { ::google::protobuf::io::CodedInputStream input(static_cast&lt;const uint8*&gt;(Data), Size); Message.">
+MessageTest msg;bool rs = msg.ParseFromArray(buffer, buffer_size); 解决办法：将ParseFromArray()函数内部的代码复制出来，放在工程的代码中，然后再执行。
+protobuf 2.x #ifndef	__ProtobufHelper_H__#define	__ProtobufHelper_H__#include &lt;google/protobuf/message_lite.h&gt;#include &lt;google/protobuf/io/coded_stream.h&gt;class ProtobufHelper{public:static bool Parse(::google::protobuf::MessageLite&amp; Message, const char* Data, int Size){::google::protobuf::io::CodedInputStream input(reinterpret_cast&lt;const uint8*&gt;(Data), Size);return Message.MergePartialFromCodedStream(&amp;input) &amp;&amp; input.ConsumedEntireMessage();}};#endif protobuf 3.x #ifndef	__ProtobufHelper_H__#define	__ProtobufHelper_H__#include &lt;google/protobuf/message_lite.h&gt;#include &lt;google/protobuf/io/coded_stream.h&gt;#include &quot;CoreMinimal.h&quot;class ProtobufHelper{public:static bool Parse(::google::protobuf::MessageLite&amp; Message, const void* Data, int Size){::google::protobuf::io::CodedInputStream input(static_cast&lt;const uint8*&gt;(Data), Size);Message.">
 <meta property="og:locale" content="en-us">
 
   
@@ -361,22 +361,15 @@ if (!doNotTrack) {
           
           <div class="post-content markdown" itemprop="articleBody">
             <div class="main-content-wrap">
-              
-
-<p>keywords：UE4、protobuf-lite、Android NDK、ParseFromArray、Crash</p>
-
+              <p>keywords：UE4、protobuf-lite、Android NDK、ParseFromArray、Crash</p>
 <p>protobuf与android ndk编译后，集成到UE4中执行时，每当执行ParseFromArray时就会崩溃（Windows版本没有问题）：</p>
-
 <pre><code>MessageTest msg;
 bool rs = msg.ParseFromArray(buffer, buffer_size);
 </code></pre>
-
 <p>解决办法：将ParseFromArray()函数内部的代码复制出来，放在工程的代码中，然后再执行。</p>
-
-<h3 id="protobuf-2-x">protobuf 2.x</h3>
-
-<pre><code>#ifndef __ProtobufHelper_H__
-#define __ProtobufHelper_H__
+<h3 id="protobuf-2x">protobuf 2.x</h3>
+<pre><code>#ifndef	__ProtobufHelper_H__
+#define	__ProtobufHelper_H__
 
 #include &lt;google/protobuf/message_lite.h&gt;
 #include &lt;google/protobuf/io/coded_stream.h&gt;
@@ -395,11 +388,9 @@ public:
 
 #endif
 </code></pre>
-
-<h3 id="protobuf-3-x">protobuf 3.x</h3>
-
-<pre><code>#ifndef __ProtobufHelper_H__
-#define __ProtobufHelper_H__
+<h3 id="protobuf-3x">protobuf 3.x</h3>
+<pre><code>#ifndef	__ProtobufHelper_H__
+#define	__ProtobufHelper_H__
 
 #include &lt;google/protobuf/message_lite.h&gt;
 #include &lt;google/protobuf/io/coded_stream.h&gt;
@@ -419,7 +410,7 @@ public:
         {
             return false;
         }
-
+        
         if (!Message.IsInitialized()) 
         {
             //GOOGLE_LOG(ERROR) &lt;&lt; InitializationErrorMessage(&quot;parse&quot;, *message);
@@ -432,21 +423,15 @@ public:
 
 #endif
 </code></pre>
-
-<h3 id="使用示例">使用示例</h3>
-
+<h3 id="heading">使用示例</h3>
 <pre><code>MessageTest msg;
 bool rs = ProtobufHelper::Parse(msg, buffer, buffer_size);
 </code></pre>
-
-<h3 id="message嵌套问题">message嵌套问题</h3>
-
+<h3 id="message">message嵌套问题</h3>
 <div class="alert danger ">
   <p>protobuf 3.x版本，如果在一个模版文件中定义多个message，即使用上面的Parse函数，UE4打包Android版本运行时也会导致崩溃。2.x版本正常</p>
 </div>
-
 <p>SearchResponse.proto</p>
-
 <pre><code>syntax = &quot;proto3&quot;;
 
 option optimize_for = LITE_RUNTIME;
@@ -461,11 +446,8 @@ message Result {
   repeated string snippets = 3;
 }
 </code></pre>
-
 <p>解决办法：一个proto文件只定义一种message，通过import方式导入。</p>
-
 <p>SearchResponse.proto</p>
-
 <pre><code>syntax = &quot;proto3&quot;;
 
 option optimize_for = LITE_RUNTIME;
@@ -476,9 +458,7 @@ message SearchResponse {
   repeated Result results = 1;
 }
 </code></pre>
-
 <p>Result.proto</p>
-
 <pre><code>syntax = &quot;proto3&quot;;
 
 option optimize_for = LITE_RUNTIME;
@@ -489,9 +469,7 @@ message Result {
   repeated string snippets = 3;
 }
 </code></pre>
-
-<hr />
-
+<hr>
 <p><code>当才华无法撑起野心时，应静下心学习。</code></p>
 
               

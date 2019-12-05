@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.58.3 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.60.1 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="">
 <meta name="description" content="Hugo tranquilpeak theme demo">
@@ -415,9 +415,10 @@ if (!doNotTrack) {
       
         keywords：hugo、MathJax、公式、数学表达式
 步骤 1，在theme\layouts\partials\目录下新建一个文件，命名为 mathjax_support.html，内容为：
-&lt;script type=&quot;text/javascript&quot; async src=&quot;https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML&quot;&gt; &lt;/script&gt; &lt;script type=&quot;text/x-mathjax-config&quot;&gt; MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$'], ['\\(','\\)']], displayMath: [['$$','$$'], ['\[','\]']], processEscapes: true, processEnvironments: true, skipTags: ['script', 'noscript', 'style', 'textarea', 'pre','code'], TeX: { equationNumbers: { autoNumber: &quot;AMS&quot; }, extensions: [&quot;AMSmath.js&quot;, &quot;AMSsymbols.js&quot;] } } }); &lt;/script&gt;  2，在header.html的&lt;/header&gt;之前或者footer.html的&lt;/footer&gt;之前添加：
-{{ if .Params.mathjax}}{{ partial &quot;mathjax_support.html&quot; . }}{{ end }}  3，在MD文件的头部追加mathjax : ture：
---- title : &quot;hugo-集成MathJax&quot; date : &quot;2018-06-22T00:51:40+08:00&quot; mathjax : ture ---  如果是新语法，则追加mathjax= [&quot;ture&quot;]：
+ MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$'], ['\\(','\\)']], displayMath: [['$$','$$'], ['\[','\]']], processEscapes: true, processEnvironments: true, skipTags: ['script', 'noscript', 'style', 'textarea', 'pre','code'], TeX: { equationNumbers: { autoNumber: "AMS" }, extensions: ["AMSmath.js", "AMSsymbols.js"] } } });  2，在header.html的&lt;/header&gt;之前或者footer.html的&lt;/footer&gt;之前添加：
+{{ if .Params.mathjax}}{{ partial "mathjax_support.html" . }}{{ end }} 3，在MD文件的头部追加mathjax : ture：
+--- title : "hugo-集成MathJax" date : "2018-06-22T00:51:40+08:00" mathjax : ture --- 如果是新语法，则追加mathjax= [&quot;ture&quot;]：
++++ title= "hugo-集成MathJax" date= "2018-06-22T00:51:40+08:00" mathjax= ["
       
       <p>
         <a href="https://dawnarc.com/2018/06/hugo%E9%9B%86%E6%88%90mathjax/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -479,17 +480,17 @@ if (!doNotTrack) {
     <div class="postShorten-excerpt" itemprop="articleBody">
       
         方式一：修改config.toml（推荐） 在config.toml中开启highlight.js
-[params] syntaxHighlighter = &quot;highlight.js&quot; customCSS = [&quot;https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/solarized-light.min.css&quot;]  其中customCSS指定的是highlight的style名称，如果不设置，则会使用highlight.js的默认style。
+[params]syntaxHighlighter = &quot;highlight.js&quot;customCSS = [&quot;https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/solarized-light.min.css&quot;] 其中customCSS指定的是highlight的style名称，如果不设置，则会使用highlight.js的默认style。
 这种方式需要hugo的theme提供highlight.js支持，hugo默认theme不支持这种方式。已知的支持highlight.js的hugo theme：https://github.com/kakawait/hugo-tranquilpeak-theme
  方式二：修改header.html 在theme的./layouts/partials或者./layouts/chrome/目录下，找到header.html或者header.includes.html文件，然后再在&lt;header&gt;标签内添加cdn地址：
-&lt;link rel=&quot;stylesheet&quot; href=&quot;//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css&quot;&gt; &lt;script src=&quot;//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js&quot;&gt;&lt;/script&gt; &lt;script&gt;hljs.initHighlightingOnLoad();&lt;/script&gt;  highlight.js的最新cdn地址获取
+&lt;link rel=&quot;stylesheet&quot;href=&quot;//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css&quot;&gt;&lt;script src=&quot;//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js&quot;&gt;&lt;/script&gt;&lt;script&gt;hljs.initHighlightingOnLoad();&lt;/script&gt; highlight.js的最新cdn地址获取
 https://highlightjs.org/download/
 如果要修改style，直接修改default.min.css的名字，比如想使用vs风格，那么就将
-href=&quot;//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css&quot;  修改为
-href=&quot;//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/vs.min.css&quot;  上述两种方式设置后，hugo文章模板中的所有代码都会统一替换为highlight.js风格，不用在修改原有的.md文件。
+href=&quot;//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css&quot; 修改为
+href=&quot;//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/vs.min.css&quot; 上述两种方式设置后，hugo文章模板中的所有代码都会统一替换为highlight.js风格，不用在修改原有的.md文件。
 highlight.js style演示合集 https://highlightjs.org/static/demo/
 Hugo highlight语法：Syntax Highlighting https://bwaycer.github.io/hugo_tutorial.hugo/extras/highlighting/#highlight-js-example
-胡者，天之骄子也。----《汉书》
+ 胡者，天之骄子也。----《汉书》
       
       <p>
         <a href="https://dawnarc.com/2018/01/hugo%E9%9B%86%E6%88%90highlight.js/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -613,11 +614,11 @@ Hugo highlight语法：Syntax Highlighting https://bwaycer.github.io/hugo_tutori
     <div class="postShorten-excerpt" itemprop="articleBody">
       
         1，新建文章：
-hugo new 章节名称/文章名称.md  2，生成HTML、js等静态web文件：
-hugo -v  这里-v是&ndash;verbose的缩写，只是打印信息。
+hugo new 章节名称/文章名称.md 2，生成HTML、js等静态web文件：
+hugo -v 这里-v是&ndash;verbose的缩写，只是打印信息。
 注意，文章有个属性draft=true，表示当前文章为草稿，默认构建是不会为草稿生成html文件发的。如果生成时希望把草稿也生成出来，需要使用参数：&ndash;buildDrafts，例如：
-hugo --buildDrafts  3，启动http服务器（测试用），3中方式：
-hugo server hugo server --buildDrafts hugo server --theme=hugo_theme_robust --buildDrafts  或者执行完第2步之后，将publish目录下的所有文件拷贝到web服务器的相应目录下，比如nginx/html/
+hugo --buildDrafts 3，启动http服务器（测试用），3中方式：
+hugo serverhugo server --buildDraftshugo server --theme=hugo_theme_robust --buildDrafts 或者执行完第2步之后，将publish目录下的所有文件拷贝到web服务器的相应目录下，比如nginx/html/
       
       <p>
         <a href="https://dawnarc.com/2016/11/hugo%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BA%E6%AD%A5%E9%AA%A4/" class="postShorten-excerpt_link link">Continue reading</a>

@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.58.3 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.60.1 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="Android NDK, to_string, Build Failed, UE4, UnrealEngine4">
 <meta name="description" content="keywords: Android NDK, to_string, Build Failed, UE4, Unreal Engine 4">
@@ -353,123 +353,101 @@ if (!doNotTrack) {
           <div class="post-content markdown" itemprop="articleBody">
             <div class="main-content-wrap">
               <p>keywords: Android NDK, to_string, Build Failed, UE4, Unreal Engine 4</p>
-
 <h5 id="steps-in-common-anroid-ndk-projects">Steps in Common Anroid NDK Projects</h5>
-
-<p>Case:<br />
+<p>Case:<br>
 Build with Android NDK failed:</p>
-
 <pre><code>error: 'to_string' is not a member of 'std'
 </code></pre>
-
 <p>Solution:</p>
-
 <p>Add C++11 support in <code>Application.mk</code> if building static libraries:</p>
-
 <pre><code>APP_STL := c++_static
 </code></pre>
-
 <p>or use <code>c++_shared</code> if building shared libraries:</p>
-
 <pre><code>APP_STL := c++_shared
 </code></pre>
-
 <div class="alert danger ">
-  <p>It doesn&rsquo;t take effect if add <code>APP_STL := gnustl_static</code> in <code>Application.mk</code>, because gnustl is the C++ standard library of GCC and it doesn&rsquo;t support C++11 fully.<br />
+  <p>It doesn't take effect if add <code>APP_STL := gnustl_static</code> in <code>Application.mk</code>, because gnustl is the C++ standard library of GCC and it doesn't support C++11 fully.<br>
 <code>c++_static</code> and <code>c++_shared</code> means using <code>libc++</code> which is the C++ standard library of LLVM, not GCC.</p>
 </div>
-
 <div class="alert warning ">
-  <p>LLVM&rsquo;s <code>libc++</code> was stable in NDK r18, and GCC had been removed from r18, Clang is the default compiler.</p>
+  <p>LLVM's <code>libc++</code> was stable in NDK r18, and GCC had been removed from r18, Clang is the default compiler.</p>
 </div>
-
 <h5 id="steps-in-ue4-android-packaging">Steps in UE4 Android Packaging</h5>
-
-<p>1, Modify function <code>SetUpSpecificEnvironment</code> which was in <code>UEBuildAndroid.cs</code>.<br />
+<p>1, Modify function <code>SetUpSpecificEnvironment</code> which was in <code>UEBuildAndroid.cs</code>.<br>
 path:</p>
-
 <pre><code>\Engine\Source\Programs\UnrealBuildTool\Platform\Android\UEBuildAndroid.cs
 </code></pre>
-
 <ul>
-<li><p>Modification 1st:<br />
+<li>
+<p>Modification 1st:<br>
 Origin:</p>
-
-<pre><code>string GccVersion = &quot;4.6&quot;;
-int NDKVersionInt = ToolChain.GetNdkApiLevelInt();
-if (Directory.Exists(Path.Combine(NDKPath, @&quot;sources/cxx-stl/gnu-libstdc++/4.9&quot;)))
-{
-    GccVersion = &quot;4.9&quot;;
-} else
-if (Directory.Exists(Path.Combine(NDKPath, @&quot;sources/cxx-stl/gnu-libstdc++/4.8&quot;)))
-{
-    GccVersion = &quot;4.8&quot;;
-}
+<pre><code>  string GccVersion = &quot;4.6&quot;;
+  int NDKVersionInt = ToolChain.GetNdkApiLevelInt();
+  if (Directory.Exists(Path.Combine(NDKPath, @&quot;sources/cxx-stl/gnu-libstdc++/4.9&quot;)))
+  {
+      GccVersion = &quot;4.9&quot;;
+  } else
+  if (Directory.Exists(Path.Combine(NDKPath, @&quot;sources/cxx-stl/gnu-libstdc++/4.8&quot;)))
+  {
+      GccVersion = &quot;4.8&quot;;
+  }
 </code></pre>
-
 <p>New:</p>
-
-<pre><code>string GccVersion = &quot;4.6&quot;;
-int NDKVersionInt = ToolChain.GetNdkApiLevelInt();
-if (Directory.Exists(Path.Combine(NDKPath, @&quot;sources/cxx-stl/llvm-libc++/4.9&quot;)))
-{
-    GccVersion = &quot;4.9&quot;;
-} else
-if (Directory.Exists(Path.Combine(NDKPath, @&quot;sources/cxx-stl/llvm-libc++/4.8&quot;)))
-{
-    GccVersion = &quot;4.8&quot;;
-}
-</code></pre></li>
-
-<li><p>Modification 2nd:<br />
+<pre><code>  string GccVersion = &quot;4.6&quot;;
+  int NDKVersionInt = ToolChain.GetNdkApiLevelInt();
+  if (Directory.Exists(Path.Combine(NDKPath, @&quot;sources/cxx-stl/llvm-libc++/4.9&quot;)))
+  {
+      GccVersion = &quot;4.9&quot;;
+  } else
+  if (Directory.Exists(Path.Combine(NDKPath, @&quot;sources/cxx-stl/llvm-libc++/4.8&quot;)))
+  {
+      GccVersion = &quot;4.8&quot;;
+  }
+</code></pre>
+</li>
+<li>
+<p>Modification 2nd:<br>
 Origin:</p>
+<pre><code>  DirectoryReference NdkDir = new DirectoryReference(NDKPath);
+  CompileEnvironment.SystemIncludePaths.Add(DirectoryReference.Combine(NdkDir, &quot;sources/cxx-stl/gnu-libstdc++/&quot; + GccVersion + &quot;/include&quot;));
 
-<pre><code>DirectoryReference NdkDir = new DirectoryReference(NDKPath);
-CompileEnvironment.SystemIncludePaths.Add(DirectoryReference.Combine(NdkDir, &quot;sources/cxx-stl/gnu-libstdc++/&quot; + GccVersion + &quot;/include&quot;));
+  // the toolchain will actually filter these out
+  CompileEnvironment.SystemIncludePaths.Add(DirectoryReference.Combine(NdkDir, &quot;sources/cxx-stl/gnu-libstdc++/&quot; + GccVersion + &quot;/libs/armeabi-v7a/include&quot;));
+  CompileEnvironment.SystemIncludePaths.Add(DirectoryReference.Combine(NdkDir, &quot;sources/cxx-stl/gnu-libstdc++/&quot; + GccVersion + &quot;/libs/arm64-v8a/include&quot;));
+  CompileEnvironment.SystemIncludePaths.Add(DirectoryReference.Combine(NdkDir, &quot;sources/cxx-stl/gnu-libstdc++/&quot; + GccVersion + &quot;/libs/x86/include&quot;));
+  CompileEnvironment.SystemIncludePaths.Add(DirectoryReference.Combine(NdkDir, &quot;sources/cxx-stl/gnu-libstdc++/&quot; + GccVersion + &quot;/libs/x86_64/include&quot;));
 
-// the toolchain will actually filter these out
-CompileEnvironment.SystemIncludePaths.Add(DirectoryReference.Combine(NdkDir, &quot;sources/cxx-stl/gnu-libstdc++/&quot; + GccVersion + &quot;/libs/armeabi-v7a/include&quot;));
-CompileEnvironment.SystemIncludePaths.Add(DirectoryReference.Combine(NdkDir, &quot;sources/cxx-stl/gnu-libstdc++/&quot; + GccVersion + &quot;/libs/arm64-v8a/include&quot;));
-CompileEnvironment.SystemIncludePaths.Add(DirectoryReference.Combine(NdkDir, &quot;sources/cxx-stl/gnu-libstdc++/&quot; + GccVersion + &quot;/libs/x86/include&quot;));
-CompileEnvironment.SystemIncludePaths.Add(DirectoryReference.Combine(NdkDir, &quot;sources/cxx-stl/gnu-libstdc++/&quot; + GccVersion + &quot;/libs/x86_64/include&quot;));
-
-LinkEnvironment.LibraryPaths.Add(DirectoryReference.Combine(NdkDir, &quot;sources/cxx-stl/gnu-libstdc++/&quot; + GccVersion + &quot;/libs/armeabi-v7a&quot;));
-LinkEnvironment.LibraryPaths.Add(DirectoryReference.Combine(NdkDir, &quot;sources/cxx-stl/gnu-libstdc++/&quot; + GccVersion + &quot;/libs/arm64-v8a&quot;));
-LinkEnvironment.LibraryPaths.Add(DirectoryReference.Combine(NdkDir, &quot;sources/cxx-stl/gnu-libstdc++/&quot; + GccVersion + &quot;/libs/x86&quot;));
-LinkEnvironment.LibraryPaths.Add(DirectoryReference.Combine(NdkDir, &quot;sources/cxx-stl/gnu-libstdc++/&quot; + GccVersion + &quot;/libs/x86_64&quot;));
+  LinkEnvironment.LibraryPaths.Add(DirectoryReference.Combine(NdkDir, &quot;sources/cxx-stl/gnu-libstdc++/&quot; + GccVersion + &quot;/libs/armeabi-v7a&quot;));
+  LinkEnvironment.LibraryPaths.Add(DirectoryReference.Combine(NdkDir, &quot;sources/cxx-stl/gnu-libstdc++/&quot; + GccVersion + &quot;/libs/arm64-v8a&quot;));
+  LinkEnvironment.LibraryPaths.Add(DirectoryReference.Combine(NdkDir, &quot;sources/cxx-stl/gnu-libstdc++/&quot; + GccVersion + &quot;/libs/x86&quot;));
+  LinkEnvironment.LibraryPaths.Add(DirectoryReference.Combine(NdkDir, &quot;sources/cxx-stl/gnu-libstdc++/&quot; + GccVersion + &quot;/libs/x86_64&quot;));
 </code></pre>
-
 <p>New:</p>
+<pre><code>  DirectoryReference NdkDir = new DirectoryReference(NDKPath);
+  CompileEnvironment.SystemIncludePaths.Add(DirectoryReference.Combine(NdkDir, &quot;sources/cxx-stl/llvm-libc++/include&quot;));
 
-<pre><code>DirectoryReference NdkDir = new DirectoryReference(NDKPath);
-CompileEnvironment.SystemIncludePaths.Add(DirectoryReference.Combine(NdkDir, &quot;sources/cxx-stl/llvm-libc++/include&quot;));
+  LinkEnvironment.LibraryPaths.Add(DirectoryReference.Combine(NdkDir, &quot;sources/cxx-stl/llvm-libc++/libs/armeabi-v7a&quot;));
+  LinkEnvironment.LibraryPaths.Add(DirectoryReference.Combine(NdkDir, &quot;sources/cxx-stl/llvm-libc++/libs/arm64-v8a&quot;));
+  LinkEnvironment.LibraryPaths.Add(DirectoryReference.Combine(NdkDir, &quot;sources/cxx-stl/llvm-libc++/libs/x86&quot;));
+  LinkEnvironment.LibraryPaths.Add(DirectoryReference.Combine(NdkDir, &quot;sources/cxx-stl/llvm-libc++/libs/x86_64&quot;));
 
-LinkEnvironment.LibraryPaths.Add(DirectoryReference.Combine(NdkDir, &quot;sources/cxx-stl/llvm-libc++/libs/armeabi-v7a&quot;));
-LinkEnvironment.LibraryPaths.Add(DirectoryReference.Combine(NdkDir, &quot;sources/cxx-stl/llvm-libc++/libs/arm64-v8a&quot;));
-LinkEnvironment.LibraryPaths.Add(DirectoryReference.Combine(NdkDir, &quot;sources/cxx-stl/llvm-libc++/libs/x86&quot;));
-LinkEnvironment.LibraryPaths.Add(DirectoryReference.Combine(NdkDir, &quot;sources/cxx-stl/llvm-libc++/libs/x86_64&quot;));
-
-CompileEnvironment.SystemIncludePaths.Add(DirectoryReference.Combine(NdkDir, &quot;sources/cxx-stl/llvm-libc++abi/include&quot;));
-</code></pre></li>
-
-<li><p>Modification 3rd:<br />
+  CompileEnvironment.SystemIncludePaths.Add(DirectoryReference.Combine(NdkDir, &quot;sources/cxx-stl/llvm-libc++abi/include&quot;));
+</code></pre>
+</li>
+<li>
+<p>Modification 3rd:<br>
 Origin:</p>
-
-<pre><code>LinkEnvironment.AdditionalLibraries.Add(&quot;gnustl_shared&quot;);
+<pre><code>  LinkEnvironment.AdditionalLibraries.Add(&quot;gnustl_shared&quot;);
 </code></pre>
-
 <p>New:</p>
-
-<pre><code>LinkEnvironment.AdditionalLibraries.Add(&quot;c++_shared&quot;);
-</code></pre></li>
+<pre><code>  LinkEnvironment.AdditionalLibraries.Add(&quot;c++_shared&quot;);
+</code></pre>
+</li>
 </ul>
-
 <div class="alert warning ">
-  <p><code>\Engine\Build\Android\Java\jni\Application.mk</code> doesn&rsquo;t take effect any more.</p>
+  <p><code>\Engine\Build\Android\Java\jni\Application.mk</code> doesn't take effect any more.</p>
 </div>
-
 <p>2, Change system environment variables of NDK, e.g. the newest NDK version UE4 support is 14b(from v4.21).</p>
-
 <p><figure>
     <img src="https://dawnarc.com/img/20190701-[Android%20NDK]error%20%27to_string%27%20is%20not%20a%20member%20of%20%27std%27/[Android%20NDK]error%20%27to_string%27%20is%20not%20a%20member%20of%20%27std%27-01.gif"/> 
 </figure>
@@ -477,17 +455,12 @@ Origin:</p>
 <div class="alert info ">
   <p>NDK Environment variables using in UEBuildAndroid.cs called <code>NDKROOT</code>.</p>
 </div></p>
-
 <p>3, Modify <code>PhysX3</code></p>
-
 <p>Source Path:</p>
-
 <pre><code>\Engine\Source\ThirdParty\PhysX3\PxShared\include\foundation\unix\PxUnixIntrinsics.h
 </code></pre>
-
-<p>Add <code>#include &lt;cmath&gt;</code> in the top of source.<br />
+<p>Add <code>#include &lt;cmath&gt;</code> in the top of source.<br>
 Origin:</p>
-
 <pre><code>#if PX_ANDROID
     // If cmath is included after math.h, it will undefine isfinite. If that's the case, use the version in the std namespace instead.
     #ifndef isfinite
@@ -495,9 +468,7 @@ Origin:</p>
     #endif
 #endif
 </code></pre>
-
 <p>New:</p>
-
 <pre><code>#if PX_ANDROID
     // If cmath is included after math.h, it will undefine isfinite. If that's the case, use the version in the std namespace instead.
     #ifndef isfinite
@@ -506,26 +477,19 @@ Origin:</p>
     #endif
 #endif
 </code></pre>
-
-<p>4, Remove plugin <code>OnlineSubsystemGooglePlay</code> and third party <code>GooglePlay</code>.<br />
+<p>4, Remove plugin <code>OnlineSubsystemGooglePlay</code> and third party <code>GooglePlay</code>.<br>
 Directory:</p>
-
 <pre><code>\Engine\Plugins\Online\Android\OnlineSubsystemGooglePlay\
 
 \Engine\Source\ThirdParty\GooglePlay\
 </code></pre>
-
 <p>Or replace them with newest version of these third parties sources if using them.</p>
-
-<p>5, Application would crash on startup, it is probably caused by missing <code>libc++_shared.so</code>.<br />
-Solution:<br />
+<p>5, Application would crash on startup, it is probably caused by missing <code>libc++_shared.so</code>.<br>
+Solution:<br>
 Modify source:</p>
-
 <pre><code>\Engine\Source\Programs\UnrealBuildTool\Platform\Android\UEDeployAndroid.cs
 </code></pre>
-
 <p>Add following code inside function <code>CopySTL</code>:</p>
-
 <pre><code>// copy libc++_shared.so
 string SourceSTLSONameLLVM = Environment.ExpandEnvironmentVariables(&quot;%NDKROOT%/sources/cxx-stl/llvm-libc++/libs/&quot;) + NDKArch + &quot;/libc++_shared.so&quot;;
 string FinalSTLSONameLLVM = UE4BuildPath + &quot;/libs/&quot; + NDKArch + &quot;/libc++_shared.so&quot;;
@@ -544,33 +508,23 @@ if (!bFileExists || Diff.TotalSeconds &lt; -1 || Diff.TotalSeconds &gt; 1)
     File.Copy(SourceSTLSONameLLVM, FinalSTLSONameLLVM, true);
 }
 </code></pre>
-
 <p>6, If want to use a version of NDK higher than maximum version which defined in UE4, following source needs to be modified:</p>
-
 <pre><code>\Engine\Source\Programs\UnrealBuildTool\Platform\Android\AndroidToolChain.cs
 </code></pre>
-
 <p>Limitation of Minimum and Maxmum version of NDK:</p>
-
 <pre><code>// Android NDK toolchain that must be used for C++ compiling
 readonly int MinimumNDKToolchain = 140100;
 readonly int MaximumNDKToolchain = 180100;
 readonly int RecommendedNDKToolchain = 140100;
 </code></pre>
-
 <h5 id="reference">Reference</h5>
-
-<p>Android ndk std::to_string support<br />
+<p>Android ndk std::to_string support<br>
 <a href="https://stackoverflow.com/questions/22774009/android-ndk-stdto-string-support%3E">https://stackoverflow.com/questions/22774009/android-ndk-stdto-string-support%3E</a></p>
-
-<p>error: &lsquo;to_string&rsquo; is not a member of &lsquo;std&rsquo;<br />
+<p>error: &lsquo;to_string&rsquo; is not a member of &lsquo;std&rsquo;<br>
 <a href="https://stackoverflow.com/questions/26095886/error-to-string-is-not-a-member-of-std">https://stackoverflow.com/questions/26095886/error-to-string-is-not-a-member-of-std</a></p>
-
-<p>C++ Library Support<br />
+<p>C++ Library Support<br>
 <a href="https://developer.android.com/ndk/guides/cpp-support">https://developer.android.com/ndk/guides/cpp-support</a></p>
-
-<hr />
-
+<hr>
 <p><code>与其更好，不如不同。</code></p>
               
             </div>

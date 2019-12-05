@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.58.3 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.60.1 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="UE4, skeletal bone, Transform">
 <meta name="description" content="Keywords: UE4, Animation, Transform Bone">
@@ -353,16 +353,11 @@ if (!doNotTrack) {
           <div class="post-content markdown" itemprop="articleBody">
             <div class="main-content-wrap">
               <p>Keywords: UE4, Animation, Transform Bone</p>
-
-<h5 id="transform-skeletalmeshcomponent-s-bone-in-blueprint">Transform SkeletalMeshComponent&rsquo;s bone in Blueprint</h5>
-
+<h5 id="transform-skeletalmeshcomponents-bone-in-blueprint">Transform SkeletalMeshComponent's bone in Blueprint</h5>
 <p>Blueprint Node</p>
-
 <pre><code>Transform (Modify) Bone
 </code></pre>
-
 <p>Example</p>
-
 <p><figure>
     <img src="https://dawnarc.com/img/20190105-[UE4]Transform%20skeletal%20bone%20in%20C&#43;&#43;/[UE4]Transform%20skeletal%20bone%20in%20C&#43;&#43;-01.jpg"/> 
 </figure>
@@ -375,13 +370,11 @@ if (!doNotTrack) {
     <img src="https://dawnarc.com/img/20190105-[UE4]Transform%20skeletal%20bone%20in%20C&#43;&#43;/[UE4]Transform%20skeletal%20bone%20in%20C&#43;&#43;-03.jpg"/> 
 </figure>
 </p>
-
-<h5 id="transform-poseablemeshcomponent-s-bone-in-c">Transform PoseableMeshComponent&rsquo;s bone in C++</h5>
-
+<h5 id="transform-poseablemeshcomponents-bone-in-c">Transform PoseableMeshComponent's bone in C++</h5>
 <p>Steps</p>
-
 <ol>
-<li>Add <code>UPoseableMeshComponent</code> in your Actor class, and set Skeletal Mesh asset for it.
+<li>
+<p>Add <code>UPoseableMeshComponent</code> in your Actor class, and set Skeletal Mesh asset for it.
 <figure>
     <img src="https://dawnarc.com/img/20190105-[UE4]Transform%20skeletal%20bone%20in%20C&#43;&#43;/[UE4]Transform%20skeletal%20bone%20in%20C&#43;&#43;-04.jpg"/> 
 </figure>
@@ -391,34 +384,31 @@ if (!doNotTrack) {
 </figure>
 
 <div class="alert info ">
-  <p>Because the transformation of PoseableMeshComponent is entirely be handle by user, so there&rsquo;s no property to set the Animation Blueprint.</p>
-</div></li>
+  <p>Because the transformation of PoseableMeshComponent is entirely be handle by user, so there's no property to set the Animation Blueprint.</p>
+</div></p>
+</li>
+<li>
+<p>Modify bones transform by UPoseableMeshComponent's functions:</p>
+<pre><code> UFUNCTION(BlueprintCallable, Category=&quot;Components|PoseableMesh&quot;)
+ void SetBoneTransformByName(FName BoneName, const FTransform&amp; InTransform, EBoneSpaces::Type BoneSpace);
 
-<li><p>Modify bones transform by UPoseableMeshComponent&rsquo;s functions:</p>
+ UFUNCTION(BlueprintCallable, Category=&quot;Components|PoseableMesh&quot;)
+ void SetBoneLocationByName(FName BoneName, FVector InLocation, EBoneSpaces::Type BoneSpace);
 
-<pre><code>UFUNCTION(BlueprintCallable, Category=&quot;Components|PoseableMesh&quot;)
-void SetBoneTransformByName(FName BoneName, const FTransform&amp; InTransform, EBoneSpaces::Type BoneSpace);
+ UFUNCTION(BlueprintCallable, Category=&quot;Components|PoseableMesh&quot;)
+ void SetBoneRotationByName(FName BoneName, FRotator InRotation, EBoneSpaces::Type BoneSpace);
 
-UFUNCTION(BlueprintCallable, Category=&quot;Components|PoseableMesh&quot;)
-void SetBoneLocationByName(FName BoneName, FVector InLocation, EBoneSpaces::Type BoneSpace);
-
-UFUNCTION(BlueprintCallable, Category=&quot;Components|PoseableMesh&quot;)
-void SetBoneRotationByName(FName BoneName, FRotator InRotation, EBoneSpaces::Type BoneSpace);
-
-UFUNCTION(BlueprintCallable, Category=&quot;Components|PoseableMesh&quot;)
-void SetBoneScaleByName(FName BoneName, FVector InScale3D, EBoneSpaces::Type BoneSpace);
-</code></pre></li>
+ UFUNCTION(BlueprintCallable, Category=&quot;Components|PoseableMesh&quot;)
+ void SetBoneScaleByName(FName BoneName, FVector InScale3D, EBoneSpaces::Type BoneSpace);
+</code></pre>
+</li>
 </ol>
-
-<h5 id="transform-skeletalmeshcomponent-s-bone-in-c">Transform SkeletalMeshComponent&rsquo;s bone in C++</h5>
-
+<h5 id="transform-skeletalmeshcomponents-bone-in-c">Transform SkeletalMeshComponent's bone in C++</h5>
 <p>Reference by Engine source:</p>
-
-<p>Engine\Source\Editor\AnimGraph\Classes\AnimGraphNode_ModifyBone.h<br />
+<p>Engine\Source\Editor\AnimGraph\Classes\AnimGraphNode_ModifyBone.h<br>
 <div class="alert success ">
   <p>This is the GraphNode <code>Transform (Modify) Bone</code> in Animation Blueprint Editor. The property <code>FAnimNode_ModifyBone</code> is the definite native class for transforming bones.</p>
 </div></p>
-
 <pre><code>UCLASS(meta=(Keywords = &quot;Modify Transform&quot;))
 class ANIMGRAPH_API UAnimGraphNode_ModifyBone : public UAnimGraphNode_SkeletalControlBase
 {
@@ -454,9 +444,7 @@ private:
     int32 CurWidgetMode;
 };
 </code></pre>
-
 <p>Engine\Source\Runtime\AnimGraphRuntime\Public\BoneControllers\AnimNode_ModifyBone.h</p>
-
 <pre><code>UENUM()
 enum EBoneModificationMode
 {
@@ -471,7 +459,7 @@ enum EBoneModificationMode
 };
 
 /**
- *  Simple controller that replaces or adds to the translation/rotation of a single bone.
+ *	Simple controller that replaces or adds to the translation/rotation of a single bone.
  */
 USTRUCT(BlueprintInternalUseOnly)
 struct ANIMGRAPHRUNTIME_API FAnimNode_ModifyBone : public FAnimNode_SkeletalControlBase
@@ -535,11 +523,9 @@ private:
     // End of FAnimNode_SkeletalControlBase interface
 };
 </code></pre>
-
 <div class="alert success ">
-  <p><code>FAnimNode_ModifyBone</code> inherit from <code>FAnimNode_SkeletalControlBase</code> and implement father&rsquo;s function <code>EvaluateSkeletalControl_AnyThread</code> which execute transformation of bones</p>
+  <p><code>FAnimNode_ModifyBone</code> inherit from <code>FAnimNode_SkeletalControlBase</code> and implement father's function <code>EvaluateSkeletalControl_AnyThread</code> which execute transformation of bones</p>
 </div>
-
 <pre><code>void FAnimNode_ModifyBone::EvaluateSkeletalControl_AnyThread(FComponentSpacePoseContext&amp; Output, TArray&lt;FBoneTransform&gt;&amp; OutBoneTransforms)
 {
     check(OutBoneTransforms.Num() == 0);
@@ -578,7 +564,7 @@ private:
 
         const FQuat BoneQuat(Rotation);
         if (RotationMode == BMM_Additive)
-        {   
+        {	
             NewBoneTM.SetRotation(BoneQuat * NewBoneTM.GetRotation());
         }
         else
@@ -589,7 +575,7 @@ private:
         // Convert back to Component Space.
         FAnimationRuntime::ConvertBoneSpaceTransformToCS(ComponentTransform, Output.Pose, NewBoneTM, CompactPoseBoneToModify, RotationSpace);
     }
-
+	
     if (TranslationMode != BMM_Ignore)
     {
         // Convert to Bone Space.
@@ -607,55 +593,39 @@ private:
         // Convert back to Component Space.
         FAnimationRuntime::ConvertBoneSpaceTransformToCS(ComponentTransform, Output.Pose, NewBoneTM, CompactPoseBoneToModify, TranslationSpace);
     }
-
+	
     OutBoneTransforms.Add( FBoneTransform(BoneToModify.GetCompactPoseIndex(BoneContainer), NewBoneTM) );
 }
 </code></pre>
-
-<p>Reference: Creating Custom Animation Nodes<br />
+<p>Reference: Creating Custom Animation Nodes<br>
 <a href="https://www.unrealengine.com/en-US/blog/creating-custom-animation-nodes">https://www.unrealengine.com/en-US/blog/creating-custom-animation-nodes</a></p>
-
 <h5 id="reference">Reference</h5>
-
-<p>Transform skeletal bone in C++<br />
+<p>Transform skeletal bone in C++<br>
 <a href="https://answers.unrealengine.com/questions/59010/transform-skeletal-bone-in-c.html">https://answers.unrealengine.com/questions/59010/transform-skeletal-bone-in-c.html</a></p>
-
-<p>Transform Bone<br />
+<p>Transform Bone<br>
 <a href="https://docs.unrealengine.com/en-us/Engine/Animation/NodeReference/SkeletalControls/TransformBone">https://docs.unrealengine.com/en-us/Engine/Animation/NodeReference/SkeletalControls/TransformBone</a></p>
-
 <h4 id="bone-related">Bone Related</h4>
-
 <p>Transform a location/rotation in bone relative space to world space.</p>
-
 <pre><code>Transform from Bone Space
 </code></pre>
-
-<p>Transform a location/rotation from world space to bone relative space.<br />
+<p>Transform a location/rotation from world space to bone relative space.<br>
 This is handy if you know the location in world space for a bone attachment, as AttachComponent takes location/rotation in bone-relative space.</p>
-
 <pre><code>TransformToBoneSpace
 </code></pre>
-
 <p>C++</p>
-
 <pre><code>void USkinnedMeshComponent::TransformToBoneSpace(FName BoneName, FVector InPosition, FRotator InRotation, FVector&amp; OutPosition, FRotator&amp; OutRotation) const
 
 void USkinnedMeshComponent::TransformFromBoneSpace(FName BoneName, FVector InPosition, FRotator InRotation, FVector&amp; OutPosition, FRotator&amp; OutRotation)
 </code></pre>
-
 <h5 id="problem-summary">Problem Summary</h5>
-
 <p>If you want to control transform of bones at real-time, following properties may be set:</p>
-
 <pre><code>// prevent anim frame skipping optimization based on visibility etc
 Mesh-&gt;bEnableUpdateRateOptimizations = false;
 
 // update animation even when mesh is not visible
 Mesh-&gt;MeshComponentUpdateFlag = EMeshComponentUpdateFlag::AlwaysTickPoseAndRefreshBones;
 </code></pre>
-
-<hr />
-
+<hr>
 <p><code>发生过的事，以后还会发生；做过的事，将来还要再做。太阳底下没有新的事。有谁能说，看，这是新事？不，在我们出生之前早就有了。以往的事没有人去追忆，今后的事也没有人去掛念。 ──《旧约·传道书》</code></p>
               
             </div>

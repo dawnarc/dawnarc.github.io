@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.58.3 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.60.1 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="">
 <meta name="description" content="Hugo tranquilpeak theme demo">
@@ -352,7 +352,8 @@ if (!doNotTrack) {
 How to change Anti-Aliasing method on desktop devices Project Settings -&gt; Engine -&gt; Rendering -&gt; Default Settings -&gt; Anti-Aliasing Method.
 Default Anti-Aliasing method is Temporal AA.
  Post-process Anti-aliasing was removed from Post Process Volume.
- How to modify parameters of Temporal AA at run-time r.TemporalAACurrentFrameWeight 0.2 r.TemporalAASamples 4 r.Tonemapper.Sharpen 0.8 // Somewhere between 0.5 and 1.0 seems like a sweet spot.  Reference:
+ How to modify parameters of Temporal AA at run-time r.TemporalAACurrentFrameWeight 0.2r.TemporalAASamples 4r.Tonemapper.Sharpen 0.8 // Somewhere between 0.5 and 1.0 seems like a sweet spot. Reference:
+https://forums.unrealengine.com/development-discussion/rendering/106829-sharp-temporal-aa/page2?134157-Sharp-Temporal-AA=&amp;viewfull=1
       
       <p>
         <a href="https://dawnarc.com/2018/05/ue4anti-aliasing-notes/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -414,7 +415,7 @@ Default Anti-Aliasing method is Temporal AA.
     <div class="postShorten-excerpt" itemprop="articleBody">
       
         Origin Text: http://www.cnblogs.com/graphics/archive/2010/07/05/1771110.html
-#include &lt;iostream&gt; #include &lt;map&gt; #include &lt;string&gt; using namespace std ; int main(void) { map&lt;int, string&gt; m ; m.insert(pair&lt;int, string&gt;(1, &quot;abc&quot;)) ; m.insert(pair&lt;int, string&gt;(2, &quot;def&quot;)) ; m.insert(pair&lt;int, string&gt;(3, &quot;def&quot;)) ; m.insert(pair&lt;int, string&gt;(4, &quot;ghi&quot;)) ; map&lt;int, string&gt;::iterator itor ; // Print m map&lt;int, string&gt;::const_iterator citor ; for (citor = m.begin(); citor != m.end(); ++citor) { cout &lt;&lt; citor-&gt;first &lt;&lt; &quot;:&quot; &lt;&lt; citor-&gt;second &lt;&lt; endl ; } return 0 ; }  Wrong way 1st: for (itor = m.
+#include &lt;iostream&gt;#include &lt;map&gt;#include &lt;string&gt;using namespace std ;int main(void) { map&lt;int, string&gt; m ;m.insert(pair&lt;int, string&gt;(1, &quot;abc&quot;)) ;m.insert(pair&lt;int, string&gt;(2, &quot;def&quot;)) ;m.insert(pair&lt;int, string&gt;(3, &quot;def&quot;)) ;m.insert(pair&lt;int, string&gt;(4, &quot;ghi&quot;)) ;map&lt;int, string&gt;::iterator itor ;// Print mmap&lt;int, string&gt;::const_iterator citor ;for (citor = m.begin(); citor != m.end(); ++citor){cout &lt;&lt; citor-&gt;first &lt;&lt; &quot;:&quot; &lt;&lt; citor-&gt;second &lt;&lt; endl ;}return 0 ; }  Wrong way 1st: for (itor = m.
       
       <p>
         <a href="https://dawnarc.com/2018/05/c-how-to-use-erase-of-std-map-correctly/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -478,8 +479,8 @@ Default Anti-Aliasing method is Temporal AA.
         问题现象 4.19版本启用Substance Plugin后，Generate Visual Studio Project Files时报错：
 Exception while generating include data for UE4Editor: Unable to instantiate module 'SubstanceCore': System.NullReferenceException: La référence d'objet n'est pas définie à une instance d'un objet.à UnrealBuildTool.Rules.SubstanceCore..ctor(ReadOnlyTargetRules Target) dans d:\3D\UE4.19\UnrealEngine-release\Engine\Plugins\Substance\Source\SubstanceCore\SubstanceCore.Build.cs:ligne 116(referenced via UE4Editor.Target.cs - Substance.uplugin) 解决办法 修改：UE_4.19\Engine\Plugins\Marketplace\Substance\Source\SubstanceCore\SubstanceCore.Build.cs
 将116行到124行注掉，并追加一行：
-IncludePS4Files = false;  参考自：https://forum.allegorithmic.com/index.php?topic=23285.0
-你简单，世界就是童话；心复杂，世界就是迷宫。
+IncludePS4Files = false; 参考自：https://forum.allegorithmic.com/index.php?topic=23285.0
+ 你简单，世界就是童话；心复杂，世界就是迷宫。
       
       <p>
         <a href="https://dawnarc.com/2018/05/ue44.19%E7%BC%96%E8%AF%91substance-plugin%E6%8A%A5%E9%94%99/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -544,21 +545,18 @@ IncludePS4Files = false;  参考自：https://forum.allegorithmic.com/index.php?
 https://forums.unrealengine.com/community/community-content-tools-and-tutorials/41043-advanced-sessions-plugin
 将该plugin加入工程后，再做以下修改：
 在DefaultEngine.ini的[/Script/Engine.Engine]下添加：
-+NetDriverDefinitions=(DefName=&quot;GameNetDriver&quot;,DriverClassName=&quot;OnlineSubsystemSteam.SteamNetDriver&quot;,DriverClassNameFallback=&quot;OnlineSubsystemUtils.IpNetDriver&quot;)  再增加：
-[OnlineSubsystem] DefaultPlatformService=Steam [OnlineSubsystemSteam] bEnabled=true SteamDevAppId=480 [/Script/OnlineSubsystemSteam.SteamNetDriver] NetConnectionClassName=&quot;OnlineSubsystemSteam.SteamNetConnection&quot;  然后启动编辑器后，以Standalone模式运行，且保证电脑上启动了Steam客户端，则启动游戏后会，在游戏屏幕右下角会自动弹出Steam相关菜单。
++NetDriverDefinitions=(DefName=&quot;GameNetDriver&quot;,DriverClassName=&quot;OnlineSubsystemSteam.SteamNetDriver&quot;,DriverClassNameFallback=&quot;OnlineSubsystemUtils.IpNetDriver&quot;) 再增加：
+[OnlineSubsystem]DefaultPlatformService=Steam[OnlineSubsystemSteam]bEnabled=trueSteamDevAppId=480[/Script/OnlineSubsystemSteam.SteamNetDriver]NetConnectionClassName=&quot;OnlineSubsystemSteam.SteamNetConnection&quot; 然后启动编辑器后，以Standalone模式运行，且保证电脑上启动了Steam客户端，则启动游戏后会，在游戏屏幕右下角会自动弹出Steam相关菜单。
 如果不使用该plugin，手动编写接入代码，则还需要添加以下配置：
- 工程名.Build.cs构造函数中添加：
-PublicDependencyModuleNames.AddRange(new string[] { &quot;OnlineSubsystem&quot;, &quot;OnlineSubsystemUtils&quot; }); DynamicallyLoadedModuleNames.Add(&quot;OnlineSubsystemSteam&quot;);  工程名.Target.cs构造函数中添加：
-bUsesSteam = true;   手动接入steam SDK Online Subsystem Steam
+  工程名.Build.cs构造函数中添加：
+ PublicDependencyModuleNames.AddRange(new string[] { &quot;OnlineSubsystem&quot;, &quot;OnlineSubsystemUtils&quot; });DynamicallyLoadedModuleNames.Add(&quot;OnlineSubsystemSteam&quot;);   工程名.Target.cs构造函数中添加：
+ bUsesSteam = true;   手动接入steam SDK Online Subsystem Steam
 https://docs.unrealengine.com/en-us/Programming/Online/Steam
 Steam, Using the Steam SDK During Development
 https://wiki.unrealengine.com/Steam,_Using_the_Steam_SDK_During_Development
 Integrating Steam SDK – Part 1
 http://orfeasel.com/steam_integration_p1/
 Handling Steam Achievements – Steam Integration Part 2
-http://orfeasel.com/handling-steam-achievements-steam-integration-part-2/
-中文翻译：
-集成 Steam SDK（一）
       
       <p>
         <a href="https://dawnarc.com/2018/05/ue4steam-sdk%E6%8E%A5%E5%85%A5%E7%9B%B8%E5%85%B3/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -713,7 +711,7 @@ youtube Tutorials Unreal Engine 4 Tutorial - Post Process Effects
 https://www.youtube.com/watch?v=i6lYSXyUKRY
 Unreal Engine 4 Beginner Tutorial Series - #34 Post Processing
 https://www.youtube.com/watch?v=i9bnPStLYfk
-Unreal 4 Post Processing Volume Part 03 Colour Grading with LUT&rsquo;s
+Unreal 4 Post Processing Volume Part 03 Colour Grading with LUT's
       
       <p>
         <a href="https://dawnarc.com/2018/04/ue4post-process-related/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -775,7 +773,7 @@ Unreal 4 Post Processing Volume Part 03 Colour Grading with LUT&rsquo;s
     <div class="postShorten-excerpt" itemprop="articleBody">
       
         keywords：UE4, Shadow Optimization, Scene Optimization, 阴影, 场景, 优化
-Cascaded Shadow Maps related Enable Dynamic Shadow Distance Test Case: 500 Actors are rendering in screen, Camera height is 4000, DirectionalLight&rsquo;s property Dynamic Shadow Distance StationaryLight (Default value is 0, which means disabled) should be larger than the straight-line distance from Camera to Actor (Beacause the distance need to cover all Actors, so the distance would be better be larger ), otherwise frame rate would drop down from 200 fps to 100 fps.
+Cascaded Shadow Maps related Enable Dynamic Shadow Distance Test Case: 500 Actors are rendering in screen, Camera height is 4000, DirectionalLight's property Dynamic Shadow Distance StationaryLight (Default value is 0, which means disabled) should be larger than the straight-line distance from Camera to Actor (Beacause the distance need to cover all Actors, so the distance would be better be larger ), otherwise frame rate would drop down from 200 fps to 100 fps.
       
       <p>
         <a href="https://dawnarc.com/2018/04/ue4shadows/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -838,8 +836,8 @@ Cascaded Shadow Maps related Enable Dynamic Shadow Distance Test Case: 500 Actor
       
         keywords：UE4、protobuf-lite、Android NDK、ParseFromArray、Crash
 protobuf与android ndk编译后，集成到UE4中执行时，每当执行ParseFromArray时就会崩溃（Windows版本没有问题）：
-MessageTest msg; bool rs = msg.ParseFromArray(buffer, buffer_size);  解决办法：将ParseFromArray()函数内部的代码复制出来，放在工程的代码中，然后再执行。
-protobuf 2.x #ifndef __ProtobufHelper_H__ #define __ProtobufHelper_H__ #include &lt;google/protobuf/message_lite.h&gt; #include &lt;google/protobuf/io/coded_stream.h&gt; class ProtobufHelper { public: static bool Parse(::google::protobuf::MessageLite&amp; Message, const char* Data, int Size) { ::google::protobuf::io::CodedInputStream input(reinterpret_cast&lt;const uint8*&gt;(Data), Size); return Message.MergePartialFromCodedStream(&amp;input) &amp;&amp; input.ConsumedEntireMessage(); } }; #endif  protobuf 3.x #ifndef __ProtobufHelper_H__ #define __ProtobufHelper_H__ #include &lt;google/protobuf/message_lite.h&gt; #include &lt;google/protobuf/io/coded_stream.h&gt; #include &quot;CoreMinimal.h&quot; class ProtobufHelper { public: static bool Parse(::google::protobuf::MessageLite&amp; Message, const void* Data, int Size) { ::google::protobuf::io::CodedInputStream input(static_cast&lt;const uint8*&gt;(Data), Size); Message.
+MessageTest msg;bool rs = msg.ParseFromArray(buffer, buffer_size); 解决办法：将ParseFromArray()函数内部的代码复制出来，放在工程的代码中，然后再执行。
+protobuf 2.x #ifndef	__ProtobufHelper_H__#define	__ProtobufHelper_H__#include &lt;google/protobuf/message_lite.h&gt;#include &lt;google/protobuf/io/coded_stream.h&gt;class ProtobufHelper{public:static bool Parse(::google::protobuf::MessageLite&amp; Message, const char* Data, int Size){::google::protobuf::io::CodedInputStream input(reinterpret_cast&lt;const uint8*&gt;(Data), Size);return Message.MergePartialFromCodedStream(&amp;input) &amp;&amp; input.ConsumedEntireMessage();}};#endif protobuf 3.x #ifndef	__ProtobufHelper_H__#define	__ProtobufHelper_H__#include &lt;google/protobuf/message_lite.h&gt;#include &lt;google/protobuf/io/coded_stream.h&gt;#include &quot;CoreMinimal.h&quot;class ProtobufHelper{public:static bool Parse(::google::protobuf::MessageLite&amp; Message, const void* Data, int Size){::google::protobuf::io::CodedInputStream input(static_cast&lt;const uint8*&gt;(Data), Size);Message.
       
       <p>
         <a href="https://dawnarc.com/2018/04/ue4android-ndk%E6%89%93%E5%8C%85%E7%89%88%E6%9C%AC%E6%89%A7%E8%A1%8Cprotobuf%E7%9A%84parsefromarray%E5%87%BD%E6%95%B0%E5%B4%A9%E6%BA%83/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -963,7 +961,7 @@ C模式读写二进制文件 //采用C模式写二进制文件 void DataWrite_CM
     <div class="postShorten-excerpt" itemprop="articleBody">
       
         protobuf源码NDK编译配置 假设工程结构如下：
-protobuf-build |-jni |- Android.mk |- Application.mk |- google |-protobuf  Android.mk LOCAL_PATH := $(call my-dir) include $(CLEAR_VARS) CC_LITE_SRC_FILES := \ google/protobuf/arena.cc \ google/protobuf/arenastring.cc \ google/protobuf/extension_set.cc \ google/protobuf/generated_message_table_driven_lite.cc \ google/protobuf/generated_message_util.cc \ google/protobuf/io/coded_stream.cc \ google/protobuf/io/zero_copy_stream.cc \ google/protobuf/io/zero_copy_stream_impl_lite.cc \ google/protobuf/message_lite.cc \ google/protobuf/repeated_field.cc \ google/protobuf/stubs/atomicops_internals_x86_gcc.cc \ google/protobuf/stubs/atomicops_internals_x86_msvc.cc \ google/protobuf/stubs/bytestream.cc \ google/protobuf/stubs/common.cc \ google/protobuf/stubs/int128.cc \ google/protobuf/stubs/io_win32.cc \ google/protobuf/stubs/once.cc \ google/protobuf/stubs/status.cc \ google/protobuf/stubs/statusor.cc \ google/protobuf/stubs/stringpiece.cc \ google/protobuf/stubs/stringprintf.cc \ google/protobuf/stubs/structurally_valid.cc \ google/protobuf/stubs/strutil.cc \ google/protobuf/stubs/time.cc \ google/protobuf/wire_format_lite.
+protobuf-build|-jni|- Android.mk|- Application.mk|- google|-protobuf Android.mk LOCAL_PATH := $(call my-dir) include $(CLEAR_VARS) CC_LITE_SRC_FILES := \google/protobuf/arena.cc \google/protobuf/arenastring.cc \google/protobuf/extension_set.cc \google/protobuf/generated_message_table_driven_lite.cc \google/protobuf/generated_message_util.cc \google/protobuf/io/coded_stream.cc \google/protobuf/io/zero_copy_stream.cc \google/protobuf/io/zero_copy_stream_impl_lite.cc \google/protobuf/message_lite.cc \google/protobuf/repeated_field.cc \google/protobuf/stubs/atomicops_internals_x86_gcc.cc \google/protobuf/stubs/atomicops_internals_x86_msvc.cc \google/protobuf/stubs/bytestream.cc \google/protobuf/stubs/common.cc \google/protobuf/stubs/int128.cc \google/protobuf/stubs/io_win32.cc \google/protobuf/stubs/once.cc \google/protobuf/stubs/status.cc \google/protobuf/stubs/statusor.cc \google/protobuf/stubs/stringpiece.cc \google/protobuf/stubs/stringprintf.cc \google/protobuf/stubs/structurally_valid.cc \google/protobuf/stubs/strutil.cc \google/protobuf/stubs/time.cc \google/protobuf/wire_format_lite.
       
       <p>
         <a href="https://dawnarc.com/2018/04/android-ndkprotobuf-lite-3.5%E7%BC%96%E8%AF%91/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -1026,13 +1024,13 @@ protobuf-build |-jni |- Android.mk |- Application.mk |- google |-protobuf  Andro
       
         Keywords: Android NDK,
 Import headers of static libraries:
-LOCAL_C_INCLUDES += ../include/  Import static libraries:
-LOCAL_LDLIBS += ../lib/libMyBoostLib.a  Android.mk：
-LOCAL_PATH := $(call my-dir) include $(CLEAR_VARS) LOCAL_MODULE := helloJNI LOCAL_SRC_FILES := mainActivity.cpp LOCAL_C_INCLUDES := $(LOCAL_PATH)/inc/ LOCAL_LDLIBS := -llog -L$(LOCAL_PATH)/inc/ -lMyLibrary include $(BUILD_SHARED_LIBRARY)  Reference Include prebuilt static library
+LOCAL_C_INCLUDES += ../include/ Import static libraries:
+LOCAL_LDLIBS += ../lib/libMyBoostLib.a Android.mk：
+LOCAL_PATH := $(call my-dir)include $(CLEAR_VARS)LOCAL_MODULE := helloJNILOCAL_SRC_FILES := mainActivity.cppLOCAL_C_INCLUDES := $(LOCAL_PATH)/inc/LOCAL_LDLIBS := -llog -L$(LOCAL_PATH)/inc/ -lMyLibraryinclude $(BUILD_SHARED_LIBRARY) Reference Include prebuilt static library
 https://stackoverflow.com/questions/18983037/include-prebuilt-static-library
 Using Prebuilt Libraries
 https://developer.android.com/ndk/guides/prebuilts
-故兵无常势，水无常形。能因敌变化而取胜者，谓之神。故五行无常胜，四时无常位，日有短长，月有死生。---《孙子兵法·虚实篇》
+ 故兵无常势，水无常形。能因敌变化而取胜者，谓之神。故五行无常胜，四时无常位，日有短长，月有死生。---《孙子兵法·虚实篇》
       
       <p>
         <a href="https://dawnarc.com/2018/04/android-ndklink-library-which-is-existed/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -1095,7 +1093,7 @@ https://developer.android.com/ndk/guides/prebuilts
       
         keywords：进度条、process bar
 先拖一个Progress Bar控件   再设置Style -》 Style -》 Background Image     再设置Percent的大小，来预览进度条颜色填充效果     也可以自定义填充颜色：Fill Color and Opacity     也可以去掉颜色，改成图片填充     注意，如果使用图片作为填充色，则Fill Color and Opacity需要改成默认值，否则填充图片颜色会受到影响。
-   然后再设置填充图片的Padding     设置进度条的填充方向   你最好不要爱上我，因为游侠是不需要女人的，游侠非常孤独。----《森林好小子》
+   然后再设置填充图片的Padding     设置进度条的填充方向    你最好不要爱上我，因为游侠是不需要女人的，游侠非常孤独。----《森林好小子》
       
       <p>
         <a href="https://dawnarc.com/2018/04/ue4umg-progress-bar%E7%9B%B8%E5%85%B3%E8%AE%BE%E7%BD%AE/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -1157,7 +1155,7 @@ https://developer.android.com/ndk/guides/prebuilts
     <div class="postShorten-excerpt" itemprop="articleBody">
       
         添加一个Button，大小设置为300x300     Image 当Draw As设置为Image时，图片会被整体拉伸     Box 图片会被分成九宫格（3x3），其中4个脚的格子大小固定，不会随分辨率改变而拉伸，上下边沿格子会跟随分辨率横向拉伸，左右边沿格子会跟随分辨率纵向拉伸   Border Border模式，Margin设置为0.25     Border模式，Margin设置为0.5     Marin表示Image边沿格子的大小，数值是百分比。例如，假设Margin设置为0.5，则表示边沿格子的大小为图片的50%。
- Border模式下，Image不会随着屏幕大小拉伸，而是固定大小。例如，当Margin为0.5，且Viewport变小时，每个格子的图片不会被拉伸：   有些动物主要是皮值钱，譬如狐狸；有些动物主要是肉值钱，譬如牛；有些动物主要是骨头值钱，譬如人。——丰子恺
+ Border模式下，Image不会随着屏幕大小拉伸，而是固定大小。例如，当Margin为0.5，且Viewport变小时，每个格子的图片不会被拉伸：    有些动物主要是皮值钱，譬如狐狸；有些动物主要是肉值钱，譬如牛；有些动物主要是骨头值钱，譬如人。——丰子恺
       
       <p>
         <a href="https://dawnarc.com/2018/04/ue4umg-image-draw-as-type/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -1220,9 +1218,9 @@ https://developer.android.com/ndk/guides/prebuilts
       
         keywords：UE4、Dynamic Load、Animation Blueprint、LoadObject、动画蓝图
 问题现象 假如用以下方式加载动画蓝图：
-FString AnimBPStringTest = &quot;AnimBlueprint'/Game/ThirdPerson/Animations/ThirdPerson_AnimBP.ThirdPerson_AnimBP'&quot;; UAnimBlueprint* AnimationBP = LoadObject&lt;UAnimBlueprint&gt;(NULL, *AnimBPStringTest);  在PIE和Standalone模式下都可加载成功，但是一旦打包运行（打包配置中添加了该资源cook）就会加载失败，并提示如下错误：
-LogUObjectGlobals:Warning: Failed to find object 'AnimBlueprint /Game/ThirdPerson/Animations/ThirdPerson_AnimBP.ThirdPerson_AnimBP'  解决办法 貌似动画蓝图比较特殊，用LoadObject无法加载，如果要获取动画蓝图Class，可以通过如下方式加载：
-// get the blueprint class reference from the editor FString AnimClassStringTest = &quot;Class'/Game/mixamo/Heidi/IcloneAnimBP.IcloneAnimBP_C'&quot;; // load the class UClass* AnimationClass = LoadObject&lt;UClass&gt;(NULL, *AnimClassStringTest); if (!AnimationClass) return; // assign the anim blueprint class to your skeletal mesh component Skeletal3DMeshComponent-&gt;SetAnimInstanceClass(AnimationClass);  参考：Why can&rsquo;t i dynamically load an animation BP in a packaged game
+FString AnimBPStringTest = &quot;AnimBlueprint'/Game/ThirdPerson/Animations/ThirdPerson_AnimBP.ThirdPerson_AnimBP'&quot;;UAnimBlueprint* AnimationBP = LoadObject&lt;UAnimBlueprint&gt;(NULL, *AnimBPStringTest); 在PIE和Standalone模式下都可加载成功，但是一旦打包运行（打包配置中添加了该资源cook）就会加载失败，并提示如下错误：
+LogUObjectGlobals:Warning: Failed to find object 'AnimBlueprint /Game/ThirdPerson/Animations/ThirdPerson_AnimBP.ThirdPerson_AnimBP' 解决办法 貌似动画蓝图比较特殊，用LoadObject无法加载，如果要获取动画蓝图Class，可以通过如下方式加载：
+// get the blueprint class reference from the editorFString AnimClassStringTest = &quot;Class'/Game/mixamo/Heidi/IcloneAnimBP.IcloneAnimBP_C'&quot;;// load the classUClass* AnimationClass = LoadObject&lt;UClass&gt;(NULL, *AnimClassStringTest);if (!AnimationClass) return;// assign the anim blueprint class to your skeletal mesh componentSkeletal3DMeshComponent-&gt;SetAnimInstanceClass(AnimationClass); 参考：Why can't i dynamically load an animation BP in a packaged game
       
       <p>
         <a href="https://dawnarc.com/2018/04/ue4loadobject%E5%8A%A0%E8%BD%BDuanimblueprint%E5%A4%B1%E8%B4%A5/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -1287,10 +1285,10 @@ LogUObjectGlobals:Warning: Failed to find object 'AnimBlueprint /Game/ThirdPerso
 Specifications of Animation Blend Nodes：Blend Nodes
 https://docs.unrealengine.com/en-us/Engine/Animation/NodeReference/Blend
 Reference of Animation Blending Example：
-EpicSurvivalGameSeries\SurvivalGame\Content\AnimStarterPack\Player_AnimBP  Logic achieved in this Blueprint: Rotate Aiming direction to the camera view direction
+EpicSurvivalGameSeries\SurvivalGame\Content\AnimStarterPack\Player_AnimBP Logic achieved in this Blueprint: Rotate Aiming direction to the camera view direction
 Site: https://github.com/tomlooman/EpicSurvivalGameSeries
       Blend Option AlphaBlend.h
-UENUM() enum class EAlphaBlendOption : uint8 { // Linear interpolation Linear = 0, // Cubic-in interpolation Cubic, // Hermite-Cubic HermiteCubic, // Sinusoidal interpolation Sinusoidal, // Quadratic in-out interpolation QuadraticInOut, // Cubic in-out interpolation CubicInOut, // Quartic in-out interpolation QuarticInOut, // Quintic in-out interpolation QuinticInOut, // Circular-in interpolation CircularIn, // Circular-out interpolation CircularOut, // Circular in-out interpolation CircularInOut, // Exponential-in interpolation ExpIn, // Exponential-Out interpolation ExpOut, // Exponential in-out interpolation ExpInOut, // Custom interpolation, will use custom curve inside an FAlphaBlend or linear if none has been set Custom, };  Explanation:
+UENUM()enum class EAlphaBlendOption : uint8{// Linear interpolationLinear = 0,// Cubic-in interpolationCubic,// Hermite-CubicHermiteCubic,// Sinusoidal interpolationSinusoidal,// Quadratic in-out interpolationQuadraticInOut,// Cubic in-out interpolationCubicInOut,// Quartic in-out interpolationQuarticInOut,// Quintic in-out interpolationQuinticInOut,// Circular-in interpolationCircularIn,// Circular-out interpolationCircularOut,// Circular in-out interpolationCircularInOut,// Exponential-in interpolationExpIn,// Exponential-Out interpolationExpOut,// Exponential in-out interpolationExpInOut,// Custom interpolation, will use custom curve inside an FAlphaBlend or linear if none has been setCustom,}; Explanation:
       
       <p>
         <a href="https://dawnarc.com/2018/04/ue4animation-blending-notes/" class="postShorten-excerpt_link link">Continue reading</a>

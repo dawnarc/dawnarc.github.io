@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.58.3 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.60.1 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="UE4, Packaging, Error">
 <meta name="description" content="Keywords: Cook failed, Valid Assets">
@@ -353,30 +353,20 @@ if (!doNotTrack) {
           <div class="post-content markdown" itemprop="articleBody">
             <div class="main-content-wrap">
               <p>Keywords: Cook failed, Valid Assets</p>
-
 <p>You can find the asset causing this by building the engine from source and adding breakpoints in these two place</p>
-
 <h5 id="package-error">Package Error</h5>
-
 <pre><code>PackagingResults: Error: Bad name index -1/47
 </code></pre>
-
 <h5 id="solution-1">Solution 1</h5>
-
 <p>You can find the asset causing this by building the engine from source and adding breakpoints in these two place:</p>
-
 <p>LinkerLoad.cpp</p>
-
 <pre><code>void FLinkerLoad::BadNameIndexError(NAME_INDEX NameIndex)
 {
     UE_LOG(LogLinker, Error, TEXT(&quot;Bad name index %i/%i&quot;), NameIndex, NameMap.Num());
 }
 </code></pre>
-
 <p>and</p>
-
 <p>PackageReader.cpp</p>
-
 <pre><code>FArchive&amp; FPackageReader::operator&lt;&lt;( FName&amp; Name )
 {
     check(Loader);
@@ -408,17 +398,12 @@ if (!doNotTrack) {
     return *this;
 }
 </code></pre>
-
-<p>What does &ldquo;bad name index -<sup>1</sup>&frasl;<sub>43</sub>&rdquo; error mean in the context of a failed packaging attempt?
+<p>What does &ldquo;bad name index -1/43&rdquo; error mean in the context of a failed packaging attempt?
 <a href="https://answers.unrealengine.com/questions/796763/what-does-bad-name-index-143-error-mean-in-the-con.html">https://answers.unrealengine.com/questions/796763/what-does-bad-name-index-143-error-mean-in-the-con.html</a></p>
-
 <h5 id="solution-2">Solution 2</h5>
-
-<p>Change <code>Cooker Progress Display Mode</code> to <code>Names and Remaining Packages</code> in <strong>Project Setttings -&gt; Engine -&gt; Cooker</strong>.<br />
+<p>Change <code>Cooker Progress Display Mode</code> to <code>Names and Remaining Packages</code> in <strong>Project Setttings -&gt; Engine -&gt; Cooker</strong>.<br>
 than see the files name around the <code>Error: Bad name index</code>, check these files if is invaild.</p>
-
-<hr />
-
+<hr>
 <p><code>不给身边的人带来负面影响，就是你的修养。</code></p>
               
             </div>

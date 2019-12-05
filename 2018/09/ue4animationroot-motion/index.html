@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.58.3 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.60.1 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="UE4, Root Motion, RootMotion, Montage">
 <meta name="description" content="Keywords: UE4, Animation, RootMotion, Root Motion, Montage">
@@ -350,73 +350,59 @@ if (!doNotTrack) {
           <div class="post-content markdown" itemprop="articleBody">
             <div class="main-content-wrap">
               <p>Keywords: UE4, Animation, RootMotion, Root Motion, Montage</p>
-
-<h5 id="蓝图设置方式">蓝图设置方式</h5>
-
+<h5 id="heading">蓝图设置方式</h5>
 <p>Root Motion 设置步骤：</p>
-
 <ol>
 <li>先在 AnimSequence 的<code>Asset Detail</code>面板中勾选<code>EnableRootMotion</code>和<code>Force Root Lock</code>。</li>
 <li>然后基于该 AnimSequence 新建一个 AnimMontage。</li>
 <li>然后再在 AnimationBluerpint 中设置<code>Root Motion Mode</code>为 <code>Root Motion From Montages Only</code>（Class Defaults 面板下，不是Class Settings）。</li>
 </ol>
-
 <div class="alert warning ">
   <p>如果你没有使用UE4的服务器、或者使用了UE4服务器但是没有对动画启用Replication（服务端通过 NetMulticast 播放动画），设置为<code>Root Motion from Enerything</code>没有问题，如果使用了UE4的Replication，且这些动画文件（AnimSequence, Blendspace, AnimMontage, etc.）勾选了<code>EnableRootMotion</code>，那么 Root Motion 也会被同步，影响性能。所以官方文档上的建议是使用默认设置，即：<code>Root Motion Mode</code>设置为<code>Root Motion From Montages Only</code>，只对Montage的Root Motion进行Replication。</p>
 </div>
-
-<p>Root Motion<br />
+<p>Root Motion<br>
 <a href="https://docs.unrealengine.com/en-US/Engine/Animation/RootMotion">https://docs.unrealengine.com/en-US/Engine/Animation/RootMotion</a></p>
-
-<h5 id="c-设置方式">C++设置方式</h5>
-
+<h5 id="c">C++设置方式</h5>
 <ul>
-<li><p>v4.5之前的方式：
-UAnimMontage 的两个属性 <code>bEnableRootMotionTranslation</code>、<code>bEnableRootMotionRotation</code>，任意一个设置为 true 即可。<br />
+<li>
+<p>v4.5之前的方式：
+UAnimMontage 的两个属性 <code>bEnableRootMotionTranslation</code>、<code>bEnableRootMotionRotation</code>，任意一个设置为 true 即可。<br>
 AnimMontage.cpp 引擎代码：</p>
+<pre><code>  bool bRootMotionEnabled = bEnableRootMotionTranslation || bEnableRootMotionRotation;
 
-<pre><code>bool bRootMotionEnabled = bEnableRootMotionTranslation || bEnableRootMotionRotation;
-
-if (bRootMotionEnabled)
-{
-    for (FSlotAnimationTrack&amp; Slot : SlotAnimTracks)
-    {
-        for (FAnimSegment&amp; Segment : Slot.AnimTrack.AnimSegments)
-        {
-            if (Segment.AnimReference)
-            {
-                Segment.AnimReference-&gt;EnableRootMotionSettingFromMontage(true, RootMotionRootLock);
-            }
-        }
-    }
-}
-</code></pre></li>
-
-<li><p>v4.5的新方式：</p>
-
-<pre><code>UAnimSequence::bEnableRootMotion = true;
-</code></pre></li>
+  if (bRootMotionEnabled)
+  {
+      for (FSlotAnimationTrack&amp; Slot : SlotAnimTracks)
+      {
+          for (FAnimSegment&amp; Segment : Slot.AnimTrack.AnimSegments)
+          {
+              if (Segment.AnimReference)
+              {
+                  Segment.AnimReference-&gt;EnableRootMotionSettingFromMontage(true, RootMotionRootLock);
+              }
+          }
+      }
+  }
+</code></pre>
+</li>
+<li>
+<p>v4.5的新方式：</p>
+<pre><code>  UAnimSequence::bEnableRootMotion = true;
+</code></pre>
+</li>
 </ul>
-
-<h5 id="blend-animation时动画卡顿">Blend Animation时动画卡顿</h5>
-
+<h5 id="blend-animation">Blend Animation时动画卡顿</h5>
 <div class="alert danger ">
   <p>播放Montage时，如果角色可能正在发生位移，且在有Dedicated Server情况下，那么对应的<code>AnimSequence</code>需要禁用<code>RootMotion</code>，否则角色移动过程中，如果正在混合Montage，会导致角色动画卡顿。或者将<code>Root Motion Mode</code>设置为<code>everything</code>（但这样会增加Dedicated Server开销）。</p>
 </div>
-
 <h5 id="rootmotion-for-art-making">RootMotion For Art Making</h5>
-
 <div class="alert danger ">
   <p>The name of root bone must contains <code>_root</code> in modeling tools(e.g. Maya, 3ds Max), otherwise option <code>Root Motion</code> in animation asset would not work in Unreal Engine.</p>
 </div>
-
 <h5 id="reference">Reference</h5>
-
-<p>《Exploring in UE4》UE4 RootMotion详解【原理分析】<br />
+<p>《Exploring in UE4》UE4 RootMotion详解【原理分析】<br>
 <a href="https://zhuanlan.zhihu.com/p/74554876">https://zhuanlan.zhihu.com/p/74554876</a></p>
-
-<hr />
-
+<hr>
 <p><code>什么是最困难的？与生活讲和。 ──米奇·阿尔博姆（MitchAlbom）《相约星期二》</code></p>
               
             </div>

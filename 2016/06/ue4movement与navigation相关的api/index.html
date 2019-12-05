@@ -5,53 +5,45 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.58.3 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.60.1 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="">
-<meta name="description" content="如何修改角色的最大移动速度 if (UCharacterMovementComponent* Movement = MyCharacter-&gt;GetCharacterMovement()) { Movement-&gt;MaxWalkSpeed *= 0.5; }  如何修改角色的当前移动速度 Tick() 中执行：
-GetCharacterMovement()-&gt;Velocity = FVector(0.f, 500.f, 0.f);  如何停止正在移动的Pawn AController::StopMovement()  修改重力加速度(Gravity)  编辑器中设置全局重力加速度
+<meta name="description" content="如何修改角色的最大移动速度 if (UCharacterMovementComponent* Movement = MyCharacter-&gt;GetCharacterMovement()){Movement-&gt;MaxWalkSpeed *= 0.5;} 如何修改角色的当前移动速度 Tick() 中执行：
+GetCharacterMovement()-&gt;Velocity = FVector(0.f, 500.f, 0.f); 如何停止正在移动的Pawn AController::StopMovement() 修改重力加速度(Gravity)   编辑器中设置全局重力加速度
 Project Settings -》 Engine -》 Physics -》 Default Physics Settings -》 Default Gravity Z。
- 运行时runtime期间设置全局重力加速度：
-AWorldSettings* MyWorldSetting=GetWorldSettings(); MyWorldSetting-&gt;bGlobalGravitySet=true; MyWorldSetting-&gt;GlobalGravityZ = 900.f;  设置单个角色的重力加速度（倍率）
-MyCharacter-&gt;GetCharacterMovement()-&gt;GravityScale = 100.f   飞行模式中的加速减速问题 CharacterMovement默认有一个加速效果（属性值为MaxAcceleration，默认为2048，表示加速率），如果MovementMode设置为Walking模式，当调用Controller-&gt;StopMovement()来立即停止移动； 但是Flying Mode时，即使不再执行AddMovementInput()，Actor仍然会继续滑行一段距离，如果希望此时立即停止不滑行，需要将减速速率（默认为0）设置为加速速率的大小：
-GetCharacterMovement()-&gt;BrakingDecelerationFlying = GetCharacterMovement()-&gt;MaxAcceleration;  设置MovementMode时的注意事项 如果一个Actor被Spawn出来之后，其MovementMode默认状态是Walking，如果此时Spawn的位置在空中，在没有Controller对其Possess的情况下，其静止在空中，当Possess之后，MovementMode会自动变为Falling，如果想让其继续停留在空中(比如飞行类的角色)，此时再手动将其MovementMode设置为Flying。绝对不能在possess之前设置，否则设置状态会被引擎修改掉。
-Controller.StopMovement()和MovementComponent.StopMovementImmediately()的区别 前者只执行：
-PathFollowingComp-&gt;AbortMove(*this, FPathFollowingResultFlags::MovementStop);  后者先执行：">
+  运行时runtime期间设置全局重力加速度：
+ AWorldSettings* MyWorldSetting=GetWorldSettings();MyWorldSetting-&gt;bGlobalGravitySet=true;MyWorldSetting-&gt;GlobalGravityZ = 900.f;   设置单个角色的重力加速度（倍率）
+ MyCharacter-&gt;GetCharacterMovement()-&gt;GravityScale = 100.f   飞行模式中的加速减速问题 CharacterMovement默认有一个加速效果（属性值为MaxAcceleration，默认为2048，表示加速率），如果MovementMode设置为Walking模式，当调用Controller-&gt;StopMovement()来立即停止移动； 但是Flying Mode时，即使不再执行AddMovementInput()，Actor仍然会继续滑行一段距离，如果希望此时立即停止不滑行，需要将减速速率（默认为0）设置为加速速率的大小：
+GetCharacterMovement()-&gt;BrakingDecelerationFlying = GetCharacterMovement()-&gt;MaxAcceleration; 设置MovementMode时的注意事项 如果一个Actor被Spawn出来之后，其MovementMode默认状态是Walking，如果此时Spawn的位置在空中，在没有Controller对其Possess的情况下，其静止在空中，当Possess之后，MovementMode会自动变为Falling，如果想让其继续停留在空中(比如飞行类的角色)，此时再手动将其MovementMode设置为Flying。绝对不能在possess之前设置，否则设置状态会被引擎修改掉。">
 
 
-<meta property="og:description" content="如何修改角色的最大移动速度 if (UCharacterMovementComponent* Movement = MyCharacter-&gt;GetCharacterMovement()) { Movement-&gt;MaxWalkSpeed *= 0.5; }  如何修改角色的当前移动速度 Tick() 中执行：
-GetCharacterMovement()-&gt;Velocity = FVector(0.f, 500.f, 0.f);  如何停止正在移动的Pawn AController::StopMovement()  修改重力加速度(Gravity)  编辑器中设置全局重力加速度
+<meta property="og:description" content="如何修改角色的最大移动速度 if (UCharacterMovementComponent* Movement = MyCharacter-&gt;GetCharacterMovement()){Movement-&gt;MaxWalkSpeed *= 0.5;} 如何修改角色的当前移动速度 Tick() 中执行：
+GetCharacterMovement()-&gt;Velocity = FVector(0.f, 500.f, 0.f); 如何停止正在移动的Pawn AController::StopMovement() 修改重力加速度(Gravity)   编辑器中设置全局重力加速度
 Project Settings -》 Engine -》 Physics -》 Default Physics Settings -》 Default Gravity Z。
- 运行时runtime期间设置全局重力加速度：
-AWorldSettings* MyWorldSetting=GetWorldSettings(); MyWorldSetting-&gt;bGlobalGravitySet=true; MyWorldSetting-&gt;GlobalGravityZ = 900.f;  设置单个角色的重力加速度（倍率）
-MyCharacter-&gt;GetCharacterMovement()-&gt;GravityScale = 100.f   飞行模式中的加速减速问题 CharacterMovement默认有一个加速效果（属性值为MaxAcceleration，默认为2048，表示加速率），如果MovementMode设置为Walking模式，当调用Controller-&gt;StopMovement()来立即停止移动； 但是Flying Mode时，即使不再执行AddMovementInput()，Actor仍然会继续滑行一段距离，如果希望此时立即停止不滑行，需要将减速速率（默认为0）设置为加速速率的大小：
-GetCharacterMovement()-&gt;BrakingDecelerationFlying = GetCharacterMovement()-&gt;MaxAcceleration;  设置MovementMode时的注意事项 如果一个Actor被Spawn出来之后，其MovementMode默认状态是Walking，如果此时Spawn的位置在空中，在没有Controller对其Possess的情况下，其静止在空中，当Possess之后，MovementMode会自动变为Falling，如果想让其继续停留在空中(比如飞行类的角色)，此时再手动将其MovementMode设置为Flying。绝对不能在possess之前设置，否则设置状态会被引擎修改掉。
-Controller.StopMovement()和MovementComponent.StopMovementImmediately()的区别 前者只执行：
-PathFollowingComp-&gt;AbortMove(*this, FPathFollowingResultFlags::MovementStop);  后者先执行：">
+  运行时runtime期间设置全局重力加速度：
+ AWorldSettings* MyWorldSetting=GetWorldSettings();MyWorldSetting-&gt;bGlobalGravitySet=true;MyWorldSetting-&gt;GlobalGravityZ = 900.f;   设置单个角色的重力加速度（倍率）
+ MyCharacter-&gt;GetCharacterMovement()-&gt;GravityScale = 100.f   飞行模式中的加速减速问题 CharacterMovement默认有一个加速效果（属性值为MaxAcceleration，默认为2048，表示加速率），如果MovementMode设置为Walking模式，当调用Controller-&gt;StopMovement()来立即停止移动； 但是Flying Mode时，即使不再执行AddMovementInput()，Actor仍然会继续滑行一段距离，如果希望此时立即停止不滑行，需要将减速速率（默认为0）设置为加速速率的大小：
+GetCharacterMovement()-&gt;BrakingDecelerationFlying = GetCharacterMovement()-&gt;MaxAcceleration; 设置MovementMode时的注意事项 如果一个Actor被Spawn出来之后，其MovementMode默认状态是Walking，如果此时Spawn的位置在空中，在没有Controller对其Possess的情况下，其静止在空中，当Possess之后，MovementMode会自动变为Falling，如果想让其继续停留在空中(比如飞行类的角色)，此时再手动将其MovementMode设置为Flying。绝对不能在possess之前设置，否则设置状态会被引擎修改掉。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[UE4]Movement与Navigation相关的API">
 <meta name="twitter:title" content="[UE4]Movement与Navigation相关的API">
 <meta property="og:url" content="https://dawnarc.com/2016/06/ue4movement%E4%B8%8Enavigation%E7%9B%B8%E5%85%B3%E7%9A%84api/">
 <meta property="twitter:url" content="https://dawnarc.com/2016/06/ue4movement%E4%B8%8Enavigation%E7%9B%B8%E5%85%B3%E7%9A%84api/">
 <meta property="og:site_name" content="玄冬Wong">
-<meta property="og:description" content="如何修改角色的最大移动速度 if (UCharacterMovementComponent* Movement = MyCharacter-&gt;GetCharacterMovement()) { Movement-&gt;MaxWalkSpeed *= 0.5; }  如何修改角色的当前移动速度 Tick() 中执行：
-GetCharacterMovement()-&gt;Velocity = FVector(0.f, 500.f, 0.f);  如何停止正在移动的Pawn AController::StopMovement()  修改重力加速度(Gravity)  编辑器中设置全局重力加速度
+<meta property="og:description" content="如何修改角色的最大移动速度 if (UCharacterMovementComponent* Movement = MyCharacter-&gt;GetCharacterMovement()){Movement-&gt;MaxWalkSpeed *= 0.5;} 如何修改角色的当前移动速度 Tick() 中执行：
+GetCharacterMovement()-&gt;Velocity = FVector(0.f, 500.f, 0.f); 如何停止正在移动的Pawn AController::StopMovement() 修改重力加速度(Gravity)   编辑器中设置全局重力加速度
 Project Settings -》 Engine -》 Physics -》 Default Physics Settings -》 Default Gravity Z。
- 运行时runtime期间设置全局重力加速度：
-AWorldSettings* MyWorldSetting=GetWorldSettings(); MyWorldSetting-&gt;bGlobalGravitySet=true; MyWorldSetting-&gt;GlobalGravityZ = 900.f;  设置单个角色的重力加速度（倍率）
-MyCharacter-&gt;GetCharacterMovement()-&gt;GravityScale = 100.f   飞行模式中的加速减速问题 CharacterMovement默认有一个加速效果（属性值为MaxAcceleration，默认为2048，表示加速率），如果MovementMode设置为Walking模式，当调用Controller-&gt;StopMovement()来立即停止移动； 但是Flying Mode时，即使不再执行AddMovementInput()，Actor仍然会继续滑行一段距离，如果希望此时立即停止不滑行，需要将减速速率（默认为0）设置为加速速率的大小：
-GetCharacterMovement()-&gt;BrakingDecelerationFlying = GetCharacterMovement()-&gt;MaxAcceleration;  设置MovementMode时的注意事项 如果一个Actor被Spawn出来之后，其MovementMode默认状态是Walking，如果此时Spawn的位置在空中，在没有Controller对其Possess的情况下，其静止在空中，当Possess之后，MovementMode会自动变为Falling，如果想让其继续停留在空中(比如飞行类的角色)，此时再手动将其MovementMode设置为Flying。绝对不能在possess之前设置，否则设置状态会被引擎修改掉。
-Controller.StopMovement()和MovementComponent.StopMovementImmediately()的区别 前者只执行：
-PathFollowingComp-&gt;AbortMove(*this, FPathFollowingResultFlags::MovementStop);  后者先执行：">
-<meta name="twitter:description" content="如何修改角色的最大移动速度 if (UCharacterMovementComponent* Movement = MyCharacter-&gt;GetCharacterMovement()) { Movement-&gt;MaxWalkSpeed *= 0.5; }  如何修改角色的当前移动速度 Tick() 中执行：
-GetCharacterMovement()-&gt;Velocity = FVector(0.f, 500.f, 0.f);  如何停止正在移动的Pawn AController::StopMovement()  修改重力加速度(Gravity)  编辑器中设置全局重力加速度
+  运行时runtime期间设置全局重力加速度：
+ AWorldSettings* MyWorldSetting=GetWorldSettings();MyWorldSetting-&gt;bGlobalGravitySet=true;MyWorldSetting-&gt;GlobalGravityZ = 900.f;   设置单个角色的重力加速度（倍率）
+ MyCharacter-&gt;GetCharacterMovement()-&gt;GravityScale = 100.f   飞行模式中的加速减速问题 CharacterMovement默认有一个加速效果（属性值为MaxAcceleration，默认为2048，表示加速率），如果MovementMode设置为Walking模式，当调用Controller-&gt;StopMovement()来立即停止移动； 但是Flying Mode时，即使不再执行AddMovementInput()，Actor仍然会继续滑行一段距离，如果希望此时立即停止不滑行，需要将减速速率（默认为0）设置为加速速率的大小：
+GetCharacterMovement()-&gt;BrakingDecelerationFlying = GetCharacterMovement()-&gt;MaxAcceleration; 设置MovementMode时的注意事项 如果一个Actor被Spawn出来之后，其MovementMode默认状态是Walking，如果此时Spawn的位置在空中，在没有Controller对其Possess的情况下，其静止在空中，当Possess之后，MovementMode会自动变为Falling，如果想让其继续停留在空中(比如飞行类的角色)，此时再手动将其MovementMode设置为Flying。绝对不能在possess之前设置，否则设置状态会被引擎修改掉。">
+<meta name="twitter:description" content="如何修改角色的最大移动速度 if (UCharacterMovementComponent* Movement = MyCharacter-&gt;GetCharacterMovement()){Movement-&gt;MaxWalkSpeed *= 0.5;} 如何修改角色的当前移动速度 Tick() 中执行：
+GetCharacterMovement()-&gt;Velocity = FVector(0.f, 500.f, 0.f); 如何停止正在移动的Pawn AController::StopMovement() 修改重力加速度(Gravity)   编辑器中设置全局重力加速度
 Project Settings -》 Engine -》 Physics -》 Default Physics Settings -》 Default Gravity Z。
- 运行时runtime期间设置全局重力加速度：
-AWorldSettings* MyWorldSetting=GetWorldSettings(); MyWorldSetting-&gt;bGlobalGravitySet=true; MyWorldSetting-&gt;GlobalGravityZ = 900.f;  设置单个角色的重力加速度（倍率）
-MyCharacter-&gt;GetCharacterMovement()-&gt;GravityScale = 100.f   飞行模式中的加速减速问题 CharacterMovement默认有一个加速效果（属性值为MaxAcceleration，默认为2048，表示加速率），如果MovementMode设置为Walking模式，当调用Controller-&gt;StopMovement()来立即停止移动； 但是Flying Mode时，即使不再执行AddMovementInput()，Actor仍然会继续滑行一段距离，如果希望此时立即停止不滑行，需要将减速速率（默认为0）设置为加速速率的大小：
-GetCharacterMovement()-&gt;BrakingDecelerationFlying = GetCharacterMovement()-&gt;MaxAcceleration;  设置MovementMode时的注意事项 如果一个Actor被Spawn出来之后，其MovementMode默认状态是Walking，如果此时Spawn的位置在空中，在没有Controller对其Possess的情况下，其静止在空中，当Possess之后，MovementMode会自动变为Falling，如果想让其继续停留在空中(比如飞行类的角色)，此时再手动将其MovementMode设置为Flying。绝对不能在possess之前设置，否则设置状态会被引擎修改掉。
-Controller.StopMovement()和MovementComponent.StopMovementImmediately()的区别 前者只执行：
-PathFollowingComp-&gt;AbortMove(*this, FPathFollowingResultFlags::MovementStop);  后者先执行：">
+  运行时runtime期间设置全局重力加速度：
+ AWorldSettings* MyWorldSetting=GetWorldSettings();MyWorldSetting-&gt;bGlobalGravitySet=true;MyWorldSetting-&gt;GlobalGravityZ = 900.f;   设置单个角色的重力加速度（倍率）
+ MyCharacter-&gt;GetCharacterMovement()-&gt;GravityScale = 100.f   飞行模式中的加速减速问题 CharacterMovement默认有一个加速效果（属性值为MaxAcceleration，默认为2048，表示加速率），如果MovementMode设置为Walking模式，当调用Controller-&gt;StopMovement()来立即停止移动； 但是Flying Mode时，即使不再执行AddMovementInput()，Actor仍然会继续滑行一段距离，如果希望此时立即停止不滑行，需要将减速速率（默认为0）设置为加速速率的大小：
+GetCharacterMovement()-&gt;BrakingDecelerationFlying = GetCharacterMovement()-&gt;MaxAcceleration; 设置MovementMode时的注意事项 如果一个Actor被Spawn出来之后，其MovementMode默认状态是Walking，如果此时Spawn的位置在空中，在没有Controller对其Possess的情况下，其静止在空中，当Possess之后，MovementMode会自动变为Falling，如果想让其继续停留在空中(比如飞行类的角色)，此时再手动将其MovementMode设置为Flying。绝对不能在possess之前设置，否则设置状态会被引擎修改掉。">
 <meta property="og:locale" content="en-us">
 
   
@@ -383,131 +375,95 @@ if (!doNotTrack) {
           
           <div class="post-content markdown" itemprop="articleBody">
             <div class="main-content-wrap">
-              
-
-<h5 id="如何修改角色的最大移动速度">如何修改角色的最大移动速度</h5>
-
+              <h5 id="heading">如何修改角色的最大移动速度</h5>
 <pre><code>if (UCharacterMovementComponent* Movement = MyCharacter-&gt;GetCharacterMovement())
 {
     Movement-&gt;MaxWalkSpeed *= 0.5;
 }
 </code></pre>
-
-<h5 id="如何修改角色的当前移动速度">如何修改角色的当前移动速度</h5>
-
+<h5 id="heading1">如何修改角色的当前移动速度</h5>
 <p>Tick() 中执行：</p>
-
 <pre><code>GetCharacterMovement()-&gt;Velocity = FVector(0.f, 500.f, 0.f);
 </code></pre>
-
-<h5 id="如何停止正在移动的pawn">如何停止正在移动的Pawn</h5>
-
+<h5 id="pawn">如何停止正在移动的Pawn</h5>
 <pre><code>AController::StopMovement()
 </code></pre>
-
-<h5 id="修改重力加速度-gravity">修改重力加速度(Gravity)</h5>
-
+<h5 id="gravity">修改重力加速度(Gravity)</h5>
 <ul>
-<li><p>编辑器中设置全局重力加速度<br />
-Project Settings -》 Engine -》 Physics -》 Default Physics Settings -》 Default Gravity Z。</p></li>
-
-<li><p>运行时runtime期间设置全局重力加速度：</p>
-
-<pre><code>AWorldSettings* MyWorldSetting=GetWorldSettings();
-MyWorldSetting-&gt;bGlobalGravitySet=true;
-MyWorldSetting-&gt;GlobalGravityZ = 900.f;
-</code></pre></li>
-
-<li><p>设置单个角色的重力加速度（倍率）</p>
-
-<pre><code>MyCharacter-&gt;GetCharacterMovement()-&gt;GravityScale = 100.f
-</code></pre></li>
+<li>
+<p>编辑器中设置全局重力加速度<br>
+Project Settings -》 Engine -》 Physics -》 Default Physics Settings -》 Default Gravity Z。</p>
+</li>
+<li>
+<p>运行时runtime期间设置全局重力加速度：</p>
+<pre><code>  AWorldSettings* MyWorldSetting=GetWorldSettings();
+  MyWorldSetting-&gt;bGlobalGravitySet=true;
+  MyWorldSetting-&gt;GlobalGravityZ = 900.f;
+</code></pre>
+</li>
+<li>
+<p>设置单个角色的重力加速度（倍率）</p>
+<pre><code>  MyCharacter-&gt;GetCharacterMovement()-&gt;GravityScale = 100.f
+</code></pre>
+</li>
 </ul>
-
-<h5 id="飞行模式中的加速减速问题">飞行模式中的加速减速问题</h5>
-
+<h5 id="heading2">飞行模式中的加速减速问题</h5>
 <p>CharacterMovement默认有一个加速效果（属性值为MaxAcceleration，默认为2048，表示加速率），如果MovementMode设置为Walking模式，当调用<code>Controller-&gt;StopMovement()</code>来立即停止移动；
 但是Flying Mode时，即使不再执行<code>AddMovementInput()</code>，Actor仍然会继续滑行一段距离，如果希望此时立即停止不滑行，需要将减速速率（默认为0）设置为加速速率的大小：</p>
-
 <pre><code>GetCharacterMovement()-&gt;BrakingDecelerationFlying = GetCharacterMovement()-&gt;MaxAcceleration;
 </code></pre>
-
-<h5 id="设置movementmode时的注意事项">设置MovementMode时的注意事项</h5>
-
+<h5 id="movementmode">设置MovementMode时的注意事项</h5>
 <p>如果一个Actor被Spawn出来之后，其MovementMode默认状态是Walking，如果此时Spawn的位置在空中，在没有Controller对其Possess的情况下，其静止在空中，当Possess之后，MovementMode会自动变为Falling，如果想让其继续停留在空中(比如飞行类的角色)，此时再手动将其MovementMode设置为Flying。<code>绝对不能在possess之前设置，否则设置状态会被引擎修改掉。</code></p>
-
-<h5 id="controller-stopmovement-和movementcomponent-stopmovementimmediately-的区别">Controller.StopMovement()和MovementComponent.StopMovementImmediately()的区别</h5>
-
+<h5 id="controllerstopmovementmovementcomponentstopmovementimmediately">Controller.StopMovement()和MovementComponent.StopMovementImmediately()的区别</h5>
 <p>前者只执行：</p>
-
 <pre><code>PathFollowingComp-&gt;AbortMove(*this, FPathFollowingResultFlags::MovementStop);
 </code></pre>
-
 <p>后者先执行：</p>
-
 <pre><code>Velocity = FVector::ZeroVector;
 </code></pre>
-
 <p>接着再执行：</p>
-
 <pre><code>PathFollowingComp-&gt;AbortMove(*this, FPathFollowingResultFlags::MovementStop);
 </code></pre>
-
-<h5 id="navigationsystem寻路相关的api">NavigationSystem寻路相关的API</h5>
-
+<h5 id="navigationsystemapi">NavigationSystem寻路相关的API</h5>
 <p>检测某个坐标点是否在navmesh内，即可以作为寻路的坐标点。
 UNavigationSystem::TestPathSync 实例用法：</p>
-
 <pre><code>UNavigationSystem* const NavSys = GetWorld()-&gt;GetNavigationSystem();
 const ANavigationData* NavData = NavSys-&gt;GetNavDataForProps(YourCharacter-&gt;GetNavAgentPropertiesRef());
 FPathFindingQuery Query1(YourCharacter, *NavData, YourCharacter-&gt;GetNavAgentLocation(), TestLocation);
 bool qrs1 = NavSys-&gt;TestPathSync(Query1);
 </code></pre>
-
 <p>UNavigationSystem::FindPathSync也可以判断，但是他会返回寻路结果，效率上没有TestPathSync快。
 其他的API还有：</p>
-
 <pre><code>UNavigationSystem::ProjectPointToNavigation
 </code></pre>
-
 <p><strong>4.20版本</strong>获取<code>NavigationSystem</code>方法：</p>
-
 <pre><code>UNavigationSystemV1* UNavigationSystemV1::GetNavigationSystem(UObject* WorldContextObject);
 </code></pre>
-
 <p>或者：</p>
-
 <pre><code>UNavigationSystemV1* NavSys = FNavigationSystem::GetCurrent&lt;UNavigationSystemV1&gt;(GetWorld());
 </code></pre>
-
 <p>获取指定坐标投射到NavMesh上的坐标；获取指定半径内可以行走的NavMesh的坐标点（随机获取）（4.20及之前老版本）：</p>
-
 <p>UNavigationSystem.h：</p>
-
 <pre><code>/** Project a point onto the NavigationData */
 UFUNCTION(BlueprintPure, Category = &quot;AI|Navigation&quot;, meta = (WorldContext = &quot;WorldContextObject&quot;, DisplayName = &quot;ProjectPointToNavigation&quot;, ScriptName = &quot;ProjectPointToNavigation&quot;))
 static bool UNavigationSystemV1::K2_ProjectPointToNavigation(UObject* WorldContextObject, const FVector&amp; Point, FVector&amp; ProjectedLocation, ANavigationData* NavData, TSubclassOf&lt;UNavigationQueryFilter&gt; FilterClass, const FVector QueryExtent = FVector::ZeroVector);
 
 /** Generates a random location reachable from given Origin location.
- *  @return Return Value represents if the call was successful */
+ *	@return Return Value represents if the call was successful */
 UFUNCTION(BlueprintPure, Category = &quot;AI|Navigation&quot;, meta = (WorldContext = &quot;WorldContextObject&quot;, DisplayName = &quot;GetRandomReachablePointInRadius&quot;, ScriptName = &quot;GetRandomReachablePointInRadius&quot;))
 static bool UNavigationSystemV1::K2_GetRandomReachablePointInRadius(UObject* WorldContextObject, const FVector&amp; Origin, FVector&amp; RandomLocation, float Radius, ANavigationData* NavData = NULL, TSubclassOf&lt;UNavigationQueryFilter&gt; FilterClass = NULL);
 
 /** Generates a random location in navigable space within given radius of Origin.
- *  @return Return Value represents if the call was successful */
+ *	@return Return Value represents if the call was successful */
 UFUNCTION(BlueprintPure, Category = &quot;AI|Navigation&quot;, meta = (WorldContext = &quot;WorldContextObject&quot;, DisplayName = &quot;GetRandomPointInNavigableRadius&quot;, ScriptName = &quot;GetRandomPointInNavigableRadius&quot;))
 static bool UNavigationSystemV1::K2_GetRandomPointInNavigableRadius(UObject* WorldContextObject, const FVector&amp; Origin, FVector&amp; RandomLocation, float Radius, ANavigationData* NavData = NULL, TSubclassOf&lt;UNavigationQueryFilter&gt; FilterClass = NULL);
 </code></pre>
-
 <p>另外两个函数（4.20、4.21版本的非shipping打包模式可用，不知官方会不会在后续版本定为正式版的API）：</p>
-
 <pre><code>bool ProjectPointToNavigation(const FVector&amp; Point, FNavLocation&amp; OutLocation, const FVector&amp; Extent = INVALID_NAVEXTENT, const FNavAgentProperties* AgentProperties = NULL, FSharedConstNavQueryFilter QueryFilter = NULL);
 
 bool ProjectPointToNavigation(const FVector&amp; Point, FNavLocation&amp; OutLocation, const FVector&amp; Extent = INVALID_NAVEXTENT, const ANavigationData* NavData = NULL, FSharedConstNavQueryFilter QueryFilter = NULL) const;
 </code></pre>
-
 <p><code>K2_ProjectPointToNavigation</code>用法：</p>
-
 <pre><code>FVector SourceLoc(1000.f, 1000.f, 100.f);
 FVector DestLoc;
 
@@ -519,45 +475,30 @@ if (UNavigationSystemV1* NavSys = FNavigationSystem::GetCurrent&lt;UNavigationSy
     }
 }
 </code></pre>
-
 <h5 id="difference-between-getrandomreachablepointinradius-and-getrandompointinnavigableradius">Difference between GetRandomReachablePointInRadius and GetRandomPointInNavigableRadius</h5>
-
 <div class="alert info ">
-  <p><p>OK, after some investigations and tests. I think I&rsquo;ve got the idea.</p>
-
+  <p><p>OK, after some investigations and tests. I think I've got the idea.</p>
 <p>So bool UNavigationSystem::GetRandomPointInNavigableRadius(const FVector&amp; Origin, float Radius, FNavLocation&amp; ResultLocation, ANavigationData* NavData, FSharedConstNavQueryFilter QueryFilter) const</p>
-
-<p>will return a point on navmesh if succeed, but it doesn&rsquo;t check whether the point is on a connected navmesh which the Origin (first parameter) is on.</p>
-
+<p>will return a point on navmesh if succeed, but it doesn't check whether the point is on a connected navmesh which the Origin (first parameter) is on.</p>
 <p>So bool UNavigationSystem::GetRandomReachablePointInRadius(const FVector&amp; Origin, float Radius, FNavLocation&amp; ResultLocation, ANavigationData* NavData, FSharedConstNavQueryFilter QueryFilter) const</p>
-
 <p>will return a point on navmesh if succeed, and it will make sure the point in on a connected navmesh with the Origin.</p>
-
 <p>So if the Origin is off navmesh and we want to find a point on navmesh, we need to use GetRandomPointInNavigableRadius.</p>
-
 <p>If the Origin is on navmesh and we want to find a point to move to, we can use GetRandomReachablePointInRadius.</p>
 </p>
 </div>
-
-<p>Reference: What&rsquo;s the difference between GetRandomReachablePointInRadius and GetRandomPointInNavigableRadius? In which case we should use which.<br />
+<p>Reference: What's the difference between GetRandomReachablePointInRadius and GetRandomPointInNavigableRadius? In which case we should use which.<br>
 <a href="https://answers.unrealengine.com/questions/796996/whats-the-difference-between-getrandomreachablepoi.html?sort=oldest">https://answers.unrealengine.com/questions/796996/whats-the-difference-between-getrandomreachablepoi.html?sort=oldest</a></p>
-
-<h5 id="寻路移动结束时的回调事件">寻路移动结束时的回调事件</h5>
-
+<h5 id="heading3">寻路移动结束时的回调事件</h5>
 <p>代码：</p>
-
 <pre><code>UPathFollowingComponent::OnMoveFinished
 </code></pre>
-
-<h5 id="如何获取两点之间的寻路路径-vector数组">如何获取两点之间的寻路路径(Vector数组)</h5>
-
+<h5 id="vector">如何获取两点之间的寻路路径(Vector数组)</h5>
 <p>代码：</p>
-
 <pre><code>//4.20之前版本用法：UNavigationSystem* NavSys = UNavigationSystem::GetCurrent(GetWorld());
 UNavigationSystemV1* NavSys = UNavigationSystemV1::GetNavigationSystem(GetWorld());
-
+ 
 UNavigationPath *tpath = NavSys-&gt;FindPathToLocationSynchronously(GetWorld(), GetActorLocation(), end_point);
-
+     
 if (tpath != NULL)
 {
      for (int pointiter = 0; pointiter &lt; tpath-&gt;PathPoints.Num(); pointiter++)
@@ -566,18 +507,13 @@ if (tpath != NULL)
      }
 }
 </code></pre>
-
 <h5 id="notice">Notice</h5>
-
 <p>Compilation Error:</p>
-
 <pre><code> error LNK2019: unresolved external symbol &quot;__declspec(dllimport) public: static class UNavigationSystemV1 * __cdecl UNavigationSystemV1::GetNavigationSystem(class UObject *)&quot; (__imp_?GetNavigationSystem@UNavigationSystemV1@@SAPEAV1@PEAVUObject@@@Z) referenced in function &quot;protected: void __cdecl AMyPlayerController::SetNewMoveDestination(struct FVector)&quot; (?SetNewMoveDestination@AMyPlayerController@@IEAAXUFVector@@@Z)
 1&gt;SkillJoystickPlayerController.cpp.obj : error LNK2019: unresolved external symbol &quot;__declspec(dllimport) public: static void __cdecl UNavigationSystemV1::SimpleMoveToLocation(class AController *,struct FVector const &amp;)&quot; (__imp_?SimpleMoveToLocation@UNavigationSystemV1@@SAXPEAVAController@@AEBUFVector@@@Z) referenced in function &quot;protected: void __cdecl AMyPlayerController::SetNewMoveDestination(struct FVector)&quot; (?SetNewMoveDestination@AMyPlayerController@@IEAAXUFVector@@@Z)
 </code></pre>
-
-<p>Solution:<br />
+<p>Solution:<br>
 Add <code>NavigationSystem</code> into DependencyModule. e.g.:</p>
-
 <pre><code>public class SkillJoystick : ModuleRules
 {
     public SkillJoystick(ReadOnlyTargetRules Target) : base(Target)
@@ -588,11 +524,8 @@ Add <code>NavigationSystem</code> into DependencyModule. e.g.:</p>
     }
 }
 </code></pre>
-
-<p>参考：<a href="https://answers.unrealengine.com/questions/102126/how-do-i-get-the-navigation-path-to-a-point.html">https://answers.unrealengine.com/questions/102126/how-do-i-get-the-navigation-path-to-a-point.html</a></p>
-
-<hr />
-
+<p>参考：https://answers.unrealengine.com/questions/102126/how-do-i-get-the-navigation-path-to-a-point.html</p>
+<hr>
 <p><code>曾虑多情损梵行，入山又恐别倾城，世间安得双全法，不负如来不负卿。----仓央嘉措</code></p>
 
               

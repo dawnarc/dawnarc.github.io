@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.58.3 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.60.1 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="">
 <meta name="description" content="Hugo tranquilpeak theme demo">
@@ -348,17 +348,18 @@ if (!doNotTrack) {
     <div class="postShorten-excerpt" itemprop="articleBody">
       
         设置编译输出路径 在CMakeList.txt中如下设置后，无论是编译可执行文件还是编译静态库，都会输出到指定目录下，而不再是默认的当前目录。
-# etc. etc. set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY &quot;lib/&quot;)  参考自：https://stackoverflow.com/questions/38445335/cmake-library-output-directory-not-affected-by-cmake-library-output-director/38450844
-获取指定目录下的所有源文件 file(GLOB cpp_files ./src/*.cpp) add_library(mylib STATIC ${cpp_files})  打印log if (NOT CMAKE_VERSION VERSION_GREATER &quot;3.0&quot;) message(FATAL_ERROR &quot;cmake version 3.x is required!&quot;) endif()  修改默认的CMAKE_MODULE_PATH目录 CMAKE_MODULE_PATH是供find_package搜索第三方库用的。cmake的默认Modules目录在安装目录中：cmake-3.11.3-win64-x64\share\cmake-3.11\Modules。
+# etc. etc.set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY &quot;lib/&quot;) 参考自：https://stackoverflow.com/questions/38445335/cmake-library-output-directory-not-affected-by-cmake-library-output-director/38450844
+获取指定目录下的所有源文件 file(GLOB cpp_files ./src/*.cpp)add_library(mylib STATIC ${cpp_files}) 打印log if (NOT CMAKE_VERSION VERSION_GREATER &quot;3.0&quot;)message(FATAL_ERROR &quot;cmake version 3.x is required!&quot;)endif() 修改默认的CMAKE_MODULE_PATH目录 CMAKE_MODULE_PATH是供find_package搜索第三方库用的。cmake的默认Modules目录在安装目录中：cmake-3.11.3-win64-x64\share\cmake-3.11\Modules。
 如果要追加Modules目录，有3种方式：
-set(CMAKE_MODULE_PATH &quot;${CMAKE_SOURCE_PATH}:${CMAKE_MODULE_PATH}&quot;) LIST(APPEND CMAKE_MODULE_PATH &quot;${CMAKE_SOURCE_PREFIX}&quot;) set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)  find_package用法 通常情况下，包含第三方库需要写以下内容
-include_directories(&quot;${project_root_path}/include/&quot;) link_directories(./lib) add_executable(myapp myapp.cpp) target_link_libraries(myapp mylib)  如果引用的很多个第三方库，那么类似上面的内容会写很多，且如果自己的多个项目都引用了某个第三方库，那么我每个项目的CmakeList.txt都得写一遍，重复劳动很多。那么有没办法为每个第三方库只定义一次它的头文件和库文件信息，然后在自己的工程中只指定名称即可？（类似编译Java的Maven仓库）答案是当然可以，find_package帮你解决。
+set(CMAKE_MODULE_PATH &quot;${CMAKE_SOURCE_PATH}:${CMAKE_MODULE_PATH}&quot;)LIST(APPEND CMAKE_MODULE_PATH &quot;${CMAKE_SOURCE_PREFIX}&quot;)set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake) find_package用法 通常情况下，包含第三方库需要写以下内容
+include_directories(&quot;${project_root_path}/include/&quot;) link_directories(./lib)add_executable(myapp myapp.cpp)target_link_libraries(myapp mylib)  如果引用的很多个第三方库，那么类似上面的内容会写很多，且如果自己的多个项目都引用了某个第三方库，那么我每个项目的CmakeList.txt都得写一遍，重复劳动很多。那么有没办法为每个第三方库只定义一次它的头文件和库文件信息，然后在自己的工程中只指定名称即可？（类似编译Java的Maven仓库）答案是当然可以，find_package帮你解决。
 find_package定义在自己工程的CmakeList.txt中：
-find_package( XXX CONFIG REQUIRED )  然后cmake就会在默认的Modules(即CMAKE_MODULE_PATH指定的目录)目录中搜索这个XXX第三方库。
+find_package( XXX CONFIG REQUIRED ) 然后cmake就会在默认的Modules(即CMAKE_MODULE_PATH指定的目录)目录中搜索这个XXX第三方库。
 搜索有两种模式：FindXXX.cmake和XXXConfig.cmake。前者叫做Module模式，后者叫做Config模式。
  Module模式
 搜索CMAKE_MODULE_PATH指定路径下的FindXXX.cmake文件，通过该文件从而找到XXX库的头文件和lib文件位置。FindXXX.cmake中需要定义XXX_INCLUDE_DIRS和XXX_LIBRARIES。 Config模式
 搜索XXX_DIR指定路径下的XXXConfig.cmake文件（XXX_DIR定义在自己工程的CMakeList.txt或者cmake-gui的环境变量中），通过该文件从而找到XXX库的头文件和lib文件位置。XXXConfig.cmake中需要定义XXX_INCLUDE_DIRS和XXX_LIBRARIES  Config模式示例：
+先在自己工程的CMakeList.txt中添加
       
       <p>
         <a href="https://dawnarc.com/2018/04/buildcmake%E5%B8%B8%E7%94%A8%E9%85%8D%E7%BD%AE%E9%A1%B9/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -419,10 +420,10 @@ find_package( XXX CONFIG REQUIRED )  然后cmake就会在默认的Modules(即CMA
     </div>
     <div class="postShorten-excerpt" itemprop="articleBody">
       
-        Steps  New a C++ Actor which inheriting LevelScriptActor.
- Open Level Blueprint, then click Class Settings, change Parent Class.    Then you can invoke the customized functions such as UFUNCTION(BlueprintCallable) which defined in your LevelScriptActor class.
+        Steps   New a C++ Actor which inheriting LevelScriptActor.
+  Open Level Blueprint, then click Class Settings, change Parent Class.     Then you can invoke the customized functions such as UFUNCTION(BlueprintCallable) which defined in your LevelScriptActor class.
   参考：http://orfeasel.com/creating-a-c-level-blueprint/
-How to get LevelScriptActor which an Actor stayed if (ULevel* Level = MyActor-&gt;GetLevel()) { if (AMyLevelScriptActor* LevelActor = Cast&lt;AMyLevelScriptActor&gt;(Level-&gt;GetLevelScriptActor())) { } }  How to get Level name which an Actor stayed FString LevelName = GetLevel()-&gt;GetOuter()-&gt;GetName();  天之道利而无害，人之道为而不争。 ----《道德经》
+How to get LevelScriptActor which an Actor stayed if (ULevel* Level = MyActor-&gt;GetLevel()){if (AMyLevelScriptActor* LevelActor = Cast&lt;AMyLevelScriptActor&gt;(Level-&gt;GetLevelScriptActor())){}} How to get Level name which an Actor stayed FString LevelName = GetLevel()-&gt;GetOuter()-&gt;GetName();  天之道利而无害，人之道为而不争。 ----《道德经》
       
       <p>
         <a href="https://dawnarc.com/2018/04/ue4how-to-let-level-blueprint-inherit-customized-c-class/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -564,7 +565,7 @@ http://api.unrealengine.com/INT/Engine/Rendering/LightingAndShadows/Lightmass/Ba
         默认情况下，UMG蓝图钟的Widget组件只能在当前UMG蓝图中访问，无法在外部被其他蓝图访问。
 如果要被外部访问，方式如下：
 设计面板（Designer）中勾选Is Variable
-    博观而约取，厚积而薄发。-----《稼说送张琥》
+     博观而约取，厚积而薄发。-----《稼说送张琥》
       
       <p>
         <a href="https://dawnarc.com/2018/04/ue4umg-widget%E4%BD%9C%E4%B8%BA%E5%8F%98%E9%87%8F%E8%AE%BF%E9%97%AE/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -627,11 +628,11 @@ http://api.unrealengine.com/INT/Engine/Rendering/LightingAndShadows/Lightmass/Ba
       
         keywords：Protobuf 3、同时生成多个proto文件、通配符
 假设目录结构如下：
-root |-proto |-a.proto |-b.proto |-build |-protoc.exe  protobuf 2.x版本，可以通过通配符指定所有proto模板文件
-protoc --proto_path=./proto/ --cpp_out=dllexport_decl=LIBPROTOC_EXPORT:./build ./proto/*.proto  但是protobuf 3.x版本不识别通配符，不过可以通过BAT或者shell提供的遍历语法，来同时生成多个proto文件。
+root|-proto|-a.proto|-b.proto|-build|-protoc.exe protobuf 2.x版本，可以通过通配符指定所有proto模板文件
+protoc --proto_path=./proto/ --cpp_out=dllexport_decl=LIBPROTOC_EXPORT:./build ./proto/*.proto 但是protobuf 3.x版本不识别通配符，不过可以通过BAT或者shell提供的遍历语法，来同时生成多个proto文件。
 windows bat：
-set dir=%cd%/proto set out_cpp=./build for /R %%s in (*.proto) do ( if exist %%s protoc.exe -I=%dir% --cpp_out=%out_cpp% %%s )  Mac and Linux (Shell):
-for i in *.xls ; do [[ -f &quot;$i&quot; ]] || continue xls2csv &quot;$i&quot; &quot;${i%.xls}.csv&quot; done  Reference How to iterate over files in a directory with Bash?
+set dir=%cd%/protoset out_cpp=./buildfor /R %%s in (*.proto) do (if exist %%s protoc.exe -I=%dir% --cpp_out=%out_cpp% %%s) Mac and Linux (Shell):
+for i in *.xls ; do [[ -f &quot;$i&quot; ]] || continuexls2csv &quot;$i&quot; &quot;${i%.xls}.csv&quot;done Reference How to iterate over files in a directory with Bash?
       
       <p>
         <a href="https://dawnarc.com/2018/03/batchprotobuf-3-protoc-generate-multiple-proto-files/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -693,14 +694,11 @@ for i in *.xls ; do [[ -f &quot;$i&quot; ]] || continue xls2csv &quot;$i&quot; &
     <div class="postShorten-excerpt" itemprop="articleBody">
       
         顺序从低到高 Player Screen
-+ Player Screen Widgets
-Viewport
-+ Touch Interface
-+ Viewport Widgets
-实际应用 比如创建一个UserWidget，一般是AddToViewport，这样会导致UMG遮挡TouchInterface输入，如果希望TouchInterface优先UMG接收Input事件，那么可以将该UserWidget添加到PlayerScreen中：
-LoginWidget-&gt;AddToPlayerScreen();  其他参考 Default Touch Interface ZOrder
+ Player Screen Widgets  Viewport
+ Touch Interface Viewport Widgets  实际应用 比如创建一个UserWidget，一般是AddToViewport，这样会导致UMG遮挡TouchInterface输入，如果希望TouchInterface优先UMG接收Input事件，那么可以将该UserWidget添加到PlayerScreen中：
+LoginWidget-&gt;AddToPlayerScreen(); 其他参考 Default Touch Interface ZOrder
 https://forums.unrealengine.com/development-discussion/android-development/78992-default-touch-interface-zorder
-你的视角决定你的观点，你的态度决定你的未来。
+ 你的视角决定你的观点，你的态度决定你的未来。
       
       <p>
         <a href="https://dawnarc.com/2018/03/ue4touchinterface-zorder/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -763,10 +761,10 @@ https://forums.unrealengine.com/development-discussion/android-development/78992
       
         keywords：UE4, BindRaw, BindUFunction, BindUObject, Pass Arguments, Variable
 BindUFunction传递参数 示例1：
-void UMyClass::FunctionWithVar(const FString&amp; MyVar, TFunction&lt;void(const FString&amp;)&gt; InFunction) { MyLambdaHandle = OnMyDelegate.BindStatic([MyVar](TFunction&lt;void(const FString&amp;)&gt; callback) {callback(MyVar);}, InFunction); // TODO: You have to track MyLambdaHandle to be able to unregister it when needed }  https://answers.unrealengine.com/questions/715835/bindufunction-with-variable-capture-in-c.html
+void UMyClass::FunctionWithVar(const FString&amp; MyVar, TFunction&lt;void(const FString&amp;)&gt; InFunction){MyLambdaHandle = OnMyDelegate.BindStatic([MyVar](TFunction&lt;void(const FString&amp;)&gt; callback) {callback(MyVar);}, InFunction);// TODO: You have to track MyLambdaHandle to be able to unregister it when needed} https://answers.unrealengine.com/questions/715835/bindufunction-with-variable-capture-in-c.html
 示例2：
 使用固定参数绑定
-DECLARE_DELEGATE(RefreshOne); class MyClass { public: MyClass() { one.BindRaw(this, &amp;MyClass::MyFunction, (uint8)1); } void MyFunction(uint8 Val) { // Whatever } void Invoke() { one.Execute(); // Will call this-&gt;MyFunction((uint8)1); } private: RefreshOne one; };  使用动态参数绑定
+DECLARE_DELEGATE(RefreshOne);class MyClass{public:MyClass(){one.BindRaw(this, &amp;MyClass::MyFunction, (uint8)1);}void MyFunction(uint8 Val){// Whatever}void Invoke(){one.Execute(); // Will call this-&gt;MyFunction((uint8)1);}private:RefreshOne one;}; 使用动态参数绑定
       
       <p>
         <a href="https://dawnarc.com/2018/03/ue4event-delegate-multi-cast-related/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -829,15 +827,15 @@ DECLARE_DELEGATE(RefreshOne); class MyClass { public: MyClass() { one.BindRaw(th
       
         原文：https://blog.csdn.net/tommy_wxie/article/details/12841735
 1.将ndk中的arm-linux-androideabi-addr2line可执行文件的路径加入配置文件~/.bashrc中，例如：
-export PATH=$PATH:~/dlna/android-ndk-r6b/toolchains/arm-linux-androideabi-4.4.3/prebuilt/linux-x86/bin  2.使配置生效：
-source ~/.bashrc  3.使用工具。例如：
-arm-linux-androideabi-addr2line -C -f -e ~/workspace/DLNA/libs/armeabi/libctrlpt.so 0003deb4  其中，0003deb4为堆栈信息中pc的值。
+export PATH=$PATH:~/dlna/android-ndk-r6b/toolchains/arm-linux-androideabi-4.4.3/prebuilt/linux-x86/bin 2.使配置生效：
+source ~/.bashrc 3.使用工具。例如：
+arm-linux-androideabi-addr2line -C -f -e ~/workspace/DLNA/libs/armeabi/libctrlpt.so 0003deb4 其中，0003deb4为堆栈信息中pc的值。
 android应用崩溃的调试方法 有两种方法可以分析 crash 的堆栈信息
 1，google提供了一个python脚本，可以从 https://github.com/maxme/android-ndk-stacktrace-analyzer 下载这个python脚本，然后使用 adb logcat -d &gt; logfile 导出 crash 的log,使用 arm-eabi-objdump 位于build/prebuilt/linux-x86/arm-eabi-4.2.1/bin下面把so或exe转换成汇编代码，如：arm-eabi-objdump -S mylib.so &gt; mylib.asm,使用脚本
-python parse_stack.py &lt;asm-file&gt; &lt;logcat-file&gt;  2，直接使用NDK下面的arm-linux-androideabi-addr2line
+python parse_stack.py &lt;asm-file&gt; &lt;logcat-file&gt; 2，直接使用NDK下面的arm-linux-androideabi-addr2line
 (D:\android-ndk-r8\toolchains\arm-linux- androideabi-4.4.3\prebuilt\windows\bin\arm-linux-androideabi-addr2line.exe)
 例如：
-arm-linux-androideabi-addr2line -C -f -e libxxx.so 0x#####(address)  出现 ??:0 , 没法展示源代码行数的问题 在Android.mk 文件中:
+arm-linux-androideabi-addr2line -C -f -e libxxx.so 0x#####(address) 出现 ??:0 , 没法展示源代码行数的问题 在Android.mk 文件中:
 LOCAL_CFLAGS := -D__STDC_CONSTANT_MACROS -Wl,-Map=test.map -g  补充2个编译参数 -Wl,-Map=test.map -g .
       
       <p>
@@ -907,7 +905,7 @@ VaTexAtlas：一款支持TexturePacker json数据导入UE4插件
 https://github.com/ufna/VaTexAtlas
 UMG Animation
 https://docs.unrealengine.com/latest/INT/Engine/UMG/UserGuide/Animation/index.html
-甚爱必大费，多藏必厚亡。 ----老子《道德经》
+ 甚爱必大费，多藏必厚亡。 ----老子《道德经》
       
       <p>
         <a href="https://dawnarc.com/2018/03/ue42d%E5%8A%A8%E7%94%BB%E5%BA%8F%E5%88%97%E5%B8%A7paper-sprite/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -973,7 +971,7 @@ https://docs.unrealengine.com/latest/INT/Engine/UMG/UserGuide/Animation/index.ht
 http://www.tomlooman.com/circular-progress-bar-for-umg/
 下载地址：
 https://pan.baidu.com/s/1kfzODWw8i_VXfd9L5ughmg
-静待一树花开，盼你叶落归来。----安意如《人生若只如初见》
+ 静待一树花开，盼你叶落归来。----安意如《人生若只如初见》
       
       <p>
         <a href="https://dawnarc.com/2018/03/ue4%E7%8E%AF%E5%BD%A2%E8%BF%9B%E5%BA%A6%E6%9D%A1%E6%9D%90%E8%B4%A8-umg%E5%8A%A8%E7%94%BBcircular-progress-bar-for-umg/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -1099,7 +1097,7 @@ https://pan.baidu.com/s/1kfzODWw8i_VXfd9L5ughmg
       
         keywords：C++操作控制UMG动画、Widget Animation
 示例代码：
-void UMyMenuWidget::AssignAnimations() { UProperty* prop = GetClass()-&gt;PropertyLink; // Run through all properties of this class to find any widget animations while( prop != nullptr ) { // Only interested in object properties if( prop-&gt;GetClass() == UObjectProperty::StaticClass() ) { UObjectProperty* objectProp = Cast&lt;UObjectProperty&gt;(prop); // Only want the properties that are widget animations if( objectProp-&gt;PropertyClass == UWidgetAnimation::StaticClass() ) { UObject* object = objectProp-&gt;GetObjectPropertyValue_InContainer( this ); UWidgetAnimation* widgetAnim = Cast&lt;UWidgetAnimation&gt;(object); if( widgetAnim !
+void UMyMenuWidget::AssignAnimations(){UProperty* prop = GetClass()-&gt;PropertyLink;// Run through all properties of this class to find any widget animationswhile( prop != nullptr ){// Only interested in object propertiesif( prop-&gt;GetClass() == UObjectProperty::StaticClass() ){UObjectProperty* objectProp = Cast&lt;UObjectProperty&gt;(prop);// Only want the properties that are widget animationsif( objectProp-&gt;PropertyClass == UWidgetAnimation::StaticClass() ){UObject* object = objectProp-&gt;GetObjectPropertyValue_InContainer( this );UWidgetAnimation* widgetAnim = Cast&lt;UWidgetAnimation&gt;(object);if( widgetAnim !
       
       <p>
         <a href="https://dawnarc.com/2018/03/ue4get-widget-animation-in-c-/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -1162,11 +1160,12 @@ void UMyMenuWidget::AssignAnimations() { UProperty* prop = GetClass()-&gt;Proper
       
         原文
 http://wangjie.rocks/2017/11/30/ue4-ios-build-on-windows/
-问题一 ssh_exchange_identification: Connection closed by remote hostrsync: connection unexpectedly closed (0 bytes received so far) [sender]rsync error: error in rsync protocol data stream (code 12) at /home/lapo/packaging/rsync-3.0.4-1/src/rsync-3.0.4/io.c(632) [sender=3.0.4]  解决方法
+问题一 ssh_exchange_identification: Connection closed by remote hostrsync: connection unexpectedly closed (0 bytes received so far) [sender]rsync error: error in rsync protocol data stream (code 12) at /home/lapo/packaging/rsync-3.0.4-1/src/rsync-3.0.4/io.c(632) [sender=3.0.4] 解决方法
 首先保证远程机器 OSX 上的 ssh 并发数配置足够，使用命令查看
-grep MaxStartups /etc/ssh/sshd_config  一般输出如下格式 10/20/30 意思是连接达到10之后以20%的概率拒绝新连接直到30为止，可以根据需求调大第一个值并重启
+grep MaxStartups /etc/ssh/sshd_config 一般输出如下格式 10/20/30 意思是连接达到10之后以20%的概率拒绝新连接直到30为止，可以根据需求调大第一个值并重启
 其次保证 RemoteToolChainPrivate.key 文件存在于 C:\Users\用户名\AppData\Roaming\Unreal Engine\UnrealBuildTool\SSHKeys\远程机器地址\mac 文件夹下，没有的话需要在 Edit -&gt; Project Settings&hellip; -&gt; Platforms -&gt; iOS -&gt; Build 中进行配置，配置好远程 OSX 机器的地址，用户名，然后点击 Generate SSH Key 生成
 问题二 编译失败，出现如下错误
+clang: error: argument unused during compilation: '-fno-objc-exceptions' [-Werror,-Wunused-command-line-argument] 解决方法
       
       <p>
         <a href="https://dawnarc.com/2018/03/ue4%E8%BD%AC%E8%BD%BDwindows-%E8%BF%9C%E7%A8%8B%E7%BC%96%E8%AF%91ios%E8%8B%A5%E5%B9%B2%E9%97%AE%E9%A2%98/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -1237,7 +1236,7 @@ http://www.cnblogs.com/ghl_carmack/p/8580617.html
 3、 如果是Win10的话切换为专用网络，Win7切换为工作网络或者家庭网络。主要是为了确保已经开启了File And Printer Sharing。
 4、 Swarm agent waiting for remotes to become available。一种情况下是它也在自己编译，另外可能就是没有打开File And Printer Sharing。
 5、 其它的问题请参考Swarm Agent Troubleshooting
-愿你出走半生，归来仍是少年郎。纵使尘满面，鬓如霜。
+ 愿你出走半生，归来仍是少年郎。纵使尘满面，鬓如霜。
       
       <p>
         <a href="https://dawnarc.com/2018/03/ue4%E8%BD%AC%E8%BD%BD%E8%81%94%E6%9C%BA%E7%83%98%E7%84%99/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -1312,7 +1311,7 @@ InstancedStaticMeshComponent::UseDynamicInstanceBuffer 设置为true，默认为
 Performance Guidelines for Mobile Devices
 https://docs.unrealengine.com/latest/INT/Platforms/Mobile/Performance/
 Materials for Mobile Platforms https://docs.unrealengine.com/latest/INT/Platforms/Mobile/Materials/
-只有诗人同圣徒才能相信，在沥青路上辛勤浇水会培养出百合花来。 ----毛姆
+ 只有诗人同圣徒才能相信，在沥青路上辛勤浇水会培养出百合花来。 ----毛姆
       
       <p>
         <a href="https://dawnarc.com/2018/03/ue4%E7%A7%BB%E5%8A%A8%E7%AB%AF%E6%9D%90%E8%B4%A8%E4%B8%8E%E8%B4%B4%E5%9B%BE%E9%97%AE%E9%A2%98/" class="postShorten-excerpt_link link">Continue reading</a>

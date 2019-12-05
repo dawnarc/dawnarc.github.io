@@ -5,19 +5,19 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.58.3 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.60.1 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="UE4, Animation">
 <meta name="description" content="Reference: Master pose vs copy pose vs mesh merge in UE4
 https://iluvanimation.blogspot.tw/2017/04/master-pose-vs-copy-pose-vs-mesh-merge.html
-Since I get this question so often, I&rsquo;m just writing quick summary for each.
+Since I get this question so often, I&#39;m just writing quick summary for each.
 When you have different parts of bodies, and you want to allow players to pick which part they want, we have multiple choices, and people are wondering what are the main differences.
 Say you have head, upper body, lower body, and how do you allow them to pick and what are the differences?">
 
 
 <meta property="og:description" content="Reference: Master pose vs copy pose vs mesh merge in UE4
 https://iluvanimation.blogspot.tw/2017/04/master-pose-vs-copy-pose-vs-mesh-merge.html
-Since I get this question so often, I&rsquo;m just writing quick summary for each.
+Since I get this question so often, I&#39;m just writing quick summary for each.
 When you have different parts of bodies, and you want to allow players to pick which part they want, we have multiple choices, and people are wondering what are the main differences.
 Say you have head, upper body, lower body, and how do you allow them to pick and what are the differences?">
 <meta property="og:type" content="article">
@@ -28,12 +28,12 @@ Say you have head, upper body, lower body, and how do you allow them to pick and
 <meta property="og:site_name" content="玄冬Wong">
 <meta property="og:description" content="Reference: Master pose vs copy pose vs mesh merge in UE4
 https://iluvanimation.blogspot.tw/2017/04/master-pose-vs-copy-pose-vs-mesh-merge.html
-Since I get this question so often, I&rsquo;m just writing quick summary for each.
+Since I get this question so often, I&#39;m just writing quick summary for each.
 When you have different parts of bodies, and you want to allow players to pick which part they want, we have multiple choices, and people are wondering what are the main differences.
 Say you have head, upper body, lower body, and how do you allow them to pick and what are the differences?">
 <meta name="twitter:description" content="Reference: Master pose vs copy pose vs mesh merge in UE4
 https://iluvanimation.blogspot.tw/2017/04/master-pose-vs-copy-pose-vs-mesh-merge.html
-Since I get this question so often, I&rsquo;m just writing quick summary for each.
+Since I get this question so often, I&#39;m just writing quick summary for each.
 When you have different parts of bodies, and you want to allow players to pick which part they want, we have multiple choices, and people are wondering what are the main differences.
 Say you have head, upper body, lower body, and how do you allow them to pick and what are the differences?">
 <meta property="og:locale" content="en-us">
@@ -367,71 +367,54 @@ if (!doNotTrack) {
           
           <div class="post-content markdown" itemprop="articleBody">
             <div class="main-content-wrap">
-              
-
-<p>Reference: Master pose vs copy pose vs mesh merge in UE4<br />
+              <p>Reference: Master pose vs copy pose vs mesh merge in UE4<br>
 <a href="https://iluvanimation.blogspot.tw/2017/04/master-pose-vs-copy-pose-vs-mesh-merge.html">https://iluvanimation.blogspot.tw/2017/04/master-pose-vs-copy-pose-vs-mesh-merge.html</a></p>
-
-<p>Since I get this question so often, I&rsquo;m just writing quick summary for each.</p>
-
+<p>Since I get this question so often, I'm just writing quick summary for each.</p>
 <p>When you have different parts of bodies, and you want to allow players to pick which part they want, we have multiple choices, and people are wondering what are the main differences.</p>
-
 <p>Say you have head, upper body, lower body, and how do you allow them to pick and what are the differences?</p>
-
 <h5 id="1-master-pose-component">1. Master Pose Component</h5>
-
 <ul>
 <li>This is Blueprint callable action that you set <code>Child-&gt;SetMaseterPoseComponent(Body)</code>, then <strong>Body</strong> becomes the master of <strong>Child</strong>, which means <strong>Child</strong> will follow whatever <strong>Body</strong> does.</li>
-<li>Behind of scene, <strong>Child</strong> does not have any bone transform buffer and it doesn&rsquo;t run any animation system even if you set AnimBP on the <strong>Child</strong>, and it just uses <strong>Body&rsquo;s</strong> bone transform buffer when rendered. This makes very light weight attachment system. Only component that has to run animation is <strong>Body</strong>, and all attachment will just use <strong>Body&rsquo;s</strong> bone transform.</li>
+<li>Behind of scene, <strong>Child</strong> does not have any bone transform buffer and it doesn't run any animation system even if you set AnimBP on the <strong>Child</strong>, and it just uses <strong>Body's</strong> bone transform buffer when rendered. This makes very light weight attachment system. Only component that has to run animation is <strong>Body</strong>, and all attachment will just use <strong>Body's</strong> bone transform.</li>
 <li>This does not reduce render cost. You still render # of components separate (and more drawcalls if you have more sections for each), but this reduces game thread cost.</li>
 <li>Limitation
-
 <ul>
-<li><strong>Child</strong> has to have SUBSET of exact matching structure. You can&rsquo;t have any other extra joint or skip the joint. Since there is no bone buffer for that extra joint, that will render in the origin of the mesh.</li>
-<li>You can&rsquo;t run any other animation or physics on the <strong>Child</strong>.</li>
-</ul></li>
+<li><strong>Child</strong> has to have SUBSET of exact matching structure. You can't have any other extra joint or skip the joint. Since there is no bone buffer for that extra joint, that will render in the origin of the mesh.</li>
+<li>You can't run any other animation or physics on the <strong>Child</strong>.</li>
 </ul>
-
+</li>
+</ul>
 <h5 id="2-copy-pose-from-mesh">2. Copy Pose From Mesh</h5>
-
 <ul>
 <li>This is anim graph node that you can use on AnimBP of the <strong>Child</strong>.</li>
-<li>It allows you to copy from any SkeletalMeshComponent. You also want to make sure the SkeletalMeshComponent (I&rsquo;ll call this <strong>Body</strong>) you copy from ALREADY has ticked. Otherwise you&rsquo;re going to copy last frame&rsquo;s animation. To ensure this, you can just attach <strong>Child</strong> to the <strong>Body</strong>. Once you attach, it will ensure parent ticks first before child.</li>
+<li>It allows you to copy from any SkeletalMeshComponent. You also want to make sure the SkeletalMeshComponent (I'll call this <strong>Body</strong>) you copy from ALREADY has ticked. Otherwise you're going to copy last frame's animation. To ensure this, you can just attach <strong>Child</strong> to the <strong>Body</strong>. Once you attach, it will ensure parent ticks first before child.</li>
 </ul>
-
 <figure>
     <img src="https://dawnarc.com/img/20180529-[UE4][Animation]Master%20Pose,%20Copy%20Pose,%20Mesh%20merge%e5%8c%ba%e5%88%ab/[UE4][Animation]Master%20Pose,%20Copy%20Pose,%20Mesh%20merge%e5%8c%ba%e5%88%ab-01.jpg"/> 
 </figure>
-
 
 <ul>
 <li>This only copies the bones that matching, and everything else will stay on reference pose.</li>
 <li>Or you can choose to play animation on top of the copied transform as illustrated above.</li>
 <li>Limitation
-
 <ul>
-<li>If <strong>Body</strong> has physics on them, you&rsquo;d like to make sure to run this AFTER your parent blends physics with it, which means it has to tick in Post Physics, but that means you can&rsquo;t have any physics on the <strong>Child</strong>. I did not test this but in theory, you can have the <strong>Child</strong> to have physics, but not both of them at the same time.</li>
+<li>If <strong>Body</strong> has physics on them, you'd like to make sure to run this AFTER your parent blends physics with it, which means it has to tick in Post Physics, but that means you can't have any physics on the <strong>Child</strong>. I did not test this but in theory, you can have the <strong>Child</strong> to have physics, but not both of them at the same time.</li>
 <li>Of course more expensive than Master Pose because this runs animation on each Child.</li>
-</ul></li>
 </ul>
-
+</li>
+</ul>
 <h5 id="3-mesh-merge">3. Mesh merge.</h5>
-
 <ul>
 <li>Mesh merge allows you to create SkeletalMesh from multiple meshes</li>
 <li>It has high initial cost of creating the SkeletalMesh</li>
 <li>Rendering cost is cheap since you can only render one mesh as opposed to multiple meshes</li>
-<li>Main <strong>Body</strong> has to contain all the animations because the merged mesh will only use the skeleton that&rsquo;s set, and it will has to contain all the joints you&rsquo;d need to animate. Say you have extra joints for certain body parts, you still have to have all animations on the <strong>Body</strong>.</li>
+<li>Main <strong>Body</strong> has to contain all the animations because the merged mesh will only use the skeleton that's set, and it will has to contain all the joints you'd need to animate. Say you have extra joints for certain body parts, you still have to have all animations on the <strong>Body</strong>.</li>
 <li>Morphtarget is not supported</li>
 <li>You only run one animation on the merged mesh.</li>
 </ul>
-
 <p>I think this sums up the main points. I hope this helps.</p>
-
-<p>With recent changes(future release of 4.17), preview animation in persona with additional meshes will use Copy Pose from Mesh since that supports both Master/Copy Pose from Mesh and we care less about performance in editor than in runtime. Also you can create custom DataAsset that supports preview and you can support your custom mesh preview. Again for 4.17 but it&rsquo;s coming. :)</p>
-
-<hr />
-
+<p>With recent changes(future release of 4.17), preview animation in persona with additional meshes will use Copy Pose from Mesh since that supports both Master/Copy Pose from Mesh and we care less about performance in editor than in runtime. Also you can create custom DataAsset that supports preview and you can support your custom mesh preview. Again for 4.17 but it's coming. :)</p>
+<hr>
 <p><code>千古功名一纸书,不过扬灰于尘土。---花香蘑菇《君临臣下》</code></p>
 
               

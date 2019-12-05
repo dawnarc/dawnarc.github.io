@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.58.3 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.60.1 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="">
 <meta name="description" content="Keywords: Android NDK Toolchains">
@@ -357,70 +357,46 @@ if (!doNotTrack) {
           <div class="post-content markdown" itemprop="articleBody">
             <div class="main-content-wrap">
               <p>Keywords: Android NDK Toolchains</p>
-
 <p>LLVM is an umbrela project now, and it contains multiple modular and reusable compiler and toolchain technologies. You can check more details at The <a href="https://llvm.org/">LLVM Compiler Infrastructure</a>.</p>
-
 <p>For Android NDK, llvm became the default toolchain since r13b and gcc was removed since r18b.</p>
-
 <p>According to toolchains directory <code>toolchains/llvm/prebuilt/darwin-x86_64</code>, llvm supports all the ABIs, i.e. x86, x86_64, arm, arm64.</p>
-
 <p>Probably there will be only one <code>llvm</code> directory under <code>toolchains</code> directory in future NDK releases when all the gcc related tools, headers and libs are completely ported to llvm.</p>
-
 <figure>
     <img src="https://dawnarc.com/img/20190705-[Android%20NDK]Toolchains%20of%20LLVM%20and%20GCC/[Android%20NDK]Toolchains%20of%20LLVM%20and%20GCC-01.png"/> 
 </figure>
 
-
 <h5 id="updates">Updates</h5>
-
 <p>Just did a quick test on different NDK revisions to check the configurations for <code>--gcc-toolchain</code> and <code>--sysroot</code> which are for cross compilation.</p>
-
 <h5 id="on-r16b">On r16b</h5>
-
 <pre><code>--target=armv7-none-linux-androideabi 
 --gcc-toolchain=~/ndks/android-ndk-r16b/toolchains/arm-linux-androideabi-4.9/prebuilt/darwin-x86_64
 --sysroot=~/ndks/android-ndk-r16b/sysroot 
 </code></pre>
-
 <h5 id="on-r17c">On r17c</h5>
-
 <pre><code>--target=armv7-none-linux-androideabi
 --gcc-toolchain=~/ndks/android-ndk-r17c/toolchains/arm-linux-androideabi-4.9/prebuilt/darwin-x86_64
 --sysroot=~/ndks/android-ndk-r17c/sysroot
 </code></pre>
-
 <h5 id="on-r18b">On r18b</h5>
-
 <pre><code>--target=armv7-none-linux-androideabi19
 --gcc-toolchain=~/ndks/android-ndk-r18b/toolchains/arm-linux-androideabi-4.9/prebuilt/darwin-x86_64
 --sysroot=~/ndks/android-ndk-r18b/sysroot
 </code></pre>
-
 <h5 id="on-r19b">On r19b</h5>
-
 <pre><code>--target=armv7-none-linux-androideabi19 
 --gcc-toolchain=~/ndks/android-ndk-r19b/toolchains/llvm/prebuilt/darwin-x86_64 
 --sysroot=~/ndks/android-ndk-r19b/toolchains/llvm/prebuilt/darwin-x86_64/sysroot 
 </code></pre>
-
 <p>As seen above, <strong>before NDK r19b</strong>, NDK uses clang compiler but the <code>--gcc-toolchain</code> and <code>--sysroot</code> are configured as the older paths for build tools, headers and libs.</p>
-
 <p>But, <strong>since NDK r19b</strong>, the <code>--gcc-toolchain</code> and <code>--sysroot</code> are configured as the new tool chains <strong>llvm</strong>, i.e. <code>toolchains/llvm/prebuilt/darwin-x86_64</code>, and the tools (e.g. ranlib, ar, strip, etc) header files and libraries of &ldquo;llvm version&rdquo; will be used.</p>
-
 <p>Also, note that <code>toolchains/llvm/prebuilt/darwin-x86_64</code> contains the support for all the Android ABIs, i.e. <code>aarch64-linux-android</code> for <strong>arm64-v8a</strong>, <code>arm-linux-androideabi</code> for <strong>armeabi-v7a</strong>, <code>i686-linux-android</code> for <strong>x86</strong>, <code>x86_64-linux-android</code> for <strong>x86_64</strong>.</p>
-
 <p>So, <strong>you can try out the NDK r19b if you want to purely use llvm toolchains</strong>.</p>
-
 <h5 id="reference">Reference</h5>
-
-<p>Android NDK path variable for “strip” command in CMake build tool chain<br />
+<p>Android NDK path variable for “strip” command in CMake build tool chain<br>
 <a href="https://stackoverflow.com/questions/53409479/android-ndk-path-variable-for-strip-command-in-cmake-build-tool-chain">https://stackoverflow.com/questions/53409479/android-ndk-path-variable-for-strip-command-in-cmake-build-tool-chain</a></p>
-
-<p>How to set build environment variables to use Clang as part of NDK?<br />
+<p>How to set build environment variables to use Clang as part of NDK?<br>
 <a href="https://stackoverflow.com/questions/36075502/how-to-set-build-environment-variables-to-use-clang-as-part-of-ndk">https://stackoverflow.com/questions/36075502/how-to-set-build-environment-variables-to-use-clang-as-part-of-ndk</a></p>
-
-<hr />
-
+<hr>
 <p><code>尽管好几十万人聚居在一小块地方，竭力把土地糟蹋得面目全非，尽管他们肆意把石头砸进地里，不让花草树木生长，尽管他们除尽刚出土的小草，把煤炭和石油烧得烟雾腾腾，尽管他们滥伐树木，驱逐鸟兽，在城市里，春天毕竟还是春天。──列夫·尼古拉耶维奇·托尔斯泰《复活》</code></p>
               
             </div>

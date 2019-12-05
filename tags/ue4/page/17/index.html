@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.58.3 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.60.1 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="">
 <meta name="description" content="Hugo tranquilpeak theme demo">
@@ -350,7 +350,7 @@ if (!doNotTrack) {
     </div>
     <div class="postShorten-excerpt" itemprop="articleBody">
       
-         1，获取场景中现成的对象并修改其坐标 此蓝图为Level BP，其中Character_2、Character_3、Character_4都是之前从World Outliner窗口中拖进场景中的，不是spawn出来的，然后按下F键来移动3个角色的位置。 3个Character变量是从World Outliner中拖进来的： 
+        1，获取场景中现成的对象并修改其坐标 此蓝图为Level BP，其中Character_2、Character_3、Character_4都是之前从World Outliner窗口中拖进场景中的，不是spawn出来的，然后按下F键来移动3个角色的位置。 3个Character变量是从World Outliner中拖进来的： 
       
       <p>
         <a href="https://dawnarc.com/2016/08/ue4%E5%B8%B8%E7%94%A8%E8%93%9D%E5%9B%BE%E5%A4%87%E5%BF%98/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -411,7 +411,7 @@ if (!doNotTrack) {
     </div>
     <div class="postShorten-excerpt" itemprop="articleBody">
       
-         Keywords: UE4, Dynamic NavMesh, Avoidance
+        Keywords: UE4, Dynamic NavMesh, Avoidance
 Dynamic NavMesh 1，设置NavigationMesh的Runtime Generation为Dynamic   2，设置胶囊体为动态障碍物。
 先选中胶囊体   再勾选Dynamic Obstacle（默认是勾选的）   Epic官方讲解的动态避让AI方案 Dynamic Navigation Mesh
 https://answers.unrealengine.com/questions/223395/dynamic-navigation-mesh.html
@@ -624,10 +624,10 @@ C++方式
 引擎的C++代码有个叫 ADetourCrowdAIController 的class，但是这个class无法继承；
 要在C++中使用Detour Crowd AI，需要借助 UCrowdFollowingComponent，在AIController的构造函数中设置即可
 头文件：
-MyAIController(const FObjectInitializer&amp; ObjectInitializer = FObjectInitializer::Get());  cpp：
-MyAIController::MyAIController(const FObjectInitializer&amp; ObjectInitializer) : Super(ObjectInitializer.SetDefaultSubobjectClass&lt;UCrowdFollowingComponent&gt;(TEXT(&quot;PathFollowingComponent&quot;))) { }  转向抖动问题 使用默认的UCrowdFollowingComponent，角色在转向时会抖动，要解决这个问题，需要将属性UCrowdFollowingComponent::bSuspendCrowdSimulation设置为true。
+MyAIController(const FObjectInitializer&amp; ObjectInitializer = FObjectInitializer::Get()); cpp：
+MyAIController::MyAIController(const FObjectInitializer&amp; ObjectInitializer): Super(ObjectInitializer.SetDefaultSubobjectClass&lt;UCrowdFollowingComponent&gt;(TEXT(&quot;PathFollowingComponent&quot;))){ } 转向抖动问题 使用默认的UCrowdFollowingComponent，角色在转向时会抖动，要解决这个问题，需要将属性UCrowdFollowingComponent::bSuspendCrowdSimulation设置为true。
 完整代码：
-#include &quot;Navigation/CrowdFollowingComponent.h&quot; AMyAIController::AMyAIController(const FObjectInitializer&amp; ObjectInitializer) : Super(ObjectInitializer.SetDefaultSubobjectClass&lt;UCrowdFollowingComponent&gt;(TEXT(&quot;PathFollowingComponent&quot;))) { if (UCrowdFollowingComponent* CrowdComp = Cast&lt;UCrowdFollowingComponent&gt;(GetComponentByClass(UCrowdFollowingComponent::StaticClass()))) { CrowdComp-&gt;SuspendCrowdSteering(true); //CrowdComp-&gt;SetCrowdAnticipateTurns(true); //CrowdComp-&gt;SetCrowdSeparation(true); //CrowdComp-&gt;SetCrowdPathOffset(true); //CrowdComp-&gt;SetCrowdAvoidanceQuality(ECrowdAvoidanceQuality::High); } }  但是`SuspendCrowdSteering` 设置为true后，自动避让面前单位的功能就失效了，如果要处理这个问题，建议重写 UCrowdFollowingComponent 中的转向逻辑，因为其内部没有考虑慢速转向的问题。 Crowd Manager 配置 Project Settings -》Engine -》 Navigation System -》 Crowd Manager Class
+#include &quot;Navigation/CrowdFollowingComponent.h&quot;AMyAIController::AMyAIController(const FObjectInitializer&amp; ObjectInitializer): Super(ObjectInitializer.SetDefaultSubobjectClass&lt;UCrowdFollowingComponent&gt;(TEXT(&quot;PathFollowingComponent&quot;))){if (UCrowdFollowingComponent* CrowdComp = Cast&lt;UCrowdFollowingComponent&gt;(GetComponentByClass(UCrowdFollowingComponent::StaticClass()))){CrowdComp-&gt;SuspendCrowdSteering(true);//CrowdComp-&gt;SetCrowdAnticipateTurns(true);//CrowdComp-&gt;SetCrowdSeparation(true);//CrowdComp-&gt;SetCrowdPathOffset(true);//CrowdComp-&gt;SetCrowdAvoidanceQuality(ECrowdAvoidanceQuality::High);}} 但是`SuspendCrowdSteering` 设置为true后，自动避让面前单位的功能就失效了，如果要处理这个问题，建议重写 UCrowdFollowingComponent 中的转向逻辑，因为其内部没有考虑慢速转向的问题。 Crowd Manager 配置 Project Settings -》Engine -》 Navigation System -》 Crowd Manager Class
       
       <p>
         <a href="https://dawnarc.com/2016/07/ue4%E5%A6%82%E4%BD%95%E5%90%AF%E7%94%A8detour-crowd-ai-controller%E7%BE%A4%E7%BB%84%E7%A7%BB%E5%8A%A8%E6%97%B6%E7%9A%84%E7%BB%95%E8%B7%AF%E9%97%AE%E9%A2%98/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -872,11 +872,11 @@ MyAIController::MyAIController(const FObjectInitializer&amp; ObjectInitializer) 
     <div class="postShorten-excerpt" itemprop="articleBody">
       
         代码：
-float Len = FMath::Sqrt(100 * 100 + 100 * 100); FVector Loc = FVector(100.f, 100.f, 0.f) + FRotator(0.f, 45.f, 0.f).Vector() * Len;  结果：
-Loc = {X=200.f, Y=200.f, Z=0.f}  FRotator::Vector()对应的蓝图函数为GetRotationXVector
+float Len = FMath::Sqrt(100 * 100 + 100 * 100);FVector Loc = FVector(100.f, 100.f, 0.f) + FRotator(0.f, 45.f, 0.f).Vector() * Len; 结果：
+Loc = {X=200.f, Y=200.f, Z=0.f} FRotator::Vector()对应的蓝图函数为GetRotationXVector
  =================================
 例子2：
-float Len = FMath::Sqrt(100 * 100 + 100 * 100); FVector Loc1 = FVector(0.f, 0.f, 0.f) + FRotator(0.f, 45.f, 0.f).Vector() * Len; FVector Loc2 = FVector(0.f, 0.f, 0.f) + FRotator(0.f, 135.f, 0.f).Vector() * Len; FVector Loc3 = FVector(0.
+float Len = FMath::Sqrt(100 * 100 + 100 * 100);FVector Loc1 = FVector(0.f, 0.f, 0.f) + FRotator(0.f, 45.f, 0.f).Vector() * Len;FVector Loc2 = FVector(0.f, 0.f, 0.f) + FRotator(0.f, 135.f, 0.f).Vector() * Len;FVector Loc3 = FVector(0.
       
       <p>
         <a href="https://dawnarc.com/2016/07/ue4%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0%E5%9F%BA%E4%BA%8E%E6%9F%90%E7%82%B9%E5%90%91%E6%9F%90%E6%96%B9%E5%90%91%E4%B8%8A%E6%8A%95%E5%B0%84%E6%8C%87%E5%AE%9A%E8%B7%9D%E7%A6%BB%E5%90%8E%E7%9A%84%E5%9D%90%E6%A0%87%E8%AE%A1%E7%AE%97/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -939,9 +939,9 @@ float Len = FMath::Sqrt(100 * 100 + 100 * 100); FVector Loc1 = FVector(0.f, 0.f,
       
         原始的数学公式不列举了，需要的话找个Math库看下源码。这里以UE4的API说明：
 情况一：已知两个坐标点，求连线与空间坐标的夹角 已知空间中两个点FVector V1, V2，方向向量V3 = V2 - V1，求V3与空间坐标的夹角：
-FRotator R = (V2 - V1).Rotation();  情况二：单个向量与世界坐标的夹角 已知方向向量Vector V1，求V1与空间坐标轴的夹角Rotator R1：即将Vector转换为Rotator
-FRotator R1 = FVector(100.f, 100.f, 0.f).Rotation(); FRotator R2 = FVector(-100.f, -100.f, 0.f).Rotation(); FRotator R3 = FVector(100.f, 0.f, 0.f).Rotation(); FRotator R4 = FVector(0.f, 100.f, 0.f).Rotation();  结果分别是：
-R1 = {Pitch=0.0 Yaw=45.0 Roll=0.0 } R2 = {Pitch=0.0 Yaw=-135.0 Roll=0.0 } R3 = {Pitch=0.0 Yaw=0.0 Roll=0.0 } R4 = {Pitch=0.0 Yaw=90.0 Roll=0.0 }  FVector::Rotation()函数的内部实现（局部）：
+FRotator R = (V2 - V1).Rotation(); 情况二：单个向量与世界坐标的夹角 已知方向向量Vector V1，求V1与空间坐标轴的夹角Rotator R1：即将Vector转换为Rotator
+FRotator R1 = FVector(100.f, 100.f, 0.f).Rotation();FRotator R2 = FVector(-100.f, -100.f, 0.f).Rotation();FRotator R3 = FVector(100.f, 0.f, 0.f).Rotation();FRotator R4 = FVector(0.f, 100.f, 0.f).Rotation(); 结果分别是：
+R1 = {Pitch=0.0 Yaw=45.0 Roll=0.0 }R2 = {Pitch=0.0 Yaw=-135.0 Roll=0.0 }R3 = {Pitch=0.0 Yaw=0.0 Roll=0.0 }R4 = {Pitch=0.0 Yaw=90.0 Roll=0.0 } FVector::Rotation()函数的内部实现（局部）：
       
       <p>
         <a href="https://dawnarc.com/2016/07/ue4%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0%E5%B7%B2%E7%9F%A5%E6%96%B9%E5%90%91%E5%90%91%E9%87%8F%E6%B1%82%E8%AF%A5%E5%90%91%E9%87%8F%E4%B8%8E%E7%A9%BA%E9%97%B4%E5%9D%90%E6%A0%87%E8%BD%B4%E7%9A%84%E5%A4%B9%E8%A7%92/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -1064,10 +1064,10 @@ R1 = {Pitch=0.0 Yaw=45.0 Roll=0.0 } R2 = {Pitch=0.0 Yaw=-135.0 Roll=0.0 } R3 = {
     <div class="postShorten-excerpt" itemprop="articleBody">
       
         keywords：UE4、Linear Algebra、Plane Geometry、线性代数、解析几何
-范围判定 检测一个点是否在一个多边形(或矩形)的内部(2D和3D) FBox2D::IsInside(const FVector2D&amp; TestPoint) FBox::IsInside(const FVector&amp; TestPoint) FIntRect::Contains( FIntPoint P )  角度计算 计算两个向量的夹角(Get an angle between 2 Vectors)，范围：(0, 180) float AimAtAngle = FMath::RadiansToDegrees(acosf(FVector::DotProduct(PlayerDirection, MouseDirection)));  参考：How to get an angle between 2 Vectors?
+范围判定 检测一个点是否在一个多边形(或矩形)的内部(2D和3D) FBox2D::IsInside(const FVector2D&amp; TestPoint)FBox::IsInside(const FVector&amp; TestPoint)FIntRect::Contains( FIntPoint P ) 角度计算 计算两个向量的夹角(Get an angle between 2 Vectors)，范围：(0, 180) float AimAtAngle = FMath::RadiansToDegrees(acosf(FVector::DotProduct(PlayerDirection, MouseDirection))); 参考：How to get an angle between 2 Vectors?
 https://answers.unrealengine.com/questions/31058/how-to-get-an-angle-between-2-vectors.html
-计算方向向量与空间坐标轴（X、Y、Z）的夹角，范围：(-180, 180) FRotator Rot = UKismetMathLibrary::MakeRotFromX(TestVector); float Angle = Rot.Yaw; //(-180, 180)  判断角色A在角色B的左边还是右边（或者角色A相对角色B的四个方向） 参考自引擎代码：UAnimInstance::CalculateDirection()
-//-180到0表示 ActorA 在 ActorB 左边，0到180表示 ActorA 在 ActorB 右边 float CalculateDirecton(const AActor* ActorA, const AActor* ActorB) { FVector TestDire = ActorA-&gt;GetActorLocation() - ActorB-&gt;GetActorLocation(); FMatrix RotMatrix = FRotationMatrix(ActorB-&gt;GetActorRotation()); FVector ForwardVector = RotMatrix.
+计算方向向量与空间坐标轴（X、Y、Z）的夹角，范围：(-180, 180) FRotator Rot = UKismetMathLibrary::MakeRotFromX(TestVector);float Angle = Rot.Yaw; //(-180, 180) 判断角色A在角色B的左边还是右边（或者角色A相对角色B的四个方向） 参考自引擎代码：UAnimInstance::CalculateDirection()
+//-180到0表示 ActorA 在 ActorB 左边，0到180表示 ActorA 在 ActorB 右边float CalculateDirecton(const AActor* ActorA, const AActor* ActorB){FVector TestDire = ActorA-&gt;GetActorLocation() - ActorB-&gt;GetActorLocation();FMatrix RotMatrix = FRotationMatrix(ActorB-&gt;GetActorRotation());FVector ForwardVector = RotMatrix.
       
       <p>
         <a href="https://dawnarc.com/2016/06/ue4linear-algebra-plane-geometry-api/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -1129,7 +1129,7 @@ https://answers.unrealengine.com/questions/31058/how-to-get-an-angle-between-2-v
     <div class="postShorten-excerpt" itemprop="articleBody">
       
         AirControl: 当Jumping或者Falling的时候，侧向移动的速度。默认为0.05，1表示以最大速度侧向移动，0表示禁止侧向移动
-CharacterMovement 0x000002244572a400 (Name=0x0000022474e0aab8 &quot;CharMoveComp&quot;) UCharacterMovementComponent * {UE4Editor-Engine.dll!UCharacterMovementComponent} [UCharacterMovementComponent] (Name=0x0000022474e0aab8 &quot;CharMoveComp&quot;) UE4Editor-Engine.dll!UCharacterMovementComponent UPawnMovementComponent (Name=0x0000022474e0aab8 &quot;CharMoveComp&quot;) UPawnMovementComponent IRVOAvoidanceInterface {...} IRVOAvoidanceInterface INetworkPredictionInterface {...} INetworkPredictionInterface CharacterOwner 0x000002244571ab00 (Name=0x000002240ef84228 &quot;pawn_shuangtouguai_charBP_C&quot;_0) ACharacter * {AWarriorCharacter} GravityScale 1.00000000 float MaxStepHeight 45.0000000 float JumpZVelocity 420.000000 float JumpOffJumpZFactor 0.500000000 float WalkableFloorAngle 44.7650833 float WalkableFloorZ 0.710000038 float MovementMode MOVE_None (0) TEnumAsByte&lt;enum EMovementMode&gt; CustomMovementMode 0 '\0' unsigned char OldBaseLocation {X=0.000000000 Y=0.000000000 Z=0.000000000 } FVector OldBaseQuat {X=0.000000000 Y=0.000000000 Z=0.000000000 ...} FQuat GroundFriction 8.
+CharacterMovement	0x000002244572a400 (Name=0x0000022474e0aab8 &quot;CharMoveComp&quot;)	UCharacterMovementComponent * {UE4Editor-Engine.dll!UCharacterMovementComponent}[UCharacterMovementComponent]	(Name=0x0000022474e0aab8 &quot;CharMoveComp&quot;)	UE4Editor-Engine.dll!UCharacterMovementComponentUPawnMovementComponent	(Name=0x0000022474e0aab8 &quot;CharMoveComp&quot;)	UPawnMovementComponentIRVOAvoidanceInterface	{...}	IRVOAvoidanceInterfaceINetworkPredictionInterface	{...}	INetworkPredictionInterfaceCharacterOwner	0x000002244571ab00 (Name=0x000002240ef84228 &quot;pawn_shuangtouguai_charBP_C&quot;_0)	ACharacter * {AWarriorCharacter}GravityScale	1.00000000	floatMaxStepHeight	45.0000000	floatJumpZVelocity	420.000000	floatJumpOffJumpZFactor	0.500000000	floatWalkableFloorAngle	44.7650833	floatWalkableFloorZ	0.710000038	floatMovementMode	MOVE_None (0)	TEnumAsByte&lt;enum EMovementMode&gt;CustomMovementMode	0 '\0'	unsigned charOldBaseLocation	{X=0.000000000 Y=0.000000000 Z=0.000000000 }	FVectorOldBaseQuat	{X=0.000000000 Y=0.000000000 Z=0.000000000 ...}	FQuatGroundFriction	8.
       
       <p>
         <a href="https://dawnarc.com/2016/06/ue4charactermovecomponent%E4%B8%AD%E5%90%84%E4%B8%AA%E5%B1%9E%E6%80%A7%E7%9A%84%E6%84%8F%E4%B9%89%E5%8F%8A%E9%BB%98%E8%AE%A4%E5%80%BC/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -1190,15 +1190,13 @@ CharacterMovement 0x000002244572a400 (Name=0x0000022474e0aab8 &quot;CharMoveComp
     </div>
     <div class="postShorten-excerpt" itemprop="articleBody">
       
-        如何修改角色的最大移动速度 if (UCharacterMovementComponent* Movement = MyCharacter-&gt;GetCharacterMovement()) { Movement-&gt;MaxWalkSpeed *= 0.5; }  如何修改角色的当前移动速度 Tick() 中执行：
-GetCharacterMovement()-&gt;Velocity = FVector(0.f, 500.f, 0.f);  如何停止正在移动的Pawn AController::StopMovement()  修改重力加速度(Gravity)  编辑器中设置全局重力加速度
+        如何修改角色的最大移动速度 if (UCharacterMovementComponent* Movement = MyCharacter-&gt;GetCharacterMovement()){Movement-&gt;MaxWalkSpeed *= 0.5;} 如何修改角色的当前移动速度 Tick() 中执行：
+GetCharacterMovement()-&gt;Velocity = FVector(0.f, 500.f, 0.f); 如何停止正在移动的Pawn AController::StopMovement() 修改重力加速度(Gravity)   编辑器中设置全局重力加速度
 Project Settings -》 Engine -》 Physics -》 Default Physics Settings -》 Default Gravity Z。
- 运行时runtime期间设置全局重力加速度：
-AWorldSettings* MyWorldSetting=GetWorldSettings(); MyWorldSetting-&gt;bGlobalGravitySet=true; MyWorldSetting-&gt;GlobalGravityZ = 900.f;  设置单个角色的重力加速度（倍率）
-MyCharacter-&gt;GetCharacterMovement()-&gt;GravityScale = 100.f   飞行模式中的加速减速问题 CharacterMovement默认有一个加速效果（属性值为MaxAcceleration，默认为2048，表示加速率），如果MovementMode设置为Walking模式，当调用Controller-&gt;StopMovement()来立即停止移动； 但是Flying Mode时，即使不再执行AddMovementInput()，Actor仍然会继续滑行一段距离，如果希望此时立即停止不滑行，需要将减速速率（默认为0）设置为加速速率的大小：
-GetCharacterMovement()-&gt;BrakingDecelerationFlying = GetCharacterMovement()-&gt;MaxAcceleration;  设置MovementMode时的注意事项 如果一个Actor被Spawn出来之后，其MovementMode默认状态是Walking，如果此时Spawn的位置在空中，在没有Controller对其Possess的情况下，其静止在空中，当Possess之后，MovementMode会自动变为Falling，如果想让其继续停留在空中(比如飞行类的角色)，此时再手动将其MovementMode设置为Flying。绝对不能在possess之前设置，否则设置状态会被引擎修改掉。
-Controller.StopMovement()和MovementComponent.StopMovementImmediately()的区别 前者只执行：
-PathFollowingComp-&gt;AbortMove(*this, FPathFollowingResultFlags::MovementStop);  后者先执行：
+  运行时runtime期间设置全局重力加速度：
+ AWorldSettings* MyWorldSetting=GetWorldSettings();MyWorldSetting-&gt;bGlobalGravitySet=true;MyWorldSetting-&gt;GlobalGravityZ = 900.f;   设置单个角色的重力加速度（倍率）
+ MyCharacter-&gt;GetCharacterMovement()-&gt;GravityScale = 100.f   飞行模式中的加速减速问题 CharacterMovement默认有一个加速效果（属性值为MaxAcceleration，默认为2048，表示加速率），如果MovementMode设置为Walking模式，当调用Controller-&gt;StopMovement()来立即停止移动； 但是Flying Mode时，即使不再执行AddMovementInput()，Actor仍然会继续滑行一段距离，如果希望此时立即停止不滑行，需要将减速速率（默认为0）设置为加速速率的大小：
+GetCharacterMovement()-&gt;BrakingDecelerationFlying = GetCharacterMovement()-&gt;MaxAcceleration; 设置MovementMode时的注意事项 如果一个Actor被Spawn出来之后，其MovementMode默认状态是Walking，如果此时Spawn的位置在空中，在没有Controller对其Possess的情况下，其静止在空中，当Possess之后，MovementMode会自动变为Falling，如果想让其继续停留在空中(比如飞行类的角色)，此时再手动将其MovementMode设置为Flying。绝对不能在possess之前设置，否则设置状态会被引擎修改掉。
       
       <p>
         <a href="https://dawnarc.com/2016/06/ue4movement%E4%B8%8Enavigation%E7%9B%B8%E5%85%B3%E7%9A%84api/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -1260,7 +1258,7 @@ PathFollowingComp-&gt;AbortMove(*this, FPathFollowingResultFlags::MovementStop);
     <div class="postShorten-excerpt" itemprop="articleBody">
       
         获取当前的Pawn 一个Controller（包括AIController）只能同时possess一个Pawn。所以GetPawn()返回的就是当前控制的Pawn：
-APawn* Pawn = PC-&gt;GetPawn();  Screen相关 //Convert 2D screen position to World Space 3D position and direction. Returns false if unable to determine value. bool DeprojectScreenPositionToWorld(float ScreenX, float ScreenY, FVector&amp; WorldLocation, FVector&amp; WorldDirection) const; /** Returns hit results from doing a collision query at a certain location on the screen */ bool GetHitResultAtScreenPosition(const FVector2D ScreenPosition, const ECollisionChannel TraceChannel, const FCollisionQueryParams&amp; CollisionQueryParams, FHitResult&amp; HitResult) const; /** * Returns the PlayerState associated with the player at the specified index.
+APawn* Pawn = PC-&gt;GetPawn(); Screen相关 //Convert 2D screen position to World Space 3D position and direction. Returns false if unable to determine value.bool DeprojectScreenPositionToWorld(float ScreenX, float ScreenY, FVector&amp; WorldLocation, FVector&amp; WorldDirection) const;/** Returns hit results from doing a collision query at a certain location on the screen */bool GetHitResultAtScreenPosition(const FVector2D ScreenPosition, const ECollisionChannel TraceChannel, const FCollisionQueryParams&amp; CollisionQueryParams, FHitResult&amp; HitResult) const;/*** Returns the PlayerState associated with the player at the specified index.
       
       <p>
         <a href="https://dawnarc.com/2016/06/ue4playercontroller-api-in-common/" class="postShorten-excerpt_link link">Continue reading</a>

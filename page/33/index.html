@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.58.3 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.60.1 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="">
 <meta name="description" content="Hugo tranquilpeak theme demo">
@@ -410,9 +410,9 @@ if (!doNotTrack) {
     <div class="postShorten-excerpt" itemprop="articleBody">
       
         AHUD中的成员变量Canvas只在PostRender()事件中有效，离开此函数后就会被引擎置空。 要想使用HUD的Canvas，必须重写HUD的两个函数之一：
-/** PostRender is the main draw loop. */ virtual void PostRenderFor(); /** The Main Draw loop for the hud. Gets called before any messaging. Should be subclassed */ virtual void DrawHUD();  其中DrawHUD为HUD独有的函数，而PostRender是所有Actor都有函数。 另外注意：PostRenderFor()不是重写了就会触发，还需要执行AHUD::AddPostRenderedActor()，将需要触发的Actor加入PostRenderActors数组中。
+/** PostRender is the main draw loop. */virtual void PostRenderFor();/** The Main Draw loop for the hud. Gets called before any messaging. Should be subclassed */virtual void DrawHUD(); 其中DrawHUD为HUD独有的函数，而PostRender是所有Actor都有函数。 另外注意：PostRenderFor()不是重写了就会触发，还需要执行AHUD::AddPostRenderedActor()，将需要触发的Actor加入PostRenderActors数组中。
 Canvas的引擎源码注释：
-protected: /** Canvas to Draw HUD on. Only valid during PostRender() event. */ UPROPERTY() UCanvas* Canvas;  
+protected:/** Canvas to Draw HUD on. Only valid during PostRender() event. */UPROPERTY()UCanvas* Canvas; 
       
       <p>
         <a href="https://dawnarc.com/2016/10/ue4hud%E7%9A%84canvas%E5%8F%98%E9%87%8F%E4%B8%BAnull%E7%9A%84%E9%97%AE%E9%A2%98/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -474,7 +474,7 @@ protected: /** Canvas to Draw HUD on. Only valid during PostRender() event. */ U
     <div class="postShorten-excerpt" itemprop="articleBody">
       
         定义struct：
-struct FMyStruct { // String which identifies our key FString UniqueID; // Some state which doesn't affect struct identity float SomeFloat; explicit FMyStruct(float InFloat) : UniqueID (FGuid::NewGuid().ToString()) , SomeFloat(InFloat) { } }; template &lt;typename ValueType&gt; struct TMyStructMapKeyFuncs : BaseKeyFuncs&lt; TPair&lt;FMyStruct, ValueType&gt;, FString &gt; { private: typedef BaseKeyFuncs&lt; TPair&lt;FMyStruct, ValueType&gt;, FString &gt; Super; public: typedef typename Super::ElementInitType ElementInitType; typedef typename Super::KeyInitType KeyInitType; static KeyInitType GetSetKey(ElementInitType Element) { return Element.Key.UniqueID; } static bool Matches(KeyInitType A, KeyInitType B) { return A.
+struct FMyStruct{// String which identifies our keyFString UniqueID;// Some state which doesn't affect struct identityfloat SomeFloat;explicit FMyStruct(float InFloat): UniqueID (FGuid::NewGuid().ToString()), SomeFloat(InFloat){}};template &lt;typename ValueType&gt;struct TMyStructMapKeyFuncs :BaseKeyFuncs&lt;TPair&lt;FMyStruct, ValueType&gt;,FString&gt;{private:typedef BaseKeyFuncs&lt;TPair&lt;FMyStruct, ValueType&gt;,FString&gt; Super;public:typedef typename Super::ElementInitType ElementInitType;typedef typename Super::KeyInitType KeyInitType;static KeyInitType GetSetKey(ElementInitType Element){return Element.Key.UniqueID;}static bool Matches(KeyInitType A, KeyInitType B){return A.
       
       <p>
         <a href="https://dawnarc.com/2016/10/ue4tmap%E4%BD%BF%E7%94%A8struct%E5%BD%93%E4%BD%9Ckey%E6%97%B6%E9%9C%80%E8%A6%81%E9%87%8D%E8%BD%BD%E7%9A%84%E6%93%8D%E4%BD%9C%E7%AC%A6/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -600,9 +600,9 @@ struct FMyStruct { // String which identifies our key FString UniqueID; // Some 
       
         keywords: UE4 Timer
 Register Timer 1st way:
-GetWorld()-&gt;GetTimerManager().SetTimer(TimerHandle, this, &amp;AMyActor::TestFun, 0.5f, false);  2nd way:
-FTimerDelegate TimerDel; TimerDel.BindUFunction(this, FName(&quot;TestFun&quot;)); GetWorld()-&gt;GetTimerManager().SetTimer(TimerHandle, TimerDel, 5.f, false);  In 2nd way, TestFun must be marked as UFUNCTION.
- Clean Timer // Ensure the fuze timer is cleared by using the timer handle GetWorld()-&gt;GetTimerManager().ClearTimer(FuzeTimerHandle); // Alternatively you can clear ALL timers that belong to this (Actor) instance. GetWorld()-&gt;GetTimerManager().ClearAllTimersForObject(this);  How to pass parameters when using GetWorldTimerManager().
+GetWorld()-&gt;GetTimerManager().SetTimer(TimerHandle, this, &amp;AMyActor::TestFun, 0.5f, false); 2nd way:
+FTimerDelegate TimerDel;TimerDel.BindUFunction(this, FName(&quot;TestFun&quot;));GetWorld()-&gt;GetTimerManager().SetTimer(TimerHandle, TimerDel, 5.f, false); In 2nd way, TestFun must be marked as UFUNCTION.
+ Clean Timer // Ensure the fuze timer is cleared by using the timer handleGetWorld()-&gt;GetTimerManager().ClearTimer(FuzeTimerHandle);// Alternatively you can clear ALL timers that belong to this (Actor) instance.GetWorld()-&gt;GetTimerManager().ClearAllTimersForObject(this); How to pass parameters when using GetWorldTimerManager().
       
       <p>
         <a href="https://dawnarc.com/2016/10/ue4timer-related/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -664,9 +664,8 @@ FTimerDelegate TimerDel; TimerDel.BindUFunction(this, FName(&quot;TestFun&quot;)
     <div class="postShorten-excerpt" itemprop="articleBody">
       
         要想以较小的Intensity（光照强度）来获得较大的光照面积（或者光照亮度），影响的参数有两个
- Attenuation Radius（衰减半径）：衰减半径越大，光照区域越大
- Use Inverse Squared Falloff（是否启用平方反差衰减）：如果启用，则会以真实世界的光照效果来模拟物体与光源距离的不同而光照效果衰减变化的效果。如果不启用，则能增大光照区域。如果场景中有高度雾，开启此属性后，灯光的半径设置的再大，光照范围也不会有明显增大。  参数示例：   效果：   官方文档： https://docs.unrealengine.com/latest/INT/Resources/ContentExamples/Lighting/4_2/index.html
-  先知先觉者胜，后知后觉者平，不知不觉者败。
+ Attenuation Radius（衰减半径）：衰减半径越大，光照区域越大 Use Inverse Squared Falloff（是否启用平方反差衰减）：如果启用，则会以真实世界的光照效果来模拟物体与光源距离的不同而光照效果衰减变化的效果。如果不启用，则能增大光照区域。如果场景中有高度雾，开启此属性后，灯光的半径设置的再大，光照范围也不会有明显增大。  参数示例：   效果：   官方文档： https://docs.unrealengine.com/latest/INT/Resources/ContentExamples/Lighting/4_2/index.html
+   先知先觉者胜，后知后觉者平，不知不觉者败。
       
       <p>
         <a href="https://dawnarc.com/2016/10/ue4pointlight%E7%82%B9%E5%85%89%E6%BA%90%E7%9A%84%E8%A1%B0%E5%87%8F%E5%8F%82%E6%95%B0/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -728,9 +727,9 @@ FTimerDelegate TimerDel; TimerDel.BindUFunction(this, FName(&quot;TestFun&quot;)
     <div class="postShorten-excerpt" itemprop="articleBody">
       
         如果对某个UObject执行了AddToRoot()，那么需要在该UObject所属的上级UOject销毁前，执行RemoveFromRoot()，否则当程序退出时，会出现崩溃，崩溃堆栈：
-Assertion failed: !IsRooted() [File:d:\build\++ue4+release-4.13+compile\sync\engine\source\runtime\coreuobject\public\uobject\UObjectBaseUtility.h] [Line: 135] UE4Editor_Core!FDebug::AssertFailed() [d:\build\++ue4+release-4.13+compile\sync\engine\source\runtime\core\private\misc\outputdevice.cpp:421] UE4Editor_UnrealEd!&lt;lambda_26419e543909ee92ebfb672b1e9c08dc&gt;::operator()() [d:\build\++ue4+release-4.13+compile\sync\engine\source\editor\unrealed\private\playlevel.cpp:384] UE4Editor_CoreUObject!ForEachObjectWithOuter() [d:\build\++ue4+release-4.13+compile\sync\engine\source\runtime\coreuobject\private\uobject\uobjecthash.cpp:678] UE4Editor_UnrealEd!UEditorEngine::EndPlayMap() [d:\build\++ue4+release-4.13+compile\sync\engine\source\editor\unrealed\private\playlevel.cpp:380] UE4Editor_UnrealEd!UEditorEngine::Tick() [d:\build\++ue4+release-4.13+compile\sync\engine\source\editor\unrealed\private\editorengine.cpp:1653] UE4Editor_UnrealEd!UUnrealEdEngine::Tick() [d:\build\++ue4+release-4.13+compile\sync\engine\source\editor\unrealed\private\unrealedengine.cpp:371] UE4Editor!FEngineLoop::Tick() [d:\build\++ue4+release-4.13+compile\sync\engine\source\runtime\launch\private\launchengineloop.cpp:2834] UE4Editor!GuardedMain() [d:\build\++ue4+release-4.13+compile\sync\engine\source\runtime\launch\private\launch.cpp:156] UE4Editor!GuardedMainWrapper() [d:\build\++ue4+release-4.13+compile\sync\engine\source\runtime\launch\private\windows\launchwindows.cpp:126] UE4Editor!WinMain() [d:\build\++ue4+release-4.13+compile\sync\engine\source\runtime\launch\private\windows\launchwindows.cpp:202] UE4Editor!__scrt_common_main_seh() [f:\dd\vctools\crt\vcstartup\src\startup\exe_common.inl:264] kernel32 ntdll  执行RemoveFromRoot()不要放在Actor自己对象的Actor::BeginDestroy()函数内（override 父类BeginDestroy()函数），即使是在Super::BeginDestroy()执行之前。否则退出游戏时（包括PIE模式（编辑器内运行游戏）下退出游戏）会导致崩溃。
+Assertion failed: !IsRooted() [File:d:\build\++ue4+release-4.13+compile\sync\engine\source\runtime\coreuobject\public\uobject\UObjectBaseUtility.h] [Line: 135] UE4Editor_Core!FDebug::AssertFailed() [d:\build\++ue4+release-4.13+compile\sync\engine\source\runtime\core\private\misc\outputdevice.cpp:421]UE4Editor_UnrealEd!&lt;lambda_26419e543909ee92ebfb672b1e9c08dc&gt;::operator()() [d:\build\++ue4+release-4.13+compile\sync\engine\source\editor\unrealed\private\playlevel.cpp:384]UE4Editor_CoreUObject!ForEachObjectWithOuter() [d:\build\++ue4+release-4.13+compile\sync\engine\source\runtime\coreuobject\private\uobject\uobjecthash.cpp:678]UE4Editor_UnrealEd!UEditorEngine::EndPlayMap() [d:\build\++ue4+release-4.13+compile\sync\engine\source\editor\unrealed\private\playlevel.cpp:380]UE4Editor_UnrealEd!UEditorEngine::Tick() [d:\build\++ue4+release-4.13+compile\sync\engine\source\editor\unrealed\private\editorengine.cpp:1653]UE4Editor_UnrealEd!UUnrealEdEngine::Tick() [d:\build\++ue4+release-4.13+compile\sync\engine\source\editor\unrealed\private\unrealedengine.cpp:371]UE4Editor!FEngineLoop::Tick() [d:\build\++ue4+release-4.13+compile\sync\engine\source\runtime\launch\private\launchengineloop.cpp:2834]UE4Editor!GuardedMain() [d:\build\++ue4+release-4.13+compile\sync\engine\source\runtime\launch\private\launch.cpp:156]UE4Editor!GuardedMainWrapper() [d:\build\++ue4+release-4.13+compile\sync\engine\source\runtime\launch\private\windows\launchwindows.cpp:126]UE4Editor!WinMain() [d:\build\++ue4+release-4.13+compile\sync\engine\source\runtime\launch\private\windows\launchwindows.cpp:202]UE4Editor!__scrt_common_main_seh() [f:\dd\vctools\crt\vcstartup\src\startup\exe_common.inl:264]kernel32ntdll 执行RemoveFromRoot()不要放在Actor自己对象的Actor::BeginDestroy()函数内（override 父类BeginDestroy()函数），即使是在Super::BeginDestroy()执行之前。否则退出游戏时（包括PIE模式（编辑器内运行游戏）下退出游戏）会导致崩溃。
  override 父类BeginDestroy()函数并在其内部执行RemoveFromRoot()导致的崩溃堆栈：
-[Inline Frame] UE4Editor-Engine.dll!UObjectBaseUtility::MarkPendingKill() Line 150 C++ [Inline Frame] UE4Editor-Engine.dll!UWorld::MarkObjectsPendingKill::__l2::&lt;lambda_def76fd07ced75fbbe91915eb5003628&gt;::operator()(UObject * Object) Line 1500 C++ [Inline Frame] UE4Editor-Engine.dll!Invoke(UWorld::MarkObjectsPendingKill::__l2::&lt;lambda_def76fd07ced75fbbe91915eb5003628&gt; &amp;) Line 45 C++ UE4Editor-Engine.dll!UE4Function_Private::TFunctionRefCaller&lt;&lt;lambda_def76fd07ced75fbbe91915eb5003628&gt;,void __cdecl(UObject * __ptr64)&gt;::Call(void * Obj, UObject * &amp; &lt;Params_0&gt;) Line 251 C++ [Inline Frame] UE4Editor-CoreUObject.
+[Inline Frame] UE4Editor-Engine.dll!UObjectBaseUtility::MarkPendingKill() Line 150	C++[Inline Frame] UE4Editor-Engine.dll!UWorld::MarkObjectsPendingKill::__l2::&lt;lambda_def76fd07ced75fbbe91915eb5003628&gt;::operator()(UObject * Object) Line 1500	C++[Inline Frame] UE4Editor-Engine.dll!Invoke(UWorld::MarkObjectsPendingKill::__l2::&lt;lambda_def76fd07ced75fbbe91915eb5003628&gt; &amp;) Line 45	C++UE4Editor-Engine.dll!UE4Function_Private::TFunctionRefCaller&lt;&lt;lambda_def76fd07ced75fbbe91915eb5003628&gt;,void __cdecl(UObject * __ptr64)&gt;::Call(void * Obj, UObject * &amp; &lt;Params_0&gt;) Line 251	C++[Inline Frame] UE4Editor-CoreUObject.
       
       <p>
         <a href="https://dawnarc.com/2016/10/ue4addtoroot%E8%A6%81%E4%B8%8Eremovefromroot%E6%88%90%E5%AF%B9%E5%87%BA%E7%8E%B0/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -792,8 +791,8 @@ Assertion failed: !IsRooted() [File:d:\build\++ue4+release-4.13+compile\sync\eng
     <div class="postShorten-excerpt" itemprop="articleBody">
       
         蓝图：   C++：
-Cast&lt;UCanvasPanelSlot&gt;( MyBtn-&gt;Slot)-&gt;SetPosition(FVector2D(X, Y));  如果是全屏模式下，单单这一行代码没有问题，但是如果是窗口化模式，那么还需要处理DPI：
-// Call this once per-frame, on tick. To avoid re-calculation, or call it when settings / screen res changes. FORCEINLINE void ComputePlacementParams() { // Cache some of the shared parameters GetWorld()-&gt;GetGameViewport()-&gt;GetViewportSize(ViewportSize); ViewportCenter = ViewportSize / 2.f; // Root Panel Data CanvasSize = RootPanel_Ptr-&gt;GetDesiredSize(); Divisor = CanvasSize / ViewportSize; DPIScaling = GetDefault&lt;UUserInterfaceSettings&gt;(UUserInterfaceSettings::StaticClass())-&gt;GetDPIScaleBasedOnSize(FIntPoint(ViewportSize.X, ViewportSize.Y)); } // Called on tick to set location. 'IssScreenLocation' is the central position on-screen of where I want the widget.
+Cast&lt;UCanvasPanelSlot&gt;( MyBtn-&gt;Slot)-&gt;SetPosition(FVector2D(X, Y)); 如果是全屏模式下，单单这一行代码没有问题，但是如果是窗口化模式，那么还需要处理DPI：
+// Call this once per-frame, on tick. To avoid re-calculation, or call it when settings / screen res changes.FORCEINLINE void ComputePlacementParams(){// Cache some of the shared parametersGetWorld()-&gt;GetGameViewport()-&gt;GetViewportSize(ViewportSize);ViewportCenter = ViewportSize / 2.f;// Root Panel DataCanvasSize = RootPanel_Ptr-&gt;GetDesiredSize();Divisor = CanvasSize / ViewportSize;DPIScaling = GetDefault&lt;UUserInterfaceSettings&gt;(UUserInterfaceSettings::StaticClass())-&gt;GetDPIScaleBasedOnSize(FIntPoint(ViewportSize.X, ViewportSize.Y));}// Called on tick to set location. 'IssScreenLocation' is the central position on-screen of where I want the widget.
       
       <p>
         <a href="https://dawnarc.com/2016/10/ue4%E5%A6%82%E4%BD%95%E5%8A%A8%E6%80%81%E4%BF%AE%E6%94%B9%E8%B0%83%E6%95%B4umg%E7%BB%84%E4%BB%B6%E7%9A%84%E4%BD%8D%E7%BD%AE%E5%9D%90%E6%A0%87c-%E5%92%8C%E8%93%9D%E5%9B%BE/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -855,7 +854,7 @@ Cast&lt;UCanvasPanelSlot&gt;( MyBtn-&gt;Slot)-&gt;SetPosition(FVector2D(X, Y)); 
     <div class="postShorten-excerpt" itemprop="articleBody">
       
         如果你的android app出现以下两种错误log提示，并不影响你的app运行，如果你的app崩溃，可以忽略下面两种log。
-10-17 16:59:29.263: E/ExtMediaPlayer-JNI(22104): env-&gt;IsInstanceOf fails 10-17 16:59:29.263: E/MediaPlayer-JNI(22104): JNIMediaPlayerFactory: bIsQCMediaPlayerPresent 0 10-17 16:59:29.263: E/ExtMediaPlayer-JNI(22104): env-&gt;IsInstanceOf fails 10-17 16:59:29.263: E/MediaPlayer-JNI(22104): JNIMediaPlayerFactory: bIsQCMediaPlayerPresent 0 10-18 00:25:40.894: E/MediaPlayer(28634): stop called in state 1 10-18 00:25:40.894: E/MediaPlayer(28634): error (-38, 0) 10-18 00:25:40.903: E/MediaPlayer(28634): Error (-38,0)  这两个错误log的具体原因不清楚，第一个貌似和权限相关。
+10-17 16:59:29.263: E/ExtMediaPlayer-JNI(22104): env-&gt;IsInstanceOf fails10-17 16:59:29.263: E/MediaPlayer-JNI(22104): JNIMediaPlayerFactory: bIsQCMediaPlayerPresent 010-17 16:59:29.263: E/ExtMediaPlayer-JNI(22104): env-&gt;IsInstanceOf fails10-17 16:59:29.263: E/MediaPlayer-JNI(22104): JNIMediaPlayerFactory: bIsQCMediaPlayerPresent 010-18 00:25:40.894: E/MediaPlayer(28634): stop called in state 110-18 00:25:40.894: E/MediaPlayer(28634): error (-38, 0)10-18 00:25:40.903: E/MediaPlayer(28634): Error (-38,0) 这两个错误log的具体原因不清楚，第一个貌似和权限相关。
       
       <p>
         <a href="https://dawnarc.com/2016/10/android-ndk%E9%94%99%E8%AF%AFlogextmediaplayer-jni22104-env-isinstanceof-fails/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -916,11 +915,11 @@ Cast&lt;UCanvasPanelSlot&gt;( MyBtn-&gt;Slot)-&gt;SetPosition(FVector2D(X, Y)); 
     </div>
     <div class="postShorten-excerpt" itemprop="articleBody">
       
-         Shipping 版本开启log 添加以下到 Target.cs 的构造函数中（Editor.Target.cs不需要添加）：
-bUseLoggingInShipping = true;  最终log文件生成位置在：
-C:\Users\&lt;WindowsUsername&gt;\AppData\Local\&lt;ProjectName&gt;\Saved\Logs  bUseLoggingInShipping = true; 只对源码编译的引擎版本有效，Launcher版本无效。Launcher版本无法在Shipping模式下开启log。
+        Shipping 版本开启log 添加以下到 Target.cs 的构造函数中（Editor.Target.cs不需要添加）：
+bUseLoggingInShipping = true; 最终log文件生成位置在：
+C:\Users\&lt;WindowsUsername&gt;\AppData\Local\&lt;ProjectName&gt;\Saved\Logs bUseLoggingInShipping = true; 只对源码编译的引擎版本有效，Launcher版本无效。Launcher版本无法在Shipping模式下开启log。
  VisualStudio中查看UE4 log 如果要查看VS命令行的UE4相关log，需要Debug模式（VS的Debug，即F5，不是UE4的DebugGame） Android Device Monitor 打印log 比如UE4工程的C++代码中有如下log打印语句：
-UE_LOG(LogTemp, Display, TEXT(&quot;aaaaaaa&quot;));  我们希望这句话在Android Device Monitor中能也能够打印出来，默认情况下，需要在将设备的Config设置为DebugGame或者Development，Shipping下则不会打印。
+UE_LOG(LogTemp, Display, TEXT(&quot;aaaaaaa&quot;)); 我们希望这句话在Android Device Monitor中能也能够打印出来，默认情况下，需要在将设备的Config设置为DebugGame或者Development，Shipping下则不会打印。
   Android Device Monitor中显示的游戏UE_LOG，统一都是Debug级别的蓝色，即使是UE_LOG的级别为Error，显示的也是蓝色。
  
       
@@ -983,12 +982,12 @@ UE_LOG(LogTemp, Display, TEXT(&quot;aaaaaaa&quot;));  我们希望这句话在An
     </div>
     <div class="postShorten-excerpt" itemprop="articleBody">
       
-         android NDK编译代码时，命令行提示错误：
+        android NDK编译代码时，命令行提示错误：
 jni/Android.mk:21: *** missing separator. Stop.
 原因有以下几点： 1，$符号之前必须有一个空格，不能跟前面的字符连在一起。如果$是该行的第一个字符，前面可以不用空格。 例子（正常）：
 LOCAL_PATH := $(call my-dir) include $(CLEAR_VARS)  错误写法：
 LOCAL_PATH :=$(call my-dir) include$(CLEAR_VARS)  2，每行结尾处不能有空格。 例子（正常）：
-COMPILER_SRC_FILES := \  错误写法：
+COMPILER_SRC_FILES := \ 错误写法：
 COMPILER_SRC_FILES := \  
       
       <p>
@@ -1052,9 +1051,9 @@ COMPILER_SRC_FILES := \
       
         NDK 1.2之后的版本已修复此bug，1.2及1.2之前的版本存在这个问题。但1.2之后的版本不再支持GCC。
 原文： http://boguscoder.blogspot.jp/2013/08/android-ndk-stl-linking-issues-bug.html
-ld.exe: libmoduleA.a(moduleA.o): in function std::priv::_String_base&gt;::_M_allocate_block(unsigned int):/sources/cxx-stl/stlport/stlport/stl/_alloc.h:158: error: undefined reference to &lsquo;std::_node_alloc::_M_allocate(unsigned int&amp;)&rsquo; ld.exe: libmoduleA.a(moduleA.o): in function std::priv::_String_base&gt;::_M_allocate_block(unsigned int):/sources/cxx-stl/stlport/stlport/stl/_string.c:600: error: undefined reference to &lsquo;std:stl_throw_length_error(char const*)&rsquo; ld.exe: libmoduleA.a(moduleA.o): in function functionA():/sources/cxx-stl/stlport/stlport/stl/_alloc.h:161: error: undefined reference to &lsquo;std::node_alloc::_M_deallocate(void*, unsigned int)&lsquo;collect2: ld returned 1 exit status
+ld.exe: libmoduleA.a(moduleA.o): in function std::priv::_String_base&lt;char, std::allocator&gt;::_M_allocate_block(unsigned int):/sources/cxx-stl/stlport/stlport/stl/_alloc.h:158: error: undefined reference to &lsquo;std::_node_alloc::_M_allocate(unsigned int&amp;)&rsquo; ld.exe: libmoduleA.a(moduleA.o): in function std::priv::_String_base&lt;char, std::allocator&gt;::_M_allocate_block(unsigned int):/sources/cxx-stl/stlport/stlport/stl/_string.c:600: error: undefined reference to &lsquo;std:__stl_throw_length_error(char const*)&rsquo; ld.exe: libmoduleA.a(moduleA.o): in function functionA():/sources/cxx-stl/stlport/stlport/stl/_alloc.h:161: error: undefined reference to &lsquo;std::__node_alloc::_M_deallocate(void*, unsigned int)&lsquo;collect2: ld returned 1 exit status
 Android.mk中添加库libstlport_static.a：
-LOCAL_LDLIBS := -lmoduleA \ &lt;NDK_PATH&gt;/libstlport_static.a  如果是UE4工程编译Android，到android-ndk-r10e\sources\cxx-stl\stlport\libs\armeabi\下拷贝一个libstlport_static.a到你工程的库文件目录下即可。
+LOCAL_LDLIBS := -lmoduleA \&lt;NDK_PATH&gt;/libstlport_static.a 如果是UE4工程编译Android，到android-ndk-r10e\sources\cxx-stl\stlport\libs\armeabi\下拷贝一个libstlport_static.a到你工程的库文件目录下即可。
       
       <p>
         <a href="https://dawnarc.com/2016/10/android-ndkstl-linking-issues-bug/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -1116,8 +1115,8 @@ LOCAL_LDLIBS := -lmoduleA \ &lt;NDK_PATH&gt;/libstlport_static.a  如果是UE4�
     <div class="postShorten-excerpt" itemprop="articleBody">
       
         http://blog.marcingil.com/android-ndk-link-static-library-to-your-jni-library/
-When you&rsquo;re developing an application that needs to use a custom, native precompiled library (the .a file) together with your gluing JNI interface maybe you&rsquo;re wondering how to link it. It&rsquo;s fairly simple and you can even make it target architecture aware (separate precompiled libraries for arm, arm-v7a, x86). In your module (I&rsquo;m using Android Studio) you should have a jnidirectory, like this:
-project / + module + src + main + jni # JNI source files here and other native sources here | Android.
+When you're developing an application that needs to use a custom, native precompiled library (the .a file) together with your gluing JNI interface maybe you're wondering how to link it. It's fairly simple and you can even make it target architecture aware (separate precompiled libraries for arm, arm-v7a, x86). In your module (I'm using Android Studio) you should have a jnidirectory, like this:
+project /+ module+ src+ main+ jni # JNI source files here and other native sources here| Android.
       
       <p>
         <a href="https://dawnarc.com/2016/10/android-ndk-link-static-library-to-your-jni-library/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -1181,7 +1180,7 @@ project / + module + src + main + jni # JNI source files here and other native s
         android中使用hash_map时报错： fatal error: 'backward_warning.h' file not found
 解决办法： Android.mk添加宏定义
 LOCAL_CFLAGS := -D_GLIBCXX_PERMIT_BACKWARD_HASH  如果是UE4项目编译android版本，在工程的Build.cs中添加：
-Definitions.Add(&quot;_GLIBCXX_PERMIT_BACKWARD_HASH&quot;);  
+Definitions.Add(&quot;_GLIBCXX_PERMIT_BACKWARD_HASH&quot;); 
       
       <p>
         <a href="https://dawnarc.com/2016/10/android-ndkfatal-error-backward_warning.h-file-not-found/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -1244,8 +1243,8 @@ Definitions.Add(&quot;_GLIBCXX_PERMIT_BACKWARD_HASH&quot;);
       
         问题表现： 使用UGameplayStatics::SpawnEmitterAttached创建的粒子尺寸大小异常，变得非常大，比SpawnEmitterAtLocation()创建出来的粒子大差不多六七倍。
 解决版本：
-UParticleSystemComponent::bAbsoluteScale = true;  例子：
-UParticleSystemComponent* PSC = UGameplayStatics::SpawnEmitterAttached(ParticleTemplate, Unit-&gt;GetMesh()); PSC-&gt;SetAbsolute(false, false, true);  
+UParticleSystemComponent::bAbsoluteScale = true; 例子：
+UParticleSystemComponent* PSC = UGameplayStatics::SpawnEmitterAttached(ParticleTemplate, Unit-&gt;GetMesh());PSC-&gt;SetAbsolute(false, false, true); 
       
       <p>
         <a href="https://dawnarc.com/2016/10/ue4spawnemitterattached%E5%88%9B%E5%BB%BA%E5%87%BA%E6%9D%A5%E7%9A%84%E7%B2%92%E5%AD%90%E7%89%B9%E6%95%88%E4%BD%93%E7%A7%AF%E8%A2%AB%E6%94%BE%E5%A4%A7%E7%9A%84%E9%97%AE%E9%A2%98/" class="postShorten-excerpt_link link">Continue reading</a>

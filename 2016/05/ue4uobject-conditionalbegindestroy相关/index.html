@@ -5,45 +5,45 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.58.3 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.60.1 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="">
 <meta name="description" content="UObject ConditionalBeginDestroy()导致无法第二次重新Load的问题 现象：
 如果一个材质对象首次执行垃圾回收（ConditionalBeginDestroy是对BeginDestroy的封装，BeginDestroy是不管任何因素强制回收）：
-UObject::ConditionalBeginDestroy()  或者：
-UObject::BeginDestroy()  之后又需要再次加载该材质，那么调用LoadObject()时，第一个参数不能为NULL:
-UObject* Obj = LoadObject&lt;UObject&gt;(NULL, Path);  原因：
+UObject::ConditionalBeginDestroy() 或者：
+UObject::BeginDestroy() 之后又需要再次加载该材质，那么调用LoadObject()时，第一个参数不能为NULL:
+UObject* Obj = LoadObject&lt;UObject&gt;(NULL, Path); 原因：
 在编辑器模式下，通过LoadObject加载出来的对象，如果执行了Destroy，那么在不重启编辑器模式的情况下，第二次执行LoadObject&lt;UObject&gt;(NULL, Path);会返回NULL，即使在编辑器模式下重新启动游戏也返回NULL
 解决办法：
 上述情况只存在编辑器模式下，如果是打包版本，即使一开始 Destroy，第二次 LoadObject 的时候仍然可以加载成功。
 如果非得希望在编辑器模式下，Destroy资源之后仍然能够正常第二次 LoadObject 该资源，方式如下：
 手动new一个UObject，作为LoadObject的第一个参数
-UObject* Obj = NewObject&lt;UTexture2D&gt;(); LoadObject&lt;UObject&gt;(Obj, Path);  这样就能正确加载了。
+UObject* Obj = NewObject&lt;UTexture2D&gt;();LoadObject&lt;UObject&gt;(Obj, Path); 这样就能正确加载了。
 通过上述表现可以推算出，编辑器和引擎的Runtime公用了同一个对象
  且该对象没有随着编辑器模式下退出游戏而被清理； 且该对象在编辑器和Runtime分别存在一个是否已销毁的标记； 且该对象在PIE（Play In Editor）模式下 Destroy 后，并没有标记该对象在编辑器中已非法；  所以在PIE模式下第二次 LoadObject 时认为该对象还存在，并且直接返回了这个已经被Destroy的空对象。
 如果UE4资源管理的引擎代码写的足够好，对于Destroy对象的操作，应该提供两个版本：一个PIE、一个Game Runtime。
 内存持久化 (Memory Persistence) 上述问题中，即使在第二次加载时手动 NewObject 创建一个对象，仍然存在问题：会发现，过几秒以后，再次使用这个UObject时会出现指针非法的错误，原因是刚刚自己New的UObject被引擎从内存中回收了。 如何禁止引擎对该UObject自动垃圾回收，而是我们自己手动执行？执行下AddToRoot：
-Obj-&gt;AddToRoot();  注：如果执行了AddToRoot()，那么退出程序前需要执行RemoveFromRoot()，否则在引擎在清理内存时会错误。
+Obj-&gt;AddToRoot(); 注：如果执行了AddToRoot()，那么退出程序前需要执行RemoveFromRoot()，否则在引擎在清理内存时会错误。
 如果一个UObject是SpawnActor创建出来的，那么执行Destroy()之后，再次执行Spawn是可以正常创建出来的。这点和LoadObject有区别。 ConditionalBeginDestroy()并不推荐在业务逻辑中使用 UE4官方论坛上，很多帖子或资料告诉你，如果要销毁对象，需要执行ConditionalBeginDestroy()。其实这个API不是给上层逻辑使用的，如果要销毁对象，只要保证该对象失去引用或者RemoveFromRoot()即可，否则就会出现上述问题，即：Destroy之后，无法第二次Load。但是这个问题只存在编辑器运行模式下，如果是打包版本（或者Play时选择下拉菜单：Standalone），即使Destroy()，第二次LoadObject()，第一个参数为NULL，也是可以正常加载的。
  DedicatedServer 中的问题 如果在 DedicatedServer 模式下，SpawnActor生成Actor，且这个Actor bReplicates 设置为true，执行 ConditionalBeginDestroy() ，一定时间后客户端会崩掉，但是使用 Destroy() 没问题。对于服务端生成的 Actor，销毁对象时绝对不要 ConditionalBeginDestroy()。">
 
 
 <meta property="og:description" content="UObject ConditionalBeginDestroy()导致无法第二次重新Load的问题 现象：
 如果一个材质对象首次执行垃圾回收（ConditionalBeginDestroy是对BeginDestroy的封装，BeginDestroy是不管任何因素强制回收）：
-UObject::ConditionalBeginDestroy()  或者：
-UObject::BeginDestroy()  之后又需要再次加载该材质，那么调用LoadObject()时，第一个参数不能为NULL:
-UObject* Obj = LoadObject&lt;UObject&gt;(NULL, Path);  原因：
+UObject::ConditionalBeginDestroy() 或者：
+UObject::BeginDestroy() 之后又需要再次加载该材质，那么调用LoadObject()时，第一个参数不能为NULL:
+UObject* Obj = LoadObject&lt;UObject&gt;(NULL, Path); 原因：
 在编辑器模式下，通过LoadObject加载出来的对象，如果执行了Destroy，那么在不重启编辑器模式的情况下，第二次执行LoadObject&lt;UObject&gt;(NULL, Path);会返回NULL，即使在编辑器模式下重新启动游戏也返回NULL
 解决办法：
 上述情况只存在编辑器模式下，如果是打包版本，即使一开始 Destroy，第二次 LoadObject 的时候仍然可以加载成功。
 如果非得希望在编辑器模式下，Destroy资源之后仍然能够正常第二次 LoadObject 该资源，方式如下：
 手动new一个UObject，作为LoadObject的第一个参数
-UObject* Obj = NewObject&lt;UTexture2D&gt;(); LoadObject&lt;UObject&gt;(Obj, Path);  这样就能正确加载了。
+UObject* Obj = NewObject&lt;UTexture2D&gt;();LoadObject&lt;UObject&gt;(Obj, Path); 这样就能正确加载了。
 通过上述表现可以推算出，编辑器和引擎的Runtime公用了同一个对象
  且该对象没有随着编辑器模式下退出游戏而被清理； 且该对象在编辑器和Runtime分别存在一个是否已销毁的标记； 且该对象在PIE（Play In Editor）模式下 Destroy 后，并没有标记该对象在编辑器中已非法；  所以在PIE模式下第二次 LoadObject 时认为该对象还存在，并且直接返回了这个已经被Destroy的空对象。
 如果UE4资源管理的引擎代码写的足够好，对于Destroy对象的操作，应该提供两个版本：一个PIE、一个Game Runtime。
 内存持久化 (Memory Persistence) 上述问题中，即使在第二次加载时手动 NewObject 创建一个对象，仍然存在问题：会发现，过几秒以后，再次使用这个UObject时会出现指针非法的错误，原因是刚刚自己New的UObject被引擎从内存中回收了。 如何禁止引擎对该UObject自动垃圾回收，而是我们自己手动执行？执行下AddToRoot：
-Obj-&gt;AddToRoot();  注：如果执行了AddToRoot()，那么退出程序前需要执行RemoveFromRoot()，否则在引擎在清理内存时会错误。
+Obj-&gt;AddToRoot(); 注：如果执行了AddToRoot()，那么退出程序前需要执行RemoveFromRoot()，否则在引擎在清理内存时会错误。
 如果一个UObject是SpawnActor创建出来的，那么执行Destroy()之后，再次执行Spawn是可以正常创建出来的。这点和LoadObject有区别。 ConditionalBeginDestroy()并不推荐在业务逻辑中使用 UE4官方论坛上，很多帖子或资料告诉你，如果要销毁对象，需要执行ConditionalBeginDestroy()。其实这个API不是给上层逻辑使用的，如果要销毁对象，只要保证该对象失去引用或者RemoveFromRoot()即可，否则就会出现上述问题，即：Destroy之后，无法第二次Load。但是这个问题只存在编辑器运行模式下，如果是打包版本（或者Play时选择下拉菜单：Standalone），即使Destroy()，第二次LoadObject()，第一个参数为NULL，也是可以正常加载的。
  DedicatedServer 中的问题 如果在 DedicatedServer 模式下，SpawnActor生成Actor，且这个Actor bReplicates 设置为true，执行 ConditionalBeginDestroy() ，一定时间后客户端会崩掉，但是使用 Destroy() 没问题。对于服务端生成的 Actor，销毁对象时绝对不要 ConditionalBeginDestroy()。">
 <meta property="og:type" content="article">
@@ -54,38 +54,38 @@ Obj-&gt;AddToRoot();  注：如果执行了AddToRoot()，那么退出程序前�
 <meta property="og:site_name" content="玄冬Wong">
 <meta property="og:description" content="UObject ConditionalBeginDestroy()导致无法第二次重新Load的问题 现象：
 如果一个材质对象首次执行垃圾回收（ConditionalBeginDestroy是对BeginDestroy的封装，BeginDestroy是不管任何因素强制回收）：
-UObject::ConditionalBeginDestroy()  或者：
-UObject::BeginDestroy()  之后又需要再次加载该材质，那么调用LoadObject()时，第一个参数不能为NULL:
-UObject* Obj = LoadObject&lt;UObject&gt;(NULL, Path);  原因：
+UObject::ConditionalBeginDestroy() 或者：
+UObject::BeginDestroy() 之后又需要再次加载该材质，那么调用LoadObject()时，第一个参数不能为NULL:
+UObject* Obj = LoadObject&lt;UObject&gt;(NULL, Path); 原因：
 在编辑器模式下，通过LoadObject加载出来的对象，如果执行了Destroy，那么在不重启编辑器模式的情况下，第二次执行LoadObject&lt;UObject&gt;(NULL, Path);会返回NULL，即使在编辑器模式下重新启动游戏也返回NULL
 解决办法：
 上述情况只存在编辑器模式下，如果是打包版本，即使一开始 Destroy，第二次 LoadObject 的时候仍然可以加载成功。
 如果非得希望在编辑器模式下，Destroy资源之后仍然能够正常第二次 LoadObject 该资源，方式如下：
 手动new一个UObject，作为LoadObject的第一个参数
-UObject* Obj = NewObject&lt;UTexture2D&gt;(); LoadObject&lt;UObject&gt;(Obj, Path);  这样就能正确加载了。
+UObject* Obj = NewObject&lt;UTexture2D&gt;();LoadObject&lt;UObject&gt;(Obj, Path); 这样就能正确加载了。
 通过上述表现可以推算出，编辑器和引擎的Runtime公用了同一个对象
  且该对象没有随着编辑器模式下退出游戏而被清理； 且该对象在编辑器和Runtime分别存在一个是否已销毁的标记； 且该对象在PIE（Play In Editor）模式下 Destroy 后，并没有标记该对象在编辑器中已非法；  所以在PIE模式下第二次 LoadObject 时认为该对象还存在，并且直接返回了这个已经被Destroy的空对象。
 如果UE4资源管理的引擎代码写的足够好，对于Destroy对象的操作，应该提供两个版本：一个PIE、一个Game Runtime。
 内存持久化 (Memory Persistence) 上述问题中，即使在第二次加载时手动 NewObject 创建一个对象，仍然存在问题：会发现，过几秒以后，再次使用这个UObject时会出现指针非法的错误，原因是刚刚自己New的UObject被引擎从内存中回收了。 如何禁止引擎对该UObject自动垃圾回收，而是我们自己手动执行？执行下AddToRoot：
-Obj-&gt;AddToRoot();  注：如果执行了AddToRoot()，那么退出程序前需要执行RemoveFromRoot()，否则在引擎在清理内存时会错误。
+Obj-&gt;AddToRoot(); 注：如果执行了AddToRoot()，那么退出程序前需要执行RemoveFromRoot()，否则在引擎在清理内存时会错误。
 如果一个UObject是SpawnActor创建出来的，那么执行Destroy()之后，再次执行Spawn是可以正常创建出来的。这点和LoadObject有区别。 ConditionalBeginDestroy()并不推荐在业务逻辑中使用 UE4官方论坛上，很多帖子或资料告诉你，如果要销毁对象，需要执行ConditionalBeginDestroy()。其实这个API不是给上层逻辑使用的，如果要销毁对象，只要保证该对象失去引用或者RemoveFromRoot()即可，否则就会出现上述问题，即：Destroy之后，无法第二次Load。但是这个问题只存在编辑器运行模式下，如果是打包版本（或者Play时选择下拉菜单：Standalone），即使Destroy()，第二次LoadObject()，第一个参数为NULL，也是可以正常加载的。
  DedicatedServer 中的问题 如果在 DedicatedServer 模式下，SpawnActor生成Actor，且这个Actor bReplicates 设置为true，执行 ConditionalBeginDestroy() ，一定时间后客户端会崩掉，但是使用 Destroy() 没问题。对于服务端生成的 Actor，销毁对象时绝对不要 ConditionalBeginDestroy()。">
 <meta name="twitter:description" content="UObject ConditionalBeginDestroy()导致无法第二次重新Load的问题 现象：
 如果一个材质对象首次执行垃圾回收（ConditionalBeginDestroy是对BeginDestroy的封装，BeginDestroy是不管任何因素强制回收）：
-UObject::ConditionalBeginDestroy()  或者：
-UObject::BeginDestroy()  之后又需要再次加载该材质，那么调用LoadObject()时，第一个参数不能为NULL:
-UObject* Obj = LoadObject&lt;UObject&gt;(NULL, Path);  原因：
+UObject::ConditionalBeginDestroy() 或者：
+UObject::BeginDestroy() 之后又需要再次加载该材质，那么调用LoadObject()时，第一个参数不能为NULL:
+UObject* Obj = LoadObject&lt;UObject&gt;(NULL, Path); 原因：
 在编辑器模式下，通过LoadObject加载出来的对象，如果执行了Destroy，那么在不重启编辑器模式的情况下，第二次执行LoadObject&lt;UObject&gt;(NULL, Path);会返回NULL，即使在编辑器模式下重新启动游戏也返回NULL
 解决办法：
 上述情况只存在编辑器模式下，如果是打包版本，即使一开始 Destroy，第二次 LoadObject 的时候仍然可以加载成功。
 如果非得希望在编辑器模式下，Destroy资源之后仍然能够正常第二次 LoadObject 该资源，方式如下：
 手动new一个UObject，作为LoadObject的第一个参数
-UObject* Obj = NewObject&lt;UTexture2D&gt;(); LoadObject&lt;UObject&gt;(Obj, Path);  这样就能正确加载了。
+UObject* Obj = NewObject&lt;UTexture2D&gt;();LoadObject&lt;UObject&gt;(Obj, Path); 这样就能正确加载了。
 通过上述表现可以推算出，编辑器和引擎的Runtime公用了同一个对象
  且该对象没有随着编辑器模式下退出游戏而被清理； 且该对象在编辑器和Runtime分别存在一个是否已销毁的标记； 且该对象在PIE（Play In Editor）模式下 Destroy 后，并没有标记该对象在编辑器中已非法；  所以在PIE模式下第二次 LoadObject 时认为该对象还存在，并且直接返回了这个已经被Destroy的空对象。
 如果UE4资源管理的引擎代码写的足够好，对于Destroy对象的操作，应该提供两个版本：一个PIE、一个Game Runtime。
 内存持久化 (Memory Persistence) 上述问题中，即使在第二次加载时手动 NewObject 创建一个对象，仍然存在问题：会发现，过几秒以后，再次使用这个UObject时会出现指针非法的错误，原因是刚刚自己New的UObject被引擎从内存中回收了。 如何禁止引擎对该UObject自动垃圾回收，而是我们自己手动执行？执行下AddToRoot：
-Obj-&gt;AddToRoot();  注：如果执行了AddToRoot()，那么退出程序前需要执行RemoveFromRoot()，否则在引擎在清理内存时会错误。
+Obj-&gt;AddToRoot(); 注：如果执行了AddToRoot()，那么退出程序前需要执行RemoveFromRoot()，否则在引擎在清理内存时会错误。
 如果一个UObject是SpawnActor创建出来的，那么执行Destroy()之后，再次执行Spawn是可以正常创建出来的。这点和LoadObject有区别。 ConditionalBeginDestroy()并不推荐在业务逻辑中使用 UE4官方论坛上，很多帖子或资料告诉你，如果要销毁对象，需要执行ConditionalBeginDestroy()。其实这个API不是给上层逻辑使用的，如果要销毁对象，只要保证该对象失去引用或者RemoveFromRoot()即可，否则就会出现上述问题，即：Destroy之后，无法第二次Load。但是这个问题只存在编辑器运行模式下，如果是打包版本（或者Play时选择下拉菜单：Standalone），即使Destroy()，第二次LoadObject()，第一个参数为NULL，也是可以正常加载的。
  DedicatedServer 中的问题 如果在 DedicatedServer 模式下，SpawnActor生成Actor，且这个Actor bReplicates 设置为true，执行 ConditionalBeginDestroy() ，一定时间后客户端会崩掉，但是使用 Destroy() 没问题。对于服务端生成的 Actor，销毁对象时绝对不要 ConditionalBeginDestroy()。">
 <meta property="og:locale" content="en-us">
@@ -419,81 +419,53 @@ if (!doNotTrack) {
           
           <div class="post-content markdown" itemprop="articleBody">
             <div class="main-content-wrap">
-              
-
-<h5 id="uobject-conditionalbegindestroy-导致无法第二次重新load的问题">UObject ConditionalBeginDestroy()导致无法第二次重新Load的问题</h5>
-
-<p>现象：<br />
+              <h5 id="uobject-conditionalbegindestroyload">UObject ConditionalBeginDestroy()导致无法第二次重新Load的问题</h5>
+<p>现象：<br>
 如果一个材质对象首次执行垃圾回收（ConditionalBeginDestroy是对BeginDestroy的封装，BeginDestroy是不管任何因素强制回收）：</p>
-
 <pre><code>UObject::ConditionalBeginDestroy()
 </code></pre>
-
 <p>或者：</p>
-
 <pre><code>UObject::BeginDestroy()
 </code></pre>
-
-<p>之后又需要再次加载该材质，那么调用LoadObject<T>()时，第一个参数不能为NULL:</p>
-
+<p>之后又需要再次加载该材质，那么调用LoadObject<!-- raw HTML omitted -->()时，第一个参数不能为NULL:</p>
 <pre><code>UObject* Obj = LoadObject&lt;UObject&gt;(NULL, Path);
 </code></pre>
-
-<p>原因：<br />
+<p>原因：<br>
 在编辑器模式下，通过<code>LoadObject</code>加载出来的对象，如果执行了Destroy，那么在不重启编辑器模式的情况下，第二次执行<code>LoadObject&lt;UObject&gt;(NULL, Path);</code>会返回<code>NULL</code>，即使在编辑器模式下重新启动游戏也返回<code>NULL</code></p>
-
-<p>解决办法：<br />
+<p>解决办法：<br>
 上述情况只存在编辑器模式下，如果是打包版本，即使一开始 Destroy，第二次 LoadObject 的时候仍然可以加载成功。</p>
-
-<p>如果非得希望在编辑器模式下，Destroy资源之后仍然能够正常第二次 LoadObject 该资源，方式如下：<br />
+<p>如果非得希望在编辑器模式下，Destroy资源之后仍然能够正常第二次 LoadObject 该资源，方式如下：<br>
 <span class="highlight-text green">手动new一个UObject，作为LoadObject的第一个参数</span></p>
-
 <pre><code>UObject* Obj = NewObject&lt;UTexture2D&gt;();
 LoadObject&lt;UObject&gt;(Obj, Path);
 </code></pre>
-
 <p>这样就能正确加载了。</p>
-
 <p>通过上述表现可以推算出，编辑器和引擎的Runtime公用了同一个对象</p>
-
 <ul>
 <li>且该对象没有随着编辑器模式下退出游戏而被清理；</li>
 <li>且该对象在编辑器和Runtime分别存在一个是否已销毁的标记；</li>
 <li>且该对象在PIE（Play In Editor）模式下 Destroy 后，并没有标记该对象在编辑器中已非法；</li>
 </ul>
-
-<p>所以在PIE模式下第二次 LoadObject 时认为该对象还存在，并且直接返回了这个已经被Destroy的空对象。<br />
+<p>所以在PIE模式下第二次 LoadObject 时认为该对象还存在，并且直接返回了这个已经被Destroy的空对象。<br>
 如果UE4资源管理的引擎代码写的足够好，对于Destroy对象的操作，应该提供两个版本：一个PIE、一个Game Runtime。</p>
-
-<h5 id="内存持久化-memory-persistence">内存持久化 (Memory Persistence)</h5>
-
+<h5 id="-memory-persistence">内存持久化 (Memory Persistence)</h5>
 <p>上述问题中，即使在第二次加载时手动 NewObject 创建一个对象，仍然存在问题：会发现，过几秒以后，再次使用这个UObject时会出现指针非法的错误，原因是刚刚自己New的UObject被引擎从内存中回收了。
 如何禁止引擎对该UObject自动垃圾回收，而是我们自己手动执行？执行下AddToRoot：</p>
-
 <pre><code>Obj-&gt;AddToRoot();
 </code></pre>
-
 <p>注：如果执行了<code>AddToRoot()</code>，那么退出程序前需要执行<code>RemoveFromRoot()</code>，否则在引擎在清理内存时会错误。</p>
-
 <span class="highlight-text red">如果一个UObject是SpawnActor创建出来的，那么执行Destroy()之后，再次执行Spawn是可以正常创建出来的。这点和LoadObject有区别。</span>
-
-<h5 id="conditionalbegindestroy-并不推荐在业务逻辑中使用">ConditionalBeginDestroy()并不推荐在业务逻辑中使用</h5>
-
+<h5 id="conditionalbegindestroy">ConditionalBeginDestroy()并不推荐在业务逻辑中使用</h5>
 <div class="alert warning ">
   <p>UE4官方论坛上，很多帖子或资料告诉你，如果要销毁对象，需要执行ConditionalBeginDestroy()。其实这个API不是给上层逻辑使用的，如果要销毁对象，只要保证该对象失去引用或者RemoveFromRoot()即可，否则就会出现上述问题，即：Destroy之后，无法第二次Load。但是这个问题只存在编辑器运行模式下，如果是打包版本（或者Play时选择下拉菜单：Standalone），即使Destroy()，第二次LoadObject()，第一个参数为NULL，也是可以正常加载的。</p>
 </div>
-
-<h5 id="dedicatedserver-中的问题">DedicatedServer 中的问题</h5>
-
+<h5 id="dedicatedserver-">DedicatedServer 中的问题</h5>
 <div class="alert danger ">
   <p>如果在 DedicatedServer 模式下，SpawnActor生成Actor，且这个Actor bReplicates 设置为true，执行 ConditionalBeginDestroy() ，一定时间后客户端会崩掉，但是使用 Destroy() 没问题。对于服务端生成的 Actor，销毁对象时绝对不要 ConditionalBeginDestroy()。</p>
 </div>
-
-<p>解决办法：<br />
+<p>解决办法：<br>
 <code>SpawnActor</code>生成出的 Actor，且 <code>AActor::bReplicates = true;</code> ，销毁时，不要用<code>ConditionalBeginDestroy()</code>，而要用<code>Destroy()</code>。Standalone 模式貌似没这种限制。</p>
-
 <p>崩溃日志：</p>
-
 <pre><code>Assertion failed: Index &gt;= 0 [File:D:\Build\++UE4+Release-4.16+Compile\Sync\Engine\Source\Runtime\CoreUObject\Public\UObject/UObjectArray.h] [Line: 455] 
 
 UE4Editor_Core!FDebug::AssertFailed() [d:\build\++ue4+release-4.16+compile\sync\engine\source\runtime\core\private\misc\assertionmacros.cpp:349]
@@ -513,11 +485,8 @@ UE4Editor!__scrt_common_main_seh() [f:\dd\vctools\crt\vcstartup\src\startup\exe_
 kernel32
 ntdll
 </code></pre>
-
-<h5 id="conditionalbegindestroy-和-destroy区别">ConditionalBeginDestroy 和 Destroy区别</h5>
-
+<h5 id="conditionalbegindestroy--destroy">ConditionalBeginDestroy 和 Destroy区别</h5>
 <p>ConditionalBeginDestroy 和 Destroy两者都是销毁对象，区别是：前者是在delay一定时间后执行销毁，Destroy是在当前帧结束时执行销毁。</p>
-
 <p>如果逻辑上每帧都有很多 Actor需要销毁，那么可以先把这些Actor隐藏，让对象失去引用（如果对象是被<code>URPOPERTY</code>属性保持的，那就让其所属的对象失去引用，比如：<code>RemoveFromRoot()</code>），不必手动执行 Destroy，让引擎批量执行GC。</p>
 
               

@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.58.3 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.60.1 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="">
 <meta name="description" content="keywords: C&#43;&#43;, instanceof, typeof">
@@ -353,57 +353,40 @@ if (!doNotTrack) {
           <div class="post-content markdown" itemprop="articleBody">
             <div class="main-content-wrap">
               <p>keywords: C++, instanceof, typeof</p>
-
-<h5 id="dynamic-cast">dynamic_cast</h5>
-
-<p>Java has keyword <code>instanceof</code> and C# has function <code>typeof</code> to check object type at run-time.</p>
-
-<p>Does C++ have equivalent of instanceof?<br />
+<h5 id="dynamiccast">dynamic_cast</h5>
+<p>Java has keyword <code>instanceof </code> and C# has function <code>typeof</code> to check object type at run-time.</p>
+<p>Does C++ have equivalent of instanceof?<br>
 Answer is <code>dynamic_cast</code>:</p>
-
 <pre><code>if(NewType* v = dynamic_cast&lt;NewType*&gt;(old))
 {
     // old was safely casted to NewType
     v-&gt;doSomething();
 }
 </code></pre>
-
 <div class="alert info ">
   <p><code>dynamic_cast</code> only works when compiler RTTI enabled.</p>
 </div>
-
 <div class="alert warning ">
   <p><code>dynamic_cast</code> is an operation with big cost.</p>
 </div>
-
-<h5 id="std-is-base-of">std::is_base_of</h5>
-
+<h5 id="stdisbaseof">std::is_base_of</h5>
 <p>std::is_base_of</p>
-
 <pre><code>template&lt;typename Base, typename T&gt;
 inline bool instanceof(const T*) {
     return std::is_base_of&lt;Base, T&gt;::value;
 }
 </code></pre>
-
 <p>Usage:</p>
-
 <pre><code>if (instanceof&lt;BaseClass&gt;(ptr)) { ... }
 </code></pre>
-
-<h5 id="optimization-for-dynamic-cast">Optimization for dynamic_cast</h5>
-
-<p>Priori - A Fast dynamic_cast&lt;&gt; Alternative<br />
-<a href="https://www.codeproject.com/Articles/609598/Priori-A-Fast-dynamic-cast-Alternative">https://www.codeproject.com/Articles/609598/Priori-A-Fast-dynamic-cast-Alternative</a><br />
+<h5 id="optimization-for-dynamiccast">Optimization for dynamic_cast</h5>
+<p>Priori - A Fast dynamic_cast&lt;&gt; Alternative<br>
+<a href="https://www.codeproject.com/Articles/609598/Priori-A-Fast-dynamic-cast-Alternative">https://www.codeproject.com/Articles/609598/Priori-A-Fast-dynamic-cast-Alternative</a><br>
 <a href="https://github.com/DigitalInBlue/Priori">https://github.com/DigitalInBlue/Priori</a></p>
-
-<p>Fast dynamic cast in C++ for MSVC, outperforming the regular dynamic cast by up to 25 times<br />
+<p>Fast dynamic cast in C++ for MSVC, outperforming the regular dynamic cast by up to 25 times<br>
 <a href="https://github.com/tobspr/FastDynamicCast">https://github.com/tobspr/FastDynamicCast</a></p>
-
 <h5 id="cases">Cases</h5>
-
 <p>Eampple source:</p>
-
 <pre><code>class A
 {
     int a;
@@ -417,25 +400,20 @@ class B
 int main(int argc, char* args[])
 {
     A ca;
-
+	
     A* Aptr = &amp;ca;
     B* Bptr = dynamic_cast&lt;B*&gt;(Aptr);
-
+	
     return 0;
 }
 </code></pre>
-
 <p>Complication error:</p>
-
 <pre><code>error C2683:  'dynamic_cast': 'CA01' is not a polymorphic type
 </code></pre>
-
-<p>Caused by:<br />
-<code>dynamic_cast</code> is used to type checking which a class is polymorphic( own a virtual function in self or the class it derived from own a virtual function) or there&rsquo;s an inheritance between two classes.</p>
-
-<p>Solution 1:<br />
+<p>Caused by:<br>
+<code>dynamic_cast</code> is used to type checking which a class is polymorphic( own a virtual function in self or the class it derived from own a virtual function) or there's an inheritance between two classes.</p>
+<p>Solution 1:<br>
 Add virtual function in class which cast from;</p>
-
 <pre><code>class A
 {
     int a;
@@ -443,10 +421,8 @@ Add virtual function in class which cast from;</p>
     virtual void fun01() {}
 };
 </code></pre>
-
-<p>Solution 2:<br />
+<p>Solution 2:<br>
 Source class(input parameter of <code>dynamic_cast</code>) inherit from target class.</p>
-
 <pre><code>class A
 {
     int a;
@@ -462,30 +438,23 @@ int main(int argc, char* args[])
 {
     A ca;
     B cb;
-
+	
     A* Aptr = &amp;ca;
     B* Bptr = &amp;cb;
     A* ptr = dynamic_cast&lt;A*&gt;(Bptr);
 }
 </code></pre>
-
 <div class="alert danger ">
-  <p><code>B* ptr = dynamic_cast&lt;B*&gt;(Aptr);</code> was invalid if there&rsquo;s no inheritance between A and B, there would be a compliation error.</p>
+  <p><code>B* ptr = dynamic_cast&lt;B*&gt;(Aptr);</code> was invalid if there's no inheritance between A and B, there would be a compliation error.</p>
 </div>
-
 <h5 id="reference">Reference</h5>
-
-<p>C++ equivalent of instanceof<br />
+<p>C++ equivalent of instanceof<br>
 <a href="https://stackoverflow.com/questions/500493/c-equivalent-of-instanceof">https://stackoverflow.com/questions/500493/c-equivalent-of-instanceof</a></p>
-
-<p>Fast dynamic casting<br />
+<p>Fast dynamic casting<br>
 <a href="http://www.stroustrup.com/fast_dynamic_casting.pdf">http://www.stroustrup.com/fast_dynamic_casting.pdf</a></p>
-
-<p>How slow is dynamic_cast?<br />
+<p>How slow is dynamic_cast?<br>
 <a href="http://www.nerdblog.com/2006/12/how-slow-is-dynamiccast.html">http://www.nerdblog.com/2006/12/how-slow-is-dynamiccast.html</a></p>
-
-<hr />
-
+<hr>
 <p><code>我与春风皆过客，你携秋水揽星河。----网络</code></p>
               
             </div>

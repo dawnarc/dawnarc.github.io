@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.58.3 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.60.1 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="">
 <meta name="description" content="原文：http://blog.csdn.net/xiaozhi0999/article/details/51393704
@@ -385,97 +385,63 @@ if (!doNotTrack) {
           
           <div class="post-content markdown" itemprop="articleBody">
             <div class="main-content-wrap">
-              <p>原文：<a href="http://blog.csdn.net/xiaozhi0999/article/details/51393704">http://blog.csdn.net/xiaozhi0999/article/details/51393704</a></p>
-
+              <p>原文：http://blog.csdn.net/xiaozhi0999/article/details/51393704</p>
 <p>ue4中，客户端登陆流程如下，调用UEngine::Browse方法，在这个方法中，判断如果是客户端，则创建UPendingNetGame实例，代码如下：</p>
-
 <pre><code>WorldContext.PendingNetGame = NewObject&lt;UPendingNetGame&gt;();  
 WorldContext.PendingNetGame-&gt;Initialize(URL);  
 WorldContext.PendingNetGame-&gt;InitNetDriver();  
 </code></pre>
-
 <p>而在InitNetDriver函数中，会向服务器发送 NMT_Hello 协议，我们转到NMT_Hello 的定义，如下：</p>
-
 <pre><code>DEFINE_CONTROL_CHANNEL_MESSAGE_TWOPARAM(Hello, 0, uint8, uint32); // initial client connection message  
 </code></pre>
-
-<p>参数1：大端还是小端<br />
+<p>参数1：大端还是小端<br>
 参数2：客户端版本号</p>
-
 <p>客户端处理协议的地方是如下两个函数：</p>
-
 <pre><code>void UPendingNetGame::NotifyControlMessage(UNetConnection* Connection, uint8 MessageType, class FInBunch&amp; Bunch)  
 void UWorld::NotifyControlMessage(UNetConnection* Connection, uint8 MessageType, class FInBunch&amp; Bunch)  
 </code></pre>
-
 <p>服务器处理协议的地方是下面这个函数：</p>
-
 <pre><code>void UWorld::NotifyControlMessage(UNetConnection* Connection, uint8 MessageType, class FInBunch&amp; Bunch)  
 </code></pre>
-
 <p>在服务器的协议处理函数，我们可以看到NMT_Hello协议的处理过程，先调用Receive接收消息，然后判断版本号是否一致，不一致发送NMT_Upgrade消息，一致则发送NMT_Challenge消息</p>
-
 <pre><code>DEFINE_CONTROL_CHANNEL_MESSAGE_ONEPARAM(Challenge, 3, FString); // server sends client challenge string to verify integrity  
 </code></pre>
-
 <p>客户端收到NMT_Challenge消息后，向服务器发送NMT_Login消息，NMT_Login消息携带三个参数，如下：</p>
-
 <pre><code>DEFINE_CONTROL_CHANNEL_MESSAGE_THREEPARAM(Login, 5, FString, FString, FUniqueNetIdRepl); // client requests to be admitted to the game  
 </code></pre>
-
-<p>参数1：客户端响应<br />
-参数2：客户端URL<br />
-参数3：客户端唯一ID<br />
+<p>参数1：客户端响应<br>
+参数2：客户端URL<br>
+参数3：客户端唯一ID<br>
 服务器收到NMT_Login消息，验证是否可以登录，失败返回NMT_Failure消息，成功则向服务器发送NMT_Welcome消息</p>
-
 <p>NMT_Welcome消息定义如下:</p>
-
 <pre><code>DEFINE_CONTROL_CHANNEL_MESSAGE_THREEPARAM(Welcome, 1, FString, FString, FString); // server tells client they're ok'ed to load the server's level  
 </code></pre>
-
-<p>参数1：服务器使用地图名<br />
-参数2：服务器使用GameMode名称<br />
+<p>参数1：服务器使用地图名<br>
+参数2：服务器使用GameMode名称<br>
 参数3：重定向URL</p>
-
 <p>客户端收到NMT_Welcome消息，向服务器发送NMT_Netspeed消息，定义如下：</p>
-
 <pre><code>DEFINE_CONTROL_CHANNEL_MESSAGE_ONEPARAM(Netspeed, 4, int32); // client sends requested transfer rate  
 </code></pre>
-
-<p>参数1：当前网络传输速度<br />
+<p>参数1：当前网络传输速度<br>
 服务器收到NMT_Netspeed消息，只是简单记录一下客户端的NetSpeed即可</p>
-
 <p>这里有个问题先要说明一下，客户端何时加载地图？</p>
-
 <p>在下面这个函数中：</p>
-
 <pre><code>void UEngine::TickWorldTravel(FWorldContext&amp; Context, float DeltaSeconds)  
 </code></pre>
-
 <p>有如下这个判断：</p>
-
 <pre><code>else if( Context.PendingNetGame &amp;&amp; Context.PendingNetGame-&gt;bSuccessfullyConnected &amp;&amp; !Context.PendingNetGame-&gt;bSentJoinRequest )  
 </code></pre>
-
 <p>当bSuccessfullyConnected为true而bSentJoinRequest为false时，客户端会LoadMap，而bSuccessfullyConnected是在客户端处理完NMT_Welcome消息后设置为true的，也就是说客户端在处理完NMT_Welcome消息，下一次执行TickWorldTravel函数的时候，就会加载地图，而bSentJoinRequest变量，是为了防止地图被加载多次而设置的。</p>
-
 <p>当客户端调用完LoadMap，会向服务器发送NMT_Join消息，在服务器处理NMT_Join消息时，代码如下：</p>
-
 <pre><code>Connection-&gt;PlayerController = SpawnPlayActor( Connection, ROLE_AutonomousProxy, InURL, Connection-&gt;PlayerId, ErrorMsg );  
 </code></pre>
-
 <p>然后SpawnPlayActor中会调用GameMode的Login，而在Login内部，会调用如下代码，创建PlayerController</p>
-
 <pre><code>APlayerController* NewPlayerController = SpawnPlayerController(RemoteRole, FVector::ZeroVector, FRotator::ZeroRotator);  
 </code></pre>
-
 <p>在PlayerController的初始化函数中，如果是服务器，则创建PlayerState，用于服务器和客户端Player信息的同步，具体函数如下：</p>
-
 <pre><code>void APlayerController::PostInitializeComponents()  
 </code></pre>
-
-<hr />
-
+<hr>
 <p><code>快乐属于那些选择了孤独的人，因为你是从那儿来的，而且你还要回到那儿去。——《托马斯福音》（GospelofThomas）</code></p>
 
               

@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.58.3 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.60.1 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="UE4, Tick, UObject, NewObject">
 <meta name="description" content="1st way: FTickableGameObject">
@@ -353,16 +353,11 @@ if (!doNotTrack) {
           <div class="post-content markdown" itemprop="articleBody">
             <div class="main-content-wrap">
               <h3 id="1st-way-ftickablegameobject">1st way: FTickableGameObject</h3>
-
-<p>The object inherited from UObject would not trigger Tick when instanced (NewObject<UObject>()), but AActor and the UActorComponent would trigger Tick.</p>
-
-<p>So how to trigger Tick of the object inherited from UObject?<br />
+<p>The object inherited from UObject would not trigger Tick when instanced (NewObject<!-- raw HTML omitted -->()), but AActor and the UActorComponent would trigger Tick.</p>
+<p>So how to trigger Tick of the object inherited from UObject?<br>
 The answer is: <span class="highlight-text green">inherit FTickableGameObject and UObject at the same.</span></p>
-
 <p>example source</p>
-
 <p>header:</p>
-
 <pre><code>UCLASS()
 class UCoolDownMgr : public UObject, public FTickableGameObject
 {
@@ -371,22 +366,20 @@ public:
     // Sets default values for this character's properties
     UCoolDownMgr();
     virtual ~UCoolDownMgr();
-
+ 
     // Begin FTickableGameObject Interface.
     virtual void Tick(float DeltaTime) override;
     virtual bool IsTickable() const override;
     virtual TStatId GetStatId() const override;
     // End FTickableGameObject Interface.
-
+    
 private:
-
+    
     //Because engine would construct inner object when game load package (before game start), so we need to add a flag to identify which one is construct on game running.
     bool bIsCreateOnRunning = false;
 };
 </code></pre>
-
 <p>cpp:</p>
-
 <pre><code>UCoolDownMgr::UCoolDownMgr()
 {
     bIsCreateOnRunning = GIsRunning;
@@ -397,7 +390,7 @@ void UCoolDownMgr::Tick(float DeltaTime)
     //Don't invoke Super::Tick(), otherwise would link failed!!!
     //Super::Tick(DeltaTime);
 }
-
+ 
 bool UCoolDownMgr::IsTickable() const
 {
     //notify engine to ingore Tick of the object constructed before game running.
@@ -408,41 +401,30 @@ TStatId UCoolDownMgr::GetStatId() const
     return UObject::GetStatID();
 }
 </code></pre>
-
 <div class="alert danger ">
   <p>Because engine would construct inner object when game load package (before game start), so we need to add a flag (<code>bIsCreateOnRunning</code>) to identify which one is construct on game running.</p>
 </div>
-
-<p>Reference:<br />
+<p>Reference:<br>
 <a href="https://blog.csdn.net/yangxuan0261/article/details/52093573">https://blog.csdn.net/yangxuan0261/article/details/52093573</a></p>
-
 <h3 id="2nd-way-ftickerdelegate">2nd way: FTickerDelegate</h3>
-
 <p>header:</p>
-
 <pre><code>/** Delegate for callbacks to Tick */
 FTickerDelegate TickDelegate;
 
 /** Handle to various registered delegates */
 FDelegateHandle TickDelegateHandle;
 </code></pre>
-
 <p>cpp:</p>
-
 <pre><code>TickDelegate = FTickerDelegate::CreateUObject(this, &amp;UMyObject::MyTick);
 TickDelegateHandle = FTicker::GetCoreTicker().AddTicker(TickDelegate);
 </code></pre>
-
 <p>Tick function:</p>
-
 <pre><code>bool UMyObject::MyTick(float DeltaSeconds)
 {
 
 }
 </code></pre>
-
-<hr />
-
+<hr>
 <p><code>生活总是这样，不能叫人处处都满意。但我们还要热情地活下去。人活一生，值得爱的东西很多，不要因为一个不满意，就灰心。</code></p>
               
             </div>

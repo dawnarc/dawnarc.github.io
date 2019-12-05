@@ -5,21 +5,21 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.58.3 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.60.1 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="UE4, Memory, GC, Persist, 垃圾回收, 内存管理">
 <meta name="description" content="keywords：UE4, Memory Persist, GC, 垃圾回收, 内存管理
 防止GC的办法 一个UObject类型的变量，即使是static，默认也会被GC掉。
  要防止该对象被GC，有4种方式：
  作为成员变量并标记为UPROPERTY()； 创建对象后 AddToRoot() ；（退出游戏时需要RemoveFromRoot()） FStreamableManager Load资源时，bManageActiveHandle 设置为true； FGCObjectScopeGuard 在指定代码区域内保持对象；  Uobject不能使用TSharedPtr进行引用计数，非UObject才可以；如果一个非UObject的类想加入GC，那么必须继承FGCObject类。
- UPROPERTY()用法 URPOPERTY() UObject* MyObj;  AddToRoot()用法 UMyObject* MyObj = NewObject&lt;UMyObject&gt;(); MyObj.AddToRoot();  FStreamableManager 用法 FSoftObjectPath AssetPath(TEXT(&quot;/Game/Mannequin/Animations/ThirdPersonWalk.ThirdPersonWalk&quot;)); FStreamableManager&amp; AssetLoader = UAssetManager::GetStreamableManager(); //hold object in memory. TSharedPtr&lt;FStreamableHandle&gt; Handle = AssetLoader.RequestSyncLoad(AssetPath, true); UObject* Obj = Handle-&gt;GetLoadedAsset(); //free memory of object. Handle-&gt;ReleaseHandle();  FGCObjectScopeGuard 用法 { FGCObjectScopeGuard(UObject* GladOS = NewObject&lt;...&gt;(...)); GladOS-&gt;SpawnCell(); RunGC(); GladOS-&gt;IsStillAlive(); // Object will not be removed by GC }  GC 常见问题  官方论坛上有人说 NewObject() 或者 LoadObject() 创建的对象才会自动被 GC ， SpawnActor 创建的对象会被自动 AddToRoot ，不会被 GC。不知早期的版本是否确实如此，但是目前版本不是这样，即使是 SpawnActor ，默认也会被 GC。  参考资料 UE4 Garbage Collection">
+ UPROPERTY()用法 URPOPERTY()UObject* MyObj; AddToRoot()用法 UMyObject* MyObj = NewObject&lt;UMyObject&gt;();MyObj.AddToRoot(); FStreamableManager 用法 FSoftObjectPath AssetPath(TEXT(&quot;/Game/Mannequin/Animations/ThirdPersonWalk.ThirdPersonWalk&quot;));FStreamableManager&amp; AssetLoader = UAssetManager::GetStreamableManager();//hold object in memory.TSharedPtr&lt;FStreamableHandle&gt; Handle = AssetLoader.RequestSyncLoad(AssetPath, true);UObject* Obj = Handle-&gt;GetLoadedAsset();//free memory of object.Handle-&gt;ReleaseHandle(); FGCObjectScopeGuard 用法 {FGCObjectScopeGuard(UObject* GladOS = NewObject&lt;...&gt;(...));GladOS-&gt;SpawnCell();RunGC();GladOS-&gt;IsStillAlive(); // Object will not be removed by GC} GC 常见问题  官方论坛上有人说 NewObject() 或者 LoadObject() 创建的对象才会自动被 GC ， SpawnActor 创建的对象会被自动 AddToRoot ，不会被 GC。不知早期的版本是否确实如此，但是目前版本不是这样，即使是 SpawnActor ，默认也会被 GC。  参考资料 UE4 Garbage Collection">
 
 
 <meta property="og:description" content="keywords：UE4, Memory Persist, GC, 垃圾回收, 内存管理
 防止GC的办法 一个UObject类型的变量，即使是static，默认也会被GC掉。
  要防止该对象被GC，有4种方式：
  作为成员变量并标记为UPROPERTY()； 创建对象后 AddToRoot() ；（退出游戏时需要RemoveFromRoot()） FStreamableManager Load资源时，bManageActiveHandle 设置为true； FGCObjectScopeGuard 在指定代码区域内保持对象；  Uobject不能使用TSharedPtr进行引用计数，非UObject才可以；如果一个非UObject的类想加入GC，那么必须继承FGCObject类。
- UPROPERTY()用法 URPOPERTY() UObject* MyObj;  AddToRoot()用法 UMyObject* MyObj = NewObject&lt;UMyObject&gt;(); MyObj.AddToRoot();  FStreamableManager 用法 FSoftObjectPath AssetPath(TEXT(&quot;/Game/Mannequin/Animations/ThirdPersonWalk.ThirdPersonWalk&quot;)); FStreamableManager&amp; AssetLoader = UAssetManager::GetStreamableManager(); //hold object in memory. TSharedPtr&lt;FStreamableHandle&gt; Handle = AssetLoader.RequestSyncLoad(AssetPath, true); UObject* Obj = Handle-&gt;GetLoadedAsset(); //free memory of object. Handle-&gt;ReleaseHandle();  FGCObjectScopeGuard 用法 { FGCObjectScopeGuard(UObject* GladOS = NewObject&lt;...&gt;(...)); GladOS-&gt;SpawnCell(); RunGC(); GladOS-&gt;IsStillAlive(); // Object will not be removed by GC }  GC 常见问题  官方论坛上有人说 NewObject() 或者 LoadObject() 创建的对象才会自动被 GC ， SpawnActor 创建的对象会被自动 AddToRoot ，不会被 GC。不知早期的版本是否确实如此，但是目前版本不是这样，即使是 SpawnActor ，默认也会被 GC。  参考资料 UE4 Garbage Collection">
+ UPROPERTY()用法 URPOPERTY()UObject* MyObj; AddToRoot()用法 UMyObject* MyObj = NewObject&lt;UMyObject&gt;();MyObj.AddToRoot(); FStreamableManager 用法 FSoftObjectPath AssetPath(TEXT(&quot;/Game/Mannequin/Animations/ThirdPersonWalk.ThirdPersonWalk&quot;));FStreamableManager&amp; AssetLoader = UAssetManager::GetStreamableManager();//hold object in memory.TSharedPtr&lt;FStreamableHandle&gt; Handle = AssetLoader.RequestSyncLoad(AssetPath, true);UObject* Obj = Handle-&gt;GetLoadedAsset();//free memory of object.Handle-&gt;ReleaseHandle(); FGCObjectScopeGuard 用法 {FGCObjectScopeGuard(UObject* GladOS = NewObject&lt;...&gt;(...));GladOS-&gt;SpawnCell();RunGC();GladOS-&gt;IsStillAlive(); // Object will not be removed by GC} GC 常见问题  官方论坛上有人说 NewObject() 或者 LoadObject() 创建的对象才会自动被 GC ， SpawnActor 创建的对象会被自动 AddToRoot ，不会被 GC。不知早期的版本是否确实如此，但是目前版本不是这样，即使是 SpawnActor ，默认也会被 GC。  参考资料 UE4 Garbage Collection">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[UE4]对象的垃圾回收与内存常驻">
 <meta name="twitter:title" content="[UE4]对象的垃圾回收与内存常驻">
@@ -30,12 +30,12 @@
 防止GC的办法 一个UObject类型的变量，即使是static，默认也会被GC掉。
  要防止该对象被GC，有4种方式：
  作为成员变量并标记为UPROPERTY()； 创建对象后 AddToRoot() ；（退出游戏时需要RemoveFromRoot()） FStreamableManager Load资源时，bManageActiveHandle 设置为true； FGCObjectScopeGuard 在指定代码区域内保持对象；  Uobject不能使用TSharedPtr进行引用计数，非UObject才可以；如果一个非UObject的类想加入GC，那么必须继承FGCObject类。
- UPROPERTY()用法 URPOPERTY() UObject* MyObj;  AddToRoot()用法 UMyObject* MyObj = NewObject&lt;UMyObject&gt;(); MyObj.AddToRoot();  FStreamableManager 用法 FSoftObjectPath AssetPath(TEXT(&quot;/Game/Mannequin/Animations/ThirdPersonWalk.ThirdPersonWalk&quot;)); FStreamableManager&amp; AssetLoader = UAssetManager::GetStreamableManager(); //hold object in memory. TSharedPtr&lt;FStreamableHandle&gt; Handle = AssetLoader.RequestSyncLoad(AssetPath, true); UObject* Obj = Handle-&gt;GetLoadedAsset(); //free memory of object. Handle-&gt;ReleaseHandle();  FGCObjectScopeGuard 用法 { FGCObjectScopeGuard(UObject* GladOS = NewObject&lt;...&gt;(...)); GladOS-&gt;SpawnCell(); RunGC(); GladOS-&gt;IsStillAlive(); // Object will not be removed by GC }  GC 常见问题  官方论坛上有人说 NewObject() 或者 LoadObject() 创建的对象才会自动被 GC ， SpawnActor 创建的对象会被自动 AddToRoot ，不会被 GC。不知早期的版本是否确实如此，但是目前版本不是这样，即使是 SpawnActor ，默认也会被 GC。  参考资料 UE4 Garbage Collection">
+ UPROPERTY()用法 URPOPERTY()UObject* MyObj; AddToRoot()用法 UMyObject* MyObj = NewObject&lt;UMyObject&gt;();MyObj.AddToRoot(); FStreamableManager 用法 FSoftObjectPath AssetPath(TEXT(&quot;/Game/Mannequin/Animations/ThirdPersonWalk.ThirdPersonWalk&quot;));FStreamableManager&amp; AssetLoader = UAssetManager::GetStreamableManager();//hold object in memory.TSharedPtr&lt;FStreamableHandle&gt; Handle = AssetLoader.RequestSyncLoad(AssetPath, true);UObject* Obj = Handle-&gt;GetLoadedAsset();//free memory of object.Handle-&gt;ReleaseHandle(); FGCObjectScopeGuard 用法 {FGCObjectScopeGuard(UObject* GladOS = NewObject&lt;...&gt;(...));GladOS-&gt;SpawnCell();RunGC();GladOS-&gt;IsStillAlive(); // Object will not be removed by GC} GC 常见问题  官方论坛上有人说 NewObject() 或者 LoadObject() 创建的对象才会自动被 GC ， SpawnActor 创建的对象会被自动 AddToRoot ，不会被 GC。不知早期的版本是否确实如此，但是目前版本不是这样，即使是 SpawnActor ，默认也会被 GC。  参考资料 UE4 Garbage Collection">
 <meta name="twitter:description" content="keywords：UE4, Memory Persist, GC, 垃圾回收, 内存管理
 防止GC的办法 一个UObject类型的变量，即使是static，默认也会被GC掉。
  要防止该对象被GC，有4种方式：
  作为成员变量并标记为UPROPERTY()； 创建对象后 AddToRoot() ；（退出游戏时需要RemoveFromRoot()） FStreamableManager Load资源时，bManageActiveHandle 设置为true； FGCObjectScopeGuard 在指定代码区域内保持对象；  Uobject不能使用TSharedPtr进行引用计数，非UObject才可以；如果一个非UObject的类想加入GC，那么必须继承FGCObject类。
- UPROPERTY()用法 URPOPERTY() UObject* MyObj;  AddToRoot()用法 UMyObject* MyObj = NewObject&lt;UMyObject&gt;(); MyObj.AddToRoot();  FStreamableManager 用法 FSoftObjectPath AssetPath(TEXT(&quot;/Game/Mannequin/Animations/ThirdPersonWalk.ThirdPersonWalk&quot;)); FStreamableManager&amp; AssetLoader = UAssetManager::GetStreamableManager(); //hold object in memory. TSharedPtr&lt;FStreamableHandle&gt; Handle = AssetLoader.RequestSyncLoad(AssetPath, true); UObject* Obj = Handle-&gt;GetLoadedAsset(); //free memory of object. Handle-&gt;ReleaseHandle();  FGCObjectScopeGuard 用法 { FGCObjectScopeGuard(UObject* GladOS = NewObject&lt;...&gt;(...)); GladOS-&gt;SpawnCell(); RunGC(); GladOS-&gt;IsStillAlive(); // Object will not be removed by GC }  GC 常见问题  官方论坛上有人说 NewObject() 或者 LoadObject() 创建的对象才会自动被 GC ， SpawnActor 创建的对象会被自动 AddToRoot ，不会被 GC。不知早期的版本是否确实如此，但是目前版本不是这样，即使是 SpawnActor ，默认也会被 GC。  参考资料 UE4 Garbage Collection">
+ UPROPERTY()用法 URPOPERTY()UObject* MyObj; AddToRoot()用法 UMyObject* MyObj = NewObject&lt;UMyObject&gt;();MyObj.AddToRoot(); FStreamableManager 用法 FSoftObjectPath AssetPath(TEXT(&quot;/Game/Mannequin/Animations/ThirdPersonWalk.ThirdPersonWalk&quot;));FStreamableManager&amp; AssetLoader = UAssetManager::GetStreamableManager();//hold object in memory.TSharedPtr&lt;FStreamableHandle&gt; Handle = AssetLoader.RequestSyncLoad(AssetPath, true);UObject* Obj = Handle-&gt;GetLoadedAsset();//free memory of object.Handle-&gt;ReleaseHandle(); FGCObjectScopeGuard 用法 {FGCObjectScopeGuard(UObject* GladOS = NewObject&lt;...&gt;(...));GladOS-&gt;SpawnCell();RunGC();GladOS-&gt;IsStillAlive(); // Object will not be removed by GC} GC 常见问题  官方论坛上有人说 NewObject() 或者 LoadObject() 创建的对象才会自动被 GC ， SpawnActor 创建的对象会被自动 AddToRoot ，不会被 GC。不知早期的版本是否确实如此，但是目前版本不是这样，即使是 SpawnActor ，默认也会被 GC。  参考资料 UE4 Garbage Collection">
 <meta property="og:locale" content="en-us">
 
   
@@ -365,43 +365,30 @@ if (!doNotTrack) {
           
           <div class="post-content markdown" itemprop="articleBody">
             <div class="main-content-wrap">
-              
-
-<p>keywords：UE4, Memory Persist, GC, 垃圾回收, 内存管理</p>
-
-<h5 id="防止gc的办法">防止GC的办法</h5>
-
+              <p>keywords：UE4, Memory Persist, GC, 垃圾回收, 内存管理</p>
+<h5 id="gc">防止GC的办法</h5>
 <div class="alert danger ">
   <p>一个UObject类型的变量，即使是static，默认也会被GC掉。</p>
 </div>
-
 <p>要防止该对象被GC，有4种方式：</p>
-
 <ul>
 <li>作为成员变量并标记为<code>UPROPERTY()</code>；</li>
 <li>创建对象后 <code>AddToRoot()</code> ；（退出游戏时需要<code>RemoveFromRoot()</code>）</li>
 <li>FStreamableManager Load资源时，<code>bManageActiveHandle</code> 设置为true；</li>
 <li><code>FGCObjectScopeGuard</code> 在指定代码区域内保持对象；</li>
 </ul>
-
 <div class="alert warning ">
   <p>Uobject不能使用TSharedPtr进行引用计数，非UObject才可以；如果一个非UObject的类想加入GC，那么必须继承FGCObject类。</p>
 </div>
-
-<h6 id="uproperty-用法">UPROPERTY()用法</h6>
-
+<h6 id="uproperty">UPROPERTY()用法</h6>
 <pre><code>URPOPERTY()
     UObject* MyObj;
 </code></pre>
-
-<h6 id="addtoroot-用法">AddToRoot()用法</h6>
-
+<h6 id="addtoroot">AddToRoot()用法</h6>
 <pre><code>UMyObject* MyObj = NewObject&lt;UMyObject&gt;();
 MyObj.AddToRoot();
 </code></pre>
-
-<h6 id="fstreamablemanager-用法">FStreamableManager 用法</h6>
-
+<h6 id="fstreamablemanager-">FStreamableManager 用法</h6>
 <pre><code>FSoftObjectPath AssetPath(TEXT(&quot;/Game/Mannequin/Animations/ThirdPersonWalk.ThirdPersonWalk&quot;));
 FStreamableManager&amp; AssetLoader = UAssetManager::GetStreamableManager();
 
@@ -412,9 +399,7 @@ UObject* Obj = Handle-&gt;GetLoadedAsset();
 //free memory of object.
 Handle-&gt;ReleaseHandle();
 </code></pre>
-
-<h6 id="fgcobjectscopeguard-用法">FGCObjectScopeGuard 用法</h6>
-
+<h6 id="fgcobjectscopeguard-">FGCObjectScopeGuard 用法</h6>
 <pre><code>{
     FGCObjectScopeGuard(UObject* GladOS = NewObject&lt;...&gt;(...));
     GladOS-&gt;SpawnCell();
@@ -422,189 +407,158 @@ Handle-&gt;ReleaseHandle();
     GladOS-&gt;IsStillAlive();   // Object will not be removed by GC
 }
 </code></pre>
-
-<h5 id="gc-常见问题">GC 常见问题</h5>
-
+<h5 id="gc-">GC 常见问题</h5>
 <ol>
 <li>官方论坛上有人说 NewObject() 或者 LoadObject() 创建的对象才会自动被 GC ， SpawnActor 创建的对象会被自动 AddToRoot ，不会被 GC。不知早期的版本是否确实如此，但是目前版本不是这样，<span class="highlight-text red">即使是 SpawnActor ，默认也会被 GC。</span></li>
 </ol>
-
-<h5 id="参考资料">参考资料</h5>
-
-<p>UE4 Garbage Collection<br />
+<h5 id="heading">参考资料</h5>
+<p>UE4 Garbage Collection<br>
 <a href="https://gist.github.com/LordNed/650de717daca23aaf8fc2932bf3f9123">https://gist.github.com/LordNed/650de717daca23aaf8fc2932bf3f9123</a></p>
-
-<p>虚幻4垃圾回收剖析<br />
+<p>虚幻4垃圾回收剖析<br>
 <a href="http://www.cnblogs.com/ghl_carmack/p/6112118.html">http://www.cnblogs.com/ghl_carmack/p/6112118.html</a></p>
-
-<h3 id="转载-ue4内存管理-实践">转载：UE4内存管理 – 实践</h3>
-
-<p>原文：<br />
+<h3 id="ue4--">转载：UE4内存管理 – 实践</h3>
+<p>原文：<br>
 <a href="http://blog.csdn.net/yangxuan0261/article/details/52075581">http://blog.csdn.net/yangxuan0261/article/details/52075581</a></p>
-
 <p>原文内容如下：</p>
-
-<h4 id="uobject-gc机制">UObject gc机制</h4>
-
+<h4 id="uobject-gc">UObject gc机制</h4>
 <ul>
-<li><p>通过 UPROPERTY() 去保持引用</p>
+<li>
+<p>通过 UPROPERTY() 去保持引用</p>
+<pre><code>  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = &quot;MyChar&quot;)
+  class UBehavData* mBehavData;
 
-<pre><code>UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = &quot;MyChar&quot;)
-class UBehavData* mBehavData;
-
-mBehavData = NewObject&lt;UBehavData&gt;(this, UBehavData::StaticClass());
-bh-&gt;mId = 111;
-</code></pre></li>
-
-<li><p>TArray保持引用如果有个 TArray 容器，则这个TArray需要用一个<code>UPROPERTY()</code> 去保持容器的引用，然后里面的UObject就不需要再去AddToRoot去阻止被gc了。</p>
-
-<pre><code>UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = &quot;UCoolDownComponent&quot;)
-TArray&lt;UCoolDown*&gt;      mCDArr;
-
-UCoolDown* cd = NewObject&lt;UCoolDown&gt;(_class);
-cd-&gt;SetSkillId(_skillId);
-mCDArr.Add(cd);
+  mBehavData = NewObject&lt;UBehavData&gt;(this, UBehavData::StaticClass());
+  bh-&gt;mId = 111;
 </code></pre>
+</li>
+<li>
+<p>TArray保持引用如果有个 TArray 容器，则这个TArray需要用一个<code>UPROPERTY()</code> 去保持容器的引用，然后里面的UObject就不需要再去AddToRoot去阻止被gc了。</p>
+<pre><code>  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = &quot;UCoolDownComponent&quot;)
+  TArray&lt;UCoolDown*&gt;      mCDArr;
 
-<p>容器clear后，元素会自动被gc</p></li>
-
-<li><p>4.15版本支持了蓝图 TMap 容器，也是可以通过 UPROPERTY()去保持容器的引用，容器内的UObject就不需要再去AddToRoot去阻止被gc了</p>
-
-<pre><code>UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = &quot;MyChar&quot;)
-    TMap&lt;int32, UBehavData*&gt; mTestMap2;
-
-UBehavData* bh = NewObject&lt;UBehavData&gt;(this, UBehavData::StaticClass());
-bh-&gt;mId = 111;
-mTestMap2.Add(111, bh);
-bh = NewObject&lt;UBehavData&gt;(this, UBehavData::StaticClass());
-bh-&gt;mId = 222;
-mTestMap2.Add(222, bh);
-</code></pre></li>
-
-<li><p>没有任何容器保持引用需要AddToRoot添加标记去阻止被gc</p>
-
-<pre><code>m_sInstance = NewObject&lt;T&gt;();
-m_sInstance-&gt;AddToRoot();
+  UCoolDown* cd = NewObject&lt;UCoolDown&gt;(_class);
+  cd-&gt;SetSkillId(_skillId);
+  mCDArr.Add(cd);
 </code></pre>
+<p>容器clear后，元素会自动被gc</p>
+</li>
+<li>
+<p>4.15版本支持了蓝图 TMap 容器，也是可以通过 UPROPERTY()去保持容器的引用，容器内的UObject就不需要再去AddToRoot去阻止被gc了</p>
+<pre><code>  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = &quot;MyChar&quot;)
+      TMap&lt;int32, UBehavData*&gt; mTestMap2;
 
+  UBehavData* bh = NewObject&lt;UBehavData&gt;(this, UBehavData::StaticClass());
+  bh-&gt;mId = 111;
+  mTestMap2.Add(111, bh);
+  bh = NewObject&lt;UBehavData&gt;(this, UBehavData::StaticClass());
+  bh-&gt;mId = 222;
+  mTestMap2.Add(222, bh);
+</code></pre>
+</li>
+<li>
+<p>没有任何容器保持引用需要AddToRoot添加标记去阻止被gc</p>
+<pre><code>  m_sInstance = NewObject&lt;T&gt;();
+  m_sInstance-&gt;AddToRoot();
+</code></pre>
 <p>让对象重新被gc回收，需要移除标记（不是立即释放对象，是在某个时间gc时才释放对象）</p>
-
-<pre><code>m_sInstance-&gt;RemoveFromRoot();
-m_sInstance = nullptr;
-</code></pre></li>
-
-<li><p>c++ new对象丢个蓝图引用住防止gc</p>
-
-<p>c++ new对象</p>
-
-<pre><code>UFUNCTION(BlueprintPure, Category = &quot;UBehavData&quot;)
-static UBehavData* CreateBehavData();
-
-UBehavData * UBehavData::CreateBehavData()
-{
-    UBehavData* behavData = (UBehavData*)NewObject&lt;UBehavData&gt;(UBehavData::StaticClass());
-    return behavData;
-}
+<pre><code>  m_sInstance-&gt;RemoveFromRoot();
+  m_sInstance = nullptr;
 </code></pre>
+</li>
+<li>
+<p>c++ new对象丢个蓝图引用住防止gc</p>
+<p>c++ new对象</p>
+<pre><code>  UFUNCTION(BlueprintPure, Category = &quot;UBehavData&quot;)
+  static UBehavData* CreateBehavData();
 
+  UBehavData * UBehavData::CreateBehavData()
+  {
+      UBehavData* behavData = (UBehavData*)NewObject&lt;UBehavData&gt;(UBehavData::StaticClass());
+      return behavData;
+  }
+</code></pre>
 <p>蓝图 第一时间 用一个变量 mBehavData 引用住，就可以防止这个对象被gc掉。切记第一时间。
 <figure>
     <img src="https://dawnarc.com/img/20170426-[UE4]%e5%86%85%e5%ad%98%e7%ae%a1%e7%90%86%20%e2%80%93%20%e5%ae%9e%e8%b7%b5/[UE4]%e5%86%85%e5%ad%98%e7%ae%a1%e7%90%86%20%e2%80%93%20%e5%ae%9e%e8%b7%b5-01.jpg"/> 
 </figure>
 </p>
-
-<p>将蓝图中的变量 mBehavData 设为 null，则对象会被gc不定时回收掉
+<p>将蓝图中的变量 mBehavData 设为 null，则对象会被gc不定时回收掉 
 <figure>
     <img src="https://dawnarc.com/img/20170426-[UE4]%e5%86%85%e5%ad%98%e7%ae%a1%e7%90%86%20%e2%80%93%20%e5%ae%9e%e8%b7%b5/[UE4]%e5%86%85%e5%ad%98%e7%ae%a1%e7%90%86%20%e2%80%93%20%e5%ae%9e%e8%b7%b5-02.jpg"/> 
 </figure>
-</p></li>
-
-<li><p>强制gc</p>
-
-<pre><code>GWorld-&gt;GetWorld()-&gt;ForceGarbageCollection(true);
-</code></pre></li>
+</p>
+</li>
+<li>
+<p>强制gc</p>
+<pre><code>  GWorld-&gt;GetWorld()-&gt;ForceGarbageCollection(true);
+</code></pre>
+</li>
 </ul>
-
-<h4 id="aactor-gc机制">AActor gc机制</h4>
-
+<h4 id="aactor-gc">AActor gc机制</h4>
 <p>一般重写这两个函数，来做一些初始化和清理工作</p>
-
 <pre><code>virtual void PostActorCreated() override; //做初始化工作
 virtual void BeginPlay() override; //做初始化工作
 virtual void BeginDestroy() override; //引擎在gc的时候调用，并不是立即调用，一般不用
 virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override; //做清理工作
 virtual void Destroyed() override; //用于释放成员，调用Destroy();会立即调用
 </code></pre>
-
 <p>调用SpawnActor或DestroyActor会调用到这两个函数，析构函数则要在gc的时候才会调用，可以调用gc函数测试一下</p>
-
 <pre><code>GWorld-&gt;GetWorld()-&gt;ForceGarbageCollection(true);
 </code></pre>
-
-<h4 id="uactorcomponent-gc机制">UActorComponent gc机制</h4>
-
+<h4 id="uactorcomponent-gc">UActorComponent gc机制</h4>
 <ul>
-<li><p>作为Actor的组件存在于Actor的组件列表中，销毁Actor时会把组件列表遍历一边destroy掉并标记为待gc的对象，在一个不定时的时间被gc掉</p>
-
-<pre><code>UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = &quot;MyChar&quot;)
-UCoolDownComponent*     mCDComp;    //注册cd组件
-</code></pre></li>
-
-<li><p>任意时刻销毁，即使宿主Actor未被销毁C++销毁则直接调用接口</p>
-
-<pre><code>void UActorComponent::DestroyComponent(bool bPromoteChildren/*= false*/)
+<li>
+<p>作为Actor的组件存在于Actor的组件列表中，销毁Actor时会把组件列表遍历一边destroy掉并标记为待gc的对象，在一个不定时的时间被gc掉</p>
+<pre><code>  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = &quot;MyChar&quot;)
+  UCoolDownComponent*     mCDComp;    //注册cd组件
 </code></pre>
-
+</li>
+<li>
+<p>任意时刻销毁，即使宿主Actor未被销毁C++销毁则直接调用接口</p>
+<pre><code>  void UActorComponent::DestroyComponent(bool bPromoteChildren/*= false*/)
+</code></pre>
 <p>蓝图销毁，需要设置一个UActorComponent的属性</p>
-
-<pre><code>    bAllowAnyoneToDestroyMe = true;
+<pre><code>      bAllowAnyoneToDestroyMe = true;
 </code></pre>
-
 <p>因为提供给蓝图的接口需要判断这个字段，默认是false</p>
+<pre><code>  UFUNCTION(BlueprintCallable, Category=&quot;Components&quot;, meta=(Keywords = &quot;Delete&quot;, HidePin=&quot;Object&quot;, DefaultToSelf=&quot;Object&quot;, DisplayName = &quot;DestroyComponent&quot;))
+  void K2_DestroyComponent(UObject* Object);
 
-<pre><code>UFUNCTION(BlueprintCallable, Category=&quot;Components&quot;, meta=(Keywords = &quot;Delete&quot;, HidePin=&quot;Object&quot;, DefaultToSelf=&quot;Object&quot;, DisplayName = &quot;DestroyComponent&quot;))
-void K2_DestroyComponent(UObject* Object);
-
-void UActorComponent::K2_DestroyComponent(UObject* Object)
-{
-    AActor* MyOwner = GetOwner();
-    if (bAllowAnyoneToDestroyMe || Object == this || MyOwner == NULL || MyOwner == Object)
-    {
-        DestroyComponent();
-    }
-    else
-    {
-        // TODO: Put in Message Log
-        UE_LOG(LogActorComponent, Error, TEXT(&quot;May not destroy component %s owned by %s.&quot;), *GetFullName(), *MyOwner-&gt;GetFullName());
-    }
-}
-</code></pre></li>
-
-<li><p>一般重写这两个函数，来做一些初始化和清理工作</p>
-
-<pre><code>// Begin UActorComponent Interface.
-virtual void BeginPlay() override; //组件RegisterComponent注册的时候，且有OwnerActor才会立即调用，一般不用
-virtual void BeginDestroy() override; //引擎在gc的时候调用，并不是立即调用，一般不用
-virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override; //立即调用，一般这里做清理工作（注册过才会调用），且gc时还会再调用一次，一般不用
-virtual void OnComponentCreated() override; //组件RegisterComponent注册的时候立即调用，一般这里做初始化工作
-virtual void OnComponentDestroyed(bool bDestroyingHierarchy) override;//立即调用，一般这里做清理工作（只要DestroyComponent就会调用）
-
-// End UActorComponent Interface.
+  void UActorComponent::K2_DestroyComponent(UObject* Object)
+  {
+      AActor* MyOwner = GetOwner();
+      if (bAllowAnyoneToDestroyMe || Object == this || MyOwner == NULL || MyOwner == Object)
+      {
+          DestroyComponent();
+      }
+      else
+      {
+          // TODO: Put in Message Log
+          UE_LOG(LogActorComponent, Error, TEXT(&quot;May not destroy component %s owned by %s.&quot;), *GetFullName(), *MyOwner-&gt;GetFullName());
+      }
+  }
 </code></pre>
+</li>
+<li>
+<p>一般重写这两个函数，来做一些初始化和清理工作</p>
+<pre><code>  // Begin UActorComponent Interface.
+  virtual void BeginPlay() override; //组件RegisterComponent注册的时候，且有OwnerActor才会立即调用，一般不用
+  virtual void BeginDestroy() override; //引擎在gc的时候调用，并不是立即调用，一般不用
+  virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override; //立即调用，一般这里做清理工作（注册过才会调用），且gc时还会再调用一次，一般不用
+  virtual void OnComponentCreated() override; //组件RegisterComponent注册的时候立即调用，一般这里做初始化工作
+  virtual void OnComponentDestroyed(bool bDestroyingHierarchy) override;//立即调用，一般这里做清理工作（只要DestroyComponent就会调用）
 
+  // End UActorComponent Interface.
+</code></pre>
 <p>默认的gc是时间测试得到为1min
 如果需要立即销毁，使用这个接口</p>
-
-<pre><code>mCDComp-&gt;DestroyComponent(); //会立即调用到 OnComponentDestroyed，并标记为准备被gc回收
-</code></pre></li>
+<pre><code>  mCDComp-&gt;DestroyComponent(); //会立即调用到 OnComponentDestroyed，并标记为准备被gc回收
+</code></pre>
+</li>
 </ul>
-
-<h4 id="参考资料-1">参考资料</h4>
-
+<h4 id="heading1">参考资料</h4>
 <p>官网地址： <a href="https://wiki.unrealengine.com/Garbage_Collection_%26_Dynamic_Memory_Allocation">https://wiki.unrealengine.com/Garbage_Collection_%26_Dynamic_Memory_Allocation</a></p>
-
-<hr />
-
+<hr>
 <p><code>他们如此单纯，以至于认为贫穷是一种罪过，还以为可以通过赚钱来遗忘。——杰拉尔·萨利克</code></p>
 
               

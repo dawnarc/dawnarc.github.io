@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.58.3 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.60.1 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="UE4, Compile Engine Source">
 <meta name="description" content="When upgrade engine from v4.20 to v4.22, SkeletalMesh Cook failed.">
@@ -353,9 +353,7 @@ if (!doNotTrack) {
           <div class="post-content markdown" itemprop="articleBody">
             <div class="main-content-wrap">
               <p>When upgrade engine from v4.20 to v4.22, SkeletalMesh Cook failed.</p>
-
 <p>Log Error:</p>
-
 <pre><code>UATHelper: Packaging (Windows (64-bit)):   LogCook: Display: Cooked packages 4338 Packages Remain 6916 Total 11254
 UATHelper: Packaging (Windows (64-bit)):   LogNiagaraCompiler: Error: Skeletal Mesh DI Function GetTriPositionWS has been deprecated. Use GetSinnedTriangleData or GetSkinnedTriangleDataWS instead.
 UATHelper: Packaging (Windows (64-bit)):    - Node: Get Tri Position WS - Callstack: UpdateScript.MyScript
@@ -391,30 +389,21 @@ PackagingResults: Error: Error compiling input for convert node. - Node: Break V
 PackagingResults: Error: The HLSL Translator failed to generate HLSL!
 UATHelper: Packaging (Windows (64-bit)):   LogNiagara: Error: Skeletal Mesh DI Function GetTriPositionWS has been deprecated. Use GetSinnedTriangleData or GetSkinnedTriangleDataWS instead.
 </code></pre>
-
 <h5 id="solution">Solution</h5>
-
 <p>1, Disable Niagara: Settings -&gt; Plugins -&gt; FX , disable all plugins related Niagara.</p>
-
-<p>2, Modify engine source:<br />
+<p>2, Modify engine source:<br>
 <code>Engine\Source\Runtime\CoreUObject\Private\Misc\PackageName.cpp</code></p>
-
 <p>Change this Log Level to <code>Warning</code> in function <code>FPackageName::DoesPackageExist()</code>, origin is <code>Error</code></p>
-
 <pre><code>if ( !FPackageName::IsValidLongPackageName( PackageName, true, &amp;Reason ) )
 {
     UE_LOG(LogPackageName, Warning, TEXT( &quot;DoesPackageExist: DoesPackageExist FAILED: '%s' is not a standard unreal filename or a long path name. Reason: %s&quot;), *LongPackageName, *Reason.ToString() );
     return false;
 }
 </code></pre>
-
-<p>This modification&rsquo;s purpose is to ignore following error log:</p>
-
+<p>This modification's purpose is to ignore following error log:</p>
 <pre><code>UATHelper: Packaging (Windows (64-bit)):   LogInit: Display: LogPackageName: Error: DoesPackageExist: DoesPackageExist FAILED: '/Niagara/DefaultAssets/DefaultSpriteMaterial' is not a standard unreal filename or a long path name. Reason: Path does not start with a valid root. Path must begin with: '/Engine/', '/Game/', '/Paper2D/', '/AnimationSharing/', '/Cry
 </code></pre>
-
-<hr />
-
+<hr>
 <p><code>正是一个人怎么看待自己，决定了此人的命运，指向了他的归宿。 ——亨利·戴维·梭罗《瓦尔登湖》</code></p>
               
             </div>

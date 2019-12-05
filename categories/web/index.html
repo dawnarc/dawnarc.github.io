@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.58.3 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.60.1 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="">
 <meta name="description" content="Hugo tranquilpeak theme demo">
@@ -479,8 +479,8 @@ if (!doNotTrack) {
         keywords：github pages、custom domain、https
 我的github pages的默认域名为：dawnarc.github.io，以修改该域名为自定义域名：dawnarc.com 为例
 1，域名解析设置 以美橙互联为例：
-   主机名 记录类型 记录值     @ A记录 github pages的ip地址   xxx CNAME记录 dawnarc.github.io.    2，CNAME文件修改 dawnarc.github.io仓库下的CNAME修改
-dawnarc.com  3，enforce HTTPS 勾选 上面第二步的CNAME文件修改以后，再刷新 dawnarc.github.io 的 GitHub Pages 设置，就可以勾选 Enforce HTTPS。稍等片刻，就可以以https打开自己的自定义域名。
+2，CNAME文件修改 dawnarc.github.io仓库下的CNAME修改
+dawnarc.com 3，enforce HTTPS 勾选 上面第二步的CNAME文件修改以后，再刷新 dawnarc.github.io 的 GitHub Pages 设置，就可以勾选 Enforce HTTPS 。稍等片刻，就可以以https打开自己的自定义域名。
 GitHub Pages 的CNAME如果设置为带 www 的域名，貌似无法使用 https，去掉 www 后才可以。
  注意事项 如果使用 Chrome 访问 https 地址栏左侧仍未出现小绿锁，请检查自己的网站引用的资源文件有没有使用了 http 协议，请替换成相应的 https 资源。
 参考自：GitHub Pages 对自定义域名支持 HTTPS
@@ -547,9 +547,10 @@ https://likfe.com/2018/05/03/github-pages-custom-domains-support-https/
       
         keywords：hugo、MathJax、公式、数学表达式
 步骤 1，在theme\layouts\partials\目录下新建一个文件，命名为 mathjax_support.html，内容为：
-&lt;script type=&quot;text/javascript&quot; async src=&quot;https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML&quot;&gt; &lt;/script&gt; &lt;script type=&quot;text/x-mathjax-config&quot;&gt; MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$'], ['\\(','\\)']], displayMath: [['$$','$$'], ['\[','\]']], processEscapes: true, processEnvironments: true, skipTags: ['script', 'noscript', 'style', 'textarea', 'pre','code'], TeX: { equationNumbers: { autoNumber: &quot;AMS&quot; }, extensions: [&quot;AMSmath.js&quot;, &quot;AMSsymbols.js&quot;] } } }); &lt;/script&gt;  2，在header.html的&lt;/header&gt;之前或者footer.html的&lt;/footer&gt;之前添加：
-{{ if .Params.mathjax}}{{ partial &quot;mathjax_support.html&quot; . }}{{ end }}  3，在MD文件的头部追加mathjax : ture：
---- title : &quot;hugo-集成MathJax&quot; date : &quot;2018-06-22T00:51:40+08:00&quot; mathjax : ture ---  如果是新语法，则追加mathjax= [&quot;ture&quot;]：
+ MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$'], ['\\(','\\)']], displayMath: [['$$','$$'], ['\[','\]']], processEscapes: true, processEnvironments: true, skipTags: ['script', 'noscript', 'style', 'textarea', 'pre','code'], TeX: { equationNumbers: { autoNumber: "AMS" }, extensions: ["AMSmath.js", "AMSsymbols.js"] } } });  2，在header.html的&lt;/header&gt;之前或者footer.html的&lt;/footer&gt;之前添加：
+{{ if .Params.mathjax}}{{ partial "mathjax_support.html" . }}{{ end }} 3，在MD文件的头部追加mathjax : ture：
+--- title : "hugo-集成MathJax" date : "2018-06-22T00:51:40+08:00" mathjax : ture --- 如果是新语法，则追加mathjax= [&quot;ture&quot;]：
++++ title= "hugo-集成MathJax" date= "2018-06-22T00:51:40+08:00" mathjax= ["
       
       <p>
         <a href="https://dawnarc.com/2018/06/hugo%E9%9B%86%E6%88%90mathjax/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -611,17 +612,17 @@ https://likfe.com/2018/05/03/github-pages-custom-domains-support-https/
     <div class="postShorten-excerpt" itemprop="articleBody">
       
         方式一：修改config.toml（推荐） 在config.toml中开启highlight.js
-[params] syntaxHighlighter = &quot;highlight.js&quot; customCSS = [&quot;https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/solarized-light.min.css&quot;]  其中customCSS指定的是highlight的style名称，如果不设置，则会使用highlight.js的默认style。
+[params]syntaxHighlighter = &quot;highlight.js&quot;customCSS = [&quot;https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/solarized-light.min.css&quot;] 其中customCSS指定的是highlight的style名称，如果不设置，则会使用highlight.js的默认style。
 这种方式需要hugo的theme提供highlight.js支持，hugo默认theme不支持这种方式。已知的支持highlight.js的hugo theme：https://github.com/kakawait/hugo-tranquilpeak-theme
  方式二：修改header.html 在theme的./layouts/partials或者./layouts/chrome/目录下，找到header.html或者header.includes.html文件，然后再在&lt;header&gt;标签内添加cdn地址：
-&lt;link rel=&quot;stylesheet&quot; href=&quot;//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css&quot;&gt; &lt;script src=&quot;//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js&quot;&gt;&lt;/script&gt; &lt;script&gt;hljs.initHighlightingOnLoad();&lt;/script&gt;  highlight.js的最新cdn地址获取
+&lt;link rel=&quot;stylesheet&quot;href=&quot;//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css&quot;&gt;&lt;script src=&quot;//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js&quot;&gt;&lt;/script&gt;&lt;script&gt;hljs.initHighlightingOnLoad();&lt;/script&gt; highlight.js的最新cdn地址获取
 https://highlightjs.org/download/
 如果要修改style，直接修改default.min.css的名字，比如想使用vs风格，那么就将
-href=&quot;//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css&quot;  修改为
-href=&quot;//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/vs.min.css&quot;  上述两种方式设置后，hugo文章模板中的所有代码都会统一替换为highlight.js风格，不用在修改原有的.md文件。
+href=&quot;//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css&quot; 修改为
+href=&quot;//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/vs.min.css&quot; 上述两种方式设置后，hugo文章模板中的所有代码都会统一替换为highlight.js风格，不用在修改原有的.md文件。
 highlight.js style演示合集 https://highlightjs.org/static/demo/
 Hugo highlight语法：Syntax Highlighting https://bwaycer.github.io/hugo_tutorial.hugo/extras/highlighting/#highlight-js-example
-胡者，天之骄子也。----《汉书》
+ 胡者，天之骄子也。----《汉书》
       
       <p>
         <a href="https://dawnarc.com/2018/01/hugo%E9%9B%86%E6%88%90highlight.js/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -683,7 +684,7 @@ Hugo highlight语法：Syntax Highlighting https://bwaycer.github.io/hugo_tutori
     <div class="postShorten-excerpt" itemprop="articleBody">
       
         markdown没有专门支持颜色的语法，但是可以内嵌HTML：
-&lt;font color=red&gt;内容&lt;/font&gt; &lt;font color=#0099ff size=7 face=&quot;黑体&quot;&gt;内容&lt;/font&gt;  出淤泥而不染，濯清涟而不妖，中通外直，不蔓不枝，香远益清，亭亭净植，可远观，而不可亵玩焉。---周敦颐《爱莲说》
+&lt;font color=red&gt;内容&lt;/font&gt; &lt;font color=#0099ff size=7 face=&quot;黑体&quot;&gt;内容&lt;/font&gt;   出淤泥而不染，濯清涟而不妖，中通外直，不蔓不枝，香远益清，亭亭净植，可远观，而不可亵玩焉。---周敦颐《爱莲说》
       
       <p>
         <a href="https://dawnarc.com/2017/04/markdown%E5%A6%82%E4%BD%95%E4%BF%AE%E6%94%B9%E5%AD%97%E4%BD%93%E9%A2%9C%E8%89%B2/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -807,11 +808,11 @@ Hugo highlight语法：Syntax Highlighting https://bwaycer.github.io/hugo_tutori
     <div class="postShorten-excerpt" itemprop="articleBody">
       
         1，新建文章：
-hugo new 章节名称/文章名称.md  2，生成HTML、js等静态web文件：
-hugo -v  这里-v是&ndash;verbose的缩写，只是打印信息。
+hugo new 章节名称/文章名称.md 2，生成HTML、js等静态web文件：
+hugo -v 这里-v是&ndash;verbose的缩写，只是打印信息。
 注意，文章有个属性draft=true，表示当前文章为草稿，默认构建是不会为草稿生成html文件发的。如果生成时希望把草稿也生成出来，需要使用参数：&ndash;buildDrafts，例如：
-hugo --buildDrafts  3，启动http服务器（测试用），3中方式：
-hugo server hugo server --buildDrafts hugo server --theme=hugo_theme_robust --buildDrafts  或者执行完第2步之后，将publish目录下的所有文件拷贝到web服务器的相应目录下，比如nginx/html/
+hugo --buildDrafts 3，启动http服务器（测试用），3中方式：
+hugo serverhugo server --buildDraftshugo server --theme=hugo_theme_robust --buildDrafts 或者执行完第2步之后，将publish目录下的所有文件拷贝到web服务器的相应目录下，比如nginx/html/
       
       <p>
         <a href="https://dawnarc.com/2016/11/hugo%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BA%E6%AD%A5%E9%AA%A4/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -872,7 +873,7 @@ hugo server hugo server --buildDrafts hugo server --theme=hugo_theme_robust --bu
     </div>
     <div class="postShorten-excerpt" itemprop="articleBody">
       
-        错误堆栈： YAMLException: end of the stream or a document separator is expected at line 15, column 1: url: http://yoursite.com ^ at generateError (E:\Protoss\Desktop\blog\node_modules\hexo\node_modules\js-yaml\lib\js-yaml\loader.js:162:10) at throwError (E:\Protoss\Desktop\blog\node_modules\hexo\node_modules\js-yaml\lib\js-yaml\loader.js:168:9) at readDocument (E:\Protoss\Desktop\blog\node_modules\hexo\node_modules\js-yaml\lib\js-yaml\loader.js:1508:5) at loadDocuments (E:\Protoss\Desktop\blog\node_modules\hexo\node_modules\js-yaml\lib\js-yaml\loader.js:1544:5) at Object.load (E:\Protoss\Desktop\blog\node_modules\hexo\node_modules\js-yaml\lib\js-yaml\loader.js:1561:19) at Hexo.yamlHelper (E:\Protoss\Desktop\blog\node_modules\hexo\lib\plugins\renderer\yaml.js:7:15) at Hexo.tryCatcher (E:\Protoss\Desktop\blog\node_modules\hexo\node_modules\bluebird\js\release\util.js:16:23) at Hexo.&lt;anonymous&gt; (E:\Protoss\Desktop\blog\node_modules\hexo\node_modules\bluebird\js\release\method.js:15:34) at E:\Protoss\Desktop\blog\node_modules\hexo\lib\hexo\render.js:59:21 at tryCatcher (E:\Protoss\Desktop\blog\node_modules\hexo\node_modules\bluebird\js\release\util.js:16:23) at Promise._settlePromiseFromHandler (E:\Protoss\Desktop\blog\node_modules\hexo\node_modules\bluebird\js\release\promise.js:502:31) at Promise._settlePromise (E:\Protoss\Desktop\blog\node_modules\hexo\node_modules\bluebird\js\release\promise.js:559:18) at Promise._settlePromise0 (E:\Protoss\Desktop\blog\node_modules\hexo\node_modules\bluebird\js\release\promise.js:604:10) at Promise._settlePromises (E:\Protoss\Desktop\blog\node_modules\hexo\node_modules\bluebird\js\release\promise.js:683:18) at Async._drainQueue (E:\Protoss\Desktop\blog\node_modules\hexo\node_modules\bluebird\js\release\async.js:138:16) at Async._drainQueues (E:\Protoss\Desktop\blog\node_modules\hexo\node_modules\bluebird\js\release\async.js:148:10) at Immediate.Async.drainQueues [as _onImmediate] (E:\Protoss\Desktop\blog\node_modules\hexo\node_modules\bluebird\js\release\async.
+        错误堆栈： YAMLException: end of the stream or a document separator is expected at line 15, column 1:url: http://yoursite.com^at generateError (E:\Protoss\Desktop\blog\node_modules\hexo\node_modules\js-yaml\lib\js-yaml\loader.js:162:10)at throwError (E:\Protoss\Desktop\blog\node_modules\hexo\node_modules\js-yaml\lib\js-yaml\loader.js:168:9)at readDocument (E:\Protoss\Desktop\blog\node_modules\hexo\node_modules\js-yaml\lib\js-yaml\loader.js:1508:5)at loadDocuments (E:\Protoss\Desktop\blog\node_modules\hexo\node_modules\js-yaml\lib\js-yaml\loader.js:1544:5)at Object.load (E:\Protoss\Desktop\blog\node_modules\hexo\node_modules\js-yaml\lib\js-yaml\loader.js:1561:19)at Hexo.yamlHelper (E:\Protoss\Desktop\blog\node_modules\hexo\lib\plugins\renderer\yaml.js:7:15)at Hexo.tryCatcher (E:\Protoss\Desktop\blog\node_modules\hexo\node_modules\bluebird\js\release\util.js:16:23)at Hexo.&lt;anonymous&gt; (E:\Protoss\Desktop\blog\node_modules\hexo\node_modules\bluebird\js\release\method.js:15:34)at E:\Protoss\Desktop\blog\node_modules\hexo\lib\hexo\render.js:59:21at tryCatcher (E:\Protoss\Desktop\blog\node_modules\hexo\node_modules\bluebird\js\release\util.js:16:23)at Promise._settlePromiseFromHandler (E:\Protoss\Desktop\blog\node_modules\hexo\node_modules\bluebird\js\release\promise.js:502:31)at Promise._settlePromise (E:\Protoss\Desktop\blog\node_modules\hexo\node_modules\bluebird\js\release\promise.js:559:18)at Promise._settlePromise0 (E:\Protoss\Desktop\blog\node_modules\hexo\node_modules\bluebird\js\release\promise.js:604:10)at Promise._settlePromises (E:\Protoss\Desktop\blog\node_modules\hexo\node_modules\bluebird\js\release\promise.js:683:18)at Async._drainQueue (E:\Protoss\Desktop\blog\node_modules\hexo\node_modules\bluebird\js\release\async.js:138:16)at Async._drainQueues (E:\Protoss\Desktop\blog\node_modules\hexo\node_modules\bluebird\js\release\async.js:148:10)at Immediate.Async.drainQueues [as _onImmediate] (E:\Protoss\Desktop\blog\node_modules\hexo\node_modules\bluebird\js\release\async.
       
       <p>
         <a href="https://dawnarc.com/2016/05/hexoserver%E5%90%AF%E5%8A%A8%E5%BC%82%E5%B8%B8yamlexception/" class="postShorten-excerpt_link link">Continue reading</a>

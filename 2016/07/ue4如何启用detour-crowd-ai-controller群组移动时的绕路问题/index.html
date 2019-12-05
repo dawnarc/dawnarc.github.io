@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.58.3 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.60.1 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="">
 <meta name="description" content="keywords：UE4、AI、群体移动、闪避、避让、回避
@@ -15,10 +15,10 @@ C&#43;&#43;方式
 引擎的C&#43;&#43;代码有个叫 ADetourCrowdAIController 的class，但是这个class无法继承；
 要在C&#43;&#43;中使用Detour Crowd AI，需要借助 UCrowdFollowingComponent，在AIController的构造函数中设置即可
 头文件：
-MyAIController(const FObjectInitializer&amp; ObjectInitializer = FObjectInitializer::Get());  cpp：
-MyAIController::MyAIController(const FObjectInitializer&amp; ObjectInitializer) : Super(ObjectInitializer.SetDefaultSubobjectClass&lt;UCrowdFollowingComponent&gt;(TEXT(&quot;PathFollowingComponent&quot;))) { }  转向抖动问题 使用默认的UCrowdFollowingComponent，角色在转向时会抖动，要解决这个问题，需要将属性UCrowdFollowingComponent::bSuspendCrowdSimulation设置为true。
+MyAIController(const FObjectInitializer&amp; ObjectInitializer = FObjectInitializer::Get()); cpp：
+MyAIController::MyAIController(const FObjectInitializer&amp; ObjectInitializer): Super(ObjectInitializer.SetDefaultSubobjectClass&lt;UCrowdFollowingComponent&gt;(TEXT(&quot;PathFollowingComponent&quot;))){ } 转向抖动问题 使用默认的UCrowdFollowingComponent，角色在转向时会抖动，要解决这个问题，需要将属性UCrowdFollowingComponent::bSuspendCrowdSimulation设置为true。
 完整代码：
-#include &quot;Navigation/CrowdFollowingComponent.h&quot; AMyAIController::AMyAIController(const FObjectInitializer&amp; ObjectInitializer) : Super(ObjectInitializer.SetDefaultSubobjectClass&lt;UCrowdFollowingComponent&gt;(TEXT(&quot;PathFollowingComponent&quot;))) { if (UCrowdFollowingComponent* CrowdComp = Cast&lt;UCrowdFollowingComponent&gt;(GetComponentByClass(UCrowdFollowingComponent::StaticClass()))) { CrowdComp-&gt;SuspendCrowdSteering(true); //CrowdComp-&gt;SetCrowdAnticipateTurns(true); //CrowdComp-&gt;SetCrowdSeparation(true); //CrowdComp-&gt;SetCrowdPathOffset(true); //CrowdComp-&gt;SetCrowdAvoidanceQuality(ECrowdAvoidanceQuality::High); } }  但是`SuspendCrowdSteering` 设置为true后，自动避让面前单位的功能就失效了，如果要处理这个问题，建议重写 UCrowdFollowingComponent 中的转向逻辑，因为其内部没有考虑慢速转向的问题。 Crowd Manager 配置 Project Settings -》Engine -》 Navigation System -》 Crowd Manager Class">
+#include &quot;Navigation/CrowdFollowingComponent.h&quot;AMyAIController::AMyAIController(const FObjectInitializer&amp; ObjectInitializer): Super(ObjectInitializer.SetDefaultSubobjectClass&lt;UCrowdFollowingComponent&gt;(TEXT(&quot;PathFollowingComponent&quot;))){if (UCrowdFollowingComponent* CrowdComp = Cast&lt;UCrowdFollowingComponent&gt;(GetComponentByClass(UCrowdFollowingComponent::StaticClass()))){CrowdComp-&gt;SuspendCrowdSteering(true);//CrowdComp-&gt;SetCrowdAnticipateTurns(true);//CrowdComp-&gt;SetCrowdSeparation(true);//CrowdComp-&gt;SetCrowdPathOffset(true);//CrowdComp-&gt;SetCrowdAvoidanceQuality(ECrowdAvoidanceQuality::High);}} 但是`SuspendCrowdSteering` 设置为true后，自动避让面前单位的功能就失效了，如果要处理这个问题，建议重写 UCrowdFollowingComponent 中的转向逻辑，因为其内部没有考虑慢速转向的问题。 Crowd Manager 配置 Project Settings -》Engine -》 Navigation System -》 Crowd Manager Class">
 
 
 <meta property="og:description" content="keywords：UE4、AI、群体移动、闪避、避让、回避
@@ -28,10 +28,10 @@ C&#43;&#43;方式
 引擎的C&#43;&#43;代码有个叫 ADetourCrowdAIController 的class，但是这个class无法继承；
 要在C&#43;&#43;中使用Detour Crowd AI，需要借助 UCrowdFollowingComponent，在AIController的构造函数中设置即可
 头文件：
-MyAIController(const FObjectInitializer&amp; ObjectInitializer = FObjectInitializer::Get());  cpp：
-MyAIController::MyAIController(const FObjectInitializer&amp; ObjectInitializer) : Super(ObjectInitializer.SetDefaultSubobjectClass&lt;UCrowdFollowingComponent&gt;(TEXT(&quot;PathFollowingComponent&quot;))) { }  转向抖动问题 使用默认的UCrowdFollowingComponent，角色在转向时会抖动，要解决这个问题，需要将属性UCrowdFollowingComponent::bSuspendCrowdSimulation设置为true。
+MyAIController(const FObjectInitializer&amp; ObjectInitializer = FObjectInitializer::Get()); cpp：
+MyAIController::MyAIController(const FObjectInitializer&amp; ObjectInitializer): Super(ObjectInitializer.SetDefaultSubobjectClass&lt;UCrowdFollowingComponent&gt;(TEXT(&quot;PathFollowingComponent&quot;))){ } 转向抖动问题 使用默认的UCrowdFollowingComponent，角色在转向时会抖动，要解决这个问题，需要将属性UCrowdFollowingComponent::bSuspendCrowdSimulation设置为true。
 完整代码：
-#include &quot;Navigation/CrowdFollowingComponent.h&quot; AMyAIController::AMyAIController(const FObjectInitializer&amp; ObjectInitializer) : Super(ObjectInitializer.SetDefaultSubobjectClass&lt;UCrowdFollowingComponent&gt;(TEXT(&quot;PathFollowingComponent&quot;))) { if (UCrowdFollowingComponent* CrowdComp = Cast&lt;UCrowdFollowingComponent&gt;(GetComponentByClass(UCrowdFollowingComponent::StaticClass()))) { CrowdComp-&gt;SuspendCrowdSteering(true); //CrowdComp-&gt;SetCrowdAnticipateTurns(true); //CrowdComp-&gt;SetCrowdSeparation(true); //CrowdComp-&gt;SetCrowdPathOffset(true); //CrowdComp-&gt;SetCrowdAvoidanceQuality(ECrowdAvoidanceQuality::High); } }  但是`SuspendCrowdSteering` 设置为true后，自动避让面前单位的功能就失效了，如果要处理这个问题，建议重写 UCrowdFollowingComponent 中的转向逻辑，因为其内部没有考虑慢速转向的问题。 Crowd Manager 配置 Project Settings -》Engine -》 Navigation System -》 Crowd Manager Class">
+#include &quot;Navigation/CrowdFollowingComponent.h&quot;AMyAIController::AMyAIController(const FObjectInitializer&amp; ObjectInitializer): Super(ObjectInitializer.SetDefaultSubobjectClass&lt;UCrowdFollowingComponent&gt;(TEXT(&quot;PathFollowingComponent&quot;))){if (UCrowdFollowingComponent* CrowdComp = Cast&lt;UCrowdFollowingComponent&gt;(GetComponentByClass(UCrowdFollowingComponent::StaticClass()))){CrowdComp-&gt;SuspendCrowdSteering(true);//CrowdComp-&gt;SetCrowdAnticipateTurns(true);//CrowdComp-&gt;SetCrowdSeparation(true);//CrowdComp-&gt;SetCrowdPathOffset(true);//CrowdComp-&gt;SetCrowdAvoidanceQuality(ECrowdAvoidanceQuality::High);}} 但是`SuspendCrowdSteering` 设置为true后，自动避让面前单位的功能就失效了，如果要处理这个问题，建议重写 UCrowdFollowingComponent 中的转向逻辑，因为其内部没有考虑慢速转向的问题。 Crowd Manager 配置 Project Settings -》Engine -》 Navigation System -》 Crowd Manager Class">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[UE4]如何启用Detour Crowd AI Controller(群组移动时的绕路问题)">
 <meta name="twitter:title" content="[UE4]如何启用Detour Crowd AI Controller(群组移动时的绕路问题)">
@@ -45,10 +45,10 @@ C&#43;&#43;方式
 引擎的C&#43;&#43;代码有个叫 ADetourCrowdAIController 的class，但是这个class无法继承；
 要在C&#43;&#43;中使用Detour Crowd AI，需要借助 UCrowdFollowingComponent，在AIController的构造函数中设置即可
 头文件：
-MyAIController(const FObjectInitializer&amp; ObjectInitializer = FObjectInitializer::Get());  cpp：
-MyAIController::MyAIController(const FObjectInitializer&amp; ObjectInitializer) : Super(ObjectInitializer.SetDefaultSubobjectClass&lt;UCrowdFollowingComponent&gt;(TEXT(&quot;PathFollowingComponent&quot;))) { }  转向抖动问题 使用默认的UCrowdFollowingComponent，角色在转向时会抖动，要解决这个问题，需要将属性UCrowdFollowingComponent::bSuspendCrowdSimulation设置为true。
+MyAIController(const FObjectInitializer&amp; ObjectInitializer = FObjectInitializer::Get()); cpp：
+MyAIController::MyAIController(const FObjectInitializer&amp; ObjectInitializer): Super(ObjectInitializer.SetDefaultSubobjectClass&lt;UCrowdFollowingComponent&gt;(TEXT(&quot;PathFollowingComponent&quot;))){ } 转向抖动问题 使用默认的UCrowdFollowingComponent，角色在转向时会抖动，要解决这个问题，需要将属性UCrowdFollowingComponent::bSuspendCrowdSimulation设置为true。
 完整代码：
-#include &quot;Navigation/CrowdFollowingComponent.h&quot; AMyAIController::AMyAIController(const FObjectInitializer&amp; ObjectInitializer) : Super(ObjectInitializer.SetDefaultSubobjectClass&lt;UCrowdFollowingComponent&gt;(TEXT(&quot;PathFollowingComponent&quot;))) { if (UCrowdFollowingComponent* CrowdComp = Cast&lt;UCrowdFollowingComponent&gt;(GetComponentByClass(UCrowdFollowingComponent::StaticClass()))) { CrowdComp-&gt;SuspendCrowdSteering(true); //CrowdComp-&gt;SetCrowdAnticipateTurns(true); //CrowdComp-&gt;SetCrowdSeparation(true); //CrowdComp-&gt;SetCrowdPathOffset(true); //CrowdComp-&gt;SetCrowdAvoidanceQuality(ECrowdAvoidanceQuality::High); } }  但是`SuspendCrowdSteering` 设置为true后，自动避让面前单位的功能就失效了，如果要处理这个问题，建议重写 UCrowdFollowingComponent 中的转向逻辑，因为其内部没有考虑慢速转向的问题。 Crowd Manager 配置 Project Settings -》Engine -》 Navigation System -》 Crowd Manager Class">
+#include &quot;Navigation/CrowdFollowingComponent.h&quot;AMyAIController::AMyAIController(const FObjectInitializer&amp; ObjectInitializer): Super(ObjectInitializer.SetDefaultSubobjectClass&lt;UCrowdFollowingComponent&gt;(TEXT(&quot;PathFollowingComponent&quot;))){if (UCrowdFollowingComponent* CrowdComp = Cast&lt;UCrowdFollowingComponent&gt;(GetComponentByClass(UCrowdFollowingComponent::StaticClass()))){CrowdComp-&gt;SuspendCrowdSteering(true);//CrowdComp-&gt;SetCrowdAnticipateTurns(true);//CrowdComp-&gt;SetCrowdSeparation(true);//CrowdComp-&gt;SetCrowdPathOffset(true);//CrowdComp-&gt;SetCrowdAvoidanceQuality(ECrowdAvoidanceQuality::High);}} 但是`SuspendCrowdSteering` 设置为true后，自动避让面前单位的功能就失效了，如果要处理这个问题，建议重写 UCrowdFollowingComponent 中的转向逻辑，因为其内部没有考虑慢速转向的问题。 Crowd Manager 配置 Project Settings -》Engine -》 Navigation System -》 Crowd Manager Class">
 <meta name="twitter:description" content="keywords：UE4、AI、群体移动、闪避、避让、回避
 Detour Crowd AI Controller 蓝图方式
 打开ControllerBP，在 Class Settings 中设置 Parent Class 为：Detour Crowd AI Controller。
@@ -56,10 +56,10 @@ C&#43;&#43;方式
 引擎的C&#43;&#43;代码有个叫 ADetourCrowdAIController 的class，但是这个class无法继承；
 要在C&#43;&#43;中使用Detour Crowd AI，需要借助 UCrowdFollowingComponent，在AIController的构造函数中设置即可
 头文件：
-MyAIController(const FObjectInitializer&amp; ObjectInitializer = FObjectInitializer::Get());  cpp：
-MyAIController::MyAIController(const FObjectInitializer&amp; ObjectInitializer) : Super(ObjectInitializer.SetDefaultSubobjectClass&lt;UCrowdFollowingComponent&gt;(TEXT(&quot;PathFollowingComponent&quot;))) { }  转向抖动问题 使用默认的UCrowdFollowingComponent，角色在转向时会抖动，要解决这个问题，需要将属性UCrowdFollowingComponent::bSuspendCrowdSimulation设置为true。
+MyAIController(const FObjectInitializer&amp; ObjectInitializer = FObjectInitializer::Get()); cpp：
+MyAIController::MyAIController(const FObjectInitializer&amp; ObjectInitializer): Super(ObjectInitializer.SetDefaultSubobjectClass&lt;UCrowdFollowingComponent&gt;(TEXT(&quot;PathFollowingComponent&quot;))){ } 转向抖动问题 使用默认的UCrowdFollowingComponent，角色在转向时会抖动，要解决这个问题，需要将属性UCrowdFollowingComponent::bSuspendCrowdSimulation设置为true。
 完整代码：
-#include &quot;Navigation/CrowdFollowingComponent.h&quot; AMyAIController::AMyAIController(const FObjectInitializer&amp; ObjectInitializer) : Super(ObjectInitializer.SetDefaultSubobjectClass&lt;UCrowdFollowingComponent&gt;(TEXT(&quot;PathFollowingComponent&quot;))) { if (UCrowdFollowingComponent* CrowdComp = Cast&lt;UCrowdFollowingComponent&gt;(GetComponentByClass(UCrowdFollowingComponent::StaticClass()))) { CrowdComp-&gt;SuspendCrowdSteering(true); //CrowdComp-&gt;SetCrowdAnticipateTurns(true); //CrowdComp-&gt;SetCrowdSeparation(true); //CrowdComp-&gt;SetCrowdPathOffset(true); //CrowdComp-&gt;SetCrowdAvoidanceQuality(ECrowdAvoidanceQuality::High); } }  但是`SuspendCrowdSteering` 设置为true后，自动避让面前单位的功能就失效了，如果要处理这个问题，建议重写 UCrowdFollowingComponent 中的转向逻辑，因为其内部没有考虑慢速转向的问题。 Crowd Manager 配置 Project Settings -》Engine -》 Navigation System -》 Crowd Manager Class">
+#include &quot;Navigation/CrowdFollowingComponent.h&quot;AMyAIController::AMyAIController(const FObjectInitializer&amp; ObjectInitializer): Super(ObjectInitializer.SetDefaultSubobjectClass&lt;UCrowdFollowingComponent&gt;(TEXT(&quot;PathFollowingComponent&quot;))){if (UCrowdFollowingComponent* CrowdComp = Cast&lt;UCrowdFollowingComponent&gt;(GetComponentByClass(UCrowdFollowingComponent::StaticClass()))){CrowdComp-&gt;SuspendCrowdSteering(true);//CrowdComp-&gt;SetCrowdAnticipateTurns(true);//CrowdComp-&gt;SetCrowdSeparation(true);//CrowdComp-&gt;SetCrowdPathOffset(true);//CrowdComp-&gt;SetCrowdAvoidanceQuality(ECrowdAvoidanceQuality::High);}} 但是`SuspendCrowdSteering` 设置为true后，自动避让面前单位的功能就失效了，如果要处理这个问题，建议重写 UCrowdFollowingComponent 中的转向逻辑，因为其内部没有考虑慢速转向的问题。 Crowd Manager 配置 Project Settings -》Engine -》 Navigation System -》 Crowd Manager Class">
 <meta property="og:locale" content="en-us">
 
   
@@ -391,38 +391,25 @@ if (!doNotTrack) {
           
           <div class="post-content markdown" itemprop="articleBody">
             <div class="main-content-wrap">
-              
-
-<p>keywords：UE4、AI、群体移动、闪避、避让、回避</p>
-
+              <p>keywords：UE4、AI、群体移动、闪避、避让、回避</p>
 <h5 id="detour-crowd-ai-controller">Detour Crowd AI Controller</h5>
-
-<p>蓝图方式<br />
+<p>蓝图方式<br>
 打开ControllerBP，在 <code>Class Settings</code> 中设置 <code>Parent Class</code> 为：<code>Detour Crowd AI Controller</code>。</p>
-
 <p>C++方式</p>
-
-<p>引擎的C++代码有个叫 <code>ADetourCrowdAIController</code> 的class，但是这个class无法继承；<br />
+<p>引擎的C++代码有个叫 <code>ADetourCrowdAIController</code> 的class，但是这个class无法继承；<br>
 要在C++中使用Detour Crowd AI，需要借助 <code>UCrowdFollowingComponent</code>，在AIController的构造函数中设置即可</p>
-
 <p>头文件：</p>
-
 <pre><code>MyAIController(const FObjectInitializer&amp; ObjectInitializer = FObjectInitializer::Get());
 </code></pre>
-
 <p>cpp：</p>
-
 <pre><code>MyAIController::MyAIController(const FObjectInitializer&amp; ObjectInitializer)
     : Super(ObjectInitializer.SetDefaultSubobjectClass&lt;UCrowdFollowingComponent&gt;(TEXT(&quot;PathFollowingComponent&quot;)))
 {        
 }
 </code></pre>
-
-<h5 id="转向抖动问题">转向抖动问题</h5>
-
-<p>使用默认的UCrowdFollowingComponent，角色在转向时会抖动，要解决这个问题，需要将属性<code>UCrowdFollowingComponent::bSuspendCrowdSimulation</code>设置为true。<br />
+<h5 id="heading">转向抖动问题</h5>
+<p>使用默认的UCrowdFollowingComponent，角色在转向时会抖动，要解决这个问题，需要将属性<code>UCrowdFollowingComponent::bSuspendCrowdSimulation</code>设置为true。<br>
 完整代码：</p>
-
 <pre><code>#include &quot;Navigation/CrowdFollowingComponent.h&quot;
 
 AMyAIController::AMyAIController(const FObjectInitializer&amp; ObjectInitializer)
@@ -438,80 +425,70 @@ AMyAIController::AMyAIController(const FObjectInitializer&amp; ObjectInitializer
     }
 }
 </code></pre>
-
 <span class="highlight-text red">
 但是`SuspendCrowdSteering` 设置为true后，自动避让面前单位的功能就失效了，如果要处理这个问题，建议重写 UCrowdFollowingComponent 中的转向逻辑，因为其内部没有考虑慢速转向的问题。
 </span>
-
-<h5 id="crowd-manager-配置">Crowd Manager 配置</h5>
-
+<h5 id="crowd-manager-">Crowd Manager 配置</h5>
 <p>Project Settings -》Engine -》 Navigation System -》 Crowd Manager Class</p>
-
 <figure>
     <img src="https://dawnarc.com/img/20160727-[UE4]%e5%a6%82%e4%bd%95%e5%90%af%e7%94%a8Detour%20Crowd%20AI%20Controller%28%e7%be%a4%e7%bb%84%e7%a7%bb%e5%8a%a8%e6%97%b6%e7%9a%84%e7%bb%95%e8%b7%af%e9%97%ae%e9%a2%98%29/[UE4]%e5%a6%82%e4%bd%95%e5%90%af%e7%94%a8Detour%20Crowd%20AI%20Controller%28%e7%be%a4%e7%bb%84%e7%a7%bb%e5%8a%a8%e6%97%b6%e7%9a%84%e7%bb%95%e8%b7%af%e9%97%ae%e9%a2%98%29-01.jpg"/> 
 </figure>
 
-
 <p>并可以在 Project Settings -》 Engine -》 Crowd Manager 编辑各种参数。</p>
-
 <p>官方doc：
 FCrowdAvoidanceConfig
 <a href="https://docs.unrealengine.com/latest/INT/API/Runtime/AIModule/Navigation/FCrowdAvoidanceConfig/index.html">https://docs.unrealengine.com/latest/INT/API/Runtime/AIModule/Navigation/FCrowdAvoidanceConfig/index.html</a></p>
-
-<h5 id="注意事项">注意事项</h5>
-
+<h5 id="heading1">注意事项</h5>
 <p>1，使用UCrowdFollowingComponent时必须禁用RVO避让模式，否则无法生效：</p>
-
 <pre><code>//默认是关闭的
-GetCharacterMovement()-&gt;bUseRVOAvoidance = false;   
+GetCharacterMovement()-&gt;bUseRVOAvoidance = false;	
 </code></pre>
-
-<p>2，自定义 <code>CrowdManager</code> 无法生效的bug<br />
+<p>2，自定义 <code>CrowdManager</code> 无法生效的bug<br>
 4.18有这个问题，最新版是否修复本没测过。</p>
-
-<p>现象：<br />
+<p>现象：<br>
 新建的自定义 <code>CrowdManager</code>，即使在设置中（Project Settings -》Engine -》 Navigation System -》 Crowd Manager Class）设置了，也不会起效。</p>
-
-<p>原因：<br />
+<p>原因：<br>
 UE4的bug。</p>
-
 <p>解决办法：</p>
-
 <ul>
-<li>1. 继承NavigationSystem。</li>
-<li>2. 复写NavigationSystem::CreateCrowdManager()
+<li>
+<ol>
+<li>继承NavigationSystem。</li>
+</ol>
+</li>
+<li>
+<ol start="2">
+<li>复写NavigationSystem::CreateCrowdManager()
 直接在函式内生成你的CrowdManager并传进SetCrowdManager：
-SetCrowdManager(NewObject<UCrowdManagerBase>(this, UMyCrowdManager::StaticClass()));</li>
-<li>3. 到Engine/Config/DefaultEngine. ini加下面两行
-[/Script/Engine.Engine]
+SetCrowdManager(NewObject<!-- raw HTML omitted -->(this, UMyCrowdManager::StaticClass()));</li>
+</ol>
+</li>
+<li>
+<ol start="3">
+<li>到Engine/Config/DefaultEngine. ini加下面两行
+[/Script/Engine.Engine] 
 NavigationSystemClassName=/Script/[YourProjectName].[NavigationClassName]</li>
+</ol>
+</li>
 <li>4.关掉Editor重开，就可以试试看你的CrowdManager是不是运作了~</li>
 </ul>
-
-<p>3，移动时转向抖动的问题<br />
-现象：<br />
+<p>3，移动时转向抖动的问题<br>
+现象：<br>
 启用 <code>UCrowdFollowingComponent</code> 之后，角色群体移动时，转向时经常抖动（朝向瞬切）。</p>
-
-<p>原因：<br />
+<p>原因：<br>
 可能是每帧都在执行移动，且使用的API为：<code>UNavigationSystem::SimpleMoveToLocation()</code>。</p>
-
-<p>解决办法：<br />
-如果要使用 <code>UNavigationSystem::SimpleMoveToLocation()</code>，就不要每帧执行，可以间隔几秒执行一次。<br />
+<p>解决办法：<br>
+如果要使用 <code>UNavigationSystem::SimpleMoveToLocation()</code>，就不要每帧执行，可以间隔几秒执行一次。<br>
 如果使用 <code>AAIController::MoveToLocation()</code>，则没这个问题，即使每帧执行，也不会抖动。</p>
-
-<p>4，群体移动时，一部分移动，一部分静止不动<br />
-解决办法：<br />
+<p>4，群体移动时，一部分移动，一部分静止不动<br>
+解决办法：<br>
 将 <code>Max Agents</code> 改大一点。（Project Settings -&gt; Engine -&gt; Crowd Manager -&gt; Max Agents）</p>
-
-<h5 id="参考资料">参考资料</h5>
-
-<p>Crowd Manager Avoidance Config（推荐）<br />
+<h5 id="heading2">参考资料</h5>
+<p>Crowd Manager Avoidance Config（推荐）<br>
 <a href="https://answers.unrealengine.com/questions/212408/crowd-manager-avoidance-config.html">https://answers.unrealengine.com/questions/212408/crowd-manager-avoidance-config.html</a></p>
-
-<p>Unreal Avoidance系统(上)<br />
+<p>Unreal Avoidance系统(上)<br>
 <a href="https://yekdniwunrealengine.blogspot.com/2018/02/unreal-avoidance_10.html">https://yekdniwunrealengine.blogspot.com/2018/02/unreal-avoidance_10.html</a></p>
-
-<p>Unreal Avoidance系统(下)<br />
+<p>Unreal Avoidance系统(下)<br>
 <a href="https://yekdniwunrealengine.blogspot.com/2018/02/unreal-avoidance.html">https://yekdniwunrealengine.blogspot.com/2018/02/unreal-avoidance.html</a></p>
 
               

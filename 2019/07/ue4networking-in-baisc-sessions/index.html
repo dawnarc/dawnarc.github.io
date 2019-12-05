@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.58.3 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.60.1 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="UE4, Networking">
 <meta name="description" content="Keywords: UE4, Networking">
@@ -353,25 +353,17 @@ if (!doNotTrack) {
           <div class="post-content markdown" itemprop="articleBody">
             <div class="main-content-wrap">
               <p>Keywords: UE4, Networking</p>
-
-<p>The previous article explained how to connect Dedicated Server via IP address:<br />
-[UE4]Networking in Basic - Simple Replication Example<br />
+<p>The previous article explained how to connect Dedicated Server via IP address:<br>
+[UE4]Networking in Basic - Simple Replication Example<br>
 <a href="https://dawnarc.com/2017/02/ue4networking-in-basic-simple-replication-example/">https://dawnarc.com/2017/02/ue4networking-in-basic-simple-replication-example/</a></p>
-
 <p>Current article explained how to connect Server via Sessions(without IP).</p>
-
 <h3 id="engine-api">Engine API</h3>
-
 <h5 id="onlinesubsystem">OnlineSubsystem</h5>
-
-<p>BP Node <code>CreateSession</code> in native:<br />
+<p>BP Node <code>CreateSession</code> in native:<br>
 Source Path:</p>
-
 <pre><code>\Engine\Plugins\Online\OnlineSubsystemUtils\Source\OnlineSubsystemUtils\Private\CreateSessionCallbackProxy.cpp
 </code></pre>
-
 <p>Native Function:</p>
-
 <pre><code>// Creates a session with the default online subsystem
 UCreateSessionCallbackProxy* UCreateSessionCallbackProxy::CreateSession(UObject* WorldContextObject, class APlayerController* PlayerController, int32 PublicConnections, bool bUseLAN)
 {
@@ -383,15 +375,11 @@ UCreateSessionCallbackProxy* UCreateSessionCallbackProxy::CreateSession(UObject*
     return Proxy;
 }
 </code></pre>
-
-<p>BP Node <code>FindSessions</code> in native:<br />
+<p>BP Node <code>FindSessions</code> in native:<br>
 Source Path:</p>
-
 <pre><code>\Engine\Plugins\Online\OnlineSubsystemUtils\Source\OnlineSubsystemUtils\Private\FindSessionsCallbackProxy.cpp
 </code></pre>
-
 <p>Native Function:</p>
-
 <pre><code>// Searches for advertised sessions with the default online subsystem
 UFindSessionsCallbackProxy* UFindSessionsCallbackProxy::FindSessions(UObject* WorldContextObject, class APlayerController* PlayerController, int MaxResults, bool bUseLAN)
 {
@@ -403,13 +391,10 @@ UFindSessionsCallbackProxy* UFindSessionsCallbackProxy::FindSessions(UObject* Wo
     return Proxy;
 }
 </code></pre>
-
-<p>BP Node <code>JoinSession</code> in native:<br />
+<p>BP Node <code>JoinSession</code> in native:<br>
 Source Path:
-    \Engine\Plugins\Online\OnlineSubsystemUtils\Source\OnlineSubsystemUtils\Private\JoinSessionCallbackProxy.cpp</p>
-
+\Engine\Plugins\Online\OnlineSubsystemUtils\Source\OnlineSubsystemUtils\Private\JoinSessionCallbackProxy.cpp</p>
 <p>Native Function:</p>
-
 <pre><code>UJoinSessionCallbackProxy* UJoinSessionCallbackProxy::JoinSession(UObject* WorldContextObject, class APlayerController* PlayerController, const FBlueprintSessionResult&amp; SearchResult)
 {
     UJoinSessionCallbackProxy* Proxy = NewObject&lt;UJoinSessionCallbackProxy&gt;();
@@ -419,22 +404,16 @@ Source Path:
     return Proxy;
 }
 </code></pre>
-
 <p>Other BP Nodes of Session:</p>
-
 <pre><code>\Engine\Plugins\Online\OnlineSubsystemUtils\Source\OnlineSubsystemUtils\Private\ConnectionCallbackProxy.cpp
 \Engine\Plugins\Online\OnlineSubsystemUtils\Source\OnlineSubsystemUtils\Private\DestroySessionCallbackProxy.cpp
 </code></pre>
-
 <h3 id="dedicated-server">Dedicated Server</h3>
-
 <h5 id="creating-a-session-on-dedicated-server-launch">Creating a session on Dedicated Server launch?</h5>
-
 <p>New a customized GameSession class and override <code>RegisterServer</code> function, then copy following code block into it.</p>
-
 <pre><code>UWorld* World = GetWorld();
 IOnlineSessionPtr SessionInt = Online::GetSessionInterface(World);
-
+ 
 FOnlineSessionSettings Settings;
 Settings.NumPublicConnections = 3;
 Settings.bShouldAdvertise = true;
@@ -446,47 +425,33 @@ Settings.bAllowJoinViaPresence = true;
 SessionInt-&gt;CreateSession(0, GameSessionName, Settings);
 return;
 </code></pre>
-
 <p>How to set customized GameSession Class?
 <figure>
     <img src="https://dawnarc.com/img/20190716-[UE4]Networking%20in%20Baisc%20-%20Sessions/[UE4]Networking%20in%20Baisc%20-%20Sessions-01.gif"/> 
 </figure>
 </p>
-
-<p>Reference<br />
+<p>Reference<br>
 <a href="https://answers.unrealengine.com/questions/260999/creating-a-session-on-dedicated-server-launch.html">https://answers.unrealengine.com/questions/260999/creating-a-session-on-dedicated-server-launch.html</a></p>
-
 <h3 id="docs-reference">Docs Reference</h3>
-
 <h5 id="official-docs">Official Docs</h5>
-
-<p>Online Session Nodes<br />
+<p>Online Session Nodes<br>
 <a href="https://docs.unrealengine.com/en-US/Engine/Blueprints/UserGuide/OnlineNodes/index.html">https://docs.unrealengine.com/en-US/Engine/Blueprints/UserGuide/OnlineNodes/index.html</a></p>
-
-<p>How To Use Sessions In C++<br />
+<p>How To Use Sessions In C++<br>
 <a href="https://wiki.unrealengine.com/How_To_Use_Sessions_In_C%2B%2B">https://wiki.unrealengine.com/How_To_Use_Sessions_In_C%2B%2B</a></p>
-
 <h4 id="youtube-tutorials">YouTube Tutorials</h4>
-
-<p>Unreal Engine 4 | Server browser | Host &amp; Join Session | SESSION SERIES<br />
+<p>Unreal Engine 4 | Server browser | Host &amp; Join Session | SESSION SERIES<br>
 <a href="https://www.youtube.com/watch?v=NW4QHiK6YbQ">https://www.youtube.com/watch?v=NW4QHiK6YbQ</a></p>
-
-<p>Steam Multiplayer - Advanced Steam Session - Unreal Engine<br />
+<p>Steam Multiplayer - Advanced Steam Session - Unreal Engine<br>
 <a href="https://www.youtube.com/watch?v=ke3kmK6bvT0">https://www.youtube.com/watch?v=ke3kmK6bvT0</a></p>
-
-<p>Blueprint Multiplayer<br />
-<a href="https://www.youtube.com/watch?v=abmzWUWxy1U&amp;list=PLZlv_N0_O1gYqSlbGQVKsRg6fpxWndZqZ">https://www.youtube.com/watch?v=abmzWUWxy1U&amp;list=PLZlv_N0_O1gYqSlbGQVKsRg6fpxWndZqZ</a><br />
-Blueprint Multiplayer: Game Instance | 03 | v4.11 Tutorial Series | Unreal Engine<br />
+<p>Blueprint Multiplayer<br>
+<a href="https://www.youtube.com/watch?v=abmzWUWxy1U&amp;list=PLZlv_N0_O1gYqSlbGQVKsRg6fpxWndZqZ">https://www.youtube.com/watch?v=abmzWUWxy1U&amp;list=PLZlv_N0_O1gYqSlbGQVKsRg6fpxWndZqZ</a><br>
+Blueprint Multiplayer: Game Instance | 03 | v4.11 Tutorial Series | Unreal Engine<br>
 <a href="https://www.youtube.com/watch?v=78XJYBfWXAA">https://www.youtube.com/watch?v=78XJYBfWXAA</a></p>
-
-<p>[ue4] Setup Advanced Session - Steam Multiplayer<br />
+<p>[ue4] Setup Advanced Session - Steam Multiplayer<br>
 <a href="https://www.youtube.com/watch?v=rWs6SyyVpTE&amp;list=PL3TrrCsmmxllnBvhucQ4c683a2VltXBx6">https://www.youtube.com/watch?v=rWs6SyyVpTE&amp;list=PL3TrrCsmmxllnBvhucQ4c683a2VltXBx6</a></p>
-
-<p>[UE4 - BP Tutorial] Multiplayer Session<br />
+<p>[UE4 - BP Tutorial] Multiplayer Session<br>
 <a href="https://www.youtube.com/watch?v=so0-0dafVsE&amp;list=PLLiI_CRDNPL-FUUPcViHe6Ypabo1ghXh3">https://www.youtube.com/watch?v=so0-0dafVsE&amp;list=PLLiI_CRDNPL-FUUPcViHe6Ypabo1ghXh3</a></p>
-
-<hr />
-
+<hr>
 <p><code>请原谅我不敢祝愿每一位毕业生都成功、都幸福；因为历史不幸地记载着：有人的成功代价是丧失良知；有人的幸福代价是损害他人。 ----饶毅教授2015北大毕业典礼演讲</code></p>
               
             </div>

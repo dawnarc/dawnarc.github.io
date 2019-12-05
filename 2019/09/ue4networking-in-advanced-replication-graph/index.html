@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.58.3 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.60.1 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="UE4, Networking">
 <meta name="description" content="Keywords: UE4, Networking, Replication Graph">
@@ -353,38 +353,34 @@ if (!doNotTrack) {
           <div class="post-content markdown" itemprop="articleBody">
             <div class="main-content-wrap">
               <p>Keywords: UE4, Networking, Replication Graph</p>
-
 <h5 id="youtube-tutorials">Youtube Tutorials</h5>
-
-<p>[UE4] Networking - ReplicationGraph (Tutorial &amp; Overview)<br />
+<p>[UE4] Networking - ReplicationGraph (Tutorial &amp; Overview)<br>
 <a href="https://www.youtube.com/watch?v=7P11RwKfuEM">https://www.youtube.com/watch?v=7P11RwKfuEM</a></p>
-
-<p>Networking in 4.20: The Replication Graph | Feature Highlight | Unreal Engine Livestream<br />
+<p>Networking in 4.20: The Replication Graph | Feature Highlight | Unreal Engine Livestream<br>
 <a href="https://www.youtube.com/watch?v=CDnNAAzgltw">https://www.youtube.com/watch?v=CDnNAAzgltw</a></p>
-
-<h5 id="high-level-example">High-Level Example</h5>
-
-<p>Quoted from <strong>Replication Graph</strong>:<br />
+<h5 id="highlevel-example">High-Level Example</h5>
+<p>Quoted from <strong>Replication Graph</strong>:<br>
 <a href="https://docs.unrealengine.com/en-US/Engine/Networking/ReplicationGraph/index.html">https://docs.unrealengine.com/en-US/Engine/Networking/ReplicationGraph/index.html</a></p>
-
 <p>For a game with a large number of connected clients and an even larger number of synced Actors, a Replication Graph that assigns Actors based on type and status to different nodes can save a tremendous amount of CPU time. This makes it possible to build games that would not be viable with traditional replication methods. At a conceptual level, a game at this scale might build a Replication Graph and Replication Graph Nodes with the following features to handle its huge volume of replicated Actors and connected clients:</p>
-
 <ul>
-<li><p><strong>Separate Actors into groups based on location.</strong> The world can be divided up into grid spaces for games in the battle royale, MOBA, or MMORPG genres, or predefined rooms or zones for dungeon crawlers or corridor-style first- or third-person shooters, or any method that fits your game&rsquo;s play spaces. Adding Actors into each grid cell or room from which that Actor can potentially be seen or heard will make client updates fast, as the node can simply provide the client with the persistent Actor list for whatever grid cell or room the client&rsquo;s camera is in.</p></li>
-
-<li><p><strong>Identify &ldquo;dormant&rdquo; placed Actors and keep them in a separate list.</strong> While some Actors, like those representing players or AI-controlled characters, are likely to need frequent updates, there may be many Actors that are pre-placed in the level and that don&rsquo;t move or change state on their own until a player interacts with them. These Actors may go for a long time (possibly the entire game session) without needing to send a network update. In Fortnite Battle Royale, for example, players and projectiles would be expected to update constantly until being removed from the game. A tree, on the other hand, would be expected to lie dormant for a long time, requiring no updates to any client. When the tree is damaged, any client who can see the tree would need to receive an update about it. Finally, when the tree is destroyed, any client who receives the update describing the tree&rsquo;s destruction never needs to receive any further updates about the tree.</p></li>
-
-<li><p><strong>If characters in your game can pick up and carry items, update those items with their carriers.</strong> When a player pulls out an item or weapon and carries it around, or wears a piece of clothing or armor, add the Actor representing the item (assuming it is a separate Actor and not merely a Component) to a special group that always gets updated when the owning player updates, and never updates otherwise.</p></li>
-
-<li><p><strong>Make a list of special Actors that always known to all clients.</strong> Special Actors that are always network-relevant to every player and can be put into a simple node that tracks these Actors, keeping them out of other lists where they might eat up CPU cycles doing unnecessary computation.</p></li>
-
-<li><p><strong>Make a list of special Actors that are always (or never) relevant to certain clients.</strong> A similar always-relevant list node could be made for individual players, or for teams of players. This is especially useful for things like ensuring that a player&rsquo;s teammates are always updated, or that opponents who have been &ldquo;revealed&rdquo; by a special in-game detection power are visible to the entire team of the player who revealed them. If the &ldquo;reveal&rdquo; expires, these Actors can be added back into their default nodes.</p></li>
+<li>
+<p><strong>Separate Actors into groups based on location.</strong> The world can be divided up into grid spaces for games in the battle royale, MOBA, or MMORPG genres, or predefined rooms or zones for dungeon crawlers or corridor-style first- or third-person shooters, or any method that fits your game's play spaces. Adding Actors into each grid cell or room from which that Actor can potentially be seen or heard will make client updates fast, as the node can simply provide the client with the persistent Actor list for whatever grid cell or room the client's camera is in.</p>
+</li>
+<li>
+<p><strong>Identify &ldquo;dormant&rdquo; placed Actors and keep them in a separate list.</strong> While some Actors, like those representing players or AI-controlled characters, are likely to need frequent updates, there may be many Actors that are pre-placed in the level and that don't move or change state on their own until a player interacts with them. These Actors may go for a long time (possibly the entire game session) without needing to send a network update. In Fortnite Battle Royale, for example, players and projectiles would be expected to update constantly until being removed from the game. A tree, on the other hand, would be expected to lie dormant for a long time, requiring no updates to any client. When the tree is damaged, any client who can see the tree would need to receive an update about it. Finally, when the tree is destroyed, any client who receives the update describing the tree's destruction never needs to receive any further updates about the tree.</p>
+</li>
+<li>
+<p><strong>If characters in your game can pick up and carry items, update those items with their carriers.</strong> When a player pulls out an item or weapon and carries it around, or wears a piece of clothing or armor, add the Actor representing the item (assuming it is a separate Actor and not merely a Component) to a special group that always gets updated when the owning player updates, and never updates otherwise.</p>
+</li>
+<li>
+<p><strong>Make a list of special Actors that always known to all clients.</strong> Special Actors that are always network-relevant to every player and can be put into a simple node that tracks these Actors, keeping them out of other lists where they might eat up CPU cycles doing unnecessary computation.</p>
+</li>
+<li>
+<p><strong>Make a list of special Actors that are always (or never) relevant to certain clients.</strong> A similar always-relevant list node could be made for individual players, or for teams of players. This is especially useful for things like ensuring that a player's teammates are always updated, or that opponents who have been &ldquo;revealed&rdquo; by a special in-game detection power are visible to the entire team of the player who revealed them. If the &ldquo;reveal&rdquo; expires, these Actors can be added back into their default nodes.</p>
+</li>
 </ul>
-
-<p>Building a Replication Graph that intelligently assigns Actors to different nodes based on knowledge of the Actor&rsquo;s role within the game can make the best use of your server&rsquo;s CPU time. The end result is steady server performance for games that otherwise could not run on current hardware. The Replication Graph Plugin includes several Replication Graph Node classes that you can use in large-scale online games. Developers are also encouraged to build custom node classes based on knowledge of the inner workings of their specific game.</p>
-
-<hr />
-
+<p>Building a Replication Graph that intelligently assigns Actors to different nodes based on knowledge of the Actor's role within the game can make the best use of your server's CPU time. The end result is steady server performance for games that otherwise could not run on current hardware. The Replication Graph Plugin includes several Replication Graph Node classes that you can use in large-scale online games. Developers are also encouraged to build custom node classes based on knowledge of the inner workings of their specific game.</p>
+<hr>
 <p><code>I don't want to be part of a world, where being kind is a weakness. -Keanu Reeves</code></p>
               
             </div>

@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.58.3 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.60.1 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="UE4, Networking">
 <meta name="description" content="Keywords: UE4, Networking">
@@ -353,68 +353,46 @@ if (!doNotTrack) {
           <div class="post-content markdown" itemprop="articleBody">
             <div class="main-content-wrap">
               <p>Keywords: UE4, Networking</p>
-
 <h3 id="replication-cases">Replication Cases</h3>
-
-<h5 id="disconnect-actor-s-replication-at-run-time">Disconnect Actor&rsquo;s replication at Run-time</h5>
-
-<p>Case:<br />
-A Character is replicated at first, then we want to disable replication when it dies.<br />
+<h5 id="disconnect-actors-replication-at-runtime">Disconnect Actor's replication at Run-time</h5>
+<p>Case:<br>
+A Character is replicated at first, then we want to disable replication when it dies.<br>
 E.g. Ragdoll, if we continue to keep replicating when character dies, it would increase overhead on server and server not care the result of Ragdoll, Ragdoll is just effect on client, so we need disconnect replication before perform Ragdoll computing.</p>
-
-<p>Solution:<br />
-Execute <code>AActor::ForceNetUpdate()</code> to replicate current data to client before Ragdoll computing fired on server, then execute <code>AActor::TearOff</code> on server, from now on, Actor would not be replicaed forever.<br />
+<p>Solution:<br>
+Execute <code>AActor::ForceNetUpdate()</code> to replicate current data to client before Ragdoll computing fired on server, then execute <code>AActor::TearOff</code> on server, from now on, Actor would not be replicaed forever.<br>
 <code>AActor::TornOff()</code> would be fired on client after executing <code>AActor::TearOff</code> on server, it means that Actor can be modified arbitrarily and it would not be corrected by server.</p>
-
 <h5 id="replication-of-bullet-path-in-shooting-game">Replication of bullet path in shooting game</h5>
-
-<p>Suggestion:<br />
-1. <code>bReplicateMovement = true;</code> in constructor of BulletActor;<br />
-2. <code>ProjectileMovement-&gt;InitialSpeed = 0.f;</code> and <code>ProjectileMovement-&gt;MaxSpeed = 0.f;</code> in constructor of BulletActor;<br />
-3. Set real time speed of BulletActor in Server.</p>
-
+<p>Suggestion:</p>
+<ol>
+<li><code>bReplicateMovement = true;</code> in constructor of BulletActor;</li>
+<li><code>ProjectileMovement-&gt;InitialSpeed = 0.f;</code> and <code>ProjectileMovement-&gt;MaxSpeed = 0.f;</code> in constructor of BulletActor;</li>
+<li>Set real time speed of BulletActor in Server.</li>
+</ol>
 <div class="alert warning ">
   <p>If you set a large value for <code>ProjectileMovement-&gt;InitialSpeed</code> in bullet constructor, and then set <code>Velocity</code> in server, bullet path would jitter at the begining.</p>
 </div>
-
 <h3 id="ue4-networking-documents">UE4 Networking Documents</h3>
-
 <h5 id="online-beacons-docs">Online Beacons Docs</h5>
-
 <p>Online Beacons are a special type of Actor that provide a lightweight way to contact a server and interact with it (via RPCs) without committing to a normal game connection. While the built-in classes can be used as they are in some cases, they are intended to be extended into custom classes that perform project-specific interactions, logic, and information requests.</p>
-
-<p>Docs: Online Beacons<br />
+<p>Docs: Online Beacons<br>
 <a href="https://docs.unrealengine.com/en-US/Gameplay/Networking/OnlineBeacons/index.html">https://docs.unrealengine.com/en-US/Gameplay/Networking/OnlineBeacons/index.html</a></p>
-
 <div class="alert success ">
-  <p>Online Beacons Usage:<br />
-e.g. If there&rsquo;s a requirement that make a decision to tell Client which Server to login, Client need to know the current player count of peer Server, now you can use Online Beacon to connect to Server before Replication connection created.</p>
+  <p>Online Beacons Usage:<br>
+e.g. If there's a requirement that make a decision to tell Client which Server to login, Client need to know the current player count of peer Server, now you can use Online Beacon to connect to Server before Replication connection created.</p>
 </div>
-
 <h5 id="what-are-online-beacons-and-how-do-they-work">What are &ldquo;online beacons&rdquo; and how do they work?</h5>
-
 <p>The idea behind beacons was to provide a lightweight way to contact a server before actually connecting &ldquo;for real&rdquo;.</p>
-
-<p>Ideally you make a connection, send an RPC, get a response, and disconnect. You can ask things like &ldquo;who is in the game&rdquo; or &ldquo;please make room for me, I&rsquo;m about to join&rdquo;. Traditionally, connecting to a server involved a full map load which can be frustrating to users if they do all that work only to be denied entry to an almost full game because someone got into the game first. Now you can make contact while still in the main menu, for example, and test multiple servers to pick the best one before joining. Or to inquire about information about a game in progress to &ldquo;spectate&rdquo; without being actually connected with an APlayerController and all that entails.</p>
-
+<p>Ideally you make a connection, send an RPC, get a response, and disconnect. You can ask things like &ldquo;who is in the game&rdquo; or &ldquo;please make room for me, I'm about to join&rdquo;. Traditionally, connecting to a server involved a full map load which can be frustrating to users if they do all that work only to be denied entry to an almost full game because someone got into the game first. Now you can make contact while still in the main menu, for example, and test multiple servers to pick the best one before joining. Or to inquire about information about a game in progress to &ldquo;spectate&rdquo; without being actually connected with an APlayerController and all that entails.</p>
 <p>Gears 3 used beacons to reserve space in game. That way we could test many servers for space and travel to only one, knowing that you were definitely going to get into the game. It avoided contention when thousands of users all received the same 20-50 search results but only 10 could join per match. <span class="highlight-text green">However, in UE3, this was TCP/IP and the protocol had to be implemented manually not using any reflection by UObject.</span></p>
-
 <p>In UE4, we decided that our already existing network code was so robust and powerful, why reinvent the wheel? So I made the AOnlineBeacon class to leverage all the RPC and replication power of AActor.</p>
-
-<p>Traditionally, actor replication and spawning has always been server initiated, meaning that you had to connect before you got a copy of an actor that the server also knew about. I wanted clients to be able to create an actor that would initiate contact with the server and fire a delegate when a connection has been made so that higher level code could make an RPC. Otherwise you&rsquo;d need to make a connection with the server, wait for the server to send you an actor you could RPC with, then switch to that. Unwieldy in my opinion.</p>
-
-<p>Origin:<br />
+<p>Traditionally, actor replication and spawning has always been server initiated, meaning that you had to connect before you got a copy of an actor that the server also knew about. I wanted clients to be able to create an actor that would initiate contact with the server and fire a delegate when a connection has been made so that higher level code could make an RPC. Otherwise you'd need to make a connection with the server, wait for the server to send you an actor you could RPC with, then switch to that. Unwieldy in my opinion.</p>
+<p>Origin:<br>
 <a href="https://answers.unrealengine.com/questions/467973/what-are-online-beacons-and-how-do-they-work.html">https://answers.unrealengine.com/questions/467973/what-are-online-beacons-and-how-do-they-work.html</a></p>
-
 <h5 id="unreal-engine-4-network-compendium">Unreal Engine 4 Network Compendium</h5>
-
-<p><code>Unreal Engine 4 Network Compendium</code> Made by: Cedric &lsquo;eXi&rsquo; Neukirchen<br />
+<p><code>Unreal Engine 4 Network Compendium</code> Made by: Cedric &lsquo;eXi&rsquo; Neukirchen<br>
 <a href="http://cedric-neukirchen.net/Downloads/Compendium/UE4_Network_Compendium_by_Cedric_eXi_Neukirchen.pdf">http://cedric-neukirchen.net/Downloads/Compendium/UE4_Network_Compendium_by_Cedric_eXi_Neukirchen.pdf</a></p>
-
 <h3 id="engine-source-analysis-for-networking">Engine Source Analysis for Networking</h3>
-
 <h5 id="properties-used-for-replication-in-common">Properties used for Replication in Common</h5>
-
 <pre><code>/** Square of the max distance from the client's viewpoint that this actor is relevant and will be replicated. */
 UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category=Replication)
 float NetCullDistanceSquared;   
@@ -435,12 +413,9 @@ float MinNetUpdateFrequency;
 UPROPERTY(Category=Replication, EditDefaultsOnly, BlueprintReadWrite)
 float NetPriority;
 </code></pre>
-
 <h5 id="how-does-engine-check-if-actor-is-relevant-to-connection">How does engine check if Actor is relevant to connection</h5>
-
-<p>Critical Code:<br />
+<p>Critical Code:<br>
 Engine\Source\Runtime\Engine\Private\ActorReplication.cpp</p>
-
 <pre><code>bool AActor::IsNetRelevantFor(const AActor* RealViewer, const AActor* ViewTarget, const FVector&amp; SrcLocation) const
 {
     if (bAlwaysRelevant || IsOwnedBy(ViewTarget) || IsOwnedBy(RealViewer) || this == ViewTarget || ViewTarget == Instigator)
@@ -474,80 +449,60 @@ Engine\Source\Runtime\Engine\Private\ActorReplication.cpp</p>
             IsWithinNetRelevancyDistance(SrcLocation);
 }
 </code></pre>
-
 <p>Call Stack:</p>
-
-<pre><code>UE4Editor-Engine.dll!AActor::IsNetRelevantFor(const AActor * RealViewer, const AActor * ViewTarget, const FVector &amp; SrcLocation) Line 320   C++
-[Inline Frame] UE4Editor-Engine.dll!IsActorRelevantToConnection(const AActor *) Line 3661   C++
-UE4Editor-Engine.dll!UNetDriver::ServerReplicateActors_PrioritizeActors(UNetConnection * Connection, const TArray&lt;FNetViewer,FDefaultAllocator&gt; &amp; ConnectionViewers, const TArray&lt;FNetworkObjectInfo *,FDefaultAllocator&gt; ConsiderList, const bool bCPUSaturated, FActorPriority * &amp; OutPriorityList, FActorPriority * * &amp; OutPriorityActors) Line 3780 C++
-UE4Editor-Engine.dll!UNetDriver::ServerReplicateActors(float DeltaSeconds) Line 4359    C++
-UE4Editor-Engine.dll!UNetDriver::TickFlush(float DeltaSeconds) Line 506 C++
-[Inline Frame] UE4Editor-Engine.dll!TMemberFunctionCaller&lt;UNetDriver,void (__cdecl UNetDriver::*)(float)&gt;::operator()(float &amp;) Line 156 C++
-[Inline Frame] UE4Editor-Engine.dll!UE4Tuple_Private::TTupleImpl&lt;TIntegerSequence&lt;unsigned int&gt; &gt;::ApplyAfter(TMemberFunctionCaller&lt;UNetDriver,void (__cdecl UNetDriver::*)(float)&gt; &amp;&amp;) Line 498    C++
-[Inline Frame] UE4Editor-Engine.dll!TBaseUObjectMethodDelegateInstance&lt;0,UNetDriver,TTypeWrapper&lt;void&gt; __cdecl(float)&gt;::Execute(float) Line 617 C++
-UE4Editor-Engine.dll!TBaseUObjectMethodDelegateInstance&lt;0,UNetDriver,void __cdecl(float)&gt;::ExecuteIfSafe(float &lt;Params_0&gt;) Line 679 C++
-UE4Editor-Engine.dll!TBaseMulticastDelegate&lt;void,float&gt;::Broadcast(float &lt;Params_0&gt;) Line 977   C++
-UE4Editor-Engine.dll!UWorld::Tick(ELevelTick TickType, float DeltaSeconds) Line 1720    C++
-UE4Editor-UnrealEd.dll!UEditorEngine::Tick(float DeltaSeconds, bool bIdleMode) Line 1618    C++
-UE4Editor-UnrealEd.dll!UUnrealEdEngine::Tick(float DeltaSeconds, bool bIdleMode) Line 403   C++
-UE4Editor-Win64-DebugGame.exe!FEngineLoop::Tick() Line 3967 C++
-[Inline Frame] UE4Editor-Win64-DebugGame.exe!EngineTick() Line 62   C++
-UE4Editor-Win64-DebugGame.exe!GuardedMain(const wchar_t * CmdLine, HINSTANCE__ * hInInstance, HINSTANCE__ * hPrevInstance, int nCmdShow) Line 168   C++
-UE4Editor-Win64-DebugGame.exe!WinMain(HINSTANCE__ * hInInstance, HINSTANCE__ * hPrevInstance, char * __formal, int nCmdShow) Line 261   C++
+<pre><code>UE4Editor-Engine.dll!AActor::IsNetRelevantFor(const AActor * RealViewer, const AActor * ViewTarget, const FVector &amp; SrcLocation) Line 320	C++
+[Inline Frame] UE4Editor-Engine.dll!IsActorRelevantToConnection(const AActor *) Line 3661	C++
+UE4Editor-Engine.dll!UNetDriver::ServerReplicateActors_PrioritizeActors(UNetConnection * Connection, const TArray&lt;FNetViewer,FDefaultAllocator&gt; &amp; ConnectionViewers, const TArray&lt;FNetworkObjectInfo *,FDefaultAllocator&gt; ConsiderList, const bool bCPUSaturated, FActorPriority * &amp; OutPriorityList, FActorPriority * * &amp; OutPriorityActors) Line 3780	C++
+UE4Editor-Engine.dll!UNetDriver::ServerReplicateActors(float DeltaSeconds) Line 4359	C++
+UE4Editor-Engine.dll!UNetDriver::TickFlush(float DeltaSeconds) Line 506	C++
+[Inline Frame] UE4Editor-Engine.dll!TMemberFunctionCaller&lt;UNetDriver,void (__cdecl UNetDriver::*)(float)&gt;::operator()(float &amp;) Line 156	C++
+[Inline Frame] UE4Editor-Engine.dll!UE4Tuple_Private::TTupleImpl&lt;TIntegerSequence&lt;unsigned int&gt; &gt;::ApplyAfter(TMemberFunctionCaller&lt;UNetDriver,void (__cdecl UNetDriver::*)(float)&gt; &amp;&amp;) Line 498	C++
+[Inline Frame] UE4Editor-Engine.dll!TBaseUObjectMethodDelegateInstance&lt;0,UNetDriver,TTypeWrapper&lt;void&gt; __cdecl(float)&gt;::Execute(float) Line 617	C++
+UE4Editor-Engine.dll!TBaseUObjectMethodDelegateInstance&lt;0,UNetDriver,void __cdecl(float)&gt;::ExecuteIfSafe(float &lt;Params_0&gt;) Line 679	C++
+UE4Editor-Engine.dll!TBaseMulticastDelegate&lt;void,float&gt;::Broadcast(float &lt;Params_0&gt;) Line 977	C++
+UE4Editor-Engine.dll!UWorld::Tick(ELevelTick TickType, float DeltaSeconds) Line 1720	C++
+UE4Editor-UnrealEd.dll!UEditorEngine::Tick(float DeltaSeconds, bool bIdleMode) Line 1618	C++
+UE4Editor-UnrealEd.dll!UUnrealEdEngine::Tick(float DeltaSeconds, bool bIdleMode) Line 403	C++
+UE4Editor-Win64-DebugGame.exe!FEngineLoop::Tick() Line 3967	C++
+[Inline Frame] UE4Editor-Win64-DebugGame.exe!EngineTick() Line 62	C++
+UE4Editor-Win64-DebugGame.exe!GuardedMain(const wchar_t * CmdLine, HINSTANCE__ * hInInstance, HINSTANCE__ * hPrevInstance, int nCmdShow) Line 168	C++
+UE4Editor-Win64-DebugGame.exe!WinMain(HINSTANCE__ * hInInstance, HINSTANCE__ * hPrevInstance, char * __formal, int nCmdShow) Line 261	C++
 </code></pre>
-
 <p>Related Properties:</p>
-
 <pre><code>/** Always relevant for network (overrides bOnlyRelevantToOwner). */
 UPROPERTY(Category=Replication, EditDefaultsOnly, BlueprintReadWrite)
 uint8 bAlwaysRelevant:1;
 </code></pre>
-
 <h5 id="how-does-engine-check-if-strip-animation-data">How does engine check if strip animation data</h5>
-
 <p><code>Strip Animation Data On Dedicated Server</code> was used in <code>UAnimSequence::Serialize()</code>:</p>
-
 <pre><code>const bool bCookingTargetNeedsCompressedData = bIsCooking 
     &amp;&amp; (!UAnimationSettings::Get()-&gt;bStripAnimationDataOnDedicatedServer 
         || !bIsCookingForDedicatedServer 
         || bEnableRootMotion);
 </code></pre>
-
 <h5 id="rpc-related-engine-api">RPC Related Engine API</h5>
-
 <p>Functions:</p>
-
 <pre><code>/** Called on client when updated AttachmentReplication value is received for this actor. */
 UFUNCTION()
 virtual void OnRep_AttachmentReplication();
 </code></pre>
-
 <p>Properties:</p>
-
 <pre><code>//Priority for this actor when checking for replication in a low bandwidth or saturated situation, higher priority means it is more likely to replicate
 UPROPERTY(Category=Replication, EditDefaultsOnly, BlueprintReadWrite)
 float NetPriority
 </code></pre>
-
 <h5 id="how-to-change-remoterole-when-spawning-actor">How to change RemoteRole when spawning Actor</h5>
-
 <pre><code>/** This function should only be used in the constructor of classes that need to set the RemoteRole for backwards compatibility purposes */
 void SetRemoteRoleForBackwardsCompat(const ENetRole InRemoteRole) { RemoteRole = InRemoteRole; }
 </code></pre>
-
 <h5 id="reference">Reference</h5>
-
-<p>Function call replication - Sending messages between server and client<br />
+<p>Function call replication - Sending messages between server and client<br>
 <a href="https://wiki.beyondunreal.com/Everything_you_ever_wanted_to_know_about_replication_%28but_were_afraid_to_ask%29#Function_call_replication_-_Sending_messages_between_server_and_client">https://wiki.beyondunreal.com/Everything_you_ever_wanted_to_know_about_replication_%28but_were_afraid_to_ask%29#Function_call_replication_-_Sending_messages_between_server_and_client</a></p>
-
-<p>《Exploring in UE4》网络同步原理深入（上）[原理分析]<br />
+<p>《Exploring in UE4》网络同步原理深入（上）[原理分析]<br>
 <a href="https://zhuanlan.zhihu.com/p/34723199">https://zhuanlan.zhihu.com/p/34723199</a></p>
-
-<p>《Exploring in UE4》网络同步原理深入（下）[原理分析]<br />
+<p>《Exploring in UE4》网络同步原理深入（下）[原理分析]<br>
 <a href="https://zhuanlan.zhihu.com/p/55596030">https://zhuanlan.zhihu.com/p/55596030</a></p>
-
-<hr />
-
+<hr>
 <p><code>我是个过分认真的人，总想给生命一个交代。这种愚蠢的努力简直成了我的噩梦，当然也是最终的救赎。——《像我这样笨拙地生活》</code></p>
               
             </div>

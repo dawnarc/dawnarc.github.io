@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.58.3 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.60.1 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="">
 <meta name="description" content="将int或float转换为string：
@@ -14,9 +14,9 @@ FString str; TCHAR *c1 = *str; TCHAR* c2 = str.GetCharArray().GetData();  将str
 FString TheString = &quot;123.021&quot;; int32 MyShinyNewInt = FCString::Atoi(*TheString); float MyShinyNewFloat = FCString::Atof(*TheString);  字符串切割：
 FString a(&quot;1,2,3&quot;); TArray&lt;FString&gt; stringArray; a.ParseIntoArray(stringArray, TEXT(&quot;,&quot;), false);  字符串截取：
 FString::Left(int count); FString::Right(int count);  字符串格式化Format：
-FString Path = FString::Printf(TEXT(&quot;StaticMesh&#39;/Game/Shapes/ground_shape_%d.ground_shape_%d&#39;&quot;), i);  如何获取FString转换后char之后的长度 比如用TCHAR_TO_ANSI()将tchar转换为char之后，char的长度如何计算？ 使用FTCHARToANSI::Length()，示例如下：
-FTCHARToANSI Convert(*String); Ar-&gt;Serialize((ANSICHAR*)Convert, Convert.Length());  参考自：https://docs.unrealengine.com/latest/INT/Programming/UnrealArchitecture/StringHandling/CharacterEncoding/index.html
-中文字符的FString 转换 char数组 FString str(TEXT(&quot;笑傲江湖DA&quot;)); const wchar_t* s1 = *str; int LenW = wcslen(s1); int LenC = LenW * 2; //先转换为 char*, 比如 protobuf 不支持 wchar_t，那么可以将中文转换为char，然后储存在protobuf内部。 char* buf = new char[LenC &#43; 1](); memcpy(buf, s1, LenC); //验证char*能否还原为 wchar_t 数组 wchar_t* buf2 = new wchar_t[LenC/2 &#43; 1](); memcpy(buf2, buf, LenC);  TCHAR*、wchar_t、char 转换相关 //char 转换为 TCHAR TCHAR* msg = ANSI_TO_TCHAR(&quot;dddd&quot;); TCHAR* msg2 = UTF8_TO_TCHAR(&quot;dddd&quot;); //TCHAR 转换为 char char* Str4 = TCHAR_TO_UTF8(*Str); char* Str4 = TCHAR_TO_ANSI(*Str); //TCHAR 转换为 wchar_t FSting Str; wchar_t* Str2 = TCHAR_TO_WCHAR(*Str); //wchar_t 转换为 TCHAR wchar_t Str5[] = L&quot;sss&quot;; TCHAR* Str6 = (TCHAR*)Str5;  如果 char* 字符串有中文，转换为 FString 时，必须使用 ANSI_TO_TCHAR() 或者 UTF8_TO_TCHAR()，例如：FString Text = UTF8_TO_TCHAR(&ldquo;牛鼻&rdquo;); 。否则会出现乱码。另外，如果汉字是写在代码里面，则代码文件的编码格式需要改成UTF8，否则也会乱码。">
+FString Path = FString::Printf(TEXT(&quot;StaticMesh&#39;/Game/Shapes/ground_shape_%d.ground_shape_%d&#39;&quot;), i); 如何获取FString转换后char之后的长度 比如用TCHAR_TO_ANSI()将tchar转换为char之后，char的长度如何计算？ 使用FTCHARToANSI::Length()，示例如下：
+FTCHARToANSI Convert(*String);Ar-&gt;Serialize((ANSICHAR*)Convert, Convert.Length()); 参考自：https://docs.unrealengine.com/latest/INT/Programming/UnrealArchitecture/StringHandling/CharacterEncoding/index.html
+中文字符的FString 转换 char数组 FString str(TEXT(&quot;笑傲江湖DA&quot;));const wchar_t* s1 = *str;int LenW = wcslen(s1);int LenC = LenW * 2;//先转换为 char*, 比如 protobuf 不支持 wchar_t，那么可以将中文转换为char，然后储存在protobuf内部。char* buf = new char[LenC &#43; 1]();memcpy(buf, s1, LenC);//验证char*能否还原为 wchar_t 数组wchar_t* buf2 = new wchar_t[LenC/2 &#43; 1]();memcpy(buf2, buf, LenC); TCHAR*、wchar_t*、char* 转换相关 //char 转换为 TCHARTCHAR* msg = ANSI_TO_TCHAR(&quot;dddd&quot;); TCHAR* msg2 = UTF8_TO_TCHAR(&quot;dddd&quot;); //TCHAR 转换为 charchar* Str4 = TCHAR_TO_UTF8(*Str);char* Str4 = TCHAR_TO_ANSI(*Str);//TCHAR 转换为 wchar_tFSting Str;wchar_t* Str2 = TCHAR_TO_WCHAR(*Str);//wchar_t 转换为 TCHAR wchar_t Str5[] = L&quot;sss&quot;;TCHAR* Str6 = (TCHAR*)Str5; 如果 char* 字符串有中文，转换为 FString 时，必须使用 ANSI_TO_TCHAR() 或者 UTF8_TO_TCHAR()，例如：FString Text = UTF8_TO_TCHAR(&ldquo;牛鼻&rdquo;); 。否则会出现乱码。另外，如果汉字是写在代码里面，则代码文件的编码格式需要改成UTF8，否则也会乱码。">
 
 
 <meta property="og:description" content="将int或float转换为string：
@@ -25,9 +25,9 @@ FString str; TCHAR *c1 = *str; TCHAR* c2 = str.GetCharArray().GetData();  将str
 FString TheString = &quot;123.021&quot;; int32 MyShinyNewInt = FCString::Atoi(*TheString); float MyShinyNewFloat = FCString::Atof(*TheString);  字符串切割：
 FString a(&quot;1,2,3&quot;); TArray&lt;FString&gt; stringArray; a.ParseIntoArray(stringArray, TEXT(&quot;,&quot;), false);  字符串截取：
 FString::Left(int count); FString::Right(int count);  字符串格式化Format：
-FString Path = FString::Printf(TEXT(&quot;StaticMesh&#39;/Game/Shapes/ground_shape_%d.ground_shape_%d&#39;&quot;), i);  如何获取FString转换后char之后的长度 比如用TCHAR_TO_ANSI()将tchar转换为char之后，char的长度如何计算？ 使用FTCHARToANSI::Length()，示例如下：
-FTCHARToANSI Convert(*String); Ar-&gt;Serialize((ANSICHAR*)Convert, Convert.Length());  参考自：https://docs.unrealengine.com/latest/INT/Programming/UnrealArchitecture/StringHandling/CharacterEncoding/index.html
-中文字符的FString 转换 char数组 FString str(TEXT(&quot;笑傲江湖DA&quot;)); const wchar_t* s1 = *str; int LenW = wcslen(s1); int LenC = LenW * 2; //先转换为 char*, 比如 protobuf 不支持 wchar_t，那么可以将中文转换为char，然后储存在protobuf内部。 char* buf = new char[LenC &#43; 1](); memcpy(buf, s1, LenC); //验证char*能否还原为 wchar_t 数组 wchar_t* buf2 = new wchar_t[LenC/2 &#43; 1](); memcpy(buf2, buf, LenC);  TCHAR*、wchar_t、char 转换相关 //char 转换为 TCHAR TCHAR* msg = ANSI_TO_TCHAR(&quot;dddd&quot;); TCHAR* msg2 = UTF8_TO_TCHAR(&quot;dddd&quot;); //TCHAR 转换为 char char* Str4 = TCHAR_TO_UTF8(*Str); char* Str4 = TCHAR_TO_ANSI(*Str); //TCHAR 转换为 wchar_t FSting Str; wchar_t* Str2 = TCHAR_TO_WCHAR(*Str); //wchar_t 转换为 TCHAR wchar_t Str5[] = L&quot;sss&quot;; TCHAR* Str6 = (TCHAR*)Str5;  如果 char* 字符串有中文，转换为 FString 时，必须使用 ANSI_TO_TCHAR() 或者 UTF8_TO_TCHAR()，例如：FString Text = UTF8_TO_TCHAR(&ldquo;牛鼻&rdquo;); 。否则会出现乱码。另外，如果汉字是写在代码里面，则代码文件的编码格式需要改成UTF8，否则也会乱码。">
+FString Path = FString::Printf(TEXT(&quot;StaticMesh&#39;/Game/Shapes/ground_shape_%d.ground_shape_%d&#39;&quot;), i); 如何获取FString转换后char之后的长度 比如用TCHAR_TO_ANSI()将tchar转换为char之后，char的长度如何计算？ 使用FTCHARToANSI::Length()，示例如下：
+FTCHARToANSI Convert(*String);Ar-&gt;Serialize((ANSICHAR*)Convert, Convert.Length()); 参考自：https://docs.unrealengine.com/latest/INT/Programming/UnrealArchitecture/StringHandling/CharacterEncoding/index.html
+中文字符的FString 转换 char数组 FString str(TEXT(&quot;笑傲江湖DA&quot;));const wchar_t* s1 = *str;int LenW = wcslen(s1);int LenC = LenW * 2;//先转换为 char*, 比如 protobuf 不支持 wchar_t，那么可以将中文转换为char，然后储存在protobuf内部。char* buf = new char[LenC &#43; 1]();memcpy(buf, s1, LenC);//验证char*能否还原为 wchar_t 数组wchar_t* buf2 = new wchar_t[LenC/2 &#43; 1]();memcpy(buf2, buf, LenC); TCHAR*、wchar_t*、char* 转换相关 //char 转换为 TCHARTCHAR* msg = ANSI_TO_TCHAR(&quot;dddd&quot;); TCHAR* msg2 = UTF8_TO_TCHAR(&quot;dddd&quot;); //TCHAR 转换为 charchar* Str4 = TCHAR_TO_UTF8(*Str);char* Str4 = TCHAR_TO_ANSI(*Str);//TCHAR 转换为 wchar_tFSting Str;wchar_t* Str2 = TCHAR_TO_WCHAR(*Str);//wchar_t 转换为 TCHAR wchar_t Str5[] = L&quot;sss&quot;;TCHAR* Str6 = (TCHAR*)Str5; 如果 char* 字符串有中文，转换为 FString 时，必须使用 ANSI_TO_TCHAR() 或者 UTF8_TO_TCHAR()，例如：FString Text = UTF8_TO_TCHAR(&ldquo;牛鼻&rdquo;); 。否则会出现乱码。另外，如果汉字是写在代码里面，则代码文件的编码格式需要改成UTF8，否则也会乱码。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[UE4]FString常用API">
 <meta name="twitter:title" content="[UE4]FString常用API">
@@ -40,18 +40,18 @@ FString str; TCHAR *c1 = *str; TCHAR* c2 = str.GetCharArray().GetData();  将str
 FString TheString = &quot;123.021&quot;; int32 MyShinyNewInt = FCString::Atoi(*TheString); float MyShinyNewFloat = FCString::Atof(*TheString);  字符串切割：
 FString a(&quot;1,2,3&quot;); TArray&lt;FString&gt; stringArray; a.ParseIntoArray(stringArray, TEXT(&quot;,&quot;), false);  字符串截取：
 FString::Left(int count); FString::Right(int count);  字符串格式化Format：
-FString Path = FString::Printf(TEXT(&quot;StaticMesh&#39;/Game/Shapes/ground_shape_%d.ground_shape_%d&#39;&quot;), i);  如何获取FString转换后char之后的长度 比如用TCHAR_TO_ANSI()将tchar转换为char之后，char的长度如何计算？ 使用FTCHARToANSI::Length()，示例如下：
-FTCHARToANSI Convert(*String); Ar-&gt;Serialize((ANSICHAR*)Convert, Convert.Length());  参考自：https://docs.unrealengine.com/latest/INT/Programming/UnrealArchitecture/StringHandling/CharacterEncoding/index.html
-中文字符的FString 转换 char数组 FString str(TEXT(&quot;笑傲江湖DA&quot;)); const wchar_t* s1 = *str; int LenW = wcslen(s1); int LenC = LenW * 2; //先转换为 char*, 比如 protobuf 不支持 wchar_t，那么可以将中文转换为char，然后储存在protobuf内部。 char* buf = new char[LenC &#43; 1](); memcpy(buf, s1, LenC); //验证char*能否还原为 wchar_t 数组 wchar_t* buf2 = new wchar_t[LenC/2 &#43; 1](); memcpy(buf2, buf, LenC);  TCHAR*、wchar_t、char 转换相关 //char 转换为 TCHAR TCHAR* msg = ANSI_TO_TCHAR(&quot;dddd&quot;); TCHAR* msg2 = UTF8_TO_TCHAR(&quot;dddd&quot;); //TCHAR 转换为 char char* Str4 = TCHAR_TO_UTF8(*Str); char* Str4 = TCHAR_TO_ANSI(*Str); //TCHAR 转换为 wchar_t FSting Str; wchar_t* Str2 = TCHAR_TO_WCHAR(*Str); //wchar_t 转换为 TCHAR wchar_t Str5[] = L&quot;sss&quot;; TCHAR* Str6 = (TCHAR*)Str5;  如果 char* 字符串有中文，转换为 FString 时，必须使用 ANSI_TO_TCHAR() 或者 UTF8_TO_TCHAR()，例如：FString Text = UTF8_TO_TCHAR(&ldquo;牛鼻&rdquo;); 。否则会出现乱码。另外，如果汉字是写在代码里面，则代码文件的编码格式需要改成UTF8，否则也会乱码。">
+FString Path = FString::Printf(TEXT(&quot;StaticMesh&#39;/Game/Shapes/ground_shape_%d.ground_shape_%d&#39;&quot;), i); 如何获取FString转换后char之后的长度 比如用TCHAR_TO_ANSI()将tchar转换为char之后，char的长度如何计算？ 使用FTCHARToANSI::Length()，示例如下：
+FTCHARToANSI Convert(*String);Ar-&gt;Serialize((ANSICHAR*)Convert, Convert.Length()); 参考自：https://docs.unrealengine.com/latest/INT/Programming/UnrealArchitecture/StringHandling/CharacterEncoding/index.html
+中文字符的FString 转换 char数组 FString str(TEXT(&quot;笑傲江湖DA&quot;));const wchar_t* s1 = *str;int LenW = wcslen(s1);int LenC = LenW * 2;//先转换为 char*, 比如 protobuf 不支持 wchar_t，那么可以将中文转换为char，然后储存在protobuf内部。char* buf = new char[LenC &#43; 1]();memcpy(buf, s1, LenC);//验证char*能否还原为 wchar_t 数组wchar_t* buf2 = new wchar_t[LenC/2 &#43; 1]();memcpy(buf2, buf, LenC); TCHAR*、wchar_t*、char* 转换相关 //char 转换为 TCHARTCHAR* msg = ANSI_TO_TCHAR(&quot;dddd&quot;); TCHAR* msg2 = UTF8_TO_TCHAR(&quot;dddd&quot;); //TCHAR 转换为 charchar* Str4 = TCHAR_TO_UTF8(*Str);char* Str4 = TCHAR_TO_ANSI(*Str);//TCHAR 转换为 wchar_tFSting Str;wchar_t* Str2 = TCHAR_TO_WCHAR(*Str);//wchar_t 转换为 TCHAR wchar_t Str5[] = L&quot;sss&quot;;TCHAR* Str6 = (TCHAR*)Str5; 如果 char* 字符串有中文，转换为 FString 时，必须使用 ANSI_TO_TCHAR() 或者 UTF8_TO_TCHAR()，例如：FString Text = UTF8_TO_TCHAR(&ldquo;牛鼻&rdquo;); 。否则会出现乱码。另外，如果汉字是写在代码里面，则代码文件的编码格式需要改成UTF8，否则也会乱码。">
 <meta name="twitter:description" content="将int或float转换为string：
 FString NewString = FString::FromInt(YourInt); FString VeryCleanString = FString::SanitizeFloat(YourFloat);  将FString转换为 TCHAR*：
 FString str; TCHAR *c1 = *str; TCHAR* c2 = str.GetCharArray().GetData();  将string转换为int或者float：
 FString TheString = &quot;123.021&quot;; int32 MyShinyNewInt = FCString::Atoi(*TheString); float MyShinyNewFloat = FCString::Atof(*TheString);  字符串切割：
 FString a(&quot;1,2,3&quot;); TArray&lt;FString&gt; stringArray; a.ParseIntoArray(stringArray, TEXT(&quot;,&quot;), false);  字符串截取：
 FString::Left(int count); FString::Right(int count);  字符串格式化Format：
-FString Path = FString::Printf(TEXT(&quot;StaticMesh&#39;/Game/Shapes/ground_shape_%d.ground_shape_%d&#39;&quot;), i);  如何获取FString转换后char之后的长度 比如用TCHAR_TO_ANSI()将tchar转换为char之后，char的长度如何计算？ 使用FTCHARToANSI::Length()，示例如下：
-FTCHARToANSI Convert(*String); Ar-&gt;Serialize((ANSICHAR*)Convert, Convert.Length());  参考自：https://docs.unrealengine.com/latest/INT/Programming/UnrealArchitecture/StringHandling/CharacterEncoding/index.html
-中文字符的FString 转换 char数组 FString str(TEXT(&quot;笑傲江湖DA&quot;)); const wchar_t* s1 = *str; int LenW = wcslen(s1); int LenC = LenW * 2; //先转换为 char*, 比如 protobuf 不支持 wchar_t，那么可以将中文转换为char，然后储存在protobuf内部。 char* buf = new char[LenC &#43; 1](); memcpy(buf, s1, LenC); //验证char*能否还原为 wchar_t 数组 wchar_t* buf2 = new wchar_t[LenC/2 &#43; 1](); memcpy(buf2, buf, LenC);  TCHAR*、wchar_t、char 转换相关 //char 转换为 TCHAR TCHAR* msg = ANSI_TO_TCHAR(&quot;dddd&quot;); TCHAR* msg2 = UTF8_TO_TCHAR(&quot;dddd&quot;); //TCHAR 转换为 char char* Str4 = TCHAR_TO_UTF8(*Str); char* Str4 = TCHAR_TO_ANSI(*Str); //TCHAR 转换为 wchar_t FSting Str; wchar_t* Str2 = TCHAR_TO_WCHAR(*Str); //wchar_t 转换为 TCHAR wchar_t Str5[] = L&quot;sss&quot;; TCHAR* Str6 = (TCHAR*)Str5;  如果 char* 字符串有中文，转换为 FString 时，必须使用 ANSI_TO_TCHAR() 或者 UTF8_TO_TCHAR()，例如：FString Text = UTF8_TO_TCHAR(&ldquo;牛鼻&rdquo;); 。否则会出现乱码。另外，如果汉字是写在代码里面，则代码文件的编码格式需要改成UTF8，否则也会乱码。">
+FString Path = FString::Printf(TEXT(&quot;StaticMesh&#39;/Game/Shapes/ground_shape_%d.ground_shape_%d&#39;&quot;), i); 如何获取FString转换后char之后的长度 比如用TCHAR_TO_ANSI()将tchar转换为char之后，char的长度如何计算？ 使用FTCHARToANSI::Length()，示例如下：
+FTCHARToANSI Convert(*String);Ar-&gt;Serialize((ANSICHAR*)Convert, Convert.Length()); 参考自：https://docs.unrealengine.com/latest/INT/Programming/UnrealArchitecture/StringHandling/CharacterEncoding/index.html
+中文字符的FString 转换 char数组 FString str(TEXT(&quot;笑傲江湖DA&quot;));const wchar_t* s1 = *str;int LenW = wcslen(s1);int LenC = LenW * 2;//先转换为 char*, 比如 protobuf 不支持 wchar_t，那么可以将中文转换为char，然后储存在protobuf内部。char* buf = new char[LenC &#43; 1]();memcpy(buf, s1, LenC);//验证char*能否还原为 wchar_t 数组wchar_t* buf2 = new wchar_t[LenC/2 &#43; 1]();memcpy(buf2, buf, LenC); TCHAR*、wchar_t*、char* 转换相关 //char 转换为 TCHARTCHAR* msg = ANSI_TO_TCHAR(&quot;dddd&quot;); TCHAR* msg2 = UTF8_TO_TCHAR(&quot;dddd&quot;); //TCHAR 转换为 charchar* Str4 = TCHAR_TO_UTF8(*Str);char* Str4 = TCHAR_TO_ANSI(*Str);//TCHAR 转换为 wchar_tFSting Str;wchar_t* Str2 = TCHAR_TO_WCHAR(*Str);//wchar_t 转换为 TCHAR wchar_t Str5[] = L&quot;sss&quot;;TCHAR* Str6 = (TCHAR*)Str5; 如果 char* 字符串有中文，转换为 FString 时，必须使用 ANSI_TO_TCHAR() 或者 UTF8_TO_TCHAR()，例如：FString Text = UTF8_TO_TCHAR(&ldquo;牛鼻&rdquo;); 。否则会出现乱码。另外，如果汉字是写在代码里面，则代码文件的编码格式需要改成UTF8，否则也会乱码。">
 <meta property="og:locale" content="en-us">
 
   
@@ -383,60 +383,41 @@ if (!doNotTrack) {
           
           <div class="post-content markdown" itemprop="articleBody">
             <div class="main-content-wrap">
-              
-
-<p>将int或float转换为string：</p>
-
+              <p>将int或float转换为string：</p>
 <pre><code>FString NewString = FString::FromInt(YourInt);     
 FString VeryCleanString = FString::SanitizeFloat(YourFloat);  
 </code></pre>
-
 <p>将FString转换为 TCHAR*：</p>
-
 <pre><code>FString str;  
 TCHAR *c1 = *str;  
 
 TCHAR* c2 = str.GetCharArray().GetData();  
 </code></pre>
-
 <p>将string转换为int或者float：</p>
-
 <pre><code>FString TheString = &quot;123.021&quot;;    
 int32 MyShinyNewInt = FCString::Atoi(*TheString);  
 float MyShinyNewFloat = FCString::Atof(*TheString);  
 </code></pre>
-
 <p>字符串切割：</p>
-
 <pre><code>FString a(&quot;1,2,3&quot;);  
 TArray&lt;FString&gt; stringArray;  
 a.ParseIntoArray(stringArray, TEXT(&quot;,&quot;), false);  
 </code></pre>
-
 <p>字符串截取：</p>
-
 <pre><code>FString::Left(int count);  
 FString::Right(int count);  
 </code></pre>
-
 <p>字符串格式化Format：</p>
-
 <pre><code>FString Path = FString::Printf(TEXT(&quot;StaticMesh'/Game/Shapes/ground_shape_%d.ground_shape_%d'&quot;), i);
 </code></pre>
-
-<h5 id="如何获取fstring转换后char之后的长度">如何获取FString转换后char之后的长度</h5>
-
+<h5 id="fstringchar">如何获取FString转换后char之后的长度</h5>
 <p>比如用TCHAR_TO_ANSI()将tchar转换为char之后，char的长度如何计算？
 使用FTCHARToANSI::Length()，示例如下：</p>
-
 <pre><code>FTCHARToANSI Convert(*String);
 Ar-&gt;Serialize((ANSICHAR*)Convert, Convert.Length());
 </code></pre>
-
-<p>参考自：<a href="https://docs.unrealengine.com/latest/INT/Programming/UnrealArchitecture/StringHandling/CharacterEncoding/index.html">https://docs.unrealengine.com/latest/INT/Programming/UnrealArchitecture/StringHandling/CharacterEncoding/index.html</a></p>
-
-<h5 id="中文字符的fstring-转换-char数组">中文字符的FString 转换 char数组</h5>
-
+<p>参考自：https://docs.unrealengine.com/latest/INT/Programming/UnrealArchitecture/StringHandling/CharacterEncoding/index.html</p>
+<h5 id="fstring--char">中文字符的FString 转换 char数组</h5>
 <pre><code>FString str(TEXT(&quot;笑傲江湖DA&quot;));
 const wchar_t* s1 = *str;
 
@@ -451,9 +432,7 @@ memcpy(buf, s1, LenC);
 wchar_t* buf2 = new wchar_t[LenC/2 + 1]();
 memcpy(buf2, buf, LenC);
 </code></pre>
-
-<h5 id="tchar-wchar-t-char-转换相关">TCHAR*、wchar_t<em>、char</em> 转换相关</h5>
-
+<h5 id="tcharwchartchar-">TCHAR*、wchar_t*、char* 转换相关</h5>
 <pre><code>//char 转换为 TCHAR
 TCHAR* msg = ANSI_TO_TCHAR(&quot;dddd&quot;);  
 TCHAR* msg2 = UTF8_TO_TCHAR(&quot;dddd&quot;);  
@@ -471,30 +450,22 @@ wchar_t* Str2 = TCHAR_TO_WCHAR(*Str);
 wchar_t Str5[] = L&quot;sss&quot;;
 TCHAR* Str6 = (TCHAR*)Str5;
 </code></pre>
-
 <div class="alert danger ">
   <p>如果 char* 字符串有中文，转换为 FString 时，必须使用 ANSI_TO_TCHAR() 或者 UTF8_TO_TCHAR()，例如：FString Text = UTF8_TO_TCHAR(&ldquo;牛鼻&rdquo;); 。否则会出现乱码。另外，如果汉字是写在代码里面，则代码文件的编码格式需要改成UTF8，否则也会乱码。</p>
 </div>
-
-<h5 id="4-20-android版本的wchar-t到tchar转换问题">4.20 Android版本的wchar_t到TCHAR转换问题</h5>
-
-<p>问题现象：<br />
+<h5 id="420-androidwcharttchar">4.20 Android版本的wchar_t到TCHAR转换问题</h5>
+<p>问题现象：<br>
 <div class="alert danger ">
   <p>4.20之前，wchar_t* 和 TCHAR* 之前直接强转没什么问题，但是4.20版本开始，直接强转在android版本下只会截取字符串的第一个字母，之后的内容都丢失。Windows版本没这个问题。</p>
 </div></p>
-
-<p>解决办法：<br />
+<p>解决办法：<br>
 使用<code>TCHAR_TO_WCHAR</code>和<code>WCHAR_TO_TCHAR</code>转换，而不要直接强制转换。强制转换在Windwos版本下没有问题，android就会出现数据错误。</p>
-
 <span class="highlight-text red">
 但是使用 WCHAR_TO_TCHAR 在android版本下编译会有错误：
 </span>
-
 <pre><code>UATHelper: Packaging (Android (ASTC)):     UE_4.21/Engine/Source/Runtime/Core/Public/Misc/CString.h(658,9) :  error: no matching function for call to 'Strlen'
 </code></pre>
-
 <p>感觉像是引擎的bug，临时解决办法，自己写 wchar_t 转换 TCHAR 的函数：</p>
-
 <pre><code>bool UMyStringUtil::WCharToTChar(const wchar_t* Src, TCHAR* Dest, int DestLen)
 {
     bool Ret = true;
@@ -523,15 +494,12 @@ TCHAR* Str6 = (TCHAR*)Str5;
     return Ret;
 }
 </code></pre>
-
 <p>使用示例：</p>
-
 <pre><code>size_t StrLen = wcslen(MyWcharArray) + 1;
 TCHAR *pData = new TCHAR[StrLen];
 FMemory::Memset(pData, 0, StrLen);
 WCharToTChar(MyWcharArray, pData, StrLen);
-delete[] pData;
-</code></pre>
+delete[] pData;</code></pre>
 
               
             </div>

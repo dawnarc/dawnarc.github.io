@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.58.3 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.60.1 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="UE4, Sequencer">
 <meta name="description" content="Keywords: UE4, Build.cs">
@@ -353,11 +353,8 @@ if (!doNotTrack) {
           <div class="post-content markdown" itemprop="articleBody">
             <div class="main-content-wrap">
               <p>Keywords: UE4, Build.cs</p>
-
 <h5 id="how-to-get-the-current-project-directory">How to get the current project directory</h5>
-
 <p>New way</p>
-
 <pre><code>using System.IO;
 using UnrealBuildTool;  
 
@@ -370,7 +367,7 @@ public class MyProject : ModuleRules
             return Path.GetFullPath(Path.Combine(ModuleDirectory, &quot;../../&quot;));
         }
     }
-
+	
     private string ThirdPartyPath
     { 
         get 
@@ -381,47 +378,41 @@ public class MyProject : ModuleRules
 
     public MyProject(ReadOnlyTargetRules Target) : base(Target)
     {  
-
+	
     }  
 }
 </code></pre>
-
-<p>Reference:<br />
+<p>Reference:<br>
 <a href="https://answers.unrealengine.com/questions/237166/how-can-i-get-the-current-project-path-within-the.html">https://answers.unrealengine.com/questions/237166/how-can-i-get-the-current-project-path-within-the.html</a></p>
-
 <p>Old way (Removed in 4.21)</p>
-
 <pre><code>using System.IO;  
 using UnrealBuildTool;  
-
+  
 public class MyProject : ModuleRules  
 {  
     RulesAssembly r;  
-
+  
     private string ModulePath  
     {  
         get { return Path.GetDirectoryName( r.GetModuleFileName(this.GetType().Name).CanonicalName); }  
     }  
-
+  
     private string ThirdPartyPath  
     {  
         get { return Path.GetFullPath(Path.Combine(ModulePath, &quot;../../ThirdParty/&quot;)); }  
     }  
-
+  
     public MyProject(TargetInfo Target)  
     {  
-
+  
         FileReference CheckProjectFile;  
         UProjectInfo.TryGetProjectForTarget(&quot;MyProject&quot;, out CheckProjectFile);  
         r = RulesCompiler.CreateProjectRulesAssembly(CheckProjectFile);  
     }  
 }
 </code></pre>
-
 <h5 id="how-to-include-third-party-libraries">How to include third party libraries</h5>
-
 <p>Example:</p>
-
 <pre><code>using UnrealBuildTool;
 using System.IO;
 
@@ -434,7 +425,7 @@ public class TestTD : ModuleRules
             return Path.GetFullPath(Path.Combine(ModuleDirectory, &quot;../../&quot;));
         }
     }
-
+	
     private string ThirdPartyPath
     { 
         get 
@@ -442,7 +433,7 @@ public class TestTD : ModuleRules
             return Path.GetFullPath(Path.Combine(ModuleDirectory, ProjectRoot, &quot;ThirdParty&quot;)); 
         } 
     }
-
+	
     public TestTD(ReadOnlyTargetRules Target) : base(Target)
     {
         PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
@@ -451,9 +442,9 @@ public class TestTD : ModuleRules
 
         LoadOpenCV(Target);
     }
-
+	
     public bool LoadOpenCV(ReadOnlyTargetRules Target)
-    {   
+    {	
         // Start OpenCV linking here!
         bool isLibrarySupported = false;
 
@@ -475,7 +466,7 @@ public class TestTD : ModuleRules
                     break;
                 }
         }
-
+		
         bool isdebug = Target.Configuration == UnrealTargetConfiguration.Debug;
         string DebugLibNameFlag = &quot;&quot;;
         if(isdebug)
@@ -488,7 +479,7 @@ public class TestTD : ModuleRules
             //LibrariesPath value for Windows in Debug: D:\MyProj\ThirdParty\OpenCV\Libraries\Win64\opencv_world348d.lib
             string LibrariesPath = Path.Combine(ThirdPartyPath, &quot;OpenCV&quot;, &quot;Libraries&quot;, PlatformString, &quot;opencv_world348&quot; + DebugLibNameFlag + libSuffix);
             PublicAdditionalLibraries.Add(LibrariesPath);
-
+			
             System.Console.WriteLine(&quot;++++++++++++ Set OpenCV Libraries: &quot; + LibrariesPath + &quot;\r&quot;);
         }
 
@@ -497,16 +488,14 @@ public class TestTD : ModuleRules
         PublicIncludePaths.Add(IncludePath);
 
         System.Console.WriteLine(&quot;++++++++++++ Set OpenCV Includes: &quot; + IncludePath + &quot;\r&quot;);
-
+		
         PublicDefinitions.Add(string.Format(&quot;WITH_OPENCV_BINDING={0}&quot;, isLibrarySupported ? 1 : 0));
 
         return isLibrarySupported;
     }
 }
 </code></pre>
-
 <p>If want to include a number of libraries, you can do like this:</p>
-
 <pre><code>// Add static library search path 
 PublicLibraryPaths.Add(LibPath);
 
@@ -523,13 +512,10 @@ PublicDelayLoadDLLs.Add(&quot;opencv_core340.dll&quot;);
 PublicDelayLoadDLLs.Add(&quot;opencv_cudaarithm340.dll&quot;);
 PublicDelayLoadDLLs.Add(&quot;opencv_cudabgsegm340.dll&quot;);
 </code></pre>
-
-<p>Reference:<br />
-[UE4]UnrealBuildTool APIs in common<br />
+<p>Reference:<br>
+[UE4]UnrealBuildTool APIs in common<br>
 <a href="https://dawnarc.com/2019/07/ue4unrealbuildtool-apis-in-common/">https://dawnarc.com/2019/07/ue4unrealbuildtool-apis-in-common/</a></p>
-
-<hr />
-
+<hr>
 <p><code>我年轻时，听一位教授讲：“人生都只有一个想法，终其一生不过是不断丰富它。”我当时觉得：“一辈子只围绕一个念头转？这未免也太反动了！”五十岁时，我明白他是对的：我这一辈子都在追随一个想法，问题是我从来都不知道是哪个。──翁贝托·埃科《密涅瓦火柴盒》</code></p>
               
             </div>

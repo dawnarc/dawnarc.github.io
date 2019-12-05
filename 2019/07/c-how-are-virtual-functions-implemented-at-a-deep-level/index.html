@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.58.3 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.60.1 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="">
 <meta name="description" content="keywords: Virtual Functions, VTables">
@@ -353,49 +353,31 @@ if (!doNotTrack) {
           <div class="post-content markdown" itemprop="articleBody">
             <div class="main-content-wrap">
               <p>keywords: Virtual Functions, VTables</p>
-
 <h5 id="we-all-know-what-virtual-functions-are-in-c-but-how-are-they-implemented-at-a-deep-level">We all know what virtual functions are in C++, but how are they implemented at a deep level?</h5>
-
 <p>This is an array with pointers to functions, which are implementations of a particular virtual function. An index in this array represents particular index of a virtual function defined for a class. This includes pure virtual functions.</p>
-
 <p>When a polymorphic class derives from another polymorphic class, we may have the following situations:</p>
-
 <ul>
 <li>The deriving class does not add new virtual functions nor overrides any. In this case this class shares the vtable with the base class.</li>
 <li>The deriving class adds and overrides virtual methods. In this case it gets its own vtable, where the added virtual functions have index starting past the last derived one.</li>
 <li>Multiple polymorphic classes in the inheritance. In this case we have an index-shift between second and next bases and the index of it in the derived class</li>
 </ul>
-
 <h5 id="can-the-vtable-be-modified-or-even-directly-accessed-at-runtime">Can the vtable be modified or even directly accessed at runtime?</h5>
-
-<p>Not standard way - there&rsquo;s no API to access them. Compilers may have some extensions or private APIs to access them, but that may be only an extension.</p>
-
+<p>Not standard way - there's no API to access them. Compilers may have some extensions or private APIs to access them, but that may be only an extension.</p>
 <h5 id="does-the-vtable-exist-for-all-classes-or-only-those-that-have-at-least-one-virtual-function">Does the vtable exist for all classes, or only those that have at least one virtual function?</h5>
-
 <p>Only those that have at least one virtual function (be it even destructor) or derive at least one class that has its vtable (&ldquo;is polymorphic&rdquo;).</p>
-
 <h5 id="do-abstract-classes-simply-have-a-null-for-the-function-pointer-of-at-least-one-entry">Do abstract classes simply have a NULL for the function pointer of at least one entry?</h5>
-
-<p>That&rsquo;s a possible implementation, but rather not practiced. Instead there is usually a function that prints something like &ldquo;pure virtual function called&rdquo; and does abort(). The call to that may occur if you try to call the abstract method in the constructor or destructor.</p>
-
+<p>That's a possible implementation, but rather not practiced. Instead there is usually a function that prints something like &ldquo;pure virtual function called&rdquo; and does abort(). The call to that may occur if you try to call the abstract method in the constructor or destructor.</p>
 <h5 id="does-having-a-single-virtual-function-slow-down-the-whole-class-or-only-the-call-to-the-function-that-is-virtual-and-does-the-speed-get-affected-if-the-virtual-function-is-actually-overwritten-or-not-or-does-this-have-no-effect-so-long-as-it-is-virtual">Does having a single virtual function slow down the whole class? Or only the call to the function that is virtual? And does the speed get affected if the virtual function is actually overwritten or not, or does this have no effect so long as it is virtual.</h5>
-
 <p>The slowdown is only dependent on whether the call is resolved as direct call or as a virtual call. And nothing else matters. :)</p>
-
 <p>If you call a virtual function through a pointer or reference to an object, then it will be always implemented as virtual call - because the compiler can never know what kind of object will be assigned to this pointer in runtime, and whether it is of a class in which this method is overridden or not. Only in two cases the compiler can resolve the call to a virtual function as a direct call:</p>
-
 <ul>
 <li>If you call the method through a value (a variable or result of a function that returns a value) - in this case the compiler has no doubts what the actual class of the object is, and can &ldquo;hard-resolve&rdquo; it at compile time.</li>
 <li>If the virtual method is declared final in the class to which you have a pointer or reference through which you call it (<span class="highlight-text red">only in C++11</span>). In this case compiler knows that this method cannot undergo any further overriding and it can only be the method from this class.</li>
 </ul>
-
 <p>Note though that virtual calls have only overhead of dereferencing two pointers. Using RTTI (although only available for polymorphic classes) is slower than calling virtual methods, should you find a case to implement the same thing two such ways. For example, defining <code>virtual bool HasHoof() { return false; }</code> and then override only as <code>bool Horse::HasHoof() { return true; }</code> would provide you with ability to call if (anim-&gt;HasHoof()) that will be faster than trying <code>if(dynamic_cast&lt;Horse*&gt;(anim))</code>. This is because <code>dynamic_cast</code> has to walk through the class hierarchy in some cases even recursively to see if there can be built the path from the actual pointer type and the desired class type. While the virtual call is always the same - dereferencing two pointers.</p>
-
-<p>Origin:<br />
+<p>Origin:<br>
 <a href="https://stackoverflow.com/questions/99297/how-are-virtual-functions-and-vtable-implemented">https://stackoverflow.com/questions/99297/how-are-virtual-functions-and-vtable-implemented</a></p>
-
-<hr />
-
+<hr>
 <p><code>It's enough for me to be sure that you and I exist at this moment. ― Gabriel García Márquez, One Hundred Years of Solitude</code></p>
               
             </div>

@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.58.3 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.60.1 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="">
 <meta name="description" content="Hugo tranquilpeak theme demo">
@@ -421,7 +421,7 @@ https://cg2010studio.com/2011/11/01/flat%E3%80%81gouraud%E3%80%81phong-shading%E
       
         Pipeline   (The blue boxes are programmable shader stages.)
 The OpenGL rendering pipeline works in the following order:
- Prepare vertex array data, and then render it Vertex Processing:  Each vertex is acted upon by a Vertex Shader. Each vertex in the stream is processed in turn into an output vertex. Optional primitive tessellation stages. Optional Geometry Shader primitive processing. The output is a sequence of primitives.  Vertex Post-Processing, the outputs of the last stage are adjusted or shipped to different locations.
+ Prepare vertex array data, and then render it Vertex Processing:  Each vertex is acted upon by a Vertex Shader. Each vertex in the stream is processed in turn into an output vertex. Optional primitive tessellation stages. Optional Geometry Shader primitive processing. The output is a sequence of primitives.   Vertex Post-Processing, the outputs of the last stage are adjusted or shipped to different locations.
       
       <p>
         <a href="https://dawnarc.com/2018/06/openglrendering-pipeline%E6%B8%B2%E6%9F%93%E7%AE%A1%E7%BA%BF%E6%B5%81%E7%A8%8B%E6%A6%82%E8%BF%B0/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -548,9 +548,9 @@ As for the language itself, there are a few things that C++ does better than D i
     <div class="postShorten-excerpt" itemprop="articleBody">
       
         调用UFunction 执行UFuncion，使用 ProcessEvent ：
-UFunction* Fun = Actor-&gt;FindFunction(TEXT(&quot;TestFun&quot;)); if(Fun) { Actor-&gt;ProcessEvent(Fun, Buffer); }  查询UFunction信息 获取返回值：
-UFunction* Fun = Actor-&gt;FindFunction(TEXT(&quot;TestFun&quot;)); if(Fun) { FFrame frame = FFrame(Actor, Fun, Buffer, NULL, Fun-&gt;Children); uint8* ReturnValueAdress = Buffer + Fun-&gt;ReturnValueOffset; int* intp = (int*)ReturnValueAdress; //hardcoded exemple for a int return Fun-&gt;Invoke(Actor, frame, intp); }  获取输出参数：
-if(UFunction* Fun = Actor-&gt;FindFunction(TEXT(&quot;TestFun&quot;))) { if(uint8* Buffer = (uint8*)FMemory_Alloca(Fun-&gt;ParmsSize)) { for (TFieldIterator&lt;UProperty&gt; PropIt(Fun, EFieldIteratorFlags::ExcludeSuper); PropIt; ++PropIt) { UProperty* Property = *PropIt; bool isOut = Property-&gt;HasAnyPropertyFlags(CPF_OutParm); if (!
+UFunction* Fun = Actor-&gt;FindFunction(TEXT(&quot;TestFun&quot;));if(Fun){Actor-&gt;ProcessEvent(Fun, Buffer);} 查询UFunction信息 获取返回值：
+UFunction* Fun = Actor-&gt;FindFunction(TEXT(&quot;TestFun&quot;));if(Fun){FFrame frame = FFrame(Actor, Fun, Buffer, NULL, Fun-&gt;Children);uint8* ReturnValueAdress = Buffer + Fun-&gt;ReturnValueOffset;int* intp = (int*)ReturnValueAdress; //hardcoded exemple for a int returnFun-&gt;Invoke(Actor, frame, intp);} 获取输出参数：
+if(UFunction* Fun = Actor-&gt;FindFunction(TEXT(&quot;TestFun&quot;))){if(uint8* Buffer = (uint8*)FMemory_Alloca(Fun-&gt;ParmsSize)){for (TFieldIterator&lt;UProperty&gt; PropIt(Fun, EFieldIteratorFlags::ExcludeSuper); PropIt; ++PropIt){UProperty* Property = *PropIt;bool isOut = Property-&gt;HasAnyPropertyFlags(CPF_OutParm);if (!
       
       <p>
         <a href="https://dawnarc.com/2018/06/ue4ufunction-processevent%E8%BF%94%E5%9B%9E%E5%80%BC%E4%B8%8E%E8%BE%93%E5%87%BA%E5%8F%82%E6%95%B0%E8%8E%B7%E5%8F%96/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -613,9 +613,10 @@ if(UFunction* Fun = Actor-&gt;FindFunction(TEXT(&quot;TestFun&quot;))) { if(uint
       
         keywords：hugo、MathJax、公式、数学表达式
 步骤 1，在theme\layouts\partials\目录下新建一个文件，命名为 mathjax_support.html，内容为：
-&lt;script type=&quot;text/javascript&quot; async src=&quot;https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML&quot;&gt; &lt;/script&gt; &lt;script type=&quot;text/x-mathjax-config&quot;&gt; MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$'], ['\\(','\\)']], displayMath: [['$$','$$'], ['\[','\]']], processEscapes: true, processEnvironments: true, skipTags: ['script', 'noscript', 'style', 'textarea', 'pre','code'], TeX: { equationNumbers: { autoNumber: &quot;AMS&quot; }, extensions: [&quot;AMSmath.js&quot;, &quot;AMSsymbols.js&quot;] } } }); &lt;/script&gt;  2，在header.html的&lt;/header&gt;之前或者footer.html的&lt;/footer&gt;之前添加：
-{{ if .Params.mathjax}}{{ partial &quot;mathjax_support.html&quot; . }}{{ end }}  3，在MD文件的头部追加mathjax : ture：
---- title : &quot;hugo-集成MathJax&quot; date : &quot;2018-06-22T00:51:40+08:00&quot; mathjax : ture ---  如果是新语法，则追加mathjax= [&quot;ture&quot;]：
+ MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$'], ['\\(','\\)']], displayMath: [['$$','$$'], ['\[','\]']], processEscapes: true, processEnvironments: true, skipTags: ['script', 'noscript', 'style', 'textarea', 'pre','code'], TeX: { equationNumbers: { autoNumber: "AMS" }, extensions: ["AMSmath.js", "AMSsymbols.js"] } } });  2，在header.html的&lt;/header&gt;之前或者footer.html的&lt;/footer&gt;之前添加：
+{{ if .Params.mathjax}}{{ partial "mathjax_support.html" . }}{{ end }} 3，在MD文件的头部追加mathjax : ture：
+--- title : "hugo-集成MathJax" date : "2018-06-22T00:51:40+08:00" mathjax : ture --- 如果是新语法，则追加mathjax= [&quot;ture&quot;]：
++++ title= "hugo-集成MathJax" date= "2018-06-22T00:51:40+08:00" mathjax= ["
       
       <p>
         <a href="https://dawnarc.com/2018/06/hugo%E9%9B%86%E6%88%90mathjax/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -687,7 +688,7 @@ D:/sdk/glm-0.9.9.0
 cmake-gui的build binaries设置为：
 D:/sdk/glm-0.9.9.0/bin
 Configure过程中，会有警告，可以无视，直接Generate：
-GLM is a header only library, no need to build it. Set the option GLM_TEST_ENABLE with ON to build and run the test bench  生成完以后，不需要打开VS编译，后面直接使用相关文件即可。
+GLM is a header only library, no need to build it. Set the option GLM_TEST_ENABLE with ON to build and run the test bench 生成完以后，不需要打开VS编译，后面直接使用相关文件即可。
 2，下载glfw源码，并用cmake-gui生成VS工程文件。 https://github.com/glfw/glfw/releases/download/3.2.1/glfw-3.2.1.zip
 假设
 cmake-gui的source code设置为：
@@ -695,7 +696,7 @@ D:/sdk/glfw-3.2.1
 cmake-gui的build binaries设置为：
 D:/sdk/glfw-3.2.1/bin
 Configure过程中，会有红色警告，可以无视，直接Generate：
-CMake Deprecation Warning at CMakeLists.txt:10 (cmake_policy): The OLD behavior for policy CMP0042 will be removed from a future version of CMake. The cmake-policies(7) manual explains that the OLD behaviors of all policies are deprecated and that a policy should be set to OLD only under specific short-term circumstances.
+CMake Deprecation Warning at CMakeLists.txt:10 (cmake_policy):The OLD behavior for policy CMP0042 will be removed from a future versionof CMake.The cmake-policies(7) manual explains that the OLD behaviors of allpolicies are deprecated and that a policy should be set to OLD only underspecific short-term circumstances.
       
       <p>
         <a href="https://dawnarc.com/2018/06/openglglsl-cookbook%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91%E6%AD%A5%E9%AA%A4%E6%B5%81%E7%A8%8B2018.06%E6%96%B0%E7%89%88/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -761,12 +762,12 @@ https://www.jianshu.com/p/e78b28081a44
 https://stackoverflow.com/questions/9237348/what-does-fetch-head-in-git-mean
 https://ruby-china.org/topics/4768
 git clone git clone支持多种协议，除了HTTP(s)以外，还支持SSH、Git、本地文件协议等，通常来说，Git协议下载速度最快，SSH协议用于需要用户认证的场合。在clone完成之后，Git 会自动为你将此远程仓库命名为origin（origin只相当于一个别名，运行git remote –v或者查看.git/config可以看到origin的含义），并下载其中所有的数据，建立一个指向它的master 分支的指针，我们用(远程仓库名)/(分支名) 这样的形式表示远程分支，所以origin/master指向的是一个remote branch（从那个branch我们clone数据到本地），但你无法在本地更改其数据。同时，Git 会建立一个属于你自己的本地master 分支，它指向的是你刚刚从remote server传到你本地的副本。随着你不断的改动文件，git add, git commit，master的指向会自动移动，你也可以通过merge（fast forward）来移动master的指向。
-git clone + 远程仓库项目网址  克隆远程仓库项目到本地仓库，也就是俗称的拉代码，本地仓库生成的项目与远程仓库的项目结构一致。git clone + 远程仓库项目网址 + 本地仓库项目目录：克隆远程仓库项目到本地仓库，本地仓库生成的项目放在第二个参数【本地仓库项目目录】中
+git clone + 远程仓库项目网址 克隆远程仓库项目到本地仓库，也就是俗称的拉代码，本地仓库生成的项目与远程仓库的项目结构一致。git clone + 远程仓库项目网址 + 本地仓库项目目录：克隆远程仓库项目到本地仓库，本地仓库生成的项目放在第二个参数【本地仓库项目目录】中
 git fetch 真正理解 git fetch, git pull，要讲清楚git fetch，git pull,必须要附加讲清楚git remote，git merge 、远程repo， branch 、 commit-id 以及 FETCH_HEAD。
- git remote
+  git remote
 首先， git是一个分布式的结构，这意味着本地和远程是一个相对的名称。
 本地的repo仓库要与远程的repo配合完成版本对应必须要有 git remote子命令，通过git remote add来添加当前本地长度的远程repo， 有了这个动作本地的repo就知道了当遇到git push 的时候应该往哪里提交代码。
- git branch
+  git branch
 其次，git天生就是为了多版本分支管理而创造的，因此分支一说，不得不提， 分支就相当于是为了单独记录软件的某一个发布版本而存在的，既然git是分布式的，便有了本地分支和远程分支一说，git branch 可以查看本地分支， git branch -r 可以用来查看远程分支。 本地分支和远程分支在git push 的时候可以随意指定，交错对应，只要不出现版本从图即可。
       
       <p>
@@ -828,11 +829,11 @@ git fetch 真正理解 git fetch, git pull，要讲清楚git fetch，git pull,�
     </div>
     <div class="postShorten-excerpt" itemprop="articleBody">
       
-        错误1 error C2027: use of undefined type 'glm::tvec4&lt;float,0&gt;'  原因：
+        错误1 error C2027: use of undefined type 'glm::tvec4&lt;float,0&gt;' 原因：
 只包含了头文件：&lt;glm/detail/type_vec.hpp&gt;
 解决办法：
 不需要包含&lt;glm/detail/type_vec.hpp&gt;，只需要包含&lt;glm/glm.hpp&gt;。
-就投机钻营来说，世故的价值永远是无可比拟的。---《死魂灵》
+ 就投机钻营来说，世故的价值永远是无可比拟的。---《死魂灵》
       
       <p>
         <a href="https://dawnarc.com/2018/06/opengl%E5%B8%B8%E8%A7%81%E7%BC%96%E8%AF%91%E9%94%99%E8%AF%AF/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -896,7 +897,7 @@ git fetch 真正理解 git fetch, git pull，要讲清楚git fetch，git pull,�
         keywords：匿名类，匿名结构体、构造函数、析构函数、Lambda
 为匿名类添加构造函数与析构函数，有两种方式：
  C++98中在匿名类内部加一个命名类 C++11 Lambda语法  C++98 C++98中，可以在匿名类内部放一个命名类(named class )，然后再为命名类添加构造和析构函数，当匿名类构造或析构时，就会去调用命名类的构造函数和析构函数。
-#include &lt;iostream&gt; #include &lt;cmath&gt; int main() { struct { struct S { double a; int b; S() : a(sqrt(4)), b(42) { std::cout &lt;&lt; &quot;constructed&quot; &lt;&lt; std::endl; } ~S() { std::cout &lt;&lt; &quot;destructed&quot; &lt;&lt; std::endl; } } s; } instance1, instance2; std::cout &lt;&lt; &quot;body&quot; &lt;&lt; std::endl; }  C++11 Lambda #include &lt;iostream&gt; #include &lt;cmath&gt; int main() { struct { double a { sqrt(4) }; int b { []{ std::cout &lt;&lt; &quot;constructed&quot; &lt;&lt; std::endl; return 42; }() }; } instance1, instance2; }  参考 How to add constructors/destructors to an unnamed class?
+#include &lt;iostream&gt;#include &lt;cmath&gt;int main() {struct {struct S {double a;int b;S() : a(sqrt(4)), b(42) { std::cout &lt;&lt; &quot;constructed&quot; &lt;&lt; std::endl; }~S() { std::cout &lt;&lt; &quot;destructed&quot; &lt;&lt; std::endl; }} s;} instance1, instance2;std::cout &lt;&lt; &quot;body&quot; &lt;&lt; std::endl;} C++11 Lambda #include &lt;iostream&gt;#include &lt;cmath&gt;int main() {struct {double a { sqrt(4) };int b { []{std::cout &lt;&lt; &quot;constructed&quot; &lt;&lt; std::endl;return 42; }()};} instance1, instance2;} 参考 How to add constructors/destructors to an unnamed class?
       
       <p>
         <a href="https://dawnarc.com/2018/06/c-how-to-add-constructors-or-destructors-to-an-unnamed-class%E4%B8%BA%E5%8C%BF%E5%90%8D%E7%B1%BB%E6%B7%BB%E5%8A%A0%E6%9E%84%E9%80%A0%E5%87%BD%E6%95%B0%E4%B8%8E%E6%9E%90%E6%9E%84%E5%87%BD%E6%95%B0/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -958,10 +959,10 @@ git fetch 真正理解 git fetch, git pull，要讲清楚git fetch，git pull,�
     <div class="postShorten-excerpt" itemprop="articleBody">
       
         GLM默认使用右手坐标系，如果要改成默认左手坐标系，使用：
-GLM_FORCE_LEFT_HANDED  &lt;glm/trigonometric.hpp&gt; GLM_FUNC_DECL GLM_CONSTEXPR vec&lt; L, T, Q &gt; radians (vec&lt; L, T, Q &gt; const &amp;degrees)  将角度转化为弧度。
-&lt;glm/gtx/transform.hpp&gt; GLM_FUNC_DECL mat&lt; 4, 4, T, Q &gt; rotate (T angle, vec&lt; 3, T, Q &gt; const &amp;v)  使用一个用弧度(radians)表示的角度(degrees)，以及一个用3个标量(scalar)表示的坐标(axis)，来构建一个4X4的旋转矩阵(rotate matrix)。
-&lt;glm/gtc/matrix_transform.hpp&gt; GLM_FUNC_DECL mat&lt;4, 4, T, Q&gt; lookAt (vec&lt;3, T, Q&gt; const &amp;eye, vec&lt;3, T, Q&gt; const &amp;center, vec&lt;3, T, Q&gt; const &amp;up)  基于默认的偏手坐标系来构建一个给定视图矩阵(view matrix)的视角(look)
-GLM_FUNC_DECL mat&lt;4, 4, T, defaultp&gt; perspective (T fovy, T aspect, T near, T far)  为一个对称透视图截锥(symmetric perspective-view frustum)创建矩阵，基于默认的偏手坐标系和默认的近剪裁面距离、远剪裁面距离
+GLM_FORCE_LEFT_HANDED &lt;glm/trigonometric.hpp&gt; GLM_FUNC_DECL GLM_CONSTEXPR vec&lt; L, T, Q &gt; radians (vec&lt; L, T, Q &gt; const &amp;degrees) 将角度转化为弧度。
+ &lt;glm/gtx/transform.hpp&gt; GLM_FUNC_DECL mat&lt; 4, 4, T, Q &gt; rotate (T angle, vec&lt; 3, T, Q &gt; const &amp;v) 使用一个用弧度(radians)表示的角度(degrees)，以及一个用3个标量(scalar)表示的坐标(axis)，来构建一个4X4的旋转矩阵(rotate matrix)。
+&lt;glm/gtc/matrix_transform.hpp&gt; GLM_FUNC_DECL mat&lt;4, 4, T, Q&gt; lookAt (vec&lt;3, T, Q&gt; const &amp;eye, vec&lt;3, T, Q&gt; const &amp;center, vec&lt;3, T, Q&gt; const &amp;up) 基于默认的偏手坐标系来构建一个给定视图矩阵(view matrix)的视角(look)
+ GLM_FUNC_DECL mat&lt;4, 4, T, defaultp&gt; perspective (T fovy, T aspect, T near, T far) 为一个对称透视图截锥(symmetric perspective-view frustum)创建矩阵，基于默认的偏手坐标系和默认的近剪裁面距离、远剪裁面距离
       
       <p>
         <a href="https://dawnarc.com/2018/06/openglglm%E5%B8%B8%E7%94%A8%E5%87%BD%E6%95%B0%E8%A7%A3%E9%87%8A%E8%AF%B4%E6%98%8E/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -1026,9 +1027,10 @@ GLM_FUNC_DECL mat&lt;4, 4, T, defaultp&gt; perspective (T fovy, T aspect, T near
 公式概述 ADS光照模型又称为“冯氏反射模型”(Phong reflection model)，为什么叫冯氏：
 裴祥风（Bùi Tường Phong音译, 1942年—1975年），美国电脑CG研究学者，于越南出生。他于1973年在尤他大学取得哲学博士学位，并发明了Phong反射模型及Phong著色法，并广为CG界采用。1975死于白血病。
  ADS光照模型公式缩写：
-LightIntensity = Ambient + Diffuse + Specular;  参数说明：
+LightIntensity = Ambient + Diffuse + Specular; 参数说明：
  Ambient 环境光 Diffuse 漫反射 Specular 全反射光 / 镜面光  三个参数渲染效果示例：   三个参数拆解如下：
-Ambient = La * Ka; Diffuse = Ld * Kd * max( dot(s, n), 0.0 ); Specular = Ls * Ks * pow( max( dot(r, v), 0.0 ), f );  参数说明：
+Ambient = La * Ka; Diffuse = Ld * Kd * max( dot(s, n), 0.0 ); Specular = Ls * Ks * pow( max( dot(r, v), 0.0 ), f ); 参数说明：
+ La 环境光强度(Ambient light intensity) Ka 材质环境光反射率 / 材质环境光反射系数(Ambient reflectivity) Ld 漫射光强度 / 散射光强度(Diffuse light intensity) Kd 材质漫反射率 / 材质漫反射系数(Diffuse reflectivity) s 顶点 / 曲面点 到光源方向的单位向量(Direction from the surface point to the light source) n 顶点 / 曲面点 的法线单位向量(Normal vector at the surface point) Ls 镜面光强度 / 全反射光强度(Specular light intensity) Ks 材质镜面反射率 / 材质镜面反射系数(Specular reflectivity) r 完全反射向量( the vector of perfect reflection) v 顶点 / 曲面点 到摄像机方向的向量( the vector towards the viewer) f 镜面高光(specular highlights)，值范围在1到200之间，值越小，镜面亮点越大    光源出射强度 / 出射光强度(Intensity of the outgoing light ) I 的完整计算公式如下：
       
       <p>
         <a href="https://dawnarc.com/2018/06/shadingads%E5%85%89%E7%85%A7%E6%A8%A1%E5%9E%8B%E5%AE%9E%E4%BE%8Bopengl%E5%AE%9E%E7%8E%B0/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -1107,6 +1109,7 @@ Adding of a rifle and fabrik node to fix left hand
 https://www.youtube.com/watch?v=49MJWjlSHcw
 Look At Look At
 https://docs.unrealengine.com/en-us/Engine/Animation/NodeReference/SkeletalControls/LookAt
+CCDIK (Cyclic Coordinate Descent Inverse Kinematics) CCDIK
       
       <p>
         <a href="https://dawnarc.com/2018/05/ue4animationik-related/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -1169,7 +1172,7 @@ https://docs.unrealengine.com/en-us/Engine/Animation/NodeReference/SkeletalContr
       
         Reference: Master pose vs copy pose vs mesh merge in UE4
 https://iluvanimation.blogspot.tw/2017/04/master-pose-vs-copy-pose-vs-mesh-merge.html
-Since I get this question so often, I&rsquo;m just writing quick summary for each.
+Since I get this question so often, I'm just writing quick summary for each.
 When you have different parts of bodies, and you want to allow players to pick which part they want, we have multiple choices, and people are wondering what are the main differences.
 Say you have head, upper body, lower body, and how do you allow them to pick and what are the differences?
       
@@ -1307,7 +1310,7 @@ https://answers.unrealengine.com/questions/228601/how-to-setup-master-pose-compo
  How to make SetMasterPoseComponent work with skeletal meshes with LODs?
 https://answers.unrealengine.com/questions/793802/how-to-make-setmasterposecomponent-work-with-skele.html
 C++接口 Set Master Pose Component蓝图节点对应的C++ API：
-Child-&gt;SetMasterPoseComponent(Body);  有一个传说，说的是有那么一只鸟儿，它一生只唱一次，那歌声比世上所有一切生灵的歌声都更加优美动听。---《荆棘鸟》
+Child-&gt;SetMasterPoseComponent(Body);  有一个传说，说的是有那么一只鸟儿，它一生只唱一次，那歌声比世上所有一切生灵的歌声都更加优美动听。---《荆棘鸟》
       
       <p>
         <a href="https://dawnarc.com/2018/05/ue4animationmultiple-skeleton-meshes-sharing-same-skeleton%E5%A4%9A%E4%B8%AAskeletonmesh%E5%85%B1%E7%94%A8%E4%B8%80%E5%A5%97%E9%AA%A8%E9%AA%BC/" class="postShorten-excerpt_link link">Continue reading</a>

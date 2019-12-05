@@ -5,35 +5,37 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.58.3 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.60.1 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="">
 <meta name="description" content="设置编译输出路径 在CMakeList.txt中如下设置后，无论是编译可执行文件还是编译静态库，都会输出到指定目录下，而不再是默认的当前目录。
-# etc. etc. set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY &quot;lib/&quot;)  参考自：https://stackoverflow.com/questions/38445335/cmake-library-output-directory-not-affected-by-cmake-library-output-director/38450844
-获取指定目录下的所有源文件 file(GLOB cpp_files ./src/*.cpp) add_library(mylib STATIC ${cpp_files})  打印log if (NOT CMAKE_VERSION VERSION_GREATER &quot;3.0&quot;) message(FATAL_ERROR &quot;cmake version 3.x is required!&quot;) endif()  修改默认的CMAKE_MODULE_PATH目录 CMAKE_MODULE_PATH是供find_package搜索第三方库用的。cmake的默认Modules目录在安装目录中：cmake-3.11.3-win64-x64\share\cmake-3.11\Modules。
+# etc. etc.set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY &quot;lib/&quot;) 参考自：https://stackoverflow.com/questions/38445335/cmake-library-output-directory-not-affected-by-cmake-library-output-director/38450844
+获取指定目录下的所有源文件 file(GLOB cpp_files ./src/*.cpp)add_library(mylib STATIC ${cpp_files}) 打印log if (NOT CMAKE_VERSION VERSION_GREATER &quot;3.0&quot;)message(FATAL_ERROR &quot;cmake version 3.x is required!&quot;)endif() 修改默认的CMAKE_MODULE_PATH目录 CMAKE_MODULE_PATH是供find_package搜索第三方库用的。cmake的默认Modules目录在安装目录中：cmake-3.11.3-win64-x64\share\cmake-3.11\Modules。
 如果要追加Modules目录，有3种方式：
-set(CMAKE_MODULE_PATH &quot;${CMAKE_SOURCE_PATH}:${CMAKE_MODULE_PATH}&quot;) LIST(APPEND CMAKE_MODULE_PATH &quot;${CMAKE_SOURCE_PREFIX}&quot;) set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)  find_package用法 通常情况下，包含第三方库需要写以下内容
-include_directories(&quot;${project_root_path}/include/&quot;) link_directories(./lib) add_executable(myapp myapp.cpp) target_link_libraries(myapp mylib)  如果引用的很多个第三方库，那么类似上面的内容会写很多，且如果自己的多个项目都引用了某个第三方库，那么我每个项目的CmakeList.txt都得写一遍，重复劳动很多。那么有没办法为每个第三方库只定义一次它的头文件和库文件信息，然后在自己的工程中只指定名称即可？（类似编译Java的Maven仓库）答案是当然可以，find_package帮你解决。
+set(CMAKE_MODULE_PATH &quot;${CMAKE_SOURCE_PATH}:${CMAKE_MODULE_PATH}&quot;)LIST(APPEND CMAKE_MODULE_PATH &quot;${CMAKE_SOURCE_PREFIX}&quot;)set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake) find_package用法 通常情况下，包含第三方库需要写以下内容
+include_directories(&quot;${project_root_path}/include/&quot;) link_directories(./lib)add_executable(myapp myapp.cpp)target_link_libraries(myapp mylib)  如果引用的很多个第三方库，那么类似上面的内容会写很多，且如果自己的多个项目都引用了某个第三方库，那么我每个项目的CmakeList.txt都得写一遍，重复劳动很多。那么有没办法为每个第三方库只定义一次它的头文件和库文件信息，然后在自己的工程中只指定名称即可？（类似编译Java的Maven仓库）答案是当然可以，find_package帮你解决。
 find_package定义在自己工程的CmakeList.txt中：
-find_package( XXX CONFIG REQUIRED )  然后cmake就会在默认的Modules(即CMAKE_MODULE_PATH指定的目录)目录中搜索这个XXX第三方库。
+find_package( XXX CONFIG REQUIRED ) 然后cmake就会在默认的Modules(即CMAKE_MODULE_PATH指定的目录)目录中搜索这个XXX第三方库。
 搜索有两种模式：FindXXX.cmake和XXXConfig.cmake。前者叫做Module模式，后者叫做Config模式。
  Module模式
 搜索CMAKE_MODULE_PATH指定路径下的FindXXX.cmake文件，通过该文件从而找到XXX库的头文件和lib文件位置。FindXXX.cmake中需要定义XXX_INCLUDE_DIRS和XXX_LIBRARIES。 Config模式
-搜索XXX_DIR指定路径下的XXXConfig.cmake文件（XXX_DIR定义在自己工程的CMakeList.txt或者cmake-gui的环境变量中），通过该文件从而找到XXX库的头文件和lib文件位置。XXXConfig.cmake中需要定义XXX_INCLUDE_DIRS和XXX_LIBRARIES  Config模式示例：">
+搜索XXX_DIR指定路径下的XXXConfig.cmake文件（XXX_DIR定义在自己工程的CMakeList.txt或者cmake-gui的环境变量中），通过该文件从而找到XXX库的头文件和lib文件位置。XXXConfig.cmake中需要定义XXX_INCLUDE_DIRS和XXX_LIBRARIES  Config模式示例：
+先在自己工程的CMakeList.txt中添加">
 
 
 <meta property="og:description" content="设置编译输出路径 在CMakeList.txt中如下设置后，无论是编译可执行文件还是编译静态库，都会输出到指定目录下，而不再是默认的当前目录。
-# etc. etc. set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY &quot;lib/&quot;)  参考自：https://stackoverflow.com/questions/38445335/cmake-library-output-directory-not-affected-by-cmake-library-output-director/38450844
-获取指定目录下的所有源文件 file(GLOB cpp_files ./src/*.cpp) add_library(mylib STATIC ${cpp_files})  打印log if (NOT CMAKE_VERSION VERSION_GREATER &quot;3.0&quot;) message(FATAL_ERROR &quot;cmake version 3.x is required!&quot;) endif()  修改默认的CMAKE_MODULE_PATH目录 CMAKE_MODULE_PATH是供find_package搜索第三方库用的。cmake的默认Modules目录在安装目录中：cmake-3.11.3-win64-x64\share\cmake-3.11\Modules。
+# etc. etc.set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY &quot;lib/&quot;) 参考自：https://stackoverflow.com/questions/38445335/cmake-library-output-directory-not-affected-by-cmake-library-output-director/38450844
+获取指定目录下的所有源文件 file(GLOB cpp_files ./src/*.cpp)add_library(mylib STATIC ${cpp_files}) 打印log if (NOT CMAKE_VERSION VERSION_GREATER &quot;3.0&quot;)message(FATAL_ERROR &quot;cmake version 3.x is required!&quot;)endif() 修改默认的CMAKE_MODULE_PATH目录 CMAKE_MODULE_PATH是供find_package搜索第三方库用的。cmake的默认Modules目录在安装目录中：cmake-3.11.3-win64-x64\share\cmake-3.11\Modules。
 如果要追加Modules目录，有3种方式：
-set(CMAKE_MODULE_PATH &quot;${CMAKE_SOURCE_PATH}:${CMAKE_MODULE_PATH}&quot;) LIST(APPEND CMAKE_MODULE_PATH &quot;${CMAKE_SOURCE_PREFIX}&quot;) set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)  find_package用法 通常情况下，包含第三方库需要写以下内容
-include_directories(&quot;${project_root_path}/include/&quot;) link_directories(./lib) add_executable(myapp myapp.cpp) target_link_libraries(myapp mylib)  如果引用的很多个第三方库，那么类似上面的内容会写很多，且如果自己的多个项目都引用了某个第三方库，那么我每个项目的CmakeList.txt都得写一遍，重复劳动很多。那么有没办法为每个第三方库只定义一次它的头文件和库文件信息，然后在自己的工程中只指定名称即可？（类似编译Java的Maven仓库）答案是当然可以，find_package帮你解决。
+set(CMAKE_MODULE_PATH &quot;${CMAKE_SOURCE_PATH}:${CMAKE_MODULE_PATH}&quot;)LIST(APPEND CMAKE_MODULE_PATH &quot;${CMAKE_SOURCE_PREFIX}&quot;)set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake) find_package用法 通常情况下，包含第三方库需要写以下内容
+include_directories(&quot;${project_root_path}/include/&quot;) link_directories(./lib)add_executable(myapp myapp.cpp)target_link_libraries(myapp mylib)  如果引用的很多个第三方库，那么类似上面的内容会写很多，且如果自己的多个项目都引用了某个第三方库，那么我每个项目的CmakeList.txt都得写一遍，重复劳动很多。那么有没办法为每个第三方库只定义一次它的头文件和库文件信息，然后在自己的工程中只指定名称即可？（类似编译Java的Maven仓库）答案是当然可以，find_package帮你解决。
 find_package定义在自己工程的CmakeList.txt中：
-find_package( XXX CONFIG REQUIRED )  然后cmake就会在默认的Modules(即CMAKE_MODULE_PATH指定的目录)目录中搜索这个XXX第三方库。
+find_package( XXX CONFIG REQUIRED ) 然后cmake就会在默认的Modules(即CMAKE_MODULE_PATH指定的目录)目录中搜索这个XXX第三方库。
 搜索有两种模式：FindXXX.cmake和XXXConfig.cmake。前者叫做Module模式，后者叫做Config模式。
  Module模式
 搜索CMAKE_MODULE_PATH指定路径下的FindXXX.cmake文件，通过该文件从而找到XXX库的头文件和lib文件位置。FindXXX.cmake中需要定义XXX_INCLUDE_DIRS和XXX_LIBRARIES。 Config模式
-搜索XXX_DIR指定路径下的XXXConfig.cmake文件（XXX_DIR定义在自己工程的CMakeList.txt或者cmake-gui的环境变量中），通过该文件从而找到XXX库的头文件和lib文件位置。XXXConfig.cmake中需要定义XXX_INCLUDE_DIRS和XXX_LIBRARIES  Config模式示例：">
+搜索XXX_DIR指定路径下的XXXConfig.cmake文件（XXX_DIR定义在自己工程的CMakeList.txt或者cmake-gui的环境变量中），通过该文件从而找到XXX库的头文件和lib文件位置。XXXConfig.cmake中需要定义XXX_INCLUDE_DIRS和XXX_LIBRARIES  Config模式示例：
+先在自己工程的CMakeList.txt中添加">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[Build]cmake常用配置项">
 <meta name="twitter:title" content="[Build]cmake常用配置项">
@@ -41,29 +43,31 @@ find_package( XXX CONFIG REQUIRED )  然后cmake就会在默认的Modules(即CMA
 <meta property="twitter:url" content="https://dawnarc.com/2018/04/buildcmake%E5%B8%B8%E7%94%A8%E9%85%8D%E7%BD%AE%E9%A1%B9/">
 <meta property="og:site_name" content="玄冬Wong">
 <meta property="og:description" content="设置编译输出路径 在CMakeList.txt中如下设置后，无论是编译可执行文件还是编译静态库，都会输出到指定目录下，而不再是默认的当前目录。
-# etc. etc. set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY &quot;lib/&quot;)  参考自：https://stackoverflow.com/questions/38445335/cmake-library-output-directory-not-affected-by-cmake-library-output-director/38450844
-获取指定目录下的所有源文件 file(GLOB cpp_files ./src/*.cpp) add_library(mylib STATIC ${cpp_files})  打印log if (NOT CMAKE_VERSION VERSION_GREATER &quot;3.0&quot;) message(FATAL_ERROR &quot;cmake version 3.x is required!&quot;) endif()  修改默认的CMAKE_MODULE_PATH目录 CMAKE_MODULE_PATH是供find_package搜索第三方库用的。cmake的默认Modules目录在安装目录中：cmake-3.11.3-win64-x64\share\cmake-3.11\Modules。
+# etc. etc.set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY &quot;lib/&quot;) 参考自：https://stackoverflow.com/questions/38445335/cmake-library-output-directory-not-affected-by-cmake-library-output-director/38450844
+获取指定目录下的所有源文件 file(GLOB cpp_files ./src/*.cpp)add_library(mylib STATIC ${cpp_files}) 打印log if (NOT CMAKE_VERSION VERSION_GREATER &quot;3.0&quot;)message(FATAL_ERROR &quot;cmake version 3.x is required!&quot;)endif() 修改默认的CMAKE_MODULE_PATH目录 CMAKE_MODULE_PATH是供find_package搜索第三方库用的。cmake的默认Modules目录在安装目录中：cmake-3.11.3-win64-x64\share\cmake-3.11\Modules。
 如果要追加Modules目录，有3种方式：
-set(CMAKE_MODULE_PATH &quot;${CMAKE_SOURCE_PATH}:${CMAKE_MODULE_PATH}&quot;) LIST(APPEND CMAKE_MODULE_PATH &quot;${CMAKE_SOURCE_PREFIX}&quot;) set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)  find_package用法 通常情况下，包含第三方库需要写以下内容
-include_directories(&quot;${project_root_path}/include/&quot;) link_directories(./lib) add_executable(myapp myapp.cpp) target_link_libraries(myapp mylib)  如果引用的很多个第三方库，那么类似上面的内容会写很多，且如果自己的多个项目都引用了某个第三方库，那么我每个项目的CmakeList.txt都得写一遍，重复劳动很多。那么有没办法为每个第三方库只定义一次它的头文件和库文件信息，然后在自己的工程中只指定名称即可？（类似编译Java的Maven仓库）答案是当然可以，find_package帮你解决。
+set(CMAKE_MODULE_PATH &quot;${CMAKE_SOURCE_PATH}:${CMAKE_MODULE_PATH}&quot;)LIST(APPEND CMAKE_MODULE_PATH &quot;${CMAKE_SOURCE_PREFIX}&quot;)set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake) find_package用法 通常情况下，包含第三方库需要写以下内容
+include_directories(&quot;${project_root_path}/include/&quot;) link_directories(./lib)add_executable(myapp myapp.cpp)target_link_libraries(myapp mylib)  如果引用的很多个第三方库，那么类似上面的内容会写很多，且如果自己的多个项目都引用了某个第三方库，那么我每个项目的CmakeList.txt都得写一遍，重复劳动很多。那么有没办法为每个第三方库只定义一次它的头文件和库文件信息，然后在自己的工程中只指定名称即可？（类似编译Java的Maven仓库）答案是当然可以，find_package帮你解决。
 find_package定义在自己工程的CmakeList.txt中：
-find_package( XXX CONFIG REQUIRED )  然后cmake就会在默认的Modules(即CMAKE_MODULE_PATH指定的目录)目录中搜索这个XXX第三方库。
+find_package( XXX CONFIG REQUIRED ) 然后cmake就会在默认的Modules(即CMAKE_MODULE_PATH指定的目录)目录中搜索这个XXX第三方库。
 搜索有两种模式：FindXXX.cmake和XXXConfig.cmake。前者叫做Module模式，后者叫做Config模式。
  Module模式
 搜索CMAKE_MODULE_PATH指定路径下的FindXXX.cmake文件，通过该文件从而找到XXX库的头文件和lib文件位置。FindXXX.cmake中需要定义XXX_INCLUDE_DIRS和XXX_LIBRARIES。 Config模式
-搜索XXX_DIR指定路径下的XXXConfig.cmake文件（XXX_DIR定义在自己工程的CMakeList.txt或者cmake-gui的环境变量中），通过该文件从而找到XXX库的头文件和lib文件位置。XXXConfig.cmake中需要定义XXX_INCLUDE_DIRS和XXX_LIBRARIES  Config模式示例：">
+搜索XXX_DIR指定路径下的XXXConfig.cmake文件（XXX_DIR定义在自己工程的CMakeList.txt或者cmake-gui的环境变量中），通过该文件从而找到XXX库的头文件和lib文件位置。XXXConfig.cmake中需要定义XXX_INCLUDE_DIRS和XXX_LIBRARIES  Config模式示例：
+先在自己工程的CMakeList.txt中添加">
 <meta name="twitter:description" content="设置编译输出路径 在CMakeList.txt中如下设置后，无论是编译可执行文件还是编译静态库，都会输出到指定目录下，而不再是默认的当前目录。
-# etc. etc. set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY &quot;lib/&quot;)  参考自：https://stackoverflow.com/questions/38445335/cmake-library-output-directory-not-affected-by-cmake-library-output-director/38450844
-获取指定目录下的所有源文件 file(GLOB cpp_files ./src/*.cpp) add_library(mylib STATIC ${cpp_files})  打印log if (NOT CMAKE_VERSION VERSION_GREATER &quot;3.0&quot;) message(FATAL_ERROR &quot;cmake version 3.x is required!&quot;) endif()  修改默认的CMAKE_MODULE_PATH目录 CMAKE_MODULE_PATH是供find_package搜索第三方库用的。cmake的默认Modules目录在安装目录中：cmake-3.11.3-win64-x64\share\cmake-3.11\Modules。
+# etc. etc.set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY &quot;lib/&quot;) 参考自：https://stackoverflow.com/questions/38445335/cmake-library-output-directory-not-affected-by-cmake-library-output-director/38450844
+获取指定目录下的所有源文件 file(GLOB cpp_files ./src/*.cpp)add_library(mylib STATIC ${cpp_files}) 打印log if (NOT CMAKE_VERSION VERSION_GREATER &quot;3.0&quot;)message(FATAL_ERROR &quot;cmake version 3.x is required!&quot;)endif() 修改默认的CMAKE_MODULE_PATH目录 CMAKE_MODULE_PATH是供find_package搜索第三方库用的。cmake的默认Modules目录在安装目录中：cmake-3.11.3-win64-x64\share\cmake-3.11\Modules。
 如果要追加Modules目录，有3种方式：
-set(CMAKE_MODULE_PATH &quot;${CMAKE_SOURCE_PATH}:${CMAKE_MODULE_PATH}&quot;) LIST(APPEND CMAKE_MODULE_PATH &quot;${CMAKE_SOURCE_PREFIX}&quot;) set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)  find_package用法 通常情况下，包含第三方库需要写以下内容
-include_directories(&quot;${project_root_path}/include/&quot;) link_directories(./lib) add_executable(myapp myapp.cpp) target_link_libraries(myapp mylib)  如果引用的很多个第三方库，那么类似上面的内容会写很多，且如果自己的多个项目都引用了某个第三方库，那么我每个项目的CmakeList.txt都得写一遍，重复劳动很多。那么有没办法为每个第三方库只定义一次它的头文件和库文件信息，然后在自己的工程中只指定名称即可？（类似编译Java的Maven仓库）答案是当然可以，find_package帮你解决。
+set(CMAKE_MODULE_PATH &quot;${CMAKE_SOURCE_PATH}:${CMAKE_MODULE_PATH}&quot;)LIST(APPEND CMAKE_MODULE_PATH &quot;${CMAKE_SOURCE_PREFIX}&quot;)set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake) find_package用法 通常情况下，包含第三方库需要写以下内容
+include_directories(&quot;${project_root_path}/include/&quot;) link_directories(./lib)add_executable(myapp myapp.cpp)target_link_libraries(myapp mylib)  如果引用的很多个第三方库，那么类似上面的内容会写很多，且如果自己的多个项目都引用了某个第三方库，那么我每个项目的CmakeList.txt都得写一遍，重复劳动很多。那么有没办法为每个第三方库只定义一次它的头文件和库文件信息，然后在自己的工程中只指定名称即可？（类似编译Java的Maven仓库）答案是当然可以，find_package帮你解决。
 find_package定义在自己工程的CmakeList.txt中：
-find_package( XXX CONFIG REQUIRED )  然后cmake就会在默认的Modules(即CMAKE_MODULE_PATH指定的目录)目录中搜索这个XXX第三方库。
+find_package( XXX CONFIG REQUIRED ) 然后cmake就会在默认的Modules(即CMAKE_MODULE_PATH指定的目录)目录中搜索这个XXX第三方库。
 搜索有两种模式：FindXXX.cmake和XXXConfig.cmake。前者叫做Module模式，后者叫做Config模式。
  Module模式
 搜索CMAKE_MODULE_PATH指定路径下的FindXXX.cmake文件，通过该文件从而找到XXX库的头文件和lib文件位置。FindXXX.cmake中需要定义XXX_INCLUDE_DIRS和XXX_LIBRARIES。 Config模式
-搜索XXX_DIR指定路径下的XXXConfig.cmake文件（XXX_DIR定义在自己工程的CMakeList.txt或者cmake-gui的环境变量中），通过该文件从而找到XXX库的头文件和lib文件位置。XXXConfig.cmake中需要定义XXX_INCLUDE_DIRS和XXX_LIBRARIES  Config模式示例：">
+搜索XXX_DIR指定路径下的XXXConfig.cmake文件（XXX_DIR定义在自己工程的CMakeList.txt或者cmake-gui的环境变量中），通过该文件从而找到XXX库的头文件和lib文件位置。XXXConfig.cmake中需要定义XXX_INCLUDE_DIRS和XXX_LIBRARIES  Config模式示例：
+先在自己工程的CMakeList.txt中添加">
 <meta property="og:locale" content="en-us">
 
   
@@ -393,111 +397,76 @@ if (!doNotTrack) {
           
           <div class="post-content markdown" itemprop="articleBody">
             <div class="main-content-wrap">
-              
-
-<h5 id="设置编译输出路径">设置编译输出路径</h5>
-
+              <h5 id="heading">设置编译输出路径</h5>
 <p>在CMakeList.txt中如下设置后，无论是编译可执行文件还是编译静态库，都会输出到指定目录下，而不再是默认的当前目录。</p>
-
 <pre><code># etc. etc.
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY &quot;lib/&quot;)
 </code></pre>
-
-<p>参考自：<a href="https://stackoverflow.com/questions/38445335/cmake-library-output-directory-not-affected-by-cmake-library-output-director/38450844">https://stackoverflow.com/questions/38445335/cmake-library-output-directory-not-affected-by-cmake-library-output-director/38450844</a></p>
-
-<h5 id="获取指定目录下的所有源文件">获取指定目录下的所有源文件</h5>
-
+<p>参考自：https://stackoverflow.com/questions/38445335/cmake-library-output-directory-not-affected-by-cmake-library-output-director/38450844</p>
+<h5 id="heading1">获取指定目录下的所有源文件</h5>
 <pre><code>file(GLOB cpp_files ./src/*.cpp)
 add_library(mylib STATIC ${cpp_files})
 </code></pre>
-
-<h5 id="打印log">打印log</h5>
-
+<h5 id="log">打印log</h5>
 <pre><code>if (NOT CMAKE_VERSION VERSION_GREATER &quot;3.0&quot;)
     message(FATAL_ERROR &quot;cmake version 3.x is required!&quot;)
 endif()
 </code></pre>
-
-<h5 id="修改默认的cmake-module-path目录">修改默认的CMAKE_MODULE_PATH目录</h5>
-
-<p>CMAKE_MODULE_PATH是供<code>find_package</code>搜索第三方库用的。cmake的默认Modules目录在安装目录中：<code>cmake-3.11.3-win64-x64\share\cmake-3.11\Modules</code>。<br />
+<h5 id="cmakemodulepath">修改默认的CMAKE_MODULE_PATH目录</h5>
+<p>CMAKE_MODULE_PATH是供<code>find_package</code>搜索第三方库用的。cmake的默认Modules目录在安装目录中：<code>cmake-3.11.3-win64-x64\share\cmake-3.11\Modules</code>。<br>
 如果要追加Modules目录，有3种方式：</p>
-
 <pre><code>set(CMAKE_MODULE_PATH &quot;${CMAKE_SOURCE_PATH}:${CMAKE_MODULE_PATH}&quot;)
 
 LIST(APPEND CMAKE_MODULE_PATH &quot;${CMAKE_SOURCE_PREFIX}&quot;)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 </code></pre>
-
-<h5 id="find-package用法">find_package用法</h5>
-
+<h5 id="findpackage">find_package用法</h5>
 <p>通常情况下，包含第三方库需要写以下内容</p>
-
 <pre><code>include_directories(&quot;${project_root_path}/include/&quot;)  
 link_directories(./lib)
 add_executable(myapp myapp.cpp)
 target_link_libraries(myapp mylib)  
 </code></pre>
-
 <p>如果引用的很多个第三方库，那么类似上面的内容会写很多，且如果自己的多个项目都引用了某个第三方库，那么我每个项目的<code>CmakeList.txt</code>都得写一遍，重复劳动很多。那么有没办法为每个第三方库只定义一次它的头文件和库文件信息，然后在自己的工程中只指定名称即可？（类似编译Java的Maven仓库）答案是当然可以，<code>find_package</code>帮你解决。</p>
-
 <p><code>find_package</code>定义在自己工程的CmakeList.txt中：</p>
-
 <pre><code>find_package( XXX CONFIG REQUIRED )
 </code></pre>
-
-<p>然后cmake就会在默认的Modules(即<code>CMAKE_MODULE_PATH</code>指定的目录)目录中搜索这个XXX第三方库。<br />
+<p>然后cmake就会在默认的Modules(即<code>CMAKE_MODULE_PATH</code>指定的目录)目录中搜索这个XXX第三方库。<br>
 搜索有两种模式：<code>FindXXX.cmake</code>和<code>XXXConfig.cmake</code>。前者叫做<strong>Module模式</strong>，后者叫做<strong>Config模式</strong>。</p>
-
 <ul>
-<li>Module模式<br />
+<li>Module模式<br>
 搜索CMAKE_MODULE_PATH指定路径下的FindXXX.cmake文件，通过该文件从而找到XXX库的头文件和lib文件位置。FindXXX.cmake中需要定义<code>XXX_INCLUDE_DIRS</code>和<code>XXX_LIBRARIES</code>。</li>
-<li>Config模式<br />
+<li>Config模式<br>
 搜索XXX_DIR指定路径下的XXXConfig.cmake文件（XXX_DIR定义在自己工程的CMakeList.txt或者cmake-gui的环境变量中），通过该文件从而找到XXX库的头文件和lib文件位置。XXXConfig.cmake中需要定义<code>XXX_INCLUDE_DIRS</code>和<code>XXX_LIBRARIES</code></li>
 </ul>
-
-<p>Config模式示例：<br />
+<p>Config模式示例：<br>
 先在自己工程的CMakeList.txt中添加</p>
-
 <pre><code>set(XXX_DIR D:/sdk/XXX-0.9.9.0/bin)
 find_package( XXX CONFIG REQUIRED )
 </code></pre>
-
 <p>其中<code>CONFIG</code>表示使用Config模式搜索，默认是Module模式；然后D:/sdk/XXX-0.9.9.0/cmake目录下必须存在XXXConfig.cmake文件，否则当执行cmake时会提示找不到XXXConfig.cmake。</p>
-
 <div class="alert danger ">
   <p>XXXConfig.cmake和XXXTargets.cmake都不是手动编写的，而是CMake自动生成的！！</p>
 </div>
-
-<p>生成Config.cmake的参考代码：<br />
+<p>生成Config.cmake的参考代码：<br>
 <a href="https://github.com/g-truc/glm/blob/0d973b40a49e550b1ea7df22a8573bc5fff84f24/CMakeLists.txt#L175">https://github.com/g-truc/glm/blob/0d973b40a49e550b1ea7df22a8573bc5fff84f24/CMakeLists.txt#L175</a></p>
-
-<p>生成Targets.cmake的参考代码：<br />
+<p>生成Targets.cmake的参考代码：<br>
 <a href="https://github.com/g-truc/glm/blob/0d973b40a49e550b1ea7df22a8573bc5fff84f24/CMakeLists.txt#L198">https://github.com/g-truc/glm/blob/0d973b40a49e550b1ea7df22a8573bc5fff84f24/CMakeLists.txt#L198</a></p>
-
 <h3 id="cmake-examples">CMake Examples</h3>
-
-<p>A CMake toolchain file for iOS, watchOS and tvOS C/C++/Obj-C++ development<br />
+<p>A CMake toolchain file for iOS, watchOS and tvOS C/C++/Obj-C++ development<br>
 <a href="https://github.com/leetal/ios-cmake">https://github.com/leetal/ios-cmake</a></p>
-
-<p>Example. Compile android, iOS, mac static lib on MacOS.<br />
+<p>Example. Compile android, iOS, mac static lib on MacOS.<br>
 <a href="https://github.com/9b9387/CMakeCrossCompiling">https://github.com/9b9387/CMakeCrossCompiling</a></p>
-
-<p>Command line C++ barcode reader for Windows, Linux, and macOS.<br />
+<p>Command line C++ barcode reader for Windows, Linux, and macOS.<br>
 <a href="https://github.com/dynamsoft-dbr/cmake">https://github.com/dynamsoft-dbr/cmake</a></p>
-
-<p>learning cmake<br />
+<p>learning cmake<br>
 <a href="https://github.com/Akagi201/learning-cmake">https://github.com/Akagi201/learning-cmake</a></p>
-
-<p>Useful CMake Examples<br />
+<p>Useful CMake Examples<br>
 <a href="https://github.com/ttroy50/cmake-examples">https://github.com/ttroy50/cmake-examples</a></p>
-
-<p>A curated list of awesome CMake resources, scripts, modules, examples and others.<br />
+<p>A curated list of awesome CMake resources, scripts, modules, examples and others.<br>
 <a href="https://github.com/onqtam/awesome-cmake">https://github.com/onqtam/awesome-cmake</a></p>
-
-<hr />
-
+<hr>
 <p><code>伦常乖舛，立见消亡；德不配位，必有灾殃。----《朱子家训》</code></p>
 
               

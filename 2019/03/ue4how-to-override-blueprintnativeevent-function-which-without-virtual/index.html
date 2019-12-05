@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.58.3 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.60.1 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="UE4, BlueprintNativeEvent, override">
 <meta name="description" content="Problem:">
@@ -353,39 +353,30 @@ if (!doNotTrack) {
           <div class="post-content markdown" itemprop="articleBody">
             <div class="main-content-wrap">
               <p>Problem:</p>
-
 <p>We want to override <code>CalculateBaseMagnitude</code> that without <code>virtual</code>:</p>
-
 <pre><code>UFUNCTION(BlueprintNativeEvent, Category=&quot;Calculation&quot;)
 float CalculateBaseMagnitude(const FGameplayEffectSpec&amp; Spec) const;
 </code></pre>
-
-<p>Solution:<br />
+<p>Solution:<br>
 Before compilation, UnrealHeaderTool generates the virtual function for a BlueprintNativeEvent in the base class. The example from above would look like:</p>
-
 <pre><code>virtual float CalculateBaseMagnitude_Implementation(const FGameplayEffectSpec&amp; Spec) const;
 </code></pre>
-
 <p>So in the derived C++ class, override (and implement) that function as usual in C++:</p>
-
 <pre><code>class PROJECT_API UGMMCCustom : public UGameplayModMagnitudeCalculation
 {
     float CalculateBaseMagnitude_Implementation(const FGameplayEffectSpec&amp; Spec) const override
     {
         float Ret = Super::CalculateBaseMagnitude_Implementation();
-
+		
         // Add your custom implementation in the cpp file.
-
+		
         return Ret; 
     }
 }
 </code></pre>
-
-<p>Reference<br />
+<p>Reference<br>
 <a href="https://stackoverflow.com/questions/55272245/how-to-override-a-blueprintnativeevent-function-in-c">https://stackoverflow.com/questions/55272245/how-to-override-a-blueprintnativeevent-function-in-c</a></p>
-
-<hr />
-
+<hr>
 <p><code>幸运的人一生都被童年治愈，不幸的人一生都在治愈童年。----阿德勒</code></p>
               
             </div>

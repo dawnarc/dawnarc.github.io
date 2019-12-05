@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.58.3 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.60.1 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="UE4, Android NDK, OpenSSL, libssl.a, libcrypto.a">
 <meta name="description" content="keywords: UE4, Android NDK, OpenSSL, SSL, curl, libcurl.a, libssl.a, libcrypto.a">
@@ -353,11 +353,8 @@ if (!doNotTrack) {
           <div class="post-content markdown" itemprop="articleBody">
             <div class="main-content-wrap">
               <p>keywords: UE4, Android NDK, OpenSSL, SSL, curl, libcurl.a, libssl.a, libcrypto.a</p>
-
 <h5 id="issue-1-multiple-definition-of-functions-of-ssl">Issue 1: multiple definition of functions of ssl</h5>
-
 <p>Error log when building Android package:</p>
-
 <pre><code>D:/sdks/Android/android-ndk-r14b/toolchains/arm-linux-androideabi-4.9/prebuilt/windows-x86_64/lib/gcc/arm-linux-androideabi/4.9.x/../../../../arm-linux-androideabi/bin\ld: error: G:/EpicGames/UnrealEngine4.22/Engine/Source/ThirdParty/libcurl/lib/Android/ARMv7/libcurl.a(s23_clnt.o): multiple definition of 'ssl_fill_hello_random'
 UATHelper: Packaging (Android (ASTC)):     D:/sdks/Android/android-ndk-r14b/toolchains/arm-linux-androideabi-4.9/prebuilt/windows-x86_64/lib/gcc/arm-linux-androideabi/4.9.x/../../../../arm-linux-androideabi/bin\ld: 
 UATHelper: Packaging (Android (ASTC)):     D:/sdks/Android/android-ndk-r14b/toolchains/arm-linux-androideabi-4.9/prebuilt/windows-x86_64/lib/gcc/arm-linux-androideabi/4.9.x/../../../../arm-linux-androideabi/bin\ld: error: G:/EpicGames/UnrealEngine4.22/Engine/Source/ThirdParty/libcurl/lib/Android/ARMv7/libcurl.a(s3_both.o): multiple definition of 'ssl3_do_write'
@@ -376,25 +373,19 @@ PackagingResults: Error: G:/EpicGames/UnrealEngine422_spatialos/Engine/Source/Th
 PackagingResults: Error: G:/EpicGames/UnrealEngine422_spatialos/Engine/Source/ThirdParty/libcurl/lib/Android/ARMv7/libcurl.a(err.o): multiple definition of 'ERR_peek_error'
 PackagingResults: Error: G:/EpicGames/UnrealEngine422_spatialos/Engine/Source/ThirdParty/libcurl/lib/Android/ARMv7/libcurl.a(err.o): multiple definition of 'ERR_peek_error_line'
 </code></pre>
-
-<p>Cause:<br />
+<p>Cause:<br>
 <div class="alert danger ">
   <p><code>libcurl.a</code> included in engine has included openssl library.</p>
 </div>
 <code>libcurl.a</code> path:</p>
-
 <pre><code>\Engine\Source\ThirdParty\libcurl\lib\Android\ARM64\libcurl.a
 </code></pre>
-
-<p>Solution:<br />
-Replace <code>libcurl.a</code> with a pure curl library.<br />
-Download curl sources:<br />
+<p>Solution:<br>
+Replace <code>libcurl.a</code> with a pure curl library.<br>
+Download curl sources:<br>
 <a href="https://github.com/dawnarc/libcurl_in_pure_llvm">https://github.com/dawnarc/libcurl_in_pure_llvm</a></p>
-
-<h5 id="issue-2-undefined-reference-to-x509-store-ctx-get-chain">Issue 2: undefined reference to &lsquo;X509_STORE_CTX_get_chain&rsquo;</h5>
-
+<h5 id="issue-2-undefined-reference-to-x509storectxgetchain">Issue 2: undefined reference to &lsquo;X509_STORE_CTX_get_chain&rsquo;</h5>
 <p>Error log when building Android package:</p>
-
 <pre><code>G:\EpicGames\UnrealEngine4.22\Engine\Source\Runtime\Online\SSL\Private/SslCertificateManager.cpp:183: error: undefined reference to 'X509_STORE_CTX_get_chain'
 G:\EpicGames\UnrealEngine4.22\Engine\Source\Runtime\Online\SSL\Private/SslCertificateManager.cpp:184: error: undefined reference to 'sk_num'
 G:\EpicGames\UnrealEngine4.22\Engine\Source\Runtime\Online\SSL\Private/SslCertificateManager.cpp:211: error: undefined reference to 'sk_value'
@@ -408,24 +399,17 @@ G:\EpicGames\UnrealEngine4.22\Engine\Source\Runtime\Online\SSL\Private/SslManage
 G:\EpicGames\UnrealEngine4.22\Engine\Source\Runtime\Online\SSL\Private/SslManager.cpp:82: error: undefined reference to 'SSLv23_client_method'
 clang++: error: linker command failed with exit code 1 (use -v to see invocation)
 </code></pre>
-
-<p>Cause:<br />
-OpenSSL version used in engine is too old, so new functions of ssl don&rsquo;t support in UE4.</p>
-
+<p>Cause:<br>
+OpenSSL version used in engine is too old, so new functions of ssl don't support in UE4.</p>
 <p>Old ssl library path:</p>
-
 <pre><code>\Engine\Source\ThirdParty\OpenSSL\1_0_2h\lib\Android\ARM64\libssl.a
 </code></pre>
-
-<p>Solution:<br />
-Modify building configuration.<br />
+<p>Solution:<br>
+Modify building configuration.<br>
 Building configuration path:</p>
-
 <pre><code>\Engine\Source\ThirdParty\OpenSSL\OpenSSL.Build.cs
 </code></pre>
-
 <p>Origin:</p>
-
 <pre><code>else if (Target.Platform == UnrealTargetPlatform.Android)
 {
     string IncludePath = OpenSSL101sPath + &quot;/include/Android&quot;;
@@ -436,9 +420,7 @@ Building configuration path:</p>
     //PublicLibraryPaths.Add(LibPath);
 }
 </code></pre>
-
 <p>New:</p>
-
 <pre><code>else if (Target.Platform == UnrealTargetPlatform.Android)
 {
     string IncludePath = OpenSSL111Path + &quot;/include/Android/ARMv7&quot;;
@@ -450,33 +432,22 @@ Building configuration path:</p>
     PublicAdditionalLibraries.Add(LibraryPath + &quot;/libcrypto.a&quot;);
 }
 </code></pre>
-
-<p>then replace <code>libssl.a</code> with new version building library.<br />
+<p>then replace <code>libssl.a</code> with new version building library.<br>
 destination directory:</p>
-
 <pre><code>\Engine\Source\ThirdParty\OpenSSL\1.1.1\Lib\Android
 </code></pre>
-
-<p>Download NDK library of 1.1.1 ssh:<br />
+<p>Download NDK library of 1.1.1 ssh:<br>
 <a href="https://github.com/leenjewel/openssl_for_ios_and_android/releases/tag/android_openssl-1.1.1a">https://github.com/leenjewel/openssl_for_ios_and_android/releases/tag/android_openssl-1.1.1a</a></p>
-
-<h5 id="issue-3-expected-unqualified-id-uint32-t-xor">Issue 3: expected unqualified-id uint32_t xor;</h5>
-
+<h5 id="issue-3-expected-unqualifiedid-uint32t-xor">Issue 3: expected unqualified-id uint32_t xor;</h5>
 <p>Error log when building Android package:</p>
-
 <pre><code>include\internal/constant_time_locl.h:274:18: error: expected unqualified-id uint32_t xor = *a ^ *b;
 </code></pre>
-
-<p>Cause:<br />
+<p>Cause:<br>
 <code>xor</code> is a keyword of Clang.</p>
-
-<p>Solution:<br />
+<p>Solution:<br>
 Rename variables;</p>
-
-<h5 id="issue-4-use-of-undeclared-identifier-strtof-l">Issue 4: use of undeclared identifier &lsquo;strtof_l&rsquo;</h5>
-
+<h5 id="issue-4-use-of-undeclared-identifier-strtofl">Issue 4: use of undeclared identifier &lsquo;strtof_l&rsquo;</h5>
 <p>Error log when building Android package:</p>
-
 <pre><code>D:/sdks/Android/android-ndk-r16b/sources/cxx-stl/llvm-libc++/include\locale(807,12):  error: use of undeclared identifier 'strtof_l'
 return strtof_l(__a, __p2, _LIBCPP_GET_C_LOCALE);
 ^
@@ -490,15 +461,11 @@ long double strtold_l(const char* __s, char** __end_ptr, locale_t __l) __INTRODU
 Error: use of undeclared identifier 'strtof_l'
 Error: use of undeclared identifier 'strtod_l'; did you mean 'strtold_l'?
 </code></pre>
-
-<p>Cause:<br />
+<p>Cause:<br>
 NDK version is too old.</p>
-
-<p>Solution:<br />
+<p>Solution:<br>
 Switch NDK version to newer versoin.</p>
-
-<hr />
-
+<hr>
 <p><code>扛得住事儿，就是才华横溢。</code></p>
               
             </div>

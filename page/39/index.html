@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.58.3 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.60.1 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="">
 <meta name="description" content="Hugo tranquilpeak theme demo">
@@ -410,20 +410,20 @@ if (!doNotTrack) {
       
         UObject ConditionalBeginDestroy()导致无法第二次重新Load的问题 现象：
 如果一个材质对象首次执行垃圾回收（ConditionalBeginDestroy是对BeginDestroy的封装，BeginDestroy是不管任何因素强制回收）：
-UObject::ConditionalBeginDestroy()  或者：
-UObject::BeginDestroy()  之后又需要再次加载该材质，那么调用LoadObject()时，第一个参数不能为NULL:
-UObject* Obj = LoadObject&lt;UObject&gt;(NULL, Path);  原因：
+UObject::ConditionalBeginDestroy() 或者：
+UObject::BeginDestroy() 之后又需要再次加载该材质，那么调用LoadObject()时，第一个参数不能为NULL:
+UObject* Obj = LoadObject&lt;UObject&gt;(NULL, Path); 原因：
 在编辑器模式下，通过LoadObject加载出来的对象，如果执行了Destroy，那么在不重启编辑器模式的情况下，第二次执行LoadObject&lt;UObject&gt;(NULL, Path);会返回NULL，即使在编辑器模式下重新启动游戏也返回NULL
 解决办法：
 上述情况只存在编辑器模式下，如果是打包版本，即使一开始 Destroy，第二次 LoadObject 的时候仍然可以加载成功。
 如果非得希望在编辑器模式下，Destroy资源之后仍然能够正常第二次 LoadObject 该资源，方式如下：
 手动new一个UObject，作为LoadObject的第一个参数
-UObject* Obj = NewObject&lt;UTexture2D&gt;(); LoadObject&lt;UObject&gt;(Obj, Path);  这样就能正确加载了。
+UObject* Obj = NewObject&lt;UTexture2D&gt;();LoadObject&lt;UObject&gt;(Obj, Path); 这样就能正确加载了。
 通过上述表现可以推算出，编辑器和引擎的Runtime公用了同一个对象
  且该对象没有随着编辑器模式下退出游戏而被清理； 且该对象在编辑器和Runtime分别存在一个是否已销毁的标记； 且该对象在PIE（Play In Editor）模式下 Destroy 后，并没有标记该对象在编辑器中已非法；  所以在PIE模式下第二次 LoadObject 时认为该对象还存在，并且直接返回了这个已经被Destroy的空对象。
 如果UE4资源管理的引擎代码写的足够好，对于Destroy对象的操作，应该提供两个版本：一个PIE、一个Game Runtime。
 内存持久化 (Memory Persistence) 上述问题中，即使在第二次加载时手动 NewObject 创建一个对象，仍然存在问题：会发现，过几秒以后，再次使用这个UObject时会出现指针非法的错误，原因是刚刚自己New的UObject被引擎从内存中回收了。 如何禁止引擎对该UObject自动垃圾回收，而是我们自己手动执行？执行下AddToRoot：
-Obj-&gt;AddToRoot();  注：如果执行了AddToRoot()，那么退出程序前需要执行RemoveFromRoot()，否则在引擎在清理内存时会错误。
+Obj-&gt;AddToRoot(); 注：如果执行了AddToRoot()，那么退出程序前需要执行RemoveFromRoot()，否则在引擎在清理内存时会错误。
 如果一个UObject是SpawnActor创建出来的，那么执行Destroy()之后，再次执行Spawn是可以正常创建出来的。这点和LoadObject有区别。 ConditionalBeginDestroy()并不推荐在业务逻辑中使用 UE4官方论坛上，很多帖子或资料告诉你，如果要销毁对象，需要执行ConditionalBeginDestroy()。其实这个API不是给上层逻辑使用的，如果要销毁对象，只要保证该对象失去引用或者RemoveFromRoot()即可，否则就会出现上述问题，即：Destroy之后，无法第二次Load。但是这个问题只存在编辑器运行模式下，如果是打包版本（或者Play时选择下拉菜单：Standalone），即使Destroy()，第二次LoadObject()，第一个参数为NULL，也是可以正常加载的。
  DedicatedServer 中的问题 如果在 DedicatedServer 模式下，SpawnActor生成Actor，且这个Actor bReplicates 设置为true，执行 ConditionalBeginDestroy() ，一定时间后客户端会崩掉，但是使用 Destroy() 没问题。对于服务端生成的 Actor，销毁对象时绝对不要 ConditionalBeginDestroy()。
       
@@ -486,7 +486,7 @@ Obj-&gt;AddToRoot();  注：如果执行了AddToRoot()，那么退出程序前�
     </div>
     <div class="postShorten-excerpt" itemprop="articleBody">
       
-        错误堆栈： YAMLException: end of the stream or a document separator is expected at line 15, column 1: url: http://yoursite.com ^ at generateError (E:\Protoss\Desktop\blog\node_modules\hexo\node_modules\js-yaml\lib\js-yaml\loader.js:162:10) at throwError (E:\Protoss\Desktop\blog\node_modules\hexo\node_modules\js-yaml\lib\js-yaml\loader.js:168:9) at readDocument (E:\Protoss\Desktop\blog\node_modules\hexo\node_modules\js-yaml\lib\js-yaml\loader.js:1508:5) at loadDocuments (E:\Protoss\Desktop\blog\node_modules\hexo\node_modules\js-yaml\lib\js-yaml\loader.js:1544:5) at Object.load (E:\Protoss\Desktop\blog\node_modules\hexo\node_modules\js-yaml\lib\js-yaml\loader.js:1561:19) at Hexo.yamlHelper (E:\Protoss\Desktop\blog\node_modules\hexo\lib\plugins\renderer\yaml.js:7:15) at Hexo.tryCatcher (E:\Protoss\Desktop\blog\node_modules\hexo\node_modules\bluebird\js\release\util.js:16:23) at Hexo.&lt;anonymous&gt; (E:\Protoss\Desktop\blog\node_modules\hexo\node_modules\bluebird\js\release\method.js:15:34) at E:\Protoss\Desktop\blog\node_modules\hexo\lib\hexo\render.js:59:21 at tryCatcher (E:\Protoss\Desktop\blog\node_modules\hexo\node_modules\bluebird\js\release\util.js:16:23) at Promise._settlePromiseFromHandler (E:\Protoss\Desktop\blog\node_modules\hexo\node_modules\bluebird\js\release\promise.js:502:31) at Promise._settlePromise (E:\Protoss\Desktop\blog\node_modules\hexo\node_modules\bluebird\js\release\promise.js:559:18) at Promise._settlePromise0 (E:\Protoss\Desktop\blog\node_modules\hexo\node_modules\bluebird\js\release\promise.js:604:10) at Promise._settlePromises (E:\Protoss\Desktop\blog\node_modules\hexo\node_modules\bluebird\js\release\promise.js:683:18) at Async._drainQueue (E:\Protoss\Desktop\blog\node_modules\hexo\node_modules\bluebird\js\release\async.js:138:16) at Async._drainQueues (E:\Protoss\Desktop\blog\node_modules\hexo\node_modules\bluebird\js\release\async.js:148:10) at Immediate.Async.drainQueues [as _onImmediate] (E:\Protoss\Desktop\blog\node_modules\hexo\node_modules\bluebird\js\release\async.
+        错误堆栈： YAMLException: end of the stream or a document separator is expected at line 15, column 1:url: http://yoursite.com^at generateError (E:\Protoss\Desktop\blog\node_modules\hexo\node_modules\js-yaml\lib\js-yaml\loader.js:162:10)at throwError (E:\Protoss\Desktop\blog\node_modules\hexo\node_modules\js-yaml\lib\js-yaml\loader.js:168:9)at readDocument (E:\Protoss\Desktop\blog\node_modules\hexo\node_modules\js-yaml\lib\js-yaml\loader.js:1508:5)at loadDocuments (E:\Protoss\Desktop\blog\node_modules\hexo\node_modules\js-yaml\lib\js-yaml\loader.js:1544:5)at Object.load (E:\Protoss\Desktop\blog\node_modules\hexo\node_modules\js-yaml\lib\js-yaml\loader.js:1561:19)at Hexo.yamlHelper (E:\Protoss\Desktop\blog\node_modules\hexo\lib\plugins\renderer\yaml.js:7:15)at Hexo.tryCatcher (E:\Protoss\Desktop\blog\node_modules\hexo\node_modules\bluebird\js\release\util.js:16:23)at Hexo.&lt;anonymous&gt; (E:\Protoss\Desktop\blog\node_modules\hexo\node_modules\bluebird\js\release\method.js:15:34)at E:\Protoss\Desktop\blog\node_modules\hexo\lib\hexo\render.js:59:21at tryCatcher (E:\Protoss\Desktop\blog\node_modules\hexo\node_modules\bluebird\js\release\util.js:16:23)at Promise._settlePromiseFromHandler (E:\Protoss\Desktop\blog\node_modules\hexo\node_modules\bluebird\js\release\promise.js:502:31)at Promise._settlePromise (E:\Protoss\Desktop\blog\node_modules\hexo\node_modules\bluebird\js\release\promise.js:559:18)at Promise._settlePromise0 (E:\Protoss\Desktop\blog\node_modules\hexo\node_modules\bluebird\js\release\promise.js:604:10)at Promise._settlePromises (E:\Protoss\Desktop\blog\node_modules\hexo\node_modules\bluebird\js\release\promise.js:683:18)at Async._drainQueue (E:\Protoss\Desktop\blog\node_modules\hexo\node_modules\bluebird\js\release\async.js:138:16)at Async._drainQueues (E:\Protoss\Desktop\blog\node_modules\hexo\node_modules\bluebird\js\release\async.js:148:10)at Immediate.Async.drainQueues [as _onImmediate] (E:\Protoss\Desktop\blog\node_modules\hexo\node_modules\bluebird\js\release\async.
       
       <p>
         <a href="https://dawnarc.com/2016/05/hexoserver%E5%90%AF%E5%8A%A8%E5%BC%82%E5%B8%B8yamlexception/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -549,11 +549,11 @@ Obj-&gt;AddToRoot();  注：如果执行了AddToRoot()，那么退出程序前�
       
         Editor命令（ShowFlag） 如果想在 Editor 中查看 Actor 蓝图的 Bounds（默认只能在 Static Mesh 编辑窗口中查看），可以使用 ShowFlag 命令（在编辑器窗口中按下波浪键打开输入窗口）。
 开启：
-ShowFlag.Bounds 1  关闭：
-ShowFlag.Bounds 0  凡是 Show 命令能查看的参数，ShowFlag也能查看，包括Collision等。
+ShowFlag.Bounds 1 关闭：
+ShowFlag.Bounds 0 凡是 Show 命令能查看的参数，ShowFlag也能查看，包括Collision等。
 如果想在游戏运行时查看指定物体的 Bounds，那么可以先执行 ShowFlag.Bounds 1，然后再以 Simulate 模式运行游戏，然后再在场景中单击要查看的物体，然后就可以显示该物体的 Bounds 信息。
  运行时命令 修改Camera Mode（切换摄像机视角）： Camera [modename] 其中modename的值为：
-static const FName NAME_Fixed = FName(TEXT(&quot;Fixed&quot;)); static const FName NAME_ThirdPerson = FName(TEXT(&quot;ThirdPerson&quot;)); static const FName NAME_FreeCam = FName(TEXT(&quot;FreeCam&quot;)); static const FName NAME_FreeCam_Default = FName(TEXT(&quot;FreeCam_Default&quot;)); static const FName NAME_FirstPerson = FName(TEXT(&quot;FirstPerson&quot;));  启用debug camera：
+static const FName NAME_Fixed = FName(TEXT(&quot;Fixed&quot;));static const FName NAME_ThirdPerson = FName(TEXT(&quot;ThirdPerson&quot;));static const FName NAME_FreeCam = FName(TEXT(&quot;FreeCam&quot;));static const FName NAME_FreeCam_Default = FName(TEXT(&quot;FreeCam_Default&quot;));static const FName NAME_FirstPerson = FName(TEXT(&quot;FirstPerson&quot;)); 启用debug camera：
       
       <p>
         <a href="https://dawnarc.com/2016/05/ue4console%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4command/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -614,10 +614,10 @@ static const FName NAME_Fixed = FName(TEXT(&quot;Fixed&quot;)); static const FNa
     </div>
     <div class="postShorten-excerpt" itemprop="articleBody">
       
-        安装依赖 $ yum install -y zlib-devel $ yum install -y pcre-devel $ yum install -y ssl $ yum install -y gcc  编译&amp;安装 $ ./configure $ make $ make install  默认安装目录：
-/usr/local/nginx/  nginx的bin目录：
-/usr/local/nginx/sbin  link到bin目录
-$ ln /usr/local/nginx/sbin/nginx /usr/local/bin/nginx  开机自动启动 如果使用编译版本，貌似配置器比较复杂。建议用yum安装，这样安装后就是自动启动且帮你link好了。
+        安装依赖 $ yum install -y zlib-devel $ yum install -y pcre-devel$ yum install -y ssl$ yum install -y gcc 编译&amp;安装 $ ./configure$ make$ make install 默认安装目录：
+/usr/local/nginx/ nginx的bin目录：
+/usr/local/nginx/sbin link到bin目录
+$ ln /usr/local/nginx/sbin/nginx /usr/local/bin/nginx 开机自动启动 如果使用编译版本，貌似配置器比较复杂。建议用yum安装，这样安装后就是自动启动且帮你link好了。
       
       <p>
         <a href="https://dawnarc.com/2016/05/nginx%E5%AE%89%E8%A3%85%E7%AE%80%E7%95%A5%E6%AD%A5%E9%AA%A4/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -684,9 +684,9 @@ FString str; TCHAR *c1 = *str; TCHAR* c2 = str.GetCharArray().GetData();  将str
 FString TheString = &quot;123.021&quot;; int32 MyShinyNewInt = FCString::Atoi(*TheString); float MyShinyNewFloat = FCString::Atof(*TheString);  字符串切割：
 FString a(&quot;1,2,3&quot;); TArray&lt;FString&gt; stringArray; a.ParseIntoArray(stringArray, TEXT(&quot;,&quot;), false);  字符串截取：
 FString::Left(int count); FString::Right(int count);  字符串格式化Format：
-FString Path = FString::Printf(TEXT(&quot;StaticMesh'/Game/Shapes/ground_shape_%d.ground_shape_%d'&quot;), i);  如何获取FString转换后char之后的长度 比如用TCHAR_TO_ANSI()将tchar转换为char之后，char的长度如何计算？ 使用FTCHARToANSI::Length()，示例如下：
-FTCHARToANSI Convert(*String); Ar-&gt;Serialize((ANSICHAR*)Convert, Convert.Length());  参考自：https://docs.unrealengine.com/latest/INT/Programming/UnrealArchitecture/StringHandling/CharacterEncoding/index.html
-中文字符的FString 转换 char数组 FString str(TEXT(&quot;笑傲江湖DA&quot;)); const wchar_t* s1 = *str; int LenW = wcslen(s1); int LenC = LenW * 2; //先转换为 char*, 比如 protobuf 不支持 wchar_t，那么可以将中文转换为char，然后储存在protobuf内部。 char* buf = new char[LenC + 1](); memcpy(buf, s1, LenC); //验证char*能否还原为 wchar_t 数组 wchar_t* buf2 = new wchar_t[LenC/2 + 1](); memcpy(buf2, buf, LenC);  TCHAR*、wchar_t、char 转换相关 //char 转换为 TCHAR TCHAR* msg = ANSI_TO_TCHAR(&quot;dddd&quot;); TCHAR* msg2 = UTF8_TO_TCHAR(&quot;dddd&quot;); //TCHAR 转换为 char char* Str4 = TCHAR_TO_UTF8(*Str); char* Str4 = TCHAR_TO_ANSI(*Str); //TCHAR 转换为 wchar_t FSting Str; wchar_t* Str2 = TCHAR_TO_WCHAR(*Str); //wchar_t 转换为 TCHAR wchar_t Str5[] = L&quot;sss&quot;; TCHAR* Str6 = (TCHAR*)Str5;  如果 char* 字符串有中文，转换为 FString 时，必须使用 ANSI_TO_TCHAR() 或者 UTF8_TO_TCHAR()，例如：FString Text = UTF8_TO_TCHAR(&ldquo;牛鼻&rdquo;); 。否则会出现乱码。另外，如果汉字是写在代码里面，则代码文件的编码格式需要改成UTF8，否则也会乱码。
+FString Path = FString::Printf(TEXT(&quot;StaticMesh'/Game/Shapes/ground_shape_%d.ground_shape_%d'&quot;), i); 如何获取FString转换后char之后的长度 比如用TCHAR_TO_ANSI()将tchar转换为char之后，char的长度如何计算？ 使用FTCHARToANSI::Length()，示例如下：
+FTCHARToANSI Convert(*String);Ar-&gt;Serialize((ANSICHAR*)Convert, Convert.Length()); 参考自：https://docs.unrealengine.com/latest/INT/Programming/UnrealArchitecture/StringHandling/CharacterEncoding/index.html
+中文字符的FString 转换 char数组 FString str(TEXT(&quot;笑傲江湖DA&quot;));const wchar_t* s1 = *str;int LenW = wcslen(s1);int LenC = LenW * 2;//先转换为 char*, 比如 protobuf 不支持 wchar_t，那么可以将中文转换为char，然后储存在protobuf内部。char* buf = new char[LenC + 1]();memcpy(buf, s1, LenC);//验证char*能否还原为 wchar_t 数组wchar_t* buf2 = new wchar_t[LenC/2 + 1]();memcpy(buf2, buf, LenC); TCHAR*、wchar_t*、char* 转换相关 //char 转换为 TCHARTCHAR* msg = ANSI_TO_TCHAR(&quot;dddd&quot;); TCHAR* msg2 = UTF8_TO_TCHAR(&quot;dddd&quot;); //TCHAR 转换为 charchar* Str4 = TCHAR_TO_UTF8(*Str);char* Str4 = TCHAR_TO_ANSI(*Str);//TCHAR 转换为 wchar_tFSting Str;wchar_t* Str2 = TCHAR_TO_WCHAR(*Str);//wchar_t 转换为 TCHAR wchar_t Str5[] = L&quot;sss&quot;;TCHAR* Str6 = (TCHAR*)Str5; 如果 char* 字符串有中文，转换为 FString 时，必须使用 ANSI_TO_TCHAR() 或者 UTF8_TO_TCHAR()，例如：FString Text = UTF8_TO_TCHAR(&ldquo;牛鼻&rdquo;); 。否则会出现乱码。另外，如果汉字是写在代码里面，则代码文件的编码格式需要改成UTF8，否则也会乱码。
       
       <p>
         <a href="https://dawnarc.com/2016/03/ue4fstring%E5%B8%B8%E7%94%A8api/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -748,14 +748,14 @@ FTCHARToANSI Convert(*String); Ar-&gt;Serialize((ANSICHAR*)Convert, Convert.Leng
     <div class="postShorten-excerpt" itemprop="articleBody">
       
         常用API C++如何播放Montage动画 假设是在Character内执行，其中MontagePtr为Montage指针：
-float DeathAnimDuration = PlayAnimMontage(MontagePtr) / (GetMesh() &amp;&amp; GetMesh()-&gt;GlobalAnimRateScale &gt; 0 ? GetMesh()-&gt;GlobalAnimRateScale : 1);  如果只是播放Animation Sequence，可以使用 PlayAnimation()
-if (USkeletalMeshComponent *Mesh = GetMesh()) { Mesh-&gt;PlayAnimation(AnimSequence, false); }  注意：PlayAnimation可以直接来播放AnimSequence，但是不能混合动作。比如当播放完攻击动作后，无法自动回到空闲状态，但是通过Montage的Slot可以完成自动切换动作。
+float DeathAnimDuration = PlayAnimMontage(MontagePtr) / (GetMesh() &amp;&amp; GetMesh()-&gt;GlobalAnimRateScale &gt; 0 ? GetMesh()-&gt;GlobalAnimRateScale : 1); 如果只是播放Animation Sequence，可以使用 PlayAnimation()
+if (USkeletalMeshComponent *Mesh = GetMesh()){Mesh-&gt;PlayAnimation(AnimSequence, false);} 注意：PlayAnimation可以直接来播放AnimSequence，但是不能混合动作。比如当播放完攻击动作后，无法自动回到空闲状态，但是通过Montage的Slot可以完成自动切换动作。
  其他参考：
 How can I play animations strictly from C++?
 https://answers.unrealengine.com/questions/292345/how-can-i-play-animations-strictly-from-c.html
 C++动态播放Montage（通过AnimSequence创建） keywords：UE4, C++, AnimSequence, AnimMontage, Slot, 动态创建, 播放动画
 首先要在动画蓝图中添加Slot节点，默认的Slot名字为DefaultSlot。这个名字会在C++代码中使用   假设已经获取了要播放的AnimSequence对象指针：AnimSeq
-float AnimLength = 0.f; if (USkeletalMeshComponent *Mesh = MyActor-&gt;FindComponentByClass&lt;USkeletalMeshComponent&gt;()) { if (UAnimInstance *AnimInst = Mesh-&gt;GetAnimInstance()) { if (UAnimMontage* Mtg = AnimInst-&gt;PlaySlotAnimationAsDynamicMontage(AnimSeq, TEXT(&quot;DefaultSlot&quot;), 0.
+float AnimLength = 0.f;if (USkeletalMeshComponent *Mesh = MyActor-&gt;FindComponentByClass&lt;USkeletalMeshComponent&gt;()){if (UAnimInstance *AnimInst = Mesh-&gt;GetAnimInstance()){if (UAnimMontage* Mtg = AnimInst-&gt;PlaySlotAnimationAsDynamicMontage(AnimSeq, TEXT(&quot;DefaultSlot&quot;), 0.
       
       <p>
         <a href="https://dawnarc.com/2016/02/ue4animation-montage%E5%8A%A8%E7%94%BB%E7%9B%B8%E5%85%B3/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -840,10 +840,10 @@ UE4中的C++类继承规则：只能直接继承自两种类，一种是非UObje
 如果spawn出来的actor执行了AddToRoot操作，那么，需要GameInstance::Shutdown()中执行RemoveFromRoot，否则退出UE4Editor时会出现崩溃。另外，在GameMode和GameInstance的BeginDestroy()中执行是不行的，因为垃圾回收过程发生在BeginDestroy()执行之前。
 【2017-02-06】
 用宏控制debug相关代码的开启和关闭
-#if UE_BUILD_SHIPPING //debug code... #endif  UE4数据同步相关的引擎源码
-Runtime\Engine\Private\ActorReplication.cpp Runtime\Engine\Private\ Replication.cpp Runtime\Engine\Public\Net \DataReplication.cpp Engine\Plugins\Messaging\TcpMessaging\Source\TcpMessaging\Private\TcpMessagingModule.cpp  SpawnActor和NewObject创建出来的对象如何获取父对象
+#if UE_BUILD_SHIPPING//debug code...#endif UE4数据同步相关的引擎源码
+Runtime\Engine\Private\ActorReplication.cppRuntime\Engine\Private\ Replication.cppRuntime\Engine\Public\Net \DataReplication.cppEngine\Plugins\Messaging\TcpMessaging\Source\TcpMessaging\Private\TcpMessagingModule.cpp SpawnActor和NewObject创建出来的对象如何获取父对象
 SpawnActor()有个参数：FActorSpawnParameters，这个参数中有很多属性，设置相关属性后，可以更方便的来控制这个被spawn出来的Actor，比如Owner属性：
-FActorSpawnParameters Param; Param.Owner = MyActor1; AActor MyActor2 = GetWorld()-&gt;SpawnActor&lt;MyActor&gt;(MyClass, Param); //此时的Owner就是MyActor1 MyActor Owner= MyActor2-&gt;GetOwner();  NewObject直接通过构造函数参数指定：
+FActorSpawnParameters Param;Param.Owner = MyActor1; AActor MyActor2 = GetWorld()-&gt;SpawnActor&lt;MyActor&gt;(MyClass, Param);//此时的Owner就是MyActor1MyActor Owner= MyActor2-&gt;GetOwner(); NewObject直接通过构造函数参数指定：
       
       <p>
         <a href="https://dawnarc.com/2015/12/ue4%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9%E4%B8%8E%E7%AC%94%E8%AE%B0/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -906,9 +906,9 @@ FActorSpawnParameters Param; Param.Owner = MyActor1; AActor MyActor2 = GetWorld(
       
         JDK 6.0 以及JDK 5.0 update 9 的 nio支持epoll （仅限 Linux 系统 ），对并发idle connection会有大幅度的性能提升，这就是很多网络服务器应用程序需要的。
 启用的方法如下：
--Djava.nio.channels.spi.SelectorProvider=sun.nio.ch.EPollSelectorProvider  例如在 Linux 下运行的 Tomcat 使用 NIO Connector ，那么启用 epoll 对性能的提升会有帮助。
+-Djava.nio.channels.spi.SelectorProvider=sun.nio.ch.EPollSelectorProvider 例如在 Linux 下运行的 Tomcat 使用 NIO Connector ，那么启用 epoll 对性能的提升会有帮助。
 而 Tomcat 要启用这个选项的做法是在 catalina.sh 的开头加入下面这一行
-CATALINA_OPTS='-Djava.nio.channels.spi.SelectorProvider=sun.nio.ch.EPollSelectorProvider'  
+CATALINA_OPTS='-Djava.nio.channels.spi.SelectorProvider=sun.nio.ch.EPollSelectorProvider' 
       
       <p>
         <a href="https://dawnarc.com/2012/01/java%E4%BD%BF%E7%94%A8epoll%E6%9D%A5%E8%BF%9B%E8%A1%8Cnio%E5%A4%84%E7%90%86%E7%9A%84%E6%96%B9%E6%B3%95/" class="postShorten-excerpt_link link">Continue reading</a>

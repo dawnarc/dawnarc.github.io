@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.58.3 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.60.1 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="">
 <meta name="description" content="Hugo tranquilpeak theme demo">
@@ -412,9 +412,9 @@ if (!doNotTrack) {
     <div class="postShorten-excerpt" itemprop="articleBody">
       
         如何禁用角色的刚体碰撞检测Collision 禁用Actor上所有Component的碰撞：
-MyCharacter-&gt;SetActorEnableCollision(false);  设置以后，角色就可以忽视一切障碍物或者刚体来进行移动了，但是这样会导致 AddMovementInput 失效， SetActorLocation 没问题 。
+MyCharacter-&gt;SetActorEnableCollision(false); 设置以后，角色就可以忽视一切障碍物或者刚体来进行移动了，但是这样会导致 AddMovementInput 失效， SetActorLocation 没问题 。
 禁用指定 Component 的碰撞：
-MyCharacter-&gt;GetMesh()-&gt;SetCollisionEnabled(ECollisionEnabled::NoCollision);  GetOverlappingActors() 注意事项 GetOverlappingActors() 是获取与当前 Collision 相碰撞的 Actor ，如果一个角色身上有两个 CollisionComponent ，且这两个 CollisionComponent 之间有重叠，即使这两个 CollisionComponent没有和其他 Actor碰撞， GetOverlappingActors() 也会返回当前角色 Actor 。
+MyCharacter-&gt;GetMesh()-&gt;SetCollisionEnabled(ECollisionEnabled::NoCollision); GetOverlappingActors() 注意事项 GetOverlappingActors() 是获取与当前 Collision 相碰撞的 Actor ，如果一个角色身上有两个 CollisionComponent ，且这两个 CollisionComponent 之间有重叠，即使这两个 CollisionComponent没有和其他 Actor碰撞， GetOverlappingActors() 也会返回当前角色 Actor 。
       
       <p>
         <a href="https://dawnarc.com/2016/10/ue4collision%E7%A2%B0%E6%92%9E%E7%9B%B8%E5%85%B3/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -476,9 +476,8 @@ MyCharacter-&gt;GetMesh()-&gt;SetCollisionEnabled(ECollisionEnabled::NoCollision
     <div class="postShorten-excerpt" itemprop="articleBody">
       
         之前网上一直有这么一条for循环优化建议： 将size提到第一个分号前，这样可以提高循环的效率，例如：
-std::vector&lt;int&gt; aaa; for (size_t i = 0, size = aaa.size(); i &lt; size; i++) { printf(&quot;bbb&quot;); }  这个如果是很多年前，应该是有道理的，但是现在的编译器足够聪明，很多看起不够优化的代码，编译器会帮你处理。 以下是在VS2015下的汇编代码，结果是：size不前提反而可以节省两次mov指令。
-size放在第一个分号后：
- for (size_t i = 0; i &lt; aaa.size(); i++) 00007FF7629E3147 mov qword ptr [rbp+48h],0 00007FF7629E314F jmp _20161011+3Ch (07FF7629E315Ch) 00007FF7629E3151 mov rax,qword ptr [rbp+48h] 00007FF7629E3155 inc rax 00007FF7629E3158 mov qword ptr [rbp+48h],rax 00007FF7629E315C lea rcx,[aaa] 00007FF7629E3160 call std::vector&lt;int,std::allocator&lt;int&gt; &gt;::size (07FF7629E16BDh) 00007FF7629E3165 cmp qword ptr [rbp+48h],rax 00007FF7629E3169 jae _20161011+59h (07FF7629E3179h)  size提到第一个分号前：
+std::vector&lt;int&gt; aaa;for (size_t i = 0, size = aaa.size(); i &lt; size; i++){printf(&quot;bbb&quot;);} 这个如果是很多年前，应该是有道理的，但是现在的编译器足够聪明，很多看起不够优化的代码，编译器会帮你处理。 以下是在VS2015下的汇编代码，结果是：size不前提反而可以节省两次mov指令。size放在第一个分号后：
+ for (size_t i = 0; i &lt; aaa.size(); i++)00007FF7629E3147 mov qword ptr [rbp+48h],0 00007FF7629E314F jmp _20161011+3Ch (07FF7629E315Ch) 00007FF7629E3151 mov rax,qword ptr [rbp+48h] 00007FF7629E3155 inc rax 00007FF7629E3158 mov qword ptr [rbp+48h],rax 00007FF7629E315C lea rcx,[aaa] 00007FF7629E3160 call std::vector&lt;int,std::allocator&lt;int&gt; &gt;::size (07FF7629E16BDh) 00007FF7629E3165 cmp qword ptr [rbp+48h],rax 00007FF7629E3169 jae _20161011+59h (07FF7629E3179h)  size提到第一个分号前：
       
       <p>
         <a href="https://dawnarc.com/2016/10/c-for%E5%BE%AA%E7%8E%AF%E4%B8%AD%E7%9A%84size%E5%8F%82%E6%95%B0%E4%BC%98%E5%8C%96%E9%97%AE%E9%A2%98/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -540,9 +539,9 @@ size放在第一个分号后：
     <div class="postShorten-excerpt" itemprop="articleBody">
       
         .h (located in pawn header file and assigned in Blueprint editor)
-UPROPERTY(EditAnywhere) TArray&lt;UMaterialInterface*&gt; Materials;  .h (located in pawn manager responsible for spawning them)
-TSubclassOf&lt;class AMyPawn&gt; PawnClass;  .cpp
-FVector spawnLocation = FVector(0.0f, 0.0f, 0.0f); FRotator spawnRotation = FRotator::ZeroRotator; AMyPawn* pawn = GetWorld()-&gt;SpawnActor&lt;AMyPawn&gt;(PawnClass, spawnLocation, spawnRotation); if (pawn != nullptr) { AMyPawn* defaultPawn = PawnClass.GetDefaultObject(); int32 materialCount = defaultPawn-&gt;Materials.Num(); int m = FMath::RandRange(0, materialCount - 1); const TArray&lt;UActorComponent*&gt;&amp; theComponents = pawn-&gt;GetComponents(); int32 componentCount = theComponents.
+UPROPERTY(EditAnywhere)TArray&lt;UMaterialInterface*&gt; Materials; .h (located in pawn manager responsible for spawning them)
+TSubclassOf&lt;class AMyPawn&gt; PawnClass; .cpp
+FVector spawnLocation = FVector(0.0f, 0.0f, 0.0f);FRotator spawnRotation = FRotator::ZeroRotator;AMyPawn* pawn = GetWorld()-&gt;SpawnActor&lt;AMyPawn&gt;(PawnClass, spawnLocation, spawnRotation);if (pawn != nullptr){AMyPawn* defaultPawn = PawnClass.GetDefaultObject();int32 materialCount = defaultPawn-&gt;Materials.Num();int m = FMath::RandRange(0, materialCount - 1);const TArray&lt;UActorComponent*&gt;&amp; theComponents = pawn-&gt;GetComponents();int32 componentCount = theComponents.
       
       <p>
         <a href="https://dawnarc.com/2016/10/ue4%E5%A6%82%E4%BD%95%E6%9B%BF%E6%8D%A2%E8%A7%92%E8%89%B2mesh%E4%B8%8A%E7%9A%84material%E6%9D%90%E8%B4%A8/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -607,11 +606,11 @@ FVector spawnLocation = FVector(0.0f, 0.0f, 0.0f); FRotator spawnRotation = FRot
 在计算机中并没有一个真正的随机数发生器，但是可以做到使产生的数字重复率很低，这样看起来好象是真正的随机数，实现这一功能的程序叫伪随机数发生器。
 有关如何产生随机数的理论有许多，如果要详细地讨论，需要厚厚的一本书的篇幅。不管用什么方法实现随机数发生器，都必须给它提供一个名为“种子”的初始值。而且这个值最好是随机的，或者至少这个值是伪随机的。“种子”的值通常是用快速计数寄存器或移位寄存器来生成的。
 下面讲一讲在C语言里所提供的随机数发生器的用法。现在的C编译器都提供了一个基于ANSI标准的伪随机数发生器函数，用来生成随机数。它们就是rand()和srand()函数。这二个函数的工作过程如下：
-1) 首先给srand()提供一个种子，它是一个unsigned int类型，其取值范围从0~65535；
-2) 然后调用rand()，它会根据提供给srand()的种子值返回一个随机数(在0到32767之间)
-3) 根据需要多次调用rand()，从而不间断地得到新的随机数；
-4) 无论什么时候，都可以给srand()提供一个新的种子，从而进一步“随机化”rand()的输出结果。
-这个过程看起来很简单，问题是如果你每次调用srand()时都提供相同的种子值，那么，你将会得到相同的随机数序列，这时看到的现象是没有随机数，而每一次的数都是一样的了。例如，在以17为种子值调用srand()之后，在首次调用rand()时，得到随机数94。在第二次和第三次调用rand()时将分别得到26602和30017，这些数看上去是很随机的(尽管这只是一个很小的数据点集合)，但是，在你再次以17为种子值调用srand()后，在对于rand()的前三次调用中，所得的返回值仍然是在对94，26602，30017，并且此后得到的返回值仍然是在对rand()的第一批调用中所得到的其余的返回值。因此只有再次给srand()提供一个随机的种子值，才能再次得到一个随机数。
+  首先给srand()提供一个种子，它是一个unsigned int类型，其取值范围从0~65535；
+  然后调用rand()，它会根据提供给srand()的种子值返回一个随机数(在0到32767之间)
+  根据需要多次调用rand()，从而不间断地得到新的随机数；
+  无论什么时候，都可以给srand()提供一个新的种子，从而进一步“随机化”rand()的输出结果。
+  这个过程看起来很简单，问题是如果你每次调用srand()时都提供相同的种子值，那么，你将会得到相同的随机数序列，这时看到的现象是没有随机数，而每一次的数都是一样的了。例如，在以17为种子值调用srand()之后，在首次调用rand()时，得到随机数94。在第二次和第三次调用rand()时将分别得到26602和30017，这些数看上去是很随机的(尽管这只是一个很小的数据点集合)，但是，在你再次以17为种子值调用srand()后，在对于rand()的前三次调用中，所得的返回值仍然是在对94，26602，30017，并且此后得到的返回值仍然是在对rand()的第一批调用中所得到的其余的返回值。因此只有再次给srand()提供一个随机的种子值，才能再次得到一个随机数。
       
       <p>
         <a href="https://dawnarc.com/2016/10/%E9%9A%8F%E6%9C%BA%E6%95%B0%E9%9A%8F%E6%9C%BA%E6%95%B0%E7%A7%8D%E5%AD%90/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -673,8 +672,8 @@ FVector spawnLocation = FVector(0.0f, 0.0f, 0.0f); FRotator spawnRotation = FRot
     <div class="postShorten-excerpt" itemprop="articleBody">
       
         Keyword：Particle、Emitter、Collision、Event、Dispathch、Blueprint、C++
-先保证粒子发射器中有碰撞检测事件：类型为Collision的Event Generator   蓝图方式： Spawn创建粒子之后，绑定事件OnParticleCollide，然后新建一个自定义事件（图中命令为CustomEvent_0），然后就可以在这个事件中获取碰撞的坐标等信息了。   注意：这里的CumtomEvent_0无法单独创建出来，否则就是一个没有任何参数的普通custom event，必须从Bind Event to OnParticleCollide节点中拖拽出来   C++方式： UParticleSystemComponent* PSC = UGameplayStatics::SpawnEmitterAtLocation(MyGameMode-&gt;GetWorld(), SkillParticle_1004, Location, FRotator::ZeroRotator, true); FScriptDelegate Delegate; Delegate.BindUFunction(MyCharacter, &quot;OnParticleHit&quot;); PSC-&gt;OnParticleCollide.Add(Delegate);  碰撞回调事件的函数签名：
-UFUNCTION() void OnParticleHit(FName EventName, float EmitterTime, int32 ParticleTime, FVector Location, FVector Velocity, FVector Direction, FVector Normal, FName BoneName, UPhysicalMaterial* PhysMat);  其中的Location就是撞击的坐标
+先保证粒子发射器中有碰撞检测事件：类型为Collision的Event Generator   蓝图方式： Spawn创建粒子之后，绑定事件OnParticleCollide，然后新建一个自定义事件（图中命令为CustomEvent_0），然后就可以在这个事件中获取碰撞的坐标等信息了。   注意：这里的CumtomEvent_0无法单独创建出来，否则就是一个没有任何参数的普通custom event，必须从Bind Event to OnParticleCollide节点中拖拽出来   C++方式： UParticleSystemComponent* PSC = UGameplayStatics::SpawnEmitterAtLocation(MyGameMode-&gt;GetWorld(), SkillParticle_1004, Location, FRotator::ZeroRotator, true);FScriptDelegate Delegate;Delegate.BindUFunction(MyCharacter, &quot;OnParticleHit&quot;);PSC-&gt;OnParticleCollide.Add(Delegate); 碰撞回调事件的函数签名：
+UFUNCTION()void OnParticleHit(FName EventName, float EmitterTime, int32 ParticleTime, FVector Location, FVector Velocity, FVector Direction, FVector Normal, FName BoneName, UPhysicalMaterial* PhysMat); 其中的Location就是撞击的坐标
       
       <p>
         <a href="https://dawnarc.com/2016/10/ue4%E7%B2%92%E5%AD%90%E5%8F%91%E5%B0%84%E5%99%A8%E7%9A%84%E7%A2%B0%E6%92%9E%E4%BA%8B%E4%BB%B6particle-collision-event/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -803,8 +802,8 @@ https://docs.unrealengine.com/latest/INT/Engine/Animation/Sequences/Notifies/
 ue4中动画通知的两种方式（蓝图和C++）
 http://blog.csdn.net/yangxuan0261/article/details/52097917
 Add Custom Parameters in AnimNotify Steps:
- Add Custom C++ AnimNotify Class
-UCLASS() class TOWERDEFENSE_API UAnimNotify_Test : public UAnimNotify { GENERATED_BODY() protected: virtual void Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation) override; protected: UPROPERTY(EditAnywhere) FString Param; }; void UAnimNotify_Test::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation) { Super::Notify(MeshComp, Animation); if (Param == TEXT(&quot;AAA&quot;)) { ... } }  Add AnimNotify in Animation asset    Edit Custom Parameters     Note: Add custom parameters in AnimNotifyState is same as AnimNotify.
+  Add Custom C++ AnimNotify Class
+ UCLASS()class TOWERDEFENSE_API UAnimNotify_Test : public UAnimNotify{GENERATED_BODY()protected:virtual void Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation) override;protected:UPROPERTY(EditAnywhere)FString Param;};void UAnimNotify_Test::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation){Super::Notify(MeshComp, Animation);if (Param == TEXT(&quot;AAA&quot;)){...}}   Add AnimNotify in Animation asset     Edit Custom Parameters     Note: Add custom parameters in AnimNotifyState is same as AnimNotify.
       
       <p>
         <a href="https://dawnarc.com/2016/10/ue4animation-notifications-animnotify/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -868,7 +867,7 @@ UCLASS() class TOWERDEFENSE_API UAnimNotify_Test : public UAnimNotify { GENERATE
         Keyword：UE4、Particle、Emitter、Collision、Hit、Event、Floor
 问题表现：粒子特效中有个事件类型为collision的Event Generator
   但是当粒子发生碰撞时（比如撞击地面时），并没有触发此Event。原因可能如下：
-1， 碰撞的物体没有设置为static   2， 碰撞方式没有设置default或者BlockAll   3， 如果是4.15之前的版本，修改Config/DefaultEngine.ini中[/Script/Engine.Engine]节点下的参数bUseFixedFrameRate设置为true，删掉这个参数或者设为false即可：
+1，	碰撞的物体没有设置为static   2，	碰撞方式没有设置default或者BlockAll   3，	如果是4.15之前的版本，修改Config/DefaultEngine.ini中[/Script/Engine.Engine]节点下的参数bUseFixedFrameRate设置为true，删掉这个参数或者设为false即可：
 bUseFixedFrameRate=True
 这是UE4的一个bug，在4.15版本修复了：https://issues.unrealengine.com/issue/UE-37210
       
@@ -993,7 +992,7 @@ bUseFixedFrameRate=True
     <div class="postShorten-excerpt" itemprop="articleBody">
       
         自己实现的用DrawDebugLine绘制矩形的函数：
-/* Draw rectangle use line @CenterLoc, location of rectangle center @Rot, rotation of rectangle @Angle, angle of diagonal @DiagonalHalve, half of diagonal lenght. */ void DrawDebugTrangle(const FVector&amp; CenterLoc, const FRotator&amp; Rot, float Angle, float DiagonalHalve) { FVector Point1 = CenterLoc + (Rot + FRotator(0.f, Angle, 0.f)).Vector() * DiagonalHalve; FVector Point2 = CenterLoc + (Rot + FRotator(0.f, 90.f + (90.f - Angle), 0.f)).Vector() * DiagonalHalve; FVector Point3 = CenterLoc + (Rot + FRotator(0.
+/* Draw rectangle use line@CenterLoc, location of rectangle center@Rot, rotation of rectangle@Angle, angle of diagonal@DiagonalHalve, half of diagonal lenght.*/void DrawDebugTrangle(const FVector&amp; CenterLoc, const FRotator&amp; Rot, float Angle, float DiagonalHalve){FVector Point1 = CenterLoc + (Rot + FRotator(0.f, Angle, 0.f)).Vector() * DiagonalHalve;FVector Point2 = CenterLoc + (Rot + FRotator(0.f, 90.f + (90.f - Angle), 0.f)).Vector() * DiagonalHalve;FVector Point3 = CenterLoc + (Rot + FRotator(0.
       
       <p>
         <a href="https://dawnarc.com/2016/10/ue4%E7%94%A8drawdebugline%E7%BB%98%E5%88%B6%E7%9F%A9%E5%BD%A2/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -1055,7 +1054,7 @@ bUseFixedFrameRate=True
     <div class="postShorten-excerpt" itemprop="articleBody">
       
         有时候调用DrawDebugLine划线，在场景中看不见：
-DrawDebugLine(GameMode-&gt;GetWorld(), StartLocation, EndLocation, FColor::Red);  代码上没有任何问题，如果还是看不见，则可能是天光太强，导致线条没有渲染出来。
+DrawDebugLine(GameMode-&gt;GetWorld(), StartLocation, EndLocation, FColor::Red); 代码上没有任何问题，如果还是看不见，则可能是天光太强，导致线条没有渲染出来。
 解决办法： 按F2关掉天光，或者按F1开启mesh透视模式
       
       <p>
@@ -1119,7 +1118,7 @@ DrawDebugLine(GameMode-&gt;GetWorld(), StartLocation, EndLocation, FColor::Red);
       
         蓝图方式 1，我拿StartContent中官方提供的火焰特效来举例，在蓝图脚本中来修改火焰的颜色   2，打开粒子编辑界面，这是粒子发射器中设置好的颜色参数   3，修改：Color Over Lif模组 –》 Color Over Life参数 –》Distribution参数 –》 Distribution Vector Particle Parameter   4，为这个参数起一个当前粒子里面的唯一名字。当然你如果希望多个参数共享一个设置，那么参数也可以同名   5，因为这个特效中和颜色相关的发射器有两个，所以我们这两个发射器中的参数名字设置为同名：ParamFireColor   6，设置参数模式为 DPM Direct     7，然后将粒子拖入场景中进行编辑。当然你可以通过Spawn在运行时动态生成，但是这里为了方便直接场景中放一个静态的   8，添加一个Instance Parameters参数   9，设置参数名为之前定好的ParamFireColor，类型选择Vector Random   10，启动运行程序，然后我们在游戏运行时动态修改。先找到粒子对象   11，然后在属性面板中，编辑之前添加的参数ParamFireColor，这里我们先改为之前的默认数值     12，这时修改颜色，场景中的火焰也会即时生效了。这些修改的数值不会保存，因为这是即时数据。     补充内容：用蓝图动态生成并设置颜色方式，按下键盘E时生成火焰并将颜色设置为蓝色     因为这里没有写随机颜色的逻辑，所以看起来很单薄。
 C++方式 C++方式也需要上面蓝图的前面步骤，从第7步开始，后面的步骤都不需要了。 具体代码如下：
-UParticleSystemComponent* PSC = UGameplayStatics::SpawnEmitterAtLocation(GameMode-&gt;GetWorld(), EmitterTemplate, Location, FRotator::ZeroRotator, true); PSC-&gt;SetColorParameter(FName(TEXT(&quot;ParamFireColor&quot;)), FLinearColor::Red); FLinearColor OutColor; PSC-&gt;GetColorParameter(FName(TEXT(&quot;ParamFireColor &quot;)), OutColor);  注意：要Get参数之前，必须先Set一次，否则无法Get。
+UParticleSystemComponent* PSC = UGameplayStatics::SpawnEmitterAtLocation(GameMode-&gt;GetWorld(), EmitterTemplate, Location, FRotator::ZeroRotator, true);PSC-&gt;SetColorParameter(FName(TEXT(&quot;ParamFireColor&quot;)), FLinearColor::Red);FLinearColor OutColor;PSC-&gt;GetColorParameter(FName(TEXT(&quot;ParamFireColor &quot;)), OutColor); 注意：要Get参数之前，必须先Set一次，否则无法Get。
       
       <p>
         <a href="https://dawnarc.com/2016/10/ue4%E7%94%A8c-%E6%88%96%E8%93%9D%E5%9B%BE%E6%9D%A5%E5%8A%A8%E6%80%81%E8%AE%BE%E7%BD%AE%E7%B2%92%E5%AD%90%E7%B3%BB%E7%BB%9F%E7%9A%84%E7%9B%B8%E5%85%B3%E5%B1%9E%E6%80%A7/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -1181,7 +1180,7 @@ UParticleSystemComponent* PSC = UGameplayStatics::SpawnEmitterAtLocation(GameMod
     <div class="postShorten-excerpt" itemprop="articleBody">
       
         首先，按Win键+R键调出运行，输入“gpedit.msc”点击“确定”，调出“本地组策略编辑器”。
-依次展开&rdquo;计算机配置&rdquo;，&rdquo;管理模板&rdquo; ，&rdquo;windows组件&rdquo; ，&rdquo;windows更新 &ldquo;。
+依次展开&quot;计算机配置&rdquo;，&ldquo;管理模板&rdquo; ，&ldquo;windows组件&rdquo; ，&ldquo;windows更新 &ldquo;。
 在右面找到“配置自动更新”，并双击。
 在配置窗口上按1-3的顺序选择“已禁用”，点击“应用”，“确定”。
 关掉“本地组策略编辑器”，重启电脑。
@@ -1246,9 +1245,9 @@ UParticleSystemComponent* PSC = UGameplayStatics::SpawnEmitterAtLocation(GameMod
     <div class="postShorten-excerpt" itemprop="articleBody">
       
         原文：http://ju.outofmemory.cn/entry/149128
-struct A { int x:1; int y:2; int z:31; };  此时是正确的
+struct A {int x:1;int y:2;int z:31;}; 此时是正确的
 但是：
-struct A { int x:1; int y:2; int z:33; };  此时就会有编译错误：error C2034: 'z' : type of bit field too small for number of bits
+struct A {int x:1;int y:2;int z:33;}; 此时就会有编译错误：error C2034: 'z' : type of bit field too small for number of bits
 原文：http://zhidao.baidu.com/question/60696610.html
 struct/class定义中在成员后面加冒号“：1”是什么意思？
 这是位域操作的表示方法，也就是说后面加上“：1”的意思是这个成员的大小占所定义类型的1 bit，“：2”占2 bit，依次类推。当然大小不能超过所定义类型包含的总bit数。 一个bytes(字节)是8 bit(bit)。例如你的结构中定义的类型是u_char，一个字节，共8bit，最大就不能超过8。 32位机下， short是2字节，共16bit，最大就不能超过16. int是4字节，共32bit，最大就不能超过32. 依次类推。
