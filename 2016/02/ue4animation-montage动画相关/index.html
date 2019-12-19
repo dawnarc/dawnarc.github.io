@@ -8,8 +8,10 @@
 <meta name="generator" content="Hugo 0.60.1 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="">
-<meta name="description" content="常用API C&#43;&#43;如何播放Montage动画 假设是在Character内执行，其中MontagePtr为Montage指针：
-float DeathAnimDuration = PlayAnimMontage(MontagePtr) / (GetMesh() &amp;&amp; GetMesh()-&gt;GlobalAnimRateScale &gt; 0 ? GetMesh()-&gt;GlobalAnimRateScale : 1); 如果只是播放Animation Sequence，可以使用 PlayAnimation()
+<meta name="description" content="常用API C&#43;&#43;如何播放Montage动画 Character接口：
+假设是在Character内执行，其中MontagePtr为Montage指针：
+float AnimDuration = PlayAnimMontage(MontagePtr) / (GetMesh() &amp;&amp; GetMesh()-&gt;GlobalAnimRateScale &gt; 0 ? GetMesh()-&gt;GlobalAnimRateScale : 1); AnimInstace接口：
+float AnimDuration = Montage_Play(Param.Montage, Param.PlayRate); 如果只是播放Animation Sequence，不需要Montage，可以使用 PlayAnimation()：
 if (USkeletalMeshComponent *Mesh = GetMesh()){Mesh-&gt;PlayAnimation(AnimSequence, false);} 注意：PlayAnimation可以直接来播放AnimSequence，但是不能混合动作。比如当播放完攻击动作后，无法自动回到空闲状态，但是通过Montage的Slot可以完成自动切换动作。
  其他参考：
 How can I play animations strictly from C&#43;&#43;?
@@ -19,8 +21,10 @@ C&#43;&#43;动态播放Montage（通过AnimSequence创建） keywords：UE4, C&#
 float AnimLength = 0.f;if (USkeletalMeshComponent *Mesh = MyActor-&gt;FindComponentByClass&lt;USkeletalMeshComponent&gt;()){if (UAnimInstance *AnimInst = Mesh-&gt;GetAnimInstance()){if (UAnimMontage* Mtg = AnimInst-&gt;PlaySlotAnimationAsDynamicMontage(AnimSeq, TEXT(&quot;DefaultSlot&quot;), 0.">
 
 
-<meta property="og:description" content="常用API C&#43;&#43;如何播放Montage动画 假设是在Character内执行，其中MontagePtr为Montage指针：
-float DeathAnimDuration = PlayAnimMontage(MontagePtr) / (GetMesh() &amp;&amp; GetMesh()-&gt;GlobalAnimRateScale &gt; 0 ? GetMesh()-&gt;GlobalAnimRateScale : 1); 如果只是播放Animation Sequence，可以使用 PlayAnimation()
+<meta property="og:description" content="常用API C&#43;&#43;如何播放Montage动画 Character接口：
+假设是在Character内执行，其中MontagePtr为Montage指针：
+float AnimDuration = PlayAnimMontage(MontagePtr) / (GetMesh() &amp;&amp; GetMesh()-&gt;GlobalAnimRateScale &gt; 0 ? GetMesh()-&gt;GlobalAnimRateScale : 1); AnimInstace接口：
+float AnimDuration = Montage_Play(Param.Montage, Param.PlayRate); 如果只是播放Animation Sequence，不需要Montage，可以使用 PlayAnimation()：
 if (USkeletalMeshComponent *Mesh = GetMesh()){Mesh-&gt;PlayAnimation(AnimSequence, false);} 注意：PlayAnimation可以直接来播放AnimSequence，但是不能混合动作。比如当播放完攻击动作后，无法自动回到空闲状态，但是通过Montage的Slot可以完成自动切换动作。
  其他参考：
 How can I play animations strictly from C&#43;&#43;?
@@ -34,8 +38,10 @@ float AnimLength = 0.f;if (USkeletalMeshComponent *Mesh = MyActor-&gt;FindCompo
 <meta property="og:url" content="https://dawnarc.com/2016/02/ue4animation-montage%E5%8A%A8%E7%94%BB%E7%9B%B8%E5%85%B3/">
 <meta property="twitter:url" content="https://dawnarc.com/2016/02/ue4animation-montage%E5%8A%A8%E7%94%BB%E7%9B%B8%E5%85%B3/">
 <meta property="og:site_name" content="玄冬Wong">
-<meta property="og:description" content="常用API C&#43;&#43;如何播放Montage动画 假设是在Character内执行，其中MontagePtr为Montage指针：
-float DeathAnimDuration = PlayAnimMontage(MontagePtr) / (GetMesh() &amp;&amp; GetMesh()-&gt;GlobalAnimRateScale &gt; 0 ? GetMesh()-&gt;GlobalAnimRateScale : 1); 如果只是播放Animation Sequence，可以使用 PlayAnimation()
+<meta property="og:description" content="常用API C&#43;&#43;如何播放Montage动画 Character接口：
+假设是在Character内执行，其中MontagePtr为Montage指针：
+float AnimDuration = PlayAnimMontage(MontagePtr) / (GetMesh() &amp;&amp; GetMesh()-&gt;GlobalAnimRateScale &gt; 0 ? GetMesh()-&gt;GlobalAnimRateScale : 1); AnimInstace接口：
+float AnimDuration = Montage_Play(Param.Montage, Param.PlayRate); 如果只是播放Animation Sequence，不需要Montage，可以使用 PlayAnimation()：
 if (USkeletalMeshComponent *Mesh = GetMesh()){Mesh-&gt;PlayAnimation(AnimSequence, false);} 注意：PlayAnimation可以直接来播放AnimSequence，但是不能混合动作。比如当播放完攻击动作后，无法自动回到空闲状态，但是通过Montage的Slot可以完成自动切换动作。
  其他参考：
 How can I play animations strictly from C&#43;&#43;?
@@ -43,8 +49,10 @@ https://answers.unrealengine.com/questions/292345/how-can-i-play-animations-stri
 C&#43;&#43;动态播放Montage（通过AnimSequence创建） keywords：UE4, C&#43;&#43;, AnimSequence, AnimMontage, Slot, 动态创建, 播放动画
 首先要在动画蓝图中添加Slot节点，默认的Slot名字为DefaultSlot。这个名字会在C&#43;&#43;代码中使用   假设已经获取了要播放的AnimSequence对象指针：AnimSeq
 float AnimLength = 0.f;if (USkeletalMeshComponent *Mesh = MyActor-&gt;FindComponentByClass&lt;USkeletalMeshComponent&gt;()){if (UAnimInstance *AnimInst = Mesh-&gt;GetAnimInstance()){if (UAnimMontage* Mtg = AnimInst-&gt;PlaySlotAnimationAsDynamicMontage(AnimSeq, TEXT(&quot;DefaultSlot&quot;), 0.">
-<meta name="twitter:description" content="常用API C&#43;&#43;如何播放Montage动画 假设是在Character内执行，其中MontagePtr为Montage指针：
-float DeathAnimDuration = PlayAnimMontage(MontagePtr) / (GetMesh() &amp;&amp; GetMesh()-&gt;GlobalAnimRateScale &gt; 0 ? GetMesh()-&gt;GlobalAnimRateScale : 1); 如果只是播放Animation Sequence，可以使用 PlayAnimation()
+<meta name="twitter:description" content="常用API C&#43;&#43;如何播放Montage动画 Character接口：
+假设是在Character内执行，其中MontagePtr为Montage指针：
+float AnimDuration = PlayAnimMontage(MontagePtr) / (GetMesh() &amp;&amp; GetMesh()-&gt;GlobalAnimRateScale &gt; 0 ? GetMesh()-&gt;GlobalAnimRateScale : 1); AnimInstace接口：
+float AnimDuration = Montage_Play(Param.Montage, Param.PlayRate); 如果只是播放Animation Sequence，不需要Montage，可以使用 PlayAnimation()：
 if (USkeletalMeshComponent *Mesh = GetMesh()){Mesh-&gt;PlayAnimation(AnimSequence, false);} 注意：PlayAnimation可以直接来播放AnimSequence，但是不能混合动作。比如当播放完攻击动作后，无法自动回到空闲状态，但是通过Montage的Slot可以完成自动切换动作。
  其他参考：
 How can I play animations strictly from C&#43;&#43;?
@@ -385,10 +393,14 @@ if (!doNotTrack) {
             <div class="main-content-wrap">
               <h3 id="api">常用API</h3>
 <h5 id="cmontage">C++如何播放Montage动画</h5>
-<p>假设是在Character内执行，其中MontagePtr为Montage指针：</p>
-<pre><code>float DeathAnimDuration = PlayAnimMontage(MontagePtr) / (GetMesh() &amp;&amp; GetMesh()-&gt;GlobalAnimRateScale &gt; 0 ? GetMesh()-&gt;GlobalAnimRateScale : 1);
+<p>Character接口：<br>
+假设是在Character内执行，其中MontagePtr为Montage指针：</p>
+<pre><code>float AnimDuration = PlayAnimMontage(MontagePtr) / (GetMesh() &amp;&amp; GetMesh()-&gt;GlobalAnimRateScale &gt; 0 ? GetMesh()-&gt;GlobalAnimRateScale : 1);
 </code></pre>
-<p>如果只是播放Animation Sequence，可以使用 PlayAnimation()</p>
+<p>AnimInstace接口：</p>
+<pre><code>float AnimDuration = Montage_Play(Param.Montage, Param.PlayRate);
+</code></pre>
+<p>如果只是播放Animation Sequence，不需要Montage，可以使用 PlayAnimation()：</p>
 <pre><code>if (USkeletalMeshComponent *Mesh = GetMesh())
 {
     Mesh-&gt;PlayAnimation(AnimSequence, false);
@@ -421,10 +433,13 @@ if (USkeletalMeshComponent *Mesh = MyActor-&gt;FindComponentByClass&lt;USkeletal
 }
 </code></pre>
 <div class="alert info ">
-  <p>使用 UAnimInstance::PlaySlotAnimationAsDynamicMontage() 播放Montage时，参数 Animation Sequence 中 Notify 仍然对动态生成的 Montage 有效，即：Montage 也会触发同样的Notify。</p>
+  <p>使用<code>UAnimInstance::PlaySlotAnimationAsDynamicMontage()</code>播放Montage时，参数 Animation Sequence 中 Notify 仍然对动态生成的 Montage 有效，即：Montage 也会触发同样的Notify。</p>
+</div>
+<div class="alert warning ">
+  <p>如果将<code>PlaySlotAnimationAsDynamicMontage()</code>的返回值Montage保存起来，则这个Montage对象会保存创建时指定的LoopCount, SlotName等信息。</p>
 </div>
 <div class="alert danger ">
-  <p>使用PlaySlotAnimationAsDynamicMontage()播放Montage时，如果不是循环播放的Montage，播放完毕后一定要执行 UAnimInstance::Montage_Stop() 停掉当前Montage，否则会干扰蓝图动画的逻辑，导致切换其他Montage时无效。</p>
+  <p>使用<code>PlaySlotAnimationAsDynamicMontage()</code>播放Montage时，如果不是循环播放的Montage，播放完毕后一定要执行<code>UAnimInstance::Montage_Stop()</code>停掉当前Montage，否则会干扰蓝图动画的逻辑，导致切换其他Montage时无效。</p>
 </div>
 <h5 id="montage">播放Montage动画时让动作停留在最后一帧</h5>
 <p>keywords：UE4、Montage、C++、播放速度、播放速率、加速播放、减速播放</p>

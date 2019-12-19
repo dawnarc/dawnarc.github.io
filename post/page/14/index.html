@@ -316,6 +316,411 @@ if (!doNotTrack) {
     
     <div class="postShorten-header">
       <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2018/07/c-c-11-shared_ptr-%E4%B8%8E-weak_ptr-%E5%8C%BA%E5%88%AB/">
+          [C&#43;&#43;]C&#43;&#43;11 shared_ptr 与 weak_ptr 区别
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2018-07-06T14:19:40&#43;08:00">
+        
+  
+  
+  
+  
+    Friday, 14:19, Jul 6, 2018
+  
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/c&#43;&#43;">C&#43;&#43;</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        shared_ptr 语法：
+#include &lt;memory&gt;shared_ptr&lt;A&gt; x(new A); shared_ptr 相当于 对象引用计数器。每当对 shared_ptr 赋值操作一次，则其引用对象的计数+1。当某对象的引用计数为0时，则该对象自动销毁。
+weak_ptr 语法：
+#include &lt;memory&gt;weak_ptr&lt;A&gt; x(new A); weak_ptr 典型应用是缓存：例如我们在缓存中存放了一个 raw pointer 来指向某个对象，如果这个对象在其他地方被销毁了，那么缓存中的这个 raw pointer 指向的对象不存在。如果我们希望某个对象在其他地方被销毁时，缓存中指向该对象的指针也马上被置为 null，那么就可以使用 weak_ptr。
+参考自：
+shared_ptr and weak_ptr differences
+https://stackoverflow.com/questions/4984381/shared-ptr-and-weak-ptr-differences
+When is std::weak_ptr useful?
+https://stackoverflow.com/questions/12030650/when-is-stdweak-ptr-useful
+ 我希望我的文字，是一场一场的梦，是一阵一阵的风，是一片一片的月光。那些生活于尘土中的人们，那些在四季轮回中迷失了方向的人们，那些在大地的收货和欠收中痛苦和欣喜的人们，他们会有一个朝上仰望的这样一颗心灵。如果文学还能做什么，那么，文学需要承载大地上所有的苦难和沉重，让人们抬起头来，朝着云端去望，朝着树叶去望。这就是文学唯一能给我们的一点安慰。----刘亮程
+      
+      <p>
+        <a href="https://dawnarc.com/2018/07/c-c-11-shared_ptr-%E4%B8%8E-weak_ptr-%E5%8C%BA%E5%88%AB/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2018/07/ue4-tsharedptr-tweakobjectptr-and-tuniqueptr/">
+          [UE4] TSharedPtr, TWeakObjectPtr and TUniquePtr
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2018-07-04T16:44:02&#43;08:00">
+        
+  
+  
+  
+  
+    Wednesday, 16:44, Jul 4, 2018
+  
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        UE4 的 TSharedPtr、TWeakObjectPtr 模仿自 C++11 的 shared_ptr 、 weak_ptr 。
+TSharedPtr TSharedPtr 相当于对象的引用计数器。每当对 TSharedPtr 赋值一次，该 TSharedPtr 引用对象计数加一，当引用计数为0时，则该对象被自动销毁。
+用法：
+TSharedPtr&lt;TestClass&gt; ObjPtr = MakeShareable(new TestClass()); 如果两个 TSharedPtr 相互赋值，则会导致对象永不释放，导致内存泄漏。
+ TSharedPtr无法对继承自UObject的对象指针进行计数，raw pointers才可以。
+ 如果raw pointers想加入GC，那么指针所指对象必须继承FGCObject类。
+因为C++11已经有一套 smart pointers，为了和UE4的垃圾回收区分开，所以TSharedPtr作用对象不包括raw pointers。
+ TWeakObjectPtr TWeakObjectPtr 保持的对象不能防止被垃圾回收。若引用的对象在其他地方被销毁，则 TWeakObjectPtr 内部的指针自动将被置为NULL，TWeakObjectPtr::IsValid()会返回false。TSharedPtr 则没有这个作用。
+Usage Assignment
+TWeakObjectPtr&lt;AActor&gt; MyWeakActor;MyWeakActor = MyActor; Get value
+AActor* Actor = MyWeakActor.Get(); or
+if(MyWeakActor.Get()){ACharacter* Character = Cast&lt;ACharacter&gt;(MyWeakActor);} if MyActor has been destroyed, MyWeakActor.
+      
+      <p>
+        <a href="https://dawnarc.com/2018/07/ue4-tsharedptr-tweakobjectptr-and-tuniqueptr/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2018/07/ue4error-c3668-utexturecubeupdateresourcew/">
+          [UE4]error C3668: &#39;UTextureCube::UpdateResourceW&#39;
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2018-07-02T20:04:02&#43;08:00">
+        
+  
+  
+  
+  
+    Monday, 20:04, Jul 2, 2018
+  
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        4.19 编译错误：
+2&gt;F:\EpicGames\UE_4.19\Engine\Source\Runtime\Engine\Classes\Engine/TextureCube.h(69): error C3668: 'UTextureCube::UpdateResourceW': method with override specifier 'override' did not override any base class methods2&gt;F:\EpicGames\UE_4.19\Engine\Source\Runtime\Engine\Classes\Engine/CanvasRenderTarget2D.h(43): error C3668: 'UCanvasRenderTarget2D::UpdateResourceW': method with override specifier 'override' did not override any base class methods 4.18 编译错误：
+2&gt;f:\epicgames\ue_4.18\engine\source\runtime\core\public\HAL/ThreadSafeCounter64.h(67): error C2039: '_InterlockedIncrement': is not a member of 'FWindowsPlatformAtomics'2&gt;F:\EpicGames\UE_4.18\Engine\Source\Runtime\Core\Public\Windows/WindowsPlatformAtomics.h(14): note: see declaration of 'FWindowsPlatformAtomics'2&gt;f:\epicgames\ue_4.18\engine\source\runtime\core\public\HAL/ThreadSafeCounter64.h(67): error C2665: '_InterlockedIncrement': none of the 4 overloads could convert all the argument types2&gt;C:\Program Files (x86)\Windows Kits\8.
+      
+      <p>
+        <a href="https://dawnarc.com/2018/07/ue4error-c3668-utexturecubeupdateresourcew/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2018/06/c-non-static-member-function-as-callback-function-and-achieve-inheritance/">
+          [C&#43;&#43;]non-static member function as callback function and achieve inheritance
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2018-06-30T17:19:40&#43;08:00">
+        
+  
+  
+  
+  
+    Saturday, 17:19, Jun 30, 2018
+  
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/c&#43;&#43;">C&#43;&#43;</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        keywords：C++ 非静态成员函数作为回调函数并实现继承多态
+Base.hpp
+#pragma onceclass Base{public:virtual void TestFun1(int Param) {}virtual void TestFun2(int Param) {}}; Child.hpp
+#pragma once#include &lt;iostream&gt;#include &quot;Base.hpp&quot;class Child : public Base{public:void TestFun1(int Param) override{printf(&quot;Fun1 : %d\n&quot;, Param);}void TestFun2(int Param) override{printf(&quot;Fun2 : %d\n&quot;, Param);}}; EventManager.h
+// Fill out your copyright notice in the Description page of Project Settings.
+      
+      <p>
+        <a href="https://dawnarc.com/2018/06/c-non-static-member-function-as-callback-function-and-achieve-inheritance/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2018/06/c-how-to-erase-an-element-from-std-vector-by-index/">
+          [C&#43;&#43;]How to erase an element from std vector by index
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2018-06-29T21:39:40&#43;08:00">
+        
+  
+  
+  
+  
+    Friday, 21:39, Jun 29, 2018
+  
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/c&#43;&#43;">C&#43;&#43;</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        keywords：C++ 用索引删除 std::vector 中的数组元素
+To delete a single element, you could do:
+std::vector&lt;int&gt; vec;vec.push_back(6);vec.push_back(-17);vec.push_back(12);// Deletes the second element (vec[1])vec.erase(vec.begin() + 1); Or, to delete more than one element at once:
+// Deletes the second through third elements (vec[1], vec[2])vec.erase(vec.begin() + 1, vec.begin() + 3); 参考自：How do I erase an element from std::vector&lt;&gt; by index?
+https://stackoverflow.com/questions/875103/how-do-i-erase-an-element-from-stdvector-by-index
+ 无论精神多么独立的人，感情却总是在寻找一种依附，寻找一种归宿。---路遥《平凡的世界》
+      
+      <p>
+        <a href="https://dawnarc.com/2018/06/c-how-to-erase-an-element-from-std-vector-by-index/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2018/06/versioncontrolgit-reset-type/">
+          [VersionControl]git Reset Type
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2018-06-28T18:38:02&#43;08:00">
+        
+  
+  
+  
+  
+    Thursday, 18:38, Jun 28, 2018
+  
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/versioncontrol">VersionControl</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        概述 Reset Type有三种类型：Soft、Mixed、Hard。
+理解Reset Type之前，先解释下以下术语：
+ HEAD 这是当前分支版本顶端的别名，也就是在当前分支你最近的一个提交 Index Index也被称为staging area，是指一整套即将被下一个提交的文件集合。他也是将成为HEAD的父亲的那个commit Working Directory 代表你正在工作的那个文件集，又称作Working Tree。  三个Reset级别的意思分别是：
+ Soft # 还原 HEAD Mixed # 还原 HEAD、Index # 默认参数 Hard # 还原 HEAD、Index、Working Directory  应用 如果本地有commit，但是没有push，此时想把这个commit 回退掉，则：右键需要回退的SHA-1 -》 Reset &ldquo;master&rdquo; to this。   然后和弹出菜单：   选择合适的Reset Type，点击OK。
+注意事项：
+根据需要选择Reset Type：
+ 若本地无修改，那么就选择 Soft; 若本地有修改未commit，那么就选择 Mixed; 若本地有修改且已commit，那么就选择 Hard;  参考自：git reset soft,hard,mixed之区别深解
+https://www.cnblogs.com/kidsitcn/p/4513297.html
+ 生命的价值不在于时间的长短，而在于你如何利用它。
+      
+      <p>
+        <a href="https://dawnarc.com/2018/06/versioncontrolgit-reset-type/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
         <a class="link-unstyled" href="https://dawnarc.com/2018/06/versioncontrolorig_head-fetch_head-merge_head%E5%8C%BA%E5%88%AB/">
           [VersionControl]ORIG_HEAD, FETCH_HEAD, MERGE_HEAD区别
         </a>
@@ -912,412 +1317,6 @@ git fetch 真正理解 git fetch, git pull，要讲清楚git fetch，git pull,�
 </article>
 
           
-            
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2018/06/c-how-to-add-constructors-or-destructors-to-an-unnamed-class%E4%B8%BA%E5%8C%BF%E5%90%8D%E7%B1%BB%E6%B7%BB%E5%8A%A0%E6%9E%84%E9%80%A0%E5%87%BD%E6%95%B0%E4%B8%8E%E6%9E%90%E6%9E%84%E5%87%BD%E6%95%B0/">
-          [C&#43;&#43;]How to add constructors or destructors to an unnamed class(为匿名类添加构造函数与析构函数)
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2018-06-06T17:44:40&#43;08:00">
-        
-  
-  
-  
-  
-    Wednesday, 17:44, Jun 6, 2018
-  
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/c&#43;&#43;">C&#43;&#43;</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        keywords：匿名类，匿名结构体、构造函数、析构函数、Lambda
-为匿名类添加构造函数与析构函数，有两种方式：
- C++98中在匿名类内部加一个命名类 C++11 Lambda语法  C++98 C++98中，可以在匿名类内部放一个命名类(named class )，然后再为命名类添加构造和析构函数，当匿名类构造或析构时，就会去调用命名类的构造函数和析构函数。
-#include &lt;iostream&gt;#include &lt;cmath&gt;int main() {struct {struct S {double a;int b;S() : a(sqrt(4)), b(42) { std::cout &lt;&lt; &quot;constructed&quot; &lt;&lt; std::endl; }~S() { std::cout &lt;&lt; &quot;destructed&quot; &lt;&lt; std::endl; }} s;} instance1, instance2;std::cout &lt;&lt; &quot;body&quot; &lt;&lt; std::endl;} C++11 Lambda #include &lt;iostream&gt;#include &lt;cmath&gt;int main() {struct {double a { sqrt(4) };int b { []{std::cout &lt;&lt; &quot;constructed&quot; &lt;&lt; std::endl;return 42; }()};} instance1, instance2;} 参考 How to add constructors/destructors to an unnamed class?
-      
-      <p>
-        <a href="https://dawnarc.com/2018/06/c-how-to-add-constructors-or-destructors-to-an-unnamed-class%E4%B8%BA%E5%8C%BF%E5%90%8D%E7%B1%BB%E6%B7%BB%E5%8A%A0%E6%9E%84%E9%80%A0%E5%87%BD%E6%95%B0%E4%B8%8E%E6%9E%90%E6%9E%84%E5%87%BD%E6%95%B0/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-          
-            
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2018/06/openglglm%E5%B8%B8%E7%94%A8%E5%87%BD%E6%95%B0%E8%A7%A3%E9%87%8A%E8%AF%B4%E6%98%8E/">
-          [OpenGL]GLM常用函数解释说明
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2018-06-03T22:57:40&#43;08:00">
-        
-  
-  
-  
-  
-    Sunday, 22:57, Jun 3, 2018
-  
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/opengl">OpenGL</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        GLM默认使用右手坐标系，如果要改成默认左手坐标系，使用：
-GLM_FORCE_LEFT_HANDED &lt;glm/trigonometric.hpp&gt; GLM_FUNC_DECL GLM_CONSTEXPR vec&lt; L, T, Q &gt; radians (vec&lt; L, T, Q &gt; const &amp;degrees) 将角度转化为弧度。
- &lt;glm/gtx/transform.hpp&gt; GLM_FUNC_DECL mat&lt; 4, 4, T, Q &gt; rotate (T angle, vec&lt; 3, T, Q &gt; const &amp;v) 使用一个用弧度(radians)表示的角度(degrees)，以及一个用3个标量(scalar)表示的坐标(axis)，来构建一个4X4的旋转矩阵(rotate matrix)。
-&lt;glm/gtc/matrix_transform.hpp&gt; GLM_FUNC_DECL mat&lt;4, 4, T, Q&gt; lookAt (vec&lt;3, T, Q&gt; const &amp;eye, vec&lt;3, T, Q&gt; const &amp;center, vec&lt;3, T, Q&gt; const &amp;up) 基于默认的偏手坐标系来构建一个给定视图矩阵(view matrix)的视角(look)
- GLM_FUNC_DECL mat&lt;4, 4, T, defaultp&gt; perspective (T fovy, T aspect, T near, T far) 为一个对称透视图截锥(symmetric perspective-view frustum)创建矩阵，基于默认的偏手坐标系和默认的近剪裁面距离、远剪裁面距离
-      
-      <p>
-        <a href="https://dawnarc.com/2018/06/openglglm%E5%B8%B8%E7%94%A8%E5%87%BD%E6%95%B0%E8%A7%A3%E9%87%8A%E8%AF%B4%E6%98%8E/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-          
-            
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2018/06/shadingads%E5%85%89%E7%85%A7%E6%A8%A1%E5%9E%8B%E5%AE%9E%E4%BE%8Bopengl%E5%AE%9E%E7%8E%B0/">
-          [Shading]ADS光照模型实例(OpenGL实现)
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2018-06-03T22:30:40&#43;08:00">
-        
-  
-  
-  
-  
-    Sunday, 22:30, Jun 3, 2018
-  
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/shading">Shading</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        keywords：ambient diffuse specular、Phong Shading、Phong reflection model
-公式概述 ADS光照模型又称为“冯氏反射模型”(Phong reflection model)，为什么叫冯氏：
-裴祥风（Bùi Tường Phong音译, 1942年—1975年），美国电脑CG研究学者，于越南出生。他于1973年在尤他大学取得哲学博士学位，并发明了Phong反射模型及Phong著色法，并广为CG界采用。1975死于白血病。
- ADS光照模型公式缩写：
-LightIntensity = Ambient + Diffuse + Specular; 参数说明：
- Ambient 环境光 Diffuse 漫反射 Specular 全反射光 / 镜面光  三个参数渲染效果示例：   三个参数拆解如下：
-Ambient = La * Ka; Diffuse = Ld * Kd * max( dot(s, n), 0.0 ); Specular = Ls * Ks * pow( max( dot(r, v), 0.0 ), f ); 参数说明：
- La 环境光强度(Ambient light intensity) Ka 材质环境光反射率 / 材质环境光反射系数(Ambient reflectivity) Ld 漫射光强度 / 散射光强度(Diffuse light intensity) Kd 材质漫反射率 / 材质漫反射系数(Diffuse reflectivity) s 顶点 / 曲面点 到光源方向的单位向量(Direction from the surface point to the light source) n 顶点 / 曲面点 的法线单位向量(Normal vector at the surface point) Ls 镜面光强度 / 全反射光强度(Specular light intensity) Ks 材质镜面反射率 / 材质镜面反射系数(Specular reflectivity) r 完全反射向量( the vector of perfect reflection) v 顶点 / 曲面点 到摄像机方向的向量( the vector towards the viewer) f 镜面高光(specular highlights)，值范围在1到200之间，值越小，镜面亮点越大    光源出射强度 / 出射光强度(Intensity of the outgoing light ) I 的完整计算公式如下：
-      
-      <p>
-        <a href="https://dawnarc.com/2018/06/shadingads%E5%85%89%E7%85%A7%E6%A8%A1%E5%9E%8B%E5%AE%9E%E4%BE%8Bopengl%E5%AE%9E%E7%8E%B0/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-          
-            
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2018/05/ue4animationik-related/">
-          [UE4][Animation]IK Related
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2018-05-30T13:41:02&#43;08:00">
-        
-  
-  
-  
-  
-    Wednesday, 13:41, May 30, 2018
-  
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        Examples 工程1 在油管上看到一个UE4 IK动画的demo工程示例
-该示例作者的主页：https://www.patreon.com/unrealcg
-      演示视频：Advanced foot IK for Unreal Engine 4 - (100% Free)
-https://www.youtube.com/watch?v=XetC9ivIXFc
-demo工程下载地址(4.19)：
-https://pan.baidu.com/s/1mlcM0cseKWpprnISVM0P5Q
-工程2 该工程除了IK，还包括动画融合、物理等功能
-演示视频：UE4 - Advanced Locomotion System V3 - Features
-https://www.youtube.com/watch?v=yTniZCOCY7o
-下载地址：Unreal商城，60刀
-Advanced Locomotion System V3
-https://www.unrealengine.com/marketplace/advanced-locomotion-system-v1
-IK AnimNode FABRIK (Forward And Backward Reaching Inverse Kinematics) FABRIK
-https://docs.unrealengine.com/en-us/Engine/Animation/NodeReference/Fabrik
-Adding of a rifle and fabrik node to fix left hand
-https://www.youtube.com/watch?v=49MJWjlSHcw
-Look At Look At
-https://docs.unrealengine.com/en-us/Engine/Animation/NodeReference/SkeletalControls/LookAt
-CCDIK (Cyclic Coordinate Descent Inverse Kinematics) CCDIK
-      
-      <p>
-        <a href="https://dawnarc.com/2018/05/ue4animationik-related/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-          
-            
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2018/05/ue4animationdifference-between-master-pose-copy-pose-and-mesh-merge/">
-          [UE4][Animation]Difference between Master Pose, Copy Pose and Mesh merge
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2018-05-29T16:50:02&#43;08:00">
-        
-  
-  
-  
-  
-    Tuesday, 16:50, May 29, 2018
-  
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        Reference: Master pose vs copy pose vs mesh merge in UE4
-https://iluvanimation.blogspot.tw/2017/04/master-pose-vs-copy-pose-vs-mesh-merge.html
-Since I get this question so often, I'm just writing quick summary for each.
-When you have different parts of bodies, and you want to allow players to pick which part they want, we have multiple choices, and people are wondering what are the main differences.
-Say you have head, upper body, lower body, and how do you allow them to pick and what are the differences?
-      
-      <p>
-        <a href="https://dawnarc.com/2018/05/ue4animationdifference-between-master-pose-copy-pose-and-mesh-merge/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-          
-            
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2018/05/ue4animationanimation-blueprint-inherit%E5%8A%A8%E7%94%BB%E8%93%9D%E5%9B%BE%E7%BB%A7%E6%89%BF%E4%B8%8E%E5%A4%8D%E7%94%A8/">
-          [UE4][Animation]Animation Blueprint Inherit(动画蓝图继承与复用)
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2018-05-29T12:36:02&#43;08:00">
-        
-  
-  
-  
-  
-    Tuesday, 12:36, May 29, 2018
-  
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        keyworks：Animation Blueprint Inherit、Animation Blueprint Reuse、蓝图继承、蓝图重用、蓝图复用
-三种方式可以重用动画蓝图逻辑：
- Blueprint Inherit（蓝图继承） Sub Animation Blueprint Instances Post Process Animation Blueprints  Animation Blueprint Inherit（动画蓝图继承） 角色蓝图继承和动画蓝图继承有部分相似，这里先说下角色蓝图继承
-右键角色蓝图 -》 Create Child Blueprint Class   这样创建出来的子蓝图，其构造函数中会自动生成一个执行父级蓝图构造函数的节点   其他的Event事件中，如果也需要调用父级蓝图的函数，可以右键对应节点 -》 Add call to parent function     动画蓝图也可以使用上述角色蓝图继承的方式。
-但直接右键生成子蓝图的方式创建出来的动画蓝图，无法选择其他骨骼，只能保持和父级动画蓝图的骨骼一样   如果要创建一个与父级动画蓝图骨骼不同的子动画蓝图，可以先新建一个普通的动画蓝图   然后选择需要继承的父级动画蓝图，以及子动画蓝图的骨骼   这样生成出来的子动画蓝图，其Event Graph中，会自动生成一个执行调用父级蓝图的节点：Parent: Blueprint Update Animation   Sub Animation Blueprint Instance   Using Sub Anim Instances
-      
-      <p>
-        <a href="https://dawnarc.com/2018/05/ue4animationanimation-blueprint-inherit%E5%8A%A8%E7%94%BB%E8%93%9D%E5%9B%BE%E7%BB%A7%E6%89%BF%E4%B8%8E%E5%A4%8D%E7%94%A8/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-          
           
   <div class="pagination-bar">
     <ul class="pagination">
@@ -1339,7 +1338,7 @@ Say you have head, upper body, lower body, and how do you allow them to pick and
           </li>
         
       
-      <li class="pagination-number">page 14 of 39</li>
+      <li class="pagination-number">page 14 of 40</li>
     </ul>
   </div>
 

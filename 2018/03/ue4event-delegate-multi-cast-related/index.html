@@ -479,6 +479,25 @@ GunMeshComp-&gt;OnComponentBeginOverlap.Add(DelegateBegin);
 <div class="alert warning ">
   <p>使用AddDynamic注册函数时，函数仍然需要添加UFUNCTION()。</p>
 </div>
+<h3 id="addlambda">AddLambda</h3>
+<p>If you don't want to define callback function as member function of class, define callback function in where it be registered, you can use <code>AddLambda</code>.</p>
+<p>Example:<br>
+Engine\Source\Editor\SequenceRecorder\Private\SequenceRecorderModule.cpp</p>
+<pre><code>virtual void StartupModule() override
+{
+    // register standalone UI
+    auto RegisterTabSpawner = []()
+    {
+        FGlobalTabmanager::Get()-&gt;RegisterNomadTabSpawner(SequenceRecorderTabName, FOnSpawnTab::CreateStatic(&amp;FSequenceRecorderModule::SpawnSequenceRecorderTab))
+        .SetGroup(WorkspaceMenu::GetMenuStructure().GetLevelEditorCategory())
+        .SetDisplayName(LOCTEXT(&quot;SequenceRecorderTabTitle&quot;, &quot;Sequence Recorder&quot;))
+        .SetTooltipText(LOCTEXT(&quot;SequenceRecorderTooltipText&quot;, &quot;Open the Sequence Recorder tab.&quot;))
+        .SetIcon(FSlateIcon(FEditorStyle::GetStyleSetName(), &quot;SequenceRecorder.TabIcon&quot;));
+    };
+	
+    LevelEditorTabManagerChangedHandle = LevelEditorModule.OnTabManagerChanged().AddLambda(RegisterTabSpawner);
+}
+</code></pre>
 <hr>
 <p><code>天上的神明和星辰，人间的艺术与真纯，我们所敬畏和景仰的，莫过于此。-丰子恺</code></p>
 

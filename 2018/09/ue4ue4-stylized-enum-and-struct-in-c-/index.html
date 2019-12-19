@@ -12,14 +12,18 @@
 UENUM()enum Status{Stopped UMETA(DisplayName = &quot;Stopped&quot;),Moving UMETA(DisplayName = &quot;Moving&quot;),Attacking UMETA(DisplayName = &quot;Attacking&quot;),}; 2, using
 UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Status)TEnumAsByte&lt;Status&gt; Status; struct 1, define
 USTRUCT(BlueprintType)struct TESTPROJ_API FMyStruct{GENERATED_USTRUCT_BODY()UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = &quot;Test&quot;)int32 Test;FMyStruct(){}}; 2, using
-UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)FMyStruct Test;  我们拥有艺术，所以不会被真相击垮。──尼采">
+UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)FMyStruct Test; Issues Example:
+PROPERTY(BlueprintReadWrite)TArray&lt;FMyStruct*&gt; AnimArray; Error at building:
+error : Inappropriate &#39;*&#39; on variable of type &#39;FMyStruct&#39;, cannot have an exposed pointer to this type.">
 
 
 <meta property="og:description" content="enum 1, define
 UENUM()enum Status{Stopped UMETA(DisplayName = &quot;Stopped&quot;),Moving UMETA(DisplayName = &quot;Moving&quot;),Attacking UMETA(DisplayName = &quot;Attacking&quot;),}; 2, using
 UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Status)TEnumAsByte&lt;Status&gt; Status; struct 1, define
 USTRUCT(BlueprintType)struct TESTPROJ_API FMyStruct{GENERATED_USTRUCT_BODY()UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = &quot;Test&quot;)int32 Test;FMyStruct(){}}; 2, using
-UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)FMyStruct Test;  我们拥有艺术，所以不会被真相击垮。──尼采">
+UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)FMyStruct Test; Issues Example:
+PROPERTY(BlueprintReadWrite)TArray&lt;FMyStruct*&gt; AnimArray; Error at building:
+error : Inappropriate &#39;*&#39; on variable of type &#39;FMyStruct&#39;, cannot have an exposed pointer to this type.">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[UE4]UE4 stylized Enum and Struct in C&#43;&#43;">
 <meta name="twitter:title" content="[UE4]UE4 stylized Enum and Struct in C&#43;&#43;">
@@ -30,12 +34,16 @@ UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)FMyStruct Test;  我们拥有艺
 UENUM()enum Status{Stopped UMETA(DisplayName = &quot;Stopped&quot;),Moving UMETA(DisplayName = &quot;Moving&quot;),Attacking UMETA(DisplayName = &quot;Attacking&quot;),}; 2, using
 UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Status)TEnumAsByte&lt;Status&gt; Status; struct 1, define
 USTRUCT(BlueprintType)struct TESTPROJ_API FMyStruct{GENERATED_USTRUCT_BODY()UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = &quot;Test&quot;)int32 Test;FMyStruct(){}}; 2, using
-UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)FMyStruct Test;  我们拥有艺术，所以不会被真相击垮。──尼采">
+UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)FMyStruct Test; Issues Example:
+PROPERTY(BlueprintReadWrite)TArray&lt;FMyStruct*&gt; AnimArray; Error at building:
+error : Inappropriate &#39;*&#39; on variable of type &#39;FMyStruct&#39;, cannot have an exposed pointer to this type.">
 <meta name="twitter:description" content="enum 1, define
 UENUM()enum Status{Stopped UMETA(DisplayName = &quot;Stopped&quot;),Moving UMETA(DisplayName = &quot;Moving&quot;),Attacking UMETA(DisplayName = &quot;Attacking&quot;),}; 2, using
 UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Status)TEnumAsByte&lt;Status&gt; Status; struct 1, define
 USTRUCT(BlueprintType)struct TESTPROJ_API FMyStruct{GENERATED_USTRUCT_BODY()UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = &quot;Test&quot;)int32 Test;FMyStruct(){}}; 2, using
-UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)FMyStruct Test;  我们拥有艺术，所以不会被真相击垮。──尼采">
+UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)FMyStruct Test; Issues Example:
+PROPERTY(BlueprintReadWrite)TArray&lt;FMyStruct*&gt; AnimArray; Error at building:
+error : Inappropriate &#39;*&#39; on variable of type &#39;FMyStruct&#39;, cannot have an exposed pointer to this type.">
 <meta property="og:locale" content="en-us">
 
   
@@ -399,6 +407,27 @@ struct TESTPROJ_API FMyStruct
 <pre><code>UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     FMyStruct Test;
 </code></pre>
+<h5 id="issues">Issues</h5>
+<p>Example:</p>
+<pre><code>PROPERTY(BlueprintReadWrite)
+    TArray&lt;FMyStruct*&gt; AnimArray;
+</code></pre>
+<p>Error at building:</p>
+<pre><code>error : Inappropriate '*' on variable of type 'FMyStruct', cannot have an exposed pointer to this type.
+</code></pre>
+<p>Caused by:<br>
+The Unreal property system that Blueprints are built on top only support passing pointers to non-UObjects, you can only pass them &lsquo;by value&rsquo; or &lsquo;by reference&rsquo;.</p>
+<p>Solution:<br>
+Using reference instead of pointer.</p>
+<pre><code>PROPERTY(BlueprintReadWrite)
+    TArray&lt;FMyStruct&amp;&gt; AnimArray;
+</code></pre>
+<p>Or <code>by value</code>:</p>
+<pre><code>PROPERTY(BlueprintReadWrite)
+    TArray&lt;FMyStruct&gt; AnimArray;
+</code></pre>
+<p>Reference:<br>
+<a href="https://answers.unrealengine.com/questions/132416/how-do-i-expose-a-pointer-to-a-struct.html">https://answers.unrealengine.com/questions/132416/how-do-i-expose-a-pointer-to-a-struct.html</a></p>
 <hr>
 <p><code>我们拥有艺术，所以不会被真相击垮。</code>──尼采</p>
 
@@ -426,7 +455,7 @@ struct TESTPROJ_API FMyStruct
           
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2018/09/ue4animationroot-motion/" data-tooltip="[UE4][Animation]Root Motion">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2018/09/ue4animationroot-motion-notes/" data-tooltip="[UE4][Animation]Root Motion Notes">
               
                   <i class="fa fa-angle-left"></i>
                   <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
@@ -494,7 +523,7 @@ struct TESTPROJ_API FMyStruct
           
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2018/09/ue4animationroot-motion/" data-tooltip="[UE4][Animation]Root Motion">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2018/09/ue4animationroot-motion-notes/" data-tooltip="[UE4][Animation]Root Motion Notes">
               
                   <i class="fa fa-angle-left"></i>
                   <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
