@@ -318,6 +318,68 @@ if (!doNotTrack) {
     
     <div class="postShorten-header">
       <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2016/09/ue4%E7%B2%92%E5%AD%90%E7%B3%BB%E7%BB%9F%E7%9A%84%E7%A7%BB%E5%8A%A8%E9%80%BB%E8%BE%91%E7%BC%96%E5%86%99/">
+          [UE4]粒子系统的移动逻辑编写
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2016-09-20T20:06:40&#43;08:00">
+        
+  
+  
+  
+  
+    Tuesday, 20:06, Sep 20, 2016
+  
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        keywords：UE4、粒子特效、粒子、Particle、Emitter、移动、Move
+1，	先在资源浏览器中新建一个蓝图，类型选择Actor即可     2，	打开actor蓝图，点击右上角的Add Component，类型选择Particle System：   添加之后，默认会添加到DefaultSceneRoot之下：   DefaultSceneRoot我们不需要。鼠标左键按住ParticleSytem节点不放，拖拽到DefaultSceneRoot节点之中，这样DefaultSceneRoot就会被替换为ParticleSystem：   3，	设置ParticleSystem，选择我们做好的粒子特效：   4，添加ProjectileMovement：     5，设置ProjectileMovement参数：设置初始速度和最大速度，如果不需要重力影响，可以将Projectile Gravity Scale设置为0。   ProjectileMovement的速度可以先设置为0，在蓝图事件中对速度进行，逻辑如下（在Actor蓝图中编辑）：   如果碰到Actor无法移动的问题，原因可能如下： 1，	static mesh没有设置为Movable。由于我们这里是粒子，所以没有static mesh，如果有，设置如下：   2，	速率Velocity设置太小。所以上面我么对Normalize出来的Vector乘以了300。   
+      
+      <p>
+        <a href="https://dawnarc.com/2016/09/ue4%E7%B2%92%E5%AD%90%E7%B3%BB%E7%BB%9F%E7%9A%84%E7%A7%BB%E5%8A%A8%E9%80%BB%E8%BE%91%E7%BC%96%E5%86%99/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
         <a class="link-unstyled" href="https://dawnarc.com/2016/09/ue4%E8%93%9D%E5%9B%BE%E4%B8%AD%E5%A6%82%E4%BD%95%E6%8B%86%E5%88%86%E8%AE%BE%E7%BD%AEvector%E5%92%8Crotator%E4%B8%AD%E7%9A%84xyz/">
           [UE4]蓝图中如何拆分设置Vector和Rotator中的X、Y、Z
         </a>
@@ -1178,72 +1240,6 @@ FDateTime Time = FDateTime::Now();int64 Timestamp = Time.ToUnixTimestamp(); �
 </article>
 
             
-              
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2016/08/ue4%E7%94%A8c-%E5%A6%82%E4%BD%95%E5%88%9B%E5%BB%BAbox-collision/">
-          [UE4]用C&#43;&#43;如何创建Box Collision
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2016-08-03T15:53:40&#43;08:00">
-        
-  
-  
-  
-  
-    Wednesday, 15:53, Aug 3, 2016
-  
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        在蓝图中直接编辑添加Box Collision是这样的： ![This is an image](/img/20160803-[UE4]用C++如何创建Box Collision.jpg)
-如果用C++，则如下：
-UBoxComponent* CollisionBox = CreateDefaultSubobject&lt;UBoxComponent&gt;(TEXT(&quot;TestCollision&quot;));CollisionBox-&gt;SetBoxExtent(FVector(32.f, 32.f, 96.f));CollisionBox-&gt;bDynamicObstacle = true;CollisionBox-&gt;SetupAttachment(GetRootComponent()); 注： 使用CreateDefaultSubobject必须在构造函数中，如果是其他成员函数，则形式为 UBoxComponent* MyNewBox = NewObject(this); 这里的this是一个Character指针。但这样有个问题：NewObject非构造函数中创建的Box无法及时更新NavMesh，也就是说该box在NavMesh不会被当作障碍物。
-其他参考：
-C++创建BoxCollision(BoxComponent)并注册Overlap和Hit事件回调函数
-https://dawnarc.com/2017/05/ue4c--%E5%88%9B%E5%BB%BAboxcollisionboxcomponent%E5%B9%B6%E6%B3%A8%E5%86%8Coverlap%E5%92%8Chit%E4%BA%8B%E4%BB%B6%E5%9B%9E%E8%B0%83%E5%87%BD%E6%95%B0/
-      
-      <p>
-        <a href="https://dawnarc.com/2016/08/ue4%E7%94%A8c-%E5%A6%82%E4%BD%95%E5%88%9B%E5%BB%BAbox-collision/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-            
             
   <div class="pagination-bar">
     <ul class="pagination">
@@ -1274,7 +1270,7 @@ https://dawnarc.com/2017/05/ue4c--%E5%88%9B%E5%BB%BAboxcollisionboxcomponent%E5%
         
         <footer id="footer" class="main-content-wrap">
   <span class="copyrights">
-    &copy; 2019 Neil Wang. All Rights Reserved. Powered by <A href="https://gohugo.io/"> Hugo</A> | Theme created by <A href="https://github.com/kakawait/hugo-tranquilpeak-theme/"> Tranquilpeak</A>.
+    &copy; 2020 Neil Wang. All Rights Reserved. Powered by <A href="https://gohugo.io/"> Hugo</A> | Theme created by <A href="https://github.com/kakawait/hugo-tranquilpeak-theme/"> Tranquilpeak</A>.
   </span>
 </footer>
 
