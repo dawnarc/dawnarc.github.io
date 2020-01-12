@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.60.1 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.62.2 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="UE4性能优化, UE4, Performance, Optimization">
 <meta name="description" content="keywords：UE4性能优化、Performance Optimization">
@@ -355,7 +355,7 @@ if (!doNotTrack) {
             <div class="main-content-wrap">
               <p>keywords：UE4性能优化、Performance Optimization</p>
 <p>内容都是处理项目问题的相关笔记，留给自己做备忘录，也分享出来让别人少走弯路。</p>
-<h5 id="heading">零散记录</h5>
+<h5 id="零散记录">零散记录</h5>
 <ol>
 <li>
 <p>GPUProfile来统计性能消耗的时候，在editor模式下不是很准，因为编辑器的消耗也算进去了，如果要用，最好以Game模式来查看。</p>
@@ -371,7 +371,7 @@ if (!doNotTrack) {
 <p>面数对UE4来说不敏感，即使在移动端。ipad 4上，50万的三角面，也能够以30fps帧率稳定运行，移动端主要对贴图大小、材质复杂度较为敏感。</p>
 </li>
 </ol>
-<h5 id="heading1">代码编译优化</h5>
+<h5 id="代码编译优化">代码编译优化</h5>
 <ol>
 <li>
 <p>C++ 比 蓝图快100到1000倍<br>
@@ -393,7 +393,7 @@ UE4做了优化，当你使用<code>FTransform::TransformXXX()</code>时，如�
 <p>更多详情见微软C++团队博客：<a href="https://devblogs.microsoft.com/cppblog">C++ Team Blog</a>。</p>
 </li>
 </ol>
-<h5 id="ue4-api">代码算法优化（仅限UE4 API相关）</h5>
+<h5 id="代码算法优化仅限ue4-api相关">代码算法优化（仅限UE4 API相关）</h5>
 <ol>
 <li>
 <p>清空TArray时，如果该TArray对象还会继续使用，使用<code>Reset()</code>代替<code>Empty()</code>，因为前者不会销毁内存空间。</p>
@@ -405,7 +405,7 @@ UE4做了优化，当你使用<code>FTransform::TransformXXX()</code>时，如�
 <p><code>TSoftObjectPtr</code>内部使用了RTTI的<code>dynamic_cast</code>，这个操作很贵，避免在run-time大规模使用，尤其是服务端。如果非要在run-time中频繁使用，个人建议做法：自己建一个map当作资源加载管理的缓存，key是资源路径，value是一个自定义结构体，其中保存了对象指针和资源类型枚举，获取的时候根据枚举值<code>static_cast</code>强转。</p>
 </li>
 </ol>
-<h5 id="heading2">视距裁剪（剔除）</h5>
+<h5 id="视距裁剪剔除">视距裁剪（剔除）</h5>
 <ol>
 <li>
 <p>开启<code>Occlusion Culling</code> (Project Settings -&gt; Engine -&gt; Rendering -&gt; Occlusion Culling，默认已开启)。如果需要增大以屏占比基准的剔除强度（代价是剔除效果比较突兀）以提升渲染效率，将以下属性值增大：<br>
@@ -417,7 +417,7 @@ UE4做了优化，当你使用<code>FTransform::TransformXXX()</code>时，如�
 <p>使用<code>Cull Distance Volume</code>进行细粒度的视距裁剪。Project Settings中的<code>Occlusion Culling</code>只能通过一个临界阀值来控制视距裁剪，而<code>Cull Distance Volume</code>可以设置多级裁剪参数。</p>
 </li>
 </ol>
-<h5 id="heading3">灯光优化</h5>
+<h5 id="灯光优化">灯光优化</h5>
 <ol>
 <li>
 <p>3种光源的性能消耗从低到高：<br>
@@ -466,7 +466,7 @@ DFAO相关的两个优化选项：</p>
 <p>如果场景中有大量点光源和聚光灯且都是动态的，此时通过<code>Distance Field</code>动态地对LightComponet执行<code>SetVisibility</code>和<code>SetHiddenInGame</code>，那么性能可提高30%到60%。这个结论是基于对官方商城一款付费插件 <a href="https://devblogs.microsoft.com/cppblog">Dynamic Lighting Portal System (Performance Booster)</a> 的源码研读。引擎本身有对灯光<code>Occlusion Culling</code>，至于为什么<code>SetVisibility</code>和<code>SetHiddenInGame</code>之后还能有这么大性能提升，估计需要仔细研究UE4渲染相关代码，个人不成熟的推测：以deferred shading为例，每个光源的在image space处理像素时，即使某个光源没有对当前像素产生明显影响，但是对应的计算过程仍然执行了，可能渲染层并没有因上层应用是游戏项目还是影视动画渲染而去做专门优化，而这个插件通过将灯光隐藏并禁用后，那么在处理各个像素光照信息时，这些光源的计算逻辑直接跳过了，所以可以大幅提升性能。</p>
 </li>
 </ol>
-<h5 id="heading4">阴影优化</h5>
+<h5 id="阴影优化">阴影优化</h5>
 <ol>
 <li>
 <p>如果使用了非静态的Directional Light（Stationary 或者 Movable），场景中有大量单位时，一定要开启<code>Dynamic Shadow Distance</code>（默认为0，表示关闭）。<br>
@@ -485,7 +485,7 @@ Dynamic Shadow Distance 表示在多少距离内使用动态阴影，超过这�
 <p>开启动态光之后消耗巨大，若既想启用动态光，又想保证性能，可以将阴影级别较低，默认是级别3（Epic），可以改成级别2（High）。</p>
 </li>
 </ol>
-<h5 id="heading5">材质优化</h5>
+<h5 id="材质优化">材质优化</h5>
 <ol>
 <li>
 <p>材质类型的性能，从快到慢：Opaque -&gt; Masked -&gt; Translucent。</p>
@@ -505,7 +505,7 @@ Dynamic Shadow Distance 表示在多少距离内使用动态阴影，超过这�
 </ol>
 <p>Performance Guidelines for Artists and Designers<br>
 <a href="https://docs.unrealengine.com/latest/INT/Engine/Performance/Guidelines/">https://docs.unrealengine.com/latest/INT/Engine/Performance/Guidelines/</a></p>
-<h4 id="heading6">植被优化</h4>
+<h4 id="植被优化">植被优化</h4>
 <ol>
 <li>
 <p>地形编辑时，使用Instanced Static Meshes。Intancing会增加GPU的开销，但是可以显著降低CPU的开销。注意：实际应用中，Instancing并不能作为减少CPU draw call次数的主要途径，因为实际的游戏场景不可能全是instanced mesh，即使是满屏的植被，也并非一定要用instanced mesh。要减少draw call次数，需要减少材质种类，提高材质复用率。</p>
@@ -521,7 +521,7 @@ Dynamic Shadow Distance 表示在多少距离内使用动态阴影，超过这�
 <p>为Instanced Mesh设置合适的<code>Cull Distance</code>。</p>
 </li>
 </ol>
-<h5 id="heading7">物理与碰撞优化</h5>
+<h5 id="物理与碰撞优化">物理与碰撞优化</h5>
 <ol>
 <li>
 <p>BoxComponent的 Generate Overlap Events 设置为false。如果不需要Overlap事件，那么就将该属性设置设置为false，默认为true。当BoxCompont达到一定量级时，开启Generate Overlap Events的性能消耗是关闭情况下的两倍。</p>
@@ -540,7 +540,7 @@ Dynamic Shadow Distance 表示在多少距离内使用动态阴影，超过这�
 建议自己实现一个简易的自定义Collision，比如球形Collision，然后计算该 Collision 与单位之间的直线距离，来判断是否是否发生了碰撞，并且降低检测间隔，比如 0.1秒一次。用此种方式，如果单位数量较多时，还需要自己写一个类似<code>Distance Filed</code>的八叉树来缓存单位列表，以降低计算单位间距时遍历单位列表的循环次数。</p>
 </li>
 </ol>
-<h5 id="heading8">动画优化</h5>
+<h5 id="动画优化">动画优化</h5>
 <ol>
 <li>
 <p>打开角色蓝图 -》 MeshComponent -》 Detail 面板中的 Optimization 类别下 -》 勾选 <code>Enable Update Rate Optimizations</code>。</p>
@@ -568,7 +568,7 @@ Animation Fast Path Optimization<br>
 <a href="https://docs.unrealengine.com/en-us/Engine/Animation/Optimization/FastPath">https://docs.unrealengine.com/en-us/Engine/Animation/Optimization/FastPath</a></p>
 </li>
 </ol>
-<h5 id="ui">UI优化</h5>
+<h5 id="ui优化">UI优化</h5>
 <ol>
 <li>
 <p>能用HUD解决的就不要用UMG，等到需要显示时才创建Widget对象，不显示时则销毁，UMG对象较多时性能消耗巨大。<br>
@@ -580,20 +580,20 @@ Animation Fast Path Optimization<br>
 </ol>
 <p>Epic Games工程师分享：如何在移动平台上做UE4的UI优化？<br>
 <a href="http://youxiputao.com/articles/11743">http://youxiputao.com/articles/11743</a></p>
-<h5 id="heading9">位移优化</h5>
+<h5 id="位移优化">位移优化</h5>
 <ol>
 <li>海量Pawn（比如500个）单位移动，如果是在 Tick 中使用 AddMovementInput 移动，帧率直接下降一半（比如从90帧下降到40多帧）。对于无法移动的单位，最好停止执行 AddMovementInput() ，以提升性能。</li>
 </ol>
-<h5 id="heading10">特效优化</h5>
+<h5 id="特效优化">特效优化</h5>
 <ol>
 <li>尽量不要使用 Volume domain，使用后会显著增加GPU开销。可以通过 <code>profilegpu</code> 检测 Volume 开销。</li>
 </ol>
-<h5 id="ai">AI优化</h5>
+<h5 id="ai优化">AI优化</h5>
 <ol>
 <li>如果角色不需要 Controller ，就不要给它 Spawn Controller。如果一个角色长时间停止，则先给他<code>Unpossesed()</code> ，等到可移动时再<code>PossessedBy()</code>。<br>
 测试：500个角色，AI Controller Class 设置为：null、 AIController、PlayerController 的帧数分别为 120 fps、 100 fps、75 fps。</li>
 </ol>
-<h5 id="dedicated-server">Dedicated Server优化</h5>
+<h5 id="dedicated-server优化">Dedicated Server优化</h5>
 <ol>
 <li>
 <p>服务端cook时剥离动画数据<br>
@@ -619,7 +619,7 @@ Project Settings -&gt; Engine -&gt; Animation -&gt; 勾选 Strip Animation Data 
 <p>4.20提供了针对Dedicated Server优化的新特性：Replication Graph，可以初略地理解为针对网络通信的LOD（不过Replication Graph提供了不止网络层面的LOD，更多特性见官方文档）。没有这个特性之前，服务端调用Multicast函数，几公里外的玩家也会收到Multicast，而实际上这种远距离玩家可能不需要即时更新数据，或者等到出现在视距内时再手动<code>ForceNetUpdate()</code>。有了Replication Graph之后，这种手动优化方式可以交给引擎自己管理。</p>
 </li>
 </ol>
-<h5 id="heading11">参考资料</h5>
+<h5 id="参考资料">参考资料</h5>
 <p>Performance and Profiling<br>
 <a href="https://docs.unrealengine.com/en-us/Engine/Performance">https://docs.unrealengine.com/en-us/Engine/Performance</a></p>
 <p>通过优化在UE4中实现良好性能和高质量视觉效果<br>

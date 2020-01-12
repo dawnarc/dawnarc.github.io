@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.60.1 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.62.2 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="">
 <meta name="description" content="讲之前，先说下如果两个Rotation相加的意义，比如：
@@ -389,7 +389,7 @@ FRotator Result =( FRotationMatrix(Rot1) * FRotationMatrix(Rot2)).Rotator();
 </code></pre>
 <p>得到的结果FRotator Result(0.f, 90.f, 90.f)，其意义是：
 <code>先将物体作Rot1旋转，即：Yaw方向（水平平面）旋转90度，然后再假设该物体相对坐标轴原点的旋转量为(0, 0, 0)，即没有作任何旋转，但实际Rotation相对坐标轴原点为(0, 90, 0)；然后再将物体进行Rot2旋转，即Pitch方向（垂直于(90, 0, 0)方向的平面）侧翻90度，因为侧翻90度前假设物体的Rotation是(0, 0, 0)，所以侧翻时所在的平面不再是Yaw=90的平面（垂直于(0, 90, 0)方向），而是Yaw=0的平面（垂直于(90, 0, 0)方向）。没做相关配图，这段话理解起来有点绕，最好用空间思维想象下，可以用手掌比划。</code></p>
-<h4 id="heading">实际应用：</h4>
+<h4 id="实际应用">实际应用：</h4>
 <p>比如空间中有两个物体：A和B，现在要将A旋转至与B相同的朝向，目前只知道A的相对世界坐标的Rotation Rw(90.f,0.f, 0.f)、B相对A（将A的Rotation当做(0, 0, 0)）的Rotation Rr(0.f, 90.f, 0.f)，求A旋转后的世界坐标Rotation。<br>
 此时的计算公式就是：</p>
 <pre><code>(FRotationMatrix(Rr) * FRotationMatrix(Rw)).Rotator()

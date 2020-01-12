@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.60.1 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.62.2 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="">
 <meta name="description" content="如何修改角色的最大移动速度 if (UCharacterMovementComponent* Movement = MyCharacter-&gt;GetCharacterMovement()){Movement-&gt;MaxWalkSpeed *= 0.5;} 如何修改角色的当前移动速度 Tick() 中执行：
@@ -375,20 +375,20 @@ if (!doNotTrack) {
           
           <div class="post-content markdown" itemprop="articleBody">
             <div class="main-content-wrap">
-              <h5 id="heading">如何修改角色的最大移动速度</h5>
+              <h5 id="如何修改角色的最大移动速度">如何修改角色的最大移动速度</h5>
 <pre><code>if (UCharacterMovementComponent* Movement = MyCharacter-&gt;GetCharacterMovement())
 {
     Movement-&gt;MaxWalkSpeed *= 0.5;
 }
 </code></pre>
-<h5 id="heading1">如何修改角色的当前移动速度</h5>
+<h5 id="如何修改角色的当前移动速度">如何修改角色的当前移动速度</h5>
 <p>Tick() 中执行：</p>
 <pre><code>GetCharacterMovement()-&gt;Velocity = FVector(0.f, 500.f, 0.f);
 </code></pre>
-<h5 id="pawn">如何停止正在移动的Pawn</h5>
+<h5 id="如何停止正在移动的pawn">如何停止正在移动的Pawn</h5>
 <pre><code>AController::StopMovement()
 </code></pre>
-<h5 id="gravity">修改重力加速度(Gravity)</h5>
+<h5 id="修改重力加速度gravity">修改重力加速度(Gravity)</h5>
 <ul>
 <li>
 <p>编辑器中设置全局重力加速度<br>
@@ -407,14 +407,14 @@ Project Settings -》 Engine -》 Physics -》 Default Physics Settings -》 Def
 </code></pre>
 </li>
 </ul>
-<h5 id="heading2">飞行模式中的加速减速问题</h5>
+<h5 id="飞行模式中的加速减速问题">飞行模式中的加速减速问题</h5>
 <p>CharacterMovement默认有一个加速效果（属性值为MaxAcceleration，默认为2048，表示加速率），如果MovementMode设置为Walking模式，当调用<code>Controller-&gt;StopMovement()</code>来立即停止移动；
 但是Flying Mode时，即使不再执行<code>AddMovementInput()</code>，Actor仍然会继续滑行一段距离，如果希望此时立即停止不滑行，需要将减速速率（默认为0）设置为加速速率的大小：</p>
 <pre><code>GetCharacterMovement()-&gt;BrakingDecelerationFlying = GetCharacterMovement()-&gt;MaxAcceleration;
 </code></pre>
-<h5 id="movementmode">设置MovementMode时的注意事项</h5>
+<h5 id="设置movementmode时的注意事项">设置MovementMode时的注意事项</h5>
 <p>如果一个Actor被Spawn出来之后，其MovementMode默认状态是Walking，如果此时Spawn的位置在空中，在没有Controller对其Possess的情况下，其静止在空中，当Possess之后，MovementMode会自动变为Falling，如果想让其继续停留在空中(比如飞行类的角色)，此时再手动将其MovementMode设置为Flying。<code>绝对不能在possess之前设置，否则设置状态会被引擎修改掉。</code></p>
-<h5 id="controllerstopmovementmovementcomponentstopmovementimmediately">Controller.StopMovement()和MovementComponent.StopMovementImmediately()的区别</h5>
+<h5 id="controllerstopmovement和movementcomponentstopmovementimmediately的区别">Controller.StopMovement()和MovementComponent.StopMovementImmediately()的区别</h5>
 <p>前者只执行：</p>
 <pre><code>PathFollowingComp-&gt;AbortMove(*this, FPathFollowingResultFlags::MovementStop);
 </code></pre>
@@ -424,7 +424,7 @@ Project Settings -》 Engine -》 Physics -》 Default Physics Settings -》 Def
 <p>接着再执行：</p>
 <pre><code>PathFollowingComp-&gt;AbortMove(*this, FPathFollowingResultFlags::MovementStop);
 </code></pre>
-<h5 id="navigationsystemapi">NavigationSystem寻路相关的API</h5>
+<h5 id="navigationsystem寻路相关的api">NavigationSystem寻路相关的API</h5>
 <p>检测某个坐标点是否在navmesh内，即可以作为寻路的坐标点。
 UNavigationSystem::TestPathSync 实例用法：</p>
 <pre><code>UNavigationSystem* const NavSys = GetWorld()-&gt;GetNavigationSystem();
@@ -488,11 +488,11 @@ if (UNavigationSystemV1* NavSys = FNavigationSystem::GetCurrent&lt;UNavigationSy
 </div>
 <p>Reference: What's the difference between GetRandomReachablePointInRadius and GetRandomPointInNavigableRadius? In which case we should use which.<br>
 <a href="https://answers.unrealengine.com/questions/796996/whats-the-difference-between-getrandomreachablepoi.html?sort=oldest">https://answers.unrealengine.com/questions/796996/whats-the-difference-between-getrandomreachablepoi.html?sort=oldest</a></p>
-<h5 id="heading3">寻路移动结束时的回调事件</h5>
+<h5 id="寻路移动结束时的回调事件">寻路移动结束时的回调事件</h5>
 <p>代码：</p>
 <pre><code>UPathFollowingComponent::OnMoveFinished
 </code></pre>
-<h5 id="vector">如何获取两点之间的寻路路径(Vector数组)</h5>
+<h5 id="如何获取两点之间的寻路路径vector数组">如何获取两点之间的寻路路径(Vector数组)</h5>
 <p>代码：</p>
 <pre><code>//4.20之前版本用法：UNavigationSystem* NavSys = UNavigationSystem::GetCurrent(GetWorld());
 UNavigationSystemV1* NavSys = UNavigationSystemV1::GetNavigationSystem(GetWorld());
@@ -507,6 +507,8 @@ if (tpath != NULL)
      }
 }
 </code></pre>
+<p>参考：<br>
+<a href="https://answers.unrealengine.com/questions/102126/how-do-i-get-the-navigation-path-to-a-point.html">https://answers.unrealengine.com/questions/102126/how-do-i-get-the-navigation-path-to-a-point.html</a></p>
 <h5 id="notice">Notice</h5>
 <p>Compilation Error:</p>
 <pre><code> error LNK2019: unresolved external symbol &quot;__declspec(dllimport) public: static class UNavigationSystemV1 * __cdecl UNavigationSystemV1::GetNavigationSystem(class UObject *)&quot; (__imp_?GetNavigationSystem@UNavigationSystemV1@@SAPEAV1@PEAVUObject@@@Z) referenced in function &quot;protected: void __cdecl AMyPlayerController::SetNewMoveDestination(struct FVector)&quot; (?SetNewMoveDestination@AMyPlayerController@@IEAAXUFVector@@@Z)
@@ -524,7 +526,6 @@ Add <code>NavigationSystem</code> into DependencyModule. e.g.:</p>
     }
 }
 </code></pre>
-<p>参考：https://answers.unrealengine.com/questions/102126/how-do-i-get-the-navigation-path-to-a-point.html</p>
 <hr>
 <p><code>曾虑多情损梵行，入山又恐别倾城，世间安得双全法，不负如来不负卿。----仓央嘉措</code></p>
 

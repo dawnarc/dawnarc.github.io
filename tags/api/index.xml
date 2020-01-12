@@ -178,7 +178,8 @@ CollisionMesh = NewObject&amp;lt;UBoxComponent&amp;gt;(this);if (CollisionMesh)
 ConstructorHelpers::FObjectFinder&amp;lt;UMaterial&amp;gt; DecalMaterialAsset(TEXT(&amp;quot;Material&#39;/Game/TopDownCPP/Blueprints/M_Cursor_Decal.M_Cursor_Decal&#39;&amp;quot;));if (DecalMaterialAsset.Succeeded()){DecalMaterialAsset.AttachToActor(MyActor, FAttachmentTransformRules::KeepRelativeTransform);} Runtime中Actor和Actor之间相互Attach Actor1 = GetWorld()-&amp;gt;SpawnActor&amp;lt;AMyActor&amp;gt;(AMyActor::StaticClass());if(Actor1){Actor1-&amp;gt;AttachToActor(Actor2, FAttachmentTransformRules::KeepRelativeTransform);} AttachToComponent()为引擎的仅次于UObject的子类ActorComponent的函数； AttachToActor为引擎的仅次于UObject的子类Actor的函数。
  通过NewObject创建Component之后，执行Register的目的是为了触发OnComponentCreate等回调。不执行Create相关的Initial回调会导致后续的Attach失效。
  注意：Actor::AttachToActor()和Actor::AttachTo()为4.12的新版API，旧版本的工程迁移至4.12后，编译提示警告：
-AActor::AttachRootComponentToActor已废弃，需要使用AttachToActor替换获取 ActorComponent 所属的 Actor AActor* GetOwner() const; GetOwner() 会沿着 ActorComponent 到 RootComponent 之间的从属链一直往上走，找到 RootComponent 并返回 RootComponent 所属的 Actor 对象。</description>
+AActor::AttachRootComponentToActor已废弃，需要使用AttachToActor替换
+获取 ActorComponent 所属的 Actor AActor* GetOwner() const; GetOwner() 会沿着 ActorComponent 到 RootComponent 之间的从属链一直往上走，找到 RootComponent 并返回 RootComponent 所属的 Actor 对象。</description>
     </item>
     
     <item>

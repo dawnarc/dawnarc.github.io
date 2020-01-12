@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.60.1 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.62.2 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="">
 <meta name="description" content="之前写过如何用C&#43;&#43;创建自定义PlayerController方式：
@@ -404,7 +404,7 @@ AMyPlayerController* NewPC = GetWorld()-&gt;SpawnActor&lt;AMyPlayerController&gt
 自己设置FActorSpawnParameters相关参数，对PlayerController可行，但是对AIController，相关参数设置不一样，导致AIController在服务端失效。</p>
 <p>解决办法：<br>
 两种方式</p>
-<h5 id="aicontrollerclass">方式一：AIControllerClass指定</h5>
+<h5 id="方式一aicontrollerclass指定">方式一：AIControllerClass指定</h5>
 <p>1，先为Character指定AI Controller Class，且禁用AutoPossessPlayer。这段代码可以放在构造函数中，保证在Possess之前设置好。以下3个属性也可以在角色蓝图中指定。</p>
 <pre><code>AutoPossessPlayer = EAutoReceiveInput::Type::Disabled;
 AutoPossessAI = EAutoPossessAI::PlacedInWorld;
@@ -416,7 +416,7 @@ AIControllerClass = AMyAIController::StaticClass();
 <p>如果AutoPossessAI设置为Disable，则接着执行一下Possess：</p>
 <pre><code>void AController::Possess(APawn* InPawn);
 </code></pre>
-<h5 id="spawnactorfactorspawnparameters">方式一：SpawnActor时使用默认FActorSpawnParameters。</h5>
+<h5 id="方式一spawnactor时使用默认factorspawnparameters">方式一：SpawnActor时使用默认FActorSpawnParameters。</h5>
 <pre><code> AMyAIController* PC = GetWorld()-&gt;SpawnActor&lt;AMyAIController&gt;(AMyAIController::StaticClass(), SpawnLoc, SpawnRot);
 </code></pre>
 <p>不要自己设置FActorSpawnParameters，因为AIController和PlayerController表现不一样。</p>

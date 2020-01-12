@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.60.1 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.62.2 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="">
 <meta name="description" content="UObject ConditionalBeginDestroy()导致无法第二次重新Load的问题 现象：
@@ -419,7 +419,7 @@ if (!doNotTrack) {
           
           <div class="post-content markdown" itemprop="articleBody">
             <div class="main-content-wrap">
-              <h5 id="uobject-conditionalbegindestroyload">UObject ConditionalBeginDestroy()导致无法第二次重新Load的问题</h5>
+              <h5 id="uobject-conditionalbegindestroy导致无法第二次重新load的问题">UObject ConditionalBeginDestroy()导致无法第二次重新Load的问题</h5>
 <p>现象：<br>
 如果一个材质对象首次执行垃圾回收（ConditionalBeginDestroy是对BeginDestroy的封装，BeginDestroy是不管任何因素强制回收）：</p>
 <pre><code>UObject::ConditionalBeginDestroy()
@@ -448,18 +448,18 @@ LoadObject&lt;UObject&gt;(Obj, Path);
 </ul>
 <p>所以在PIE模式下第二次 LoadObject 时认为该对象还存在，并且直接返回了这个已经被Destroy的空对象。<br>
 如果UE4资源管理的引擎代码写的足够好，对于Destroy对象的操作，应该提供两个版本：一个PIE、一个Game Runtime。</p>
-<h5 id="-memory-persistence">内存持久化 (Memory Persistence)</h5>
+<h5 id="内存持久化-memory-persistence">内存持久化 (Memory Persistence)</h5>
 <p>上述问题中，即使在第二次加载时手动 NewObject 创建一个对象，仍然存在问题：会发现，过几秒以后，再次使用这个UObject时会出现指针非法的错误，原因是刚刚自己New的UObject被引擎从内存中回收了。
 如何禁止引擎对该UObject自动垃圾回收，而是我们自己手动执行？执行下AddToRoot：</p>
 <pre><code>Obj-&gt;AddToRoot();
 </code></pre>
 <p>注：如果执行了<code>AddToRoot()</code>，那么退出程序前需要执行<code>RemoveFromRoot()</code>，否则在引擎在清理内存时会错误。</p>
 <span class="highlight-text red">如果一个UObject是SpawnActor创建出来的，那么执行Destroy()之后，再次执行Spawn是可以正常创建出来的。这点和LoadObject有区别。</span>
-<h5 id="conditionalbegindestroy">ConditionalBeginDestroy()并不推荐在业务逻辑中使用</h5>
+<h5 id="conditionalbegindestroy并不推荐在业务逻辑中使用">ConditionalBeginDestroy()并不推荐在业务逻辑中使用</h5>
 <div class="alert warning ">
   <p>UE4官方论坛上，很多帖子或资料告诉你，如果要销毁对象，需要执行ConditionalBeginDestroy()。其实这个API不是给上层逻辑使用的，如果要销毁对象，只要保证该对象失去引用或者RemoveFromRoot()即可，否则就会出现上述问题，即：Destroy之后，无法第二次Load。但是这个问题只存在编辑器运行模式下，如果是打包版本（或者Play时选择下拉菜单：Standalone），即使Destroy()，第二次LoadObject()，第一个参数为NULL，也是可以正常加载的。</p>
 </div>
-<h5 id="dedicatedserver-">DedicatedServer 中的问题</h5>
+<h5 id="dedicatedserver-中的问题">DedicatedServer 中的问题</h5>
 <div class="alert danger ">
   <p>如果在 DedicatedServer 模式下，SpawnActor生成Actor，且这个Actor bReplicates 设置为true，执行 ConditionalBeginDestroy() ，一定时间后客户端会崩掉，但是使用 Destroy() 没问题。对于服务端生成的 Actor，销毁对象时绝对不要 ConditionalBeginDestroy()。</p>
 </div>
@@ -485,7 +485,7 @@ UE4Editor!__scrt_common_main_seh() [f:\dd\vctools\crt\vcstartup\src\startup\exe_
 kernel32
 ntdll
 </code></pre>
-<h5 id="conditionalbegindestroy--destroy">ConditionalBeginDestroy 和 Destroy区别</h5>
+<h5 id="conditionalbegindestroy-和-destroy区别">ConditionalBeginDestroy 和 Destroy区别</h5>
 <p>ConditionalBeginDestroy 和 Destroy两者都是销毁对象，区别是：前者是在delay一定时间后执行销毁，Destroy是在当前帧结束时执行销毁。</p>
 <p>如果逻辑上每帧都有很多 Actor需要销毁，那么可以先把这些Actor隐藏，让对象失去引用（如果对象是被<code>URPOPERTY</code>属性保持的，那就让其所属的对象失去引用，比如：<code>RemoveFromRoot()</code>），不必手动执行 Destroy，让引擎批量执行GC。</p>
 

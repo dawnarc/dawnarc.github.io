@@ -5,10 +5,10 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.60.1 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.62.2 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="UE4, Plugin">
-<meta name="description" content="Plugin在构造函数中加载的问题 在GameMode构造函数中加载（LoadObject或者ConstructorHelpers::FObjectFinder）蓝图，该蓝图使用了plugin（这里我使用了一个叫Swipe的插件），如果在构造函数中加载，则会报错：
+<meta name="description" content="Usage Plugin在构造函数中加载的问题 在GameMode构造函数中加载（LoadObject或者ConstructorHelpers::FObjectFinder）蓝图，该蓝图使用了plugin（这里我使用了一个叫Swipe的插件），如果在构造函数中加载，则会报错：
 /Game/Demo/Female/Blueprints/FemaleCharBP : Can&#39;t find file for asset. /Script/SwipeFailed to load /Script/Swipe.SwipeComponent Referenced by K2Node_ComponentBoundEvent_2Failed to load /Script/Swipe.SwipeComponent Referenced by K2Node_ComponentBoundEvent_3Failed to load /Script/Swipe.SwipeComponent Referenced by SCS_Node_1 另外一种解决办法：给C&#43;&#43;的GameMode套一个蓝图，然后在该蓝图中设置DefaultPawnClass、PlayerControllerClass等GameMode属性，此时即使这些PawnClass或者PlayerControllerClass蓝图使用了plugin，也不会报错。
 添加第三方Plugin（2018-08-10更新） 工程.uproject 需要添加两处地方：
 1，在 Modules 中添加 plugin 名字字符串；
@@ -16,7 +16,7 @@
 {&quot;FileVersion&quot;: 3,&quot;EngineAssociation&quot;: &quot;4.20&quot;,&quot;Category&quot;: &quot;&quot;,&quot;Description&quot;: &quot;&quot;,&quot;Modules&quot;: [{&quot;Name&quot;: &quot;MyProj&quot;,&quot;Type&quot;: &quot;Runtime&quot;,&quot;LoadingPhase&quot;: &quot;Default&quot;,&quot;AdditionalDependencies&quot;: [&quot;UMG&quot;,&quot;Engine&quot;,&quot;CoreUObject&quot;,&quot;AIModule&quot;,&quot;ApexDestruction&quot;,&quot;MyPlugin&quot;]}],&quot;Plugins&quot;: [{&quot;Name&quot;: &quot;ApexDestruction&quot;,&quot;Enabled&quot;: true},{&quot;Name&quot;: &quot;MyPlugin&quot;,&quot;Enabled&quot;: true}]} 往 Plugin 中添加 C&#43;&#43; 代码（2018-08-13更新） 貌似没有好的办法，只能手动添加 C&#43;&#43; 类文件">
 
 
-<meta property="og:description" content="Plugin在构造函数中加载的问题 在GameMode构造函数中加载（LoadObject或者ConstructorHelpers::FObjectFinder）蓝图，该蓝图使用了plugin（这里我使用了一个叫Swipe的插件），如果在构造函数中加载，则会报错：
+<meta property="og:description" content="Usage Plugin在构造函数中加载的问题 在GameMode构造函数中加载（LoadObject或者ConstructorHelpers::FObjectFinder）蓝图，该蓝图使用了plugin（这里我使用了一个叫Swipe的插件），如果在构造函数中加载，则会报错：
 /Game/Demo/Female/Blueprints/FemaleCharBP : Can&#39;t find file for asset. /Script/SwipeFailed to load /Script/Swipe.SwipeComponent Referenced by K2Node_ComponentBoundEvent_2Failed to load /Script/Swipe.SwipeComponent Referenced by K2Node_ComponentBoundEvent_3Failed to load /Script/Swipe.SwipeComponent Referenced by SCS_Node_1 另外一种解决办法：给C&#43;&#43;的GameMode套一个蓝图，然后在该蓝图中设置DefaultPawnClass、PlayerControllerClass等GameMode属性，此时即使这些PawnClass或者PlayerControllerClass蓝图使用了plugin，也不会报错。
 添加第三方Plugin（2018-08-10更新） 工程.uproject 需要添加两处地方：
 1，在 Modules 中添加 plugin 名字字符串；
@@ -28,13 +28,13 @@
 <meta property="og:url" content="https://dawnarc.com/2017/12/ue4plugin-related/">
 <meta property="twitter:url" content="https://dawnarc.com/2017/12/ue4plugin-related/">
 <meta property="og:site_name" content="玄冬Wong">
-<meta property="og:description" content="Plugin在构造函数中加载的问题 在GameMode构造函数中加载（LoadObject或者ConstructorHelpers::FObjectFinder）蓝图，该蓝图使用了plugin（这里我使用了一个叫Swipe的插件），如果在构造函数中加载，则会报错：
+<meta property="og:description" content="Usage Plugin在构造函数中加载的问题 在GameMode构造函数中加载（LoadObject或者ConstructorHelpers::FObjectFinder）蓝图，该蓝图使用了plugin（这里我使用了一个叫Swipe的插件），如果在构造函数中加载，则会报错：
 /Game/Demo/Female/Blueprints/FemaleCharBP : Can&#39;t find file for asset. /Script/SwipeFailed to load /Script/Swipe.SwipeComponent Referenced by K2Node_ComponentBoundEvent_2Failed to load /Script/Swipe.SwipeComponent Referenced by K2Node_ComponentBoundEvent_3Failed to load /Script/Swipe.SwipeComponent Referenced by SCS_Node_1 另外一种解决办法：给C&#43;&#43;的GameMode套一个蓝图，然后在该蓝图中设置DefaultPawnClass、PlayerControllerClass等GameMode属性，此时即使这些PawnClass或者PlayerControllerClass蓝图使用了plugin，也不会报错。
 添加第三方Plugin（2018-08-10更新） 工程.uproject 需要添加两处地方：
 1，在 Modules 中添加 plugin 名字字符串；
 2，在 Plugins 添加 plugin 信息：包括 Name 和 Enabled；
 {&quot;FileVersion&quot;: 3,&quot;EngineAssociation&quot;: &quot;4.20&quot;,&quot;Category&quot;: &quot;&quot;,&quot;Description&quot;: &quot;&quot;,&quot;Modules&quot;: [{&quot;Name&quot;: &quot;MyProj&quot;,&quot;Type&quot;: &quot;Runtime&quot;,&quot;LoadingPhase&quot;: &quot;Default&quot;,&quot;AdditionalDependencies&quot;: [&quot;UMG&quot;,&quot;Engine&quot;,&quot;CoreUObject&quot;,&quot;AIModule&quot;,&quot;ApexDestruction&quot;,&quot;MyPlugin&quot;]}],&quot;Plugins&quot;: [{&quot;Name&quot;: &quot;ApexDestruction&quot;,&quot;Enabled&quot;: true},{&quot;Name&quot;: &quot;MyPlugin&quot;,&quot;Enabled&quot;: true}]} 往 Plugin 中添加 C&#43;&#43; 代码（2018-08-13更新） 貌似没有好的办法，只能手动添加 C&#43;&#43; 类文件">
-<meta name="twitter:description" content="Plugin在构造函数中加载的问题 在GameMode构造函数中加载（LoadObject或者ConstructorHelpers::FObjectFinder）蓝图，该蓝图使用了plugin（这里我使用了一个叫Swipe的插件），如果在构造函数中加载，则会报错：
+<meta name="twitter:description" content="Usage Plugin在构造函数中加载的问题 在GameMode构造函数中加载（LoadObject或者ConstructorHelpers::FObjectFinder）蓝图，该蓝图使用了plugin（这里我使用了一个叫Swipe的插件），如果在构造函数中加载，则会报错：
 /Game/Demo/Female/Blueprints/FemaleCharBP : Can&#39;t find file for asset. /Script/SwipeFailed to load /Script/Swipe.SwipeComponent Referenced by K2Node_ComponentBoundEvent_2Failed to load /Script/Swipe.SwipeComponent Referenced by K2Node_ComponentBoundEvent_3Failed to load /Script/Swipe.SwipeComponent Referenced by SCS_Node_1 另外一种解决办法：给C&#43;&#43;的GameMode套一个蓝图，然后在该蓝图中设置DefaultPawnClass、PlayerControllerClass等GameMode属性，此时即使这些PawnClass或者PlayerControllerClass蓝图使用了plugin，也不会报错。
 添加第三方Plugin（2018-08-10更新） 工程.uproject 需要添加两处地方：
 1，在 Modules 中添加 plugin 名字字符串；
@@ -369,7 +369,8 @@ if (!doNotTrack) {
           
           <div class="post-content markdown" itemprop="articleBody">
             <div class="main-content-wrap">
-              <h5 id="plugin">Plugin在构造函数中加载的问题</h5>
+              <h3 id="usage">Usage</h3>
+<h5 id="plugin在构造函数中加载的问题">Plugin在构造函数中加载的问题</h5>
 <p>在GameMode构造函数中加载（LoadObject或者ConstructorHelpers::FObjectFinder）蓝图，该蓝图使用了plugin（这里我使用了一个叫Swipe的插件），如果在构造函数中加载，则会报错：</p>
 <pre><code>/Game/Demo/Female/Blueprints/FemaleCharBP : Can't find file for asset. /Script/Swipe
 Failed to load /Script/Swipe.SwipeComponent Referenced by K2Node_ComponentBoundEvent_2
@@ -377,7 +378,7 @@ Failed to load /Script/Swipe.SwipeComponent Referenced by K2Node_ComponentBoundE
 Failed to load /Script/Swipe.SwipeComponent Referenced by SCS_Node_1
 </code></pre>
 <p>另外一种解决办法：给C++的GameMode套一个蓝图，然后在该蓝图中设置DefaultPawnClass、PlayerControllerClass等GameMode属性，此时即使这些PawnClass或者PlayerControllerClass蓝图使用了plugin，也不会报错。</p>
-<h6 id="plugin20180810">添加第三方Plugin（2018-08-10更新）</h6>
+<h6 id="添加第三方plugin2018-08-10更新">添加第三方Plugin（2018-08-10更新）</h6>
 <p>工程.uproject 需要添加两处地方：<br>
 1，在 Modules 中添加 plugin 名字字符串；<br>
 2，在 Plugins 添加 plugin 信息：包括 Name 和 Enabled；</p>
@@ -413,7 +414,7 @@ Failed to load /Script/Swipe.SwipeComponent Referenced by SCS_Node_1
   ]
 }
 </code></pre>
-<h6 id="-plugin--c-20180813">往 Plugin 中添加 C++ 代码（2018-08-13更新）</h6>
+<h6 id="往-plugin-中添加-c-代码2018-08-13更新">往 Plugin 中添加 C++ 代码（2018-08-13更新）</h6>
 <p>貌似没有好的办法，只能手动添加 C++ 类文件</p>
 <p>论坛上说的这种方式不可行（至少4.20版本试过不可行）：</p>
 <ol>
@@ -425,6 +426,11 @@ Failed to load /Script/Swipe.SwipeComponent Referenced by SCS_Node_1
 </ol>
 <p>Adding an Actor class to plugin?<br>
 <a href="https://forums.unrealengine.com/development-discussion/c-gameplay-programming/50761-adding-an-actor-class-to-plugin">https://forums.unrealengine.com/development-discussion/c-gameplay-programming/50761-adding-an-actor-class-to-plugin</a></p>
+<h3 id="building">Building</h3>
+<h5 id="building-the-plugin">Building the plugin</h5>
+<p>The first stage is to build the plugin for distribution in the normal manner. This can be done using the UnrealBuildTool with the following command:</p>
+<pre><code>UE4Dir\Engine\Build\BatchFiles\RunUAT.bat BuildPlugin -Rocket -Plugin=Plugin.uplugin -TargetPlatforms=Win64 -Package=OutputDir
+</code></pre>
 <h3 id="issues">Issues</h3>
 <h5 id="warning-modules-must-specify-an-explicit-precompiled-header">Warning: Modules must specify an explicit precompiled header</h5>
 <p>Warning at building project:</p>
@@ -540,7 +546,7 @@ IMPLEMENT_MODULE(FMyPluginModule, MyPlugin)
 Maybe caused by cache files of building.</p>
 <p>Solution:<br>
 Remove directory <code>[Project]/Intermediate</code> and <code>[Project]/Saved</code>, then regenerate project files.</p>
-<h5 id="heading"></h5>
+<h5 id="error-lnk2019-unresolved-external-symbol-__declspecdllimport-public-static-bool-__cdecl-frhiresourcebypassvoid">error LNK2019: unresolved external symbol &ldquo;__declspec(dllimport) public: static bool __cdecl FRHIResource::Bypass(void)&rdquo;</h5>
 <p>Error at building project:</p>
 <pre><code>Module.OpenCV.cpp.obj : error LNK2019: unresolved external symbol &quot;__declspec(dllimport) public: static bool __cdecl FRHIResource::Bypass(void)&quot; (__imp_?Bypass@FRHIResource@@SA_NXZ) referenced in function &quot;public: __cdecl TRefCountPtr&lt;class FRHITexture2D&gt;::~TRefCountPtr&lt;class FRHITexture2D&gt;(void)&quot; (??1?$TRefCountPtr@VFRHITexture2D@@@@QEAA@XZ)
 Module.OpenCV.cpp.obj : error LNK2019: unresolved external symbol &quot;__declspec(dllimport) public: static enum ENamedThreads::Type __cdecl FRenderCommand::GetDesiredThread(void)&quot; (__imp_?GetDesiredThread@FRenderCommand@@SA?AW4Type@ENamedThreads@@XZ) referenced in function &quot;private: class TRefCountPtr&lt;class FGraphEvent&gt; __cdecl TGraphTask&lt;class `protected: void __cdecl AWebcamReader::UpdateTextureRegions(class UTexture2D *,int,unsigned int,struct FUpdateTextureRegion2D *,unsigned int,unsigned int,unsigned char *,bool)'::`5'::EURCMacro_UpdateTextureRegionsData&gt;::Setup(class TArray&lt;class TRefCountPtr&lt;class FGraphEvent&gt;,class TInlineAllocator&lt;4,class FDefaultAllocator&gt; &gt; const *,enum ENamedThreads::Type)&quot; (?Setup@?$TGraphTask@VEURCMacro_UpdateTextureRegionsData@?4??UpdateTextureRegions@AWebcamReader@@IEAAXPEAVUTexture2D@@HIPEAUFUpdateTextureRegion2D@@IIPEAE_N@Z@@@AEAA?AV?$TRefCountPtr@VFGraphEvent@@@@PEBV?$TArray@V?$TRefCountPtr@VFGraphEvent@@@@V?$TInlineAllocator@$03VFDefaultAllocator@@@@@@W4Type@ENamedThreads@@@Z)
@@ -568,11 +574,28 @@ Add module names in <code>MyPlugin.Build.cs</code></p>
 </code></pre>
 <p>Origin:<br>
 <a href="https://usagi.hatenablog.jp/entry/2018/09/11/205922">https://usagi.hatenablog.jp/entry/2018/09/11/205922</a></p>
+<h5 id="error-could-not-find-definition-for-module">ERROR: Could not find definition for module</h5>
+<p>Error at buling project:</p>
+<pre><code>UATHelper: Packaging (Windows (64-bit)):   ERROR: Could not find definition for module 'MyPlugin' (referenced via default plugins -&gt; MyPlugin.uplugin)
+PackagingResults: Error: Could not find definition for module 'MyPlugin' (referenced via default plugins -&gt; MyPlugin.uplugin)
+</code></pre>
+<p>Caused by:<br>
+Missed source code of plugin.<br>
+<div class="alert danger ">
+  <p>Only Editor workd if there's no source code in game project plugins, and project building would fail.</p>
+</div></p>
+<p>Solution:<br>
+If you want to get your plugin working at building project, also keep plugin source in private, you need to deliver engine binaries from source building:<br>
+<span class="highlight-text green">
+Put your plugin source in `UE4Dir\Engine\Plugins\` and build engine from source, then remove source code of plugin.
+</span></p>
 <h3 id="reference">Reference</h3>
 <p>How to Install a Plugin on Unreal Engine 4<br>
 <a href="https://idkudk.blogspot.jp/2015/02/how-to-install-plugin-on-unreal-engine-4.html">https://idkudk.blogspot.jp/2015/02/how-to-install-plugin-on-unreal-engine-4.html</a></p>
 <p>UE4/Plugin installation<br>
 <a href="https://wiki.popcornfx.com/index.php/UE4/Plugin_installation">https://wiki.popcornfx.com/index.php/UE4/Plugin_installation</a></p>
+<p>Origin: Building Binary Plugins In Unreal Engine 4<br>
+<a href="https://mercuna.com/building-binary-plugins-in-unreal-engine-4/">https://mercuna.com/building-binary-plugins-in-unreal-engine-4/</a></p>
 <hr>
 <p><code>醉里挑灯看剑，梦回吹角连营。----辛弃疾《破阵子·为陈同甫赋壮词以寄之》</code></p>
 

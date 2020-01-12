@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.60.1 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.62.2 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="UE4, Memory, GC, Persist, 垃圾回收, 内存管理">
 <meta name="description" content="keywords：UE4, Memory Persist, GC, 垃圾回收, 内存管理
@@ -366,7 +366,7 @@ if (!doNotTrack) {
           <div class="post-content markdown" itemprop="articleBody">
             <div class="main-content-wrap">
               <p>keywords：UE4, Memory Persist, GC, 垃圾回收, 内存管理</p>
-<h5 id="gc">防止GC的办法</h5>
+<h5 id="防止gc的办法">防止GC的办法</h5>
 <div class="alert danger ">
   <p>一个UObject类型的变量，即使是static，默认也会被GC掉。</p>
 </div>
@@ -380,15 +380,15 @@ if (!doNotTrack) {
 <div class="alert warning ">
   <p>Uobject不能使用TSharedPtr进行引用计数，非UObject才可以；如果一个非UObject的类想加入GC，那么必须继承FGCObject类。</p>
 </div>
-<h6 id="uproperty">UPROPERTY()用法</h6>
+<h6 id="uproperty用法">UPROPERTY()用法</h6>
 <pre><code>URPOPERTY()
     UObject* MyObj;
 </code></pre>
-<h6 id="addtoroot">AddToRoot()用法</h6>
+<h6 id="addtoroot用法">AddToRoot()用法</h6>
 <pre><code>UMyObject* MyObj = NewObject&lt;UMyObject&gt;();
 MyObj.AddToRoot();
 </code></pre>
-<h6 id="fstreamablemanager-">FStreamableManager 用法</h6>
+<h6 id="fstreamablemanager-用法">FStreamableManager 用法</h6>
 <pre><code>FSoftObjectPath AssetPath(TEXT(&quot;/Game/Mannequin/Animations/ThirdPersonWalk.ThirdPersonWalk&quot;));
 FStreamableManager&amp; AssetLoader = UAssetManager::GetStreamableManager();
 
@@ -399,7 +399,7 @@ UObject* Obj = Handle-&gt;GetLoadedAsset();
 //free memory of object.
 Handle-&gt;ReleaseHandle();
 </code></pre>
-<h6 id="fgcobjectscopeguard-">FGCObjectScopeGuard 用法</h6>
+<h6 id="fgcobjectscopeguard-用法">FGCObjectScopeGuard 用法</h6>
 <pre><code>{
     FGCObjectScopeGuard(UObject* GladOS = NewObject&lt;...&gt;(...));
     GladOS-&gt;SpawnCell();
@@ -407,20 +407,20 @@ Handle-&gt;ReleaseHandle();
     GladOS-&gt;IsStillAlive();   // Object will not be removed by GC
 }
 </code></pre>
-<h5 id="gc-">GC 常见问题</h5>
+<h5 id="gc-常见问题">GC 常见问题</h5>
 <ol>
 <li>官方论坛上有人说 NewObject() 或者 LoadObject() 创建的对象才会自动被 GC ， SpawnActor 创建的对象会被自动 AddToRoot ，不会被 GC。不知早期的版本是否确实如此，但是目前版本不是这样，<span class="highlight-text red">即使是 SpawnActor ，默认也会被 GC。</span></li>
 </ol>
-<h5 id="heading">参考资料</h5>
+<h5 id="参考资料">参考资料</h5>
 <p>UE4 Garbage Collection<br>
 <a href="https://gist.github.com/LordNed/650de717daca23aaf8fc2932bf3f9123">https://gist.github.com/LordNed/650de717daca23aaf8fc2932bf3f9123</a></p>
 <p>虚幻4垃圾回收剖析<br>
 <a href="http://www.cnblogs.com/ghl_carmack/p/6112118.html">http://www.cnblogs.com/ghl_carmack/p/6112118.html</a></p>
-<h3 id="ue4--">转载：UE4内存管理 – 实践</h3>
+<h3 id="转载ue4内存管理--实践">转载：UE4内存管理 – 实践</h3>
 <p>原文：<br>
 <a href="http://blog.csdn.net/yangxuan0261/article/details/52075581">http://blog.csdn.net/yangxuan0261/article/details/52075581</a></p>
 <p>原文内容如下：</p>
-<h4 id="uobject-gc">UObject gc机制</h4>
+<h4 id="uobject-gc机制">UObject gc机制</h4>
 <ul>
 <li>
 <p>通过 UPROPERTY() 去保持引用</p>
@@ -494,7 +494,7 @@ Handle-&gt;ReleaseHandle();
 </code></pre>
 </li>
 </ul>
-<h4 id="aactor-gc">AActor gc机制</h4>
+<h4 id="aactor-gc机制">AActor gc机制</h4>
 <p>一般重写这两个函数，来做一些初始化和清理工作</p>
 <pre><code>virtual void PostActorCreated() override; //做初始化工作
 virtual void BeginPlay() override; //做初始化工作
@@ -505,7 +505,7 @@ virtual void Destroyed() override; //用于释放成员，调用Destroy();会立
 <p>调用SpawnActor或DestroyActor会调用到这两个函数，析构函数则要在gc的时候才会调用，可以调用gc函数测试一下</p>
 <pre><code>GWorld-&gt;GetWorld()-&gt;ForceGarbageCollection(true);
 </code></pre>
-<h4 id="uactorcomponent-gc">UActorComponent gc机制</h4>
+<h4 id="uactorcomponent-gc机制">UActorComponent gc机制</h4>
 <ul>
 <li>
 <p>作为Actor的组件存在于Actor的组件列表中，销毁Actor时会把组件列表遍历一边destroy掉并标记为待gc的对象，在一个不定时的时间被gc掉</p>
@@ -556,7 +556,7 @@ virtual void Destroyed() override; //用于释放成员，调用Destroy();会立
 </code></pre>
 </li>
 </ul>
-<h4 id="heading1">参考资料</h4>
+<h4 id="参考资料-1">参考资料</h4>
 <p>官网地址： <a href="https://wiki.unrealengine.com/Garbage_Collection_%26_Dynamic_Memory_Allocation">https://wiki.unrealengine.com/Garbage_Collection_%26_Dynamic_Memory_Allocation</a></p>
 <hr>
 <p><code>他们如此单纯，以至于认为贫穷是一种罪过，还以为可以通过赚钱来遗忘。——杰拉尔·萨利克</code></p>

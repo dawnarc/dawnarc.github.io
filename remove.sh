@@ -4,6 +4,7 @@ rm -rf 2016
 rm -rf 2017
 rm -rf 2018
 rm -rf 2019
+rm -rf 2020
 rm -rf archives
 rm -rf categories
 rm -rf css

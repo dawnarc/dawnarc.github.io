@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.60.1 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.62.2 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="UE4, Velocity, AddImpulse, Simulate Physics, Collision">
 <meta name="description" content="UProjectileMovementComponent相关 官方第一人称射击模版项目中，是在构造函数中就设置好了速度：
@@ -381,7 +381,7 @@ if (!doNotTrack) {
           
           <div class="post-content markdown" itemprop="articleBody">
             <div class="main-content-wrap">
-              <h5 id="uprojectilemovementcomponent">UProjectileMovementComponent相关</h5>
+              <h5 id="uprojectilemovementcomponent相关">UProjectileMovementComponent相关</h5>
 <p>官方第一人称射击模版项目中，是在构造函数中就设置好了速度：</p>
 <pre><code>ProjectileMovement = CreateDefaultSubobject&lt;UProjectileMovementComponent&gt;(TEXT(&quot;ProjectileComp&quot;));
 ProjectileMovement-&gt;UpdatedComponent = CollisionComp;
@@ -421,7 +421,7 @@ Simulate Physics and Projectile Movement Component<br>
 <p>UProjectileMovementComponent处理平面滑动</p>
 <pre><code>bool UProjectileMovementComponent::HandleSliding(FHitResult&amp; Hit, float&amp; SubTickTimeRemaining)
 </code></pre>
-<h5 id="staticmeshcollisioncomponent">模拟物理时StaticMesh和CollisionComponent冲突</h5>
+<h5 id="模拟物理时staticmesh和collisioncomponent冲突">模拟物理时StaticMesh和CollisionComponent冲突</h5>
 <p>记住：<span class="highlight-text red">StaticMesh自带刚体(RigidBody)，并能执行碰撞(Collision)相关逻辑。</span><br>
 比如新建一个 Actor，并在该 Actor 内部创建了一个 BoxComponent ，然后再创建一个 StaticMeshComponent 并 Attach 到 BoxComponent 上。<br>
 如果不模拟物理，那么没有问题，一旦模拟物理并执行 AddImpulse 时，就会出问题。</p>
@@ -429,7 +429,7 @@ Simulate Physics and Projectile Movement Component<br>
 如果只对 StaticMeshComponent 执行击飞，那么 BoxComponent 会停在原地，如果对 BoxComponent 击飞： <code>BoxComponent-&gt;BodyInstance.AddImpulse()</code> ，那么 StaticMeshComponent 不会动。</p>
 <p>解决办法：<br>
 直接使用 StaticMeshComponent Collision ，不用与 Col1isionComponent 附加。</p>
-<h5 id="heading">如何处理发射刚体与角色刚体冲突</h5>
+<h5 id="如何处理发射刚体与角色刚体冲突">如何处理发射刚体与角色刚体冲突</h5>
 <p>问题现象：<br>
 当角色的<code>CollisionComponent</code>半径较大时，此时想在角色面前发射(<code>AddImpulse</code>)一个<code>Simulate Physics</code>的<code>StaticMeshActor</code>，但是当这个 Actor 刚发射之前，其刚体正好和角色的刚体相互影响，导致 Actor 没能按预定方向和速度运动。</p>
 <p>三种解决办法：</p>
@@ -438,7 +438,7 @@ Simulate Physics and Projectile Movement Component<br>
 <li>通过自定义碰撞通道将两个Mesh的碰撞避开。</li>
 <li>使用<code>UPrimitiveComponent::IgnoreActorWhenMoving()</code>将胶囊体从子弹的碰撞检测中过滤掉。</li>
 </ul>
-<h5 id="-movementcomponent--gravity-">不使用 MovementComponent 情况下设置 Gravity 大小</h5>
+<h5 id="不使用-movementcomponent-情况下设置-gravity-大小">不使用 MovementComponent 情况下设置 Gravity 大小</h5>
 <p>MovementComponent 有个属性<code>Gravity Scale</code>来设置重力大小。<br>
 假设一个 Actor 如果没有添加 MovementComponent ，只有一个 StaticMeshComponent ，此时 StaticMeshComponent 模拟物理时，其重力加速度较小，这种情况下有没办法设置重力加速度大小？方式如下：</p>
 <pre><code>StaticMeshComp-&gt;SetSimulatePhysics(true);
@@ -450,7 +450,7 @@ Velocity.Z -= 100.f;
 StaticMeshComp-&gt;SetPhysicsLinearVelocity(Velocity);
 </code></pre>
 <p>说明：<code>GetPhysicsLinearVelocity</code> 默认为0，这里修改成 -100.f 的重力下降速率，</p>
-<h5 id="heading1">禁用、开启物理</h5>
+<h5 id="禁用开启物理">禁用、开启物理</h5>
 <pre><code>//禁用所有子组件的物理模拟（但是没有对应的开启物理的API）
 AActor::DisableComponentsSimulatePhysics();
 
@@ -466,7 +466,7 @@ GetMesh()-&gt;SetSimulatePhysics(false);
  */
 void UPrimitiveComponent::IgnoreActorWhenMoving(AActor* Actor, bool bShouldIgnore)
 </code></pre>
-<h5 id="heading2">收集资料</h5>
+<h5 id="收集资料">收集资料</h5>
 <p>Using Async Collision Traces in Unreal Engine 4<br>
 <a href="https://medium.com/@bryan.corell/using-async-collision-traces-in-unreal-engine-4-2cc312c825f5">https://medium.com/@bryan.corell/using-async-collision-traces-in-unreal-engine-4-2cc312c825f5</a></p>
 <p>Inside Unreal Physics<br>

@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.60.1 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.62.2 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="">
 <meta name="description" content="文章内容大部分参考自《OpenGL 4 Shading Language Cookbook, Second Edition》书中的代码：
@@ -365,13 +365,13 @@ if (!doNotTrack) {
             <div class="main-content-wrap">
               <p>文章内容大部分参考自《OpenGL 4 Shading Language Cookbook, Second Edition》书中的代码：<br>
 <a href="https://github.com/daw42/glslcookbook">https://github.com/daw42/glslcookbook</a></p>
-<h5 id="heading">术语解释：</h5>
+<h5 id="术语解释">术语解释：</h5>
 <ul>
 <li><code>GLEW</code> (OpenGL Extension Wrangler).</li>
 <li><code>GLM</code> (OpenGL Mathematics)</li>
 <li><code>GLFW</code> is an Open Source, multi-platform library for OpenGL, OpenGL ES and Vulkan development on the desktop. It provides a simple API for creating windows, contexts and surfaces, receiving input and events.</li>
 </ul>
-<h5 id="shader">Shader类型</h5>
+<h5 id="shader类型">Shader类型</h5>
 <ul>
 <li>vertex shader</li>
 <li>fragment shader</li>
@@ -380,7 +380,7 @@ if (!doNotTrack) {
 <li>tess_evaluation shader</li>
 <li>compute shader</li>
 </ul>
-<h5 id="opengl">OpenGL版本查询与设置</h5>
+<h5 id="opengl版本查询与设置">OpenGL版本查询与设置</h5>
 <p>查询版本（使用glad的API）：</p>
 <pre><code>GLint major, minor;
 glGetIntegerv(GL_MAJOR_VERSION, &amp;major);
@@ -392,7 +392,7 @@ glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
 </code></pre>
 <p>注意：设置版本号不得高于查询出来的版本号。</p>
-<h5 id="populate">批量填充(populate)数据</h5>
+<h5 id="批量填充populate数据">批量填充(populate)数据</h5>
 <p>OpenGL 4.0之前，比如要填充vertex数据，必须要逐个vertex设置。4.0之后，可以一次性填充一组vertex。<br>
 以填充position和color的vertex shader为例：</p>
 <pre><code>/////////////////// Create the VBO ////////////////////
@@ -432,12 +432,12 @@ glBindBuffer(GL_ARRAY_BUFFER, colorBufferHandle);
 glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (GLubyte *)NULL);
 glBindVertexArray(0);
 </code></pre>
-<h5 id="program">多个Program切换</h5>
+<h5 id="多个program切换">多个Program切换</h5>
 <p>可以在一个OpenGL程序中创建多个Program对象（<code>glCreateProgram</code>创建），然后通过<code>glUseProgram</code>且切换使用需要的Program对象。</p>
-<h5 id="program1">删除Program对象</h5>
+<h5 id="删除program对象">删除Program对象</h5>
 <p>如果一个Program对象不再使用，可以使用<code>glDeleteProgram</code>删除；如果这个Program正在使用，使用<code>glDeleteProgram</code>不会直接删除，而是给一个删除标记，等到下次OpenGL内部检测时才会删除。<br>
 删除一个Program对象后，会自动Detach之前Attach上去的所有ShaderObject（<code>glCreateShader</code>创建），但是不会删除这些ShaderObject，除非调用<code>glDeleteShader</code>。</p>
-<h5 id="-vertex-input-attributes">动态获取 vertex input attributes</h5>
+<h5 id="动态获取-vertex-input-attributes">动态获取 vertex input attributes</h5>
 <p>一般情况下，vertex输入属性是在shader代码中定义好的：</p>
 <pre><code>#version 410
 
@@ -476,14 +476,14 @@ for( int i = 0; i &lt; numAttribs; ++i )
 1    VertexColor (vec3)
 0    VertexPosition (vec3)
 </code></pre>
-<h5 id="uniform-variables">Uniform variables的意义和作用</h5>
+<h5 id="uniform-variables的意义和作用">Uniform variables的意义和作用</h5>
 <p>前面介绍的 Vertex attributes 是一种通用的给 shader 填充输入参数的方式，Vertext attributes 在 shader 内部不仅可以被读取，还可以被修改。<br>
 但是 Uniform variables 在 shader 内只能被读取，如果要修改，必须在 shader 之外调用OpenGL的API。</p>
 <p>什么情况下用Uniform variable：<br>
 在渲染一个模型时，由于其每个顶点(vertex)信息都不一样，所以每个顶点在调用 shader 时，shader 的输入参数都不一样，相当于每计算一个顶点，shader 的输入参数都得变化一次，针对这种实时变化的输入参数，最好使用 Vertex attributes ；对于像摄像机角度、投射变换(projective transformations)等数据，相对变化频率很低，这种情况下最好使用 Uniform variable，毕竟它在 shader 内为常量，所以编译器可以针对这种常量做优化来提升性能。</p>
 <p>注意事项：<br>
 Uniform variables 可以定义在任何一个 shader 中，如果多个 shader 定义了名字相同的 Uniform variables，那么它们的类型也必须相同，也就是说：<span class="highlight-text green">只要一处定义，就可以被当前程序的所有 shader 对象访问</span>。</p>
-<h5 id="uniform-variables-opengl-api">Uniform variables 常用的OpenGL API</h5>
+<h5 id="uniform-variables-常用的opengl-api">Uniform variables 常用的OpenGL API</h5>
 <p>假设测试的 uniform.frag 代码如下：</p>
 <pre><code>#version 410
 
@@ -524,7 +524,7 @@ glUniformMatrix4fv(location, 1, GL_FALSE, &amp;rotationMatrix[0][0]);
 </code></pre>
 </li>
 </ul>
-<h5 id="-uniform-variables">动态获取 Uniform variables</h5>
+<h5 id="动态获取-uniform-variables">动态获取 Uniform variables</h5>
 <p>方式类似前面提到的<strong>动态获取 vertex input attributes</strong>，还是以前面的 uniform.frag 为例：</p>
 <pre><code>GLint numUniforms = 0;
 glGetProgramInterfaceiv( handle, GL_UNIFORM, GL_ACTIVE_RESOURCES, &amp;numUniforms);
@@ -551,7 +551,7 @@ for( int i = 0; i &lt; numUniforms; ++i )
 <pre><code>Active uniforms:
 0    RotationMatrix (mat4)
 </code></pre>
-<h5 id="uniform-blocks">Uniform blocks意义和作用</h5>
+<h5 id="uniform-blocks意义和作用">Uniform blocks意义和作用</h5>
 <p>如果你的 OpenGL 程序中有多个 shader 对象，且这些 shader 使用了同一个 Uniform variables，而我们知道，Uniform variables的location等信息是在 shader 对象Link之后生成的，也就是说每当 Link 一个 shader对象时，这个Uniform variables 的location 可能发生变化（比如在 shader 对象A中，Uniform variables 的location 为1，shader 对象2中，那么Uniform variables 的location 为2，那么如果先link对象A，再link对象B，则这个Uniform variables的location对于 shader 对象A就已失效）。<br>
 所以需要一个管理当前Program对象中所有Uniform variables的管理器，这个管理器就是Uniform blocks。</p>
 <p>使用实例：</p>
@@ -636,7 +636,7 @@ glBufferData( GL_UNIFORM_BUFFER, blockSize, blockBuffer, GL_DYNAMIC_DRAW );
 // Bind the buffer object to the uniform block
 glBindBufferBase( GL_UNIFORM_BUFFER, 1, uboHandle );
 </code></pre>
-<h5 id="glbufferdata">glBufferData的作用</h5>
+<h5 id="glbufferdata的作用">glBufferData的作用</h5>
 <p>Create the buffer object and copy the data into it:</p>
 <pre><code>GLuint uboHandle;
 glGenBuffers( 1, &amp;uboHandle );
@@ -644,7 +644,7 @@ glBindBuffer( GL_UNIFORM_BUFFER, uboHandle );
 glBufferData( GL_UNIFORM_BUFFER, blockSize, blockBuffer, GL_DYNAMIC_DRAW );
 </code></pre>
 <p>The space is allocated within the buffer object and the data is copied when glBufferData is called.</p>
-<h5 id="glbindbufferbase">glBindBufferBase的索引问题</h5>
+<h5 id="glbindbufferbase的索引问题">glBindBufferBase的索引问题</h5>
 <p>glBindBufferBase函数参数的索引（第二个参数）必须与定义uniform时设定的layout(binding=)相同，例如：</p>
 <pre><code>glBindBufferBase(GL_UNIFORM_BUFFER, 0, uboHandle);
 </code></pre>
@@ -656,13 +656,13 @@ glBufferData( GL_UNIFORM_BUFFER, blockSize, blockBuffer, GL_DYNAMIC_DRAW );
     float RadiusOuter;
 };
 </code></pre>
-<h5 id="glbindbufferglbindbufferbase">glBindBuffer与glBindBufferBase的区别</h5>
+<h5 id="glbindbuffer与glbindbufferbase的区别">glBindBuffer与glBindBufferBase的区别</h5>
 <div class="alert info ">
   <p>简述之：<code>glBindBuffer</code> 绑定的指针索引，是用来对 Buffer 填充或修改数据而使用的，但是这个索引无法作为输入参数传递给 shader ，如果要把这个索引传递给 shader ，那么必须使用glBindBufferBase。</p>
 </div>
 <p>书中原文：<br>
 You might be wondering why we use glBindBuffer and glBindBufferBase with GL_UNIFORM_BUFFER. Aren't these the same binding points used in two different contexts? The answer is that the GL_UNIFORM_BUFFER point can be used in each function with a slightly different meaning. With glBindBuffer, we bind to a point that can be used for filling or modifying a buffer, but can't be used as a source of data for the shader. When we use glBindBufferBase, we are binding to an index within a location that can be directly sourced by the shader. Granted, that's a bit confusing.</p>
-<h5 id="uniform-layout">uniform layout类型：</h5>
+<h5 id="uniform-layout类型">uniform layout类型：</h5>
 <ul>
 <li>std140</li>
 <li>shared</li>
@@ -678,7 +678,7 @@ You might be wondering why we use glBindBuffer and glBindBufferBase with GL_UNIF
 <pre><code>layout( row_major, shared ) uniform BlobSettings {
 };
 </code></pre>
-<h5 id="fragment-shadervertex-shaderpage-58">fragment shader到vertex shader之间的工作流程（page 58）</h5>
+<h5 id="fragment-shader到vertex-shader之间的工作流程page-58">fragment shader到vertex shader之间的工作流程（page 58）</h5>
 <figure>
     <img src="https://dawnarc.com/img/20170113-[Shading]OpenGL%e5%b8%b8%e7%94%a8%e5%9f%ba%e7%a1%80%e7%9f%a5%e8%af%86%28%e4%b8%aa%e4%ba%ba%e5%ad%a6%e4%b9%a0%e7%ac%94%e8%ae%b0%29/[Shading]OpenGL%e5%b8%b8%e7%94%a8%e5%9f%ba%e7%a1%80%e7%9f%a5%e8%af%86%28%e4%b8%aa%e4%ba%ba%e5%ad%a6%e4%b9%a0%e7%ac%94%e8%ae%b0%29-01.png"/> 
 </figure>

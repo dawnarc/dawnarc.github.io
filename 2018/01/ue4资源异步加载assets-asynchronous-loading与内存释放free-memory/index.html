@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.60.1 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.62.2 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="UE4, Asset Asynchronous Loading">
 <meta name="description" content="为什么需要异步加载资源，因为当一次性加载的资源较多或者单个资源较大时，普通的LoadObject()方式会阻塞引擎的主线程。
@@ -384,8 +384,8 @@ if (!doNotTrack) {
               <p>为什么需要异步加载资源，因为当一次性加载的资源较多或者单个资源较大时，普通的LoadObject()方式会阻塞引擎的主线程。</p>
 <p>假设测试工程叫TestTD4，自定义Character叫ATestTD4Character（头文件为TestTD4Character.h）</p>
 <p>假设在Content/Assets/目录下放了三个动画文件（AnimSequence）。</p>
-<h3 id="heading">异步加载</h3>
-<h5 id="defaultgameinifsoftobjectpath">通过DefaultGame.ini配置文件生成FSoftObjectPath</h5>
+<h3 id="异步加载">异步加载</h3>
+<h5 id="通过defaultgameini配置文件生成fsoftobjectpath">通过DefaultGame.ini配置文件生成FSoftObjectPath</h5>
 <p>DefaultGame.ini</p>
 <pre><code>[/Script/TestTD4.TestTD4Character]
 +TestAssets=/Game/Assets/ThirdPerson_Jump.ThirdPerson_Jump
@@ -442,7 +442,7 @@ ThirdPerson_Jump
 /Game/Assets/ThirdPerson_Jump.ThirdPerson_Jump
 </code></pre>
 <p>说明这三个资源确实是运行时异步加载，而不是游戏启动时就被自动加载。</p>
-<h5 id="fsoftobjectpath">通过路径字符串生成FSoftObjectPath</h5>
+<h5 id="通过路径字符串生成fsoftobjectpath">通过路径字符串生成FSoftObjectPath</h5>
 <p>头文件中定义一个变量</p>
 <pre><code>FSoftObjectPath SoftObj;
 </code></pre>
@@ -462,7 +462,7 @@ AssetLoader.RequestAsyncLoad(SoftObj, FStreamableDelegate::CreateUObject(this, &
     }
 }
 </code></pre>
-<h3 id="heading1">同步加载</h3>
+<h3 id="同步加载">同步加载</h3>
 <p>同步加载有两种API：</p>
 <ul>
 <li>
@@ -483,7 +483,7 @@ AssetLoader.RequestAsyncLoad(SoftObj, FStreamableDelegate::CreateUObject(this, &
 <div class="alert warning ">
   <p>FStreamableManager的源码注释已经写明：RequestAsyncLoad、RequestSyncLoad、LoadSynchronous等待延迟时间可能长达数秒。LoadSynchronous和RequestSyncLoad的内部实现是对异步加载的封装：调用FStreamableHandle::WaitUntilComplete()阻塞等待。RequestSyncLoad函数内部要么会进行异步载入并且调用WaitUntilComplete函数，要么直接调用LoadObject函数 —— 哪个更快就调哪个。</p>
 </div>
-<h5 id="umg">加载蓝图（角色蓝图、UMG蓝图等）</h5>
+<h5 id="加载蓝图角色蓝图umg蓝图等">加载蓝图（角色蓝图、UMG蓝图等）</h5>
 <p>StreamManager加载蓝图时，不能使用默认路径（即使后缀加_C），否则加载出来的Class无法使用，虽然不为空。<br>
 正确方式：前缀统一用Class，然后后缀再加_C。</p>
 <p>示例：</p>
@@ -498,13 +498,13 @@ if (WidgetClass)
     }
 }
 </code></pre>
-<h3 id="heading2">资源内存释放</h3>
+<h3 id="资源内存释放">资源内存释放</h3>
 <p>用上述方式加载资源后（包括同步加载和异步加载），如何再释放资源并从内存中销毁？两种情况：</p>
-<h5 id="heading3">自动回收</h5>
+<h5 id="自动回收">自动回收</h5>
 <div class="alert success ">
   <p>只要对象失去引用后就会被自动释放，无需手动Destroy。如果是异步加载，对象只在回调函数中有效，回调函数执行完毕后，就会被标记为可收回状态，如果此时ForceGC，则对象会立即销毁。</p>
 </div>
-<h5 id="heading4">手动回收</h5>
+<h5 id="手动回收">手动回收</h5>
 <p>在执行加载时，将bManageActiveHandle标记为true，默认为false：表示是否手动管理FStreamableHandle。如果设置为true，则对象会一直常驻内存直到手动释放。</p>
 <pre><code>FStreamableManager&amp; AssetLoader = UAssetManager::GetStreamableManager();
 UParticleSystem* AimObj = AssetLoader.LoadSynchronous&lt;UParticleSystem&gt;(FSoftObjectPath(AssetPath), true);
@@ -519,7 +519,7 @@ AssetLoader.Unload(FSoftObjectPath(AssetPath));
 <div class="alert danger ">
   <p>在编辑器模式下，上述两种回收方式都不起效，会一直常驻内存，只有在打包运行版本中才会生效。如果在编辑器运行模式下强制Destroy()或者MarkPendingKill()，则对象可以从内存中销毁，但是无法再次Load，除非重启编辑器。</p>
 </div>
-<h3 id="heading5">加载资源中的引用关系</h3>
+<h3 id="加载资源中的引用关系">加载资源中的引用关系</h3>
 <p>2017年用4.18版本测试的结果如下：<br>
 <div class="alert warning ">
   <p>加载角色蓝图时，蓝图中引用的SkeletalMesh等资源并不会被加载，而是在SpawnActor时才会去加载。在移动端上，如果角色蓝图引用的资源（SkeletalMeshes、Materials、Textures等）体积较大时，首次SpawnActor时会出现hitch。这种问题在PC上的SSD硬盘上很难察觉。</p>
@@ -532,7 +532,7 @@ AssetLoader.Unload(FSoftObjectPath(AssetPath));
 <li>加载特效（ParticleSystem）时，特效中粒子发射器（Emitter）引用的材质蓝图会自动被加载，包括材质（Material）与材质实例（MaterialInstanceConstant），并且该材质引用的所有贴图也会自动被加载。</li>
 </ul></p>
 </div></p>
-<h3 id="heading6">注意事项</h3>
+<h3 id="注意事项">注意事项</h3>
 <ul>
 <li>
 <p>FStreamableManager::Unload()会Release掉和当前资源相关的所有FStreamableHandle。比如在三处位置加载了同一个资源，即使bManageActiveHandle设置为true，那么只要调用Unload一次，就可以将这三个FStreamableHandle对象全部Release掉，即从内存中释放该对象；如果对这3个FStreamableHandle对象分别执行Release，那么只有当最后一个Handle被Release之后，该资源才会从内存中释放。</p>
@@ -569,10 +569,10 @@ AssetLoader.Unload(FSoftObjectPath(AssetPath));
 <p><code>TSoftObjectPtr</code>内部使用了RTTI的<code>dynamic_cast</code>，这个操作很贵，避免在run-time大规模使用，尤其是服务端。如果非要在run-time中频繁使用，个人建议做法：自己建一个map当作资源加载管理的缓存，key是资源路径，value是一个自定义结构体，其中保存了对象指针和资源类型枚举，获取的时候根据枚举值<code>static_cast</code>强转。</p>
 </li>
 </ul>
-<h3 id="heading7">参考</h3>
+<h3 id="参考">参考</h3>
 <p>《Fortnite》开发经验分享之运行时资源管理：Runtime Asset Management<br>
 <a href="https://answers.unrealengine.com/storage/temp/136465-runtimeassetmanagementin416.pdf">https://answers.unrealengine.com/storage/temp/136465-runtimeassetmanagementin416.pdf</a></p>
-<h3 id="heading8">常见错误</h3>
+<h3 id="常见错误">常见错误</h3>
 <p>【2018-05-21】<br>
 如果在场景A中去加载场景B（SyncLoad或者AsyncLoad，不是UGameplayStatics::OpenLevel方式），那么加载场景B时，bManageActiveHandle参数不能设置为false，而要设置为true。</p>
 <p>现象：<br>

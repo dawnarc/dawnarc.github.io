@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.60.1 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.62.2 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="">
 <meta name="description" content="keywords：UE4、Linear Algebra、Plane Geometry、线性代数、解析几何
@@ -368,23 +368,23 @@ if (!doNotTrack) {
           <div class="post-content markdown" itemprop="articleBody">
             <div class="main-content-wrap">
               <p>keywords：UE4、Linear Algebra、Plane Geometry、线性代数、解析几何</p>
-<h3 id="heading">范围判定</h3>
-<h5 id="2d3d">检测一个点是否在一个多边形(或矩形)的内部(2D和3D)</h5>
+<h3 id="范围判定">范围判定</h3>
+<h5 id="检测一个点是否在一个多边形或矩形的内部2d和3d">检测一个点是否在一个多边形(或矩形)的内部(2D和3D)</h5>
 <pre><code>FBox2D::IsInside(const FVector2D&amp; TestPoint)
 FBox::IsInside(const FVector&amp; TestPoint)
 FIntRect::Contains( FIntPoint P )
 </code></pre>
-<h3 id="heading1">角度计算</h3>
-<h5 id="get-an-angle-between-2-vectors0-180">计算两个向量的夹角(Get an angle between 2 Vectors)，范围：(0, 180)</h5>
+<h3 id="角度计算">角度计算</h3>
+<h5 id="计算两个向量的夹角get-an-angle-between-2-vectors范围0-180">计算两个向量的夹角(Get an angle between 2 Vectors)，范围：(0, 180)</h5>
 <pre><code>float AimAtAngle = FMath::RadiansToDegrees(acosf(FVector::DotProduct(PlayerDirection, MouseDirection)));
 </code></pre>
 <p>参考：How to get an angle between 2 Vectors?<br>
 <a href="https://answers.unrealengine.com/questions/31058/how-to-get-an-angle-between-2-vectors.html">https://answers.unrealengine.com/questions/31058/how-to-get-an-angle-between-2-vectors.html</a></p>
-<h5 id="xyz180-180">计算方向向量与空间坐标轴（X、Y、Z）的夹角，范围：(-180, 180)</h5>
+<h5 id="计算方向向量与空间坐标轴xyz的夹角范围-180-180">计算方向向量与空间坐标轴（X、Y、Z）的夹角，范围：(-180, 180)</h5>
 <pre><code>FRotator Rot = UKismetMathLibrary::MakeRotFromX(TestVector);
 float Angle = Rot.Yaw;  //(-180, 180)
 </code></pre>
-<h5 id="abab">判断角色A在角色B的左边还是右边（或者角色A相对角色B的四个方向）</h5>
+<h5 id="判断角色a在角色b的左边还是右边或者角色a相对角色b的四个方向">判断角色A在角色B的左边还是右边（或者角色A相对角色B的四个方向）</h5>
 <p>参考自引擎代码：<code>UAnimInstance::CalculateDirection()</code></p>
 <pre><code>//-180到0表示 ActorA 在 ActorB 左边，0到180表示 ActorA 在 ActorB 右边
 float CalculateDirecton(const AActor* ActorA, const AActor* ActorB)
@@ -411,29 +411,29 @@ float CalculateDirecton(const AActor* ActorA, const AActor* ActorB)
     return ForwardDeltaDegree;
 }
 </code></pre>
-<h5 id="-indirection--referenceframe-azimuthelevation">计算方向向量 InDirection 相对 ReferenceFrame 的方位俯仰角(Azimuth-Elevation)</h5>
+<h5 id="计算方向向量-indirection-相对-referenceframe-的方位俯仰角azimuth-elevation">计算方向向量 InDirection 相对 ReferenceFrame 的方位俯仰角(Azimuth-Elevation)</h5>
 <pre><code>void UKismetMathLibrary::GetAzimuthAndElevation(FVector InDirection, const FTransform&amp; ReferenceFrame, float&amp; Azimuth, float&amp; Elevation);
 </code></pre>
-<h5 id="heading2">根据入射向量和法线向量计算反射向量</h5>
+<h5 id="根据入射向量和法线向量计算反射向量">根据入射向量和法线向量计算反射向量</h5>
 <pre><code>FVector FMath::GetReflectionVector(const FVector&amp; Direction, const FVector&amp; SurfaceNormal);
 </code></pre>
-<h5 id="rightup-roll--pitch-">根据地面的法线向量、Right方向向量、Up向量向量，计算出斜坡的 Roll 和 Pitch 方向的角度</h5>
+<h5 id="根据地面的法线向量right方向向量up向量向量计算出斜坡的-roll-和-pitch-方向的角度">根据地面的法线向量、Right方向向量、Up向量向量，计算出斜坡的 Roll 和 Pitch 方向的角度</h5>
 <pre><code>void UKismetMathLibrary::GetSlopeDegreeAngles(const FVector&amp; MyRightYAxis, const FVector&amp; FloorNormal, const FVector&amp; UpVector, 
     float&amp; OutSlopePitchDegreeAngle, float&amp; OutSlopeRollDegreeAngle);
 </code></pre>
-<h3 id="heading3">点坐标计算</h3>
-<h5 id="heading4">计算直线外一点到该直线的最近的点（垂足的坐标）</h5>
+<h3 id="点坐标计算">点坐标计算</h3>
+<h5 id="计算直线外一点到该直线的最近的点垂足的坐标">计算直线外一点到该直线的最近的点（垂足的坐标）</h5>
 <pre><code>FVector UKismetMathLibrary::FindClosestPointOnLine(FVector Point, FVector LineOrigin, FVector LineDirection);
 </code></pre>
-<h5 id="heading5">计算直线与平面交叉点的坐标</h5>
+<h5 id="计算直线与平面交叉点的坐标">计算直线与平面交叉点的坐标</h5>
 <pre><code>bool UKismetMathLibrary::LinePlaneIntersection(const FVector&amp; LineStart, const FVector&amp; LineEnd, 
     const FPlane&amp; APlane, float&amp; T, FVector&amp; Intersection);
 </code></pre>
-<h5 id="heading6">计算平面外一点投射到平面的坐标点</h5>
+<h5 id="计算平面外一点投射到平面的坐标点">计算平面外一点投射到平面的坐标点</h5>
 <pre><code>FVector UKismetMathLibrary::ProjectPointOnToPlane(FVector Point, FVector PlaneBase, FVector PlaneNormal);
 </code></pre>
-<h3 id="heading7">向量（矢量）计算</h3>
-<h5 id="az">向量A投射到以Z轴为法线的平面的投射向量</h5>
+<h3 id="向量矢量计算">向量（矢量）计算</h3>
+<h5 id="向量a投射到以z轴为法线的平面的投射向量">向量A投射到以Z轴为法线的平面的投射向量</h5>
 <pre><code>/**
  * Projects 2D components of vector based on Z.
  *
@@ -441,23 +441,23 @@ float CalculateDirecton(const AActor* ActorA, const AActor* ActorB)
  */
 FVector Projection() const;
 </code></pre>
-<h5 id="heading8">计算平面外矢量投射到平面后的矢量</h5>
+<h5 id="计算平面外矢量投射到平面后的矢量">计算平面外矢量投射到平面后的矢量</h5>
 <pre><code>FVector UKismetMathLibrary::ProjectVectorOnToPlane(FVector V, FVector PlaneNormal);
 
 static FVector VectorPlaneProject(const FVector&amp; V, const FVector&amp; PlaneNormal);
 </code></pre>
-<h5 id="rotator-a-3">获取Rotator A 对应的3个方向向量</h5>
+<h5 id="获取rotator-a-对应的3个方向向量">获取Rotator A 对应的3个方向向量</h5>
 <pre><code>void UKismetMathLibrary::GetAxes(FRotator A, FVector&amp; X, FVector&amp; Y, FVector&amp; Z);
 </code></pre>
-<h5 id="-rotator-3">获取 Rotator 对应坐标系3个方向向量</h5>
+<h5 id="获取-rotator-对应坐标系3个方向向量">获取 Rotator 对应坐标系3个方向向量</h5>
 <pre><code>FVector UKismetMathLibrary::GetForwardVector(FRotator InRot);
 FVector UKismetMathLibrary::GetRightVector(FRotator InRot);
 FVector UKismetMathLibrary::GetUpVector(FRotator InRot);
 </code></pre>
-<h5 id="heading9">计算一组向量的平均向量</h5>
+<h5 id="计算一组向量的平均向量">计算一组向量的平均向量</h5>
 <pre><code>FVector GetVectorArrayAverage(const TArray&lt;FVector&gt;&amp; Vectors);
 </code></pre>
-<h5 id="--ab">获取反向方向 / 获取A向量相对B向量的镜像向量</h5>
+<h5 id="获取反向方向--获取a向量相对b向量的镜像向量">获取反向方向 / 获取A向量相对B向量的镜像向量</h5>
 <pre><code>/** 
  * Given a direction vector and a surface normal, returns the vector reflected across the surface normal.
  * Produces a result like shining a laser at a mirror!
@@ -469,7 +469,7 @@ FVector UKismetMathLibrary::GetUpVector(FRotator InRot);
  */
 static CORE_API FVector GetReflectionVector(const FVector&amp; Direction, const FVector&amp; SurfaceNormal);
 </code></pre>
-<h5 id="rotatorxxyz">以Rotator自身朝向为X轴，获取对应的X、Y、Z轴方向的世界坐标系方向</h5>
+<h5 id="以rotator自身朝向为x轴获取对应的xyz轴方向的世界坐标系方向">以Rotator自身朝向为X轴，获取对应的X、Y、Z轴方向的世界坐标系方向</h5>
 <pre><code>FMatrix RotMatrix = FRotationMatrix(ActorB-&gt;GetActorRotation());
 FVector ForwardVector = RotMatrix.GetScaledAxis(EAxis::X);
 FVector RightVector = RotMatrix.GetScaledAxis(EAxis::Y);
@@ -478,7 +478,7 @@ FVector TopVector = RotMatrix.GetScaledAxis(EAxis::Z);
 <p>如果是想获取对应的方向向量使用：</p>
 <pre><code>FVector FMatrix::GetUnitAxis( EAxis::Type InAxis ) const
 </code></pre>
-<h5 id="rotatorxxyz1">以Rotator自身朝向为X轴，计算指定向量映射在这个局部坐标系X、Y、Z轴方向的局部空间向量</h5>
+<h5 id="以rotator自身朝向为x轴计算指定向量映射在这个局部坐标系xyz轴方向的局部空间向量">以Rotator自身朝向为X轴，计算指定向量映射在这个局部坐标系X、Y、Z轴方向的局部空间向量</h5>
 <pre><code>FRotator Rot(45.f, 45.f, 0);
 FVector Velocity(90.f, 90.f, 0);
 FVector VeclocityInNewDire = Rot.UnrotateVector(Velocity);
@@ -543,14 +543,14 @@ static FRotator UKismetMathLibrary::InverseTransformRotation(const FTransform&am
 <div class="alert info ">
   <p>Inner of InverseTransformXXX is using <code>UnrotateVector</code>.</p>
 </div>
-<h5 id="heading10">计算方向的相反反向</h5>
+<h5 id="计算方向的相反反向">计算方向的相反反向</h5>
 <pre><code>FVector UKismetMathLibrary::NegateVector(FVector A)
 </code></pre>
 <p>或者</p>
 <pre><code>FVector Direction;
 FVector InverseDire = -Direction;
 </code></pre>
-<h3 id="heading11">插值相关</h3>
+<h3 id="插值相关">插值相关</h3>
 <p>使用简单弹簧模型（Spring）来 interpolate 浮点数值（范围从 Current 到 Target）</p>
 <pre><code>float UKismetMathLibrary::FloatSpringInterp(float Current, float Target, UPARAM(ref) FFloatSpringState&amp; SpringState, 
     float Stiffness, float CriticalDampingFactor, float DeltaTime, float Mass = 1.f);

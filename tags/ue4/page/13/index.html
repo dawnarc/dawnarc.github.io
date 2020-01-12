@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.60.1 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.62.2 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="">
 <meta name="description" content="Hugo tranquilpeak theme demo">
@@ -300,6 +300,134 @@ if (!doNotTrack) {
         
           <section class="postShorten-group main-content-wrap">
             
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2017/05/ue4c-%E5%BC%80%E5%8F%91fsp%E6%B8%B8%E6%88%8F%E7%9A%84%E5%AE%98%E6%96%B9wiki%E6%95%99%E7%A8%8B/">
+          [UE4]C&#43;&#43;开发FSP游戏的官方wiki教程
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2017-05-15T00:12:40&#43;08:00">
+        
+  
+  
+  
+  
+    Monday, 00:12, May 15, 2017
+  
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        First Person Shooter C++ Tutorial https://wiki.unrealengine.com/First_Person_Shooter_C%2B%2B_Tutorial
+教程很久没有更新，有的api在新版本中已经变动了。比如对于CollisionComponent的Hit(碰撞)事件，其回调函数的写法已经变动： https://answers.unrealengine.com/questions/556543/oncomponenthitadddynamic.html
+ 渐行渐远渐无书，水阔鱼沉何处问？---欧阳修《木兰花》
+      
+      <p>
+        <a href="https://dawnarc.com/2017/05/ue4c-%E5%BC%80%E5%8F%91fsp%E6%B8%B8%E6%88%8F%E7%9A%84%E5%AE%98%E6%96%B9wiki%E6%95%99%E7%A8%8B/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2017/04/ue4%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E4%B8%8E%E5%86%85%E5%AD%98%E5%B8%B8%E9%A9%BB/">
+          [UE4]对象的垃圾回收与内存常驻
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2017-04-26T14:11:40&#43;08:00">
+        
+  
+  
+  
+  
+    Wednesday, 14:11, Apr 26, 2017
+  
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        keywords：UE4, Memory Persist, GC, 垃圾回收, 内存管理
+防止GC的办法 一个UObject类型的变量，即使是static，默认也会被GC掉。
+ 要防止该对象被GC，有4种方式：
+ 作为成员变量并标记为UPROPERTY()； 创建对象后 AddToRoot() ；（退出游戏时需要RemoveFromRoot()） FStreamableManager Load资源时，bManageActiveHandle 设置为true； FGCObjectScopeGuard 在指定代码区域内保持对象；  Uobject不能使用TSharedPtr进行引用计数，非UObject才可以；如果一个非UObject的类想加入GC，那么必须继承FGCObject类。
+ UPROPERTY()用法 URPOPERTY()UObject* MyObj; AddToRoot()用法 UMyObject* MyObj = NewObject&lt;UMyObject&gt;();MyObj.AddToRoot(); FStreamableManager 用法 FSoftObjectPath AssetPath(TEXT(&quot;/Game/Mannequin/Animations/ThirdPersonWalk.ThirdPersonWalk&quot;));FStreamableManager&amp; AssetLoader = UAssetManager::GetStreamableManager();//hold object in memory.TSharedPtr&lt;FStreamableHandle&gt; Handle = AssetLoader.RequestSyncLoad(AssetPath, true);UObject* Obj = Handle-&gt;GetLoadedAsset();//free memory of object.Handle-&gt;ReleaseHandle(); FGCObjectScopeGuard 用法 {FGCObjectScopeGuard(UObject* GladOS = NewObject&lt;...&gt;(...));GladOS-&gt;SpawnCell();RunGC();GladOS-&gt;IsStillAlive(); // Object will not be removed by GC} GC 常见问题  官方论坛上有人说 NewObject() 或者 LoadObject() 创建的对象才会自动被 GC ， SpawnActor 创建的对象会被自动 AddToRoot ，不会被 GC。不知早期的版本是否确实如此，但是目前版本不是这样，即使是 SpawnActor ，默认也会被 GC。  参考资料 UE4 Garbage Collection
+      
+      <p>
+        <a href="https://dawnarc.com/2017/04/ue4%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E4%B8%8E%E5%86%85%E5%AD%98%E5%B8%B8%E9%A9%BB/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
             
               
   
@@ -1155,134 +1283,6 @@ exec: error : one or more of the modules specified using the '-module' argument 
       
       <p>
         <a href="https://dawnarc.com/2016/12/ue4exec-error-one-or-more-of-the-modules-specified-using-the-module-argument-could-not-be-found/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-            
-              
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2016/12/ue4%E4%BC%98%E5%8C%96%E5%BB%BA%E8%AE%AE%E4%B8%8E%E7%BB%8F%E9%AA%8C/">
-          [UE4]优化建议与经验
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2016-12-09T19:17:02&#43;08:00">
-        
-  
-  
-  
-  
-    Friday, 19:17, Dec 9, 2016
-  
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        <p>keywords：UE4性能优化、Performance Optimization</p>
-      
-      <p>
-        <a href="https://dawnarc.com/2016/12/ue4%E4%BC%98%E5%8C%96%E5%BB%BA%E8%AE%AE%E4%B8%8E%E7%BB%8F%E9%AA%8C/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-            
-              
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2016/11/ue4material%E4%BD%BF%E7%94%A8%E8%93%9D%E5%9B%BE%E5%92%8Cc-%E5%8A%A8%E6%80%81%E5%88%9B%E5%BB%BA%E6%9D%90%E8%B4%A8%E5%B9%B6%E8%AE%BE%E7%BD%AE%E6%9D%90%E8%B4%A8%E5%8F%82%E6%95%B0%E5%B1%9E%E6%80%A7parameter/">
-          [UE4][Material]使用蓝图和C&#43;&#43;动态创建材质并设置材质参数属性(Parameter)
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2016-11-27T22:20:40&#43;08:00">
-        
-  
-  
-  
-  
-    Sunday, 22:20, Nov 27, 2016
-  
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        蓝图方式： 使用StarterContent中的椅子作为演示示例的模型：
-1，	创建一个空的Actor蓝图，命名为RandomChair：   2，打开蓝图   并将椅子的StaticMesh拖放的到根节点内：     3，在该蓝图内创建一个box，命名为Box1，用于检测碰撞时使用：   4，将这个蓝图拖放到场景中：   5，添加蓝图脚本
-现在构造函数中创建一个材质示例，并命名为DynamicMetarial     然后再添加Box1的碰撞事件函数
-    全部逻辑为：   每当靠近这个椅子时，椅子的颜色就会随机变化一次。
-其中的参数名：ColorSeats，是在Chair的材质中定义的可编辑参数：   C++方式： 加载材质、创建动态材质、并为 Image 控制设置材质资源
-UMaterial* Mat = LoadObject&lt;UMaterial&gt;(nullptr, TEXT(&quot;Material'/Game/Asset/Materials/HUD/ProgressCircleRotate/M_ProgressCircleRot.M_ProgressCircleRot'&quot;));if (Mat &amp;&amp; Img){if (UMaterialInstanceDynamic* MatInstance = UMaterialInstanceDynamic::Create(Mat, this)){Img-&gt;SetBrushFromMaterial(MatInstance);}} 设置动态参数
-if (Img){if (UMaterialInstanceDynamic* MatInsDyna= Cast&lt;UMaterialInstanceDynamic&gt;(Img-&gt;Brush.
-      
-      <p>
-        <a href="https://dawnarc.com/2016/11/ue4material%E4%BD%BF%E7%94%A8%E8%93%9D%E5%9B%BE%E5%92%8Cc-%E5%8A%A8%E6%80%81%E5%88%9B%E5%BB%BA%E6%9D%90%E8%B4%A8%E5%B9%B6%E8%AE%BE%E7%BD%AE%E6%9D%90%E8%B4%A8%E5%8F%82%E6%95%B0%E5%B1%9E%E6%80%A7parameter/" class="postShorten-excerpt_link link">Continue reading</a>
         
       </p>
     </div>

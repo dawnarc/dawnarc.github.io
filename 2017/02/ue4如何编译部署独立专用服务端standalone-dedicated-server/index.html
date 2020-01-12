@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.60.1 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.62.2 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="UE4, Replication, Relicate, reliable, RPC, RTS Movement, Dedicated Server, 属性同步">
 <meta name="description" content="keywords: Dedicated Server 搭建流程">
@@ -352,14 +352,14 @@ if (!doNotTrack) {
               <p>keywords: Dedicated Server 搭建流程</p>
 <p>下面步骤假设是以development模式来构建，步骤和shipping模式没差异。</p>
 <p>下面步骤中假设我们自己的UE4工程名叫：MyProject</p>
-<h5 id="1">1，下载源码及编译</h5>
+<h5 id="1下载源码及编译">1，下载源码及编译</h5>
 <p>首先需要unrealengine官网上注册并加入github开发组才有权限进入下面地址。<br>
 <a href="https://github.com/EpicGames/UnrealEngine/tags">https://github.com/EpicGames/UnrealEngine/tags</a></p>
 <div class="alert warning ">
   <p>注意：编译专用服务器，只能用源码编译版本的引擎，安装版本的引擎无法编译Server。</p>
 </div>
 <p>打开页面后下载一个最新的release版本，解压出来后先运行Setup.bat，会自动下载资源文件，大概有几个G，下载完以后，然后再运行GenerateProjectFiles.bat，会生成VS工程文件，这里假设你已经安装好了VS，我用的vs2015旗舰版，生成完以后打开VS，build类型选择debuggame editor或者development editor，并编译。</p>
-<h5 id="2ue4">2，切换工程的UE4版本</h5>
+<h5 id="2切换工程的ue4版本">2，切换工程的UE4版本</h5>
 <p>右键点击你的UE4工程文件MyProject.uproject -》 Switch Unreal Engine version，选择刚刚编译出来的UE4，切换版本以后，再右击*.uproject并选择：Generate Visual Studio project files，最后启动VS，启动VS之后再选择一种build类型来编译工程并启动，这里测试用的是development editor类型。</p>
 <h5 id="3cook-client-content">3，cook client content</h5>
 <p>上面第二步编译并启动运行工程后，这一步来打包客户端（官方文档上叫cook client content），方法和正常客户端版本打包的步骤一样：<br>
@@ -389,7 +389,7 @@ Package Project -》 Windows -》 Windows x64。
 <div class="alert warning ">
   <p>如果这里不设置，默认为空，则客户端进入服务端后会黑屏。</p>
 </div></p>
-<h5 id="4servertargetcs">4，添加Server.target.cs配置文件</h5>
+<h5 id="4添加servertargetcs配置文件">4，添加Server.target.cs配置文件</h5>
 <p>这一步是关键步骤。<br>
 从官网教学项目ShooterGame中拷贝一个文件：<br>
 <span class="highlight-text green">\Epic Games\Launcher\VaultCache\ShooterGame_‘版本号’\data\Source\ShooterGameServer.Target.cs</span></p>
@@ -420,7 +420,7 @@ public class ShooterGameServerTarget : TargetRules
 <div class="alert warning ">
   <p>注意：这段代码是4.16及以后的版本，4.16之前的版本用上面代码无法编译。</p>
 </div>
-<h5 id="5server">5，构建Server版本</h5>
+<h5 id="5构建server版本">5，构建Server版本</h5>
 <p>首先，关掉VS，然后右击工程文件*.uproject-》Generate Visual Studio project files，之所以要重新生成VS工程文件，是因为要确保上一步添加的Target.cs文件能够在编译中生效。</p>
 <p>打开VS后，选择build类型Development Server，然后构建。
 <figure>
@@ -433,7 +433,7 @@ public class ShooterGameServerTarget : TargetRules
 <p>如果MyProjectServer.exe不和MyProject.exe放在一起，则启动server时会报错（下面只是其众多错误信息中的一条）：<br>
 <span class="highlight-text danger">default Property warning and errors:</span><br>
 <span class="highlight-text danger">Error: CDO Constructor (WidgetComponent): Failed to find /Engine/EngineMaterials/Widget3DPassThrough_Translucent</span></p>
-<h5 id="6server">6，启动Server</h5>
+<h5 id="6启动server">6，启动Server</h5>
 <p>到此为止，已经从构建UE4服务端这个深坑中爬出来了。。。<br>
 命令行启动：</p>
 <pre><code>MyProjectServer.exe -log
@@ -444,17 +444,17 @@ public class ShooterGameServerTarget : TargetRules
     <img src="https://dawnarc.com/img/20170225-[UE4]%e5%a6%82%e4%bd%95%e7%bc%96%e8%af%91%e9%83%a8%e7%bd%b2%e7%8b%ac%e7%ab%8b%e4%b8%93%e7%94%a8%e6%9c%8d%e5%8a%a1%e7%ab%af%28Standalone%20Dedicated%20Server%29/[UE4]%e5%a6%82%e4%bd%95%e7%bc%96%e8%af%91%e9%83%a8%e7%bd%b2%e7%8b%ac%e7%ab%8b%e4%b8%93%e7%94%a8%e6%9c%8d%e5%8a%a1%e7%ab%af%28Standalone%20Dedicated%20Server%29-04.jpg"/> 
 </figure>
 </p>
-<h5 id="7clientserver">7，client连接server</h5>
+<h5 id="7client连接server">7，client连接server</h5>
 <p>这一步很简单，启动客户端游戏后（双击打包生成的MyProject.exe或者从UE4 Editor中启动游戏均可），按~键，输入：<span class="highlight-text green">open   127.0.0.1:7777</span>，即可连接上服务端，7777是端口号。如果是shipping模式，是没有这种命令行的，连接服务端需要手动写相关的逻辑代码。</p>
 <p>这样UFUNCTION(Server, Reliable, WithValidation)函数就可以与客户端独实现同步了。</p>
 <div class="alert warning ">
   <p>注意的是：按~键打开游戏的命令行只对development和debug模式有效，shipping模式无效，另外shipping下也会关闭自带的同步机制（开头提到的）。</p>
 </div>
-<h3 id="heading">常见问题</h3>
+<h3 id="常见问题">常见问题</h3>
 <h5 id="client-connecting-with-invalid-version">Client connecting with invalid version</h5>
 <p>如果出现以下错误提示，原因是客户端和服务端版本不匹配，比如编译完客户端之后又改过代码，然后再编译服务端。<br>
 <span class="highlight-text danger">LogNet: NotifyControlMessage: Client connecting with invalid version. LocalNetworkVersion: -629807355, RemoteNetworkVersion: 1642249361</span></p>
-<h5 id="dep-sbefores-export-class-objectproperty">Dep S_BEFORE_S Export class ObjectProperty</h5>
+<h5 id="dep-s_before_s-export-class-objectproperty">Dep S_BEFORE_S Export class ObjectProperty</h5>
 <p>Error Log when start server:</p>
 <pre><code>LogStreaming: Error:         Dep S_BEFORE_S Export     0    /Game/Blueprints/UI/TestUIBP.TestUIBP_C:HPBar     (class ObjectProperty)
 </code></pre>
@@ -462,7 +462,7 @@ public class ShooterGameServerTarget : TargetRules
 Only build client, but doesn't build Server.</p>
 <p>Solution:<br>
 Build Server.</p>
-<h3 id="heading1">服务器部署</h3>
+<h3 id="服务器部署">服务器部署</h3>
 <h5 id="windows-server">Windows Server</h5>
 <p>如果UE4 Dedicated Server部署在 Windows Server ，建议操作系统版本使用2016极其以上版本。2012版本需要安装一大推补丁程序才能保证 Dedicated Server 正常启动，非常繁琐。</p>
 <p>首次运行 Dedicated Server 之前，需要执行一下步骤：</p>
@@ -471,7 +471,7 @@ Build Server.</p>
 <li>双击运行<code>UE4PrereqSetup_x64.exe</code>，位置：<code>WindowsNoEditor\Engine\Extras\Redist\en-us\UE4PrereqSetup_x64.exe</code>。</li>
 <li>防火墙添加过滤。不要添加端口7777过滤，而是添加Server.exe程序过滤。</li>
 </ol>
-<h5 id="heading2">参考资料</h5>
+<h5 id="参考资料">参考资料</h5>
 <p>Dedicated Server Guide (Windows &amp; Linux)<br>
 <a href="https://wiki.unrealengine.com/Dedicated_Server_Guide_(Windows_%26_Linux)">https://wiki.unrealengine.com/Dedicated_Server_Guide_(Windows_%26_Linux)</a></p>
 <p>Cross-Compiling for Linux<br>

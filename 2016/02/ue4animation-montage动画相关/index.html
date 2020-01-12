@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.60.1 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.62.2 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="">
 <meta name="description" content="常用API C&#43;&#43;如何播放Montage动画 Character接口：
@@ -391,8 +391,8 @@ if (!doNotTrack) {
           
           <div class="post-content markdown" itemprop="articleBody">
             <div class="main-content-wrap">
-              <h3 id="api">常用API</h3>
-<h5 id="cmontage">C++如何播放Montage动画</h5>
+              <h3 id="常用api">常用API</h3>
+<h5 id="c如何播放montage动画">C++如何播放Montage动画</h5>
 <p>Character接口：<br>
 假设是在Character内执行，其中MontagePtr为Montage指针：</p>
 <pre><code>float AnimDuration = PlayAnimMontage(MontagePtr) / (GetMesh() &amp;&amp; GetMesh()-&gt;GlobalAnimRateScale &gt; 0 ? GetMesh()-&gt;GlobalAnimRateScale : 1);
@@ -412,7 +412,7 @@ if (!doNotTrack) {
 <p>其他参考：<br>
 How can I play animations strictly from C++?<br>
 <a href="https://answers.unrealengine.com/questions/292345/how-can-i-play-animations-strictly-from-c.html">https://answers.unrealengine.com/questions/292345/how-can-i-play-animations-strictly-from-c.html</a></p>
-<h5 id="cmontageanimsequence">C++动态播放Montage（通过AnimSequence创建）</h5>
+<h5 id="c动态播放montage通过animsequence创建">C++动态播放Montage（通过AnimSequence创建）</h5>
 <p>keywords：UE4, C++, AnimSequence, AnimMontage, Slot, 动态创建, 播放动画</p>
 <p>首先要在动画蓝图中添加Slot节点，默认的Slot名字为DefaultSlot。这个名字会在C++代码中使用
 <figure>
@@ -441,7 +441,7 @@ if (USkeletalMeshComponent *Mesh = MyActor-&gt;FindComponentByClass&lt;USkeletal
 <div class="alert danger ">
   <p>使用<code>PlaySlotAnimationAsDynamicMontage()</code>播放Montage时，如果不是循环播放的Montage，播放完毕后一定要执行<code>UAnimInstance::Montage_Stop()</code>停掉当前Montage，否则会干扰蓝图动画的逻辑，导致切换其他Montage时无效。</p>
 </div>
-<h5 id="montage">播放Montage动画时让动作停留在最后一帧</h5>
+<h5 id="播放montage动画时让动作停留在最后一帧">播放Montage动画时让动作停留在最后一帧</h5>
 <p>keywords：UE4、Montage、C++、播放速度、播放速率、加速播放、减速播放</p>
 <p>四种方式<br>
 方式1：
@@ -464,7 +464,7 @@ if (USkeletalMeshComponent *Mesh = MyActor-&gt;FindComponentByClass&lt;USkeletal
     <img src="https://dawnarc.com/img/20160218-[UE4]Animation%20Montage%e5%8a%a8%e7%94%bb%e7%9b%b8%e5%85%b3/[UE4]Animation%20Montage%e5%8a%a8%e7%94%bb%e7%9b%b8%e5%85%b3-06.jpg"/> 
 </figure>
 </p>
-<h5 id="cmontagesection">C++播放Montage时指定Section</h5>
+<h5 id="c播放montage时指定section">C++播放Montage时指定Section</h5>
 <p>方式1：<br>
 通过第三个参数 StartSectionName 指定 Section</p>
 <pre><code>float ACharacter::PlayAnimMontage(class UAnimMontage* AnimMontage, float InPlayRate = 1.f, FName StartSectionName = NAME_None);
@@ -483,10 +483,10 @@ if (USkeletalMeshComponent *Mesh = MyActor-&gt;FindComponentByClass&lt;USkeletal
 <div class="alert danger ">
   <p>执行 Montage_JumpToSection 时请确保角色动画的正处于Section所属Montage的播放状态，否则 JumpToSection 无效。</p>
 </div>
-<h5 id="montage1">获取当前正在播放的Montage</h5>
+<h5 id="获取当前正在播放的montage">获取当前正在播放的Montage</h5>
 <pre><code>UAnimMontage* UAnimInstance::GetCurrentActiveMontage() const
 </code></pre>
-<h5 id="montage2">停止Montage播放</h5>
+<h5 id="停止montage播放">停止Montage播放</h5>
 <p>如果要停止当前正在播放的Montage，则执行<code>StopAnimMontage()</code>：</p>
 <pre><code>void ACharacter::StopAnimMontage(class UAnimMontage* AnimMontage);
 </code></pre>
@@ -499,23 +499,23 @@ if (USkeletalMeshComponent *Mesh = MyActor-&gt;FindComponentByClass&lt;USkeletal
 <div class="alert success ">
   <p>一旦通过StopAnimMontage停止正在播放的Montage，角色就会恢复到待机动作。</p>
 </div>
-<h5 id="montage3">设置Montage播放结束和融合结束后的回调函数</h5>
+<h5 id="设置montage播放结束和融合结束后的回调函数">设置Montage播放结束和融合结束后的回调函数</h5>
 <pre><code>//设置Montage播放完毕后的回调
 void UAnimInstance::Montage_SetEndDelegate(FOnMontageEnded &amp; InOnMontageEnded, UAnimMontage* Montage = NULL);
 
 //设置Montage融合完毕后的回调
 void UAnimInstance::Montage_SetBlendingOutDelegate(FOnMontageBlendingOutStarted &amp; InOnMontageBlendingOut, UAnimMontage* Montage = NULL);
 </code></pre>
-<h5 id="blend-in--blend-out-">Blend In 和 Blend Out 区别</h5>
+<h5 id="blend-in-和-blend-out-区别">Blend In 和 Blend Out 区别</h5>
 <p>Engine\Source\Runtime\Engine\Classes\Animation\AnimMontage.h</p>
 <pre><code>/** Blend out option. This is only used when it blends out itself. If it's interrupted by other montages, it will use new montage's BlendIn option to blend out. */
 UPROPERTY(EditAnywhere, Category=BlendOption)
 FAlphaBlend BlendOut;
 </code></pre>
-<h5 id="heading">如何指定动画的某个时间点作为起始播放点</h5>
+<h5 id="如何指定动画的某个时间点作为起始播放点">如何指定动画的某个时间点作为起始播放点</h5>
 <p><code>UAnimInstance::PlaySlotAnimationAsDynamicMontage()</code>和<code>UAnimInstance::Montage_Play()</code>都提供了参数<code>InTimeToStartMontageAt</code>，表示从当前动作的哪个时间点还是融合，默认为0，即从第一帧开始融合。</p>
-<h3 id="heading1">常见问题</h3>
-<h5 id="montage-section20180211">Montage Section切换无效的问题(2018-02-11)</h5>
+<h3 id="常见问题">常见问题</h3>
+<h5 id="montage-section切换无效的问题2018-02-11">Montage Section切换无效的问题(2018-02-11)</h5>
 <p>keywords: UE4 Montage Section not working</p>
 <p>问题现象：<br>
 SetNextSection在编辑器中运行正常，但是在打包版本中无效。</p>
@@ -526,7 +526,7 @@ SetNextSection在编辑器中运行正常，但是在打包版本中无效。</p
 <div class="alert warning ">
   <p>如果Section的时间很短，需要将<code>Blend In</code>和<code>Blend Out</code>设置为 改小或者设置为 0（默认为0.25），否则 JumpToSection 无效果。</p>
 </div>
-<h5 id="montage-20181026">Montage 循环播放(2018-10-26)</h5>
+<h5 id="montage-循环播放2018-10-26">Montage 循环播放(2018-10-26)</h5>
 <p>如果用动画蓝图控制动画切换，直接用动画状态机去指定 AnimSequence 即可，不需要其他设置，因为动画蓝图会自动根据状态机去循环播放指定的 AnimSequence 。<br>
 如果用C++播放Montage，则需要注意以下细节：</p>
 <ol>
@@ -553,12 +553,12 @@ SetNextSection在编辑器中运行正常，但是在打包版本中无效。</p
 <div class="alert danger ">
   <p>这种方式是否可行：不设置Montage循环播放，而是在Tick中不停检测上一次Montage的累计播放时长，当播完时马上执行下一次播放。答案是不可行！！实际效果是：两次的Montage播放之间会有短暂时间切换到Idle状态动画。</p>
 </div>
-<h5 id="montage-">Montage 切换时没有融合的问题</h5>
+<h5 id="montage-切换时没有融合的问题">Montage 切换时没有融合的问题</h5>
 <p>原因：<br>
 Montage 的参数<code>Blend In</code>被设置为了0。</p>
 <p>解决办法：<br>
 将Montage 的参数<code>Blend In</code>（Blend Option -&gt; Blend In -&gt; Blend Time）改成大于0，比如默认值0.25。</p>
-<h5 id="heading2">动画状态机切换动画时让动画停留在最后一帧</h5>
+<h5 id="动画状态机切换动画时让动画停留在最后一帧">动画状态机切换动画时让动画停留在最后一帧</h5>
 <p>动画蓝图中的State内部播放动画的节点属性<code>Loop</code>修改为<code>false</code>：
 <figure>
     <img src="https://dawnarc.com/img/20160218-[UE4]Animation%20Montage%e5%8a%a8%e7%94%bb%e7%9b%b8%e5%85%b3/[UE4]Animation%20Montage%e5%8a%a8%e7%94%bb%e7%9b%b8%e5%85%b3-04.jpg"/> 
@@ -606,7 +606,7 @@ Montage 的参数<code>Blend In</code>被设置为了0。</p>
             </li>
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2015/12/ue4%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9%E4%B8%8E%E7%AC%94%E8%AE%B0/" data-tooltip="[UE4]注意事项与笔记">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2016/01/ue4blueprintnativeevent-blueprintimplementableevent-notes/" data-tooltip="[UE4]BlueprintNativeEvent&amp; BlueprintImplementableEvent Notes">
               
                   <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
                   <i class="fa fa-angle-right"></i>
@@ -674,7 +674,7 @@ Montage 的参数<code>Blend In</code>被设置为了0。</p>
             </li>
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2015/12/ue4%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9%E4%B8%8E%E7%AC%94%E8%AE%B0/" data-tooltip="[UE4]注意事项与笔记">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2016/01/ue4blueprintnativeevent-blueprintimplementableevent-notes/" data-tooltip="[UE4]BlueprintNativeEvent&amp; BlueprintImplementableEvent Notes">
               
                   <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
                   <i class="fa fa-angle-right"></i>
