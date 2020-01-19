@@ -302,6 +302,146 @@ if (!doNotTrack) {
             
   
     
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2016/03/ue4fstring%E5%B8%B8%E7%94%A8api/">
+          [UE4]FString常用API
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2016-03-01T16:45:02&#43;08:00">
+        
+  
+  
+  
+  
+    Tuesday, 16:45, Mar 1, 2016
+  
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        将int或float转换为string：
+FString NewString = FString::FromInt(YourInt); FString VeryCleanString = FString::SanitizeFloat(YourFloat);  将FString转换为 TCHAR*：
+FString str; TCHAR *c1 = *str; TCHAR* c2 = str.GetCharArray().GetData();  将string转换为int或者float：
+FString TheString = &quot;123.021&quot;; int32 MyShinyNewInt = FCString::Atoi(*TheString); float MyShinyNewFloat = FCString::Atof(*TheString);  字符串切割：
+FString a(&quot;1,2,3&quot;); TArray&lt;FString&gt; stringArray; a.ParseIntoArray(stringArray, TEXT(&quot;,&quot;), false);  字符串截取：
+FString::Left(int count); FString::Right(int count);  字符串格式化Format：
+FString Path = FString::Printf(TEXT(&quot;StaticMesh'/Game/Shapes/ground_shape_%d.ground_shape_%d'&quot;), i); 如何获取FString转换后char之后的长度 比如用TCHAR_TO_ANSI()将tchar转换为char之后，char的长度如何计算？ 使用FTCHARToANSI::Length()，示例如下：
+FTCHARToANSI Convert(*String);Ar-&gt;Serialize((ANSICHAR*)Convert, Convert.Length()); 参考自：https://docs.unrealengine.com/latest/INT/Programming/UnrealArchitecture/StringHandling/CharacterEncoding/index.html
+中文字符的FString 转换 char数组 FString str(TEXT(&quot;笑傲江湖DA&quot;));const wchar_t* s1 = *str;int LenW = wcslen(s1);int LenC = LenW * 2;//先转换为 char*, 比如 protobuf 不支持 wchar_t，那么可以将中文转换为char，然后储存在protobuf内部。char* buf = new char[LenC + 1]();memcpy(buf, s1, LenC);//验证char*能否还原为 wchar_t 数组wchar_t* buf2 = new wchar_t[LenC/2 + 1]();memcpy(buf2, buf, LenC); TCHAR*、wchar_t*、char* 转换相关 //char 转换为 TCHARTCHAR* msg = ANSI_TO_TCHAR(&quot;dddd&quot;); TCHAR* msg2 = UTF8_TO_TCHAR(&quot;dddd&quot;); //TCHAR 转换为 charchar* Str4 = TCHAR_TO_UTF8(*Str);char* Str4 = TCHAR_TO_ANSI(*Str);//TCHAR 转换为 wchar_tFSting Str;wchar_t* Str2 = TCHAR_TO_WCHAR(*Str);//wchar_t 转换为 TCHAR wchar_t Str5[] = L&quot;sss&quot;;TCHAR* Str6 = (TCHAR*)Str5; 如果 char* 字符串有中文，转换为 FString 时，必须使用 ANSI_TO_TCHAR() 或者 UTF8_TO_TCHAR()，例如：FString Text = UTF8_TO_TCHAR(&ldquo;牛鼻&rdquo;); 。否则会出现乱码。另外，如果汉字是写在代码里面，则代码文件的编码格式需要改成UTF8，否则也会乱码。
+      
+      <p>
+        <a href="https://dawnarc.com/2016/03/ue4fstring%E5%B8%B8%E7%94%A8api/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2016/02/ue4animation-montage%E5%8A%A8%E7%94%BB%E7%9B%B8%E5%85%B3/">
+          [UE4]Animation Montage动画相关
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2016-02-18T16:40:02&#43;08:00">
+        
+  
+  
+  
+  
+    Thursday, 16:40, Feb 18, 2016
+  
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        常用API C++如何播放Montage动画 Character接口：
+假设是在Character内执行，其中MontagePtr为Montage指针：
+float AnimDuration = PlayAnimMontage(MontagePtr) / (GetMesh() &amp;&amp; GetMesh()-&gt;GlobalAnimRateScale &gt; 0 ? GetMesh()-&gt;GlobalAnimRateScale : 1); AnimInstace接口：
+float AnimDuration = Montage_Play(Param.Montage, Param.PlayRate); 如果只是播放Animation Sequence，不需要Montage，可以使用 PlayAnimation()：
+if (USkeletalMeshComponent *Mesh = GetMesh()){Mesh-&gt;PlayAnimation(AnimSequence, false);} 注意：PlayAnimation可以直接来播放AnimSequence，但是不能混合动作。比如当播放完攻击动作后，无法自动回到空闲状态，但是通过Montage的Slot可以完成自动切换动作。
+ 其他参考：
+How can I play animations strictly from C++?
+https://answers.unrealengine.com/questions/292345/how-can-i-play-animations-strictly-from-c.html
+C++动态播放Montage（通过AnimSequence创建） keywords：UE4, C++, AnimSequence, AnimMontage, Slot, 动态创建, 播放动画
+首先要在动画蓝图中添加Slot节点，默认的Slot名字为DefaultSlot。这个名字会在C++代码中使用   假设已经获取了要播放的AnimSequence对象指针：AnimSeq
+float AnimLength = 0.f;if (USkeletalMeshComponent *Mesh = MyActor-&gt;FindComponentByClass&lt;USkeletalMeshComponent&gt;()){if (UAnimInstance *AnimInst = Mesh-&gt;GetAnimInstance()){if (UAnimMontage* Mtg = AnimInst-&gt;PlaySlotAnimationAsDynamicMontage(AnimSeq, TEXT(&quot;DefaultSlot&quot;), 0.
+      
+      <p>
+        <a href="https://dawnarc.com/2016/02/ue4animation-montage%E5%8A%A8%E7%94%BB%E7%9B%B8%E5%85%B3/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
   
 
 
@@ -344,7 +484,7 @@ if (!doNotTrack) {
     </div>
     <div class="postShorten-excerpt" itemprop="articleBody">
       
-        <p>keywords: UE4, BlueprintNativeEvent, BlueprintImplementableEvent</p>
+        <p>keywords: UE4, BlueprintNativeEvent, BlueprintImplementableEvent, C++ invoke Blueprint function</p>
       
       <p>
         <a href="https://dawnarc.com/2016/01/ue4blueprintnativeevent-blueprintimplementableevent-notes/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -426,12 +566,9 @@ UE4还写莫名其妙的bug，这些bug可能是与引擎升级有关，可参�
 内存溢出导致的问题：在用FString拼接字符串的时候，抛了一个异常，但是相同的代码在另一个地方是正常的，两个地方都是非GameThread，崩掉的位置发在调用FString::FromInt()。后来用itoa代替就正常了。很可能是逻辑代码有内存溢出的bug。
 【2016-06-02】
 如果同一属性在蓝图编辑器中和C++中的值不同，那么蓝图中的属性值会shadow掉C++构造函数中的值。如果想让C++的值shadow蓝图的值，那么可以在C++的BeginPlay等非构造函数的初始化函数中设置属性（这里假设没有在蓝图逻辑脚本中对属性设置）。 新建蓝图时，蓝图的属性会遵循C++父类中的构造函数中的属性设置。
-【2016-08-16】
-用C++动态创建Component时（NewObject()），在AttachToComponent之前，需要执行RegisterComponent,否则无法Attach成功，且TickComponent()无法触发。
-备注：只有NewObject创建出来的Component才需要执行ResisterComponent，SpawnActor和ConstructorHelpers创建的对象则不需要。
 【2016-09-23】
 UE4中的C++类继承规则：只能直接继承自两种类，一种是非UObject类，一种是继承过UInterface的UObject类。如果一个类是UObject且其父类没有一个是UInterface，则无法编译通过。
-如果同一批美术材质，在两个不同工程下的渲染效果不一样，比如同一个粒子特效，实际效果在两个工程中有差异，则可能是工程的设置项问题。解决办法：将两个工程中的Config/DefaultEngine.ini中的[/Script/Engine.RendererSettings】配置参数，设置统一即可。
+如果同一批美术材质，在两个不同工程下的渲染效果不一样，比如同一个粒子特效，实际效果在两个工程中有差异，则可能是工程的设置项问题。解决办法：将两个工程中的Config/DefaultEngine.ini中的[/Script/Engine.RendererSettings]配置参数，设置统一即可。
 如果spawn出来的actor执行了AddToRoot操作，那么，需要GameInstance::Shutdown()中执行RemoveFromRoot，否则退出UE4Editor时会出现崩溃。另外，在GameMode和GameInstance的BeginDestroy()中执行是不行的，因为垃圾回收过程发生在BeginDestroy()执行之前。
 【2017-02-06】
 用宏控制debug相关代码的开启和关闭

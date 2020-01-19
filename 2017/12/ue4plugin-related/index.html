@@ -589,6 +589,67 @@ If you want to get your plugin working at building project, also keep plugin sou
 <span class="highlight-text green">
 Put your plugin source in `UE4Dir\Engine\Plugins\` and build engine from source, then remove source code of plugin.
 </span></p>
+<h5 id="fatal-error-c1083-cannot-open-include-file-myactorgeneratedh">Fatal error C1083: Cannot open include file: &lsquo;MyActor.generated.h&rsquo;</h5>
+<p>Error at builing project:</p>
+<pre><code>fatal error C1083: Cannot open include file: 'MyActor.generated.h'
+</code></pre>
+<p>Caused by:<br>
+If set <code>bUsePrecompiled = true;</code> in Build.cs of plugin, maybe you clean <code>Intermediate</code> directory, so it build failed at first building.</p>
+<p>Solution:<br>
+Set <code>bUsePrecompiled = false;</code> at first, then build project, then set <code>bUsePrecompiled = true;</code></p>
+<h5 id="error-missing-precompiled-manifest-for-testplugin">ERROR: Missing precompiled manifest for &lsquo;TestPlugin&rsquo;</h5>
+<p>Error at building project:</p>
+<pre><code>UATHelper: Packaging (Windows (64-bit)):   ERROR: Missing precompiled manifest for 'TestPlugin'. This module was most likely not flagged for being included in a precompiled build - set 'PrecompileForTargets = PrecompileTargetsType.Any;' in TestPlugin.build.cs to override.
+PackagingResults: Error: Missing precompiled manifest for 'TestPlugin'. This module was most likely not flagged for being included in a precompiled build - set 'PrecompileForTargets = PrecompileTargetsType.Any;' in TestPlugin.build.cs to override.
+</code></pre>
+<p>Caused by:<br>
+The binaries of plugins builded under VisualStudio aren unusable for building project.</p>
+<p>Solution:<br>
+If you plan to build project with plugin source removed (use binaries only), you should package your plugin at first: Settings -&gt; Plugins -&gt; Find you plugins and click <code>Package</code> under plugin tab, then replace original plugin with new plugin which was packaged before.</p>
+<h5 id="error-remote-compiling-requires-a-server-name">ERROR: Remote compiling requires a server name</h5>
+<p>Error at packaging plugin:</p>
+<pre><code>ERROR: Remote compiling requires a server name. Use the editor (Project Settings &gt; IOS) to set up your remote compilation settings.
+</code></pre>
+<p>Caused by:<br>
+By default, plugin building includes all platforms even current device don't support.</p>
+<p>Solution:<br>
+Specify platform name that current device support.</p>
+<p>Example in <code>*.uplugin</code>:</p>
+<pre><code>{
+    &quot;FileVersion&quot; : 3,
+    &quot;Version&quot; : 1,
+    &quot;VersionName&quot; : &quot;1.0&quot;,
+    &quot;FriendlyName&quot; : &quot;Victory Plugin&quot;,
+    &quot;Description&quot; : &quot;120+ Custom Blueprint Nodes For You! &lt;3 Rama&quot;,
+    &quot;Category&quot; : &quot;Rama&quot;,
+    &quot;CreatedBy&quot; : &quot;Rama&quot;,
+    &quot;CreatedByURL&quot; : &quot;http://www.ue4code.com&quot;,
+    &quot;DocsURL&quot; : &quot;http://www.ue4code.com&quot;,
+    &quot;MarketplaceURL&quot; : &quot;http://www.ue4code.com&quot;,
+    &quot;SupportURL&quot; : &quot;http://www.ue4code.com&quot;,
+    &quot;EnabledByDefault&quot; : true,
+    &quot;CanContainContent&quot; : false,
+    &quot;IsBetaVersion&quot; : false,
+    &quot;Installed&quot; : true,
+    &quot;RequiresBuildPlatform&quot; : false,
+    &quot;Modules&quot; :
+    [
+        {
+            &quot;Name&quot; : &quot;VictoryBPLibrary&quot;,
+            &quot;Type&quot; : &quot;Runtime&quot;,
+            &quot;LoadingPhase&quot; : &quot;PreDefault&quot;,
+            &quot;WhitelistPlatforms&quot; :
+            [
+                &quot;Win64&quot;,
+                &quot;Win32&quot;,
+                &quot;HTML5&quot;
+            ]
+        }
+    ]
+}
+</code></pre>
+<p>Reference:<br>
+<a href="https://wiki.unrealengine.com/How_To_Package_Plugins_For_UE4_Marketplace#.Uplugin_White_List">https://wiki.unrealengine.com/How_To_Package_Plugins_For_UE4_Marketplace#.Uplugin_White_List</a></p>
 <h3 id="reference">Reference</h3>
 <p>How to Install a Plugin on Unreal Engine 4<br>
 <a href="https://idkudk.blogspot.jp/2015/02/how-to-install-plugin-on-unreal-engine-4.html">https://idkudk.blogspot.jp/2015/02/how-to-install-plugin-on-unreal-engine-4.html</a></p>
@@ -596,6 +657,10 @@ Put your plugin source in `UE4Dir\Engine\Plugins\` and build engine from source,
 <a href="https://wiki.popcornfx.com/index.php/UE4/Plugin_installation">https://wiki.popcornfx.com/index.php/UE4/Plugin_installation</a></p>
 <p>Origin: Building Binary Plugins In Unreal Engine 4<br>
 <a href="https://mercuna.com/building-binary-plugins-in-unreal-engine-4/">https://mercuna.com/building-binary-plugins-in-unreal-engine-4/</a></p>
+<p>Plugins<br>
+<a href="https://docs.unrealengine.com/en-US/Programming/Plugins/index.html">https://docs.unrealengine.com/en-US/Programming/Plugins/index.html</a></p>
+<p>How To Package Plugins For UE4 Marketplace<br>
+<a href="https://wiki.unrealengine.com/How_To_Package_Plugins_For_UE4_Marketplace">https://wiki.unrealengine.com/How_To_Package_Plugins_For_UE4_Marketplace</a></p>
 <hr>
 <p><code>醉里挑灯看剑，梦回吹角连营。----辛弃疾《破阵子·为陈同甫赋壮词以寄之》</code></p>
 

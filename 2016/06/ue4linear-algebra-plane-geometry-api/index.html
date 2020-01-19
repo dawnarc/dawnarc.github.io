@@ -446,14 +446,6 @@ FVector Projection() const;
 
 static FVector VectorPlaneProject(const FVector&amp; V, const FVector&amp; PlaneNormal);
 </code></pre>
-<h5 id="获取rotator-a-对应的3个方向向量">获取Rotator A 对应的3个方向向量</h5>
-<pre><code>void UKismetMathLibrary::GetAxes(FRotator A, FVector&amp; X, FVector&amp; Y, FVector&amp; Z);
-</code></pre>
-<h5 id="获取-rotator-对应坐标系3个方向向量">获取 Rotator 对应坐标系3个方向向量</h5>
-<pre><code>FVector UKismetMathLibrary::GetForwardVector(FRotator InRot);
-FVector UKismetMathLibrary::GetRightVector(FRotator InRot);
-FVector UKismetMathLibrary::GetUpVector(FRotator InRot);
-</code></pre>
 <h5 id="计算一组向量的平均向量">计算一组向量的平均向量</h5>
 <pre><code>FVector GetVectorArrayAverage(const TArray&lt;FVector&gt;&amp; Vectors);
 </code></pre>
@@ -478,6 +470,19 @@ FVector TopVector = RotMatrix.GetScaledAxis(EAxis::Z);
 <p>如果是想获取对应的方向向量使用：</p>
 <pre><code>FVector FMatrix::GetUnitAxis( EAxis::Type InAxis ) const
 </code></pre>
+<h5 id="获取世界rotator对应世界坐标系的3个轴向向量">获取世界Rotator对应世界坐标系的3个轴向向量</h5>
+<p>接口1；</p>
+<pre><code>FRotator TestRot(450.f, 45.f, 0.f);
+FVector OutX;
+FVector OutY;
+FVector OutZ;
+UKismetMathLibrary::GetAxes(TestRot, OutX, OutY, OutZ);
+</code></pre>
+<p>接口2；</p>
+<pre><code>FVector VecFwd = UKismetMathLibrary::GetForwardVector(TestRot);
+FVector VecRight = UKismetMathLibrary::GetRightVector(TestRot);
+FVector VecUp = UKismetMathLibrary::GetUpVector(TestRot);
+</code></pre>
 <h5 id="以rotator自身朝向为x轴计算指定向量映射在这个局部坐标系xyz轴方向的局部空间向量">以Rotator自身朝向为X轴，计算指定向量映射在这个局部坐标系X、Y、Z轴方向的局部空间向量</h5>
 <pre><code>FRotator Rot(45.f, 45.f, 0);
 FVector Velocity(90.f, 90.f, 0);
@@ -496,7 +501,7 @@ float RightSpeed = VeclocityInNewDire.Y;
 FVector BaseDire(0, -1.f, 0.f);
 FVector OffsetDire = BaseDire.Rotation().UnrotateVector(Direction);
 </code></pre>
-<h5 id="local-space-position-direction-or-rotation-to-world-space">Local space (Position, Direction or rotation) to world space</h5>
+<h5 id="local-space-position-direction-or-rotation-to-world-space">Local Space (Position, Direction or Rotation) to World Space</h5>
 <pre><code>/** 
  *	Transform a position by the supplied transform.
  *	For example, if T was an object's transform, this would transform a position from local space to world space.
@@ -518,7 +523,7 @@ static FVector UKismetMathLibrary::TransformDirection(const FTransform&amp; T, F
 UFUNCTION(BlueprintPure, Category=&quot;Math|Transform&quot;)
 static FRotator UKismetMathLibrary::TransformRotation(const FTransform&amp; T, FRotator Rotation);
 </code></pre>
-<h5 id="world-space-position-direction-or-rotation-to-local-space">World space (Position, Direction or rotation) to local space</h5>
+<h5 id="world-space-position-direction-or-rotation-to-local-space">World Space (Position, Direction or Rotation) to Local Space</h5>
 <pre><code>/** 
  *	Transform a position by the inverse of the supplied transform.
  *	For example, if T was an object's transform, this would transform a position from world space to local space.
