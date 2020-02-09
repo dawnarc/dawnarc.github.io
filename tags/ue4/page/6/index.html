@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.62.2 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.64.0 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="">
 <meta name="description" content="Hugo tranquilpeak theme demo">
@@ -300,6 +300,75 @@ if (!doNotTrack) {
         
           <section class="postShorten-group main-content-wrap">
             
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2018/07/ue4%E7%89%A9%E7%90%86%E5%92%8C%E5%88%9A%E4%BD%93%E7%9B%B8%E5%85%B3%E7%9A%84%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9simulate-physics-and-rigidbody/">
+          [UE4]物理和刚体相关的注意事项(Simulate Physics and RigidBody)
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2018-07-23T00:27:02&#43;08:00">
+        
+  
+  
+  
+  
+    Monday, 00:27, Jul 23, 2018
+  
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        UProjectileMovementComponent相关 官方第一人称射击模版项目中，是在构造函数中就设置好了速度：
+ProjectileMovement = CreateDefaultSubobject&lt;UProjectileMovementComponent&gt;(TEXT(&quot;ProjectileComp&quot;));ProjectileMovement-&gt;UpdatedComponent = CollisionComp;ProjectileMovement-&gt;InitialSpeed = 3000.f;ProjectileMovement-&gt;MaxSpeed = 3000.f;ProjectileMovement-&gt;bRotationFollowsVelocity = true;ProjectileMovement-&gt;bShouldBounce = true; 两个问题：
+ 如何停止移动； 如何在运行时期间修改速度；  问题1解决方法：
+默认情况下，Actor spawn之后，就会受到 ProjectileMovement 影响立即移动，如何在 Spawn 之后马上停止移动：
+ProjectileMovement-&gt;Deactivate(); 问题2解决方法：
+如何在 Spawn 之后修改 Speed，两种方式：
+UProjectileMovementComponent-&gt;SetVelocityInLocalSpace(FVector NewVelocity); 或者
+UProjectileMovementComponent-&gt;Velocity = NewVelocity; Velocity计算方式：
+Velocity = Velocity.GetSafeNormal() * InitialSpeed; 前者速度方向是相对于 UProjectileMovementComponent本地坐标系 的相对Rotation，后者速度方向是相对于世界坐标系的绝对Rotation。 注意：当使用 UProjectileMovementComponent 后，UPrimitiveComponent::SetSimulatePhysics() 启用物理会与 ProjectileMovement 冲突。如果要使用物理，那么只能去掉 UProjectileMovementComponent ，使用 Add Impulse 来代替。
+      
+      <p>
+        <a href="https://dawnarc.com/2018/07/ue4%E7%89%A9%E7%90%86%E5%92%8C%E5%88%9A%E4%BD%93%E7%9B%B8%E5%85%B3%E7%9A%84%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9simulate-physics-and-rigidbody/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
             
               
   
@@ -630,7 +699,7 @@ CCDIK (Cyclic Coordinate Descent Inverse Kinematics) CCDIK
       
         Reference: Master pose vs copy pose vs mesh merge in UE4
 https://iluvanimation.blogspot.tw/2017/04/master-pose-vs-copy-pose-vs-mesh-merge.html
-Since I get this question so often, I'm just writing quick summary for each.
+Since I get this question so often, I&rsquo;m just writing quick summary for each.
 When you have different parts of bodies, and you want to allow players to pick which part they want, we have multiple choices, and people are wondering what are the main differences.
 Say you have head, upper body, lower body, and how do you allow them to pick and what are the differences?
       
@@ -1130,7 +1199,7 @@ youtube Tutorials Unreal Engine 4 Tutorial - Post Process Effects
 https://www.youtube.com/watch?v=i6lYSXyUKRY
 Unreal Engine 4 Beginner Tutorial Series - #34 Post Processing
 https://www.youtube.com/watch?v=i9bnPStLYfk
-Unreal 4 Post Processing Volume Part 03 Colour Grading with LUT's
+Unreal 4 Post Processing Volume Part 03 Colour Grading with LUT&rsquo;s
       
       <p>
         <a href="https://dawnarc.com/2018/04/ue4post-process-related/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -1192,7 +1261,7 @@ Unreal 4 Post Processing Volume Part 03 Colour Grading with LUT's
     <div class="postShorten-excerpt" itemprop="articleBody">
       
         keywords：UE4, Shadow Optimization, Scene Optimization, 阴影, 场景, 优化
-Cascaded Shadow Maps related Enable Dynamic Shadow Distance Test Case: 500 Actors are rendering in screen, Camera height is 4000, DirectionalLight's property Dynamic Shadow Distance StationaryLight (Default value is 0, which means disabled) should be larger than the straight-line distance from Camera to Actor (Beacause the distance need to cover all Actors, so the distance would be better be larger ), otherwise frame rate would drop down from 200 fps to 100 fps.
+Cascaded Shadow Maps related Enable Dynamic Shadow Distance Test Case: 500 Actors are rendering in screen, Camera height is 4000, DirectionalLight&rsquo;s property Dynamic Shadow Distance StationaryLight (Default value is 0, which means disabled) should be larger than the straight-line distance from Camera to Actor (Beacause the distance need to cover all Actors, so the distance would be better be larger ), otherwise frame rate would drop down from 200 fps to 100 fps.
       
       <p>
         <a href="https://dawnarc.com/2018/04/ue4shadows/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -1260,69 +1329,6 @@ protobuf 2.x #ifndef	__ProtobufHelper_H__#define	__ProtobufHelper_H__#include 
       
       <p>
         <a href="https://dawnarc.com/2018/04/ue4android-ndk%E6%89%93%E5%8C%85%E7%89%88%E6%9C%AC%E6%89%A7%E8%A1%8Cprotobuf%E7%9A%84parsefromarray%E5%87%BD%E6%95%B0%E5%B4%A9%E6%BA%83/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-            
-              
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2018/04/ue4umg-progress-bar%E7%9B%B8%E5%85%B3%E8%AE%BE%E7%BD%AE/">
-          [UE4]UMG Progress Bar相关设置
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2018-04-17T17:32:02&#43;08:00">
-        
-  
-  
-  
-  
-    Tuesday, 17:32, Apr 17, 2018
-  
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        keywords：进度条、process bar
-先拖一个Progress Bar控件   再设置Style -》 Style -》 Background Image     再设置Percent的大小，来预览进度条颜色填充效果     也可以自定义填充颜色：Fill Color and Opacity     也可以去掉颜色，改成图片填充     注意，如果使用图片作为填充色，则Fill Color and Opacity需要改成默认值，否则填充图片颜色会受到影响。
-   然后再设置填充图片的Padding     设置进度条的填充方向    你最好不要爱上我，因为游侠是不需要女人的，游侠非常孤独。----《森林好小子》
-      
-      <p>
-        <a href="https://dawnarc.com/2018/04/ue4umg-progress-bar%E7%9B%B8%E5%85%B3%E8%AE%BE%E7%BD%AE/" class="postShorten-excerpt_link link">Continue reading</a>
         
       </p>
     </div>

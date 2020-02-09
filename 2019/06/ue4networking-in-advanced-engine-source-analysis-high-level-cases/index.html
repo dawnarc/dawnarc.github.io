@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.62.2 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.64.0 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="UE4, Networking">
 <meta name="description" content="Keywords: UE4, Networking">
@@ -354,7 +354,7 @@ if (!doNotTrack) {
             <div class="main-content-wrap">
               <p>Keywords: UE4, Networking</p>
 <h3 id="replication-cases">Replication Cases</h3>
-<h5 id="disconnect-actors-replication-at-run-time">Disconnect Actor's replication at Run-time</h5>
+<h5 id="disconnect-actors-replication-at-run-time">Disconnect Actor&rsquo;s replication at Run-time</h5>
 <p>Case:<br>
 A Character is replicated at first, then we want to disable replication when it dies.<br>
 E.g. Ragdoll, if we continue to keep replicating when character dies, it would increase overhead on server and server not care the result of Ragdoll, Ragdoll is just effect on client, so we need disconnect replication before perform Ragdoll computing.</p>
@@ -378,14 +378,14 @@ Execute <code>AActor::ForceNetUpdate()</code> to replicate current data to clien
 <a href="https://docs.unrealengine.com/en-US/Gameplay/Networking/OnlineBeacons/index.html">https://docs.unrealengine.com/en-US/Gameplay/Networking/OnlineBeacons/index.html</a></p>
 <div class="alert success ">
   <p>Online Beacons Usage:<br>
-e.g. If there's a requirement that make a decision to tell Client which Server to login, Client need to know the current player count of peer Server, now you can use Online Beacon to connect to Server before Replication connection created.</p>
+e.g. If there&rsquo;s a requirement that make a decision to tell Client which Server to login, Client need to know the current player count of peer Server, now you can use Online Beacon to connect to Server before Replication connection created.</p>
 </div>
 <h5 id="what-are-online-beacons-and-how-do-they-work">What are &ldquo;online beacons&rdquo; and how do they work?</h5>
 <p>The idea behind beacons was to provide a lightweight way to contact a server before actually connecting &ldquo;for real&rdquo;.</p>
-<p>Ideally you make a connection, send an RPC, get a response, and disconnect. You can ask things like &ldquo;who is in the game&rdquo; or &ldquo;please make room for me, I'm about to join&rdquo;. Traditionally, connecting to a server involved a full map load which can be frustrating to users if they do all that work only to be denied entry to an almost full game because someone got into the game first. Now you can make contact while still in the main menu, for example, and test multiple servers to pick the best one before joining. Or to inquire about information about a game in progress to &ldquo;spectate&rdquo; without being actually connected with an APlayerController and all that entails.</p>
+<p>Ideally you make a connection, send an RPC, get a response, and disconnect. You can ask things like &ldquo;who is in the game&rdquo; or &ldquo;please make room for me, I&rsquo;m about to join&rdquo;. Traditionally, connecting to a server involved a full map load which can be frustrating to users if they do all that work only to be denied entry to an almost full game because someone got into the game first. Now you can make contact while still in the main menu, for example, and test multiple servers to pick the best one before joining. Or to inquire about information about a game in progress to &ldquo;spectate&rdquo; without being actually connected with an APlayerController and all that entails.</p>
 <p>Gears 3 used beacons to reserve space in game. That way we could test many servers for space and travel to only one, knowing that you were definitely going to get into the game. It avoided contention when thousands of users all received the same 20-50 search results but only 10 could join per match. <span class="highlight-text green">However, in UE3, this was TCP/IP and the protocol had to be implemented manually not using any reflection by UObject.</span></p>
 <p>In UE4, we decided that our already existing network code was so robust and powerful, why reinvent the wheel? So I made the AOnlineBeacon class to leverage all the RPC and replication power of AActor.</p>
-<p>Traditionally, actor replication and spawning has always been server initiated, meaning that you had to connect before you got a copy of an actor that the server also knew about. I wanted clients to be able to create an actor that would initiate contact with the server and fire a delegate when a connection has been made so that higher level code could make an RPC. Otherwise you'd need to make a connection with the server, wait for the server to send you an actor you could RPC with, then switch to that. Unwieldy in my opinion.</p>
+<p>Traditionally, actor replication and spawning has always been server initiated, meaning that you had to connect before you got a copy of an actor that the server also knew about. I wanted clients to be able to create an actor that would initiate contact with the server and fire a delegate when a connection has been made so that higher level code could make an RPC. Otherwise you&rsquo;d need to make a connection with the server, wait for the server to send you an actor you could RPC with, then switch to that. Unwieldy in my opinion.</p>
 <p>Origin:<br>
 <a href="https://answers.unrealengine.com/questions/467973/what-are-online-beacons-and-how-do-they-work.html">https://answers.unrealengine.com/questions/467973/what-are-online-beacons-and-how-do-they-work.html</a></p>
 <h5 id="unreal-engine-4-network-compendium">Unreal Engine 4 Network Compendium</h5>

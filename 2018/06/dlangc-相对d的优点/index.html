@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.62.2 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.64.0 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="">
 <meta name="description" content="原文：What does C&#43;&#43; do better than D?
@@ -371,18 +371,18 @@ if (!doNotTrack) {
 <a href="https://softwareengineering.stackexchange.com/questions/97207/what-does-c-do-better-than-d">https://softwareengineering.stackexchange.com/questions/97207/what-does-c-do-better-than-d</a></p>
 <p>Most of the things C++ &ldquo;does&rdquo; better than D are meta things:<br>
 C++ has better compilers, better tools, more mature libraries, more bindings, more experts, more tutorials etc. Basically it has more and better of all the external things that you would expect from a more mature language. This is inarguable.</p>
-<p>As for the language itself, there are a few things that C++ does better than D in my opinion. There's probably more, but here's a few that I can list off the top of my head:</p>
+<p>As for the language itself, there are a few things that C++ does better than D in my opinion. There&rsquo;s probably more, but here&rsquo;s a few that I can list off the top of my head:</p>
 <h5 id="c-has-a-better-thought-out-type-system">C++ has a better thought out type system</h5>
-<p>There are quite a few problems with the type system in D at the moment, which appear to be oversights in the design. For example, it is currently impossible to copy a const struct to a non-const struct if the struct contains class object references or pointers due to the transitivity of const and the way postblit constructors work on value types. Andrei says he knows how to solve this, but didn't give any details. The problem is certainly fixable (introducing C++-style copy constructors would be one fix), but it is a major problem in language at present.</p>
+<p>There are quite a few problems with the type system in D at the moment, which appear to be oversights in the design. For example, it is currently impossible to copy a const struct to a non-const struct if the struct contains class object references or pointers due to the transitivity of const and the way postblit constructors work on value types. Andrei says he knows how to solve this, but didn&rsquo;t give any details. The problem is certainly fixable (introducing C++-style copy constructors would be one fix), but it is a major problem in language at present.</p>
 <p>Another problem that has bugged me is the lack of logical const (i.e. no mutable like in C++). This is great for writing thread-safe code, but makes it difficult (impossible?) to do lazy intialisation within const objects (think of a const &lsquo;get&rsquo; function which constructs and caches the returned value on first call).</p>
-<p>Finally, given these existing problems, I'm worried about how the rest of the type system (pure, shared, etc.) will interact with everything else in the language once they are put to use. The standard library (Phobos) currently makes very little use of D's advanced type system, so I think it is reasonable the question whether it will hold up under stress. I am skeptical, but optimistic.</p>
-<p>Note that C++ has some type system warts (e.g. non-transitive const, requiring iterator as well as  const_iterator) that make it quite ugly, but while C++'s type system is a little wrong at parts, it doesn't stop you from getting work done like D's sometimes does.</p>
-<p>Edit: To clarify, I believe that C++ has a better thought out type system &ndash; not necessarily a better one &ndash; if that makes sense. Essentially, in D I feel that there is a risk involved in using all aspects of its type system that isn't present in C++.</p>
+<p>Finally, given these existing problems, I&rsquo;m worried about how the rest of the type system (pure, shared, etc.) will interact with everything else in the language once they are put to use. The standard library (Phobos) currently makes very little use of D&rsquo;s advanced type system, so I think it is reasonable the question whether it will hold up under stress. I am skeptical, but optimistic.</p>
+<p>Note that C++ has some type system warts (e.g. non-transitive const, requiring iterator as well as  const_iterator) that make it quite ugly, but while C++'s type system is a little wrong at parts, it doesn&rsquo;t stop you from getting work done like D&rsquo;s sometimes does.</p>
+<p>Edit: To clarify, I believe that C++ has a better thought out type system &ndash; not necessarily a better one &ndash; if that makes sense. Essentially, in D I feel that there is a risk involved in using all aspects of its type system that isn&rsquo;t present in C++.</p>
 <h5 id="d-is-sometimes-a-little-too-convenient">D is sometimes a little too convenient</h5>
-<p>One criticism that you often hear of C++ is that it hides some low-level issues from you e.g. simple assignments like a = b; could be doing many things like calling conversion operators, calling overload assignment operators etc., which can be difficult to see from the code. Some people like this, some people don't. Either way, in D it is worse (better?) due to things like opDispatch, @property, opApply, lazy which have the potential to change innocent looking code into things that you don't expect.</p>
-<p>I don't think this is a big issue personally, but some might find this off-putting.</p>
+<p>One criticism that you often hear of C++ is that it hides some low-level issues from you e.g. simple assignments like a = b; could be doing many things like calling conversion operators, calling overload assignment operators etc., which can be difficult to see from the code. Some people like this, some people don&rsquo;t. Either way, in D it is worse (better?) due to things like opDispatch, @property, opApply, lazy which have the potential to change innocent looking code into things that you don&rsquo;t expect.</p>
+<p>I don&rsquo;t think this is a big issue personally, but some might find this off-putting.</p>
 <h5 id="d-requires-garbage-collection">D requires garbage-collection</h5>
-<p>This could be seen as controversial because it is possible to run D without the GC. However, just because it is possible doesn't mean it is practical. Without a GC, you lose a lot of D's features, and using the standard library would be like walking in a minefield (who knows which functions allocate memory?). Personally, I think it is totally impractical to use D without a GC, and if you aren't a fan of GCs (like I am) then this can be quite off-putting.</p>
+<p>This could be seen as controversial because it is possible to run D without the GC. However, just because it is possible doesn&rsquo;t mean it is practical. Without a GC, you lose a lot of D&rsquo;s features, and using the standard library would be like walking in a minefield (who knows which functions allocate memory?). Personally, I think it is totally impractical to use D without a GC, and if you aren&rsquo;t a fan of GCs (like I am) then this can be quite off-putting.</p>
 <h5 id="naive-array-definitions-in-d-allocate-memory">Naive array definitions in D allocate memory</h5>
 <p>This is a pet peeve of mine:</p>
 <pre><code>int[3] a = [1, 2, 3]; // in D, this allocates then copies
@@ -396,7 +396,7 @@ int[3] a = staticA; // non-allocating copy
 <p><del>Edit: Note that this is a known issue that is being worked on.</del><br>
 Edit: This is now fixed. No allocation takes place.</p>
 <h5 id="conclusion">Conclusion</h5>
-<p>I've focussed on the negatives of D vs C++ because that's what the question asked, but please don't see this post as a statement that C++ is better than D. I could easily make a larger post of places where D is better than C++. It's up to you to make the decision of which one to use.</p>
+<p>I&rsquo;ve focussed on the negatives of D vs C++ because that&rsquo;s what the question asked, but please don&rsquo;t see this post as a statement that C++ is better than D. I could easily make a larger post of places where D is better than C++. It&rsquo;s up to you to make the decision of which one to use.</p>
 <hr>
 <p><code>对的那条路，往往不是最好走的。</code></p>
 
