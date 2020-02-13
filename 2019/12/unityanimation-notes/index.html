@@ -366,6 +366,28 @@ if (!doNotTrack) {
     <img src="https://dawnarc.com/img/20191208-[Unity]Animation%20Notes/[Unity]Animation%20Notes%20-%2002.gif"/> 
 </figure>
 </p>
+<h5 id="how-to-extract-animationclip-anim-from-batch-fbx-files">How to extract AnimationClip (.anim) from batch .fbx files?</h5>
+<p>Source:</p>
+<pre><code>using UnityEngine;
+using UnityEditor;
+
+public class test : MonoBehaviour 
+{
+    new AnimationClip[] animation;
+    void Start()
+    {
+        //&quot;Model&quot; is the directory under `Assets/Resources/`
+        animation = Resources.LoadAll&lt;AnimationClip&gt; (&quot;Model&quot;);
+        foreach (AnimationClip i in animation)
+        {
+            Debug.Log (&quot;Animation: &quot; + i.name);
+            AssetDatabase.CreateAsset(i, string.Format(&quot;Assets/AnimationClips/{0}.anim&quot;, i.name));
+        }
+    }
+}
+</code></pre>
+<p>Reference:<br>
+<a href="https://answers.unity.com/questions/1016801/convert-fbx-files-to-anim-batch.html">https://answers.unity.com/questions/1016801/convert-fbx-files-to-anim-batch.html</a></p>
 <h3 id="animator-related">Animator Related</h3>
 <h5 id="how-to-switch-animation-immediately">How to switch animation immediately?</h5>
 <p>Disable <code>Has Exit Time</code> in Transition.
