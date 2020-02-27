@@ -487,11 +487,15 @@ if (USkeletalMeshComponent *Mesh = MyActor-&gt;FindComponentByClass&lt;USkeletal
 <pre><code>UAnimMontage* UAnimInstance::GetCurrentActiveMontage() const
 </code></pre>
 <h5 id="停止montage播放">停止Montage播放</h5>
-<p>如果要停止当前正在播放的Montage，则执行<code>StopAnimMontage()</code>：</p>
+<p>如果要停止当前正在播放的Montage，三种方式。</p>
+<p>方式1：</p>
 <pre><code>void ACharacter::StopAnimMontage(class UAnimMontage* AnimMontage);
 </code></pre>
-<p>或者</p>
+<p>方式2：</p>
 <pre><code>void UAnimInstance::Montage_Stop(float InBlendOutTime, const UAnimMontage* Montage = NULL);
+</code></pre>
+<p>方式3：</p>
+<pre><code>void UAnimMontage::Stop(const FAlphaBlend&amp; InBlendOut, bool bInterrupt=true);
 </code></pre>
 <div class="alert warning ">
   <p>如果希望停止播放Montage时有动画融合效果，记得将Montage的Blend Out Time设置为大于0，比如默认值 0.25 。</p>
@@ -500,10 +504,10 @@ if (USkeletalMeshComponent *Mesh = MyActor-&gt;FindComponentByClass&lt;USkeletal
   <p>一旦通过StopAnimMontage停止正在播放的Montage，角色就会恢复到待机动作。</p>
 </div>
 <h5 id="设置montage播放结束和融合结束后的回调函数">设置Montage播放结束和融合结束后的回调函数</h5>
-<pre><code>//设置Montage播放完毕后的回调
+<pre><code>//设置Montage播放完毕（动画的最后一帧）的回调
 void UAnimInstance::Montage_SetEndDelegate(FOnMontageEnded &amp; InOnMontageEnded, UAnimMontage* Montage = NULL);
 
-//设置Montage融合完毕后的回调
+//设置Montage混出（BlendOut）开始时的回调
 void UAnimInstance::Montage_SetBlendingOutDelegate(FOnMontageBlendingOutStarted &amp; InOnMontageBlendingOut, UAnimMontage* Montage = NULL);
 </code></pre>
 <h5 id="blend-in-和-blend-out-区别">Blend In 和 Blend Out 区别</h5>

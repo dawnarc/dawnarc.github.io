@@ -318,6 +318,144 @@ if (!doNotTrack) {
     
     <div class="postShorten-header">
       <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2017/09/ue4%E5%88%9B%E5%BB%BA%E8%87%AA%E5%AE%9A%E4%B9%89aicontroller%E7%9A%84%E6%96%B9%E6%B3%95c-/">
+          [UE4]创建自定义AIController的方法(C&#43;&#43;)
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2017-09-13T20:09:02&#43;08:00">
+        
+  
+  
+  
+  
+    Wednesday, 20:09, Sep 13, 2017
+  
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        之前写过如何用C++创建自定义PlayerController方式：
+FActorSpawnParameters SpawnInfo;SpawnInfo.Instigator = Instigator;	SpawnInfo.ObjectFlags |= RF_Transient;	// We never want to save player controllers into a mapSpawnInfo.bDeferConstruction = true;AMyPlayerController* NewPC = GetWorld()-&gt;SpawnActor&lt;AMyPlayerController&gt;(AMyPlayerController::StaticClass(), SpawnLocation, SpawnRotation, SpawnInfo); 如果用同样的方式，在服务端创建AIController，会有问题，执行：
+EPathFollowingRequestResult::Type AAIController::MoveToLocation(const FVector&amp; Dest, ...); 返回值是Success，但是没有任何效果。
+原因：
+自己设置FActorSpawnParameters相关参数，对PlayerController可行，但是对AIController，相关参数设置不一样，导致AIController在服务端失效。
+解决办法：
+两种方式
+方式一：AIControllerClass指定 1，先为Character指定AI Controller Class，且禁用AutoPossessPlayer。这段代码可以放在构造函数中，保证在Possess之前设置好。以下3个属性也可以在角色蓝图中指定。
+AutoPossessPlayer = EAutoReceiveInput::Type::Disabled;AutoPossessAI = EAutoPossessAI::PlacedInWorld;AIControllerClass = AMyAIController::StaticClass(); 2，Character被Spawn出来后，再执行：
+void APawn::SpawnDefaultController(); 如果AutoPossessAI设置为Disable，则接着执行一下Possess：
+void AController::Possess(APawn* InPawn); 方式一：SpawnActor时使用默认FActorSpawnParameters。  AMyAIController* PC = GetWorld()-&gt;SpawnActor&lt;AMyAIController&gt;(AMyAIController::StaticClass(), SpawnLoc, SpawnRot); 不要自己设置FActorSpawnParameters，因为AIController和PlayerController表现不一样。
+      
+      <p>
+        <a href="https://dawnarc.com/2017/09/ue4%E5%88%9B%E5%BB%BA%E8%87%AA%E5%AE%9A%E4%B9%89aicontroller%E7%9A%84%E6%96%B9%E6%B3%95c-/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2017/09/ue4no-owning-connection-for-actor-xxx.-function-xxx-will-not-be-processed/">
+          [UE4]No owning connection for actor XXX. Function XXX will not be processed
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2017-09-12T18:26:40&#43;08:00">
+        
+  
+  
+  
+  
+    Tuesday, 18:26, Sep 12, 2017
+  
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        keywords：UE4, Dedicated Server, Replication
+Issue Client execute a server function failed:
+LogNet: Warning: UIpNetDriver::ProcesRemoteFunction: No owning connection for actor TopDownCharacter_C_0. Function ServerMoveToDest will not be processed. Cause:
+Because the Actor which invoking server function on client doesn&rsquo;t have Connection.
+Solution:
+How to let object have Connection?
+ For Characters, possess it by PlayerController on server after spawning this Actor on server. For Actors, Set a Owner which has Connection for it on server.
+      
+      <p>
+        <a href="https://dawnarc.com/2017/09/ue4no-owning-connection-for-actor-xxx.-function-xxx-will-not-be-processed/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
         <a class="link-unstyled" href="https://dawnarc.com/2017/09/ue4getnavigationsystem%E8%BF%94%E5%9B%9Enull%E7%9A%84%E9%97%AE%E9%A2%98/">
           [UE4]GetNavigationSystem返回NULL的问题
         </a>
@@ -1142,138 +1280,6 @@ Visual Studio 所需的最低 Windows SDK 版本 【2018-11-25】
       
       <p>
         <a href="https://dawnarc.com/2017/05/ue4generate-visual-studio%E5%B7%A5%E7%A8%8B%E6%97%B6%E5%A6%82%E4%BD%95%E6%8C%87%E5%AE%9Avs%E7%89%88%E6%9C%AC/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-            
-              
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2017/05/ue4%E5%9C%B0%E5%BD%A2%E7%BC%96%E8%BE%91%E5%92%8C%E6%A4%8D%E8%A2%AB%E7%BC%96%E8%BE%91/">
-          [UE4]地形编辑和植被编辑
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2017-05-25T22:40:40&#43;08:00">
-        
-  
-  
-  
-  
-    Thursday, 22:40, May 25, 2017
-  
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        keywords: Landscape、Sculpting、Painting、Material、Foliage、Instance、Mesh
-地形编辑
-https://docs.unrealengine.com/latest/INT/Engine/Landscape/index.html
-植被编辑
-https://docs.unrealengine.com/latest/INT/Engine/Foliage/index.html
-Procedural Foliage Tool Quick Start
-https://docs.unrealengine.com/latest/INT/Engine/OpenWorldTools/ProceduralFoliage/QuickStart/index.html
- 念去去、千里烟波，暮霭沉沉楚天阔。—柳永《雨霖铃》
-      
-      <p>
-        <a href="https://dawnarc.com/2017/05/ue4%E5%9C%B0%E5%BD%A2%E7%BC%96%E8%BE%91%E5%92%8C%E6%A4%8D%E8%A2%AB%E7%BC%96%E8%BE%91/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-            
-              
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2017/05/ue4c-%E5%88%9B%E5%BB%BAboxcollisionboxcomponent%E5%B9%B6%E6%B3%A8%E5%86%8Coverlap%E5%92%8Chit%E4%BA%8B%E4%BB%B6%E5%9B%9E%E8%B0%83%E5%87%BD%E6%95%B0/">
-          [UE4]C&#43;&#43;创建BoxCollision(BoxComponent)并注册Overlap和Hit事件回调函数
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2017-05-15T23:31:02&#43;08:00">
-        
-  
-  
-  
-  
-    Monday, 23:31, May 15, 2017
-  
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        keywords: UE4、Overlap、Hit、Event、Callback、C++、Blueprint、Box Collision、BoxComponent、SphereComponent、Trace Channel、碰撞
-BoxComponent的Overlap事件 1，C++中的代码编写 这里我们演示的例子，是在角色身上创建一个BoxComponent，假设角色的C++ class叫AMyCharacter。 MyCharacter.h头文件中定义：
-//Box对象UBoxComponent* CollisionMesh;//OverlapBegin事件的回调函数，注意函数签名！UFUNCTION()void OnTestOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &amp; SweepResult);//OverlapEnd事件的回调函数，注意函数签名！UFUNCTION()void OnTestOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex); 旧版本函数签名：
-UFUNCTION()void OnTestOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &amp; SweepResult);UFUNCTION()void OnTestOverlapEnd(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex); 回调函数一定要加UFUNCTION()，否则无法注册成功，因为UE4的代码生成工具需要通过该标识生成相应的代码，变相实现虚拟机编程语言（比如Java、C#）的反射。
-      
-      <p>
-        <a href="https://dawnarc.com/2017/05/ue4c-%E5%88%9B%E5%BB%BAboxcollisionboxcomponent%E5%B9%B6%E6%B3%A8%E5%86%8Coverlap%E5%92%8Chit%E4%BA%8B%E4%BB%B6%E5%9B%9E%E8%B0%83%E5%87%BD%E6%95%B0/" class="postShorten-excerpt_link link">Continue reading</a>
         
       </p>
     </div>
