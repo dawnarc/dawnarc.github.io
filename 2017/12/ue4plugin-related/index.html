@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.64.0 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.64.1 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="UE4, Plugin">
 <meta name="description" content="Usage Plugin在构造函数中加载的问题 在GameMode构造函数中加载（LoadObject或者ConstructorHelpers::FObjectFinder）蓝图，该蓝图使用了plugin（这里我使用了一个叫Swipe的插件），如果在构造函数中加载，则会报错：
@@ -378,7 +378,7 @@ Failed to load /Script/Swipe.SwipeComponent Referenced by K2Node_ComponentBoundE
 Failed to load /Script/Swipe.SwipeComponent Referenced by SCS_Node_1
 </code></pre>
 <p>另外一种解决办法：给C++的GameMode套一个蓝图，然后在该蓝图中设置DefaultPawnClass、PlayerControllerClass等GameMode属性，此时即使这些PawnClass或者PlayerControllerClass蓝图使用了plugin，也不会报错。</p>
-<h6 id="添加第三方plugin2018-08-10更新">添加第三方Plugin（2018-08-10更新）</h6>
+<h5 id="添加第三方plugin2018-08-10更新">添加第三方Plugin（2018-08-10更新）</h5>
 <p>工程.uproject 需要添加两处地方：<br>
 1，在 Modules 中添加 plugin 名字字符串；<br>
 2，在 Plugins 添加 plugin 信息：包括 Name 和 Enabled；</p>
@@ -414,7 +414,7 @@ Failed to load /Script/Swipe.SwipeComponent Referenced by SCS_Node_1
   ]
 }
 </code></pre>
-<h6 id="往-plugin-中添加-c-代码2018-08-13更新">往 Plugin 中添加 C++ 代码（2018-08-13更新）</h6>
+<h5 id="往-plugin-中添加-c-代码2018-08-13更新">往 Plugin 中添加 C++ 代码（2018-08-13更新）</h5>
 <p>貌似没有好的办法，只能手动添加 C++ 类文件</p>
 <p>论坛上说的这种方式不可行（至少4.20版本试过不可行）：</p>
 <ol>
@@ -426,6 +426,38 @@ Failed to load /Script/Swipe.SwipeComponent Referenced by SCS_Node_1
 </ol>
 <p>Adding an Actor class to plugin?<br>
 <a href="https://forums.unrealengine.com/development-discussion/c-gameplay-programming/50761-adding-an-actor-class-to-plugin">https://forums.unrealengine.com/development-discussion/c-gameplay-programming/50761-adding-an-actor-class-to-plugin</a></p>
+<h5 id="third-party-in-plugin">Third Party in Plugin</h5>
+<p>Settings -&gt; Plugins -&gt; New Plugin -&gt; Third Party Library</p>
+<p><code>Build.cs</code> Path:<br>
+TestTD\Plugins\Plugin2\Source\ThirdParty\Plugin2Library\Plugin2Library.Build.cs</p>
+<pre><code>using System.IO;
+using UnrealBuildTool;
+
+public class Plugin2Library : ModuleRules
+{
+    public Plugin2Library(ReadOnlyTargetRules Target) : base(Target)
+    {
+        Type = ModuleType.External;
+
+        if (Target.Platform == UnrealTargetPlatform.Win64)
+        {
+            // Add the import library
+            PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, &quot;x64&quot;, &quot;Release&quot;, &quot;ExampleLibrary.lib&quot;));
+
+            // Delay-load the DLL, so we can load it from the right place first
+            PublicDelayLoadDLLs.Add(&quot;ExampleLibrary.dll&quot;);
+
+            // Ensure that the DLL is staged along with the executable
+            RuntimeDependencies.Add(&quot;$(PluginDir)/Binaries/ThirdParty/Plugin2Library/Win64/ExampleLibrary.dll&quot;);
+        }
+        else if (Target.Platform == UnrealTargetPlatform.Mac)
+        {
+            PublicDelayLoadDLLs.Add(Path.Combine(ModuleDirectory, &quot;Mac&quot;, &quot;Release&quot;, &quot;libExampleLibrary.dylib&quot;));
+            RuntimeDependencies.Add(&quot;$(PluginDir)/Source/ThirdParty/Plugin2Library/Mac/Release/libExampleLibrary.dylib&quot;);
+        }
+    }
+}
+</code></pre>
 <h3 id="building">Building</h3>
 <h5 id="building-the-plugin">Building the plugin</h5>
 <p>The first stage is to build the plugin for distribution in the normal manner. This can be done using the UnrealBuildTool with the following command:</p>

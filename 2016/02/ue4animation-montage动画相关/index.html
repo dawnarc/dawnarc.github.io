@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.64.0 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.64.1 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="">
 <meta name="description" content="常用API C&#43;&#43;如何播放Montage动画 Character接口：
@@ -510,6 +510,9 @@ void UAnimInstance::Montage_SetEndDelegate(FOnMontageEnded &amp; InOnMontageEnde
 //设置Montage混出（BlendOut）开始时的回调
 void UAnimInstance::Montage_SetBlendingOutDelegate(FOnMontageBlendingOutStarted &amp; InOnMontageBlendingOut, UAnimMontage* Montage = NULL);
 </code></pre>
+<div class="alert info ">
+  <p>如果在播放Montage的同时添加一个float类型的变量（比如<code>float AnimPlayingDelata = 0.f;</code>），并在Tick中执行<code>AnimPlayingDelata += DeltaSeconds</code>，那么<code>AnimPlayingDelata &gt;= Montage-&gt;SequenceLength</code>将在<code>Montage_SetEndDelegate</code>回调之前触发。</p>
+</div>
 <h5 id="blend-in-和-blend-out-区别">Blend In 和 Blend Out 区别</h5>
 <p>Engine\Source\Runtime\Engine\Classes\Animation\AnimMontage.h</p>
 <pre><code>/** Blend out option. This is only used when it blends out itself. If it's interrupted by other montages, it will use new montage's BlendIn option to blend out. */
