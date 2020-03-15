@@ -8,18 +8,18 @@
 <meta name="generator" content="Hugo 0.64.1 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="Unity, Input, Controller">
-<meta name="description" content="Keywords: Unity, Movement, Controller">
+<meta name="description" content="Keywords: Unity, Input, Controller">
 
 
-<meta property="og:description" content="Keywords: Unity, Movement, Controller">
+<meta property="og:description" content="Keywords: Unity, Input, Controller">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[Unity]Input &amp; Controller Notes">
 <meta name="twitter:title" content="[Unity]Input &amp; Controller Notes">
 <meta property="og:url" content="https://dawnarc.com/2019/12/unityinput-controller-notes/">
 <meta property="twitter:url" content="https://dawnarc.com/2019/12/unityinput-controller-notes/">
 <meta property="og:site_name" content="玄冬Wong">
-<meta property="og:description" content="Keywords: Unity, Movement, Controller">
-<meta name="twitter:description" content="Keywords: Unity, Movement, Controller">
+<meta property="og:description" content="Keywords: Unity, Input, Controller">
+<meta name="twitter:description" content="Keywords: Unity, Input, Controller">
 <meta property="og:locale" content="en-us">
 
   
@@ -352,8 +352,197 @@ if (!doNotTrack) {
           
           <div class="post-content markdown" itemprop="articleBody">
             <div class="main-content-wrap">
-              <p>Keywords: Unity, Movement, Controller</p>
-<h3 id="input">Input</h3>
+              <p>Keywords: Unity, Input, Controller</p>
+<h5 id="quick-start">Quick Start</h5>
+<div class="alert info ">
+  <p>Ensure <code>Input System</code> was installed in <code>Package Manager</code>.</p>
+</div>
+<p>1, Select Player Object.
+<figure>
+    <img src="https://dawnarc.com/img/20191230-[Unity]Input%20&amp;%20Controller%20Notes/[Unity]Input%20&amp;%20Controller%20Notes%20-%2001.gif"/> 
+</figure>
+</p>
+<p>2, Add <code>Player Input</code> Component.
+<figure>
+    <img src="https://dawnarc.com/img/20191230-[Unity]Input%20&amp;%20Controller%20Notes/[Unity]Input%20&amp;%20Controller%20Notes%20-%2002.gif"/> 
+</figure>
+</p>
+<p>3, Create default actions.
+<figure>
+    <img src="https://dawnarc.com/img/20191230-[Unity]Input%20&amp;%20Controller%20Notes/[Unity]Input%20&amp;%20Controller%20Notes%20-%2003.gif"/> 
+</figure>
+
+when <code>Save</code> window pop up, choose directory for saving.
+<figure>
+    <img src="https://dawnarc.com/img/20191230-[Unity]Input%20&amp;%20Controller%20Notes/[Unity]Input%20&amp;%20Controller%20Notes%20-%2004.gif"/> 
+</figure>
+</p>
+<p>4, Open Input Action Asset.
+<figure>
+    <img src="https://dawnarc.com/img/20191230-[Unity]Input%20&amp;%20Controller%20Notes/[Unity]Input%20&amp;%20Controller%20Notes%20-%2005.gif"/> 
+</figure>
+
+Now you would see default actions.
+<figure>
+    <img src="https://dawnarc.com/img/20191230-[Unity]Input%20&amp;%20Controller%20Notes/[Unity]Input%20&amp;%20Controller%20Notes%20-%2006.gif"/> 
+</figure>
+</p>
+<p>5, Check <code>Generate C# Class</code> in <code>Inspector</code> panel of Input Action Asset, then click <code>Apply</code>.
+<figure>
+    <img src="https://dawnarc.com/img/20191230-[Unity]Input%20&amp;%20Controller%20Notes/[Unity]Input%20&amp;%20Controller%20Notes%20-%2007.gif"/> 
+</figure>
+
+Now you would see the C# script.
+<figure>
+    <img src="https://dawnarc.com/img/20191230-[Unity]Input%20&amp;%20Controller%20Notes/[Unity]Input%20&amp;%20Controller%20Notes%20-%2008.gif"/> 
+</figure>
+
+There&rsquo;re codes which were generated automatically.
+<figure>
+    <img src="https://dawnarc.com/img/20191230-[Unity]Input%20&amp;%20Controller%20Notes/[Unity]Input%20&amp;%20Controller%20Notes%20-%2009.gif"/> 
+</figure>
+</p>
+<p>6, Then we add callback functions of <code>Move</code> and <code>Fire</code> actions.
+<figure>
+    <img src="https://dawnarc.com/img/20191230-[Unity]Input%20&amp;%20Controller%20Notes/[Unity]Input%20&amp;%20Controller%20Notes%20-%2010.gif"/> 
+</figure>
+
+Add a script named <code>PlayerMovement</code> for <code>Player</code> first.
+<figure>
+    <img src="https://dawnarc.com/img/20191230-[Unity]Input%20&amp;%20Controller%20Notes/[Unity]Input%20&amp;%20Controller%20Notes%20-%2011.gif"/> 
+</figure>
+
+Remove <code>PlayerInput</code> Component which was added previously. 
+<figure>
+    <img src="https://dawnarc.com/img/20191230-[Unity]Input%20&amp;%20Controller%20Notes/[Unity]Input%20&amp;%20Controller%20Notes%20-%2012.gif"/> 
+</figure>
+
+Then add code of action callback:</p>
+<pre><code>using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.InputSystem;
+
+public class PlayerMovement : MonoBehaviour
+{
+    private TestInput Input;
+
+    private Vector2 movementInput;
+
+    void Awake()
+    {
+        Input = new TestInput();
+        Input.Player.Move.performed += ctx =&gt; OnMovementChanged(ctx);
+        Input.Player.Fire.performed += ctx =&gt; OnFire();
+    }
+
+    void OnMovementChanged(InputAction.CallbackContext Context)
+    {
+        movementInput = Context.ReadValue&lt;Vector2&gt;();
+        Debug.Log(&quot;Move Direction: &quot; + movementInput.ToString());
+    }
+
+    // Start is called before the first frame update
+    void Start()
+    {
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+    }
+
+    void FixedUpdate()
+    {
+    }
+
+    private void OnEnable()
+    {
+        Input.Enable();
+    }
+
+    private void OnDisable()
+    {
+        Input.Disable();
+    }
+
+    void OnFire()
+    {
+        Debug.Log(&quot;Fire+++++++&quot;);
+    }
+}
+</code></pre><p>Now when press Arrow Key or click left mouse button, <code>OnMovementChanged()</code> and <code>OnFire()</code> would be fired.</p>
+<h5 id="another-way-to-register-callback-functions">Another way to register callback functions.</h5>
+<pre><code>using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.InputSystem;
+
+public class PlayerMovement : MonoBehaviour
+{
+    [Space]
+    [SerializeField]
+    private InputActionAsset InputAssetRef;
+    
+    private Vector2 movementInput;
+
+    void Awake()
+    {
+        InputActionMap PlayerInputMap = InputAssetRef.FindActionMap(&quot;Player&quot;);
+
+        InputAction MoveAction = PlayerInputMap.FindAction(&quot;Move&quot;);
+        MoveAction.performed += ctx =&gt; OnMovementChanged(ctx);
+
+        InputAction FireAction = PlayerInputMap.FindAction(&quot;Fire&quot;);
+        FireAction.performed += ctx =&gt; OnFire();
+    }
+
+    void OnMovementChanged(InputAction.CallbackContext Context)
+    {
+        movementInput = Context.ReadValue&lt;Vector2&gt;();
+        Debug.Log(&quot;Move Direction: &quot; + movementInput.ToString());
+    }
+
+    // Start is called before the first frame update
+    void Start()
+    {
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+    }
+
+    void FixedUpdate()
+    {
+    }
+
+    private void OnEnable()
+    {
+        InputAssetRef.Enable();
+    }
+
+    private void OnDisable()
+    {
+        InputAssetRef.Disable();
+    }
+
+    void OnFire()
+    {
+        Debug.Log(&quot;Fire+++++++&quot;);
+    }
+}
+
+</code></pre><p>Then specify the Input Action Asset in <code>Inspector</code> panel
+<figure>
+    <img src="https://dawnarc.com/img/20191230-[Unity]Input%20&amp;%20Controller%20Notes/[Unity]Input%20&amp;%20Controller%20Notes%20-%2013.gif"/> 
+</figure>
+
+<figure>
+    <img src="https://dawnarc.com/img/20191230-[Unity]Input%20&amp;%20Controller%20Notes/[Unity]Input%20&amp;%20Controller%20Notes%20-%2014.gif"/> 
+</figure>
+</p>
+<h3 id="input-reference">Input Reference</h3>
 <h5 id="new-input-from-20191">New Input (from 2019.1)</h5>
 <p>NEW INPUT SYSTEM in Unity - Brackeys (Recommended)<br>
 <a href="https://www.youtube.com/watch?v=Pzd8NhcRzVo">https://www.youtube.com/watch?v=Pzd8NhcRzVo</a></p>
@@ -371,7 +560,7 @@ Quick start guide<br>
 <p>Keyboard and Joystick Controls in Unity 2019! (New Input System Tutorial)<br>
 <a href="https://www.youtube.com/watch?v=Gz0YcjXBJ3U">https://www.youtube.com/watch?v=Gz0YcjXBJ3U</a><br>
 <a href="https://github.com/dawnarc/UnityExamples/tree/master/TopDownShooter">https://github.com/dawnarc/UnityExamples/tree/master/TopDownShooter</a></p>
-<h3 id="controller">Controller</h3>
+<h3 id="controller-reference">Controller Reference</h3>
 <h5 id="controller---camera-controller">Controller - Camera Controller</h5>
 <p>Unity3D 8 Directional Character System<br>
 <a href="https://www.youtube.com/watch?v=cVy-NTjqZR8">https://www.youtube.com/watch?v=cVy-NTjqZR8</a></p>
