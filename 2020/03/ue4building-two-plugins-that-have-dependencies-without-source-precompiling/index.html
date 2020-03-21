@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.64.1 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="author" content="Neil Wang">
+<meta name="keywords" content="UE4, Plugins, Dependencies, Building, Package, Precompiling">
+<meta name="description" content="Keywords: UE4, Building Multiple Plugins, Dependencies, Without Source, Prebuild, Precompile">
+
+
+<meta property="og:description" content="Keywords: UE4, Building Multiple Plugins, Dependencies, Without Source, Prebuild, Precompile">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[UE4]Building Two Plugins That Have Dependencies Without Source (Precompiling)">
+<meta name="twitter:title" content="[UE4]Building Two Plugins That Have Dependencies Without Source (Precompiling)">
+<meta property="og:url" content="https://dawnarc.com/2020/03/ue4building-two-plugins-that-have-dependencies-without-source-precompiling/">
+<meta property="twitter:url" content="https://dawnarc.com/2020/03/ue4building-two-plugins-that-have-dependencies-without-source-precompiling/">
+<meta property="og:site_name" content="玄冬Wong">
+<meta property="og:description" content="Keywords: UE4, Building Multiple Plugins, Dependencies, Without Source, Prebuild, Precompile">
+<meta name="twitter:description" content="Keywords: UE4, Building Multiple Plugins, Dependencies, Without Source, Prebuild, Precompile">
+<meta property="og:locale" content="en-us">
+
+  
+    <meta property="article:published_time" content="2020-03-21T11:23:02">
+  
+  
+    <meta property="article:modified_time" content="2020-03-21T11:23:02">
+  
+  
+  
+    
+      <meta property="article:section" content="UnrealEngine4">
+    
+  
+  
+    
+      <meta property="article:tag" content="UE4">
+    
+  
+
+
+<meta name="twitter:card" content="summary">
+
+  <meta name="twitter:site" content="@dawn_arc">
+
+
+  <meta name="twitter:creator" content="@dawn_arc">
+
+
+
+
+
+
+  <meta property="og:image" content="https://dawnarc.com/thumbnail/cover-toronto.jpg">
+  <meta property="twitter:image" content="https://dawnarc.com/thumbnail/cover-toronto.jpg">
+
+
+
+
+
+  <meta property="og:image" content="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=640">
+  <meta property="twitter:image" content="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=640">
+
+
+    <title>[UE4]Building Two Plugins That Have Dependencies Without Source (Precompiling)</title>
+
+    <link rel="icon" href="https://dawnarc.com/favicon.png">
+    
+
+    
+      <link rel="publisher" href="https://plus.google.com/111340706178390411568">
+    
+
+    <link rel="canonical" href="https://dawnarc.com/2020/03/ue4building-two-plugins-that-have-dependencies-without-source-precompiling/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/jquery.fancybox.min.css" integrity="sha256-vuXZ9LGmmwtjqFX1F+EKin1ThZMub58gKULUyf0qECk=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/helpers/jquery.fancybox-thumbs.min.css" integrity="sha256-SEa4XYAHihTcEP1f5gARTB2K26Uk8PsndQYHQC1f4jU=" crossorigin="anonymous" />
+    
+    
+    <link rel="stylesheet" href="https://dawnarc.com/css/style-twzjdbqhmnnacqs0pwwdzcdbt8yhv8giawvjqjmyfoqnvazl0dalmnhdkvp7.min.css" />
+    
+    
+      
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/solarized-light.min.css">
+      
+    
+
+    
+      
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-78064851-2', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="4">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="https://dawnarc.com/">玄冬Wong</a>
+  </div>
+  
+    
+      <a class="header-right-picture "
+         href="https://dawnarc.com/#about">
+    
+    
+    
+      
+        <img class="header-picture" src="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=90" alt="Author&#39;s picture" />
+      
+    
+    </a>
+    
+</header>
+
+      <nav id="sidebar" data-behavior="4">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="https://dawnarc.com/#about">
+          <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=110" alt="Author&#39;s picture" />
+        </a>
+        <h4 class="sidebar-profile-name">Neil Wang</h4>
+        
+          <h5 class="sidebar-profile-bio">久长唯有品格</h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/categories">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+      
+      <span class="sidebar-button-desc">Categories</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/tags">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+      
+      <span class="sidebar-button-desc">Tags</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/archives">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+      
+      <span class="sidebar-button-desc">Archives</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/#about">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+      
+      <span class="sidebar-button-desc">About</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+      
+      <span class="sidebar-button-desc">Home</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/index.xml">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://stackoverflow.com/users/1645289/protoss" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-stack-overflow"></i>
+      
+      <span class="sidebar-button-desc">Stack Overflow</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://www.facebook.com/koanland" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-facebook"></i>
+      
+      <span class="sidebar-button-desc">Facebook</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/dawnarc" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://www.instagram.com/dawn_arc/" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-instagram"></i>
+      
+      <span class="sidebar-button-desc">Instagram</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://www.linkedin.com/in/dawnarc/" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-linkedin"></i>
+      
+      <span class="sidebar-button-desc">Linkedin</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://www.pinterest.com/wangaiguo/" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-pinterest"></i>
+      
+      <span class="sidebar-button-desc">Pinterest</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://steamcommunity.com/id/dawnarc" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-steam"></i>
+      
+      <span class="sidebar-button-desc">Steam</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://twitter.com/dawn_arc" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-twitter"></i>
+      
+      <span class="sidebar-button-desc">Twitter</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://weibo.com/koanland" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-weibo"></i>
+      
+      <span class="sidebar-button-desc">Weibo</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+
+    </ul>
+  </div>
+</nav>
+
+      
+
+      <div id="main" data-behavior="4"
+        class="
+               hasCoverMetaIn
+               ">
+        <article class="post" itemscope itemType="http://schema.org/BlogPosting">
+          
+          
+            <div class="post-header main-content-wrap text-left">
+  
+    <h1 class="post-title" itemprop="headline">
+      [UE4]Building Two Plugins That Have Dependencies Without Source (Precompiling)
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2020-03-21T11:23:02&#43;08:00">
+        
+  
+  
+  
+  
+    Saturday, 11:23, Mar 21, 2020
+  
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+</div>
+          
+          <div class="post-content markdown" itemprop="articleBody">
+            <div class="main-content-wrap">
+              <p>Keywords: UE4, Building Multiple Plugins, Dependencies, Without Source, Prebuild, Precompile</p>
+<p>1, New two plugins (Edit -&gt; Plugins -&gt; New Plugin) that named as <code>P1</code> and <code>P2</code>.
+<figure>
+    <img src="https://dawnarc.com/img/2020/20200321-[UE4]Building%20Two%20Plugins%20That%20Have%20Dependencies%20Without%20Source%20%28Precompiling%29/[UE4]Building%20Two%20Plugins%20That%20Have%20Dependencies%20Without%20Source%20%28Precompiling%29%20-%2001.gif"/> 
+</figure>
+</p>
+<p>2, Add source for <code>P1</code> and <code>P2</code>.
+<figure>
+    <img src="https://dawnarc.com/img/2020/20200321-[UE4]Building%20Two%20Plugins%20That%20Have%20Dependencies%20Without%20Source%20%28Precompiling%29/[UE4]Building%20Two%20Plugins%20That%20Have%20Dependencies%20Without%20Source%20%28Precompiling%29%20-%2002.gif"/> 
+</figure>
+</p>
+<p>We have assumed that <code>Actor1</code> was in plugin <code>P1</code>, and <code>Actor2</code> was in plugin <code>P2</code>, <code>P2</code> has dependencies on <code>P1</code>, but <code>P1</code> has no dependencies on <code>P2</code>.</p>
+<p>Actor1.h</p>
+<pre><code>#include &quot;Actor1.h&quot;
+#include &quot;Engine.h&quot;
+
+// Sets default values
+AActor1::AActor1()
+{
+    // Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+    PrimaryActorTick.bCanEverTick = true;
+
+}
+
+// Called when the game starts or when spawned
+void AActor1::BeginPlay()
+{
+    Super::BeginPlay();
+    
+    GEngine-&gt;AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString(&quot;Actor1 BeginPlay&quot;));
+}
+</code></pre>
+<p>Actor2.h</p>
+<pre><code>#include &quot;Actor2.h&quot;
+#include &quot;Engine/Engine.h&quot;
+#include &quot;Engine/World.h&quot;
+#include &quot;Actor1.h&quot;
+
+// Sets default values
+AActor2::AActor2()
+{
+    // Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+    PrimaryActorTick.bCanEverTick = true;
+
+}
+
+// Called when the game starts or when spawned
+void AActor2::BeginPlay()
+{
+    Super::BeginPlay();
+    
+    GEngine-&gt;AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString(&quot;Actor2 BeginPlay&quot;));
+
+    FTransform Trans;
+    AActor1 A1 = GetWorld()-&gt;SpawnActor&lt;AActor1&gt;(AActor1::StaticClass(), Trans);
+}
+</code></pre>
+<p>3, List <code>P1</code> in <code>PrivateDependencyModuleNames</code> of <code>Build.cs</code> of <code>P2</code>:</p>
+<pre><code>PrivateDependencyModuleNames.AddRange(
+    new string[]
+    {
+        &quot;CoreUObject&quot;,
+        &quot;Engine&quot;,
+        &quot;Slate&quot;,
+        &quot;SlateCore&quot;,
+        &quot;P1&quot;
+        // ... add private dependencies that you statically link with here ...	
+    }
+    );
+</code></pre>
+<p>4, List plugin <code>P1</code> in <code>P2.uplugin</code>, and add <code>WhitelistPlatforms</code> in <code>P1.uplugin</code> and <code>P2.uplugin</code>:</p>
+<p>P1.uplugin</p>
+<pre><code>{
+    &quot;FileVersion&quot;: 3,
+    &quot;Version&quot;: 1,
+    &quot;VersionName&quot;: &quot;1.0&quot;,
+    &quot;FriendlyName&quot;: &quot;P1&quot;,
+    &quot;Description&quot;: &quot;&quot;,
+    &quot;Category&quot;: &quot;Other&quot;,
+    &quot;CreatedBy&quot;: &quot;&quot;,
+    &quot;CreatedByURL&quot;: &quot;&quot;,
+    &quot;DocsURL&quot;: &quot;&quot;,
+    &quot;MarketplaceURL&quot;: &quot;&quot;,
+    &quot;SupportURL&quot;: &quot;&quot;,
+    &quot;CanContainContent&quot;: true,
+    &quot;IsBetaVersion&quot;: false,
+    &quot;IsExperimentalVersion&quot;: false,
+    &quot;Installed&quot;: false,
+    &quot;Modules&quot;: [
+        {
+            &quot;Name&quot;: &quot;P1&quot;,
+            &quot;Type&quot;: &quot;Runtime&quot;,
+            &quot;LoadingPhase&quot;: &quot;Default&quot;,
+            &quot;WhitelistPlatforms&quot;: [
+                &quot;Win64&quot;
+            ]
+        }
+    ]
+}
+</code></pre>
+<p>P2.uplugin</p>
+<pre><code>{
+    &quot;FileVersion&quot;: 3,
+    &quot;Version&quot;: 1,
+    &quot;VersionName&quot;: &quot;1.0&quot;,
+    &quot;FriendlyName&quot;: &quot;P2&quot;,
+    &quot;Description&quot;: &quot;&quot;,
+    &quot;Category&quot;: &quot;Other&quot;,
+    &quot;CreatedBy&quot;: &quot;&quot;,
+    &quot;CreatedByURL&quot;: &quot;&quot;,
+    &quot;DocsURL&quot;: &quot;&quot;,
+    &quot;MarketplaceURL&quot;: &quot;&quot;,
+    &quot;SupportURL&quot;: &quot;&quot;,
+    &quot;CanContainContent&quot;: true,
+    &quot;IsBetaVersion&quot;: false,
+    &quot;IsExperimentalVersion&quot;: false,
+    &quot;Installed&quot;: false,
+    &quot;Modules&quot;: [
+        {
+            &quot;Name&quot;: &quot;P2&quot;,
+            &quot;Type&quot;: &quot;Runtime&quot;,
+            &quot;LoadingPhase&quot;: &quot;Default&quot;
+        }
+    ],
+    &quot;Plugins&quot;: [
+        {
+            &quot;Name&quot;: &quot;P1&quot;,
+            &quot;Enabled&quot;: true
+        }
+    ]
+}
+</code></pre>
+<p>5, Close project, rebuild project source and restart editor.</p>
+<p>6, Package plugin <code>P1</code>: Edit -&gt; Plugins -&gt; Project -&gt; <code>P1</code> -&gt; Package</p>
+<figure>
+    <img src="https://dawnarc.com/img/2020/20200321-[UE4]Building%20Two%20Plugins%20That%20Have%20Dependencies%20Without%20Source%20%28Precompiling%29/[UE4]Building%20Two%20Plugins%20That%20Have%20Dependencies%20Without%20Source%20%28Precompiling%29%20-%2003.gif"/> 
+</figure>
+
+<p>then close editor and remove <code>TestProj\Plugins\P1</code>, then copy packaged version of <code>P1</code> into engine plugins directory. 
+<figure>
+    <img src="https://dawnarc.com/img/2020/20200321-[UE4]Building%20Two%20Plugins%20That%20Have%20Dependencies%20Without%20Source%20%28Precompiling%29/[UE4]Building%20Two%20Plugins%20That%20Have%20Dependencies%20Without%20Source%20%28Precompiling%29%20-%2004.gif"/> 
+</figure>
+
+then you can remove private source files:
+<figure>
+    <img src="https://dawnarc.com/img/2020/20200321-[UE4]Building%20Two%20Plugins%20That%20Have%20Dependencies%20Without%20Source%20%28Precompiling%29/[UE4]Building%20Two%20Plugins%20That%20Have%20Dependencies%20Without%20Source%20%28Precompiling%29%20-%2005.gif"/> 
+</figure>
+</p>
+<p>When restart editor, you will see the packaged plugin <code>P1</code> in <code>Installed</code> tab of plugins.
+<figure>
+    <img src="https://dawnarc.com/img/2020/20200321-[UE4]Building%20Two%20Plugins%20That%20Have%20Dependencies%20Without%20Source%20%28Precompiling%29/[UE4]Building%20Two%20Plugins%20That%20Have%20Dependencies%20Without%20Source%20%28Precompiling%29%20-%2006.gif"/> 
+</figure>
+</p>
+<p>7, Package plugin <code>P2</code>: Edit -&gt; Plugins -&gt; Project -&gt; <code>P2</code> -&gt; Package:
+<figure>
+    <img src="https://dawnarc.com/img/2020/20200321-[UE4]Building%20Two%20Plugins%20That%20Have%20Dependencies%20Without%20Source%20%28Precompiling%29/[UE4]Building%20Two%20Plugins%20That%20Have%20Dependencies%20Without%20Source%20%28Precompiling%29%20-%2007.gif"/> 
+</figure>
+</p>
+<p>then close editor and remove <code>TestProj\Plugins\P2</code>, then copy packaged version of <code>P2</code> into engine plugins directory.
+<figure>
+    <img src="https://dawnarc.com/img/2020/20200321-[UE4]Building%20Two%20Plugins%20That%20Have%20Dependencies%20Without%20Source%20%28Precompiling%29/[UE4]Building%20Two%20Plugins%20That%20Have%20Dependencies%20Without%20Source%20%28Precompiling%29%20-%2008.gif"/> 
+</figure>
+
+then you can remove private source files:
+<figure>
+    <img src="https://dawnarc.com/img/2020/20200321-[UE4]Building%20Two%20Plugins%20That%20Have%20Dependencies%20Without%20Source%20%28Precompiling%29/[UE4]Building%20Two%20Plugins%20That%20Have%20Dependencies%20Without%20Source%20%28Precompiling%29%20-%2009.gif"/> 
+</figure>
+</p>
+<p>8, List <code>P2</code> in <code>PublicDependencyModuleNames</code> of <code>TestProj.Build.cs</code>:</p>
+<pre><code>// Copyright 1998-2019 Epic Games, Inc. All Rights Reserved.
+
+using UnrealBuildTool;
+
+public class TestProj : ModuleRules
+{
+    public TestProj(ReadOnlyTargetRules Target) : base(Target)
+    {
+        PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
+
+        PublicDependencyModuleNames.AddRange(new string[] { &quot;Core&quot;, &quot;CoreUObject&quot;, &quot;Engine&quot;, &quot;InputCore&quot;, &quot;NavigationSystem&quot;, &quot;AIModule&quot; });
+
+        PublicDependencyModuleNames.AddRange(new string[] { &quot;P2&quot; });
+    }
+}
+</code></pre>
+<p>9, List <code>P1</code> and <code>P2</code> in <code>TestProj.uproject</code></p>
+<pre><code>{
+    &quot;FileVersion&quot;: 3,
+    &quot;EngineAssociation&quot;: &quot;4.24&quot;,
+    &quot;Category&quot;: &quot;&quot;,
+    &quot;Description&quot;: &quot;&quot;,
+    &quot;Modules&quot;: [
+        {
+            &quot;Name&quot;: &quot;TestProj&quot;,
+            &quot;Type&quot;: &quot;Runtime&quot;,
+            &quot;LoadingPhase&quot;: &quot;Default&quot;
+        }
+    ],
+    &quot;Plugins&quot;: [
+        {
+            &quot;Name&quot;: &quot;P1&quot;,
+            &quot;Enabled&quot;: true
+        },
+        {
+            &quot;Name&quot;: &quot;P2&quot;,
+            &quot;Enabled&quot;: true
+        }
+    ]
+}
+</code></pre>
+<p>Otherwise you would get error at building:</p>
+<pre><code>The game module `TestProj` could not be loaded. There may be an operating system error or the module may not be properly set up.
+</code></pre>
+<p>9, Now you can inlcude plugin <code>P2</code> headers in you game project:</p>
+<pre><code>#include &quot;TestProjGameMode.h&quot;
+#include &quot;TestProjPlayerController.h&quot;
+#include &quot;TestProjCharacter.h&quot;
+#include &quot;UObject/ConstructorHelpers.h&quot;
+#include &quot;Actor2.h&quot;
+
+ATestProjGameMode::ATestProjGameMode()
+{
+    // use our custom PlayerController class
+    PlayerControllerClass = ATestProjPlayerController::StaticClass();
+
+    // set default pawn class to our Blueprinted character
+    static ConstructorHelpers::FClassFinder&lt;APawn&gt; PlayerPawnBPClass(TEXT(&quot;/Game/TopDownCPP/Blueprints/TopDownCharacter&quot;));
+    if (PlayerPawnBPClass.Class != NULL)
+    {
+        DefaultPawnClass = PlayerPawnBPClass.Class;
+    }
+}
+
+void ATestProjGameMode::StartPlay()
+{
+    Super::StartPlay();
+
+    FTransform Trans;
+    AActor2* Pawn = GetWorld()-&gt;SpawnActor&lt;AActor2&gt;(AActor2::StaticClass(), Trans);
+}
+</code></pre>
+<p>then rebuild project source and start editor, now you can package project:<br>
+File -&gt; Package Project -&gt; Windows -&gt; Win64.</p>
+<hr>
+<p><code>If a man is to shed the light of the sun upon other men, he must first of all have it within himself. ― Romain Rolland</code></p>
+              
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+                
+                
+                  <div class="post-footer-tags">
+                    <span class="text-color-light text-small">TAGGED IN</span><br/>
+                    
+  <a class="tag tag--primary tag--small" href="https://dawnarc.com/tags/ue4/">UE4</a>
+
+                  </div>
+                
+              
+            
+            <div class="post-actions-wrap">
+  
+      <nav >
+        <ul class="post-actions post-action-nav">
+          
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--disabled">
+              
+                  <i class="fa fa-angle-left"></i>
+                  <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+                </a>
+            </li>
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2020/03/deeplearningpytorch-notes/" data-tooltip="[DeepLearning]PyTorch Notes">
+              
+                  <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+                  <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+          
+        </ul>
+      </nav>
+    <ul class="post-actions post-action-share" >
+      
+        <li class="post-action hide-lg hide-md hide-sm">
+          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
+            <i class="fa fa-share-alt"></i>
+          </a>
+        </li>
+        
+      
+      
+        <li class="post-action">
+          <a class="post-action-btn btn btn--default" href="#disqus_thread">
+            <i class="fa fa-comment-o"></i>
+          </a>
+        </li>
+      
+      <li class="post-action">
+        
+          <a class="post-action-btn btn btn--default" href="#">
+        
+          <i class="fa fa-list"></i>
+        </a>
+      </li>
+    </ul>
+  
+</div>
+
+            
+              
+                <div id="disqus_thread">
+  <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+              
+            
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2020 Neil Wang. All Rights Reserved. Powered by <A href="https://gohugo.io/"> Hugo</A> | Theme created by <A href="https://github.com/kakawait/hugo-tranquilpeak-theme/"> Tranquilpeak</A>.
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+        <div class="post-actions-wrap">
+  
+      <nav >
+        <ul class="post-actions post-action-nav">
+          
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--disabled">
+              
+                  <i class="fa fa-angle-left"></i>
+                  <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+                </a>
+            </li>
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2020/03/deeplearningpytorch-notes/" data-tooltip="[DeepLearning]PyTorch Notes">
+              
+                  <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+                  <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+          
+        </ul>
+      </nav>
+    <ul class="post-actions post-action-share" >
+      
+        <li class="post-action hide-lg hide-md hide-sm">
+          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
+            <i class="fa fa-share-alt"></i>
+          </a>
+        </li>
+        
+      
+      
+        <li class="post-action">
+          <a class="post-action-btn btn btn--default" href="#disqus_thread">
+            <i class="fa fa-comment-o"></i>
+          </a>
+        </li>
+      
+      <li class="post-action">
+        
+          <a class="post-action-btn btn btn--default" href="#">
+        
+          <i class="fa fa-list"></i>
+        </a>
+      </li>
+    </ul>
+  
+</div>
+
+      </div>
+      <div id="share-options-bar" class="share-options-bar" data-behavior="4">
+  <i id="btn-close-shareoptions" class="fa fa-close"></i>
+  <ul class="share-options">
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-remove"></i>
+    </div>
+    
+      <img id="about-card-picture" src="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=110" alt="Author&#39;s picture" />
+    
+    <h4 id="about-card-name">Neil Wang</h4>
+    
+      <div id="about-card-bio">久长唯有品格</div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        To Be Marvelous
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker"></i>
+        <br/>
+        Yichang·Hubei
+      </div>
+    
+  </div>
+</div>
+
+    
+
+    
+  
+    
+      <div id="cover" style="background-image:url('https://dawnarc.com/cover-v1.2.0.jpg');"></div>
+    
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+
+	<link rel="stylesheet"
+      href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/solarized-light.min.css">
+	<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.7/js/jquery.fancybox.min.js" integrity="sha256-GEAnjcTqVP+vBp3SSc8bEDQqvWAZMiHyUSIorrWwH50=" crossorigin="anonymous"></script>
+
+
+<script src="https://dawnarc.com/js/script-pcw6v3xilnxydl1vddzazdverrnn9ctynvnxgwho987mfyqkuylcb1nlt.min.js"></script>
+
+
+<script lang="javascript">
+window.onload = updateMinWidth;
+window.onresize = updateMinWidth;
+document.getElementById("sidebar").addEventListener("transitionend", updateMinWidth);
+function updateMinWidth() {
+  var sidebar = document.getElementById("sidebar");
+  var main = document.getElementById("main");
+  main.style.minWidth = "";
+  var w1 = getComputedStyle(main).getPropertyValue("min-width");
+  var w2 = getComputedStyle(sidebar).getPropertyValue("width");
+  var w3 = getComputedStyle(sidebar).getPropertyValue("left");
+  main.style.minWidth = `calc(${w1} - ${w2} - ${w3})`;
+}
+</script>
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+  
+    
+      <script>
+        var disqus_config = function () {
+          this.page.url = 'https:\/\/dawnarc.com\/2020\/03\/ue4building-two-plugins-that-have-dependencies-without-source-precompiling\/';
+          
+            this.page.identifier = '\/2020\/03\/ue4building-two-plugins-that-have-dependencies-without-source-precompiling\/'
+          
+        };
+        (function() {
+          
+          
+          if (window.location.hostname == "localhost") {
+            return;
+          }
+          var d = document, s = d.createElement('script');
+          var disqus_shortname = 'dawnarc';
+          s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+          s.setAttribute('data-timestamp', +new Date());
+          (d.head || d.body).appendChild(s);
+        })();
+      </script>
+    
+  
+
+
+
+
+
+
+    
+  </body>
+</html>
+

@@ -459,10 +459,44 @@ public class Plugin2Library : ModuleRules
 }
 </code></pre>
 <h3 id="building">Building</h3>
-<h5 id="building-the-plugin">Building the plugin</h5>
-<p>The first stage is to build the plugin for distribution in the normal manner. This can be done using the UnrealBuildTool with the following command:</p>
+<h5 id="building-plugin-command">Building Plugin Command</h5>
+<p>The first step is to build the plugin for distribution in the normal manner. This can be done using the UnrealBuildTool with the following command:</p>
 <pre><code>UE4Dir\Engine\Build\BatchFiles\RunUAT.bat BuildPlugin -Rocket -Plugin=Plugin.uplugin -TargetPlatforms=Win64 -Package=OutputDir
 </code></pre>
+<p>Reference:<br>
+<a href="https://mercuna.com/building-binary-plugins-in-unreal-engine-4/">https://mercuna.com/building-binary-plugins-in-unreal-engine-4/</a></p>
+<h5 id="build-project-whitout-plugin-source-pre-build">Build Project whitout plugin source (Pre-build)</h5>
+<p><strong>Issue 1: ERROR: Missing precompiled manifest for &lsquo;TestPlugin&rsquo;</strong></p>
+<p>If you plan to build project with plugin source removed (use binaries only), you should package your plugin at first:<br>
+Settings -&gt; Plugins -&gt; Find you plugins and click <code>Package</code> under plugin tab, then replace original plugin with new plugin which was packaged before.<br>
+Otherwise the binaries of plugins builded under VisualStudio aren unusable for building project.</p>
+<p>If you didn&rsquo;t <code>Package</code> build using the way above, there&rsquo;s a error at building project:</p>
+<pre><code>UATHelper: Packaging (Windows (64-bit)):   ERROR: Missing precompiled manifest for 'TestPlugin'. This module was most likely not flagged for being included in a precompiled build - set 'PrecompileForTargets = PrecompileTargetsType.Any;' in TestPlugin.build.cs to override.
+PackagingResults: Error: Missing precompiled manifest for 'TestPlugin'. This module was most likely not flagged for being included in a precompiled build - set 'PrecompileForTargets = PrecompileTargetsType.Any;' in TestPlugin.build.cs to override.
+</code></pre>
+<p><strong>Issue 2: ERROR: Could not find definition for module</strong></p>
+<p>Error at buling project:</p>
+<pre><code>UATHelper: Packaging (Windows (64-bit)):   ERROR: Could not find definition for module 'MyPlugin' (referenced via default plugins -&gt; MyPlugin.uplugin)
+PackagingResults: Error: Could not find definition for module 'MyPlugin' (referenced via default plugins -&gt; MyPlugin.uplugin)
+</code></pre>
+<p>Caused by:<br>
+Missed source code of plugin.<br>
+<div class="alert danger ">
+  <p>Only Editor workd if there&rsquo;s no source code in game project plugins, and project building would fail.</p>
+</div></p>
+<p>Solution:<br>
+If you want to get your plugin working at building project, also keep plugin source in private, you need to deliver engine binaries from source building:<br>
+<span class="highlight-text green">
+Put your plugin source in `UE4Dir\Engine\Plugins\` and build engine from source, then remove source code of plugin.
+</span></p>
+<p><strong>Issue 3: Fatal error C1083: Cannot open include file: &lsquo;MyActor.generated.h&rsquo;</strong></p>
+<p>Error at builing project:</p>
+<pre><code>fatal error C1083: Cannot open include file: 'MyActor.generated.h'
+</code></pre>
+<p>Caused by:<br>
+If set <code>bUsePrecompiled = true;</code> in Build.cs of plugin, maybe you clean <code>Intermediate</code> directory, so it build failed at first building.</p>
+<p>Solution:<br>
+Set <code>bUsePrecompiled = false;</code> at first, then build project, then set <code>bUsePrecompiled = true;</code></p>
 <h3 id="issues">Issues</h3>
 <h5 id="warning-modules-must-specify-an-explicit-precompiled-header">Warning: Modules must specify an explicit precompiled header</h5>
 <p>Warning at building project:</p>
@@ -606,38 +640,6 @@ Add module names in <code>MyPlugin.Build.cs</code></p>
 </code></pre>
 <p>Origin:<br>
 <a href="https://usagi.hatenablog.jp/entry/2018/09/11/205922">https://usagi.hatenablog.jp/entry/2018/09/11/205922</a></p>
-<h5 id="error-could-not-find-definition-for-module">ERROR: Could not find definition for module</h5>
-<p>Error at buling project:</p>
-<pre><code>UATHelper: Packaging (Windows (64-bit)):   ERROR: Could not find definition for module 'MyPlugin' (referenced via default plugins -&gt; MyPlugin.uplugin)
-PackagingResults: Error: Could not find definition for module 'MyPlugin' (referenced via default plugins -&gt; MyPlugin.uplugin)
-</code></pre>
-<p>Caused by:<br>
-Missed source code of plugin.<br>
-<div class="alert danger ">
-  <p>Only Editor workd if there&rsquo;s no source code in game project plugins, and project building would fail.</p>
-</div></p>
-<p>Solution:<br>
-If you want to get your plugin working at building project, also keep plugin source in private, you need to deliver engine binaries from source building:<br>
-<span class="highlight-text green">
-Put your plugin source in `UE4Dir\Engine\Plugins\` and build engine from source, then remove source code of plugin.
-</span></p>
-<h5 id="fatal-error-c1083-cannot-open-include-file-myactorgeneratedh">Fatal error C1083: Cannot open include file: &lsquo;MyActor.generated.h&rsquo;</h5>
-<p>Error at builing project:</p>
-<pre><code>fatal error C1083: Cannot open include file: 'MyActor.generated.h'
-</code></pre>
-<p>Caused by:<br>
-If set <code>bUsePrecompiled = true;</code> in Build.cs of plugin, maybe you clean <code>Intermediate</code> directory, so it build failed at first building.</p>
-<p>Solution:<br>
-Set <code>bUsePrecompiled = false;</code> at first, then build project, then set <code>bUsePrecompiled = true;</code></p>
-<h5 id="error-missing-precompiled-manifest-for-testplugin">ERROR: Missing precompiled manifest for &lsquo;TestPlugin&rsquo;</h5>
-<p>Error at building project:</p>
-<pre><code>UATHelper: Packaging (Windows (64-bit)):   ERROR: Missing precompiled manifest for 'TestPlugin'. This module was most likely not flagged for being included in a precompiled build - set 'PrecompileForTargets = PrecompileTargetsType.Any;' in TestPlugin.build.cs to override.
-PackagingResults: Error: Missing precompiled manifest for 'TestPlugin'. This module was most likely not flagged for being included in a precompiled build - set 'PrecompileForTargets = PrecompileTargetsType.Any;' in TestPlugin.build.cs to override.
-</code></pre>
-<p>Caused by:<br>
-The binaries of plugins builded under VisualStudio aren unusable for building project.</p>
-<p>Solution:<br>
-If you plan to build project with plugin source removed (use binaries only), you should package your plugin at first: Settings -&gt; Plugins -&gt; Find you plugins and click <code>Package</code> under plugin tab, then replace original plugin with new plugin which was packaged before.</p>
 <h5 id="error-remote-compiling-requires-a-server-name">ERROR: Remote compiling requires a server name</h5>
 <p>Error at packaging plugin:</p>
 <pre><code>ERROR: Remote compiling requires a server name. Use the editor (Project Settings &gt; IOS) to set up your remote compilation settings.
