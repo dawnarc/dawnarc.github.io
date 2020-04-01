@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.64.1 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.68.3 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="UE4, Plugin">
 <meta name="description" content="Usage Plugin在构造函数中加载的问题 在GameMode构造函数中加载（LoadObject或者ConstructorHelpers::FObjectFinder）蓝图，该蓝图使用了plugin（这里我使用了一个叫Swipe的插件），如果在构造函数中加载，则会报错：
@@ -459,7 +459,11 @@ public class Plugin2Library : ModuleRules
 }
 </code></pre>
 <h3 id="building">Building</h3>
-<h5 id="building-plugin-command">Building Plugin Command</h5>
+<h5 id="plugin-package-command">Plugin Package Command</h5>
+<p>This command equals the operation of <code>Package</code> button under <code>Plugins</code> panel:</p>
+<pre><code>F:\Epic Games\UE_4.24\Engine\Binaries\DotNET\UnrealBuildTool.exe UE4Editor Win64 Development -Project=E:\Build\P2\HostProject\HostProject.uproject -plugin=E:\Build\P2\HostProject\Plugins\P2\P2.uplugin -iwyu -noubtmakefiles -manifest=E:\Build\P2\HostProject\Saved\Manifest-UE4Editor-Win64-Development.xml -nohotreload -log=&quot;C:\Users\Neil\AppData\Roaming\Unreal Engine\AutomationTool\Logs\F+Epic+Games+UE_4.24\UBT-UE4Editor-Win64-Development.txt&quot;
+</code></pre>
+<h5 id="plugin-building-command">Plugin Building Command</h5>
 <p>The first step is to build the plugin for distribution in the normal manner. This can be done using the UnrealBuildTool with the following command:</p>
 <pre><code>UE4Dir\Engine\Build\BatchFiles\RunUAT.bat BuildPlugin -Rocket -Plugin=Plugin.uplugin -TargetPlatforms=Win64 -Package=OutputDir
 </code></pre>
@@ -684,6 +688,14 @@ Specify platform name that current device support.</p>
 </code></pre>
 <p>Reference:<br>
 <a href="https://wiki.unrealengine.com/How_To_Package_Plugins_For_UE4_Marketplace#.Uplugin_White_List">https://wiki.unrealengine.com/How_To_Package_Plugins_For_UE4_Marketplace#.Uplugin_White_List</a></p>
+<h5 id="error-c4273-vajsonfeaturesfeatures-inconsistent-dll-linkage">error C4273: &lsquo;VA::Json::Features::Features&rsquo;: inconsistent dll linkage</h5>
+<p>Error at building plugin:</p>
+<pre><code>error C4273: 'VA::Json::Features::Features': inconsistent dll linkage.
+</code></pre>
+<p>Caused by:<br>
+Your source in plugin contains <code>JSON_API</code> that was not adapted whit your plugin macro(e.g. <code>MYPLUGIN_API</code>).</p>
+<p>Solution:<br>
+Rename all <code>JSON_API</code> to your plugin macro(e.g. <code>MYPLUGIN_API</code>).</p>
 <h3 id="reference">Reference</h3>
 <p>How to Install a Plugin on Unreal Engine 4<br>
 <a href="https://idkudk.blogspot.jp/2015/02/how-to-install-plugin-on-unreal-engine-4.html">https://idkudk.blogspot.jp/2015/02/how-to-install-plugin-on-unreal-engine-4.html</a></p>

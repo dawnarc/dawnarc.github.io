@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.64.1 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.68.3 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="Math, Rotation Matrix, 旋转矩阵, Multiply, 相乘">
 <meta name="description" content="keywords：Math, 线性代数, 旋转矩阵,相乘, Linear Algebra, Rotation Matrix, Multiply">
@@ -368,18 +368,18 @@ UE4</p>
 FRotator <span style="color:#a6e22e">Rot2</span>(<span style="color:#ae81ff">90.f</span>,<span style="color:#ae81ff">0.f</span>, <span style="color:#ae81ff">0.f</span>);
 FRotator Result <span style="color:#f92672">=</span> (FRotationMatrix(Rot1) <span style="color:#f92672">*</span> FRotationMatrix(Rot2)).Rotator();
 </code></pre></div><p>Unity 方式1：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-C#" data-lang="C#">Quaternion Rot1 = Quaternion.Euler(<span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">9</span><span style="color:#ae81ff">0</span>);
-Quaternion Rot2 = Quaternion.Euler(<span style="color:#ae81ff">9</span><span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0</span>);
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-C#" data-lang="C#">Quaternion Rot1 = Quaternion.Euler(<span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">90</span>);
+Quaternion Rot2 = Quaternion.Euler(<span style="color:#ae81ff">90</span>, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0</span>);
 Quaternion RotNew = Rot1 * Rot2;
 Vector3 Result = RotNew.eulerAngles;
 </code></pre></div><p>Unity 方式2：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-C#" data-lang="C#">Quaternion Rot1 = Quaternion.Euler(<span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">9</span><span style="color:#ae81ff">0</span>);
-Quaternion Rot2 = Quaternion.Euler(<span style="color:#ae81ff">9</span><span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0</span>);
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-C#" data-lang="C#">Quaternion Rot1 = Quaternion.Euler(<span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">90</span>);
+Quaternion Rot2 = Quaternion.Euler(<span style="color:#ae81ff">90</span>, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0</span>);
 Matrix4x4 Mat = Matrix4x4.Rotate(Rot1) * Matrix4x4.Rotate(Rot2);
 Vector3 Result = Mat.MultiplyVector(Vector3.forward);
 </code></pre></div><p>得到的结果<code>Result(0.f, 90.f, 90.f)</code>，其意义是：<br>
 <div class="alert success ">
-  <p>先将物体作Rot1旋转，即：Yaw方向（水平平面）旋转90度，然后再假设该物体相对坐标轴原点的旋转量为(0, 0, 0)，即没有作任何旋转，但实际Rotation相对坐标轴原点为(0, 90, 0)；然后再将物体进行Rot2旋转，即Pitch方向（垂直于(90, 0, 0)方向的平面）侧翻90度，因为侧翻90度前假设物体的Rotation是(0, 0, 0)，所以侧翻时所在的平面不再是Yaw=90的平面（垂直于(0, 90, 0)方向），而是Yaw=0的平面（垂直于(90, 0, 0)方向）。没做相关配图，这段话理解起来有点绕，最好用空间思维想象下，可以用手掌比划。`</p>
+  <p>先将物体作Rot1旋转，即：Yaw方向（水平平面）旋转90度，然后再假设该物体相对坐标轴原点的旋转量为(0, 0, 0)，即没有作任何旋转，但实际Rotation相对坐标轴原点为(0, 90, 0)；然后再将物体进行Rot2旋转，即Pitch方向（垂直于(90, 0, 0)方向的平面）侧翻90度，因为侧翻90度前假设物体的Rotation是(0, 0, 0)，所以侧翻时所在的平面不再是Yaw=90的平面（垂直于(0, 90, 0)方向），而是Yaw=0的平面（垂直于(90, 0, 0)方向）。没做相关配图，这段话理解起来有点绕，最好用空间思维想象下，可以用手掌比划。</p>
 </div></p>
 <h5 id="实际应用">实际应用：</h5>
 <p>比如空间中有两个物体：A和B，现在要将A旋转至与B相同的朝向，目前只知道A的相对世界坐标的Rotation Rw(90.f,0.f, 0.f)、B相对A（将A的Rotation当做(0, 0, 0)，即局部坐标系）的Rotation Rr(0.f, 90.f, 0.f)，求A旋转后的世界坐标Rotation。<br>
@@ -389,15 +389,15 @@ Vector3 Result = Mat.MultiplyVector(Vector3.forward);
 <p>注意：<span class="highlight-text red">矩阵相乘时，两个乘数的前后位置不同则计算的结果也不同</span>，比如上面例子，如果是<code>(FRotationMatrix(Rot2) * FRotationMatrix(Rot1)).Rotator()</code>，则结果是<code>Rotation(90, -90, -180)</code>。</p>
 <p>一个典型应用：当角色移动时，不能将默认<code>MoveForward</code>的实参（比如<code>(1.0, 0.f, 0.f)</code>）和<code>MoveRight</code>的实参（比如<code>(0.0, 1.f, 0.f)</code>）传递给<code>AddMovementInput</code>，因为InputValue需要相对摄像机的朝向来计算，否则当按下W键，期望角色摄像机正对方向移动，但实际是侧向移动。此时就可以通过旋转矩阵相乘来获取当前摄像机朝向方向下的<code>MoveForward</code>和<code>MoveRight</code>方向。</p>
 <p>UE4:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-C++" data-lang="C++">FRotator AMyPlayerController<span style="color:#f92672">:</span><span style="color:#f92672">:</span>GetInputRotationInWorld()
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-C++" data-lang="C++">FRotator AMyPlayerController<span style="color:#f92672">::</span>GetInputRotationInWorld()
 {
-    FRotator Ret <span style="color:#f92672">=</span> FRotator<span style="color:#f92672">:</span><span style="color:#f92672">:</span>ZeroRotator;
+    FRotator Ret <span style="color:#f92672">=</span> FRotator<span style="color:#f92672">::</span>ZeroRotator;
     <span style="color:#66d9ef">if</span> (AMyCharacter<span style="color:#f92672">*</span> Player <span style="color:#f92672">=</span> Cast<span style="color:#f92672">&lt;</span>AMyCharacter<span style="color:#f92672">&gt;</span>(GetPawn()))
     {
-        <span style="color:#66d9ef">if</span>(UCameraComponent<span style="color:#f92672">*</span> CameraComp <span style="color:#f92672">=</span> Player<span style="color:#f92672">-</span><span style="color:#f92672">&gt;</span>GetFollowCamera())
+        <span style="color:#66d9ef">if</span>(UCameraComponent<span style="color:#f92672">*</span> CameraComp <span style="color:#f92672">=</span> Player<span style="color:#f92672">-&gt;</span>GetFollowCamera())
         {
             FRotator InputRotLS <span style="color:#f92672">=</span> FVector(ForwardInputValue, RighInputInputValue, <span style="color:#ae81ff">0.f</span>).Rotation();
-            FRotator CameraRotWS <span style="color:#f92672">=</span> FRotator(<span style="color:#ae81ff">0.f</span>, CameraComp<span style="color:#f92672">-</span><span style="color:#f92672">&gt;</span>GetComponentRotation().Yaw, <span style="color:#ae81ff">0.f</span>);
+            FRotator CameraRotWS <span style="color:#f92672">=</span> FRotator(<span style="color:#ae81ff">0.f</span>, CameraComp<span style="color:#f92672">-&gt;</span>GetComponentRotation().Yaw, <span style="color:#ae81ff">0.f</span>);
             Ret <span style="color:#f92672">=</span> (FRotationMatrix(InputRotLS) <span style="color:#f92672">*</span> FRotationMatrix(CameraRotWS)).Rotator();
         }
     }

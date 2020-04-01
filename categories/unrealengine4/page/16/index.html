@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.64.1 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.68.3 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="">
 <meta name="description" content="Hugo tranquilpeak theme demo">
@@ -300,6 +300,197 @@ if (!doNotTrack) {
         
           <section class="postShorten-group main-content-wrap">
             
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2016/10/ue4drawdebugline%E7%9A%84%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9/">
+          [UE4]DrawDebugLine的注意事项
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2016-10-07T01:05:40&#43;08:00">
+        
+  
+  
+  
+  
+    Friday, 01:05, Oct 7, 2016
+  
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        有时候调用DrawDebugLine划线，在场景中看不见：
+DrawDebugLine(GameMode-&gt;GetWorld(), StartLocation, EndLocation, FColor::Red); 代码上没有任何问题，如果还是看不见，则可能是天光太强，导致线条没有渲染出来。
+解决办法： 按F2关掉天光，或者按F1开启mesh透视模式
+      
+      <p>
+        <a href="https://dawnarc.com/2016/10/ue4drawdebugline%E7%9A%84%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2016/10/ue4%E7%94%A8c-%E6%88%96%E8%93%9D%E5%9B%BE%E6%9D%A5%E5%8A%A8%E6%80%81%E8%AE%BE%E7%BD%AE%E7%B2%92%E5%AD%90%E7%B3%BB%E7%BB%9F%E7%9A%84%E7%9B%B8%E5%85%B3%E5%B1%9E%E6%80%A7/">
+          [UE4]用C&#43;&#43;或蓝图来动态设置粒子系统的相关属性
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2016-10-05T13:58:40&#43;08:00">
+        
+  
+  
+  
+  
+    Wednesday, 13:58, Oct 5, 2016
+  
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        蓝图方式 1，我拿StartContent中官方提供的火焰特效来举例，在蓝图脚本中来修改火焰的颜色   2，打开粒子编辑界面，这是粒子发射器中设置好的颜色参数   3，修改：Color Over Lif模组 –》 Color Over Life参数 –》Distribution参数 –》 Distribution Vector Particle Parameter   4，为这个参数起一个当前粒子里面的唯一名字。当然你如果希望多个参数共享一个设置，那么参数也可以同名   5，因为这个特效中和颜色相关的发射器有两个，所以我们这两个发射器中的参数名字设置为同名：ParamFireColor   6，设置参数模式为 DPM Direct     7，然后将粒子拖入场景中进行编辑。当然你可以通过Spawn在运行时动态生成，但是这里为了方便直接场景中放一个静态的   8，添加一个Instance Parameters参数   9，设置参数名为之前定好的ParamFireColor，类型选择Vector Random   10，启动运行程序，然后我们在游戏运行时动态修改。先找到粒子对象   11，然后在属性面板中，编辑之前添加的参数ParamFireColor，这里我们先改为之前的默认数值     12，这时修改颜色，场景中的火焰也会即时生效了。这些修改的数值不会保存，因为这是即时数据。     补充内容：用蓝图动态生成并设置颜色方式，按下键盘E时生成火焰并将颜色设置为蓝色     因为这里没有写随机颜色的逻辑，所以看起来很单薄。
+C++方式 C++方式也需要上面蓝图的前面步骤，从第7步开始，后面的步骤都不需要了。 具体代码如下：
+UParticleSystemComponent* PSC = UGameplayStatics::SpawnEmitterAtLocation(GameMode-&gt;GetWorld(), EmitterTemplate, Location, FRotator::ZeroRotator, true);PSC-&gt;SetColorParameter(FName(TEXT(&quot;ParamFireColor&quot;)), FLinearColor::Red);FLinearColor OutColor;PSC-&gt;GetColorParameter(FName(TEXT(&quot;ParamFireColor &quot;)), OutColor); 注意：要Get参数之前，必须先Set一次，否则无法Get。
+      
+      <p>
+        <a href="https://dawnarc.com/2016/10/ue4%E7%94%A8c-%E6%88%96%E8%93%9D%E5%9B%BE%E6%9D%A5%E5%8A%A8%E6%80%81%E8%AE%BE%E7%BD%AE%E7%B2%92%E5%AD%90%E7%B3%BB%E7%BB%9F%E7%9A%84%E7%9B%B8%E5%85%B3%E5%B1%9E%E6%80%A7/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2016/09/ue4%E5%A6%82%E4%BD%95%E9%81%8D%E5%8E%86%E5%9C%BA%E6%99%AF%E4%B8%AD%E7%9A%84%E6%89%80%E6%9C%89actor%E5%92%8Cobjectc-/">
+          [UE4]如何遍历场景中的所有Actor和Object(C&#43;&#43;)
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2016-09-29T19:43:02&#43;08:00">
+        
+  
+  
+  
+  
+    Thursday, 19:43, Sep 29, 2016
+  
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        原文： https://wiki.unrealengine.com/Iterators:_Object_%26_Actor_Iterators,_Optional_Class_Scope_For_Faster_Search
+遍历所有SkeletalMeshComponent
+for ( TObjectIterator&lt;USkeletalMeshComponent&gt; Itr; Itr; ++Itr ){// Access the subclass instance with the * or -&gt; operators.USkeletalMeshCompoment *Component = *Itr;ClientMessage(Itr-&gt;GetName());} 遍历所有StaticMeshActor
+for (TActorIterator&lt;AStaticMeshActor&gt; ActorItr(GetWorld()); ActorItr; ++ActorItr){// Same as with the Object Iterator, access the subclass instance with the * or -&gt; operators.AStaticMeshActor *Mesh = *ActorItr;ClientMessage(ActorItr-&gt;GetName());ClientMessage(ActorItr-&gt;GetActorLocation().ToString());} 遍历所有Character
+for (TActorIterator&lt;ACharacter&gt; ActorItr(GetWorld()); ActorItr; ++ActorItr){if (ActorItr-&gt;GetName().Contains(&quot;beiminghuoque&quot;)){AMyCharacter* Warrior = (AMyCharacter*)*ActorItr;FString msg = FString::Printf(TEXT(&quot;#########:%d&quot;), (int)Warrior-&gt;State());GEngine-&gt;AddOnScreenDebugMessage(-1, 10.
+      
+      <p>
+        <a href="https://dawnarc.com/2016/09/ue4%E5%A6%82%E4%BD%95%E9%81%8D%E5%8E%86%E5%9C%BA%E6%99%AF%E4%B8%AD%E7%9A%84%E6%89%80%E6%9C%89actor%E5%92%8Cobjectc-/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
             
               
   
@@ -1043,193 +1234,6 @@ void TickFun(){FVector MyLoc = MyCharacter-&gt;GetActorLocation();FVector Tar
       
       <p>
         <a href="https://dawnarc.com/2016/09/ue4change-actors-rotation/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-            
-              
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2016/09/ue4%E5%A6%82%E4%BD%95%E8%AE%BE%E7%BD%AE%E8%A7%92%E8%89%B2%E6%96%B9%E5%90%91%E7%9A%84%E8%BD%AC%E5%90%91%E9%80%9F%E7%8E%87/">
-          [UE4]如何设置角色方向的转向速率
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2016-09-04T22:03:40&#43;08:00">
-        
-  
-  
-  
-  
-    Sunday, 22:03, Sep 4, 2016
-  
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        打开角色蓝图，选中CharacterMovement，设置Rotation Rate 
-      
-      <p>
-        <a href="https://dawnarc.com/2016/09/ue4%E5%A6%82%E4%BD%95%E8%AE%BE%E7%BD%AE%E8%A7%92%E8%89%B2%E6%96%B9%E5%90%91%E7%9A%84%E8%BD%AC%E5%90%91%E9%80%9F%E7%8E%87/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-            
-              
-  
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-left" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2016/08/ue4tick-function-notes/">
-          [UE4]Tick Function Notes
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2016-08-16T19:33:02&#43;08:00">
-        
-  
-  
-  
-  
-    Tuesday, 19:33, Aug 16, 2016
-  
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        <p>Keywords: UE4, Tick Function Notes</p>
-      
-      <p>
-        <a href="https://dawnarc.com/2016/08/ue4tick-function-notes/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-    <a href="https://dawnarc.com/2016/08/ue4tick-function-notes/">
-      <div class="postShorten-thumbnailimg">
-        <img alt="" itemprop="image" src="https://dawnarc.com/thumbnail/thumbnail-japen-008.jpg"/>
-      </div>
-    </a>
-  
-</article>
-
-            
-              
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2016/08/ue4%E7%94%A8c-%E5%A6%82%E4%BD%95%E5%8A%A8%E6%80%81%E5%88%9B%E5%BB%BAtextrender/">
-          [UE4]用C&#43;&#43;如何动态创建TextRender
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2016-08-15T23:07:40&#43;08:00">
-        
-  
-  
-  
-  
-    Monday, 23:07, Aug 15, 2016
-  
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        关键字：Runtime、TextRender、TextRenderActor
-代码：
-#include &quot;Engine/TextRenderActor.h&quot;#include &quot;Components/TextRenderComponent.h&quot;void ATopDownTestGameMode::BeginPlay(){Super::BeginPlay();Text = GetWorld()-&gt;SpawnActor&lt;ATextRenderActor&gt;(ATextRenderActor::StaticClass(), FVector(0.f, 100, 170.f), FRotator(90.f, 180.f, 0.f));Text-&gt;GetTextRender()-&gt;SetText(FText::FromString(TEXT(&quot;Dynamic Text&quot;)));Text-&gt;GetTextRender()-&gt;SetTextRenderColor(FColor::Red);Text-&gt;SetActorScale3D(FVector(5.f, 5.f, 5.f));} 
-      
-      <p>
-        <a href="https://dawnarc.com/2016/08/ue4%E7%94%A8c-%E5%A6%82%E4%BD%95%E5%8A%A8%E6%80%81%E5%88%9B%E5%BB%BAtextrender/" class="postShorten-excerpt_link link">Continue reading</a>
         
       </p>
     </div>
