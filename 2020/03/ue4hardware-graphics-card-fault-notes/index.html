@@ -13,10 +13,10 @@
 
 <meta property="og:description" content="Keywords: UE4, Ran out of memory allocating 1073741824 bytes with alignment 0">
 <meta property="og:type" content="article">
-<meta property="og:title" content="[UE4]Fatal Error - Ran out of memory allocating 1073741824 bytes with alignment 0">
-<meta name="twitter:title" content="[UE4]Fatal Error - Ran out of memory allocating 1073741824 bytes with alignment 0">
-<meta property="og:url" content="https://dawnarc.com/2020/03/ue4fatal-error-ran-out-of-memory-allocating-1073741824-bytes-with-alignment-0/">
-<meta property="twitter:url" content="https://dawnarc.com/2020/03/ue4fatal-error-ran-out-of-memory-allocating-1073741824-bytes-with-alignment-0/">
+<meta property="og:title" content="[UE4]Hardware (Graphics Card) Fault Notes">
+<meta name="twitter:title" content="[UE4]Hardware (Graphics Card) Fault Notes">
+<meta property="og:url" content="https://dawnarc.com/2020/03/ue4hardware-graphics-card-fault-notes/">
+<meta property="twitter:url" content="https://dawnarc.com/2020/03/ue4hardware-graphics-card-fault-notes/">
 <meta property="og:site_name" content="玄冬Wong">
 <meta property="og:description" content="Keywords: UE4, Ran out of memory allocating 1073741824 bytes with alignment 0">
 <meta name="twitter:description" content="Keywords: UE4, Ran out of memory allocating 1073741824 bytes with alignment 0">
@@ -64,7 +64,7 @@
   <meta property="twitter:image" content="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=640">
 
 
-    <title>[UE4]Fatal Error - Ran out of memory allocating 1073741824 bytes with alignment 0</title>
+    <title>[UE4]Hardware (Graphics Card) Fault Notes</title>
 
     <link rel="icon" href="https://dawnarc.com/favicon.png">
     
@@ -73,7 +73,7 @@
       <link rel="publisher" href="https://plus.google.com/111340706178390411568">
     
 
-    <link rel="canonical" href="https://dawnarc.com/2020/03/ue4fatal-error-ran-out-of-memory-allocating-1073741824-bytes-with-alignment-0/">
+    <link rel="canonical" href="https://dawnarc.com/2020/03/ue4hardware-graphics-card-fault-notes/">
 
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
@@ -320,7 +320,7 @@ if (!doNotTrack) {
             <div class="post-header main-content-wrap text-left">
   
     <h1 class="post-title" itemprop="headline">
-      [UE4]Fatal Error - Ran out of memory allocating 1073741824 bytes with alignment 0
+      [UE4]Hardware (Graphics Card) Fault Notes
     </h1>
   
   
@@ -353,9 +353,10 @@ if (!doNotTrack) {
           <div class="post-content markdown" itemprop="articleBody">
             <div class="main-content-wrap">
               <p>Keywords: UE4, Ran out of memory allocating 1073741824 bytes with alignment 0</p>
+<h5 id="issue">Issue</h5>
 <p>UE4Editor crashed on start: <code>Out of Video Memory Trying to Allocate a Texture</code>:
 <figure>
-    <img src="https://dawnarc.com/img/2020/20200327-[UE4]Fatal%20Error%20-%20Ran%20out%20of%20memory%20allocating%201073741824%20bytes%20with%20alignment%200/[UE4]Fatal%20Error%20-%20Ran%20out%20of%20memory%20allocating%201073741824%20bytes%20with%20alignment%200%20-%2001.png"/> 
+    <img src="https://dawnarc.com/img/2020/20200327-[UE4]Hardware%20%28Graphics%20Card%29%20Fault%20Notes/[UE4]Hardware%20%28Graphics%20Card%29%20Fault%20Notes%20-%2001.png"/> 
 </figure>
 </p>
 <p>Callstack of crash:</p>
@@ -384,12 +385,43 @@ UE4Editor_Core!FRunnableThreadWin::Run() [d:\build\++ue4\sync\engine\source\runt
 <p>Soulution:<br>
 This PC -&gt; Properties -&gt; Advanced system settings -&gt; Advanced -&gt; Performance -&gt; Advanced -&gt; Virtual memory -&gt; set <code>Custom size</code> larger then <code>10GB</code>.
 <figure>
-    <img src="https://dawnarc.com/img/2020/20200327-[UE4]Fatal%20Error%20-%20Ran%20out%20of%20memory%20allocating%201073741824%20bytes%20with%20alignment%200/[UE4]Fatal%20Error%20-%20Ran%20out%20of%20memory%20allocating%201073741824%20bytes%20with%20alignment%200%20-%2002.gif"/> 
+    <img src="https://dawnarc.com/img/2020/20200327-[UE4]Hardware%20%28Graphics%20Card%29%20Fault%20Notes/[UE4]Hardware%20%28Graphics%20Card%29%20Fault%20Notes%20-%2002.gif"/> 
 </figure>
 </p>
 <p>Reference:<br>
 How to Fix Fortnite Out of Video Memory Trying to Allocate a Texture Error | Epic Games Launcher.<br>
 <a href="https://www.youtube.com/watch?v=ktCVs1_hsSM">https://www.youtube.com/watch?v=ktCVs1_hsSM</a></p>
+<div class="alert danger ">
+  <p>Attention:<br>
+This issue might be caused by insufficient video memory. If you increased Virtual Memory of OS and run large scale UE4 project on a graphic card that memory was insufficient, IT MAY CAUSE PHYSICAL HARM TO YOUR HARDWARE(GPU).</p>
+</div>
+<p>e.g. the callstack of crash as shown in following. Get this error may well mean your video card might get physical harm.</p>
+<pre><code>Assertion failed: GD3D11RHI-&gt;GetQueryData(Query-&gt;Resource, &amp;Query-&gt;Result, sizeof(Query-&gt;Result), Query-&gt;QueryType, true, false) [File:D:/Build/++UE4/Sync/Engine/Source/Runtime/Windows/D3D11RHI/Private/D3D11Query.cpp] [Line: 45]
+
+UE4Editor_Core
+UE4Editor_Core
+UE4Editor_D3D11RHI
+UE4Editor_D3D11RHI
+UE4Editor_RHI
+UE4Editor_Renderer
+UE4Editor_Renderer
+UE4Editor_Renderer
+UE4Editor_Core
+UE4Editor_Core
+UE4Editor_RenderCore
+UE4Editor_RenderCore
+UE4Editor_Core
+UE4Editor_Core
+kernel32
+ntdll
+</code></pre>
+<p>If you continue to run large scale UE4 project on computer, you may get an issue on your OS:</p>
+<pre><code>display adapter Windows has stopped this device because it has reported problems. (Code 43)
+</code></pre>
+<figure>
+    <img src="https://dawnarc.com/img/2020/20200327-[UE4]Hardware%20%28Graphics%20Card%29%20Fault%20Notes/[UE4]Hardware%20%28Graphics%20Card%29%20Fault%20Notes%20-%2003.jpg"/> 
+</figure>
+
 <hr>
 <p><code>To understand everything is to hate nothing. ― Romain Rolland</code></p>
               
@@ -622,9 +654,9 @@ $(document).ready(function() {
     
       <script>
         var disqus_config = function () {
-          this.page.url = 'https:\/\/dawnarc.com\/2020\/03\/ue4fatal-error-ran-out-of-memory-allocating-1073741824-bytes-with-alignment-0\/';
+          this.page.url = 'https:\/\/dawnarc.com\/2020\/03\/ue4hardware-graphics-card-fault-notes\/';
           
-            this.page.identifier = '\/2020\/03\/ue4fatal-error-ran-out-of-memory-allocating-1073741824-bytes-with-alignment-0\/'
+            this.page.identifier = '\/2020\/03\/ue4hardware-graphics-card-fault-notes\/'
           
         };
         (function() {
