@@ -7,19 +7,19 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="generator" content="Hugo 0.68.3 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
-<meta name="keywords" content="UE4, skeletal bone, Transform">
-<meta name="description" content="Keywords: UE4, Animation, Transform Bone">
+<meta name="keywords" content="UE4, skeletal bone, Transform, Anim Graph Node, AnimGraphNode">
+<meta name="description" content="Keywords: UE4, Animation, Transform Bone, Anim Graph Node, AnimGraphNode">
 
 
-<meta property="og:description" content="Keywords: UE4, Animation, Transform Bone">
+<meta property="og:description" content="Keywords: UE4, Animation, Transform Bone, Anim Graph Node, AnimGraphNode">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[UE4]Transform skeletal bone in C&#43;&#43;">
 <meta name="twitter:title" content="[UE4]Transform skeletal bone in C&#43;&#43;">
 <meta property="og:url" content="https://dawnarc.com/2019/01/ue4transform-skeletal-bone-in-c-/">
 <meta property="twitter:url" content="https://dawnarc.com/2019/01/ue4transform-skeletal-bone-in-c-/">
 <meta property="og:site_name" content="玄冬Wong">
-<meta property="og:description" content="Keywords: UE4, Animation, Transform Bone">
-<meta name="twitter:description" content="Keywords: UE4, Animation, Transform Bone">
+<meta property="og:description" content="Keywords: UE4, Animation, Transform Bone, Anim Graph Node, AnimGraphNode">
+<meta name="twitter:description" content="Keywords: UE4, Animation, Transform Bone, Anim Graph Node, AnimGraphNode">
 <meta property="og:locale" content="en-us">
 
   
@@ -352,7 +352,7 @@ if (!doNotTrack) {
           
           <div class="post-content markdown" itemprop="articleBody">
             <div class="main-content-wrap">
-              <p>Keywords: UE4, Animation, Transform Bone</p>
+              <p>Keywords: UE4, Animation, Transform Bone, Anim Graph Node, AnimGraphNode</p>
 <h5 id="transform-skeletalmeshcomponents-bone-in-blueprint">Transform SkeletalMeshComponent&rsquo;s bone in Blueprint</h5>
 <p>Blueprint Node</p>
 <pre><code>Transform (Modify) Bone
@@ -608,14 +608,16 @@ else
     NewBoneTM.SetRotation(BoneQuat);
 }
 </code></pre>
-<p>Reference: Creating Custom Animation Nodes<br>
+<p>Reference: Creating Custom Animation Nodes (<span class="highlight-text red"> This article was obsolete! </span>)<br>
 <a href="https://www.unrealengine.com/en-US/blog/creating-custom-animation-nodes">https://www.unrealengine.com/en-US/blog/creating-custom-animation-nodes</a></p>
+<p>Example Source: UE4 Plugin for custom speed &amp; irientation warping under Anim Graph Node.(<span class="highlight-text red"> Recommended </span>)<br>
+<a href="https://github.com/dawnarc/ue4_custom_anim_graph_node">https://github.com/dawnarc/ue4_custom_anim_graph_node</a></p>
 <h5 id="reference">Reference</h5>
 <p>Transform skeletal bone in C++<br>
 <a href="https://answers.unrealengine.com/questions/59010/transform-skeletal-bone-in-c.html">https://answers.unrealengine.com/questions/59010/transform-skeletal-bone-in-c.html</a></p>
 <p>Transform Bone<br>
 <a href="https://docs.unrealengine.com/en-us/Engine/Animation/NodeReference/SkeletalControls/TransformBone">https://docs.unrealengine.com/en-us/Engine/Animation/NodeReference/SkeletalControls/TransformBone</a></p>
-<h4 id="bone-related">Bone Related</h4>
+<h6 id="bone-related-api">Bone Related API</h6>
 <p>Transform a location/rotation in bone relative space to world space.</p>
 <pre><code>Transform from Bone Space
 </code></pre>
@@ -628,7 +630,8 @@ This is handy if you know the location in world space for a bone attachment, as 
 
 void USkinnedMeshComponent::TransformFromBoneSpace(FName BoneName, FVector InPosition, FRotator InRotation, FVector&amp; OutPosition, FRotator&amp; OutRotation)
 </code></pre>
-<h5 id="problem-summary">Problem Summary</h5>
+<h3 id="problem-summary">Problem Summary</h3>
+<h5 id="properties-need-to-be-set-before-transform-bones">Properties need to be set before transform bones</h5>
 <p>If you want to control transform of bones at real-time, following properties need to be set:</p>
 <pre><code>// prevent anim frame skipping optimization based on visibility etc
 Mesh-&gt;bEnableUpdateRateOptimizations = false;
@@ -636,6 +639,14 @@ Mesh-&gt;bEnableUpdateRateOptimizations = false;
 // update animation even when mesh is not visible
 Mesh-&gt;MeshComponentUpdateFlag = EMeshComponentUpdateFlag::AlwaysTickPoseAndRefreshBones;
 </code></pre>
+<p>Otherwise tick function in animation blueprint would not be fired.</p>
+<h5 id="why-evaluateskeletalcontrol_anythread-could-not-be-fired">Why EvaluateSkeletalControl_AnyThread could not be fired</h5>
+<p>Issue:<br>
+<code>EvaluateSkeletalControl_AnyThread</code> in Anim Node could not be fired even add an Anim Node (e.g. <code>Modify Transform</code>) in Animation Blueprint.</p>
+<p>Caused by:<br>
+Maybe <code>IsValidToEvaluate()</code> return <code>false</code>.</p>
+<p>Solution:<br>
+Ensure <code>IsValidToEvaluate()</code> return <code>true</code>.</p>
 <hr>
 <p><code>发生过的事，以后还会发生；做过的事，将来还要再做。太阳底下没有新的事。有谁能说，看，这是新事？不，在我们出生之前早就有了。以往的事没有人去追忆，今后的事也没有人去掛念。 ──《旧约·传道书》</code></p>
               

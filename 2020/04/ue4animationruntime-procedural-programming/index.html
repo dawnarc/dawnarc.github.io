@@ -53,8 +53,8 @@
 
 
 
-  <meta property="og:image" content="https://dawnarc.com/thumbnail/cover-toronto.jpg">
-  <meta property="twitter:image" content="https://dawnarc.com/thumbnail/cover-toronto.jpg">
+  <meta property="og:image" content="https://dawnarc.com/thumbnail/thumbnail-japen-009.jpg">
+  <meta property="twitter:image" content="https://dawnarc.com/thumbnail/thumbnail-japen-009.jpg">
 
 
 
@@ -353,6 +353,7 @@ if (!doNotTrack) {
           <div class="post-content markdown" itemprop="articleBody">
             <div class="main-content-wrap">
               <p>Keywords: UE4, Animation, Runtime Procedural Programming</p>
+<h3 id="usages">Usages</h3>
 <h5 id="how-to-get-bone-name-list-of-skeletalmesh">How to get bone name list of SkeletalMesh</h5>
 <pre><code>void AMyCharacter::BeginPlay()
 {
@@ -365,28 +366,130 @@ if (!doNotTrack) {
     }
 }
 </code></pre>
-<h5 id="how-to-extract-transform-of-bones-in-animation-sequence">How to extract transform of bones in animation sequence</h5>
-<pre><code>void AMyCharacter::BeginPlay()
+<h5 id="how-to-extract-transform-of-bones-from-animation-sequence">How to extract transform of bones from animation sequence</h5>
+<p>.Build.cs</p>
+<pre><code>PublicDependencyModuleNames.AddRange(new string[] { &quot;AnimationModifiers&quot; });
+</code></pre>
+<p>cpp source</p>
+<pre><code>void AMyCharacter::Tick(float DeltaTime)
 {
-    Super::BeginPlay();
+    Super::Tick(DeltaTime);
     
-    if (UAnimSequence* AnimSeq = LoadObject&lt;UAnimSequence&gt;(nullptr, TEXT(&quot;AnimSequence'/Game/Mannequin/Animations/ThirdPersonRun1.ThirdPersonRun1'&quot;)))
+    if (USkeletalMeshComponent* SkMeshComp = GetMesh())
     {
-        if(USkeletalMeshComponent* SkMeshComp = GetMesh())
+        TArray&lt;FName&gt; OutBoneNames;
+        SkMeshComp-&gt;GetBoneNames(OutBoneNames);
+
+        if (UAnimSequence* AnimSeq = LoadObject&lt;UAnimSequence&gt;(nullptr, TEXT(&quot;AnimSequence'/Game/Mannequin/Animations/ThirdPersonWalk.ThirdPersonWalk'&quot;)))
         {
-            TArray&lt;FName&gt; OutBoneNames;
-            SkMeshComp-&gt;GetBoneNames(OutBoneNames);
-            
             const float FrameCost = 1.f / 30;
-            for(float DeltaSeconds = 0.f; DeltaSeconds &lt; AnimSeq-&gt;SequenceLength; DeltaSeconds += FrameCost)
+
+            AnimTime += FrameCost;
+            
+            if(AnimTime &lt; AnimSeq-&gt;SequenceLength)
             {
                 TArray&lt;FTransform&gt; OutPoses;
-                UAnimationBlueprintLibrary::GetBonePosesForTime(AnimSeq, OutBoneNames, DeltaSeconds, true, OutPoses);
+                UAnimationBlueprintLibrary::GetBonePosesForTime(AnimSeq, OutBoneNames, AnimTime, true, OutPoses);
+
+                int TestIndex = 54;
+
+                FName BoneName = OutBoneNames[TestIndex];
+
+                FTransform Trans = OutPoses[TestIndex];
+                FVector Translation = Trans.GetTranslation();
+                FRotator Rotation = Trans.Rotator();
+                FVector Scale = Trans.GetScale3D();
+
+                FString Text = FString::Printf(TEXT(&quot;Bone: %s Time: %f Loc: %s Rot: %s&quot;), *BoneName.ToString(), AnimTime, *Translation.ToString(), *Rotation.ToString());
+                GEngine-&gt;AddOnScreenDebugMessage(0, 3.f, FColor::Yellow, Text, false);
             }
         }
     }
 }
 </code></pre>
+<h5 id="how-to-get-user-data-sotred-with-animation-asset">How to get user data sotred with animation asset</h5>
+<p>Engine\Source\Runtime\Engine\Classes\Engine\SkeletalMesh.h</p>
+<pre><code>UPROPERTY(EditAnywhere, AdvancedDisplay, Instanced, Category=SkeletalMesh)
+TArray&lt;UAssetUserData*&gt; AssetUserData;
+</code></pre>
+<h5 id="how-to-get-bone-index-from-bone-name">How to get bone index from bone name</h5>
+<p>Engine\Source\Runtime\Engine\Classes\Engine\SkeletalMesh.h</p>
+<pre><code>RefSkeleton.FindBoneIndex(BoneName);
+</code></pre>
+<h5 id="get-animation-compactpose-transform-from-animsequence-by-current-time">Get Animation CompactPose (Transform) from AnimSequence by Current Time</h5>
+<p>Quoted from <code>void FAnimInstanceProxy::SlotEvaluatePose()</code></p>
+<pre><code>FSlotEvaluationPose NewPose(EvalState.MontageWeight, AdditiveAnimType);
+
+// Bone array has to be allocated prior to calling GetPoseFromAnimTrack
+NewPose.Pose.SetBoneContainer(&amp;RequiredBones);
+NewPose.Curve.InitFrom(RequiredBones);
+
+// Extract pose from Track
+FAnimExtractContext ExtractionContext(EvalState.MontagePosition, Montage-&gt;HasRootMotion() &amp;&amp; RootMotionMode != ERootMotionMode::NoRootMotionExtraction);
+AnimTrack-&gt;GetAnimationPose(NewPose.Pose, NewPose.Curve, ExtractionContext);
+</code></pre>
+<h3 id="api">API</h3>
+<h5 id="common-api-in-animationblueprintlibrary">Common API in AnimationBlueprintLibrary</h5>
+<p>Engine\Source\Editor\AnimationModifiers\Public\AnimationBlueprintLibrary.h</p>
+<pre><code>/** Retrieves Bone Pose data for the given Bone Names at the specified Time from the given Animation Sequence */
+UFUNCTION(BlueprintPure, Category = &quot;AnimationBlueprintLibrary|Pose&quot;)
+static void GetBonePosesForTime(const UAnimSequence* AnimationSequence, TArray&lt;FName&gt; BoneNames, float Time, bool bExtractRootMotion, TArray&lt;FTransform&gt;&amp; Poses, const USkeletalMesh* PreviewMesh = nullptr);
+
+/** Retrieves Bone Pose data for the given Bone Names at the specified Frame from the given Animation Sequence */
+UFUNCTION(BlueprintPure, Category = &quot;AnimationBlueprintLibrary|Pose&quot;)
+static void GetBonePosesForFrame(const UAnimSequence* AnimationSequence, TArray&lt;FName&gt; BoneNames, int32 Frame, bool bExtractRootMotion, TArray&lt;FTransform&gt;&amp; Poses, const USkeletalMesh* PreviewMesh = nullptr);
+</code></pre>
+<h5 id="common-api-in-bonepose">Common API in BonePose</h5>
+<p>Engine\Source\Runtime\Engine\Public\BonePose.h</p>
+<pre><code>// Populate InOutPose based on raw animation data. 
+extern void BuildPoseFromRawData(const TArray&lt;FRawAnimSequenceTrack&gt;&amp; InAnimationData, const TArray&lt;struct FTrackToSkeletonMap&gt;&amp; TrackToSkeletonMapTable, FCompactPose&amp; InOutPose, float InTime, EAnimInterpolationType Interpolation, int32 NumFrames, float SequenceLength, FName RetargetSource);
+</code></pre>
+<h5 id="common-api-in-animinstance">Common API in AnimInstance</h5>
+<p>Engine\Source\Runtime\Engine\Classes\Animation\AnimInstance.h</p>
+<pre><code>// the below functions are the native overrides for each phase
+// Native initialization override point
+virtual void NativeInitializeAnimation();
+
+// Native update override point. It is usually a good idea to simply gather data in this step and 
+// for the bulk of the work to be done in NativeUpdateAnimation.
+virtual void NativeUpdateAnimation(float DeltaSeconds);
+
+// Native Post Evaluate override point
+virtual void NativePostEvaluateAnimation();
+
+// Native Uninitialize override point
+virtual void NativeUninitializeAnimation();
+
+// Executed when begin play is called on the owning component
+virtual void NativeBeginPlay();
+</code></pre>
+<h3 id="engine-source-analytics">Engine Source Analytics</h3>
+<h5 id="callstack-on-fanimnode_skeletalcontrolbaseevaluateskeletalcontrol_anythread">Callstack on <code>FAnimNode_SkeletalControlBase::EvaluateSkeletalControl_AnyThread()</code></h5>
+<pre><code>UE4Editor-CustomAnimNode-Win64-DebugGame.dll!FAnimNode_SpeedWarping::EvaluateSkeletalControl_AnyThread(FComponentSpacePoseContext &amp; Output, TArray&lt;FBoneTransform,TSizedDefaultAllocator&lt;32&gt;&gt; &amp; OutBoneTransforms) Line 32	C++
+UE4Editor-AnimGraphRuntime.dll!FAnimNode_SkeletalControlBase::EvaluateComponentSpace_AnyThread(FComponentSpacePoseContext &amp; Output) Line 165	C++
+UE4Editor-Engine.dll!FComponentSpacePoseLink::EvaluateComponentSpace(FComponentSpacePoseContext &amp; Output) Line 443	C++
+UE4Editor-Engine.dll!FAnimNode_ConvertComponentToLocalSpace::Evaluate_AnyThread(FPoseContext &amp; Output) Line 34	C++
+UE4Editor-Engine.dll!FPoseLink::Evaluate(FPoseContext &amp; Output) Line 381	C++
+UE4Editor-Engine.dll!FAnimInstanceProxy::EvaluateAnimationNode_WithRoot(FPoseContext &amp; Output, FAnimNode_Base * InRootNode) Line 1365	C++
+UE4Editor-Engine.dll!FAnimInstanceProxy::EvaluateAnimation_WithRoot(FPoseContext &amp; Output, FAnimNode_Base * InRootNode) Line 1298	C++
+UE4Editor-Engine.dll!UAnimInstance::ParallelEvaluateAnimation(bool bForceRefPose, const USkeletalMesh * InSkeletalMesh, FBlendedHeapCurve &amp; OutCurve, FCompactPose &amp; OutPose) Line 658	C++
+UE4Editor-Engine.dll!USkeletalMeshComponent::EvaluateAnimation(const USkeletalMesh * InSkeletalMesh, UAnimInstance * InAnimInstance, FVector &amp; OutRootBoneTranslation, FBlendedHeapCurve &amp; OutCurve, FCompactPose &amp; OutPose) Line 1755	C++
+UE4Editor-Engine.dll!USkeletalMeshComponent::PerformAnimationProcessing(const USkeletalMesh * InSkeletalMesh, UAnimInstance * InAnimInstance, bool bInDoEvaluation, TArray&lt;FTransform,TSizedDefaultAllocator&lt;32&gt;&gt; &amp; OutSpaceBases, TArray&lt;FTransform,TSizedDefaultAllocator&lt;32&gt;&gt; &amp; OutBoneSpaceTransforms, FVector &amp; OutRootBoneTranslation, FBlendedHeapCurve &amp; OutCurve) Line 1838	C++
+UE4Editor-Engine.dll!USkeletalMeshComponent::ParallelAnimationEvaluation() Line 3528	C++
+UE4Editor-Engine.dll!FParallelAnimationEvaluationTask::DoTask(ENamedThreads::Type CurrentThread, const TRefCountPtr&lt;FGraphEvent&gt; &amp; MyCompletionGraphEvent) Line 110	C++
+UE4Editor-Engine.dll!TGraphTask&lt;FParallelAnimationEvaluationTask&gt;::ExecuteTask(TArray&lt;FBaseGraphTask *,TSizedDefaultAllocator&lt;32&gt;&gt; &amp; NewTasks, ENamedThreads::Type CurrentThread) Line 847	C++
+[Inline Frame] UE4Editor-Core.dll!FBaseGraphTask::Execute(TArray&lt;FBaseGraphTask *,TSizedDefaultAllocator&lt;32&gt;&gt; &amp; CurrentThread, ENamedThreads::Type) Line 514	C++
+UE4Editor-Core.dll!FTaskThreadAnyThread::ProcessTasks() Line 1029	C++
+UE4Editor-Core.dll!FTaskThreadAnyThread::ProcessTasksUntilQuit(int QueueIndex) Line 855	C++
+[Inline Frame] UE4Editor-Core.dll!FTaskThreadBase::Run() Line 524	C++
+UE4Editor-Core.dll!FTaskThreadAnyThread::Run() Line 931	C++
+UE4Editor-Core.dll!FRunnableThreadWin::Run() Line 96	C++
+UE4Editor-Core.dll!FRunnableThreadWin::GuardedRun() Line 45	C++
+</code></pre>
+<h3 id="docs">Docs</h3>
+<h5 id="offical-docs">Offical Docs</h5>
+<p>Demystifying Bone Indices<br>
+<a href="https://www.unrealengine.com/en-US/tech-blog/demystifying-bone-indices">https://www.unrealengine.com/en-US/tech-blog/demystifying-bone-indices</a></p>
 <hr>
 <p><code>I distrust official charity.All charity should be done by stealth. ― Romain Rolland</code></p>
               
@@ -413,7 +516,7 @@ if (!doNotTrack) {
           
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--disabled">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2020/04/graphicsanimation-programming-notes/" data-tooltip="[Graphics]Animation Programming Notes">
               
                   <i class="fa fa-angle-left"></i>
                   <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
@@ -481,7 +584,7 @@ if (!doNotTrack) {
           
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--disabled">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2020/04/graphicsanimation-programming-notes/" data-tooltip="[Graphics]Animation Programming Notes">
               
                   <i class="fa fa-angle-left"></i>
                   <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
