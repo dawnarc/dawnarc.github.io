@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.68.3 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.69.2 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="Unity, Input, Controller">
 <meta name="description" content="Keywords: Unity, Input, Controller">
@@ -550,6 +550,36 @@ public class PlayerMovement : MonoBehaviour
     <img src="https://dawnarc.com/img/20191230-[Unity]Input%20&amp;%20Controller%20Notes/[Unity]Input%20&amp;%20Controller%20Notes%20-%2014.gif"/> 
 </figure>
 </p>
+<h3 id="input-issues">Input Issues</h3>
+<h5 id="getkeyup-not-registering-after-a-long-hold">GetKeyUp not registering after a long hold</h5>
+<p>Case:<br>
+<code>Input.GetKeyUp()</code> would not work after holding ended.</p>
+<p>Caused by:<br>
+<div class="alert warning ">
+  <p>If hold key, <code>Input.GetKey()</code> would return <code>true</code>, and return <code>false</code> after holding ended (key up), and <code>GetKeyUp</code> would not work on key up.</p>
+</div></p>
+<p>Solution:<br>
+Using <code>Input.GetKey()</code> to check if key had been held.</p>
+<p>GetKey = machine gun</p>
+<pre><code>function Update () {
+    if (Input.GetKey (KeyCode.Space))
+        print (&quot;space key is being held down&quot;);
+}
+</code></pre>
+<p>GetKeyDown =  single shot gun</p>
+<pre><code>function Update () {
+    if (Input.GetKeyDown (KeyCode.Space))
+        print (&quot;space key was pressed once&quot;);
+}
+</code></pre>
+<p>finally we have the key released handler</p>
+<pre><code>function Update () {
+    if (Input.GetKeyUp (KeyCode.Space))
+        print (&quot;space key was released&quot;);
+}
+</code></pre>
+<p>Reference:<br>
+<a href="http://johnstejskal.com/wp/understanding-getbutton-and-getkey-inputs-in-unity/">http://johnstejskal.com/wp/understanding-getbutton-and-getkey-inputs-in-unity/</a></p>
 <h3 id="input-reference">Input Reference</h3>
 <h5 id="new-input-from-20191">New Input (from 2019.1)</h5>
 <p>NEW INPUT SYSTEM in Unity - Brackeys (Recommended)<br>
@@ -736,7 +766,7 @@ Quick start guide<br>
       <div id="about-card-job">
         <i class="fa fa-briefcase"></i>
         <br/>
-        To Be Marvelous
+        To be Marvelous
       </div>
     
     

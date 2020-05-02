@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.68.3 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.69.2 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="Maya, Rigging">
 <meta name="description" content="Keywords: Maya, Rigging">
@@ -55,8 +55,8 @@
 
 
 
-  <meta property="og:image" content="https://dawnarc.com/thumbnail/cover-toronto.jpg">
-  <meta property="twitter:image" content="https://dawnarc.com/thumbnail/cover-toronto.jpg">
+  <meta property="og:image" content="https://dawnarc.com/thumbnail/thumbnail-japen-007.jpg">
+  <meta property="twitter:image" content="https://dawnarc.com/thumbnail/thumbnail-japen-007.jpg">
 
 
 
@@ -370,9 +370,50 @@ If you want to create multiple joint independently (not connected). You need to 
   <p>Just right click in viewport to quit <code>Create Joints</code> mode. The first right-click would create a last joint.</p>
 </div>
 <h5 id="how-to-connect-joints">How to connect joints</h5>
-<p>Select source joints (as Child), then select target joints (as Parent), then: Skeleton -&gt; Connect Joint.</p>
+<p>First select source joints (as Child), then select target joints (as Parent), then: Skeleton -&gt; Connect Joint.</p>
 <p>Connecting Maya Joints in a Min<br>
 <a href="https://www.youtube.com/watch?v=depyrdgYSgo">https://www.youtube.com/watch?v=depyrdgYSgo</a></p>
+<h5 id="how-to-create-child-joint-under-selected-joint">How to create child joint under selected joint.</h5>
+<p>If want to create a child for a specified joint, do steps like this:<br>
+Menu: Skeleton -&gt; Create Joints, then select the joint (e.g. Joint A) which you want to create child under it in Outliner Panel, then click in Viewport to create Joint B, thus Joint B was the child of Joint A.</p>
+<h5 id="how-to-change-hierarchy-of-child-joint">How to change hierarchy of child joint</h5>
+<p>As shown in following image, Joint <code>BBB</code> is a child of <code>ROOT</code>, and <code>BBB</code> has no child joints:
+<figure>
+    <img src="https://dawnarc.com/img/2020/20200417-[Maya]Rigging%20Notes/[Maya]Rigging%20Notes%20-%2002.gif"/> 
+</figure>
+</p>
+<p>If want to change hierarchy of <code>BBB</code> as a child of <code>AAA</code>, do setps follows:</p>
+<ol>
+<li>Create a child joint under <code>BBB</code>:
+<figure>
+    <img src="https://dawnarc.com/img/2020/20200417-[Maya]Rigging%20Notes/[Maya]Rigging%20Notes%20-%2003.gif"/> 
+</figure>
+</li>
+<li>First select <code>BBB</code>, then select <code>ROOT</code>, Skeleton -&gt; Disconnect Joint:
+<figure>
+    <img src="https://dawnarc.com/img/2020/20200417-[Maya]Rigging%20Notes/[Maya]Rigging%20Notes%20-%2004.gif"/> 
+</figure>
+</li>
+<li>Now <code>BBB</code> would be a new root joint:
+<figure>
+    <img src="https://dawnarc.com/img/2020/20200417-[Maya]Rigging%20Notes/[Maya]Rigging%20Notes%20-%2005.gif"/> 
+</figure>
+</li>
+<li>First select <code>BBB</code>, then select <code>CCC</code>, Skeleton -&gt; Connect Joint:
+<figure>
+    <img src="https://dawnarc.com/img/2020/20200417-[Maya]Rigging%20Notes/[Maya]Rigging%20Notes%20-%2006.gif"/> 
+</figure>
+</li>
+<li>Then <code>BBB</code> would be a child of <code>AAA</code> which is the parent of <code>CCC</code>:
+<figure>
+    <img src="https://dawnarc.com/img/2020/20200417-[Maya]Rigging%20Notes/[Maya]Rigging%20Notes%20-%2007.gif"/> 
+</figure>
+</li>
+</ol>
+<div class="alert danger ">
+  <p>There&rsquo;s no way to change hierarchy of <code>BBB</code> without disconnecting BBB firstly, otherwise you would get a error:<br>
+<code>// Error: file: D:/Autodesk/Maya2020/scripts/others/doDisconnectJoint.mel line 32: Cannot disconnect the end joint.</code></p>
+</div>
 <h5 id="how-to-delete-joint">How to delete joint</h5>
 <p>Note:</p>
 <ul>
@@ -417,11 +458,16 @@ If you want to create multiple joint independently (not connected). You need to 
 <h3 id="issues">Issues</h3>
 <h5 id="cannot-connect-sibling-joints">Cannot connect sibling joints</h5>
 <p>Case:<br>
-There is error message <code>Cannot connect sibling joints</code> while connecting joints.</p>
+There&rsquo;re some error messages while connecting joints.</p>
+<pre><code>Error: Cannot connect sibling joints.
+</code></pre>
+<p>Or:</p>
+<pre><code>Error: line 0: The child joint must be a root joint.
+</code></pre>
 <p>Caused by:<br>
 Maybe it&rsquo;s a bug of Maya.</p>
 <p>Solution:<br>
-Reimport asset(e.g. FBX) in a new scene, or create a new child joint in parent joints, then connect target joints and source joints again.</p>
+Restart Maya, or reimport asset(e.g. FBX) in a new scene, or create a new child joint in parent joints, then connect target joints and source joints again.</p>
 <h5 id="unable-to-find-the-bind-pose-for----test_group--root_joint-use-the-dag-node-current-transform">Unable to find the bind pose for :  / test_group / root_joint. Use the DAG node current transform.</h5>
 <p>Error log on exporting control rig as FBX:</p>
 <pre><code>Unable to find the bind pose for :  / test_group / root_joint. Use the DAG node current transform.
@@ -449,14 +495,7 @@ Then select every joint in your skeleton and execute command <code>dagPose -bp -
 <p>Rigging in Maya | Part 10 | Intermediate | Roll &amp; Twist Joints<br>
 <a href="https://www.youtube.com/watch?v=So92TVHSB1g&amp;list=PLgala72Uap1pe2JPK-J6OvBkakbNAsdmr">https://www.youtube.com/watch?v=So92TVHSB1g&amp;list=PLgala72Uap1pe2JPK-J6OvBkakbNAsdmr</a></p>
 <hr>
-<p><code>Let us seek truth everywhere;</code><br>
-<code>let us cull it wherever we can find its blossom</code><br>
-<code>or its SEED. Having Found the seed,</code><br>
-<code>let us scatter it to the winds of heaven.</code><br>
-<code>Where ever it may blow, it will germinate.</code><br>
-<code>There is no lack in this wide universe of souls</code><br>
-<code>that will form the new ground.</code><br>
-<code>― Romain Rolland</code></p>
+<p><code>the public will only stand genius in infintesimal doses,sprinkled with mannerisms and fashionable literature...A fashionable genius!Doesn't that make you laugh?..what a waste of power! ― Romain Rolland, Jean-Christophe - I</code></p>
               
             </div>
           </div>
@@ -483,7 +522,7 @@ Then select every joint in your skeleton and execute command <code>dagPose -bp -
           
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--disabled">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2020/04/unitytime-notes/" data-tooltip="[Unity]Time Notes">
               
                   <i class="fa fa-angle-left"></i>
                   <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
@@ -551,7 +590,7 @@ Then select every joint in your skeleton and execute command <code>dagPose -bp -
           
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--disabled">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2020/04/unitytime-notes/" data-tooltip="[Unity]Time Notes">
               
                   <i class="fa fa-angle-left"></i>
                   <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
@@ -621,7 +660,7 @@ Then select every joint in your skeleton and execute command <code>dagPose -bp -
       <div id="about-card-job">
         <i class="fa fa-briefcase"></i>
         <br/>
-        To Be Marvelous
+        To be Marvelous
       </div>
     
     

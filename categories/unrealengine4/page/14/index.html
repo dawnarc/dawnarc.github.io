@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.68.3 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.69.2 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="">
 <meta name="description" content="Hugo tranquilpeak theme demo">
@@ -300,6 +300,152 @@ if (!doNotTrack) {
         
           <section class="postShorten-group main-content-wrap">
             
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2017/02/ue4dedicated-server%E5%90%8C%E6%AD%A5%E7%A4%BA%E4%BE%8B%E5%85%A8%E6%B5%81%E7%A8%8B%E7%99%BB%E5%BD%95replication%E5%92%8Crpc/">
+          [UE4]Dedicated Server同步示例全流程(登录、Replication和RPC)
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2017-02-25T20:33:40&#43;08:00">
+        
+  
+  
+  
+  
+    Saturday, 20:33, Feb 25, 2017
+  
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        原文已转移位置，此文章留给收藏了旧地址的用户做跳转。
+因这篇文章的内容越写越多，越来越杂，所以准备分成多篇文章，持续更新中。
+[UE4]Networking in Basic - Simple Replication Example
+https://dawnarc.com/2017/02/ue4networking-in-basic-simple-replication-example/
+[UE4]Networking in Baisc - Travelling in Multiplayer
+https://dawnarc.com//2017/06/ue4networking-in-baisc-travelling-in-multiplayer/
+[UE4]Networking in Baisc - Sessions
+https://dawnarc.com/2019/07/ue4networking-in-baisc-sessions/
+[UE4]Networking in Advanced - Engine Source Analysis &amp; High-Level Cases
+https://dawnarc.com/2019/06/ue4networking-in-advanced-engine-source-analysis-high-level-cases
+[UE4]Networking in Advanced - Replication Graph
+https://dawnarc.com/2019/09/ue4networking-in-advanced-replication-graph/
+      
+      <p>
+        <a href="https://dawnarc.com/2017/02/ue4dedicated-server%E5%90%8C%E6%AD%A5%E7%A4%BA%E4%BE%8B%E5%85%A8%E6%B5%81%E7%A8%8B%E7%99%BB%E5%BD%95replication%E5%92%8Crpc/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2017/02/ue4networking-in-basic-simple-replication-example/">
+          [UE4]Networking in Basic - Simple Replication Example
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2017-02-25T20:33:40&#43;08:00">
+        
+  
+  
+  
+  
+    Saturday, 20:33, Feb 25, 2017
+  
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        转载请注明原文出处：https://dawnarc.com
+keywords：UE4, Replication, Relicate, Reliable, RPC, RTS Movement, Dedicated Server
+实例的完整工程下载地址见文章底部。
+ 属性同步 属性同步基本用法 步骤：
+1，对属性添加UPROPERTY(Replicated)宏：
+//Player display nameUPROPERTY(Replicated)FString Alias_; 2，属性所在的class中重写函数GetLifetimeReplicatedProps：
+需要头文件：
+#include &quot;Net/UnrealNetwork.h&quot; 重写函数：
+void AReplTestCharacter::GetLifetimeReplicatedProps(TArray&lt; FLifetimeProperty &gt; &amp; OutLifetimeProps) const{Super::GetLifetimeReplicatedProps(OutLifetimeProps);DOREPLIFETIME(AReplTestCharacter, Alias_);} 属性同步扩展用法 如何为同步属性添加回调函数？
+用法：
+UPROPERTY(ReplicatedUsing = OnHPChanged)float HealthPoint;UFUNCTION()void OnHPChanged(); ReplicatedUsing只在客户端执行，服务端不执行。客户端相关表现逻辑可以放在ReplicatedUsing回调函数。另外函数需要添加UFUNCTION。
+ RPC（远程执行调用） 步骤：
+1，对需要远程执行的函数添加宏UFUNCTION(Server, Reliable, WithValidation)或者UFUNCTION(Client, Reliable)。其中Server表示在客户端调用，在服务端执行；WithValidation表示是否需要验证函数，加上的画需要添加函数：bool MyFun_Validate()，函数体内容写在MyFun_Implementation函数内。cpp中不需要与函数名同名的函数体，只需要实现_Validate和_Implementation两个函数即可。 头文件：
+//移动角色(只在服务端执行的函数)UFUNCTION(Server, Reliable, WithValidation)void ServerMoveToDest(APawn* Panw, const FVector DestLocation);bool ServerMoveToDest_Validate(APawn* Panw, const FVector DestLocation);void ServerMoveToDest_Implementation(APawn* Panw, const FVector DestLocation); CPP：
+      
+      <p>
+        <a href="https://dawnarc.com/2017/02/ue4networking-in-basic-simple-replication-example/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
             
               
   
@@ -1132,132 +1278,6 @@ MeshComponent中类似函数还有ToggleActive()
 </article>
 
             
-              
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2016/10/ue4%E5%9C%BA%E6%99%AF%E4%B8%ADactor%E5%90%8D%E5%AD%97%E4%B8%8E%E8%AF%A6%E7%BB%86%E4%BF%A1%E6%81%AF%E9%9D%A2%E6%9D%BF%E4%B8%AD%E7%9A%84name%E4%B8%8D%E4%B8%80%E8%87%B4%E7%9A%84%E9%97%AE%E9%A2%98/">
-          [UE4]场景中Actor名字与详细信息面板中的Name不一致的问题
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2016-10-25T23:10:40&#43;08:00">
-        
-  
-  
-  
-  
-    Tuesday, 23:10, Oct 25, 2016
-  
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        比如这种情况，场景对象的Details面板中，显示name和ID Name不一致，在场景中多次copy和delete对象后，就容易出现这种情况。 解决办法： 在Details面板中重新修改一次Name。
-  
-      
-      <p>
-        <a href="https://dawnarc.com/2016/10/ue4%E5%9C%BA%E6%99%AF%E4%B8%ADactor%E5%90%8D%E5%AD%97%E4%B8%8E%E8%AF%A6%E7%BB%86%E4%BF%A1%E6%81%AF%E9%9D%A2%E6%9D%BF%E4%B8%AD%E7%9A%84name%E4%B8%8D%E4%B8%80%E8%87%B4%E7%9A%84%E9%97%AE%E9%A2%98/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-            
-              
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2016/10/ue4hud%E7%9A%84canvas%E5%8F%98%E9%87%8F%E4%B8%BAnull%E7%9A%84%E9%97%AE%E9%A2%98/">
-          [UE4]HUD的Canvas变量为NULL的问题
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2016-10-24T23:06:40&#43;08:00">
-        
-  
-  
-  
-  
-    Monday, 23:06, Oct 24, 2016
-  
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        AHUD中的成员变量Canvas只在PostRender()事件中有效，离开此函数后就会被引擎置空。 要想使用HUD的Canvas，必须重写HUD的两个函数之一：
-/** PostRender is the main draw loop. */virtual void PostRenderFor();/** The Main Draw loop for the hud. Gets called before any messaging. Should be subclassed */virtual void DrawHUD(); 其中DrawHUD为HUD独有的函数，而PostRender是所有Actor都有函数。 另外注意：PostRenderFor()不是重写了就会触发，还需要执行AHUD::AddPostRenderedActor()，将需要触发的Actor加入PostRenderActors数组中。
-Canvas的引擎源码注释：
-protected:/** Canvas to Draw HUD on. Only valid during PostRender() event. */UPROPERTY()UCanvas* Canvas; 
-      
-      <p>
-        <a href="https://dawnarc.com/2016/10/ue4hud%E7%9A%84canvas%E5%8F%98%E9%87%8F%E4%B8%BAnull%E7%9A%84%E9%97%AE%E9%A2%98/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-            
             
   <div class="pagination-bar">
     <ul class="pagination">
@@ -1311,7 +1331,7 @@ protected:/** Canvas to Draw HUD on. Only valid during PostRender() event. */U
       <div id="about-card-job">
         <i class="fa fa-briefcase"></i>
         <br/>
-        To Be Marvelous
+        To be Marvelous
       </div>
     
     

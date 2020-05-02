@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.68.3 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.69.2 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="UE4, Networking">
 <meta name="description" content="转载请注明原文出处：https://dawnarc.com
@@ -777,11 +777,12 @@ LogNet: Error: UActorChannel::ProcessBunch: Replicator.ReceivedBunch failed.  Cl
 </ul>
 <p>14，打包版本的相关回调函数触发先后顺序问题<br>
 <div class="alert danger ">
-  <p>打包版本和PIE模式的Dedicated Server存在很大差异，比如：Actor的BeginPlay函数触发先后顺序，在PIE模式下，服务端生成的Actor，对应的客户端Actor的回调函数执行时机是固定的；而打包版本则不同，服务端生成的Actor，对应的客户端Actor的回调函数执行时机是随机的。所以建议两条：</p>
+  <p><p>打包版本和PIE模式的Dedicated Server存在很大差异，比如：Actor的BeginPlay函数触发先后顺序，在PIE模式下，服务端生成的Actor，对应的客户端Actor的回调函数执行时机是固定的；而打包版本则不同，服务端生成的Actor，对应的客户端Actor的回调函数执行时机是随机的。所以建议两条：</p>
 <ol>
 <li>完成的功能尽早打包，并以打包版本为准，在PIE模式下测试没有问题，很可能在打包版本下是截然不同的效果。PIE模式下，多关注下控制台的log，看看相关警告，一些隐藏问题可能已经有log提示。</li>
 <li>服务端客户端交互时，两者均不要依赖引擎的回调函数去通知上层逻辑，而是主动抛出通知。比如：客户端中，Actor A 初始化时需要Actor B的数据，那么不要在Actor A的BeginPlay函数去获取Actor B，也不要Actor B的BeginPlay函数中去通知Actor A；而是当Actor A初始化完毕后，主动向中心管理器（比如GameMode或者PlayerController等）发送通知，表明自己已经初始化完毕，当Actor B初始化完毕时亦如此，然后当中心管理器中接收到两者都已初始化完毕的通知后，再主动通知Actor A，告诉他，你现在可以获取Actor B了。</li>
-</ol></p>
+</ol>
+</p>
 </div>
 以<code>PlayerController</code>为例，假设在服务端的<code>AGameModeBase::PostLogin(APlayerController* NewPlayer)</code>函数创建了一个开启了同步的Actor A，在PIE模式下，客户端的<code>PlayerController::BeginPlay</code>的触发时刻，要先于Actor A的客户端<code>BeginPlay</code>执行，而在打包版本下执行顺序则相反。</p>
 <p>15，服务端创建的对象，在客户端的<code>BeginPlay</code>函数触发时，<code>GetOwner()</code>可能为空<br>
@@ -1115,7 +1116,7 @@ Dedicated Servers, Jitter, Matchmaking<br>
       <div id="about-card-job">
         <i class="fa fa-briefcase"></i>
         <br/>
-        To Be Marvelous
+        To be Marvelous
       </div>
     
     
