@@ -381,8 +381,8 @@ if (!doNotTrack) {
 大概在4.18（具体版本号忘了）之前，蓝图转native code的算法不够优化，比如一个加法操作，会被翻译成一个单独函数，这样导致执行堆栈特别长，后来Epic对蓝图转native的算法在不断改进，目前的版本已足够优化。</p>
 </li>
 <li>
-<p>使用C++进行向量变换时，尽量使用<code>FTransform::TransformXXX()</code>和<code>FTransform::InverseTransformXXX</code>，而不是<code>FQuat::RotateVector</code>和<code>FQuat::UnrotateVector</code>，因为前者使用了更多的当前硬件支持的矢量汇编指令，榨干了硬件性能，而后者是为了跨平台，老老实实使用C++代码来执行计算公式，虽然也调用了硬件汇编指令，但数量相对较少。<br>
-UE4做了优化，当你使用<code>FTransform::TransformXXX()</code>时，如果当前硬件支持，就走硬件指令，如果不支持，则走<code>FQuat::RotateVector</code>。</p>
+<p>使用C++进行向量变换时，尽量使用<code>FTransform::TransformXXX()</code>和<code>FTransform::InverseTransformXXX</code>，而不是<code>FQuat::RotateVector</code>和<code>FQuat::UnrotateVector</code>，因为前者使用了更多的当前硬件支持的矢量汇编指令（AVX），榨干了硬件性能，而后者是为了跨平台，老老实实使用C++代码来执行计算公式，虽然也调用了硬件汇编指令，但数量相对较少。<br>
+UE4做了优化，当你使用<code>FTransform::TransformXXX()</code>时，如果当前硬件支持（intel 2008年之后的CPU、AMD 2011年之后的CPU），就走硬件指令，如果不支持，则走<code>FQuat::RotateVector</code>。</p>
 </li>
 <li>
 <p>VS2019针对C++代码编译速度、以及CPU<code>AVX/AVX2</code>指令集下的矢量计算进行了更深入的优化，并且微软Xbox ATG团队使用UE4的demo工程<strong>Infiltrator</strong>对优化后的效果进行了基准测试：</p>

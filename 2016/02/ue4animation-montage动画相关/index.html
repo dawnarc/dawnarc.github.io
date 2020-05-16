@@ -436,12 +436,13 @@ if (USkeletalMeshComponent *Mesh = MyActor-&gt;FindComponentByClass&lt;USkeletal
   <p>使用<code>UAnimInstance::PlaySlotAnimationAsDynamicMontage()</code>播放Montage时，参数 Animation Sequence 中 Notify 仍然对动态生成的 Montage 有效，即：Montage 也会触发同样的Notify。</p>
 </div>
 <div class="alert warning ">
-  <p>如果将<code>PlaySlotAnimationAsDynamicMontage()</code>的返回值Montage保存起来，则这个Montage对象会保存创建时指定的LoopCount, SlotName等信息。</p>
+  <p>如果将<code>PlaySlotAnimationAsDynamicMontage()</code>的返回值Montage保存起来，则这个Montage对象会保存创建时指定的LoopCount, SlotName等信息。<br>
+如果下次播放该Montage时希望修改<code>LoopCount</code>、<code>SlotName</code>等信息，则需要创建新的Montage对象。</p>
 </div>
 <div class="alert danger ">
   <p>使用<code>PlaySlotAnimationAsDynamicMontage()</code>播放Montage时，如果不是循环播放的Montage，播放完毕后一定要执行<code>UAnimInstance::Montage_Stop()</code>停掉当前Montage，否则会干扰蓝图动画的逻辑，导致切换其他Montage时无效。</p>
 </div>
-<h5 id="播放montage动画时让动作停留在最后一帧">播放Montage动画时让动作停留在最后一帧</h5>
+<h5 id="c播放montage动画时让动作停留在最后一帧">C++播放Montage动画时让动作停留在最后一帧</h5>
 <p>keywords：UE4、Montage、C++、播放速度、播放速率、加速播放、减速播放</p>
 <p>四种方式<br>
 方式1：
@@ -464,6 +465,17 @@ if (USkeletalMeshComponent *Mesh = MyActor-&gt;FindComponentByClass&lt;USkeletal
     <img src="https://dawnarc.com/img/20160218-[UE4]Animation%20Montage%e5%8a%a8%e7%94%bb%e7%9b%b8%e5%85%b3/[UE4]Animation%20Montage%e5%8a%a8%e7%94%bb%e7%9b%b8%e5%85%b3-06.jpg"/> 
 </figure>
 </p>
+<h5 id="动画状态机切换动画时让动画停留在最后一帧">动画状态机切换动画时让动画停留在最后一帧</h5>
+<p>动画蓝图中的State内部播放动画的节点属性<code>Loop</code>修改为<code>false</code>：
+<figure>
+    <img src="https://dawnarc.com/img/20160218-[UE4]Animation%20Montage%e5%8a%a8%e7%94%bb%e7%9b%b8%e5%85%b3/[UE4]Animation%20Montage%e5%8a%a8%e7%94%bb%e7%9b%b8%e5%85%b3-04.jpg"/> 
+</figure>
+
+<figure>
+    <img src="https://dawnarc.com/img/20160218-[UE4]Animation%20Montage%e5%8a%a8%e7%94%bb%e7%9b%b8%e5%85%b3/[UE4]Animation%20Montage%e5%8a%a8%e7%94%bb%e7%9b%b8%e5%85%b3-05.jpg"/> 
+</figure>
+</p>
+<p>如果想让动画停留在最后一帧，另一种方式是在动画的结尾添加Notify事件，在事件中修改动画的播放速率为0。</p>
 <h5 id="c播放montage时指定section">C++播放Montage时指定Section</h5>
 <p>方式1：<br>
 通过第三个参数 StartSectionName 指定 Section</p>
@@ -484,7 +496,9 @@ if (USkeletalMeshComponent *Mesh = MyActor-&gt;FindComponentByClass&lt;USkeletal
   <p>执行 Montage_JumpToSection 时请确保角色动画的正处于Section所属Montage的播放状态，否则 JumpToSection 无效。</p>
 </div>
 <h5 id="获取当前正在播放的montage">获取当前正在播放的Montage</h5>
-<pre><code>UAnimMontage* UAnimInstance::GetCurrentActiveMontage() const
+<pre><code>/** Get a current Active Montage in this AnimInstance. 
+    Note that there might be multiple Active at the same time. This will only return the first active one it finds. **/
+UAnimMontage* UAnimInstance::GetCurrentActiveMontage() const
 </code></pre>
 <h5 id="停止montage播放">停止Montage播放</h5>
 <p>如果要停止当前正在播放的Montage，三种方式。</p>
@@ -492,7 +506,35 @@ if (USkeletalMeshComponent *Mesh = MyActor-&gt;FindComponentByClass&lt;USkeletal
 <pre><code>void ACharacter::StopAnimMontage(class UAnimMontage* AnimMontage);
 </code></pre>
 <p>方式2：</p>
-<pre><code>void UAnimInstance::Montage_Stop(float InBlendOutTime, const UAnimMontage* Montage = NULL);
+<pre><code>void UAnimInstance::Montage_Stop(float InBlendOutTime, const UAnimMontage* Montage = nullptr);
+</code></pre>
+<div class="alert success ">
+  <p>If no Montage reference (Montage = NULL), stop all actived montages.</p>
+</div>
+<p>Source in Engine:</p>
+<pre><code>void UAnimInstance::Montage_Stop(float InBlendOutTime, const UAnimMontage* Montage)
+{
+    if (Montage)
+    {
+        FAnimMontageInstance* MontageInstance = GetActiveInstanceForMontage(Montage);
+        if (MontageInstance)
+        {
+            MontageInstance-&gt;Stop(FAlphaBlend(Montage-&gt;BlendOut, InBlendOutTime));
+        }
+    }
+    else
+    {
+        // If no Montage reference, do it on all active ones.
+        for (int32 InstanceIndex = 0; InstanceIndex &lt; MontageInstances.Num(); InstanceIndex++)
+        {
+            FAnimMontageInstance* MontageInstance = MontageInstances[InstanceIndex];
+            if (MontageInstance &amp;&amp; MontageInstance-&gt;IsActive())
+            {
+                MontageInstance-&gt;Stop(FAlphaBlend(MontageInstance-&gt;Montage-&gt;BlendOut, InBlendOutTime));
+            }
+        }
+    }
+}
 </code></pre>
 <p>方式3：</p>
 <pre><code>void UAnimMontage::Stop(const FAlphaBlend&amp; InBlendOut, bool bInterrupt=true);
@@ -501,7 +543,7 @@ if (USkeletalMeshComponent *Mesh = MyActor-&gt;FindComponentByClass&lt;USkeletal
   <p>如果希望停止播放Montage时有动画融合效果，记得将Montage的Blend Out Time设置为大于0，比如默认值 0.25 。</p>
 </div>
 <div class="alert success ">
-  <p>一旦通过StopAnimMontage停止正在播放的Montage，角色就会恢复到待机动作。</p>
+  <p>一旦通过StopAnimMontage停止正在播放的Montage，角色就会恢复到待机动作（假设动画蓝图的默认动画为待机动画的话）。</p>
 </div>
 <h5 id="设置montage播放结束和融合结束后的回调函数">设置Montage播放结束和融合结束后的回调函数</h5>
 <pre><code>//设置Montage播放完毕（动画的最后一帧）的回调
@@ -565,17 +607,6 @@ SetNextSection在编辑器中运行正常，但是在打包版本中无效。</p
 Montage 的参数<code>Blend In</code>被设置为了0。</p>
 <p>解决办法：<br>
 将Montage 的参数<code>Blend In</code>（Blend Option -&gt; Blend In -&gt; Blend Time）改成大于0，比如默认值0.25。</p>
-<h5 id="动画状态机切换动画时让动画停留在最后一帧">动画状态机切换动画时让动画停留在最后一帧</h5>
-<p>动画蓝图中的State内部播放动画的节点属性<code>Loop</code>修改为<code>false</code>：
-<figure>
-    <img src="https://dawnarc.com/img/20160218-[UE4]Animation%20Montage%e5%8a%a8%e7%94%bb%e7%9b%b8%e5%85%b3/[UE4]Animation%20Montage%e5%8a%a8%e7%94%bb%e7%9b%b8%e5%85%b3-04.jpg"/> 
-</figure>
-
-<figure>
-    <img src="https://dawnarc.com/img/20160218-[UE4]Animation%20Montage%e5%8a%a8%e7%94%bb%e7%9b%b8%e5%85%b3/[UE4]Animation%20Montage%e5%8a%a8%e7%94%bb%e7%9b%b8%e5%85%b3-05.jpg"/> 
-</figure>
-</p>
-<p>如果想让动画停留在最后一帧，另一种方式是在动画的结尾添加Notify事件，在事件中修改动画的播放速率为0。</p>
 <hr>
 <p><code>人生如逆旅，我亦是行人。----苏轼《临江仙》</code></p>
 
