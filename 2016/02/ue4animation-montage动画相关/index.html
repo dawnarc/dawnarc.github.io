@@ -561,6 +561,11 @@ void UAnimInstance::Montage_SetBlendingOutDelegate(FOnMontageBlendingOutStarted 
 UPROPERTY(EditAnywhere, Category=BlendOption)
 FAlphaBlend BlendOut;
 </code></pre>
+<div class="alert info ">
+  <p><code>BlendOut</code>作用：只有当前Montage快结束时，且结束后恢复到待机动画（动画蓝图中的默认Pose），<code>BlendOut</code>才会起作用，即在待机Pose和Montage快结束时的Pose之间进行融合，融合时长为<code>BlendOut</code>。<br>
+如果Montage A在播放未结束时，Montage B开始播放，那么Montage A的<code>BlendOut</code>不在生效，而是使用Montage B的<code>BlendIn</code>。<br>
+如果某个Montage循环播放，那么<code>BlendOut</code>不会起作用；如果某个Montage连续播放多次，那么<code>BlendOut</code>只在最后一次播放将要结束时才生效。</p>
+</div>
 <h5 id="如何指定动画的某个时间点作为起始播放点">如何指定动画的某个时间点作为起始播放点</h5>
 <p><code>UAnimInstance::PlaySlotAnimationAsDynamicMontage()</code>和<code>UAnimInstance::Montage_Play()</code>都提供了参数<code>InTimeToStartMontageAt</code>，表示从当前动作的哪个时间点还是融合，默认为0，即从第一帧开始融合。</p>
 <h3 id="常见问题">常见问题</h3>
@@ -573,7 +578,7 @@ SetNextSection在编辑器中运行正常，但是在打包版本中无效。</p
 <p>参考自：Montage unwanted section switching<br>
 <a href="https://answers.unrealengine.com/questions/172537/montage-unwanted-section-switching.html">https://answers.unrealengine.com/questions/172537/montage-unwanted-section-switching.html</a></p>
 <div class="alert warning ">
-  <p>如果Section的时间很短，需要将<code>Blend In</code>和<code>Blend Out</code>设置为 改小或者设置为 0（默认为0.25），否则 JumpToSection 无效果。</p>
+  <p>如果Section的时间很短，需要将<code>Blend In</code>和<code>Blend Out</code>改小或者设置为 0（默认为0.25），否则 JumpToSection 无效果。</p>
 </div>
 <h5 id="montage-循环播放2018-10-26">Montage 循环播放(2018-10-26)</h5>
 <p>如果用动画蓝图控制动画切换，直接用动画状态机去指定 AnimSequence 即可，不需要其他设置，因为动画蓝图会自动根据状态机去循环播放指定的 AnimSequence 。<br>

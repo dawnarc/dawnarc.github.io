@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.69.2 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="author" content="Neil Wang">
+<meta name="keywords" content="UE4, error, LNK2005">
+<meta name="description" content="Keywords: UE4, error LNK2005 on linking libprotobuf">
+
+
+<meta property="og:description" content="Keywords: UE4, error LNK2005 on linking libprotobuf">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[UE4]error LNK2005 on linking libprotobuf">
+<meta name="twitter:title" content="[UE4]error LNK2005 on linking libprotobuf">
+<meta property="og:url" content="https://dawnarc.com/2020/05/ue4error-lnk2005-on-linking-libprotobuf/">
+<meta property="twitter:url" content="https://dawnarc.com/2020/05/ue4error-lnk2005-on-linking-libprotobuf/">
+<meta property="og:site_name" content="玄冬Wong">
+<meta property="og:description" content="Keywords: UE4, error LNK2005 on linking libprotobuf">
+<meta name="twitter:description" content="Keywords: UE4, error LNK2005 on linking libprotobuf">
+<meta property="og:locale" content="en-us">
+
+  
+    <meta property="article:published_time" content="2020-05-20T21:39:02">
+  
+  
+    <meta property="article:modified_time" content="2020-05-20T21:39:02">
+  
+  
+  
+    
+      <meta property="article:section" content="UnrealEngine4">
+    
+  
+  
+    
+      <meta property="article:tag" content="UE4">
+    
+  
+
+
+<meta name="twitter:card" content="summary">
+
+  <meta name="twitter:site" content="@dawn_arc">
+
+
+  <meta name="twitter:creator" content="@dawn_arc">
+
+
+
+
+
+
+  <meta property="og:image" content="https://dawnarc.com/thumbnail/cover-toronto.jpg">
+  <meta property="twitter:image" content="https://dawnarc.com/thumbnail/cover-toronto.jpg">
+
+
+
+
+
+  <meta property="og:image" content="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=640">
+  <meta property="twitter:image" content="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=640">
+
+
+    <title>[UE4]error LNK2005 on linking libprotobuf</title>
+
+    <link rel="icon" href="https://dawnarc.com/favicon.png">
+    
+
+    
+      <link rel="publisher" href="https://plus.google.com/111340706178390411568">
+    
+
+    <link rel="canonical" href="https://dawnarc.com/2020/05/ue4error-lnk2005-on-linking-libprotobuf/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/jquery.fancybox.min.css" integrity="sha256-vuXZ9LGmmwtjqFX1F+EKin1ThZMub58gKULUyf0qECk=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/helpers/jquery.fancybox-thumbs.min.css" integrity="sha256-SEa4XYAHihTcEP1f5gARTB2K26Uk8PsndQYHQC1f4jU=" crossorigin="anonymous" />
+    
+    
+    <link rel="stylesheet" href="https://dawnarc.com/css/style-twzjdbqhmnnacqs0pwwdzcdbt8yhv8giawvjqjmyfoqnvazl0dalmnhdkvp7.min.css" />
+    
+    
+      
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/solarized-light.min.css">
+      
+    
+
+    
+      
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-78064851-2', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="4">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="https://dawnarc.com/">玄冬Wong</a>
+  </div>
+  
+    
+      <a class="header-right-picture "
+         href="https://dawnarc.com/#about">
+    
+    
+    
+      
+        <img class="header-picture" src="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=90" alt="Author&#39;s picture" />
+      
+    
+    </a>
+    
+</header>
+
+      <nav id="sidebar" data-behavior="4">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="https://dawnarc.com/#about">
+          <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=110" alt="Author&#39;s picture" />
+        </a>
+        <h4 class="sidebar-profile-name">Neil Wang</h4>
+        
+          <h5 class="sidebar-profile-bio">久长唯有品格</h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/categories">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+      
+      <span class="sidebar-button-desc">Categories</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/tags">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+      
+      <span class="sidebar-button-desc">Tags</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/archives">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+      
+      <span class="sidebar-button-desc">Archives</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/#about">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+      
+      <span class="sidebar-button-desc">About</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+      
+      <span class="sidebar-button-desc">Home</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/index.xml">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://stackoverflow.com/users/1645289/protoss" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-stack-overflow"></i>
+      
+      <span class="sidebar-button-desc">Stack Overflow</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://www.facebook.com/koanland" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-facebook"></i>
+      
+      <span class="sidebar-button-desc">Facebook</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/dawnarc" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://www.instagram.com/dawn_arc/" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-instagram"></i>
+      
+      <span class="sidebar-button-desc">Instagram</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://www.linkedin.com/in/dawnarc/" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-linkedin"></i>
+      
+      <span class="sidebar-button-desc">Linkedin</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://www.pinterest.com/wangaiguo/" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-pinterest"></i>
+      
+      <span class="sidebar-button-desc">Pinterest</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://steamcommunity.com/id/dawnarc" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-steam"></i>
+      
+      <span class="sidebar-button-desc">Steam</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://twitter.com/dawn_arc" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-twitter"></i>
+      
+      <span class="sidebar-button-desc">Twitter</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://weibo.com/koanland" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-weibo"></i>
+      
+      <span class="sidebar-button-desc">Weibo</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+
+    </ul>
+  </div>
+</nav>
+
+      
+
+      <div id="main" data-behavior="4"
+        class="
+               hasCoverMetaIn
+               ">
+        <article class="post" itemscope itemType="http://schema.org/BlogPosting">
+          
+          
+            <div class="post-header main-content-wrap text-left">
+  
+    <h1 class="post-title" itemprop="headline">
+      [UE4]error LNK2005 on linking libprotobuf
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2020-05-20T21:39:02&#43;08:00">
+        
+  
+  
+  
+  
+    Wednesday, 21:39, May 20, 2020
+  
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+</div>
+          
+          <div class="post-content markdown" itemprop="articleBody">
+            <div class="main-content-wrap">
+              <p>Keywords: UE4, error LNK2005 on linking libprotobuf</p>
+<h5 id="case">Case</h5>
+<p>There&rsquo;re tons of <code>LNK2005</code> errors on packaging project( e.g. building in <code>Shipping</code> mode).</p>
+<h5 id="may-be-caused-by">May be caused by</h5>
+<p>Your project perhaps included multiple third party libraries, and they are linked a same library(e.g. <code>libprotobuf</code>), and this library(<code>libprotobuf</code>) saved in multiple replicas in your project or engine.<br>
+e.g.: <code>WebRTC</code> was included in your project, <code>libprotobuf.lib</code> was also include as a third party library in your plugin, then packaging project would failed with error <code>LNK2005</code>. Because there&rsquo;s another <code>libprotobuf.lib</code> that was included in <code>WebRTC</code>.</p>
+<h5 id="solution">Solution</h5>
+<p>Make sure the library which was linked by multiple third party was in independentce.</p>
+<p>Example of error:</p>
+<pre><code>webrtc.lib(message_lite.obj) : error LNK2005: &quot;public: bool __cdecl google::protobuf::MessageLite::AppendPartialToString(class std::basic_string&lt;char,struct std::char_traits&lt;char&gt;,class std::allocator&lt;char&gt; &gt; *)const &quot; (?AppendPartialToString@MessageLite@protobuf@google@@QEBA_NPEAV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z) already defined in libprotobuf.lib(message_lite.cc.obj)
+webrtc.lib(message_lite.obj) : error LNK2005: &quot;public: bool __cdecl google::protobuf::MessageLite::AppendToString(class std::basic_string&lt;char,struct std::char_traits&lt;char&gt;,class std::allocator&lt;char&gt; &gt; *)const &quot; (?AppendToString@MessageLite@protobuf@google@@QEBA_NPEAV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z) already defined in libprotobuf.lib(message_lite.cc.obj)
+webrtc.lib(message_lite.obj) : error LNK2005: &quot;public: virtual class std::basic_string&lt;char,struct std::char_traits&lt;char&gt;,class std::allocator&lt;char&gt; &gt; __cdecl google::protobuf::MessageLite::InitializationErrorString(void)const &quot; (?InitializationErrorString@MessageLite@protobuf@google@@UEBA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ) already defined in libprotobuf.lib(message_lite.cc.obj)
+webrtc.lib(message_lite.obj) : error LNK2005: &quot;public: static void __cdecl google::protobuf::internal::GenericTypeHandler&lt;class std::basic_string&lt;char,struct std::char_traits&lt;char&gt;,class std::allocator&lt;char&gt; &gt; &gt;::Merge(class std::basic_string&lt;char,struct std::char_traits&lt;char&gt;,class std::allocator&lt;char&gt; &gt; const &amp;,class std::basic_string&lt;char,struct std::char_traits&lt;char&gt;,class std::allocator&lt;char&gt; &gt; *)&quot; (?Merge@?$GenericTypeHandler@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@internal@protobuf@google@@SAXAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@PEAV56@@Z) already defined in libprotobuf.lib(message_lite.cc.obj)
+webrtc.lib(message_lite.obj) : error LNK2005: &quot;public: static void __cdecl google::protobuf::internal::GenericTypeHandler&lt;class google::protobuf::MessageLite&gt;::Merge(class google::protobuf::MessageLite const &amp;,class google::protobuf::MessageLite *)&quot; (?Merge@?$GenericTypeHandler@VMessageLite@protobuf@google@@@internal@protobuf@google@@SAXAEBVMessageLite@34@PEAV534@@Z) already defined in libprotobuf.lib(message_lite.cc.obj)
+webrtc.lib(message_lite.obj) : error LNK2005: &quot;public: bool __cdecl google::protobuf::MessageLite::MergeFromCodedStream(class google::protobuf::io::CodedInputStream *)&quot; (?MergeFromCodedStream@MessageLite@protobuf@google@@QEAA_NPEAVCodedInputStream@io@23@@Z) already defined in libprotobuf.lib(message_lite.cc.obj)
+webrtc.lib(message_lite.obj) : error LNK2005: &quot;public: virtual class google::protobuf::MessageLite * __cdecl google::protobuf::MessageLite::New(class google::protobuf::Arena *)const &quot; (?New@MessageLite@protobuf@google@@UEBAPEAV123@PEAVArena@23@@Z) already defined in libprotobuf.lib(message_lite.cc.obj)
+webrtc.lib(message_lite.obj) : error LNK2005: &quot;public: bool __cdecl google::protobuf::MessageLite::ParseFromArray(void const *,int)&quot; (?ParseFromArray@MessageLite@protobuf@google@@QEAA_NPEBXH@Z) already defined in libprotobuf.lib(message_lite.cc.obj)
+webrtc.lib(message_lite.obj) : error LNK2005: &quot;public: bool __cdecl google::protobuf::MessageLite::ParseFromBoundedZeroCopyStream(class google::protobuf::io::ZeroCopyInputStream *,int)&quot; (?ParseFromBoundedZeroCopyStream@MessageLite@protobuf@google@@QEAA_NPEAVZeroCopyInputStream@io@23@H@Z) already defined in libprotobuf.lib(message_lite.cc.obj)
+webrtc.lib(message_lite.obj) : error LNK2005: &quot;public: bool __cdecl google::protobuf::MessageLite::ParseFromCodedStream(class google::protobuf::io::CodedInputStream *)&quot; (?ParseFromCodedStream@MessageLite@protobuf@google@@QEAA_NPEAVCodedInputStream@io@23@@Z) already defined in libprotobuf.lib(message_lite.cc.obj)
+webrtc.lib(message_lite.obj) : error LNK2005: &quot;public: bool __cdecl google::protobuf::MessageLite::ParseFromString(class std::basic_string&lt;char,struct std::char_traits&lt;char&gt;,class std::allocator&lt;char&gt; &gt; const &amp;)&quot; (?ParseFromString@MessageLite@protobuf@google@@QEAA_NAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z) already defined in libprotobuf.lib(message_lite.cc.obj)
+webrtc.lib(message_lite.obj) : error LNK2005: &quot;public: bool __cdecl google::protobuf::MessageLite::ParseFromZeroCopyStream(class google::protobuf::io::ZeroCopyInputStream *)&quot; (?ParseFromZeroCopyStream@MessageLite@protobuf@google@@QEAA_NPEAVZeroCopyInputStream@io@23@@Z) already defined in libprotobuf.lib(message_lite.cc.obj)
+webrtc.lib(message_lite.obj) : error LNK2005: &quot;public: bool __cdecl google::protobuf::MessageLite::ParsePartialFromArray(void const *,int)&quot; (?ParsePartialFromArray@MessageLite@protobuf@google@@QEAA_NPEBXH@Z) already defined in libprotobuf.lib(message_lite.cc.obj)
+webrtc.lib(message_lite.obj) : error LNK2005: &quot;public: bool __cdecl google::protobuf::MessageLite::ParsePartialFromBoundedZeroCopyStream(class google::protobuf::io::ZeroCopyInputStream *,int)&quot; (?ParsePartialFromBoundedZeroCopyStream@MessageLite@protobuf@google@@QEAA_NPEAVZeroCopyInputStream@io@23@H@Z) already defined in libprotobuf.lib(message_lite.cc.obj)
+webrtc.lib(message_lite.obj) : error LNK2005: &quot;public: bool __cdecl google::protobuf::MessageLite::ParsePartialFromCodedStream(class google::protobuf::io::CodedInputStream *)&quot; (?ParsePartialFromCodedStream@MessageLite@protobuf@google@@QEAA_NPEAVCodedInputStream@io@23@@Z) already defined in libprotobuf.lib(message_lite.cc.obj)
+webrtc.lib(message_lite.obj) : error LNK2005: &quot;public: bool __cdecl google::protobuf::MessageLite::ParsePartialFromString(class std::basic_string&lt;char,struct std::char_traits&lt;char&gt;,class std::allocator&lt;char&gt; &gt; const &amp;)&quot; (?ParsePartialFromString@MessageLite@protobuf@google@@QEAA_NAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z) already defined in libprotobuf.lib(message_lite.cc.obj)
+webrtc.lib(message_lite.obj) : error LNK2005: &quot;public: bool __cdecl google::protobuf::MessageLite::ParsePartialFromZeroCopyStream(class google::protobuf::io::ZeroCopyInputStream *)&quot; (?ParsePartialFromZeroCopyStream@MessageLite@protobuf@google@@QEAA_NPEAVZeroCopyInputStream@io@23@@Z) already defined in libprotobuf.lib(message_lite.cc.obj)
+webrtc.lib(message_lite.obj) : error LNK2005: &quot;public: class std::basic_string&lt;char,struct std::char_traits&lt;char&gt;,class std::allocator&lt;char&gt; &gt; __cdecl google::protobuf::MessageLite::SerializeAsString(void)const &quot; (?SerializeAsString@MessageLite@protobuf@google@@QEBA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ) already defined in libprotobuf.lib(message_lite.cc.obj)
+webrtc.lib(message_lite.obj) : error LNK2005: &quot;public: class std::basic_string&lt;char,struct std::char_traits&lt;char&gt;,class std::allocator&lt;char&gt; &gt; __cdecl google::protobuf::MessageLite::SerializePartialAsString(void)const &quot; (?SerializePartialAsString@MessageLite@protobuf@google@@QEBA?AV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@XZ) already defined in libprotobuf.lib(message_lite.cc.obj)
+webrtc.lib(message_lite.obj) : error LNK2005: &quot;public: bool __cdecl google::protobuf::MessageLite::SerializePartialToArray(void *,int)const &quot; (?SerializePartialToArray@MessageLite@protobuf@google@@QEBA_NPEAXH@Z) already defined in libprotobuf.lib(message_lite.cc.obj)
+webrtc.lib(message_lite.obj) : error LNK2005: &quot;public: bool __cdecl google::protobuf::MessageLite::SerializePartialToCodedStream(class google::protobuf::io::CodedOutputStream *)const &quot; (?SerializePartialToCodedStream@MessageLite@protobuf@google@@QEBA_NPEAVCodedOutputStream@io@23@@Z) already defined in libprotobuf.lib(message_lite.cc.obj)
+webrtc.lib(message_lite.obj) : error LNK2005: &quot;public: bool __cdecl google::protobuf::MessageLite::SerializePartialToString(class std::basic_string&lt;char,struct std::char_traits&lt;char&gt;,class std::allocator&lt;char&gt; &gt; *)const &quot; (?SerializePartialToString@MessageLite@protobuf@google@@QEBA_NPEAV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z) already defined in libprotobuf.lib(message_lite.cc.obj)
+webrtc.lib(message_lite.obj) : error LNK2005: &quot;public: bool __cdecl google::protobuf::MessageLite::SerializePartialToZeroCopyStream(class google::protobuf::io::ZeroCopyOutputStream *)const &quot; (?SerializePartialToZeroCopyStream@MessageLite@protobuf@google@@QEBA_NPEAVZeroCopyOutputStream@io@23@@Z) already defined in libprotobuf.lib(message_lite.cc.obj)
+webrtc.lib(message_lite.obj) : error LNK2005: &quot;public: bool __cdecl google::protobuf::MessageLite::SerializeToArray(void *,int)const &quot; (?SerializeToArray@MessageLite@protobuf@google@@QEBA_NPEAXH@Z) already defined in libprotobuf.lib(message_lite.cc.obj)
+webrtc.lib(message_lite.obj) : error LNK2005: &quot;public: bool __cdecl google::protobuf::MessageLite::SerializeToCodedStream(class google::protobuf::io::CodedOutputStream *)const &quot; (?SerializeToCodedStream@MessageLite@protobuf@google@@QEBA_NPEAVCodedOutputStream@io@23@@Z) already defined in libprotobuf.lib(message_lite.cc.obj)
+webrtc.lib(message_lite.obj) : error LNK2005: &quot;public: bool __cdecl google::protobuf::MessageLite::SerializeToString(class std::basic_string&lt;char,struct std::char_traits&lt;char&gt;,class std::allocator&lt;char&gt; &gt; *)const &quot; (?SerializeToString@MessageLite@protobuf@google@@QEBA_NPEAV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z) already defined in libprotobuf.lib(message_lite.cc.obj)
+webrtc.lib(message_lite.obj) : error LNK2005: &quot;public: bool __cdecl google::protobuf::MessageLite::SerializeToZeroCopyStream(class google::protobuf::io::ZeroCopyOutputStream *)const &quot; (?SerializeToZeroCopyStream@MessageLite@protobuf@google@@QEBA_NPEAVZeroCopyOutputStream@io@23@@Z) already defined in libprotobuf.lib(message_lite.cc.obj)
+webrtc.lib(zero_copy_stream_impl_lite.obj) : error LNK2005: &quot;public: __cdecl google::protobuf::io::ArrayInputStream::ArrayInputStream(void const *,int,int)&quot; (??0ArrayInputStream@io@protobuf@google@@QEAA@PEBXHH@Z) already defined in libprotobuf.lib(zero_copy_stream_impl_lite.cc.obj)
+webrtc.lib(zero_copy_stream_impl_lite.obj) : error LNK2005: &quot;public: __cdecl google::protobuf::io::ArrayOutputStream::ArrayOutputStream(void *,int,int)&quot; (??0ArrayOutputStream@io@protobuf@google@@QEAA@PEAXHH@Z) already defined in libprotobuf.lib(zero_copy_stream_impl_lite.cc.obj)
+webrtc.lib(zero_copy_stream_impl_lite.obj) : error LNK2005: &quot;public: __cdecl google::protobuf::io::CopyingInputStreamAdaptor::CopyingInputStreamAdaptor(class google::protobuf::io::CopyingInputStream *,int)&quot; (??0CopyingInputStreamAdaptor@io@protobuf@google@@QEAA@PEAVCopyingInputStream@123@H@Z) already defined in libprotobuf.lib(zero_copy_stream_impl_lite.cc.obj)
+webrtc.lib(zero_copy_stream_impl_lite.obj) : error LNK2005: &quot;public: __cdecl google::protobuf::io::CopyingOutputStreamAdaptor::CopyingOutputStreamAdaptor(class google::protobuf::io::CopyingOutputStream *,int)&quot; (??0CopyingOutputStreamAdaptor@io@protobuf@google@@QEAA@PEAVCopyingOutputStream@123@H@Z) already defined in libprotobuf.lib(zero_copy_stream_impl_lite.cc.obj)
+webrtc.lib(zero_copy_stream_impl_lite.obj) : error LNK2005: &quot;public: __cdecl google::protobuf::io::StringOutputStream::StringOutputStream(class std::basic_string&lt;char,struct std::char_traits&lt;char&gt;,class std::allocator&lt;char&gt; &gt; *)&quot; (??0StringOutputStream@io@protobuf@google@@QEAA@PEAV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z) already defined in libprotobuf.lib(zero_copy_stream_impl_lite.cc.obj)
+webrtc.lib(zero_copy_stream_impl_lite.obj) : error LNK2005: &quot;public: virtual __cdecl google::protobuf::io::ArrayInputStream::~ArrayInputStream(void)&quot; (??1ArrayInputStream@io@protobuf@google@@UEAA@XZ) already defined in libprotobuf.lib(unknown_field_set.cc.obj)
+webrtc.lib(zero_copy_stream_impl_lite.obj) : error LNK2005: &quot;public: virtual __cdecl google::protobuf::io::ArrayOutputStream::~ArrayOutputStream(void)&quot; (??1ArrayOutputStream@io@protobuf@google@@UEAA@XZ) already defined in libprotobuf.lib(message_lite.cc.obj)
+webrtc.lib(zero_copy_stream_impl_lite.obj) : error LNK2005: &quot;public: virtual __cdecl google::protobuf::io::CopyingInputStream::~CopyingInputStream(void)&quot; (??1CopyingInputStream@io@protobuf@google@@UEAA@XZ) already defined in libprotobuf.lib(zero_copy_stream_impl.cc.obj)
+webrtc.lib(zero_copy_stream_impl_lite.obj) : error LNK2005: &quot;public: virtual __cdecl google::protobuf::io::CopyingInputStreamAdaptor::~CopyingInputStreamAdaptor(void)&quot; (??1CopyingInputStreamAdaptor@io@protobuf@google@@UEAA@XZ) already defined in libprotobuf.lib(zero_copy_stream_impl_lite.cc.obj)
+webrtc.lib(zero_copy_stream_impl_lite.obj) : error LNK2005: &quot;public: virtual __cdecl google::protobuf::io::CopyingOutputStream::~CopyingOutputStream(void)&quot; (??1CopyingOutputStream@io@protobuf@google@@UEAA@XZ) already defined in libprotobuf.lib(zero_copy_stream_impl.cc.obj)
+webrtc.lib(zero_copy_stream_impl_lite.obj) : error LNK2005: &quot;public: virtual __cdecl google::protobuf::io::CopyingOutputStreamAdaptor::~CopyingOutputStreamAdaptor(void)&quot; (??1CopyingOutputStreamAdaptor@io@protobuf@google@@UEAA@XZ) already defined in libprotobuf.lib(zero_copy_stream_impl_lite.cc.obj)
+webrtc.lib(zero_copy_stream_impl_lite.obj) : error LNK2005: &quot;public: virtual __cdecl google::protobuf::io::StringOutputStream::~StringOutputStream(void)&quot; (??1StringOutputStream@io@protobuf@google@@UEAA@XZ) already defined in libprotobuf.lib(zero_copy_stream_impl_lite.cc.obj)
+webrtc.lib(zero_copy_stream_impl_lite.obj) : error LNK2005: &quot;private: void __cdecl google::protobuf::io::CopyingInputStreamAdaptor::AllocateBufferIfNeeded(void)&quot; (?AllocateBufferIfNeeded@CopyingInputStreamAdaptor@io@protobuf@google@@AEAAXXZ) already defined in libprotobuf.lib(zero_copy_stream_impl_lite.cc.obj)
+webrtc.lib(zero_copy_stream_impl_lite.obj) : error LNK2005: &quot;private: void __cdecl google::protobuf::io::CopyingOutputStreamAdaptor::AllocateBufferIfNeeded(void)&quot; (?AllocateBufferIfNeeded@CopyingOutputStreamAdaptor@io@protobuf@google@@AEAAXXZ) already defined in libprotobuf.lib(zero_copy_stream_impl_lite.cc.obj)
+webrtc.lib(zero_copy_stream_impl_lite.obj) : error LNK2005: &quot;public: virtual void __cdecl google::protobuf::io::ArrayInputStream::BackUp(int)&quot; (?BackUp@ArrayInputStream@io@protobuf@google@@UEAAXH@Z) already defined in libprotobuf.lib(zero_copy_stream_impl_lite.cc.obj)
+webrtc.lib(zero_copy_stream_impl_lite.obj) : error LNK2005: &quot;public: virtual void __cdecl google::protobuf::io::ArrayOutputStream::BackUp(int)&quot; (?BackUp@ArrayOutputStream@io@protobuf@google@@UEAAXH@Z) already defined in libprotobuf.lib(zero_copy_stream_impl_lite.cc.obj)
+webrtc.lib(zero_copy_stream_impl_lite.obj) : error LNK2005: &quot;public: virtual void __cdecl google::protobuf::io::CopyingInputStreamAdaptor::BackUp(int)&quot; (?BackUp@CopyingInputStreamAdaptor@io@protobuf@google@@UEAAXH@Z) already defined in libprotobuf.lib(zero_copy_stream_impl_lite.cc.obj)
+webrtc.lib(zero_copy_stream_impl_lite.obj) : error LNK2005: &quot;public: virtual void __cdecl google::protobuf::io::CopyingOutputStreamAdaptor::BackUp(int)&quot; (?BackUp@CopyingOutputStreamAdaptor@io@protobuf@google@@UEAAXH@Z) already defined in libprotobuf.lib(zero_copy_stream_impl_lite.cc.obj)
+webrtc.lib(zero_copy_stream_impl_lite.obj) : error LNK2005: &quot;public: virtual void __cdecl google::protobuf::io::StringOutputStream::BackUp(int)&quot; (?BackUp@StringOutputStream@io@protobuf@google@@UEAAXH@Z) already defined in libprotobuf.lib(zero_copy_stream_impl_lite.cc.obj)
+webrtc.lib(zero_copy_stream_impl_lite.obj) : error LNK2005: &quot;public: virtual __int64 __cdecl google::protobuf::io::ArrayInputStream::ByteCount(void)const &quot; (?ByteCount@ArrayInputStream@io@protobuf@google@@UEBA_JXZ) already defined in libprotobuf.lib(zero_copy_stream_impl_lite.cc.obj)
+webrtc.lib(zero_copy_stream_impl_lite.obj) : error LNK2005: &quot;public: virtual __int64 __cdecl google::protobuf::io::ArrayOutputStream::ByteCount(void)const &quot; (?ByteCount@ArrayOutputStream@io@protobuf@google@@UEBA_JXZ) already defined in libprotobuf.lib(zero_copy_stream_impl_lite.cc.obj)
+webrtc.lib(zero_copy_stream_impl_lite.obj) : error LNK2005: &quot;public: virtual __int64 __cdecl google::protobuf::io::CopyingInputStreamAdaptor::ByteCount(void)const &quot; (?ByteCount@CopyingInputStreamAdaptor@io@protobuf@google@@UEBA_JXZ) already defined in libprotobuf.lib(zero_copy_stream_impl_lite.cc.obj)
+webrtc.lib(zero_copy_stream_impl_lite.obj) : error LNK2005: &quot;public: virtual __int64 __cdecl google::protobuf::io::CopyingOutputStreamAdaptor::ByteCount(void)const &quot; (?ByteCount@CopyingOutputStreamAdaptor@io@protobuf@google@@UEBA_JXZ) already defined in libprotobuf.lib(zero_copy_stream_impl_lite.cc.obj)
+webrtc.lib(zero_copy_stream_impl_lite.obj) : error LNK2005: &quot;public: virtual __int64 __cdecl google::protobuf::io::StringOutputStream::ByteCount(void)const &quot; (?ByteCount@StringOutputStream@io@protobuf@google@@UEBA_JXZ) already defined in libprotobuf.lib(zero_copy_stream_impl_lite.cc.obj)
+webrtc.lib(zero_copy_stream_impl_lite.obj) : error LNK2005: &quot;public: bool __cdecl google::protobuf::io::CopyingOutputStreamAdaptor::Flush(void)&quot; (?Flush@CopyingOutputStreamAdaptor@io@protobuf@google@@QEAA_NXZ) already defined in libprotobuf.lib(zero_copy_stream_impl_lite.cc.obj)
+webrtc.lib(zero_copy_stream_impl_lite.obj) : error LNK2005: &quot;private: void __cdecl google::protobuf::io::CopyingInputStreamAdaptor::FreeBuffer(void)&quot; (?FreeBuffer@CopyingInputStreamAdaptor@io@protobuf@google@@AEAAXXZ) already defined in libprotobuf.lib(zero_copy_stream_impl_lite.cc.obj)
+webrtc.lib(zero_copy_stream_impl_lite.obj) : error LNK2005: &quot;private: void __cdecl google::protobuf::io::CopyingOutputStreamAdaptor::FreeBuffer(void)&quot; (?FreeBuffer@CopyingOutputStreamAdaptor@io@protobuf@google@@AEAAXXZ) already defined in libprotobuf.lib(zero_copy_stream_impl_lite.cc.obj)
+webrtc.lib(zero_copy_stream_impl_lite.obj) : error LNK2005: &quot;public: virtual bool __cdecl google::protobuf::io::ArrayInputStream::Next(void const * *,int *)&quot; (?Next@ArrayInputStream@io@protobuf@google@@UEAA_NPEAPEBXPEAH@Z) already defined in libprotobuf.lib(zero_copy_stream_impl_lite.cc.obj)
+webrtc.lib(zero_copy_stream_impl_lite.obj) : error LNK2005: &quot;public: virtual bool __cdecl google::protobuf::io::ArrayOutputStream::Next(void * *,int *)&quot; (?Next@ArrayOutputStream@io@protobuf@google@@UEAA_NPEAPEAXPEAH@Z) already defined in libprotobuf.lib(zero_copy_stream_impl_lite.cc.obj)
+webrtc.lib(zero_copy_stream_impl_lite.obj) : error LNK2005: &quot;public: virtual bool __cdecl google::protobuf::io::CopyingInputStreamAdaptor::Next(void const * *,int *)&quot; (?Next@CopyingInputStreamAdaptor@io@protobuf@google@@UEAA_NPEAPEBXPEAH@Z) already defined in libprotobuf.lib(zero_copy_stream_impl_lite.cc.obj)
+webrtc.lib(zero_copy_stream_impl_lite.obj) : error LNK2005: &quot;public: virtual bool __cdecl google::protobuf::io::CopyingOutputStreamAdaptor::Next(void * *,int *)&quot; (?Next@CopyingOutputStreamAdaptor@io@protobuf@google@@UEAA_NPEAPEAXPEAH@Z) already defined in libprotobuf.lib(zero_copy_stream_impl_lite.cc.obj)
+webrtc.lib(zero_copy_stream_impl_lite.obj) : error LNK2005: &quot;public: virtual bool __cdecl google::protobuf::io::StringOutputStream::Next(void * *,int *)&quot; (?Next@StringOutputStream@io@protobuf@google@@UEAA_NPEAPEAXPEAH@Z) already defined in libprotobuf.lib(zero_copy_stream_impl_lite.cc.obj)
+webrtc.lib(zero_copy_stream_impl_lite.obj) : error LNK2005: &quot;public: virtual bool __cdecl google::protobuf::io::ArrayInputStream::Skip(int)&quot; (?Skip@ArrayInputStream@io@protobuf@google@@UEAA_NH@Z) already defined in libprotobuf.lib(zero_copy_stream_impl_lite.cc.obj)
+webrtc.lib(zero_copy_stream_impl_lite.obj) : error LNK2005: &quot;public: virtual int __cdecl google::protobuf::io::CopyingInputStream::Skip(int)&quot; (?Skip@CopyingInputStream@io@protobuf@google@@UEAAHH@Z) already defined in libprotobuf.lib(zero_copy_stream_impl_lite.cc.obj)
+webrtc.lib(zero_copy_stream_impl_lite.obj) : error LNK2005: &quot;public: virtual bool __cdecl google::protobuf::io::CopyingInputStreamAdaptor::Skip(int)&quot; (?Skip@CopyingInputStreamAdaptor@io@protobuf@google@@UEAA_NH@Z) already defined in libprotobuf.lib(zero_copy_stream_impl_lite.cc.obj)
+webrtc.lib(zero_copy_stream_impl_lite.obj) : error LNK2005: &quot;private: bool __cdecl google::protobuf::io::CopyingOutputStreamAdaptor::WriteBuffer(void)&quot; (?WriteBuffer@CopyingOutputStreamAdaptor@io@protobuf@google@@AEAA_NXZ) already defined in libprotobuf.lib(zero_copy_stream_impl_lite.cc.obj)
+webrtc.lib(common.obj) : error LNK2005: &quot;public: __cdecl google::protobuf::internal::LogMessage::LogMessage(enum google::protobuf::LogLevel,char const *,int)&quot; (??0LogMessage@internal@protobuf@google@@QEAA@W4LogLevel@23@PEBDH@Z) already defined in libprotobuf.lib(common.cc.obj)
+webrtc.lib(common.obj) : error LNK2005: &quot;public: __cdecl google::protobuf::LogSilencer::LogSilencer(void)&quot; (??0LogSilencer@protobuf@google@@QEAA@XZ) already defined in libprotobuf.lib(common.cc.obj)
+webrtc.lib(common.obj) : error LNK2005: &quot;public: virtual __cdecl google::protobuf::Closure::~Closure(void)&quot; (??1Closure@protobuf@google@@UEAA@XZ) already defined in libprotobuf.lib(common.cc.obj)
+webrtc.lib(common.obj) : error LNK2005: &quot;public: virtual __cdecl google::protobuf::internal::FunctionClosure0::~FunctionClosure0(void)&quot; (??1FunctionClosure0@internal@protobuf@google@@UEAA@XZ) already defined in libprotobuf.lib(common.cc.obj)
+webrtc.lib(common.obj) : error LNK2005: &quot;public: __cdecl google::protobuf::internal::LogMessage::~LogMessage(void)&quot; (??1LogMessage@internal@protobuf@google@@QEAA@XZ) already defined in libprotobuf.lib(common.cc.obj)
+webrtc.lib(common.obj) : error LNK2005: &quot;public: __cdecl google::protobuf::LogSilencer::~LogSilencer(void)&quot; (??1LogSilencer@protobuf@google@@QEAA@XZ) already defined in libprotobuf.lib(common.cc.obj)
+webrtc.lib(common.obj) : error LNK2005: &quot;public: void __cdecl google::protobuf::internal::LogFinisher::operator=(class google::protobuf::internal::LogMessage &amp;)&quot; (??4LogFinisher@internal@protobuf@google@@QEAAXAEAVLogMessage@123@@Z) already defined in libprotobuf.lib(common.cc.obj)
+webrtc.lib(common.obj) : error LNK2005: &quot;public: class google::protobuf::internal::LogMessage &amp; __cdecl google::protobuf::internal::LogMessage::operator&lt;&lt;(class std::basic_string&lt;char,struct std::char_traits&lt;char&gt;,class std::allocator&lt;char&gt; &gt; const &amp;)&quot; (??6LogMessage@internal@protobuf@google@@QEAAAEAV0123@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z) already defined in libprotobuf.lib(common.cc.obj)
+webrtc.lib(common.obj) : error LNK2005: &quot;public: class google::protobuf::internal::LogMessage &amp; __cdecl google::protobuf::internal::LogMessage::operator&lt;&lt;(class google::protobuf::util::Status const &amp;)&quot; (??6LogMessage@internal@protobuf@google@@QEAAAEAV0123@AEBVStatus@util@23@@Z) already defined in libprotobuf.lib(common.cc.obj)
+webrtc.lib(common.obj) : error LNK2005: &quot;public: class google::protobuf::internal::LogMessage &amp; __cdecl google::protobuf::internal::LogMessage::operator&lt;&lt;(class google::protobuf::StringPiece const &amp;)&quot; (??6LogMessage@internal@protobuf@google@@QEAAAEAV0123@AEBVStringPiece@23@@Z) already defined in libprotobuf.lib(common.cc.obj)
+webrtc.lib(common.obj) : error LNK2005: &quot;public: class google::protobuf::internal::LogMessage &amp; __cdecl google::protobuf::internal::LogMessage::operator&lt;&lt;(class google::protobuf::uint128 const &amp;)&quot; (??6LogMessage@internal@protobuf@google@@QEAAAEAV0123@AEBVuint128@23@@Z) already defined in libprotobuf.lib(common.cc.obj)
+webrtc.lib(common.obj) : error LNK2005: &quot;public: class google::protobuf::internal::LogMessage &amp; __cdecl google::protobuf::internal::LogMessage::operator&lt;&lt;(char)&quot; (??6LogMessage@internal@protobuf@google@@QEAAAEAV0123@D@Z) already defined in libprotobuf.lib(common.cc.obj)
+webrtc.lib(common.obj) : error LNK2005: &quot;public: class google::protobuf::internal::LogMessage &amp; __cdecl google::protobuf::internal::LogMessage::operator&lt;&lt;(int)&quot; (??6LogMessage@internal@protobuf@google@@QEAAAEAV0123@H@Z) already defined in libprotobuf.lib(common.cc.obj)
+webrtc.lib(common.obj) : error LNK2005: &quot;public: class google::protobuf::internal::LogMessage &amp; __cdecl google::protobuf::internal::LogMessage::operator&lt;&lt;(unsigned int)&quot; (??6LogMessage@internal@protobuf@google@@QEAAAEAV0123@I@Z) already defined in libprotobuf.lib(common.cc.obj)
+webrtc.lib(common.obj) : error LNK2005: &quot;public: class google::protobuf::internal::LogMessage &amp; __cdecl google::protobuf::internal::LogMessage::operator&lt;&lt;(long)&quot; (??6LogMessage@internal@protobuf@google@@QEAAAEAV0123@J@Z) already defined in libprotobuf.lib(common.cc.obj)
+webrtc.lib(common.obj) : error LNK2005: &quot;public: class google::protobuf::internal::LogMessage &amp; __cdecl google::protobuf::internal::LogMessage::operator&lt;&lt;(unsigned long)&quot; (??6LogMessage@internal@protobuf@google@@QEAAAEAV0123@K@Z) already defined in libprotobuf.lib(common.cc.obj)
+webrtc.lib(common.obj) : error LNK2005: &quot;public: class google::protobuf::internal::LogMessage &amp; __cdecl google::protobuf::internal::LogMessage::operator&lt;&lt;(double)&quot; (??6LogMessage@internal@protobuf@google@@QEAAAEAV0123@N@Z) already defined in libprotobuf.lib(common.cc.obj)
+webrtc.lib(common.obj) : error LNK2005: &quot;public: class google::protobuf::internal::LogMessage &amp; __cdecl google::protobuf::internal::LogMessage::operator&lt;&lt;(void *)&quot; (??6LogMessage@internal@protobuf@google@@QEAAAEAV0123@PEAX@Z) already defined in libprotobuf.lib(common.cc.obj)
+webrtc.lib(common.obj) : error LNK2005: &quot;public: class google::protobuf::internal::LogMessage &amp; __cdecl google::protobuf::internal::LogMessage::operator&lt;&lt;(char const *)&quot; (??6LogMessage@internal@protobuf@google@@QEAAAEAV0123@PEBD@Z) already defined in libprotobuf.lib(common.cc.obj)
+webrtc.lib(common.obj) : error LNK2005: &quot;public: class google::protobuf::internal::LogMessage &amp; __cdecl google::protobuf::internal::LogMessage::operator&lt;&lt;(__int64)&quot; (??6LogMessage@internal@protobuf@google@@QEAAAEAV0123@_J@Z) already defined in libprotobuf.lib(common.cc.obj)
+webrtc.lib(common.obj) : error LNK2005: &quot;public: class google::protobuf::internal::LogMessage &amp; __cdecl google::protobuf::internal::LogMessage::operator&lt;&lt;(unsigned __int64)&quot; (??6LogMessage@internal@protobuf@google@@QEAAAEAV0123@_K@Z) already defined in libprotobuf.lib(common.cc.obj)
+webrtc.lib(common.obj) : error LNK2005: &quot;void __cdecl google::protobuf::internal::DefaultLogHandler(enum google::protobuf::LogLevel,char const *,int,class std::basic_string&lt;char,struct std::char_traits&lt;char&gt;,class std::allocator&lt;char&gt; &gt; const &amp;)&quot; (?DefaultLogHandler@internal@protobuf@google@@YAXW4LogLevel@23@PEBDHAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z) already defined in libprotobuf.lib(common.cc.obj)
+</code></pre><hr>
+<p><code>Pouvres moutons! Si nous navions à nous défendre que du loup, nous saurions bien nous en garder. Mais qui nous gardera du berger? ― Romain Rolland</code></p>
+              
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+                
+                
+                  <div class="post-footer-tags">
+                    <span class="text-color-light text-small">TAGGED IN</span><br/>
+                    
+  <a class="tag tag--primary tag--small" href="https://dawnarc.com/tags/ue4/">UE4</a>
+
+                  </div>
+                
+              
+            
+            <div class="post-actions-wrap">
+  
+      <nav >
+        <ul class="post-actions post-action-nav">
+          
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--disabled">
+              
+                  <i class="fa fa-angle-left"></i>
+                  <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+                </a>
+            </li>
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2020/05/parallelcomputingcuda-rocm-tbb-notes/" data-tooltip="[ParallelComputing]CUDA &amp; ROCm &amp; TBB Notes">
+              
+                  <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+                  <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+          
+        </ul>
+      </nav>
+    <ul class="post-actions post-action-share" >
+      
+        <li class="post-action hide-lg hide-md hide-sm">
+          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
+            <i class="fa fa-share-alt"></i>
+          </a>
+        </li>
+        
+      
+      
+        <li class="post-action">
+          <a class="post-action-btn btn btn--default" href="#disqus_thread">
+            <i class="fa fa-comment-o"></i>
+          </a>
+        </li>
+      
+      <li class="post-action">
+        
+          <a class="post-action-btn btn btn--default" href="#">
+        
+          <i class="fa fa-list"></i>
+        </a>
+      </li>
+    </ul>
+  
+</div>
+
+            
+              
+                <div id="disqus_thread">
+  <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+              
+            
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2020 Neil Wang. All Rights Reserved. Powered by <A href="https://gohugo.io/"> Hugo</A> | Theme created by <A href="https://github.com/kakawait/hugo-tranquilpeak-theme/"> Tranquilpeak</A>.
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+        <div class="post-actions-wrap">
+  
+      <nav >
+        <ul class="post-actions post-action-nav">
+          
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--disabled">
+              
+                  <i class="fa fa-angle-left"></i>
+                  <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+                </a>
+            </li>
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2020/05/parallelcomputingcuda-rocm-tbb-notes/" data-tooltip="[ParallelComputing]CUDA &amp; ROCm &amp; TBB Notes">
+              
+                  <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+                  <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+          
+        </ul>
+      </nav>
+    <ul class="post-actions post-action-share" >
+      
+        <li class="post-action hide-lg hide-md hide-sm">
+          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
+            <i class="fa fa-share-alt"></i>
+          </a>
+        </li>
+        
+      
+      
+        <li class="post-action">
+          <a class="post-action-btn btn btn--default" href="#disqus_thread">
+            <i class="fa fa-comment-o"></i>
+          </a>
+        </li>
+      
+      <li class="post-action">
+        
+          <a class="post-action-btn btn btn--default" href="#">
+        
+          <i class="fa fa-list"></i>
+        </a>
+      </li>
+    </ul>
+  
+</div>
+
+      </div>
+      <div id="share-options-bar" class="share-options-bar" data-behavior="4">
+  <i id="btn-close-shareoptions" class="fa fa-close"></i>
+  <ul class="share-options">
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-remove"></i>
+    </div>
+    
+      <img id="about-card-picture" src="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=110" alt="Author&#39;s picture" />
+    
+    <h4 id="about-card-name">Neil Wang</h4>
+    
+      <div id="about-card-bio">久长唯有品格</div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        To be Marvelous
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker"></i>
+        <br/>
+        Yichang·Hubei
+      </div>
+    
+  </div>
+</div>
+
+    
+
+    
+  
+    
+      <div id="cover" style="background-image:url('https://dawnarc.com/cover-v1.2.0.jpg');"></div>
+    
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+
+	<link rel="stylesheet"
+      href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/solarized-light.min.css">
+	<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.7/js/jquery.fancybox.min.js" integrity="sha256-GEAnjcTqVP+vBp3SSc8bEDQqvWAZMiHyUSIorrWwH50=" crossorigin="anonymous"></script>
+
+
+<script src="https://dawnarc.com/js/script-pcw6v3xilnxydl1vddzazdverrnn9ctynvnxgwho987mfyqkuylcb1nlt.min.js"></script>
+
+
+<script lang="javascript">
+window.onload = updateMinWidth;
+window.onresize = updateMinWidth;
+document.getElementById("sidebar").addEventListener("transitionend", updateMinWidth);
+function updateMinWidth() {
+  var sidebar = document.getElementById("sidebar");
+  var main = document.getElementById("main");
+  main.style.minWidth = "";
+  var w1 = getComputedStyle(main).getPropertyValue("min-width");
+  var w2 = getComputedStyle(sidebar).getPropertyValue("width");
+  var w3 = getComputedStyle(sidebar).getPropertyValue("left");
+  main.style.minWidth = `calc(${w1} - ${w2} - ${w3})`;
+}
+</script>
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+  
+    
+      <script>
+        var disqus_config = function () {
+          this.page.url = 'https:\/\/dawnarc.com\/2020\/05\/ue4error-lnk2005-on-linking-libprotobuf\/';
+          
+            this.page.identifier = '\/2020\/05\/ue4error-lnk2005-on-linking-libprotobuf\/'
+          
+        };
+        (function() {
+          
+          
+          if (window.location.hostname == "localhost") {
+            return;
+          }
+          var d = document, s = d.createElement('script');
+          var disqus_shortname = 'dawnarc';
+          s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+          s.setAttribute('data-timestamp', +new Date());
+          (d.head || d.body).appendChild(s);
+        })();
+      </script>
+    
+  
+
+
+
+
+
+
+    
+  </body>
+</html>
+
