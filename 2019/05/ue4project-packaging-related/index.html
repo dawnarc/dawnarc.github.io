@@ -355,17 +355,23 @@ if (!doNotTrack) {
               <p>keywords: UE4, Android, Packaging, Building</p>
 <h3 id="common-cases">Common Cases</h3>
 <h5 id="how-to-include-engine-third-party-in-game">How to include engine third party in game</h5>
-<p>Add third party name (the directory name in <code>Engine\Source\ThirdParty\</code>) in <code>PrivateDependencyModuleNames</code> in Build.cs.<br>
-e.g.:</p>
-<pre><code>PrivateDependencyModuleNames.AddRange(
+<p>Add third party name (the directory name in <code>Engine\Source\ThirdParty\</code> or in <code>Engine\Source\Runtime\</code>) in <code>PublicDependencyModuleNames</code> in Build.cs.</p>
+<p>e.g.</p>
+<pre><code>PublicDependencyModuleNames.AddRange(
 new string[]
     {
+        &quot;HTTP&quot;,
         &quot;OpenSSL&quot;,
         &quot;libcurl&quot;,
-        &quot;libWebSockets&quot;
+        &quot;libWebSockets&quot;,
+        &quot;Foliage&quot;
     }
 );
 </code></pre>
+<div class="alert success ">
+  <p><code>HTTP</code> was in <code>Engine\Source\Runtime\Online\HTTP</code>, and <code>Foliage</code> was in <code>Engine\Source\Runtime\Foliage</code>. If there&rsquo;s a <code>.Build.cs</code> under a directory, that means we can add the name of directory into <code>PublicDependencyModuleNames</code>.</p>
+</div>
+<p>If want to add WebSocket in your project, you can add either <code>WebSockets</code> or <code>libWebSockets</code> in <code>PublicDependencyModuleNames</code>, because there&rsquo;re two libraries of WebSocket, which are in <code>Engine\Source\Runtime\Online\WebSockets</code> and <code>Engine\Source\ThirdParty\libWebSockets</code>, in engine.</p>
 <h3 id="android-package">Android Package</h3>
 <h5 id="build-failedgradlerungradlebat-appassembledebug">BUILD FAILED：gradle\rungradle.bat&rdquo; :app:assembleDebug</h5>
 <p>Android APK send to device failed in v4.18, error log:</p>
