@@ -9,31 +9,23 @@
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="UE4, GarbageCollect, TSharedPtr, TWeakObjectPtr">
 <meta name="description" content="UE4 的 TSharedPtr、TWeakObjectPtr 模仿自 C&#43;&#43;11 的 shared_ptr 、 weak_ptr 。
-TSharedPtr TSharedPtr 相当于对象的引用计数器。每当对 TSharedPtr 赋值一次，该 TSharedPtr 引用对象计数加一，当引用计数为0时，则该对象被自动销毁。
+TSharedPtr Summary TSharedPtr 相当于对象的引用计数器。每当对 TSharedPtr 赋值一次，该 TSharedPtr 引用对象计数加一，当引用计数为0时，则该对象被自动销毁。
 用法：
 TSharedPtr&lt;TestClass&gt; ObjPtr = MakeShareable(new TestClass()); 如果两个 TSharedPtr 相互赋值，则会导致对象永不释放，导致内存泄漏。
  TSharedPtr无法对继承自UObject的对象指针进行计数，raw pointers才可以。
  如果raw pointers想加入GC，那么指针所指对象必须继承FGCObject类。
 因为C&#43;&#43;11已经有一套 smart pointers，为了和UE4的垃圾回收区分开，所以TSharedPtr作用对象不包括raw pointers。
- TWeakObjectPtr TWeakObjectPtr 保持的对象不能防止被垃圾回收。若引用的对象在其他地方被销毁，则 TWeakObjectPtr 内部的指针自动将被置为NULL，TWeakObjectPtr::IsValid()会返回false。TSharedPtr 则没有这个作用。
-Usage Assignment
-TWeakObjectPtr&lt;AActor&gt; MyWeakActor;MyWeakActor = MyActor; Get value
-AActor* Actor = MyWeakActor.Get(); or
-if(MyWeakActor.Get()){ACharacter* Character = Cast&lt;ACharacter&gt;(MyWeakActor);} if MyActor has been destroyed, MyWeakActor.">
+ TWeakObjectPtr Summary The memory presented by TWeakObjectPtr can&rsquo;t be prevented from garbage collecting. Once the object that was presented by TWeakObjectPtr was destroyed in other place, the inner pointer of TWeakObjectPtr would be assigned as nullptr automatically, and TWeakObjectPtr::IsValid() would return false.">
 
 
 <meta property="og:description" content="UE4 的 TSharedPtr、TWeakObjectPtr 模仿自 C&#43;&#43;11 的 shared_ptr 、 weak_ptr 。
-TSharedPtr TSharedPtr 相当于对象的引用计数器。每当对 TSharedPtr 赋值一次，该 TSharedPtr 引用对象计数加一，当引用计数为0时，则该对象被自动销毁。
+TSharedPtr Summary TSharedPtr 相当于对象的引用计数器。每当对 TSharedPtr 赋值一次，该 TSharedPtr 引用对象计数加一，当引用计数为0时，则该对象被自动销毁。
 用法：
 TSharedPtr&lt;TestClass&gt; ObjPtr = MakeShareable(new TestClass()); 如果两个 TSharedPtr 相互赋值，则会导致对象永不释放，导致内存泄漏。
  TSharedPtr无法对继承自UObject的对象指针进行计数，raw pointers才可以。
  如果raw pointers想加入GC，那么指针所指对象必须继承FGCObject类。
 因为C&#43;&#43;11已经有一套 smart pointers，为了和UE4的垃圾回收区分开，所以TSharedPtr作用对象不包括raw pointers。
- TWeakObjectPtr TWeakObjectPtr 保持的对象不能防止被垃圾回收。若引用的对象在其他地方被销毁，则 TWeakObjectPtr 内部的指针自动将被置为NULL，TWeakObjectPtr::IsValid()会返回false。TSharedPtr 则没有这个作用。
-Usage Assignment
-TWeakObjectPtr&lt;AActor&gt; MyWeakActor;MyWeakActor = MyActor; Get value
-AActor* Actor = MyWeakActor.Get(); or
-if(MyWeakActor.Get()){ACharacter* Character = Cast&lt;ACharacter&gt;(MyWeakActor);} if MyActor has been destroyed, MyWeakActor.">
+ TWeakObjectPtr Summary The memory presented by TWeakObjectPtr can&rsquo;t be prevented from garbage collecting. Once the object that was presented by TWeakObjectPtr was destroyed in other place, the inner pointer of TWeakObjectPtr would be assigned as nullptr automatically, and TWeakObjectPtr::IsValid() would return false.">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[UE4] TSharedPtr, TWeakObjectPtr and TUniquePtr">
 <meta name="twitter:title" content="[UE4] TSharedPtr, TWeakObjectPtr and TUniquePtr">
@@ -41,29 +33,21 @@ if(MyWeakActor.Get()){ACharacter* Character = Cast&lt;ACharacter&gt;(MyWeakAct
 <meta property="twitter:url" content="https://dawnarc.com/2018/07/ue4-tsharedptr-tweakobjectptr-and-tuniqueptr/">
 <meta property="og:site_name" content="玄冬Wong">
 <meta property="og:description" content="UE4 的 TSharedPtr、TWeakObjectPtr 模仿自 C&#43;&#43;11 的 shared_ptr 、 weak_ptr 。
-TSharedPtr TSharedPtr 相当于对象的引用计数器。每当对 TSharedPtr 赋值一次，该 TSharedPtr 引用对象计数加一，当引用计数为0时，则该对象被自动销毁。
+TSharedPtr Summary TSharedPtr 相当于对象的引用计数器。每当对 TSharedPtr 赋值一次，该 TSharedPtr 引用对象计数加一，当引用计数为0时，则该对象被自动销毁。
 用法：
 TSharedPtr&lt;TestClass&gt; ObjPtr = MakeShareable(new TestClass()); 如果两个 TSharedPtr 相互赋值，则会导致对象永不释放，导致内存泄漏。
  TSharedPtr无法对继承自UObject的对象指针进行计数，raw pointers才可以。
  如果raw pointers想加入GC，那么指针所指对象必须继承FGCObject类。
 因为C&#43;&#43;11已经有一套 smart pointers，为了和UE4的垃圾回收区分开，所以TSharedPtr作用对象不包括raw pointers。
- TWeakObjectPtr TWeakObjectPtr 保持的对象不能防止被垃圾回收。若引用的对象在其他地方被销毁，则 TWeakObjectPtr 内部的指针自动将被置为NULL，TWeakObjectPtr::IsValid()会返回false。TSharedPtr 则没有这个作用。
-Usage Assignment
-TWeakObjectPtr&lt;AActor&gt; MyWeakActor;MyWeakActor = MyActor; Get value
-AActor* Actor = MyWeakActor.Get(); or
-if(MyWeakActor.Get()){ACharacter* Character = Cast&lt;ACharacter&gt;(MyWeakActor);} if MyActor has been destroyed, MyWeakActor.">
+ TWeakObjectPtr Summary The memory presented by TWeakObjectPtr can&rsquo;t be prevented from garbage collecting. Once the object that was presented by TWeakObjectPtr was destroyed in other place, the inner pointer of TWeakObjectPtr would be assigned as nullptr automatically, and TWeakObjectPtr::IsValid() would return false.">
 <meta name="twitter:description" content="UE4 的 TSharedPtr、TWeakObjectPtr 模仿自 C&#43;&#43;11 的 shared_ptr 、 weak_ptr 。
-TSharedPtr TSharedPtr 相当于对象的引用计数器。每当对 TSharedPtr 赋值一次，该 TSharedPtr 引用对象计数加一，当引用计数为0时，则该对象被自动销毁。
+TSharedPtr Summary TSharedPtr 相当于对象的引用计数器。每当对 TSharedPtr 赋值一次，该 TSharedPtr 引用对象计数加一，当引用计数为0时，则该对象被自动销毁。
 用法：
 TSharedPtr&lt;TestClass&gt; ObjPtr = MakeShareable(new TestClass()); 如果两个 TSharedPtr 相互赋值，则会导致对象永不释放，导致内存泄漏。
  TSharedPtr无法对继承自UObject的对象指针进行计数，raw pointers才可以。
  如果raw pointers想加入GC，那么指针所指对象必须继承FGCObject类。
 因为C&#43;&#43;11已经有一套 smart pointers，为了和UE4的垃圾回收区分开，所以TSharedPtr作用对象不包括raw pointers。
- TWeakObjectPtr TWeakObjectPtr 保持的对象不能防止被垃圾回收。若引用的对象在其他地方被销毁，则 TWeakObjectPtr 内部的指针自动将被置为NULL，TWeakObjectPtr::IsValid()会返回false。TSharedPtr 则没有这个作用。
-Usage Assignment
-TWeakObjectPtr&lt;AActor&gt; MyWeakActor;MyWeakActor = MyActor; Get value
-AActor* Actor = MyWeakActor.Get(); or
-if(MyWeakActor.Get()){ACharacter* Character = Cast&lt;ACharacter&gt;(MyWeakActor);} if MyActor has been destroyed, MyWeakActor.">
+ TWeakObjectPtr Summary The memory presented by TWeakObjectPtr can&rsquo;t be prevented from garbage collecting. Once the object that was presented by TWeakObjectPtr was destroyed in other place, the inner pointer of TWeakObjectPtr would be assigned as nullptr automatically, and TWeakObjectPtr::IsValid() would return false.">
 <meta property="og:locale" content="en-us">
 
   
@@ -395,6 +379,7 @@ if (!doNotTrack) {
             <div class="main-content-wrap">
               <p>UE4 的 TSharedPtr、TWeakObjectPtr 模仿自 C++11 的 shared_ptr 、 weak_ptr 。</p>
 <h3 id="tsharedptr">TSharedPtr</h3>
+<h5 id="summary">Summary</h5>
 <p><code>TSharedPtr</code> 相当于对象的引用计数器。每当对 TSharedPtr 赋值一次，该 TSharedPtr 引用对象计数加一，当引用计数为0时，则该对象被自动销毁。</p>
 <p>用法：</p>
 <pre><code>TSharedPtr&lt;TestClass&gt; ObjPtr = MakeShareable(new TestClass());
@@ -410,7 +395,8 @@ if (!doNotTrack) {
 因为C++11已经有一套 smart pointers，为了和UE4的垃圾回收区分开，所以<code>TSharedPtr</code>作用对象不包括raw pointers。</p>
 </div>
 <h3 id="tweakobjectptr">TWeakObjectPtr</h3>
-<p><code>TWeakObjectPtr</code> 保持的对象不能防止被垃圾回收。若引用的对象在其他地方被销毁，则 <code>TWeakObjectPtr</code> 内部的指针自动将被置为NULL，TWeakObjectPtr::IsValid()会返回false。<code>TSharedPtr</code> 则没有这个作用。</p>
+<h5 id="summary-1">Summary</h5>
+<p>The memory presented by <code>TWeakObjectPtr</code> can&rsquo;t be prevented from garbage collecting. Once the object that was presented by <code>TWeakObjectPtr</code> was destroyed in other place, the inner pointer of <code>TWeakObjectPtr</code> would be assigned as <code>nullptr</code> automatically, and <code>TWeakObjectPtr::IsValid()</code> would return false. But <code>TSharedPtr</code> has no features like <code>TWeakObjectPtr</code>.</p>
 <h5 id="usage">Usage</h5>
 <p>Assignment</p>
 <pre><code>TWeakObjectPtr&lt;AActor&gt; MyWeakActor;
@@ -451,7 +437,7 @@ TestArray.Remove(WeakPtr2);
 int Num2 = TestArray.Num();	// 1
 </code></pre>
 <h3 id="tweakptr">TWeakPtr</h3>
-<p>Difference between TWeakPtr and TWeakObjectPtr:</p>
+<h5 id="difference-between-tweakptr-and-tweakobjectptr">Difference between TWeakPtr and TWeakObjectPtr</h5>
 <div class="alert danger ">
   <p>TWeakObjectPtr is for weak pointers to UObjects, TWeakPtr for pointers to everything else.<br>
 Since UObjects are garbage collected and shared pointers are reference counted, we cannot have the same weak pointer type for all, unfortunately.</p>
@@ -459,7 +445,43 @@ Since UObjects are garbage collected and shared pointers are reference counted, 
 <p>Difference between TWeakPtr and TWeakObjectPtr?<br>
 <a href="https://answers.unrealengine.com/questions/298868/difference-between-tweakptr-and-tweakobjectptr.html">https://answers.unrealengine.com/questions/298868/difference-between-tweakptr-and-tweakobjectptr.html</a></p>
 <h3 id="tuniqueptr-unique-pointers">TUniquePtr (Unique Pointers)</h3>
+<h5 id="summary-2">Summary</h5>
 <p>A Unique Pointer solely and explicitly owns the object it references. Since there can only be one Unique Pointer to a given resource, Unique Pointers can transfer ownership, but cannot share it. Any attempts to copy a Unique Pointer will result in a compile error. When a Unique Pointer is goes out of scope, it will automatically delete the object it references.</p>
+<h5 id="example--basic">Example : Basic</h5>
+<p>Define:</p>
+<pre><code>TUniquePtr&lt;FMeshTriOctree&gt; MTOctree;
+</code></pre>
+<p>Instantiate:</p>
+<pre><code>MTOctree = MakeUnique&lt;FMeshTriOctree&gt;(
+    Bounds.GetCenter(),
+    Bounds.GetExtent().GetMax()
+);
+</code></pre>
+<h5 id="example--tuniqueptr--tqueue">Example : TUniquePtr &amp; TQueue</h5>
+<p>Using <code>TUniquePtr</code> with <code>TQueue</code>:</p>
+<pre><code>class FTestStruct 
+{
+    public:
+
+};
+
+TQueue&lt;TUniquePtr&lt;FTestStruct&gt;&gt; TestQueue;
+TUniquePtr&lt;FTestStruct&gt; Ptr = MakeUnique&lt;FTestStruct&gt;();
+TestQueue.Enqueue(MoveTemp(Ptr));
+</code></pre>
+<p>If forget to invoke <code>MoveTemp</code>, e.g.:</p>
+<pre><code>TQueue&lt;TUniquePtr&lt;FTestStruct&gt;&gt; TestQueue;
+TUniquePtr&lt;FTestStruct&gt; Ptr = MakeUnique&lt;FTestStruct&gt;();
+TestQueue.Enqueue(Ptr);
+</code></pre>
+<p>You would get error:</p>
+<pre><code>D:\Program Files\Epic Games\UE_4.22\Engine\Source\Runtime\Core\Public\Containers/Queue.h(252): error C2248: 'TUniquePtr&lt;FTestStruct,TDefaultDelete&lt;T&gt;&gt;::TUniquePtr': cannot access private member declared in class 'TUniquePtr&lt;FTestStruct,TDefaultDelete&lt;T&gt;&gt;'
+2&gt;          with
+2&gt;          [
+2&gt;              T=FTestStruct
+2&gt;          ]
+</code></pre>
+<h5 id="issues">Issues</h5>
 <div class="alert warning ">
   <p>If there&rsquo;s <code>FString</code> varible in class and want to create <code>TUniquePtr</code> using this class, <code>Move Constructor</code> need to be provided in class.</p>
 </div>
@@ -497,24 +519,10 @@ typedef TUniquePtr&lt;FLwsReceiveBufferText&gt; FLwsReceiveBufferTextPtr;
 2&gt;          [
 2&gt;              T=FTestStruct
 2&gt;          ]
-2&gt;  D:\Program Files\Epic Games\UE_4.22\Engine\Source\Runtime\Core\Public\Containers/Queue.h(249): note: while compiling class template member function 'TQueue&lt;FTestStructPtr,EQueueMode::Spsc&gt;::TNode::TNode(const ItemType &amp;)'
-2&gt;          with
-2&gt;          [
-2&gt;              ItemType=FTestStructPtr
-2&gt;          ]
-2&gt;  D:\Program Files\Epic Games\UE_4.22\Engine\Source\Runtime\Core\Public\Containers/Queue.h(110): note: see reference to function template instantiation 'TQueue&lt;FTestStructPtr,EQueueMode::Spsc&gt;::TNode::TNode(const ItemType &amp;)' being compiled
-2&gt;          with
-2&gt;          [
-2&gt;              ItemType=FTestStructPtr
-2&gt;          ]
-2&gt;  D:\Program Files\Epic Games\UE_4.22\Engine\Source\Runtime\Core\Public\Containers/Queue.h(110): note: see reference to class template instantiation 'TQueue&lt;FTestStructPtr,EQueueMode::Spsc&gt;::TNode' being compiled
-2&gt;  D:\Program Files\Epic Games\UE_4.22\Engine\Source\Runtime\Core\Public\Containers/Queue.h(109): note: while compiling class template member function 'bool TQueue&lt;FTestStructPtr,EQueueMode::Spsc&gt;::Enqueue(const ItemType &amp;)'
-2&gt;          with
-2&gt;          [
-2&gt;              ItemType=FTestStructPtr
-2&gt;          ]
 </code></pre>
 <h3 id="reference">Reference</h3>
+<p>unreal-unique-pointer<br>
+<a href="https://baemincheon.github.io/2020/03/14/unreal-unique-pointer/">https://baemincheon.github.io/2020/03/14/unreal-unique-pointer/</a></p>
 <p>UE4 TSharedPtr和UObject的垃圾回收<br>
 <a href="http://www.v5xy.com/?p=808">http://www.v5xy.com/?p=808</a></p>
 <p>There&rsquo;s a Huge Difference, One Will Always Crash<br>
@@ -524,7 +532,7 @@ typedef TUniquePtr&lt;FLwsReceiveBufferText&gt; FLwsReceiveBufferTextPtr;
 <p>Unreal Smart Pointer Library<br>
 <a href="https://docs.unrealengine.com/en-US/Programming/UnrealArchitecture/SmartPointerLibrary/index.html">https://docs.unrealengine.com/en-US/Programming/UnrealArchitecture/SmartPointerLibrary/index.html</a></p>
 <hr>
-<p><code>已识乾坤大，犹怜草木青。长空送鸟印，留幻与人灵。</code> &mdash;-马一浮《旷怡亭口占》</p>
+<p><code>已识乾坤大，犹怜草木青。长空送鸟印，留幻与人灵。--- 马一浮《旷怡亭口占》</code></p>
 
               
             </div>
@@ -550,7 +558,7 @@ typedef TUniquePtr&lt;FLwsReceiveBufferText&gt; FLwsReceiveBufferTextPtr;
           
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2018/07/c-c-11-shared_ptr-%E4%B8%8E-weak_ptr-%E5%8C%BA%E5%88%AB/" data-tooltip="[C&#43;&#43;]C&#43;&#43;11 shared_ptr 与 weak_ptr 区别">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2018/07/c-shared_ptr-%E4%B8%8E-weak_ptr-%E5%8C%BA%E5%88%AB/" data-tooltip="[C&#43;&#43;]shared_ptr 与 weak_ptr 区别">
               
                   <i class="fa fa-angle-left"></i>
                   <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
@@ -618,7 +626,7 @@ typedef TUniquePtr&lt;FLwsReceiveBufferText&gt; FLwsReceiveBufferTextPtr;
           
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2018/07/c-c-11-shared_ptr-%E4%B8%8E-weak_ptr-%E5%8C%BA%E5%88%AB/" data-tooltip="[C&#43;&#43;]C&#43;&#43;11 shared_ptr 与 weak_ptr 区别">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2018/07/c-shared_ptr-%E4%B8%8E-weak_ptr-%E5%8C%BA%E5%88%AB/" data-tooltip="[C&#43;&#43;]shared_ptr 与 weak_ptr 区别">
               
                   <i class="fa fa-angle-left"></i>
                   <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>

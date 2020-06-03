@@ -8,35 +8,35 @@
 <meta name="generator" content="Hugo 0.69.2 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="">
-<meta name="description" content="keywords: VS2019, Code Analysis, Code Checking, std::move">
+<meta name="description" content="shared_ptr与weak_ptr有C&#43;&#43;11引入。">
 
 
-<meta property="og:description" content="keywords: VS2019, Code Analysis, Code Checking, std::move">
+<meta property="og:description" content="shared_ptr与weak_ptr有C&#43;&#43;11引入。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="[VisualStudio]New Code Analysis Checks in Visual Studio 2019 - use-after-move and coroutine">
-<meta name="twitter:title" content="[VisualStudio]New Code Analysis Checks in Visual Studio 2019 - use-after-move and coroutine">
-<meta property="og:url" content="https://dawnarc.com/2019/02/visualstudionew-code-analysis-checks-in-visual-studio-2019-use-after-move-and-coroutine/">
-<meta property="twitter:url" content="https://dawnarc.com/2019/02/visualstudionew-code-analysis-checks-in-visual-studio-2019-use-after-move-and-coroutine/">
+<meta property="og:title" content="[C&#43;&#43;]shared_ptr 与 weak_ptr 区别">
+<meta name="twitter:title" content="[C&#43;&#43;]shared_ptr 与 weak_ptr 区别">
+<meta property="og:url" content="https://dawnarc.com/2018/07/c-shared_ptr-%E4%B8%8E-weak_ptr-%E5%8C%BA%E5%88%AB/">
+<meta property="twitter:url" content="https://dawnarc.com/2018/07/c-shared_ptr-%E4%B8%8E-weak_ptr-%E5%8C%BA%E5%88%AB/">
 <meta property="og:site_name" content="玄冬Wong">
-<meta property="og:description" content="keywords: VS2019, Code Analysis, Code Checking, std::move">
-<meta name="twitter:description" content="keywords: VS2019, Code Analysis, Code Checking, std::move">
+<meta property="og:description" content="shared_ptr与weak_ptr有C&#43;&#43;11引入。">
+<meta name="twitter:description" content="shared_ptr与weak_ptr有C&#43;&#43;11引入。">
 <meta property="og:locale" content="en-us">
 
   
-    <meta property="article:published_time" content="2019-02-01T14:05:02">
+    <meta property="article:published_time" content="2018-07-06T14:19:40">
   
   
-    <meta property="article:modified_time" content="2019-02-01T14:05:02">
+    <meta property="article:modified_time" content="2018-07-06T14:19:40">
   
-  
-  
-    
-      <meta property="article:section" content="VisualStudio">
-    
   
   
     
-      <meta property="article:tag" content="VisualStudio">
+      <meta property="article:section" content="C&#43;&#43;">
+    
+  
+  
+    
+      <meta property="article:tag" content="C&#43;&#43;">
     
   
 
@@ -53,9 +53,6 @@
 
 
 
-  <meta property="og:image" content="https://dawnarc.com/thumbnail/thumbnail-japen-001.jpg">
-  <meta property="twitter:image" content="https://dawnarc.com/thumbnail/thumbnail-japen-001.jpg">
-
 
 
 
@@ -64,7 +61,7 @@
   <meta property="twitter:image" content="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=640">
 
 
-    <title>[VisualStudio]New Code Analysis Checks in Visual Studio 2019 - use-after-move and coroutine</title>
+    <title>[C&#43;&#43;]shared_ptr 与 weak_ptr 区别</title>
 
     <link rel="icon" href="https://dawnarc.com/favicon.png">
     
@@ -73,7 +70,7 @@
       <link rel="publisher" href="https://plus.google.com/111340706178390411568">
     
 
-    <link rel="canonical" href="https://dawnarc.com/2019/02/visualstudionew-code-analysis-checks-in-visual-studio-2019-use-after-move-and-coroutine/">
+    <link rel="canonical" href="https://dawnarc.com/2018/07/c-shared_ptr-%E4%B8%8E-weak_ptr-%E5%8C%BA%E5%88%AB/">
 
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
@@ -320,19 +317,19 @@ if (!doNotTrack) {
             <div class="post-header main-content-wrap text-left">
   
     <h1 class="post-title" itemprop="headline">
-      [VisualStudio]New Code Analysis Checks in Visual Studio 2019 - use-after-move and coroutine
+      [C&#43;&#43;]shared_ptr 与 weak_ptr 区别
     </h1>
   
   
   <div class="postShorten-meta post-meta">
     
-      <time itemprop="datePublished" datetime="2019-02-01T14:05:02&#43;08:00">
+      <time itemprop="datePublished" datetime="2018-07-06T14:19:40&#43;08:00">
         
   
   
   
   
-    Friday, 14:05, Feb 1, 2019
+    Friday, 14:19, Jul 6, 2018
   
 
       </time>
@@ -342,7 +339,7 @@ if (!doNotTrack) {
   
     <span>in</span>
     
-      <a class="category-link" href="https://dawnarc.com/categories/visualstudio">VisualStudio</a>
+      <a class="category-link" href="https://dawnarc.com/categories/c&#43;&#43;">C&#43;&#43;</a>
     
   
 
@@ -352,13 +349,59 @@ if (!doNotTrack) {
           
           <div class="post-content markdown" itemprop="articleBody">
             <div class="main-content-wrap">
-              <p>keywords: VS2019, Code Analysis, Code Checking, std::move</p>
-<p>New Code Analysis Checks in Visual Studio 2019: use-after-move and coroutine<br>
-<a href="https://blogs.msdn.microsoft.com/vcblog/2019/01/28/new-code-analysis-checks-in-visual-studio-2019-use-after-move-and-coroutine">https://blogs.msdn.microsoft.com/vcblog/2019/01/28/new-code-analysis-checks-in-visual-studio-2019-use-after-move-and-coroutine</a></p>
-<p>Move constructors(since C++11)<br>
-<a href="https://en.cppreference.com/w/cpp/language/move_constructor">https://en.cppreference.com/w/cpp/language/move_constructor</a></p>
+              <p><code>shared_ptr</code>与<code>weak_ptr</code>有C++11引入。</p>
+<h3 id="shared_ptr">shared_ptr</h3>
+<h5 id="usage">Usage</h5>
+<p>语法：</p>
+<pre><code>#include &lt;memory&gt;
+
+shared_ptr&lt;A&gt; x(new A);
+</code></pre>
+<p>shared_ptr 相当于 对象引用计数器。每当对 shared_ptr 赋值操作一次，则其引用对象的计数+1。当某对象的引用计数为0时，则该对象自动销毁。</p>
+<h3 id="weak_ptr">weak_ptr</h3>
+<h5 id="usage-1">Usage</h5>
+<p>语法：</p>
+<pre><code>#include &lt;memory&gt;
+
+weak_ptr&lt;A&gt; x(new A);
+</code></pre>
+<p>weak_ptr 典型应用是缓存：例如我们在缓存中存放了一个 raw pointer 来指向某个对象，如果这个对象在其他地方被销毁了，那么缓存中的这个 raw pointer 指向的对象不存在。如果我们希望某个对象在其他地方被销毁时，缓存中指向该对象的指针也马上被置为 null，那么就可以使用 weak_ptr。</p>
+<p>参考自：<br>
+shared_ptr and weak_ptr differences<br>
+<a href="https://stackoverflow.com/questions/4984381/shared-ptr-and-weak-ptr-differences">https://stackoverflow.com/questions/4984381/shared-ptr-and-weak-ptr-differences</a></p>
+<p>When is std::weak_ptr useful?<br>
+<a href="https://stackoverflow.com/questions/12030650/when-is-stdweak-ptr-useful">https://stackoverflow.com/questions/12030650/when-is-stdweak-ptr-useful</a></p>
+<h3 id="unique_ptr">unique_ptr</h3>
+<h5 id="usage-2">Usage</h5>
+<p>Why can I not push_back a unique_ptr into a vector?<br>
+<a href="https://stackoverflow.com/questions/3283778/why-can-i-not-push-back-a-unique-ptr-into-a-vector">https://stackoverflow.com/questions/3283778/why-can-i-not-push-back-a-unique-ptr-into-a-vector</a></p>
+<p>Using <code>std::unique_ptr</code> with <code>std::queue</code>:</p>
+<pre><code>// create queue
+std::queue&lt;std::unique_ptr&lt;int&gt;&gt; q;
+
+// add element
+std::unique_ptr&lt;int&gt; p (new int{123});
+q.push(std::move(p));
+
+// remove element
+std::unique_ptr&lt;int&gt; p2 = std::move(q.front());
+q.pop();
+</code></pre>
+<div class="alert success ">
+  <p>Also important is that after the <code>move</code>, the top element in the <code>queue</code> is a <code>unique_ptr</code> equal to <code>nullptr</code>. The <code>pop</code> is needed to remove this &ldquo;empty&rdquo; <code>unique_ptr</code> from the <code>queue</code>.</p>
+</div>
+<p>Reference:<br>
+remove unique_ptr from queue<br>
+<a href="https://stackoverflow.com/a/14127524/1645289">https://stackoverflow.com/a/14127524/1645289</a></p>
+<h5 id="attention">Attention</h5>
+<div class="alert warning ">
+  <p><code>std::unique_ptrs</code> are for handling dynamically allocated memory; they&rsquo;re said to <em><strong>take ownership of the pointer when you construct one</strong></em>.</p>
+</div>
+<p>Reference:<br>
+unique_ptr heap and stack allocation<br>
+<a href="https://stackoverflow.com/a/42911876/1645289">https://stackoverflow.com/a/42911876/1645289</a></p>
 <hr>
-<p><code>当我们表达的时候，我们应当像文学一样说话，而不让文学像我们的生活一样。</code></p>
+<p><code>我希望我的文字，是一场一场的梦，是一阵一阵的风，是一片一片的月光。那些生活于尘土中的人们，那些在四季轮回中迷失了方向的人们，那些在大地的收货和欠收中痛苦和欣喜的人们，他们会有一个朝上仰望的这样一颗心灵。如果文学还能做什么，那么，文学需要承载大地上所有的苦难和沉重，让人们抬起头来，朝着云端去望，朝着树叶去望。这就是文学唯一能给我们的一点安慰。----刘亮程</code></p>
               
             </div>
           </div>
@@ -370,7 +413,7 @@ if (!doNotTrack) {
                   <div class="post-footer-tags">
                     <span class="text-color-light text-small">TAGGED IN</span><br/>
                     
-  <a class="tag tag--primary tag--small" href="https://dawnarc.com/tags/visualstudio/">VisualStudio</a>
+  <a class="tag tag--primary tag--small" href="https://dawnarc.com/tags/c&#43;&#43;/">C&#43;&#43;</a>
 
                   </div>
                 
@@ -383,7 +426,7 @@ if (!doNotTrack) {
           
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2019/02/ue4character-and-animation-assets-collections/" data-tooltip="[UE4]Character and Animation Assets Collections">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2018/07/github-pages-%E5%AF%B9%E8%87%AA%E5%AE%9A%E4%B9%89%E5%9F%9F%E5%90%8D%E6%94%AF%E6%8C%81-https/" data-tooltip="GitHub Pages 对自定义域名支持 HTTPS">
               
                   <i class="fa fa-angle-left"></i>
                   <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
@@ -391,7 +434,7 @@ if (!doNotTrack) {
             </li>
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2019/01/ue4lightings-api-in-common/" data-tooltip="[UE4]Lighting&#39;s API in common">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2018/07/ue4-tsharedptr-tweakobjectptr-and-tuniqueptr/" data-tooltip="[UE4] TSharedPtr, TWeakObjectPtr and TUniquePtr">
               
                   <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
                   <i class="fa fa-angle-right"></i>
@@ -451,7 +494,7 @@ if (!doNotTrack) {
           
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2019/02/ue4character-and-animation-assets-collections/" data-tooltip="[UE4]Character and Animation Assets Collections">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2018/07/github-pages-%E5%AF%B9%E8%87%AA%E5%AE%9A%E4%B9%89%E5%9F%9F%E5%90%8D%E6%94%AF%E6%8C%81-https/" data-tooltip="GitHub Pages 对自定义域名支持 HTTPS">
               
                   <i class="fa fa-angle-left"></i>
                   <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
@@ -459,7 +502,7 @@ if (!doNotTrack) {
             </li>
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2019/01/ue4lightings-api-in-common/" data-tooltip="[UE4]Lighting&#39;s API in common">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2018/07/ue4-tsharedptr-tweakobjectptr-and-tuniqueptr/" data-tooltip="[UE4] TSharedPtr, TWeakObjectPtr and TUniquePtr">
               
                   <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
                   <i class="fa fa-angle-right"></i>
@@ -589,9 +632,9 @@ $(document).ready(function() {
     
       <script>
         var disqus_config = function () {
-          this.page.url = 'https:\/\/dawnarc.com\/2019\/02\/visualstudionew-code-analysis-checks-in-visual-studio-2019-use-after-move-and-coroutine\/';
+          this.page.url = 'https:\/\/dawnarc.com\/2018\/07\/c-shared_ptr-%E4%B8%8E-weak_ptr-%E5%8C%BA%E5%88%AB\/';
           
-            this.page.identifier = '\/2019\/02\/visualstudionew-code-analysis-checks-in-visual-studio-2019-use-after-move-and-coroutine\/'
+            this.page.identifier = '\/2018\/07\/c-shared_ptr-%E4%B8%8E-weak_ptr-%E5%8C%BA%E5%88%AB\/'
           
         };
         (function() {
