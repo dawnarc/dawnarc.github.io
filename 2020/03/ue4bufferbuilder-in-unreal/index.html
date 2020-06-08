@@ -361,6 +361,23 @@ Engine\Source\Runtime\Core\Public\Serialization\BufferArchive.h</p>
 Engine\Source\Runtime\Core\Public\Serialization\BufferReader.h</p>
 <p><code>FBufferWriter</code>:<br>
 Engine\Source\Runtime\Core\Public\Serialization\BufferWriter.h</p>
+<p>Example:<br>
+StreamHandle.h</p>
+<pre><code>TQueue&lt;TUniquePtr&lt;FBufferWriter&gt;, EQueueMode::Spsc&gt; RecvQueue;
+</code></pre>
+<p>StreamHandle.cpp</p>
+<pre><code>void StreamHandle::Recv(uint8* Stream, int32 Len)
+{
+    const int32 BuffLen = 1024 * 1024;
+    if(Len &lt;= BuffLen)
+    {
+        void* Data = FMemory::Malloc(BuffLen);
+        TUniquePtr&lt;FBufferWriter&gt; Buffer = MakeUnique&lt;FBufferWriter&gt;(Data, BuffLen);
+        Buffer-&gt;Serialize(Stream, Len);
+        RecvQueue.Enqueue(MoveTemp(Buffer));    
+    }
+}
+</code></pre>
 <hr>
 <p><code>To a man whose mind is free there is something even more intolerable in the sufferings of animals than in the sufferings of man. For with the latter it is at least admitted that suffering is evil and that the man who causes it is a criminal. But thousands of animals are uselessly butchered every day without a shadow of remorse. If any man were to refer to it, he would be thought ridiculous. And that is the unpardonable crime. ― Romain Rolland</code></p>
               
