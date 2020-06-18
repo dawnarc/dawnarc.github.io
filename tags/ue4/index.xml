@@ -6,10 +6,19 @@
     <description>Recent content in UE4 on 玄冬Wong</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 20 May 2020 21:39:02 +0800</lastBuildDate>
+    <lastBuildDate>Thu, 18 Jun 2020 21:09:02 +0800</lastBuildDate>
     
 	<atom:link href="https://dawnarc.com/tags/ue4/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>[UE4]Procedural Audio Notes</title>
+      <link>https://dawnarc.com/2020/06/ue4procedural-audio-notes/</link>
+      <pubDate>Thu, 18 Jun 2020 21:09:02 +0800</pubDate>
+      
+      <guid>https://dawnarc.com/2020/06/ue4procedural-audio-notes/</guid>
+      <description>&lt;p&gt;Keywords: UE4, Procedural Audio Notes&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>[UE4]error LNK2005 on linking libprotobuf</title>
@@ -431,7 +440,7 @@
       <pubDate>Thu, 24 Jan 2019 20:40:02 +0800</pubDate>
       
       <guid>https://dawnarc.com/2019/01/ue4physics-animation-related/</guid>
-      <description>&lt;p&gt;Physics Asset Properties Reference&lt;/p&gt;</description>
+      <description>&lt;p&gt;Keywords: UE4, Physics Animation, Physics Simulation&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -837,10 +846,8 @@ Velocity = Velocity.GetSafeNormal() * InitialSpeed; 前者速度方向是相对
 TSharedPtr Summary TSharedPtr 相当于对象的引用计数器。每当对 TSharedPtr 赋值一次，该 TSharedPtr 引用对象计数加一，当引用计数为0时，则该对象被自动销毁。
 用法：
 TSharedPtr&amp;lt;TestClass&amp;gt; ObjPtr = MakeShareable(new TestClass()); 如果两个 TSharedPtr 相互赋值，则会导致对象永不释放，导致内存泄漏。
- TSharedPtr无法对继承自UObject的对象指针进行计数，raw pointers才可以。
- 如果raw pointers想加入GC，那么指针所指对象必须继承FGCObject类。
-因为C++11已经有一套 smart pointers，为了和UE4的垃圾回收区分开，所以TSharedPtr作用对象不包括raw pointers。
- TWeakObjectPtr Summary The memory presented by TWeakObjectPtr can&amp;rsquo;t be prevented from garbage collecting. Once the object that was presented by TWeakObjectPtr was destroyed in other place, the inner pointer of TWeakObjectPtr would be assigned as nullptr automatically, and TWeakObjectPtr::IsValid() would return false.</description>
+ TSharedPtr 是否只对 raw pointers 计数 TSharedPtr的代码注释注明其作用对象为raw pointers:
+/** Proxy structure for implicitly converting raw pointers to shared/weak pointers */// NOTE: The following is an Unreal extension to standard shared_ptr behaviortemplate&amp;lt; class ObjectType &amp;gt;struct FRawPtrProxy{/** The object pointer */ObjectType* Object;/** Reference controller used to destroy the object */FReferenceControllerBase* ReferenceController;/** Construct implicitly from an object */FORCEINLINE FRawPtrProxy( ObjectType* InObject ): Object ( InObject ), ReferenceController( NewDefaultReferenceController( InObject ) ){}/** Construct implicitly from an object and a custom deleter */template&amp;lt; class Deleter &amp;gt;FORCEINLINE FRawPtrProxy( ObjectType* InObject, Deleter&amp;amp;&amp;amp; InDeleter ): Object ( InObject ), ReferenceController( NewCustomReferenceController( InObject, Forward&amp;lt; Deleter &amp;gt;( InDeleter ) ) ){}}; 按理说：UE4的GC系统其实就相当于针对UObject类型对象的std::shared_ptr&amp;lt;&amp;gt;，所以TSharedPtr作用范围也没必然针对UObject。</description>
     </item>
     
     <item>

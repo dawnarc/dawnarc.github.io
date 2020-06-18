@@ -315,6 +315,74 @@ if (!doNotTrack) {
     
     <div class="postShorten-header">
       <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2018/08/gitblit%E5%B9%B6%E5%8F%91%E8%AF%B7%E6%B1%82%E6%95%B0%E9%99%90%E5%88%B6%E7%9A%84%E9%97%AE%E9%A2%98concurrent-ssh-connection-limit/">
+          [gitblit]并发请求数限制的问题(Concurrent SSH connection limit)
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2018-08-07T17:30:02&#43;08:00">
+        
+  
+  
+  
+  
+    Tuesday, 17:30, Aug 7, 2018
+  
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/versioncontrol">VersionControl</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        问题现象：
+当同时 pull 或者 push 的人数较多时，只有第一个用户正常，其他用户会卡住。
+解决办法：
+修改配置文件data/gitblit.properties，添加：
+execution.defaultThreadPoolSize = 10 defaultThreadPoolSize 默认为1。
+参考自：
+Concurrent push not working
+https://github.com/gitblit/gitblit/issues/905
+      
+      <p>
+        <a href="https://dawnarc.com/2018/08/gitblit%E5%B9%B6%E5%8F%91%E8%AF%B7%E6%B1%82%E6%95%B0%E9%99%90%E5%88%B6%E7%9A%84%E9%97%AE%E9%A2%98concurrent-ssh-connection-limit/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
         <a class="link-unstyled" href="https://dawnarc.com/2018/08/github%E8%A7%A3%E5%86%B3github%E4%B8%8B%E8%BD%BD%E9%80%9F%E5%BA%A6%E5%A4%AA%E6%85%A2%E7%9A%84%E9%97%AE%E9%A2%98/">
           [github]解决GitHub下载速度太慢的问题
         </a>
@@ -908,10 +976,8 @@ https://likfe.com/2018/05/03/github-pages-custom-domains-support-https/
 TSharedPtr Summary TSharedPtr 相当于对象的引用计数器。每当对 TSharedPtr 赋值一次，该 TSharedPtr 引用对象计数加一，当引用计数为0时，则该对象被自动销毁。
 用法：
 TSharedPtr&lt;TestClass&gt; ObjPtr = MakeShareable(new TestClass()); 如果两个 TSharedPtr 相互赋值，则会导致对象永不释放，导致内存泄漏。
- TSharedPtr无法对继承自UObject的对象指针进行计数，raw pointers才可以。
- 如果raw pointers想加入GC，那么指针所指对象必须继承FGCObject类。
-因为C++11已经有一套 smart pointers，为了和UE4的垃圾回收区分开，所以TSharedPtr作用对象不包括raw pointers。
- TWeakObjectPtr Summary The memory presented by TWeakObjectPtr can&rsquo;t be prevented from garbage collecting. Once the object that was presented by TWeakObjectPtr was destroyed in other place, the inner pointer of TWeakObjectPtr would be assigned as nullptr automatically, and TWeakObjectPtr::IsValid() would return false.
+ TSharedPtr 是否只对 raw pointers 计数 TSharedPtr的代码注释注明其作用对象为raw pointers:
+/** Proxy structure for implicitly converting raw pointers to shared/weak pointers */// NOTE: The following is an Unreal extension to standard shared_ptr behaviortemplate&lt; class ObjectType &gt;struct FRawPtrProxy{/** The object pointer */ObjectType* Object;/** Reference controller used to destroy the object */FReferenceControllerBase* ReferenceController;/** Construct implicitly from an object */FORCEINLINE FRawPtrProxy( ObjectType* InObject ): Object ( InObject ), ReferenceController( NewDefaultReferenceController( InObject ) ){}/** Construct implicitly from an object and a custom deleter */template&lt; class Deleter &gt;FORCEINLINE FRawPtrProxy( ObjectType* InObject, Deleter&amp;&amp; InDeleter ): Object ( InObject ), ReferenceController( NewCustomReferenceController( InObject, Forward&lt; Deleter &gt;( InDeleter ) ) ){}}; 按理说：UE4的GC系统其实就相当于针对UObject类型对象的std::shared_ptr&lt;&gt;，所以TSharedPtr作用范围也没必然针对UObject。
       
       <p>
         <a href="https://dawnarc.com/2018/07/ue4-tsharedptr-tweakobjectptr-and-tuniqueptr/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -1244,78 +1310,6 @@ https://www.cnblogs.com/kidsitcn/p/4513297.html
       
       <p>
         <a href="https://dawnarc.com/2018/06/versioncontrolorig_head-fetch_head-merge_head%E5%8C%BA%E5%88%AB/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-          
-            
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2018/06/shadingflatgouraudphong-shading%E7%9A%84%E5%B7%AE%E5%88%A5/">
-          [Shading]Flat、Gouraud、Phong Shading的差別
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2018-06-26T15:54:40&#43;08:00">
-        
-  
-  
-  
-  
-    Tuesday, 15:54, Jun 26, 2018
-  
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/shading">Shading</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        keywords：Comparison flat, Gouraud, Phong shading
-原文：
-https://cg2010studio.com/2011/11/01/flat%E3%80%81gouraud%E3%80%81phong-shading%E7%9A%84%E5%B7%AE%E5%88%A5-comparison-flat-gouraud-phong-shading/
-现今多边形的著色方法基本的有这三种：flat、Gouraud、Phong Shading，它们之间有何差别呢？喜欢玩游戏的人一定要知道Gouraud Shading，这是PC最常使用的著色法，因为效能好、效果还不错。而近年来，随着GPU快速的发展，Phong Shading逐渐应用在更真实的著色上。
-从一张图可以看出他们的各自的特色：（a: Flat→b: Gouraud→c: Phong）
-  从古早到现代：Flat→Gouraud→Phong Shading。
-从简单到复杂：Flat→Gouraud→Phong Shading。
-观察三者所呈现的效果，可以归纳出下列结论：
- 平面着色：恒定的表面着色 Gouraud着色：颜色插值着色 Phong着色：顶点法线插值着色  用简单的中文来解释原理：
- flat shading：三角形的顶点没有法向量，三角形整个面才有法向量，打光时整个三角形只呈现一种颜色。 Gouraud shading：三角形的顶点都有各自的法向量，打光时三个顶点有各自的颜色，接着做双线性内插（bilinear interpolation）来求得颜色，使整个三角形有渐层的颜色变化。 Phong shading：三角形的顶点都有各自的法向量，先对三角形整个面作法向量的双线性内插，接着打光来求整个三角形的颜色。  然后我们来分析各自的复杂度：
-假设三角形面积为 A 。三角形个数为 N 。而且我们知道打一次光需要6次乘法和2次加法和1次查表的运算，此设定为 L 。双线性内插设定为 B 。
- flat shading的复杂度：N * L Gouraud shading 的复杂度：N * (3 * L + b * A) Phong shading的复杂度：(B + L) * N * A  数学好的人很容易计算出复杂度：Flat &lt; Gouraud &lt; Phong Shading。这里也因此说明了为何早期电脑都只支援Gouraud shading，就算已经知道Phong shading的效果比Gouraud shading好，但还是选择效能好而效果不错的Gouraud shading！如今GPU发展迅速，Phong Shading的效能已得到提升。   stack overflow答案 https://computergraphics.
-      
-      <p>
-        <a href="https://dawnarc.com/2018/06/shadingflatgouraudphong-shading%E7%9A%84%E5%B7%AE%E5%88%A5/" class="postShorten-excerpt_link link">Continue reading</a>
         
       </p>
     </div>

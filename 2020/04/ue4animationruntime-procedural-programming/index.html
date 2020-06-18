@@ -496,6 +496,12 @@ virtual void NativeUninitializeAnimation();
 // Executed when begin play is called on the owning component
 virtual void NativeBeginPlay();
 </code></pre>
+<h5 id="common-api-in-animmontage">Common API in AnimMontage</h5>
+<p>Tick function on animation simulatiing:</p>
+<pre><code>/** Simulate is same as Advance, but without calling any events or touching any of the instance data. So it performs a simulation of advancing the timeline. */
+bool SimulateAdvance(float DeltaTime, float&amp; InOutPosition, struct FRootMotionMovementParams &amp; OutRootMotionParams) const;
+void Advance(float DeltaTime, struct FRootMotionMovementParams * OutRootMotionParams, bool bBlendRootMotion);
+</code></pre>
 <h5 id="animationeditorpreviewactor">AnimationEditorPreviewActor</h5>
 <p>Path:<br>
 Engine\Source\Editor\Persona\Public\AnimationEditorPreviewActor.h</p>
@@ -546,6 +552,18 @@ UE4Editor-Core.dll!FRunnableThreadWin::GuardedRun() Line 45	C++
 <h5 id="offical-docs">Offical Docs</h5>
 <p>Demystifying Bone Indices<br>
 <a href="https://www.unrealengine.com/en-US/tech-blog/demystifying-bone-indices">https://www.unrealengine.com/en-US/tech-blog/demystifying-bone-indices</a></p>
+<h3 id="issues">Issues</h3>
+<h5 id="animation-parallel-simulation-poses-of-character-could-not-match-if-play-two-animation-separately">Animation parallel simulation: poses of character could not match if play two animation separately</h5>
+<p>Case:<br>
+If character was composed by multiple skeletal mesh (e.g. one skeletal mesh is head, another skeletal mesh is arm), and thess skeletal meshes have dedicated AnimSequence asset, and these AnimSequence are in synchronized pose transform, when you play these apart animation at the same time, arm&rsquo;s pose and head&rsquo;s pose don&rsquo;t match seamlessly.</p>
+<p>Caused by:<br>
+Multi-thread animation simulating is on by default, and if there&rsquo;re some overhead under other work threads, then animations would not match with each other seamlessly.</p>
+<p>Solution:<br>
+Override <code>CanRunParallelWork</code> of <code>UAnimInstance</code>, and return <code>false</code>;</p>
+<pre><code>// Can this animation instance run Update or Evaluation work in parallel
+virtual bool CanRunParallelWork() const override { return false; }
+</code></pre>
+<p>Or set <code>bUseMultiThreadedAnimationUpdate</code> as <code>false</code>, and uncheck <code>Allow Multi Threaded Animation Update</code> in project settings.</p>
 <hr>
 <p><code>I distrust official charity.All charity should be done by stealth. ― Romain Rolland</code></p>
               
