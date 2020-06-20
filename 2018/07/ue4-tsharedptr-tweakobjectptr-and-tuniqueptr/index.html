@@ -431,8 +431,6 @@ UE4Editor_TestTD4_Win64_DebugGame!ATestPlayerController::TestFun() [D:\workspace
 <div class="alert danger ">
   <p>就是说：使用<code>TSharedPtr</code>对<code>UObject</code>类型对象引用，编译正常，运行时<code>TSharedPtr</code>初始化也正常，但是当<code>TSharedPtr</code>被析构时就会导致程序崩溃。</p>
 </div>
-<p>个人观点：<code>TSharedPtr</code>和GC系统给用户挖了坑，允许你往里面跳，但是不让你出来。若做的标准一点，应该提供相关编译提示，禁止往<code>TSharedPtr</code>里面塞<code>UObject</code>类型指针。（由此带来的代码复杂度或者性能损失，这里不做讨论）<br>
-另外，Epics开发UE4引擎期间，估计C++11标准还未发布，或者发布了但Epics的开发人员也不想大改了，所以UE4就有了现在这套GC系统，但是<code>std::shared_ptr&lt;&gt;</code>出现后，完全可以模仿<code>std::shared_ptr&lt;&gt;</code>的原理搞一套GC，这样比UE4现有的GC流程性能更高，至少不用开单独的线程遍历。</p>
 <h5 id="如何将raw-pointers加入ue4-gc系统">如何将raw pointers加入UE4 GC系统</h5>
 <div class="alert info ">
   <p>如果raw pointers想加入GC，那么指针所指对象必须继承FGCObject类。</p>
