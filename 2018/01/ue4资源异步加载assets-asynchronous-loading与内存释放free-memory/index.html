@@ -454,8 +454,8 @@ AssetLoader.RequestAsyncLoad(SoftObj, FStreamableDelegate::CreateUObject(this, &
 <p>回调函数中获取对象</p>
 <pre><code>void ATestTD4Character::AssetsDeferred()
 {
-    TSoftObjectPtr&lt;UAnimSequence&gt; WidgetAsset(SoftObj);
-    UAnimSequence* AnimObj= WidgetAsset.Get();
+    TSoftObjectPtr&lt;UAnimSequence&gt; AnimAsset(SoftObj);
+    UAnimSequence* AnimObj= AnimAsset.Get();
     if (AnimObj)
     {
         GEngine-&gt;AddOnScreenDebugMessage(-1, 3, FColor::Red, AnimObj-&gt;GetName());
@@ -565,9 +565,6 @@ AssetLoader.Unload(FSoftObjectPath(AssetPath));
 </li>
 <li>
 <p>bManageActiveHandle为true时，即使切换关卡，该资源也不会被销毁，类似AddToRoot()的效果。</p>
-</li>
-<li>
-<p><code>TSoftObjectPtr</code>内部使用了RTTI的<code>dynamic_cast</code>，这个操作很贵，避免在run-time大规模使用，尤其是服务端。如果非要在run-time中频繁使用，个人建议做法：自己建一个map当作资源加载管理的缓存，key是资源路径，value是一个自定义结构体，其中保存了对象指针和资源类型枚举，获取的时候根据枚举值<code>static_cast</code>强转。</p>
 </li>
 </ul>
 <h3 id="参考">参考</h3>
