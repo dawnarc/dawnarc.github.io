@@ -8,18 +8,18 @@
 <meta name="generator" content="Hugo 0.69.2 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="UE4, Texture">
-<meta name="description" content="Is it need to make Texture LODs?">
+<meta name="description" content="">
 
 
-<meta property="og:description" content="Is it need to make Texture LODs?">
+<meta property="og:description" content="">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[UE4]Texture Related">
 <meta name="twitter:title" content="[UE4]Texture Related">
 <meta property="og:url" content="https://dawnarc.com/2019/02/ue4texture-related/">
 <meta property="twitter:url" content="https://dawnarc.com/2019/02/ue4texture-related/">
 <meta property="og:site_name" content="玄冬Wong">
-<meta property="og:description" content="Is it need to make Texture LODs?">
-<meta name="twitter:description" content="Is it need to make Texture LODs?">
+<meta property="og:description" content="">
+<meta name="twitter:description" content="">
 <meta property="og:locale" content="en-us">
 
   
@@ -352,13 +352,21 @@ if (!doNotTrack) {
           
           <div class="post-content markdown" itemprop="articleBody">
             <div class="main-content-wrap">
-              <h5 id="is-it-need-to-make-texture-lods">Is it need to make Texture LODs?</h5>
+              <h3 id="optimization">Optimization</h3>
+<h5 id="is-it-need-to-make-texture-lods">Is it need to make Texture LODs?</h5>
 <p>UE4 automatically make mipmaps for your textures. If you import 1024 texture to engine it&rsquo;s automatically creates 512,256,128,64,32,16,8,4,2,1 size textures from the original texture data. These are stored as mipmaps for original texture and it cost +33% more texture memory. When texture is sampled at material, pixel shader calculates what size mipmap it should sample. This automatic mipmapping prevents aliasing and saves a lot of texture memory bandwith. There is also texture streaming feature that only loads mipmap levels that are needed for object. If object is really far a way engine does not need to load the full size texture but small version of it. Let say 64x64 texture.</p>
 <p>Original Text: Texture Size LODs<br>
 <a href="https://forums.unrealengine.com/development-discussion/rendering/1445698-texture-size-lods">https://forums.unrealengine.com/development-discussion/rendering/1445698-texture-size-lods</a></p>
+<h3 id="editor-notes">Editor Notes</h3>
 <h5 id="how-to-set-texture-size">How to set Texture Size</h5>
 <p>Texture Editor -&gt; Compression -&gt; Maximum Texture Size.<br>
 Default value 0 means the maximum size for the format on each platform.</p>
+<h3 id="programming-notes">Programming Notes</h3>
+<h5 id="how-to-save-texture2d-to-image-file-eg-jpg-png-using-c">How to save Texture2D to image file (e.g. .jpg; .png) using C++</h5>
+<p>Use <code>UImageWriteBlueprintLibrary::ExportToDisk</code>, example:<br>
+<a href="https://github.com/EpicGames/UnrealEngine/blob/release/Engine/Plugins/Compositing/Composure/Source/Composure/Private/CompositingElements/CompositingElementOutputs.cpp#L299">https://github.com/EpicGames/UnrealEngine/blob/release/Engine/Plugins/Compositing/Composure/Source/Composure/Private/CompositingElements/CompositingElementOutputs.cpp#L299</a></p>
+<p>Reference:<br>
+<a href="https://forums.unrealengine.com/development-discussion/c-gameplay-programming/76797-how-to-save-utexture2d-to-png-file">https://forums.unrealengine.com/development-discussion/c-gameplay-programming/76797-how-to-save-utexture2d-to-png-file</a></p>
 <h5 id="reference">Reference</h5>
 <p>Texture Streaming<br>
 <a href="https://docs.unrealengine.com/en-us/Engine/Content/Types/Textures/Streaming">https://docs.unrealengine.com/en-us/Engine/Content/Types/Textures/Streaming</a></p>
