@@ -392,6 +392,9 @@ UE4做了优化，当你使用<code>FTransform::TransformXXX()</code>时，如�
 </ul>
 <p>更多详情见微软C++团队博客：<a href="https://devblogs.microsoft.com/cppblog">C++ Team Blog</a>。</p>
 </li>
+<li>
+<p>如何断点调试UE4中的内联函数：我们知道加了<code>FORCEINLINE</code>的函数无法断点调试，但是<code>FORCEINLINE_DEBUGGABLE</code>可以，这样保证函数既能在debug模式下调试，又能在shipping打包时让函数内联。</p>
+</li>
 </ol>
 <h5 id="代码算法优化仅限ue4-api相关">代码算法优化（仅限UE4 API相关）</h5>
 <ol>
@@ -400,6 +403,9 @@ UE4做了优化，当你使用<code>FTransform::TransformXXX()</code>时，如�
 </li>
 <li>
 <p>TArray移除元素时，如果对元素的顺序不关心，可以使用<code>RemoveAtSwap()</code>代替<code>RemoveAt()</code>，前者是用数组末尾的元素来填补内存空洞（移除元素后产生的无效内存空间），而后者是对空洞后的所有元素平移。时间复杂度，前者为O(RemovedCount)，后者为O(ArrayNum)。</p>
+</li>
+<li>
+<p>如果单个生产者单个消费者（SPSC）的线程环境，可以使用<code>TCircularQueue</code>作为消息队列来保证数据安全，比使用<code>FScopeLock</code>消耗低，因为前者内部使用的是atomic，而非lock。</p>
 </li>
 </ol>
 <h5 id="视距裁剪剔除">视距裁剪（剔除）</h5>
