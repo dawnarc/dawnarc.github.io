@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.69.2 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="author" content="Neil Wang">
+<meta name="keywords" content="UE4, Deferred, Shading, Renderer">
+<meta name="description" content="Keywords: UE4, Deferred Shading Renderer Notes">
+
+
+<meta property="og:description" content="Keywords: UE4, Deferred Shading Renderer Notes">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[UE4]Deferred Shading Renderer Notes">
+<meta name="twitter:title" content="[UE4]Deferred Shading Renderer Notes">
+<meta property="og:url" content="https://dawnarc.com/2020/07/ue4deferred-shading-renderer-notes/">
+<meta property="twitter:url" content="https://dawnarc.com/2020/07/ue4deferred-shading-renderer-notes/">
+<meta property="og:site_name" content="玄冬Wong">
+<meta property="og:description" content="Keywords: UE4, Deferred Shading Renderer Notes">
+<meta name="twitter:description" content="Keywords: UE4, Deferred Shading Renderer Notes">
+<meta property="og:locale" content="en-us">
+
+  
+    <meta property="article:published_time" content="2020-07-10T03:17:02">
+  
+  
+    <meta property="article:modified_time" content="2020-07-10T03:17:02">
+  
+  
+  
+    
+      <meta property="article:section" content="UnrealEngine4">
+    
+  
+  
+    
+      <meta property="article:tag" content="UE4">
+    
+  
+
+
+<meta name="twitter:card" content="summary">
+
+  <meta name="twitter:site" content="@dawn_arc">
+
+
+  <meta name="twitter:creator" content="@dawn_arc">
+
+
+
+
+
+
+  <meta property="og:image" content="https://dawnarc.com/thumbnail/thumbnail-japen-006.jpg">
+  <meta property="twitter:image" content="https://dawnarc.com/thumbnail/thumbnail-japen-006.jpg">
+
+
+
+
+
+  <meta property="og:image" content="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=640">
+  <meta property="twitter:image" content="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=640">
+
+
+    <title>[UE4]Deferred Shading Renderer Notes</title>
+
+    <link rel="icon" href="https://dawnarc.com/favicon.png">
+    
+
+    
+      <link rel="publisher" href="https://plus.google.com/111340706178390411568">
+    
+
+    <link rel="canonical" href="https://dawnarc.com/2020/07/ue4deferred-shading-renderer-notes/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/jquery.fancybox.min.css" integrity="sha256-vuXZ9LGmmwtjqFX1F+EKin1ThZMub58gKULUyf0qECk=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/helpers/jquery.fancybox-thumbs.min.css" integrity="sha256-SEa4XYAHihTcEP1f5gARTB2K26Uk8PsndQYHQC1f4jU=" crossorigin="anonymous" />
+    
+    
+    <link rel="stylesheet" href="https://dawnarc.com/css/style-twzjdbqhmnnacqs0pwwdzcdbt8yhv8giawvjqjmyfoqnvazl0dalmnhdkvp7.min.css" />
+    
+    
+      
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/solarized-light.min.css">
+      
+    
+
+    
+      
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-78064851-2', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="4">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="https://dawnarc.com/">玄冬Wong</a>
+  </div>
+  
+    
+      <a class="header-right-picture "
+         href="https://dawnarc.com/#about">
+    
+    
+    
+      
+        <img class="header-picture" src="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=90" alt="Author&#39;s picture" />
+      
+    
+    </a>
+    
+</header>
+
+      <nav id="sidebar" data-behavior="4">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="https://dawnarc.com/#about">
+          <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=110" alt="Author&#39;s picture" />
+        </a>
+        <h4 class="sidebar-profile-name">Neil Wang</h4>
+        
+          <h5 class="sidebar-profile-bio">久长唯有品格</h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/categories">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+      
+      <span class="sidebar-button-desc">Categories</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/tags">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+      
+      <span class="sidebar-button-desc">Tags</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/archives">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+      
+      <span class="sidebar-button-desc">Archives</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/#about">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+      
+      <span class="sidebar-button-desc">About</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+      
+      <span class="sidebar-button-desc">Home</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/index.xml">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://stackoverflow.com/users/1645289/protoss" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-stack-overflow"></i>
+      
+      <span class="sidebar-button-desc">Stack Overflow</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://www.facebook.com/koanland" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-facebook"></i>
+      
+      <span class="sidebar-button-desc">Facebook</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/dawnarc" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://www.instagram.com/dawn_arc/" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-instagram"></i>
+      
+      <span class="sidebar-button-desc">Instagram</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://www.linkedin.com/in/dawnarc/" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-linkedin"></i>
+      
+      <span class="sidebar-button-desc">Linkedin</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://www.pinterest.com/wangaiguo/" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-pinterest"></i>
+      
+      <span class="sidebar-button-desc">Pinterest</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://steamcommunity.com/id/dawnarc" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-steam"></i>
+      
+      <span class="sidebar-button-desc">Steam</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://twitter.com/dawn_arc" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-twitter"></i>
+      
+      <span class="sidebar-button-desc">Twitter</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://weibo.com/koanland" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-weibo"></i>
+      
+      <span class="sidebar-button-desc">Weibo</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+
+    </ul>
+  </div>
+</nav>
+
+      
+
+      <div id="main" data-behavior="4"
+        class="
+               hasCoverMetaIn
+               ">
+        <article class="post" itemscope itemType="http://schema.org/BlogPosting">
+          
+          
+            <div class="post-header main-content-wrap text-left">
+  
+    <h1 class="post-title" itemprop="headline">
+      [UE4]Deferred Shading Renderer Notes
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2020-07-10T03:17:02&#43;08:00">
+        
+  
+  
+  
+  
+    Friday, 03:17, Jul 10, 2020
+  
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+</div>
+          
+          <div class="post-content markdown" itemprop="articleBody">
+            <div class="main-content-wrap">
+              <p>Keywords: UE4, Deferred Shading Renderer Notes</p>
+<h3 id="render-thread">Render Thread</h3>
+<h5 id="callstack-in-engine-source">Callstack in engine source</h5>
+<p>Entrance of tick function on Deffered Shading Rendering: <code>void FDeferredShadingSceneRenderer::Render(FRHICommandListImmediate&amp; RHICmdList)</code>.<br>
+Engine\Source\Runtime\Renderer\Private\DeferredShadingRenderer.cpp</p>
+<pre><code>UE4Editor-Renderer.dll!FDeferredShadingSceneRenderer::Render(FRHICommandListImmediate &amp; RHICmdList) Line 1263	C++
+UE4Editor-Renderer.dll!RenderViewFamily_RenderThread(FRHICommandListImmediate &amp; RHICmdList, FSceneRenderer * SceneRenderer) Line 3581	C++
+[Inline Frame] UE4Editor-Renderer.dll!FRendererModule::BeginRenderingViewFamily::__l35::&lt;lambda_759d0c4589f205101b108f5da3fb1556&gt;::operator()(FRHICommandListImmediate &amp;) Line 3820	C++
+UE4Editor-Renderer.dll!TEnqueueUniqueRenderCommandType&lt;`FRendererModule::BeginRenderingViewFamily'::`35'::FDrawSceneCommandName,&lt;lambda_759d0c4589f205101b108f5da3fb1556&gt;&gt;::DoTask(ENamedThreads::Type CurrentThread, const TRefCountPtr&lt;FGraphEvent&gt; &amp; MyCompletionGraphEvent) Line 195	C++
+UE4Editor-Renderer.dll!TGraphTask&lt;TEnqueueUniqueRenderCommandType&lt;`FRendererModule::BeginRenderingViewFamily'::`35'::FDrawSceneCommandName,&lt;lambda_759d0c4589f205101b108f5da3fb1556&gt;&gt;&gt;::ExecuteTask(TArray&lt;FBaseGraphTask *,TSizedDefaultAllocator&lt;32&gt;&gt; &amp; NewTasks, ENamedThreads::Type CurrentThread) Line 849	C++
+[Inline Frame] UE4Editor-Core.dll!FBaseGraphTask::Execute(TArray&lt;FBaseGraphTask *,TSizedDefaultAllocator&lt;32&gt;&gt; &amp; CurrentThread, ENamedThreads::Type) Line 516	C++
+UE4Editor-Core.dll!FNamedTaskThread::ProcessTasksNamedThread(int QueueIndex, bool bAllowStall) Line 692	C++
+UE4Editor-Core.dll!FNamedTaskThread::ProcessTasksUntilQuit(int QueueIndex) Line 587	C++
+UE4Editor-RenderCore.dll!RenderingThreadMain(FEvent * TaskGraphBoundSyncEvent) Line 341	C++
+UE4Editor-RenderCore.dll!FRenderingThread::Run() Line 492	C++
+UE4Editor-Core.dll!FRunnableThreadWin::Run() Line 86	C++
+UE4Editor-Core.dll!FRunnableThreadWin::GuardedRun() Line 27	C++
+</code></pre>
+<h3 id="downsampling">Downsampling</h3>
+<h5 id="callstack-in-engine-source-1">Callstack in engine source</h5>
+<pre><code>UE4Editor-Renderer.dll!AddDownsamplePass(FRDGBuilder &amp; GraphBuilder, const FViewInfo &amp; View, const FDownsamplePassInputs &amp; Inputs) Line 173	C++
+UE4Editor-Renderer.dll!AddPostProcessingPasses(FRDGBuilder &amp; GraphBuilder, const FViewInfo &amp; View, const FPostProcessingInputs &amp; Inputs) Line 503	C++
+UE4Editor-Renderer.dll!FDeferredShadingSceneRenderer::Render(FRHICommandListImmediate &amp; RHICmdList) Line 2794	C++
+UE4Editor-Renderer.dll!RenderViewFamily_RenderThread(FRHICommandListImmediate &amp; RHICmdList, FSceneRenderer * SceneRenderer) Line 3581	C++
+[Inline Frame] UE4Editor-Renderer.dll!FRendererModule::BeginRenderingViewFamily::__l35::&lt;lambda_759d0c4589f205101b108f5da3fb1556&gt;::operator()(FRHICommandListImmediate &amp;) Line 3820	C++
+UE4Editor-Renderer.dll!TEnqueueUniqueRenderCommandType&lt;`FRendererModule::BeginRenderingViewFamily'::`35'::FDrawSceneCommandName,&lt;lambda_759d0c4589f205101b108f5da3fb1556&gt;&gt;::DoTask(ENamedThreads::Type CurrentThread, const TRefCountPtr&lt;FGraphEvent&gt; &amp; MyCompletionGraphEvent) Line 195	C++
+UE4Editor-Renderer.dll!TGraphTask&lt;TEnqueueUniqueRenderCommandType&lt;`FRendererModule::BeginRenderingViewFamily'::`35'::FDrawSceneCommandName,&lt;lambda_759d0c4589f205101b108f5da3fb1556&gt;&gt;&gt;::ExecuteTask(TArray&lt;FBaseGraphTask *,TSizedDefaultAllocator&lt;32&gt;&gt; &amp; NewTasks, ENamedThreads::Type CurrentThread) Line 849	C++
+[Inline Frame] UE4Editor-Core.dll!FBaseGraphTask::Execute(TArray&lt;FBaseGraphTask *,TSizedDefaultAllocator&lt;32&gt;&gt; &amp; CurrentThread, ENamedThreads::Type) Line 516	C++
+UE4Editor-Core.dll!FNamedTaskThread::ProcessTasksNamedThread(int QueueIndex, bool bAllowStall) Line 692	C++
+UE4Editor-Core.dll!FNamedTaskThread::ProcessTasksUntilQuit(int QueueIndex) Line 587	C++
+UE4Editor-RenderCore.dll!RenderingThreadMain(FEvent * TaskGraphBoundSyncEvent) Line 341	C++
+UE4Editor-RenderCore.dll!FRenderingThread::Run() Line 492	C++
+UE4Editor-Core.dll!FRunnableThreadWin::Run() Line 86	C++
+UE4Editor-Core.dll!FRunnableThreadWin::GuardedRun() Line 27	C++
+[External Code]	
+</code></pre>
+<h5 id="critical-code">Critical Code</h5>
+<p>Quoted from <code>void FDeferredShadingSceneRenderer::Render(FRHICommandListImmediate&amp; RHICmdList)</code><br>
+\Engine\Source\Runtime\Renderer\Private\DeferredShadingRenderer.cpp</p>
+<pre><code>FRDGBuilder GraphBuilder(RHICmdList);
+
+FSceneTextureParameters SceneTextures;
+SetupSceneTextureParameters(GraphBuilder, &amp;SceneTextures);
+
+// Fallback to a black texture if no velocity.
+if (!SceneTextures.SceneVelocityBuffer)
+{
+    SceneTextures.SceneVelocityBuffer = GSystemTextures.GetBlackDummy(GraphBuilder);
+}
+
+FPostProcessingInputs PostProcessingInputs;
+PostProcessingInputs.SceneTextures = &amp;SceneTextures;
+PostProcessingInputs.ViewFamilyTexture = CreateViewFamilyTexture(GraphBuilder, ViewFamily);
+PostProcessingInputs.SceneColor = GraphBuilder.RegisterExternalTexture(SceneContext.GetSceneColor(), TEXT(&quot;SceneColor&quot;));
+PostProcessingInputs.CustomDepth = GraphBuilder.TryRegisterExternalTexture(SceneContext.CustomDepth, TEXT(&quot;CustomDepth&quot;));
+PostProcessingInputs.SeparateTranslucency = RegisterExternalTextureWithFallback(GraphBuilder, SceneContext.SeparateTranslucencyRT, SceneContext.GetSeparateTranslucencyDummy(), TEXT(&quot;SeparateTranslucency&quot;));
+PostProcessingInputs.SeparateModulation = RegisterExternalTextureWithFallback(GraphBuilder, SceneContext.SeparateTranslucencyModulateRT, SceneContext.GetSeparateTranslucencyModulateDummy(), TEXT(&quot;SeparateModulate&quot;));
+
+if (ViewFamily.UseDebugViewPS())
+{
+    for (int32 ViewIndex = 0; ViewIndex &lt; Views.Num(); ViewIndex++)
+    {
+        FViewInfo&amp; View = Views[ViewIndex];
+
+        SCOPED_GPU_MASK(RHICmdList, View.GPUMask);
+        RDG_EVENT_SCOPE_CONDITIONAL(GraphBuilder, Views.Num() &gt; 1, &quot;View%d&quot;, ViewIndex);
+        AddDebugPostProcessingPasses(GraphBuilder, View, PostProcessingInputs);
+    }
+}
+else
+{
+    for (int32 ViewIndex = 0; ViewIndex &lt; Views.Num(); ViewIndex++)
+    {
+        FViewInfo&amp; View = Views[ViewIndex];
+
+        SCOPED_GPU_MASK(RHICmdList, View.GPUMask);
+        RDG_EVENT_SCOPE_CONDITIONAL(GraphBuilder, Views.Num() &gt; 1, &quot;View%d&quot;, ViewIndex);
+        AddPostProcessingPasses(GraphBuilder, View, PostProcessingInputs);
+    }
+}
+</code></pre>
+<p>Quoted from <code>void AddPostProcessingPasses(FRDGBuilder&amp; GraphBuilder, const FViewInfo&amp; View, const FPostProcessingInputs&amp; Inputs)</code><br>
+\Engine\Source\Runtime\Renderer\Private\PostProcess\PostProcessing.cpp</p>
+<pre><code>// If TAA didn't do it, downsample the scene color texture by half.
+if (!HalfResolutionSceneColor.Texture)
+{
+    FDownsamplePassInputs PassInputs;
+    PassInputs.Name = TEXT(&quot;HalfResolutionSceneColor&quot;);
+    PassInputs.SceneColor = SceneColor;
+    PassInputs.Quality = DownsampleQuality;
+    PassInputs.FormatOverride = DownsampleOverrideFormat;
+
+    HalfResolutionSceneColor = AddDownsamplePass(GraphBuilder, View, PassInputs);
+}
+</code></pre>
+<p>Quoted from <code>FScreenPassTexture AddDownsamplePass(FRDGBuilder&amp; GraphBuilder, const FViewInfo&amp; View, const FDownsamplePassInputs&amp; Inputs)</code><br>
+\Engine\Source\Runtime\Renderer\Private\PostProcess\PostProcessDownsample.cpp</p>
+<pre><code>FScreenPassTexture AddDownsamplePass(
+FRDGBuilder&amp; GraphBuilder,
+const FViewInfo&amp; View,
+const FDownsamplePassInputs&amp; Inputs)
+{
+    check(Inputs.SceneColor.IsValid());
+
+    bool bIsComputePass = View.bUseComputePasses;
+
+    if ((Inputs.Flags &amp; EDownsampleFlags::ForceRaster) == EDownsampleFlags::ForceRaster)
+    {
+        bIsComputePass = false;
+    }
+
+    FScreenPassRenderTarget Output;
+
+    // Construct the output texture to be half resolution (rounded up to even) with an optional format override.
+    {
+        FRDGTextureDesc Desc = Inputs.SceneColor.Texture-&gt;Desc;
+        Desc.Reset();
+        Desc.Extent = FIntPoint::DivideAndRoundUp(Desc.Extent, 2);
+        Desc.Extent.X = FMath::Max(1, Desc.Extent.X);
+        Desc.Extent.Y = FMath::Max(1, Desc.Extent.Y);
+        Desc.TargetableFlags &amp;= ~(TexCreate_RenderTargetable | TexCreate_UAV);
+        Desc.TargetableFlags |= bIsComputePass ? TexCreate_UAV : TexCreate_RenderTargetable;
+        Desc.Flags |= GFastVRamConfig.Downsample;
+        Desc.DebugName = Inputs.Name;
+        Desc.ClearValue = FClearValueBinding(FLinearColor(0, 0, 0, 0));
+
+        if (Inputs.FormatOverride != PF_Unknown)
+        {
+            Desc.Format = Inputs.FormatOverride;
+        }
+
+        Output.Texture = GraphBuilder.CreateTexture(Desc, Inputs.Name);
+        Output.ViewRect = FIntRect::DivideAndRoundUp(Inputs.SceneColor.ViewRect, 2);
+        Output.LoadAction = ERenderTargetLoadAction::ENoAction;
+    }
+
+    FDownsamplePermutationDomain PermutationVector;
+    PermutationVector.Set&lt;FDownsampleQualityDimension&gt;(Inputs.Quality);
+
+    const FScreenPassTextureViewport SceneColorViewport(Inputs.SceneColor);
+    const FScreenPassTextureViewport OutputViewport(Output);
+
+    if (bIsComputePass)
+    {
+        FDownsampleCS::FParameters* PassParameters = GraphBuilder.AllocParameters&lt;FDownsampleCS::FParameters&gt;();
+        PassParameters-&gt;Common = GetDownsampleParameters(View, Output, Inputs.SceneColor, Inputs.Quality);
+        PassParameters-&gt;OutComputeTexture = GraphBuilder.CreateUAV(Output.Texture);
+
+        TShaderMapRef&lt;FDownsampleCS&gt; ComputeShader(View.ShaderMap, PermutationVector);
+
+        FComputeShaderUtils::AddPass(
+            GraphBuilder,
+            RDG_EVENT_NAME(&quot;Downsample.%s %dx%d (CS)&quot;, Inputs.Name, Inputs.SceneColor.ViewRect.Width(), Inputs.SceneColor.ViewRect.Height()),
+            ComputeShader,
+            PassParameters,
+            FComputeShaderUtils::GetGroupCount(OutputViewport.Rect.Size(), FIntPoint(GDownsampleTileSizeX, GDownsampleTileSizeY)));
+    }
+    else
+    {
+        FDownsamplePS::FParameters* PassParameters = GraphBuilder.AllocParameters&lt;FDownsamplePS::FParameters&gt;();
+        PassParameters-&gt;Common = GetDownsampleParameters(View, Output, Inputs.SceneColor, Inputs.Quality);
+        PassParameters-&gt;RenderTargets[0] = Output.GetRenderTargetBinding();
+
+        TShaderMapRef&lt;FDownsamplePS&gt; PixelShader(View.ShaderMap, PermutationVector);
+
+        FPixelShaderUtils::AddFullscreenPass(
+            GraphBuilder,
+            View.ShaderMap,
+            RDG_EVENT_NAME(&quot;Downsample.%s %dx%d (PS)&quot;, Inputs.Name, Inputs.SceneColor.ViewRect.Width(), Inputs.SceneColor.ViewRect.Height()),
+            PixelShader,
+            PassParameters,
+            OutputViewport.Rect);
+    }
+
+    return MoveTemp(Output);
+}
+</code></pre>
+<hr>
+<p><code>There is nothing quite so useless, as doing with great efficiency, something that should not be done at all. ― Peter Drucker</code></p>
+              
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+                
+                
+                  <div class="post-footer-tags">
+                    <span class="text-color-light text-small">TAGGED IN</span><br/>
+                    
+  <a class="tag tag--primary tag--small" href="https://dawnarc.com/tags/ue4/">UE4</a>
+
+                  </div>
+                
+              
+            
+            <div class="post-actions-wrap">
+  
+      <nav >
+        <ul class="post-actions post-action-nav">
+          
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2020/07/shadingtexture-downsampling-downscaling-notes/" data-tooltip="[Shading]Texture Downsampling (Downscaling) Notes">
+              
+                  <i class="fa fa-angle-left"></i>
+                  <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+                </a>
+            </li>
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2020/06/ue4rhi-rendering-hardware-interface-notes/" data-tooltip="[UE4]RHI (Rendering Hardware Interface) Notes">
+              
+                  <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+                  <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+          
+        </ul>
+      </nav>
+    <ul class="post-actions post-action-share" >
+      
+        <li class="post-action hide-lg hide-md hide-sm">
+          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
+            <i class="fa fa-share-alt"></i>
+          </a>
+        </li>
+        
+      
+      
+        <li class="post-action">
+          <a class="post-action-btn btn btn--default" href="#disqus_thread">
+            <i class="fa fa-comment-o"></i>
+          </a>
+        </li>
+      
+      <li class="post-action">
+        
+          <a class="post-action-btn btn btn--default" href="#">
+        
+          <i class="fa fa-list"></i>
+        </a>
+      </li>
+    </ul>
+  
+</div>
+
+            
+              
+                <div id="disqus_thread">
+  <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+              
+            
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2020 Neil Wang. All Rights Reserved. Powered by <A href="https://gohugo.io/"> Hugo</A> | Theme created by <A href="https://github.com/kakawait/hugo-tranquilpeak-theme/"> Tranquilpeak</A>.
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+        <div class="post-actions-wrap">
+  
+      <nav >
+        <ul class="post-actions post-action-nav">
+          
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2020/07/shadingtexture-downsampling-downscaling-notes/" data-tooltip="[Shading]Texture Downsampling (Downscaling) Notes">
+              
+                  <i class="fa fa-angle-left"></i>
+                  <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+                </a>
+            </li>
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2020/06/ue4rhi-rendering-hardware-interface-notes/" data-tooltip="[UE4]RHI (Rendering Hardware Interface) Notes">
+              
+                  <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+                  <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+          
+        </ul>
+      </nav>
+    <ul class="post-actions post-action-share" >
+      
+        <li class="post-action hide-lg hide-md hide-sm">
+          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
+            <i class="fa fa-share-alt"></i>
+          </a>
+        </li>
+        
+      
+      
+        <li class="post-action">
+          <a class="post-action-btn btn btn--default" href="#disqus_thread">
+            <i class="fa fa-comment-o"></i>
+          </a>
+        </li>
+      
+      <li class="post-action">
+        
+          <a class="post-action-btn btn btn--default" href="#">
+        
+          <i class="fa fa-list"></i>
+        </a>
+      </li>
+    </ul>
+  
+</div>
+
+      </div>
+      <div id="share-options-bar" class="share-options-bar" data-behavior="4">
+  <i id="btn-close-shareoptions" class="fa fa-close"></i>
+  <ul class="share-options">
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-remove"></i>
+    </div>
+    
+      <img id="about-card-picture" src="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=110" alt="Author&#39;s picture" />
+    
+    <h4 id="about-card-name">Neil Wang</h4>
+    
+      <div id="about-card-bio">久长唯有品格</div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        To be Marvelous
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker"></i>
+        <br/>
+        Yichang·Hubei
+      </div>
+    
+  </div>
+</div>
+
+    
+
+    
+  
+    
+      <div id="cover" style="background-image:url('https://dawnarc.com/cover-v1.2.0.jpg');"></div>
+    
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+
+	<link rel="stylesheet"
+      href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/solarized-light.min.css">
+	<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.7/js/jquery.fancybox.min.js" integrity="sha256-GEAnjcTqVP+vBp3SSc8bEDQqvWAZMiHyUSIorrWwH50=" crossorigin="anonymous"></script>
+
+
+<script src="https://dawnarc.com/js/script-pcw6v3xilnxydl1vddzazdverrnn9ctynvnxgwho987mfyqkuylcb1nlt.min.js"></script>
+
+
+<script lang="javascript">
+window.onload = updateMinWidth;
+window.onresize = updateMinWidth;
+document.getElementById("sidebar").addEventListener("transitionend", updateMinWidth);
+function updateMinWidth() {
+  var sidebar = document.getElementById("sidebar");
+  var main = document.getElementById("main");
+  main.style.minWidth = "";
+  var w1 = getComputedStyle(main).getPropertyValue("min-width");
+  var w2 = getComputedStyle(sidebar).getPropertyValue("width");
+  var w3 = getComputedStyle(sidebar).getPropertyValue("left");
+  main.style.minWidth = `calc(${w1} - ${w2} - ${w3})`;
+}
+</script>
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+  
+    
+      <script>
+        var disqus_config = function () {
+          this.page.url = 'https:\/\/dawnarc.com\/2020\/07\/ue4deferred-shading-renderer-notes\/';
+          
+            this.page.identifier = '\/2020\/07\/ue4deferred-shading-renderer-notes\/'
+          
+        };
+        (function() {
+          
+          
+          if (window.location.hostname == "localhost") {
+            return;
+          }
+          var d = document, s = d.createElement('script');
+          var disqus_shortname = 'dawnarc';
+          s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+          s.setAttribute('data-timestamp', +new Date());
+          (d.head || d.body).appendChild(s);
+        })();
+      </script>
+    
+  
+
+
+
+
+
+
+    
+  </body>
+</html>
+

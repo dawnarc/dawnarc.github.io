@@ -318,6 +318,135 @@ if (!doNotTrack) {
     
     <div class="postShorten-header">
       <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2016/06/ue4charactermovecomponent%E4%B8%AD%E5%90%84%E4%B8%AA%E5%B1%9E%E6%80%A7%E7%9A%84%E6%84%8F%E4%B9%89%E5%8F%8A%E9%BB%98%E8%AE%A4%E5%80%BC/">
+          [UE4]CharacterMoveComponent中各个属性的意义及默认值
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2016-06-22T16:10:02&#43;08:00">
+        
+  
+  
+  
+  
+    Wednesday, 16:10, Jun 22, 2016
+  
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        AirControl: 当Jumping或者Falling的时候，侧向移动的速度。默认为0.05，1表示以最大速度侧向移动，0表示禁止侧向移动
+CharacterMovement	0x000002244572a400 (Name=0x0000022474e0aab8 &quot;CharMoveComp&quot;)	UCharacterMovementComponent * {UE4Editor-Engine.dll!UCharacterMovementComponent}[UCharacterMovementComponent]	(Name=0x0000022474e0aab8 &quot;CharMoveComp&quot;)	UE4Editor-Engine.dll!UCharacterMovementComponentUPawnMovementComponent	(Name=0x0000022474e0aab8 &quot;CharMoveComp&quot;)	UPawnMovementComponentIRVOAvoidanceInterface	{...}	IRVOAvoidanceInterfaceINetworkPredictionInterface	{...}	INetworkPredictionInterfaceCharacterOwner	0x000002244571ab00 (Name=0x000002240ef84228 &quot;pawn_shuangtouguai_charBP_C&quot;_0)	ACharacter * {AWarriorCharacter}GravityScale	1.00000000	floatMaxStepHeight	45.0000000	floatJumpZVelocity	420.000000	floatJumpOffJumpZFactor	0.500000000	floatWalkableFloorAngle	44.7650833	floatWalkableFloorZ	0.710000038	floatMovementMode	MOVE_None (0)	TEnumAsByte&lt;enum EMovementMode&gt;CustomMovementMode	0 '\0'	unsigned charOldBaseLocation	{X=0.000000000 Y=0.000000000 Z=0.000000000 }	FVectorOldBaseQuat	{X=0.000000000 Y=0.000000000 Z=0.000000000 ...}	FQuatGroundFriction	8.
+      
+      <p>
+        <a href="https://dawnarc.com/2016/06/ue4charactermovecomponent%E4%B8%AD%E5%90%84%E4%B8%AA%E5%B1%9E%E6%80%A7%E7%9A%84%E6%84%8F%E4%B9%89%E5%8F%8A%E9%BB%98%E8%AE%A4%E5%80%BC/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2016/06/ue4movement%E4%B8%8Enavigation%E7%9B%B8%E5%85%B3%E7%9A%84api/">
+          [UE4]Movement与Navigation相关的API
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2016-06-19T17:33:02&#43;08:00">
+        
+  
+  
+  
+  
+    Sunday, 17:33, Jun 19, 2016
+  
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        如何修改角色的最大移动速度 if (UCharacterMovementComponent* Movement = MyCharacter-&gt;GetCharacterMovement()){Movement-&gt;MaxWalkSpeed *= 0.5;} 如何修改角色的当前移动速度 Tick() 中执行：
+GetCharacterMovement()-&gt;Velocity = FVector(0.f, 500.f, 0.f); 如何停止正在移动的Pawn AController::StopMovement() 修改重力加速度(Gravity)   编辑器中设置全局重力加速度
+Project Settings -》 Engine -》 Physics -》 Default Physics Settings -》 Default Gravity Z。
+  运行时runtime期间设置全局重力加速度：
+ AWorldSettings* MyWorldSetting=GetWorldSettings();MyWorldSetting-&gt;bGlobalGravitySet=true;MyWorldSetting-&gt;GlobalGravityZ = 900.f;   设置单个角色的重力加速度（倍率）
+ MyCharacter-&gt;GetCharacterMovement()-&gt;GravityScale = 100.f   飞行模式中的加速减速问题 CharacterMovement默认有一个加速效果（属性值为MaxAcceleration，默认为2048，表示加速率），如果MovementMode设置为Walking模式，当调用Controller-&gt;StopMovement()来立即停止移动； 但是Flying Mode时，即使不再执行AddMovementInput()，Actor仍然会继续滑行一段距离，如果希望此时立即停止不滑行，需要将减速速率（默认为0）设置为加速速率的大小：
+GetCharacterMovement()-&gt;BrakingDecelerationFlying = GetCharacterMovement()-&gt;MaxAcceleration; 设置MovementMode时的注意事项 如果一个Actor被Spawn出来之后，其MovementMode默认状态是Walking，如果此时Spawn的位置在空中，在没有Controller对其Possess的情况下，其静止在空中，当Possess之后，MovementMode会自动变为Falling，如果想让其继续停留在空中(比如飞行类的角色)，此时再手动将其MovementMode设置为Flying。绝对不能在possess之前设置，否则设置状态会被引擎修改掉。
+      
+      <p>
+        <a href="https://dawnarc.com/2016/06/ue4movement%E4%B8%8Enavigation%E7%9B%B8%E5%85%B3%E7%9A%84api/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
         <a class="link-unstyled" href="https://dawnarc.com/2016/06/ue4playercontroller-api-in-common/">
           [UE4]PlayerController API In Common
         </a>
@@ -1140,142 +1269,6 @@ Obj-&gt;AddToRoot(); 注：如果执行了AddToRoot()，那么退出程序前�
       
       <p>
         <a href="https://dawnarc.com/2016/05/ue4uobject-conditionalbegindestroy%E7%9B%B8%E5%85%B3/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-            
-              
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2016/05/ue4console%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4command/">
-          [UE4]console命令行常用命令(command)
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2016-05-27T15:30:02&#43;08:00">
-        
-  
-  
-  
-  
-    Friday, 15:30, May 27, 2016
-  
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        Editor命令（ShowFlag） 如果想在 Editor 中查看 Actor 蓝图的 Bounds（默认只能在 Static Mesh 编辑窗口中查看），可以使用 ShowFlag 命令（在编辑器窗口中按下波浪键打开输入窗口）。
-开启：
-ShowFlag.Bounds 1 关闭：
-ShowFlag.Bounds 0 凡是 Show 命令能查看的参数，ShowFlag也能查看，包括Collision等。
-如果想在游戏运行时查看指定物体的 Bounds，那么可以先执行 ShowFlag.Bounds 1，然后再以 Simulate 模式运行游戏，然后再在场景中单击要查看的物体，然后就可以显示该物体的 Bounds 信息。
- 运行时命令 修改Camera Mode（切换摄像机视角）： Camera [modename] 其中modename的值为：
-static const FName NAME_Fixed = FName(TEXT(&quot;Fixed&quot;));static const FName NAME_ThirdPerson = FName(TEXT(&quot;ThirdPerson&quot;));static const FName NAME_FreeCam = FName(TEXT(&quot;FreeCam&quot;));static const FName NAME_FreeCam_Default = FName(TEXT(&quot;FreeCam_Default&quot;));static const FName NAME_FirstPerson = FName(TEXT(&quot;FirstPerson&quot;)); 启用debug camera：
-      
-      <p>
-        <a href="https://dawnarc.com/2016/05/ue4console%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4command/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-            
-              
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2016/03/ue4fstring%E5%B8%B8%E7%94%A8api/">
-          [UE4]FString常用API
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2016-03-01T16:45:02&#43;08:00">
-        
-  
-  
-  
-  
-    Tuesday, 16:45, Mar 1, 2016
-  
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        将int或float转换为string：
-FString NewString = FString::FromInt(YourInt); FString VeryCleanString = FString::SanitizeFloat(YourFloat);  将FString转换为 TCHAR*：
-FString str; TCHAR *c1 = *str; TCHAR* c2 = str.GetCharArray().GetData();  将string转换为int或者float：
-FString TheString = &quot;123.021&quot;; int32 MyShinyNewInt = FCString::Atoi(*TheString); float MyShinyNewFloat = FCString::Atof(*TheString);  字符串切割：
-FString a(&quot;1,2,3&quot;); TArray&lt;FString&gt; stringArray; a.ParseIntoArray(stringArray, TEXT(&quot;,&quot;), false);  字符串截取：
-FString::Left(int count); FString::Right(int count);  字符串格式化Format：
-FString Path = FString::Printf(TEXT(&quot;StaticMesh'/Game/Shapes/ground_shape_%d.ground_shape_%d'&quot;), i); 如何获取FString转换后char之后的长度 比如用TCHAR_TO_ANSI()将tchar转换为char之后，char的长度如何计算？ 使用FTCHARToANSI::Length()，示例如下：
-FTCHARToANSI Convert(*String);Ar-&gt;Serialize((ANSICHAR*)Convert, Convert.Length()); 参考自：https://docs.unrealengine.com/latest/INT/Programming/UnrealArchitecture/StringHandling/CharacterEncoding/index.html
-中文字符的FString 转换 char数组 FString str(TEXT(&quot;笑傲江湖DA&quot;));const wchar_t* s1 = *str;int LenW = wcslen(s1);int LenC = LenW * 2;//先转换为 char*, 比如 protobuf 不支持 wchar_t，那么可以将中文转换为char，然后储存在protobuf内部。char* buf = new char[LenC + 1]();memcpy(buf, s1, LenC);//验证char*能否还原为 wchar_t 数组wchar_t* buf2 = new wchar_t[LenC/2 + 1]();memcpy(buf2, buf, LenC); TCHAR*、wchar_t*、char* 转换相关 //char 转换为 TCHARTCHAR* msg = ANSI_TO_TCHAR(&quot;dddd&quot;); TCHAR* msg2 = UTF8_TO_TCHAR(&quot;dddd&quot;); //TCHAR 转换为 charchar* Str4 = TCHAR_TO_UTF8(*Str);char* Str4 = TCHAR_TO_ANSI(*Str);//TCHAR 转换为 wchar_tFSting Str;wchar_t* Str2 = TCHAR_TO_WCHAR(*Str);//wchar_t 转换为 TCHAR wchar_t Str5[] = L&quot;sss&quot;;TCHAR* Str6 = (TCHAR*)Str5; 如果 char* 字符串有中文，转换为 FString 时，必须使用 ANSI_TO_TCHAR() 或者 UTF8_TO_TCHAR()，例如：FString Text = UTF8_TO_TCHAR(&ldquo;牛鼻&rdquo;); 。否则会出现乱码。另外，如果汉字是写在代码里面，则代码文件的编码格式需要改成UTF8，否则也会乱码。
-      
-      <p>
-        <a href="https://dawnarc.com/2016/03/ue4fstring%E5%B8%B8%E7%94%A8api/" class="postShorten-excerpt_link link">Continue reading</a>
         
       </p>
     </div>

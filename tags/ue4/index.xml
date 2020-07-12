@@ -6,10 +6,28 @@
     <description>Recent content in UE4 on 玄冬Wong</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 26 Jun 2020 15:52:02 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 12 Jul 2020 21:17:02 +0800</lastBuildDate>
     
 	<atom:link href="https://dawnarc.com/tags/ue4/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>[UE4]Shader Development Notes</title>
+      <link>https://dawnarc.com/2020/07/ue4shader-development-notes/</link>
+      <pubDate>Sun, 12 Jul 2020 21:17:02 +0800</pubDate>
+      
+      <guid>https://dawnarc.com/2020/07/ue4shader-development-notes/</guid>
+      <description>&lt;p&gt;Keywords: UE4, Shader Development Notes&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>[UE4]Deferred Shading Renderer Notes</title>
+      <link>https://dawnarc.com/2020/07/ue4deferred-shading-renderer-notes/</link>
+      <pubDate>Fri, 10 Jul 2020 03:17:02 +0800</pubDate>
+      
+      <guid>https://dawnarc.com/2020/07/ue4deferred-shading-renderer-notes/</guid>
+      <description>&lt;p&gt;Keywords: UE4, Deferred Shading Renderer Notes&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>[UE4]RHI (Rendering Hardware Interface) Notes</title>
@@ -17,7 +35,7 @@
       <pubDate>Fri, 26 Jun 2020 15:52:02 +0800</pubDate>
       
       <guid>https://dawnarc.com/2020/06/ue4rhi-rendering-hardware-interface-notes/</guid>
-      <description>&lt;p&gt;Keywords: UE4, Programming Debug Tricks Notes&lt;/p&gt;</description>
+      <description>&lt;p&gt;Keywords: UE4, RHI (Rendering Hardware Interface) Notes&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -93,11 +111,11 @@
     </item>
     
     <item>
-      <title>[UE4]Runtime Procedural Assets Notes</title>
-      <link>https://dawnarc.com/2020/03/ue4runtime-procedural-assets-notes/</link>
+      <title>[UE4]Runtime Procedural Assets &amp; Generation Notes</title>
+      <link>https://dawnarc.com/2020/03/ue4runtime-procedural-assets-generation-notes/</link>
       <pubDate>Wed, 25 Mar 2020 19:02:02 +0800</pubDate>
       
-      <guid>https://dawnarc.com/2020/03/ue4runtime-procedural-assets-notes/</guid>
+      <guid>https://dawnarc.com/2020/03/ue4runtime-procedural-assets-generation-notes/</guid>
       <description>&lt;p&gt;Keywords: UE4, Runtime Procedural Assets Notes&lt;/p&gt;</description>
     </item>
     
@@ -444,11 +462,11 @@
     </item>
     
     <item>
-      <title>[UE4]Renderer Related</title>
-      <link>https://dawnarc.com/2019/01/ue4renderer-related/</link>
+      <title>[UE4]Renderer Applying Notes</title>
+      <link>https://dawnarc.com/2019/01/ue4renderer-applying-notes/</link>
       <pubDate>Fri, 25 Jan 2019 18:32:02 +0800</pubDate>
       
-      <guid>https://dawnarc.com/2019/01/ue4renderer-related/</guid>
+      <guid>https://dawnarc.com/2019/01/ue4renderer-applying-notes/</guid>
       <description>&lt;p&gt;Keyworks: UE4, Renderer, Forward Rendering&lt;/p&gt;</description>
     </item>
     
@@ -864,8 +882,8 @@ Velocity = Velocity.GetSafeNormal() * InitialSpeed; 前者速度方向是相对
 TSharedPtr Summary TSharedPtr 相当于对象的引用计数器。每当对 TSharedPtr 赋值一次，该 TSharedPtr 引用对象计数加一，当引用计数为0时，则该对象被自动销毁。
 用法：
 TSharedPtr&amp;lt;TestClass&amp;gt; ObjPtr = MakeShareable(new TestClass()); 如果两个 TSharedPtr 相互赋值，则会导致对象永不释放，导致内存泄漏。
- TSharedPtr 是否只对 raw pointers 计数 TSharedPtr的代码注释注明其作用对象为raw pointers:
-/** Proxy structure for implicitly converting raw pointers to shared/weak pointers */// NOTE: The following is an Unreal extension to standard shared_ptr behaviortemplate&amp;lt; class ObjectType &amp;gt;struct FRawPtrProxy{/** The object pointer */ObjectType* Object;/** Reference controller used to destroy the object */FReferenceControllerBase* ReferenceController;/** Construct implicitly from an object */FORCEINLINE FRawPtrProxy( ObjectType* InObject ): Object ( InObject ), ReferenceController( NewDefaultReferenceController( InObject ) ){}/** Construct implicitly from an object and a custom deleter */template&amp;lt; class Deleter &amp;gt;FORCEINLINE FRawPtrProxy( ObjectType* InObject, Deleter&amp;amp;&amp;amp; InDeleter ): Object ( InObject ), ReferenceController( NewCustomReferenceController( InObject, Forward&amp;lt; Deleter &amp;gt;( InDeleter ) ) ){}}; 按理说：UE4的GC系统其实就相当于针对UObject类型对象的std::shared_ptr&amp;lt;&amp;gt;，所以TSharedPtr作用范围也没必然针对UObject。</description>
+ TSharedPtr 是否对 UObject 对象计数 TSharedPtr的代码注释注明其作用对象为raw pointers:
+/** Proxy structure for implicitly converting raw pointers to shared/weak pointers */// NOTE: The following is an Unreal extension to standard shared_ptr behaviortemplate&amp;lt; class ObjectType &amp;gt;struct FRawPtrProxy{/** The object pointer */ObjectType* Object;/** Reference controller used to destroy the object */FReferenceControllerBase* ReferenceController;/** Construct implicitly from an object */FORCEINLINE FRawPtrProxy( ObjectType* InObject ): Object ( InObject ), ReferenceController( NewDefaultReferenceController( InObject ) ){}/** Construct implicitly from an object and a custom deleter */template&amp;lt; class Deleter &amp;gt;FORCEINLINE FRawPtrProxy( ObjectType* InObject, Deleter&amp;amp;&amp;amp; InDeleter ): Object ( InObject ), ReferenceController( NewCustomReferenceController( InObject, Forward&amp;lt; Deleter &amp;gt;( InDeleter ) ) ){}}; 按理说：UE4的GC系统其实就相当于针对UObject类型对象的std::shared_ptr&amp;lt;&amp;gt;，所以TSharedPtr作用范围也没必要包含UObject。</description>
     </item>
     
     <item>
@@ -1382,7 +1400,9 @@ Building iOS game in Unreal Engine 4 via remote machine
 http://zompi.pl/building-ios-game-in-unreal-engine-4-via-remote-machine/
 UE4持续集成打包（Mac脚本自动化打包）
 https://blog.csdn.net/xlyrh/article/details/89553655
- 如果一切看起来尽在掌控之中，那说明你跑得不够快；如果你身高会中冷箭，说明你走在他们面前；如果你会被他们伤到，说明你走得不够远，还在他们的射程以内。不要停下来解释，只需要继续前进，把他们远远甩在后面。</description>
+打包含iOS平台的安装版引擎（Installed Build）相关问题记录
+https://zhuanlan.zhihu.com/p/141434942
+BaseEngine.ini相关 ios远程打包时，\Engine\Config\BaseEngine.ini中需要修复手动配置RemoteServerName和SSHPrivateKeyOverridePath，否则会有奇怪的报错。    如果一切看起来尽在掌控之中，那说明你跑得不够快；如果你身高会中冷箭，说明你走在他们面前；如果你会被他们伤到，说明你走得不够远，还在他们的射程以内。不要停下来解释，只需要继续前进，把他们远远甩在后面。</description>
     </item>
     
     <item>

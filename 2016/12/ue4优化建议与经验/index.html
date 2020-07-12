@@ -405,7 +405,7 @@ UE4做了优化，当你使用<code>FTransform::TransformXXX()</code>时，如�
 <p>TArray移除元素时，如果对元素的顺序不关心，可以使用<code>RemoveAtSwap()</code>代替<code>RemoveAt()</code>，前者是用数组末尾的元素来填补内存空洞（移除元素后产生的无效内存空间），而后者是对空洞后的所有元素平移。时间复杂度，前者为O(RemovedCount)，后者为O(ArrayNum)。</p>
 </li>
 <li>
-<p>如果单个生产者单个消费者（SPSC）的线程环境，可以使用<code>TCircularQueue</code>作为消息队列来保证数据安全，比使用<code>FScopeLock</code>消耗低，因为前者内部使用的是atomic，而非lock。</p>
+<p>如果是单个生产者单个消费者（SPSC）的线程环境，可以使用<code>TCircularQueue</code>作为消息队列来保证数据安全，比使用<code>FScopeLock</code>消耗低，因为前者内部使用的是atomic，而非lock（虽然atomic也算一种轻量级lock）。</p>
 </li>
 </ol>
 <h5 id="视距裁剪剔除">视距裁剪（剔除）</h5>
@@ -515,7 +515,7 @@ Dynamic Shadow Distance 表示在多少距离内使用动态阴影，超过这�
 </li>
 <li>
 <p>当Instanced Mesh的数量较多时（比如百万级），一帧内执行<code>RemoveInstance</code>或者<code>UpdateInstanceTransform</code>数次，帧率会狂泻。<br>
-优化办法：操作Instanced Mesh之前，将<code>UHierarchicalInstancedStaticMeshComponent::bAutoRebuildTreeOnInstanceChanges</code>设置为false，然后执行你需要的各种Instanced Mesh操作，操作玩之后，然后将<code>bAutoRebuildTreeOnInstanceChanges</code>设置为true，然后执行<code>BuildTreeIfOutdated(true, false);</code>，这样可以显著减少因操作百万级Instanced Mesh而导致的性能损失。</p>
+优化办法：操作Instanced Mesh之前，将<code>UHierarchicalInstancedStaticMeshComponent::bAutoRebuildTreeOnInstanceChanges</code>设置为false，然后执行你需要的各种Instanced Mesh操作，操作完之后，然后将<code>bAutoRebuildTreeOnInstanceChanges</code>设置为true，然后执行<code>BuildTreeIfOutdated(true, false);</code>，这样可以显著减少因操作百万级Instanced Mesh而导致的性能损失。</p>
 </li>
 <li>
 <p>如果植被材质消耗成为瓶颈时，宁可增加面数，也不要使用 Translucent 材质，Masked酌情使用。比如一根草的面片，其整个形状全部使用三角面拼出来，而不要用一个三角面再加 Mask 或者 Translucent 材质的方式。</p>
