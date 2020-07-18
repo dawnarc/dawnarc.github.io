@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.69.2 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="author" content="Neil Wang">
+<meta name="keywords" content="">
+<meta name="description" content="keywords: View Content of Static Library(.lib) and Shared Library(.dll)">
+
+
+<meta property="og:description" content="keywords: View Content of Static Library(.lib) and Shared Library(.dll)">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[C&#43;&#43;]Tricks on Building">
+<meta name="twitter:title" content="[C&#43;&#43;]Tricks on Building">
+<meta property="og:url" content="https://dawnarc.com/2019/07/c-tricks-on-building/">
+<meta property="twitter:url" content="https://dawnarc.com/2019/07/c-tricks-on-building/">
+<meta property="og:site_name" content="玄冬Wong">
+<meta property="og:description" content="keywords: View Content of Static Library(.lib) and Shared Library(.dll)">
+<meta name="twitter:description" content="keywords: View Content of Static Library(.lib) and Shared Library(.dll)">
+<meta property="og:locale" content="en-us">
+
+  
+    <meta property="article:published_time" content="2019-07-04T21:27:40">
+  
+  
+    <meta property="article:modified_time" content="2019-07-04T21:27:40">
+  
+  
+  
+    
+      <meta property="article:section" content="C&#43;&#43;">
+    
+  
+  
+    
+      <meta property="article:tag" content="C&#43;&#43;">
+    
+  
+
+
+<meta name="twitter:card" content="summary">
+
+  <meta name="twitter:site" content="@dawn_arc">
+
+
+  <meta name="twitter:creator" content="@dawn_arc">
+
+
+
+
+
+
+  <meta property="og:image" content="https://dawnarc.com/thumbnail/thumbnail-japen-012.jpg">
+  <meta property="twitter:image" content="https://dawnarc.com/thumbnail/thumbnail-japen-012.jpg">
+
+
+
+
+
+  <meta property="og:image" content="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=640">
+  <meta property="twitter:image" content="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=640">
+
+
+    <title>[C&#43;&#43;]Tricks on Building</title>
+
+    <link rel="icon" href="https://dawnarc.com/favicon.png">
+    
+
+    
+      <link rel="publisher" href="https://plus.google.com/111340706178390411568">
+    
+
+    <link rel="canonical" href="https://dawnarc.com/2019/07/c-tricks-on-building/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/jquery.fancybox.min.css" integrity="sha256-vuXZ9LGmmwtjqFX1F+EKin1ThZMub58gKULUyf0qECk=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/helpers/jquery.fancybox-thumbs.min.css" integrity="sha256-SEa4XYAHihTcEP1f5gARTB2K26Uk8PsndQYHQC1f4jU=" crossorigin="anonymous" />
+    
+    
+    <link rel="stylesheet" href="https://dawnarc.com/css/style-twzjdbqhmnnacqs0pwwdzcdbt8yhv8giawvjqjmyfoqnvazl0dalmnhdkvp7.min.css" />
+    
+    
+      
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/solarized-light.min.css">
+      
+    
+
+    
+      
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-78064851-2', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="4">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="https://dawnarc.com/">玄冬Wong</a>
+  </div>
+  
+    
+      <a class="header-right-picture "
+         href="https://dawnarc.com/#about">
+    
+    
+    
+      
+        <img class="header-picture" src="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=90" alt="Author&#39;s picture" />
+      
+    
+    </a>
+    
+</header>
+
+      <nav id="sidebar" data-behavior="4">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="https://dawnarc.com/#about">
+          <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=110" alt="Author&#39;s picture" />
+        </a>
+        <h4 class="sidebar-profile-name">Neil Wang</h4>
+        
+          <h5 class="sidebar-profile-bio">久长唯有品格</h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/categories">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+      
+      <span class="sidebar-button-desc">Categories</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/tags">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+      
+      <span class="sidebar-button-desc">Tags</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/archives">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+      
+      <span class="sidebar-button-desc">Archives</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/#about">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+      
+      <span class="sidebar-button-desc">About</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+      
+      <span class="sidebar-button-desc">Home</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/index.xml">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://stackoverflow.com/users/1645289/protoss" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-stack-overflow"></i>
+      
+      <span class="sidebar-button-desc">Stack Overflow</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://www.facebook.com/koanland" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-facebook"></i>
+      
+      <span class="sidebar-button-desc">Facebook</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/dawnarc" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://www.instagram.com/dawn_arc/" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-instagram"></i>
+      
+      <span class="sidebar-button-desc">Instagram</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://www.linkedin.com/in/dawnarc/" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-linkedin"></i>
+      
+      <span class="sidebar-button-desc">Linkedin</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://www.pinterest.com/wangaiguo/" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-pinterest"></i>
+      
+      <span class="sidebar-button-desc">Pinterest</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://steamcommunity.com/id/dawnarc" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-steam"></i>
+      
+      <span class="sidebar-button-desc">Steam</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://twitter.com/dawn_arc" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-twitter"></i>
+      
+      <span class="sidebar-button-desc">Twitter</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://weibo.com/koanland" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-weibo"></i>
+      
+      <span class="sidebar-button-desc">Weibo</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+
+    </ul>
+  </div>
+</nav>
+
+      
+
+      <div id="main" data-behavior="4"
+        class="
+               hasCoverMetaIn
+               ">
+        <article class="post" itemscope itemType="http://schema.org/BlogPosting">
+          
+          
+            <div class="post-header main-content-wrap text-left">
+  
+    <h1 class="post-title" itemprop="headline">
+      [C&#43;&#43;]Tricks on Building
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2019-07-04T21:27:40&#43;08:00">
+        
+  
+  
+  
+  
+    Thursday, 21:27, Jul 4, 2019
+  
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/c&#43;&#43;">C&#43;&#43;</a>
+    
+  
+
+  </div>
+
+</div>
+          
+          <div class="post-content markdown" itemprop="articleBody">
+            <div class="main-content-wrap">
+              <p>keywords: View Content of Static Library(.lib) and Shared Library(.dll)</p>
+<h3 id="list-all-obj-files-symbols-from-a-static-library">List all obj files (symbols) from a static library</h3>
+<h5 id="windows">Windows</h5>
+<p><strong>GUI</strong></p>
+<p>DLL Export Viewer<br>
+<a href="http://www.nirsoft.net/utils/dll_export_viewer.html">http://www.nirsoft.net/utils/dll_export_viewer.html</a></p>
+<p><strong>CLI</strong></p>
+<p>Open a visual command console (Visual Studio Command Prompt)</p>
+<pre><code>dumpbin /ARCHIVEMEMBERS openssl.x86.lib /OUT:dump.log
+</code></pre>
+<p>or</p>
+<pre><code>lib /LIST openssl.x86.lib
+</code></pre>
+<p>or <span class="highlight-text green">just open it with 7-zip</span> :) its an AR archive.</p>
+<p>Reference: How to See the Contents of Windows library (*.lib)<br>
+<a href="https://stackoverflow.com/a/26689684/1645289">https://stackoverflow.com/a/26689684/1645289</a></p>
+<h5 id="linux">Linux</h5>
+<p><strong>CLI</strong></p>
+<p>Command:</p>
+<pre><code>nm -C libschnoeck.a | less
+</code></pre>
+<p>Or:</p>
+<pre><code>//This will list all of the files in the archive.
+ar -t mylib.a  
+</code></pre>
+<p>Reference:<br>
+Contents of a static library<br>
+<a href="https://stackoverflow.com/questions/3757108/contents-of-a-static-library/21320738">https://stackoverflow.com/questions/3757108/contents-of-a-static-library/21320738</a></p>
+<p>Extract object (*.o) files from an iPhone static library<br>
+<a href="https://stackoverflow.com/a/21927224/1645289">https://stackoverflow.com/a/21927224/1645289</a></p>
+<h3 id="extract-all-obj-files-symbols-from-a-static-library">Extract all obj files (symbols) from a static library</h3>
+<h5 id="windows-1">Windows</h5>
+<p>This is the batch file that I ended up using with usage <code>extract.bat mylib.lib</code> or <code>extract.bat *.lib</code> even</p>
+<pre><code>@ECHO OFF
+SETLOCAL EnableDelayedExpansion
+
+:Loop
+IF &quot;%1&quot;==&quot;&quot; GOTO Continue
+
+FOR %%F in (%1) DO (
+
+    SET LIBFILE=%%F
+    SHIFT
+
+    @ECHO !LIBFILE!
+
+    FOR /F %%O IN ('lib.exe /LIST !LIBFILE! /NOLOGO') DO (
+        @SET OBJFILE=%%O
+        @ECHO !OBJFILE!
+        
+        SET OBJPATH=%%~dO%%~pO
+        SET OBJNAME=%%~nO
+
+        IF NOT EXIST &quot;!OBJPATH!&quot; md !OBJPATH!
+
+        IF EXIST &quot;!OBJFILE!&quot; ECHO !OBJFILE! exists, skipping...
+        IF NOT EXIST &quot;!OBJFILE!&quot; lib.exe /NOLOGO !LIBFILE! &quot;/EXTRACT:!OBJFILE!&quot; &quot;/OUT:!OBJFILE!&quot;
+    )
+)
+GOTO Loop
+:Continue
+</code></pre>
+<p>Reference:<br>
+<a href="https://stackoverflow.com/a/62896582">https://stackoverflow.com/a/62896582</a></p>
+<h5 id="linux-1">Linux</h5>
+<pre><code>$ mkdir object
+$ cp libarith.a object/
+$ cd object
+$ ar x libarith.a
+$ ls *.o
+addition.o
+multiplication.o
+</code></pre>
+<p>Or:</p>
+<pre><code>//This will extract the object give myobj.o from the library mylib.a
+ar -xv mylib.a myobj.o 
+</code></pre>
+<p>UNIX ar Examples: How To Create, View, Extract, Modify C Archive Files (*.a)<br>
+<a href="https://www.thegeekstuff.com/2010/08/ar-command-examples/">https://www.thegeekstuff.com/2010/08/ar-command-examples/</a></p>
+<h3 id="create--combine--build-a-new-static-library-from-obj-files-symbols">Create / Combine / Build a new static library from obj files (symbols)</h3>
+<h5 id="windows-2">Windows</h5>
+<p>Create static library:</p>
+<pre><code>LIB.EXE /OUT:MYLIB.LIB FILE1.OBJ FILE2.OBJ
+</code></pre>
+<p>Create dynamic library:</p>
+<pre><code>LINK.EXE /DLL /OUT:MYLIB.DLL FILE3.OBJ FILE4.OBJ
+</code></pre>
+<p>Create library from all objects:</p>
+<pre><code>lib /out:libbgi.lib *.obj
+</code></pre>
+<p>Link from source file:</p>
+<pre><code>cl /LD foo.c bar.c baz.c /FeMyImage.dll
+</code></pre>
+<p>Or:</p>
+<pre><code>cl /LD foo.c bar.c baz.c /link /out:MyImage.dll
+</code></pre>
+<p>Reference:<br>
+<a href="https://stackoverflow.com/a/2727294/1645289">https://stackoverflow.com/a/2727294/1645289</a></p>
+<p><a href="https://stackoverflow.com/a/31830252/1645289">https://stackoverflow.com/a/31830252/1645289</a></p>
+<h5 id="linux-2">Linux</h5>
+<pre><code>ar -r libsmall.a obj1.o obj2.o obj3.o
+</code></pre>
+<p>Or:</p>
+<pre><code>ar -rcs libexample.a *.o
+</code></pre>
+<p>Link the library with the switch:</p>
+<pre><code>-lexample
+</code></pre>
+<p>Reference:<br>
+<a href="https://stackoverflow.com/a/53522978/1645289">https://stackoverflow.com/a/53522978/1645289</a></p>
+<p><a href="https://stackoverflow.com/a/33981949">https://stackoverflow.com/a/33981949</a></p>
+<h3 id="linking-static-libraries-to-other-static-libraries">Linking static libraries to other static libraries</h3>
+<h5 id="windows-3">Windows</h5>
+<pre><code>lib.exe /OUT:compositelib.lib  lib1.lib lib2.lib
+</code></pre>
+<p><a href="https://stackoverflow.com/a/2157735/1645289">https://stackoverflow.com/a/2157735/1645289</a></p>
+<hr>
+<p><code>你不知道的，就伤害不到你。──罗伯特·佩恩·沃伦（Robert Penn Warren）《国王的人马》（All The King's Men）</code></p>
+              
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+                
+                
+                  <div class="post-footer-tags">
+                    <span class="text-color-light text-small">TAGGED IN</span><br/>
+                    
+  <a class="tag tag--primary tag--small" href="https://dawnarc.com/tags/c&#43;&#43;/">C&#43;&#43;</a>
+
+                  </div>
+                
+              
+            
+            <div class="post-actions-wrap">
+  
+      <nav >
+        <ul class="post-actions post-action-nav">
+          
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2019/07/android-ndktoolchains-of-llvm-and-gcc/" data-tooltip="[Android NDK]Toolchains of LLVM and GCC">
+              
+                  <i class="fa fa-angle-left"></i>
+                  <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+                </a>
+            </li>
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2019/07/ue4unrealbuildtool-apis-in-common/" data-tooltip="[UE4]UnrealBuildTool APIs in common">
+              
+                  <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+                  <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+          
+        </ul>
+      </nav>
+    <ul class="post-actions post-action-share" >
+      
+        <li class="post-action hide-lg hide-md hide-sm">
+          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
+            <i class="fa fa-share-alt"></i>
+          </a>
+        </li>
+        
+      
+      
+        <li class="post-action">
+          <a class="post-action-btn btn btn--default" href="#disqus_thread">
+            <i class="fa fa-comment-o"></i>
+          </a>
+        </li>
+      
+      <li class="post-action">
+        
+          <a class="post-action-btn btn btn--default" href="#">
+        
+          <i class="fa fa-list"></i>
+        </a>
+      </li>
+    </ul>
+  
+</div>
+
+            
+              
+                <div id="disqus_thread">
+  <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+              
+            
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2020 Neil Wang. All Rights Reserved. Powered by <A href="https://gohugo.io/"> Hugo</A> | Theme created by <A href="https://github.com/kakawait/hugo-tranquilpeak-theme/"> Tranquilpeak</A>.
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+        <div class="post-actions-wrap">
+  
+      <nav >
+        <ul class="post-actions post-action-nav">
+          
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2019/07/android-ndktoolchains-of-llvm-and-gcc/" data-tooltip="[Android NDK]Toolchains of LLVM and GCC">
+              
+                  <i class="fa fa-angle-left"></i>
+                  <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+                </a>
+            </li>
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2019/07/ue4unrealbuildtool-apis-in-common/" data-tooltip="[UE4]UnrealBuildTool APIs in common">
+              
+                  <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+                  <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+          
+        </ul>
+      </nav>
+    <ul class="post-actions post-action-share" >
+      
+        <li class="post-action hide-lg hide-md hide-sm">
+          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
+            <i class="fa fa-share-alt"></i>
+          </a>
+        </li>
+        
+      
+      
+        <li class="post-action">
+          <a class="post-action-btn btn btn--default" href="#disqus_thread">
+            <i class="fa fa-comment-o"></i>
+          </a>
+        </li>
+      
+      <li class="post-action">
+        
+          <a class="post-action-btn btn btn--default" href="#">
+        
+          <i class="fa fa-list"></i>
+        </a>
+      </li>
+    </ul>
+  
+</div>
+
+      </div>
+      <div id="share-options-bar" class="share-options-bar" data-behavior="4">
+  <i id="btn-close-shareoptions" class="fa fa-close"></i>
+  <ul class="share-options">
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-remove"></i>
+    </div>
+    
+      <img id="about-card-picture" src="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=110" alt="Author&#39;s picture" />
+    
+    <h4 id="about-card-name">Neil Wang</h4>
+    
+      <div id="about-card-bio">久长唯有品格</div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        To be Marvelous
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker"></i>
+        <br/>
+        Yichang·Hubei
+      </div>
+    
+  </div>
+</div>
+
+    
+
+    
+  
+    
+      <div id="cover" style="background-image:url('https://dawnarc.com/cover-v1.2.0.jpg');"></div>
+    
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+
+	<link rel="stylesheet"
+      href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/solarized-light.min.css">
+	<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.7/js/jquery.fancybox.min.js" integrity="sha256-GEAnjcTqVP+vBp3SSc8bEDQqvWAZMiHyUSIorrWwH50=" crossorigin="anonymous"></script>
+
+
+<script src="https://dawnarc.com/js/script-pcw6v3xilnxydl1vddzazdverrnn9ctynvnxgwho987mfyqkuylcb1nlt.min.js"></script>
+
+
+<script lang="javascript">
+window.onload = updateMinWidth;
+window.onresize = updateMinWidth;
+document.getElementById("sidebar").addEventListener("transitionend", updateMinWidth);
+function updateMinWidth() {
+  var sidebar = document.getElementById("sidebar");
+  var main = document.getElementById("main");
+  main.style.minWidth = "";
+  var w1 = getComputedStyle(main).getPropertyValue("min-width");
+  var w2 = getComputedStyle(sidebar).getPropertyValue("width");
+  var w3 = getComputedStyle(sidebar).getPropertyValue("left");
+  main.style.minWidth = `calc(${w1} - ${w2} - ${w3})`;
+}
+</script>
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+  
+    
+      <script>
+        var disqus_config = function () {
+          this.page.url = 'https:\/\/dawnarc.com\/2019\/07\/c-tricks-on-building\/';
+          
+            this.page.identifier = '\/2019\/07\/c-tricks-on-building\/'
+          
+        };
+        (function() {
+          
+          
+          if (window.location.hostname == "localhost") {
+            return;
+          }
+          var d = document, s = d.createElement('script');
+          var disqus_shortname = 'dawnarc';
+          s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+          s.setAttribute('data-timestamp', +new Date());
+          (d.head || d.body).appendChild(s);
+        })();
+      </script>
+    
+  
+
+
+
+
+
+
+    
+  </body>
+</html>
+
