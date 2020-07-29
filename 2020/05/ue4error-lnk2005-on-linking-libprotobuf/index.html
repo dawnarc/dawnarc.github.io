@@ -360,29 +360,14 @@ if (!doNotTrack) {
 <p>Your project perhaps included multiple third party libraries, and they are linked a same library(e.g. <code>libprotobuf</code>), and this library(<code>libprotobuf</code>) was saved in multiple replicas in your project or engine.<br>
 e.g.: <code>WebRTC</code> was included in your project, <code>libprotobuf.lib</code> was also include as a third party library in your plugin, then packaging project would failed with error <code>LNK2005</code>. Because there&rsquo;s another <code>libprotobuf.lib</code> that was included in <code>WebRTC</code>.</p>
 <h5 id="solution">Solution</h5>
-<p>Make sure the library which was linked by multiple third party was in independence.</p>
-<p>How to build webrtc library with <code>protoubuf</code> removed?<br>
-Do as follows:</p>
-<ol>
-<li>
-<p>pull <a href="https://github.com/crow-misia/libwebrtc-bin">https://github.com/crow-misia/libwebrtc-bin</a>.</p>
-</li>
-<li>
-<p>Disable protobuf libraries: add <code>rtc_enable_protobuf=false</code> in &ldquo;/build.windows.ps1&rdquo;.</p>
-<pre><code> Push-Location $WEBRTC_DIR\src
-   # WebRTC ビルド
-   gn gen $BUILD_DIR\debug --args='is_debug=true treat_warnings_as_errors=false rtc_use_h264=false rtc_include_tests=false rtc_build_examples=false is_component_build=false use_rtti=true use_custom_libcxx=false rtc_enable_protobuf=false'
-   ninja -C &quot;$BUILD_DIR\debug&quot;
-
-   gn gen $BUILD_DIR\release --args='is_debug=false treat_warnings_as_errors=false rtc_use_h264=false rtc_include_tests=false rtc_build_examples=false is_component_build=false use_rtti=true strip_debug_info=true symbol_level=0 use_custom_libcxx=false rtc_enable_protobuf=false'
-   ninja -C &quot;$BUILD_DIR\release&quot;
- Pop-Location
-</code></pre>
-</li>
-<li>
-<p>execute &ldquo;build.windows.bat&rdquo; in Native Tool Command Prompt of Visual Studio.</p>
-</li>
-</ol>
+<p>Make sure <code>protobuf</code> match the same while <code>protobuf</code> was inlcuded in multiple third parties.</p>
+<div class="alert warning ">
+  <p>Version of <code>protobuf</code> that was included in WebRTC which is a third party of Unreal is <code>3.3.2</code>.<br>
+<a href="https://github.com/protocolbuffers/protobuf/releases/tag/v3.3.2">https://github.com/protocolbuffers/protobuf/releases/tag/v3.3.2</a></p>
+</div>
+<p>Reference:<br>
+Compilation issues on Win10 pro x64 - VS2015/2017<br>
+<a href="https://github.com/psmoveservice/PSMoveService/issues/419">https://github.com/psmoveservice/PSMoveService/issues/419</a></p>
 <h5 id="detail-of-errors">Detail of errors:</h5>
 <pre><code>webrtc.lib(message_lite.obj) : error LNK2005: &quot;public: bool __cdecl google::protobuf::MessageLite::AppendPartialToString(class std::basic_string&lt;char,struct std::char_traits&lt;char&gt;,class std::allocator&lt;char&gt; &gt; *)const &quot; (?AppendPartialToString@MessageLite@protobuf@google@@QEBA_NPEAV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z) already defined in libprotobuf.lib(message_lite.cc.obj)
 webrtc.lib(message_lite.obj) : error LNK2005: &quot;public: bool __cdecl google::protobuf::MessageLite::AppendToString(class std::basic_string&lt;char,struct std::char_traits&lt;char&gt;,class std::allocator&lt;char&gt; &gt; *)const &quot; (?AppendToString@MessageLite@protobuf@google@@QEBA_NPEAV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z) already defined in libprotobuf.lib(message_lite.cc.obj)

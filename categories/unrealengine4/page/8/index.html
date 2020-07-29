@@ -318,6 +318,70 @@ if (!doNotTrack) {
     
     <div class="postShorten-header">
       <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2018/04/ue4android-ndk%E6%89%93%E5%8C%85%E7%89%88%E6%9C%AC%E6%89%A7%E8%A1%8Cprotobuf%E7%9A%84parsefromarray%E5%87%BD%E6%95%B0%E5%B4%A9%E6%BA%83/">
+          [UE4]Android NDK打包版本执行protobuf的ParseFromArray函数崩溃
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2018-04-21T22:01:02&#43;08:00">
+        
+  
+  
+  
+  
+    Saturday, 22:01, Apr 21, 2018
+  
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        keywords：UE4、protobuf-lite、Android NDK、ParseFromArray、Crash
+protobuf与android ndk编译后，集成到UE4中执行时，每当执行ParseFromArray时就会崩溃（Windows版本没有问题）：
+MessageTest msg;bool rs = msg.ParseFromArray(buffer, buffer_size); 解决办法：将ParseFromArray()函数内部的代码复制出来，放在工程的代码中，然后再执行。
+protobuf 2.x #ifndef	__ProtobufHelper_H__#define	__ProtobufHelper_H__#include &lt;google/protobuf/message_lite.h&gt;#include &lt;google/protobuf/io/coded_stream.h&gt;class ProtobufHelper{public:static bool Parse(::google::protobuf::MessageLite&amp; Message, const char* Data, int Size){::google::protobuf::io::CodedInputStream input(reinterpret_cast&lt;const uint8*&gt;(Data), Size);return Message.MergePartialFromCodedStream(&amp;input) &amp;&amp; input.ConsumedEntireMessage();}};#endif protobuf 3.x #ifndef	__ProtobufHelper_H__#define	__ProtobufHelper_H__#include &lt;google/protobuf/message_lite.h&gt;#include &lt;google/protobuf/io/coded_stream.h&gt;#include &quot;CoreMinimal.h&quot;class ProtobufHelper{public:static bool Parse(::google::protobuf::MessageLite&amp; Message, const void* Data, int Size){::google::protobuf::io::CodedInputStream input(static_cast&lt;const uint8*&gt;(Data), Size);Message.
+      
+      <p>
+        <a href="https://dawnarc.com/2018/04/ue4android-ndk%E6%89%93%E5%8C%85%E7%89%88%E6%9C%AC%E6%89%A7%E8%A1%8Cprotobuf%E7%9A%84parsefromarray%E5%87%BD%E6%95%B0%E5%B4%A9%E6%BA%83/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
         <a class="link-unstyled" href="https://dawnarc.com/2018/04/ue4umg-progress-bar%E7%9B%B8%E5%85%B3%E8%AE%BE%E7%BD%AE/">
           [UE4]UMG Progress Bar相关设置
         </a>
@@ -1213,81 +1277,6 @@ clang: error: argument unused during compilation: '-fno-objc-exceptions' [-Werro
       
       <p>
         <a href="https://dawnarc.com/2018/03/ue4%E8%BD%AC%E8%BD%BDwindows-%E8%BF%9C%E7%A8%8B%E7%BC%96%E8%AF%91ios%E8%8B%A5%E5%B9%B2%E9%97%AE%E9%A2%98/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-            
-              
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2018/03/ue4%E7%A7%BB%E5%8A%A8%E7%AB%AF%E6%9D%90%E8%B4%A8%E4%B8%8E%E8%B4%B4%E5%9B%BE%E9%97%AE%E9%A2%98/">
-          [UE4]移动端材质与贴图问题
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2018-03-16T13:10:02&#43;08:00">
-        
-  
-  
-  
-  
-    Friday, 13:10, Mar 16, 2018
-  
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        Keywords：android、mobile、material、building、low quality
-Rendering参数 现在版本的UE4编译android版本时，默认使用的是最高特效，如果想是为了低配设备编译，可以在Project Settings –》 Engine –》 Rendering -》Mobile中，去掉HDR和Shadowing   OpenGL和Vulkan版本选择 以Android版本为例：
-Project Settings -》 Platforms -》 Android -》 Build -》 Support OpenGL ES3.1。默认只使用OpenGL ES2。
-iOS版本材质丢失或马赛克的问题(Material Mosaic) 问题现象：
-在Mac上以ios渲染模式运行，材质丢失，打包到真机上运行，材质变成马赛克。
-解决办法：
-打开材质蓝图，勾选Use Full Precision。   参考自：
-https://answers.unrealengine.com/questions/211323/layered-landscape-material-on-mobile.html
-移动端无法run-time修改Instanced Static Mesh的问题 解决办法：
-InstancedStaticMeshComponent::UseDynamicInstanceBuffer 设置为true，默认为false。
-相关文档 Scalability Reference https://docs.unrealengine.com/latest/INT/Engine/Performance/Scalability/ScalabilityReference/
-Performance Guidelines for Mobile Devices
-https://docs.unrealengine.com/latest/INT/Platforms/Mobile/Performance/
-Materials for Mobile Platforms https://docs.unrealengine.com/latest/INT/Platforms/Mobile/Materials/
- 只有诗人同圣徒才能相信，在沥青路上辛勤浇水会培养出百合花来。 ----毛姆
-      
-      <p>
-        <a href="https://dawnarc.com/2018/03/ue4%E7%A7%BB%E5%8A%A8%E7%AB%AF%E6%9D%90%E8%B4%A8%E4%B8%8E%E8%B4%B4%E5%9B%BE%E9%97%AE%E9%A2%98/" class="postShorten-excerpt_link link">Continue reading</a>
         
       </p>
     </div>
