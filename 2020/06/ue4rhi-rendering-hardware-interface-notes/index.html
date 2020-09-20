@@ -493,26 +493,28 @@ else
 }
 </code></pre>
 <h5 id="how-to-invoke-functions-of-game-source-in-render-thread">How to invoke functions of game source in render thread</h5>
-<p>namespace
+<pre><code>namespace
 {
-void DoTesting_OnRenderThread(FRHICommandListImmediate&amp; RHICmdList, AMyActor* Actor)
-{
-if(AMyActor)
-{
-AMyActor-&gt;DoMyTask();
-}
-}
-}</p>
-<p>void AMyCharacter::TestRender()
-{
-AMyActor* Actor = CreateTestActor();</p>
-<pre><code>ENQUEUE_RENDER_COMMAND(MyRenderingCommand)(
-    [Actor](FRHICommandListImmediate&amp; RHICmdList)
+    void DoTesting_OnRenderThread(FRHICommandListImmediate&amp; RHICmdList, AMyActor* Actor)
     {
-        DoTesting_OnRenderThread(RHICmdList, Actor);
-    });
+        if(AMyActor)
+        {
+            AMyActor-&gt;DoMyTask();
+        }
+    }
+}
+
+void AMyCharacter::TestRender()
+{
+    AMyActor* Actor = CreateTestActor();
+    
+    ENQUEUE_RENDER_COMMAND(MyRenderingCommand)(
+        [Actor](FRHICommandListImmediate&amp; RHICmdList)
+        {
+            DoTesting_OnRenderThread(RHICmdList, Actor);
+        });
+}
 </code></pre>
-<p>}</p>
 <h3 id="issues">Issues</h3>
 <h5 id="please-use-enqueue_render_command-instead-please-update-your-code-to-the-new-api-before-upgrading-to-the-next-release">Please use ENQUEUE_RENDER_COMMAND instead Please update your code to the new API before upgrading to the next release</h5>
 <p>Warning on compiling:</p>
