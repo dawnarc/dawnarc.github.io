@@ -13,10 +13,10 @@
 
 <meta property="og:description" content="Keywords: Graphics, Image Processing, Color Science, RGB, Grayscale">
 <meta property="og:type" content="article">
-<meta property="og:title" content="[Graphics][Image Processing]Grayscale">
-<meta name="twitter:title" content="[Graphics][Image Processing]Grayscale">
-<meta property="og:url" content="https://dawnarc.com/2019/11/graphicsimage-processinggrayscale/">
-<meta property="twitter:url" content="https://dawnarc.com/2019/11/graphicsimage-processinggrayscale/">
+<meta property="og:title" content="[Graphics]Image Processing Notes">
+<meta name="twitter:title" content="[Graphics]Image Processing Notes">
+<meta property="og:url" content="https://dawnarc.com/2019/11/graphicsimage-processing-notes/">
+<meta property="twitter:url" content="https://dawnarc.com/2019/11/graphicsimage-processing-notes/">
 <meta property="og:site_name" content="玄冬Wong">
 <meta property="og:description" content="Keywords: Graphics, Image Processing, Color Science, RGB, Grayscale">
 <meta name="twitter:description" content="Keywords: Graphics, Image Processing, Color Science, RGB, Grayscale">
@@ -64,7 +64,7 @@
   <meta property="twitter:image" content="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=640">
 
 
-    <title>[Graphics][Image Processing]Grayscale</title>
+    <title>[Graphics]Image Processing Notes</title>
 
     <link rel="icon" href="https://dawnarc.com/favicon.png">
     
@@ -73,7 +73,7 @@
       <link rel="publisher" href="https://plus.google.com/111340706178390411568">
     
 
-    <link rel="canonical" href="https://dawnarc.com/2019/11/graphicsimage-processinggrayscale/">
+    <link rel="canonical" href="https://dawnarc.com/2019/11/graphicsimage-processing-notes/">
 
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
@@ -320,7 +320,7 @@ if (!doNotTrack) {
             <div class="post-header main-content-wrap text-left">
   
     <h1 class="post-title" itemprop="headline">
-      [Graphics][Image Processing]Grayscale
+      [Graphics]Image Processing Notes
     </h1>
   
   
@@ -353,14 +353,24 @@ if (!doNotTrack) {
           <div class="post-content markdown" itemprop="articleBody">
             <div class="main-content-wrap">
               <p>Keywords: Graphics, Image Processing, Color Science, RGB, Grayscale</p>
-<h5 id="references">References</h5>
+<h3 id="documents">Documents</h3>
+<h5 id="texture-formats">Texture Formats</h5>
+<p>Texture formats<br>
+<a href="http://wiki.polycount.com/wiki/Texture_formats">http://wiki.polycount.com/wiki/Texture_formats</a></p>
+<h5 id="grayscale">Grayscale</h5>
 <p>Grayscale<br>
 <a href="https://en.wikipedia.org/wiki/Grayscale">https://en.wikipedia.org/wiki/Grayscale</a></p>
 <p>Converting RGB to grayscale/intensity<br>
 <a href="https://stackoverflow.com/questions/687261/converting-rgb-to-grayscale-intensity">https://stackoverflow.com/questions/687261/converting-rgb-to-grayscale-intensity</a></p>
 <p>数字图像处理(18): 图像灰度变换——线性灰度变换 和 非线性灰度变换(对数变换 与 伽马变换)<br>
 <a href="https://blog.csdn.net/zaishuiyifangxym/article/details/89817995">https://blog.csdn.net/zaishuiyifangxym/article/details/89817995</a></p>
-<h5 id="applications">Applications</h5>
+<h5 id="interpolation">Interpolation</h5>
+<p>Bicubic interpolation<br>
+<a href="https://en.wikipedia.org/wiki/Bicubic_interpolation">https://en.wikipedia.org/wiki/Bicubic_interpolation</a></p>
+<p>Cubic Hermite spline<br>
+<a href="https://en.wikipedia.org/wiki/Cubic_Hermite_spline">https://en.wikipedia.org/wiki/Cubic_Hermite_spline</a></p>
+<h3 id="applications">Applications</h3>
+<h5 id="grayscale-1">Grayscale</h5>
 <p>Q: How to compute grayscale in UE4 Materials?<br>
 A: The dot product of a RGB color and a coefficient is grayscale, this value can be used to computing falloff.</p>
 <figure>
@@ -376,6 +386,87 @@ A: The dot product of a RGB color and a coefficient is grayscale, this value can
     <img src="https://dawnarc.com/img/20191106-[Graphics][Image%20Processing]Grayscale/[Graphics][Image%20Processing]Grayscale%20-%2003.gif"/> 
 </figure>
 </p>
+<h3 id="ordinary-tricks-on-opencv-python">Ordinary Tricks on OpenCV-Python</h3>
+<h5 id="how-do-i-access-the-pixels-of-an-image-using-opencv-python">How do I access the pixels of an image using OpenCV-Python?</h5>
+<pre><code>import cv2
+image = cv2.imread(&quot;sample.jpg&quot;)
+pixel= image[200, 550]
+print pixel
+</code></pre>
+<p>output:</p>
+<pre><code>[ 73 89 102]
+</code></pre>
+<p>pixel_b, pixel_g, pixel_r = image[row][column]</p>
+<p>Origin:<br>
+<a href="https://stackoverflow.com/a/38202214/1645289">https://stackoverflow.com/a/38202214/1645289</a></p>
+<h5 id="add-an-alpha-channel-to-a-image">Add an alpha channel to a image</h5>
+<p>Python opencv adds an alpha channel to the image and sets the transparency:</p>
+<pre><code>import cv2
+import numpy as np
+
+img = cv2.imread(&quot;/home/shuai/Desktop/lena.jpg&quot;)
+
+b_channel, g_channel, r_channel = cv2.split(img)
+
+alpha_channel = np.ones(b_channel.shape, dtype=b_channel.dtype) * 255
+#minimum is 0
+alpha_channel[:, :int(b_channel.shape[0] / 2)] = 100
+
+img_BGRA = cv2.merge((b_channel, g_channel, r_channel, alpha_channel))
+
+cv2.imwrite(&quot;lena.png&quot;, img_BGRA)
+</code></pre>
+<p>Origin:<br>
+<a href="https://www.programmersought.com/article/5735956225/">https://www.programmersought.com/article/5735956225/</a></p>
+<p>Python with OpenCV3</p>
+<pre><code># First create the image with alpha channel
+rgba = cv2.cvtColor(rgb_data, cv2.COLOR_RGB2RGBA)
+
+# Then assign the mask to the last channel of the image
+rgba[:, :, 3] = alpha_data
+</code></pre>
+<p>C++</p>
+<pre><code># First create the image with alpha channel
+cv::cvtColor(rgb_data, rgba , cv::COLOR_RGB2RGBA);
+
+# Split the image for access to alpha channel
+std::vector&lt;cv::Mat&gt;channels(4);
+cv::split(rgba, channels);
+
+# Assign the mask to the last channel of the image
+channels[3] = alpha_data;
+
+# Finally concat channels for rgba image
+cv::merge(channels, 4, rgba);
+</code></pre>
+<p>Origin:<br>
+<a href="https://stackoverflow.com/a/50159769">https://stackoverflow.com/a/50159769</a></p>
+<h5 id="get-alpha-channel-of-a-image">Get alpha channel of a image</h5>
+<pre><code>dir_of_script =  pathlib.Path(__file__).parent.absolute()
+full_path = os.path.join(dir_of_script, &quot;heightmap.png&quot;)
+image = cv2.imread(full_path, cv2.IMREAD_UNCHANGED)
+#(400, 250) is just pixel postion for testing
+pixel = image[400, 250]
+print(pixel)
+</code></pre>
+<p>Output:</p>
+<pre><code>[  0   0   0 118]
+</code></pre>
+<p>Reference:<br>
+<a href="https://stackoverflow.com/a/36452596/1645289">https://stackoverflow.com/a/36452596/1645289</a></p>
+<h5 id="create-transparent-image-in-opencv-python">Create transparent image in opencv python</h5>
+<pre><code>import numpy as np
+import cv2
+
+img_height, img_width = 300, 300
+n_channels = 4
+transparent_img = np.zeros((img_height, img_width, n_channels), dtype=np.uint8)
+
+# Save the image for visualization
+cv2.imwrite(&quot;./transparent_img.png&quot;, transparent_img)
+</code></pre>
+<p>Reference:<br>
+<a href="https://stackoverflow.com/a/44595221/1645289">https://stackoverflow.com/a/44595221/1645289</a></p>
 <hr>
 <p><code>Then he made one last effort to search in his heart for the place where his affection had rotted away, and he could not find it. ― Gabriel Garcia Marquez, One Hundred Years of Solitude</code></p>
               
@@ -608,9 +699,9 @@ $(document).ready(function() {
     
       <script>
         var disqus_config = function () {
-          this.page.url = 'https:\/\/dawnarc.com\/2019\/11\/graphicsimage-processinggrayscale\/';
+          this.page.url = 'https:\/\/dawnarc.com\/2019\/11\/graphicsimage-processing-notes\/';
           
-            this.page.identifier = '\/2019\/11\/graphicsimage-processinggrayscale\/'
+            this.page.identifier = '\/2019\/11\/graphicsimage-processing-notes\/'
           
         };
         (function() {

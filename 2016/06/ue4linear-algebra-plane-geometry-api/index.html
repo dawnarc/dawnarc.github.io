@@ -502,26 +502,39 @@ FVector BaseDire(0, -1.f, 0.f);
 FVector OffsetDire = BaseDire.Rotation().UnrotateVector(Direction);
 </code></pre>
 <h5 id="local-space-position-direction-or-rotation-to-world-space">Local Space (Position, Direction or Rotation) to World Space</h5>
+<p>Transform a position:</p>
 <pre><code>/** 
  *	Transform a position by the supplied transform.
  *	For example, if T was an object's transform, this would transform a position from local space to world space.
  */
 UFUNCTION(BlueprintPure, Category=&quot;Math|Transform&quot;, meta=(Keywords=&quot;location&quot;))
 static FVector UKismetMathLibrary::TransformLocation(const FTransform&amp; T, FVector Location);
-
-/** 
+</code></pre>
+<p>equals:</p>
+<pre><code>FVector FTransform::TransformPosition(const FVector&amp; V) const;
+</code></pre>
+<p>Transform a direction vector:</p>
+<pre><code>/** 
  *	Transform a direction vector by the supplied transform - will not change its length. 
  *	For example, if T was an object's transform, this would transform a direction from local space to world space.
  */
 UFUNCTION(BlueprintPure, Category=&quot;Math|Transform&quot;)
 static FVector UKismetMathLibrary::TransformDirection(const FTransform&amp; T, FVector Direction);
-
-/** 
+</code></pre>
+<p>equals:</p>
+<pre><code>FVector FTransform::TransformVectorNoScale(const FVector&amp; V) const;
+</code></pre>
+<p>Transform a rotator:</p>
+<pre><code>/** 
  *	Transform a rotator by the supplied transform. 
  *	For example, if T was an object's transform, this would transform a rotation from local space to world space.
  */
 UFUNCTION(BlueprintPure, Category=&quot;Math|Transform&quot;)
 static FRotator UKismetMathLibrary::TransformRotation(const FTransform&amp; T, FRotator Rotation);
+</code></pre>
+<p>equals:</p>
+<pre><code>FQuat FTransform::TransformRotation(const FQuat&amp; Q) const;
+T.TransformRotation(Rotation.Quaternion()).Rotator();
 </code></pre>
 <h5 id="world-space-position-direction-or-rotation-to-local-space">World Space (Position, Direction or Rotation) to Local Space</h5>
 <pre><code>/** 
@@ -531,6 +544,8 @@ static FRotator UKismetMathLibrary::TransformRotation(const FTransform&amp; T, F
 UFUNCTION(BlueprintPure, Category=&quot;Math|Transform&quot;, meta=(Keywords=&quot;location&quot;))
 static FVector UKismetMathLibrary::InverseTransformLocation(const FTransform&amp; T, FVector Location);
 
+FVector FTransform::InverseTransformPosition(const FVector &amp;V) const;
+
 /** 
  *	Transform a direction vector by the inverse of the supplied transform - will not change its length.
  *	For example, if T was an object's transform, this would transform a direction from world space to local space.
@@ -538,12 +553,17 @@ static FVector UKismetMathLibrary::InverseTransformLocation(const FTransform&amp
 UFUNCTION(BlueprintPure, Category=&quot;Math|Transform&quot;)
 static FVector UKismetMathLibrary::InverseTransformDirection(const FTransform&amp; T, FVector Direction);
 
+FVector FTransform::InverseTransformVectorNoScale(const FVector &amp;V) const;
+
 /** 
  *	Transform a rotator by the inverse of the supplied transform. 
  *	For example, if T was an object's transform, this would transform a rotation from world space to local space.
  */
 UFUNCTION(BlueprintPure, Category=&quot;Math|Transform&quot;)
 static FRotator UKismetMathLibrary::InverseTransformRotation(const FTransform&amp; T, FRotator Rotation);
+
+FQuat FTransform::InverseTransformRotation(const FQuat&amp; Q) const;
+T.InverseTransformRotation(Rotation.Quaternion()).Rotator();
 </code></pre>
 <div class="alert info ">
   <p>Inner of InverseTransformXXX is using <code>UnrotateVector</code>.</p>

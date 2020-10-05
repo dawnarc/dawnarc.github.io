@@ -8,70 +8,18 @@
 <meta name="generator" content="Hugo 0.69.2 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="UE4, Lightings">
-<meta name="description" content="keywords：UE4, Lighting, 灯光, 光源距离裁剪
-以下问题都是基于4.18，不排除后续新版本变动。
-Lighting Content Examples https://docs.unrealengine.com/en-us/Resources/ContentExamples/Lighting
-Light Propagation Volumes Light Propagation Volumes
-https://docs.unrealengine.com/en-us/Engine/Rendering/LightingAndShadows/LightPropagationVolumes
-Dynamic GI : Getting the Most out of LPV ( Light Propagation Volume )
-https://forums.unrealengine.com/community/community-content-tools-and-tutorials/103572-dynamic-gi-getting-the-most-out-of-lpv-light-propagation-volume
-Lighting Channels https://docs.unrealengine.com/en-us/Engine/Rendering/LightingAndShadows/LightingChannels
-实际应用：
-假设场景中只有一个平行光，且光照强度较大时，那么角色身上接收不到直接光照的部位（比如脖子），会明显发黑，如果增大 SkyBox 光照强度，那么会影响整个场景的亮度。有没办法只增加角色身上的光照亮度？让阴影区域变亮？解决办法是：Lighting Channels。
-解决办法：
-场景中添加两个平行光，A平行光的 Lighting Channels 只开启Channel 0，B平行光只开启Channel 1，然后角色的 Mesh 同时开启 Channel 0 和 Channel 1。
-注意事项：
- Lighting Channels是动态的，意思是：静态光(Static Lights)或者Mobility为Static的Static Mesh Actor不受Lighting Channels影响。要使用Lighting Channels，Static Mesh Actor和Lights的Mobility必须设置为Stationary或者Movable。 材质类型影响：Lighting Channels只影响直接光照(direct lighting)下Opaque类型材质，Translucent或者Masked类型材质没有效果。 Lighting Channels对性能开销不大，可以忽略不计。  移动端的Lighting Channels：">
+<meta name="description" content="keywords：UE4, Lighting, 灯光, 光源距离裁剪">
 
 
-<meta property="og:description" content="keywords：UE4, Lighting, 灯光, 光源距离裁剪
-以下问题都是基于4.18，不排除后续新版本变动。
-Lighting Content Examples https://docs.unrealengine.com/en-us/Resources/ContentExamples/Lighting
-Light Propagation Volumes Light Propagation Volumes
-https://docs.unrealengine.com/en-us/Engine/Rendering/LightingAndShadows/LightPropagationVolumes
-Dynamic GI : Getting the Most out of LPV ( Light Propagation Volume )
-https://forums.unrealengine.com/community/community-content-tools-and-tutorials/103572-dynamic-gi-getting-the-most-out-of-lpv-light-propagation-volume
-Lighting Channels https://docs.unrealengine.com/en-us/Engine/Rendering/LightingAndShadows/LightingChannels
-实际应用：
-假设场景中只有一个平行光，且光照强度较大时，那么角色身上接收不到直接光照的部位（比如脖子），会明显发黑，如果增大 SkyBox 光照强度，那么会影响整个场景的亮度。有没办法只增加角色身上的光照亮度？让阴影区域变亮？解决办法是：Lighting Channels。
-解决办法：
-场景中添加两个平行光，A平行光的 Lighting Channels 只开启Channel 0，B平行光只开启Channel 1，然后角色的 Mesh 同时开启 Channel 0 和 Channel 1。
-注意事项：
- Lighting Channels是动态的，意思是：静态光(Static Lights)或者Mobility为Static的Static Mesh Actor不受Lighting Channels影响。要使用Lighting Channels，Static Mesh Actor和Lights的Mobility必须设置为Stationary或者Movable。 材质类型影响：Lighting Channels只影响直接光照(direct lighting)下Opaque类型材质，Translucent或者Masked类型材质没有效果。 Lighting Channels对性能开销不大，可以忽略不计。  移动端的Lighting Channels：">
+<meta property="og:description" content="keywords：UE4, Lighting, 灯光, 光源距离裁剪">
 <meta property="og:type" content="article">
-<meta property="og:title" content="[UE4]Lightings">
-<meta name="twitter:title" content="[UE4]Lightings">
-<meta property="og:url" content="https://dawnarc.com/2018/04/ue4lightings/">
-<meta property="twitter:url" content="https://dawnarc.com/2018/04/ue4lightings/">
+<meta property="og:title" content="[UE4]Lighting Notes">
+<meta name="twitter:title" content="[UE4]Lighting Notes">
+<meta property="og:url" content="https://dawnarc.com/2018/04/ue4lighting-notes/">
+<meta property="twitter:url" content="https://dawnarc.com/2018/04/ue4lighting-notes/">
 <meta property="og:site_name" content="玄冬Wong">
-<meta property="og:description" content="keywords：UE4, Lighting, 灯光, 光源距离裁剪
-以下问题都是基于4.18，不排除后续新版本变动。
-Lighting Content Examples https://docs.unrealengine.com/en-us/Resources/ContentExamples/Lighting
-Light Propagation Volumes Light Propagation Volumes
-https://docs.unrealengine.com/en-us/Engine/Rendering/LightingAndShadows/LightPropagationVolumes
-Dynamic GI : Getting the Most out of LPV ( Light Propagation Volume )
-https://forums.unrealengine.com/community/community-content-tools-and-tutorials/103572-dynamic-gi-getting-the-most-out-of-lpv-light-propagation-volume
-Lighting Channels https://docs.unrealengine.com/en-us/Engine/Rendering/LightingAndShadows/LightingChannels
-实际应用：
-假设场景中只有一个平行光，且光照强度较大时，那么角色身上接收不到直接光照的部位（比如脖子），会明显发黑，如果增大 SkyBox 光照强度，那么会影响整个场景的亮度。有没办法只增加角色身上的光照亮度？让阴影区域变亮？解决办法是：Lighting Channels。
-解决办法：
-场景中添加两个平行光，A平行光的 Lighting Channels 只开启Channel 0，B平行光只开启Channel 1，然后角色的 Mesh 同时开启 Channel 0 和 Channel 1。
-注意事项：
- Lighting Channels是动态的，意思是：静态光(Static Lights)或者Mobility为Static的Static Mesh Actor不受Lighting Channels影响。要使用Lighting Channels，Static Mesh Actor和Lights的Mobility必须设置为Stationary或者Movable。 材质类型影响：Lighting Channels只影响直接光照(direct lighting)下Opaque类型材质，Translucent或者Masked类型材质没有效果。 Lighting Channels对性能开销不大，可以忽略不计。  移动端的Lighting Channels：">
-<meta name="twitter:description" content="keywords：UE4, Lighting, 灯光, 光源距离裁剪
-以下问题都是基于4.18，不排除后续新版本变动。
-Lighting Content Examples https://docs.unrealengine.com/en-us/Resources/ContentExamples/Lighting
-Light Propagation Volumes Light Propagation Volumes
-https://docs.unrealengine.com/en-us/Engine/Rendering/LightingAndShadows/LightPropagationVolumes
-Dynamic GI : Getting the Most out of LPV ( Light Propagation Volume )
-https://forums.unrealengine.com/community/community-content-tools-and-tutorials/103572-dynamic-gi-getting-the-most-out-of-lpv-light-propagation-volume
-Lighting Channels https://docs.unrealengine.com/en-us/Engine/Rendering/LightingAndShadows/LightingChannels
-实际应用：
-假设场景中只有一个平行光，且光照强度较大时，那么角色身上接收不到直接光照的部位（比如脖子），会明显发黑，如果增大 SkyBox 光照强度，那么会影响整个场景的亮度。有没办法只增加角色身上的光照亮度？让阴影区域变亮？解决办法是：Lighting Channels。
-解决办法：
-场景中添加两个平行光，A平行光的 Lighting Channels 只开启Channel 0，B平行光只开启Channel 1，然后角色的 Mesh 同时开启 Channel 0 和 Channel 1。
-注意事项：
- Lighting Channels是动态的，意思是：静态光(Static Lights)或者Mobility为Static的Static Mesh Actor不受Lighting Channels影响。要使用Lighting Channels，Static Mesh Actor和Lights的Mobility必须设置为Stationary或者Movable。 材质类型影响：Lighting Channels只影响直接光照(direct lighting)下Opaque类型材质，Translucent或者Masked类型材质没有效果。 Lighting Channels对性能开销不大，可以忽略不计。  移动端的Lighting Channels：">
+<meta property="og:description" content="keywords：UE4, Lighting, 灯光, 光源距离裁剪">
+<meta name="twitter:description" content="keywords：UE4, Lighting, 灯光, 光源距离裁剪">
 <meta property="og:locale" content="en-us">
 
   
@@ -105,6 +53,9 @@ Lighting Channels https://docs.unrealengine.com/en-us/Engine/Rendering/LightingA
 
 
 
+  <meta property="og:image" content="https://dawnarc.com/thumbnail/thumbnail-japen-006.jpg">
+  <meta property="twitter:image" content="https://dawnarc.com/thumbnail/thumbnail-japen-006.jpg">
+
 
 
 
@@ -113,7 +64,7 @@ Lighting Channels https://docs.unrealengine.com/en-us/Engine/Rendering/LightingA
   <meta property="twitter:image" content="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=640">
 
 
-    <title>[UE4]Lightings</title>
+    <title>[UE4]Lighting Notes</title>
 
     <link rel="icon" href="https://dawnarc.com/favicon.png">
     
@@ -122,7 +73,7 @@ Lighting Channels https://docs.unrealengine.com/en-us/Engine/Rendering/LightingA
       <link rel="publisher" href="https://plus.google.com/111340706178390411568">
     
 
-    <link rel="canonical" href="https://dawnarc.com/2018/04/ue4lightings/">
+    <link rel="canonical" href="https://dawnarc.com/2018/04/ue4lighting-notes/">
 
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
@@ -369,7 +320,7 @@ if (!doNotTrack) {
             <div class="post-header main-content-wrap text-left">
   
     <h1 class="post-title" itemprop="headline">
-      [UE4]Lightings
+      [UE4]Lighting Notes
     </h1>
   
   
@@ -403,14 +354,23 @@ if (!doNotTrack) {
             <div class="main-content-wrap">
               <p>keywords：UE4, Lighting, 灯光, 光源距离裁剪</p>
 <p>以下问题都是基于4.18，不排除后续新版本变动。</p>
-<h3 id="lighting-content-examples">Lighting Content Examples</h3>
-<p><a href="https://docs.unrealengine.com/en-us/Resources/ContentExamples/Lighting">https://docs.unrealengine.com/en-us/Resources/ContentExamples/Lighting</a></p>
-<h3 id="light-propagation-volumes">Light Propagation Volumes</h3>
+<h3 id="documents">Documents</h3>
+<h5 id="offical-documents">Offical Documents</h5>
+<p>Lighting Content Examples<br>
+<a href="https://docs.unrealengine.com/en-us/Resources/ContentExamples/Lighting">https://docs.unrealengine.com/en-us/Resources/ContentExamples/Lighting</a></p>
 <p>Light Propagation Volumes<br>
 <a href="https://docs.unrealengine.com/en-us/Engine/Rendering/LightingAndShadows/LightPropagationVolumes">https://docs.unrealengine.com/en-us/Engine/Rendering/LightingAndShadows/LightPropagationVolumes</a></p>
+<p>Lighting for Mobile Platforms<br>
+<a href="https://docs.unrealengine.com/en-us/Platforms/Mobile/Lighting">https://docs.unrealengine.com/en-us/Platforms/Mobile/Lighting</a></p>
+<h5 id="blogs">Blogs</h5>
 <p>Dynamic GI : Getting the Most out of LPV ( Light Propagation Volume )<br>
 <a href="https://forums.unrealengine.com/community/community-content-tools-and-tutorials/103572-dynamic-gi-getting-the-most-out-of-lpv-light-propagation-volume">https://forums.unrealengine.com/community/community-content-tools-and-tutorials/103572-dynamic-gi-getting-the-most-out-of-lpv-light-propagation-volume</a></p>
-<h3 id="lighting-channels">Lighting Channels</h3>
+<p>Lighting Passes<br>
+<a href="https://unrealartoptimization.github.io/book/profiling/passes-lighting/">https://unrealartoptimization.github.io/book/profiling/passes-lighting/</a></p>
+<p>Unreal Engine 4 的 光和影<br>
+<a href="https://www.unrealengine.com/zh-CN/blog/chn-unreal-engine-4-light-and-shadow">https://www.unrealengine.com/zh-CN/blog/chn-unreal-engine-4-light-and-shadow</a></p>
+<h3 id="fragments-notes">Fragments Notes</h3>
+<h5 id="lighting-channels">Lighting Channels</h5>
 <p><a href="https://docs.unrealengine.com/en-us/Engine/Rendering/LightingAndShadows/LightingChannels">https://docs.unrealengine.com/en-us/Engine/Rendering/LightingAndShadows/LightingChannels</a></p>
 <p>实际应用：<br>
 假设场景中只有一个平行光，且光照强度较大时，那么角色身上接收不到直接光照的部位（比如脖子），会明显发黑，如果增大 SkyBox 光照强度，那么会影响整个场景的亮度。有没办法只增加角色身上的光照亮度？让阴影区域变亮？解决办法是：Lighting Channels。<br>
@@ -434,39 +394,14 @@ if (!doNotTrack) {
 <div class="alert warning ">
   <p>If Character is dark even give it dedicated Light Channel, the reason maybe is: there&rsquo;re some objects casting shadows on the Character, you can disable <code>Cast Shadow</code> on these objects.</p>
 </div>
-<h3 id="occlusion-culling">Occlusion Culling</h3>
+<h5 id="occlusion-culling">Occlusion Culling</h5>
 <p>Project Settings -》 Engine -》 Rendering -》 Culling -》 Min Screen Radius for Lights</p>
 <p>Lights view distance<br>
 <a href="https://forums.unrealengine.com/unreal-engine/feedback-for-epic/54065-lights-view-distance">https://forums.unrealengine.com/unreal-engine/feedback-for-epic/54065-lights-view-distance</a></p>
-<h3 id="lighting-related-on-mobile">Lighting Related on Mobile</h3>
-<p>1, <code>Static</code> and <code>Stationary</code> Spotlight support on Mobile, but <code>Movable</code> Spotlight not support on Mobile before v4.22;</p>
-<p>2, <code>Movable</code> Pointlight support on Mobile always;</p>
-<p>3, <span class="highlight-text red"> Testing in v4.21: Static and Stationary Point Light not work on Android Vulkan without building lighting.  
-Solution: Setting up your lighting in SM5, then building lighting, then switch to Android Vulkan, when start game, lighting would works right.</span></p>
-<h5 id="reflection-on-mobile">Reflection on Mobile</h5>
-<p>I did do some testing and was able to get the reflective environment to work on my end, but my results were not incredibly strong. Screen Space Reflections are unsupported on Mobile so that is expected no to work.
-You will want to make sure your &lsquo;Skylight&rsquo; is set to &lsquo;Static&rsquo; and &lsquo;Cast Shadows&rsquo; is unchecked. <code>Project Settings &gt; Rendering &gt; Mobile HDR</code> is enabled. Then rebuild with <code>Production</code> quality lighting.</p>
-<p>Reference:<br>
-<a href="https://answers.unrealengine.com/questions/387608/no-reflections-rendering-in-mobile-mode.html">https://answers.unrealengine.com/questions/387608/no-reflections-rendering-in-mobile-mode.html</a><br>
-<a href="https://answers.unrealengine.com/questions/381742/410-mobile-no-reflections-at-all.html">https://answers.unrealengine.com/questions/381742/410-mobile-no-reflections-at-all.html</a></p>
-<h3 id="issue-shadows-disappeared-when-the-distance-between-actor-and-camera-increased">Issue: shadows disappeared when the distance between Actor and Camera increased</h3>
-<p>This issue is affected by two factors：</p>
-<ol>
-<li>
-<p>DirectionalLight&rsquo;s perperty <code>Dynamic Shadow Distance</code>, if this value is less than the distance between Actor and Camera, shadows would disappeared.</p>
-</li>
-<li>
-<p>Engine&rsquo;s parameter <code>r.Shadow.RadiusThreshold</code>，which means shadow visibility at camera distances, there&rsquo;re two ways to change this parameter:</p>
-<ul>
-<li>For Editor: Settings -&gt; Engine Scalability Settings -&gt; Shadow.</li>
-<li>For Run-time: <code>UKismetSystemLibrary::ExecuteConsoleCommand(GetWorld(), TEXT(&quot;r.Shadow.RadiusThreshold 0.06&quot;));</code></li>
-</ul>
-</li>
-</ol>
-<p>参考：<br>
-<a href="https://answers.unrealengine.com/questions/707241/object-shadows-disappearing-too-early.html?sort=oldest">https://answers.unrealengine.com/questions/707241/object-shadows-disappearing-too-early.html?sort=oldest</a></p>
-<h3 id="ambient-occlusion">Ambient Occlusion</h3>
+<h5 id="ambient-occlusion">Ambient Occlusion</h5>
 <p>DFAO can be used with precomputed lighting, but SSAO can not. DFAO can save GPU cost but would memory usage would increase.</p>
+<p>Cheap Ambient Lighting System<br>
+<a href="https://forums.unrealengine.com/unreal-engine/marketplace/1511373-cheap-ambient-lighting-system">https://forums.unrealengine.com/unreal-engine/marketplace/1511373-cheap-ambient-lighting-system</a></p>
 <h5 id="screen-space-ambient-occlusion-ssao">Screen Space Ambient Occlusion (SSAO)</h5>
 <p>Ambient Occlusion<br>
 <a href="https://docs.unrealengine.com/en-us/Engine/Rendering/LightingAndShadows/AmbientOcclusion">https://docs.unrealengine.com/en-us/Engine/Rendering/LightingAndShadows/AmbientOcclusion</a></p>
@@ -486,10 +421,6 @@ Place a post process volume into your level, enable <code>Unbound</code> in it&r
 <a href="https://docs.unrealengine.com/en-US/Engine/Rendering/LightingAndShadows/MeshDistanceFields/HowTo/DFHT_2">https://docs.unrealengine.com/en-US/Engine/Rendering/LightingAndShadows/MeshDistanceFields/HowTo/DFHT_2</a></p>
 <p>Mesh Distance Fields<br>
 <a href="https://docs.unrealengine.com/en-US/Engine/Rendering/LightingAndShadows/MeshDistanceFields#EnablingDistanceFields">https://docs.unrealengine.com/en-US/Engine/Rendering/LightingAndShadows/MeshDistanceFields#EnablingDistanceFields</a></p>
-<h5 id="cheap-ambient-lighting-system">Cheap Ambient Lighting System</h5>
-<p>Cheap Ambient Lighting System<br>
-<a href="https://forums.unrealengine.com/unreal-engine/marketplace/1511373-cheap-ambient-lighting-system">https://forums.unrealengine.com/unreal-engine/marketplace/1511373-cheap-ambient-lighting-system</a></p>
-<h3 id="global-illumination">Global Illumination</h3>
 <h5 id="screen-space-global-illumination-ssgi">Screen Space Global Illumination (SSGI)</h5>
 <p>How to enable SSGI:<br>
 Project Settings &gt; Engine &gt; Rendering -&gt; Lighting -&gt; Check <code>Screen Space Global Illumination</code>.</p>
@@ -497,10 +428,31 @@ Project Settings &gt; Engine &gt; Rendering -&gt; Lighting -&gt; Check <code>Scr
 <a href="https://docs.unrealengine.com/en-US/Engine/Rendering/LightingAndShadows/ScreenSpaceGlobalIllumination/index.html">https://docs.unrealengine.com/en-US/Engine/Rendering/LightingAndShadows/ScreenSpaceGlobalIllumination/index.html</a></p>
 <p>UE4 4.24 SSGI + AO Implementation<br>
 <a href="https://forums.unrealengine.com/development-discussion/rendering/1698726-ue4-4-24-ssgi-ao-implementation">https://forums.unrealengine.com/development-discussion/rendering/1698726-ue4-4-24-ssgi-ao-implementation</a></p>
-<h3 id="area-lights">Area Lights</h3>
+<h5 id="area-lights">Area Lights</h5>
 <p>Simulating Area Lights in UE4<br>
 <a href="https://www.unrealengine.com/en-US/blog/simulating-area-lights-in-ue4">https://www.unrealengine.com/en-US/blog/simulating-area-lights-in-ue4</a></p>
+<h5 id="light-texture">Light Texture</h5>
+<p>LIGHT TEXTURE (UE4) Unreal Engine<br>
+<a href="https://www.youtube.com/watch?v=I1HsOtpBNpE">https://www.youtube.com/watch?v=I1HsOtpBNpE</a></p>
+<h5 id="reflections">Reflections</h5>
+<p>Reflections (Part 1) Cube Map Reflections | Tips &amp; Tricks | Unreal Engine<br>
+<a href="https://www.youtube.com/watch?v=AQ2jIgqLHPA">https://www.youtube.com/watch?v=AQ2jIgqLHPA</a></p>
+<p>Reflections (Part 2) Planar Reflections &amp; SSR | Tips &amp; Tricks | Unreal Engine<br>
+<a href="https://www.youtube.com/watch?v=1Sx9qINRoIY">https://www.youtube.com/watch?v=1Sx9qINRoIY</a></p>
+<h3 id="fragments-notes-lighting-on-mobile">Fragments Notes: Lighting on Mobile</h3>
+<h5 id="attentions-on-mobile">Attentions on Mobile</h5>
+<p>1, <code>Static</code> and <code>Stationary</code> Spotlight support on Mobile, but <code>Movable</code> Spotlight not support on Mobile before v4.22;</p>
+<p>2, <code>Movable</code> Pointlight support on Mobile always;</p>
+<p>3, <span class="highlight-text red"> Testing in v4.21: Static and Stationary Point Light not work on Android Vulkan without building lighting.  
+Solution: Setting up your lighting in SM5, then building lighting, then switch to Android Vulkan, when start game, lighting would works right.</span></p>
+<h5 id="reflection-on-mobile">Reflection on Mobile</h5>
+<p>I did do some testing and was able to get the reflective environment to work on my end, but my results were not incredibly strong. Screen Space Reflections are unsupported on Mobile so that is expected no to work.
+You will want to make sure your &lsquo;Skylight&rsquo; is set to &lsquo;Static&rsquo; and &lsquo;Cast Shadows&rsquo; is unchecked. <code>Project Settings &gt; Rendering &gt; Mobile HDR</code> is enabled. Then rebuild with <code>Production</code> quality lighting.</p>
+<p>Reference:<br>
+<a href="https://answers.unrealengine.com/questions/387608/no-reflections-rendering-in-mobile-mode.html">https://answers.unrealengine.com/questions/387608/no-reflections-rendering-in-mobile-mode.html</a><br>
+<a href="https://answers.unrealengine.com/questions/381742/410-mobile-no-reflections-at-all.html">https://answers.unrealengine.com/questions/381742/410-mobile-no-reflections-at-all.html</a></p>
 <h3 id="lighting-issues">Lighting Issues</h3>
+<h5 id="fragments-issues">Fragments Issues</h5>
 <p>Issue 1:<br>
 Point Light intensity is very low event set <code>Intensity</code> to large value.<br>
 Solution:<br>
@@ -521,44 +473,53 @@ There&rsquo;re some strange gree block on meshes when Sky Light switch from <cod
 
 Solution:<br>
 Create a Level and enable <code>Movable</code> Sky Light at first, then copy meshes into the new Level.</p>
+<h5 id="issue-shadows-disappeared-when-the-distance-between-actor-and-camera-increased">Issue: shadows disappeared when the distance between Actor and Camera increased</h5>
+<p>This issue is affected by two factors：</p>
+<ol>
+<li>
+<p>DirectionalLight&rsquo;s perperty <code>Dynamic Shadow Distance</code>, if this value is less than the distance between Actor and Camera, shadows would disappeared.</p>
+</li>
+<li>
+<p>Engine&rsquo;s parameter <code>r.Shadow.RadiusThreshold</code>，which means shadow visibility at camera distances, there&rsquo;re two ways to change this parameter:</p>
+<ul>
+<li>For Editor: Settings -&gt; Engine Scalability Settings -&gt; Shadow.</li>
+<li>For Run-time: <code>UKismetSystemLibrary::ExecuteConsoleCommand(GetWorld(), TEXT(&quot;r.Shadow.RadiusThreshold 0.06&quot;));</code></li>
+</ul>
+</li>
+</ol>
+<p>参考：<br>
+<a href="https://answers.unrealengine.com/questions/707241/object-shadows-disappearing-too-early.html?sort=oldest">https://answers.unrealengine.com/questions/707241/object-shadows-disappearing-too-early.html?sort=oldest</a></p>
 <h5 id="lighting-troubleshooting-guide">Lighting Troubleshooting Guide</h5>
 <p>LightingTroubleshootingGuide<br>
 <a href="https://wiki.unrealengine.com/LightingTroubleshootingGuide#Shadow_Seams.2FShading_Differences_with_Indirect_Lighting">https://wiki.unrealengine.com/LightingTroubleshootingGuide#Shadow_Seams.2FShading_Differences_with_Indirect_Lighting</a></p>
-<h3 id="light-texture">Light Texture</h3>
-<p>LIGHT TEXTURE (UE4) Unreal Engine<br>
-<a href="https://www.youtube.com/watch?v=I1HsOtpBNpE">https://www.youtube.com/watch?v=I1HsOtpBNpE</a></p>
-<h3 id="reflections">Reflections</h3>
-<p>Reflections (Part 1) Cube Map Reflections | Tips &amp; Tricks | Unreal Engine<br>
-<a href="https://www.youtube.com/watch?v=AQ2jIgqLHPA">https://www.youtube.com/watch?v=AQ2jIgqLHPA</a></p>
-<p>Reflections (Part 2) Planar Reflections &amp; SSR | Tips &amp; Tricks | Unreal Engine<br>
-<a href="https://www.youtube.com/watch?v=1Sx9qINRoIY">https://www.youtube.com/watch?v=1Sx9qINRoIY</a></p>
-<h3 id="reference">Reference</h3>
-<p>Lighting Passes<br>
-<a href="https://unrealartoptimization.github.io/book/profiling/passes-lighting/">https://unrealartoptimization.github.io/book/profiling/passes-lighting/</a></p>
-<p>Lighting for Mobile Platforms<br>
-<a href="https://docs.unrealengine.com/en-us/Platforms/Mobile/Lighting">https://docs.unrealengine.com/en-us/Platforms/Mobile/Lighting</a></p>
-<p>Unreal Engine 4 的 光和影<br>
-<a href="https://www.unrealengine.com/zh-CN/blog/chn-unreal-engine-4-light-and-shadow">https://www.unrealengine.com/zh-CN/blog/chn-unreal-engine-4-light-and-shadow</a></p>
 <h3 id="tutorials">Tutorials</h3>
+<h5 id="fragments-tutorials">Fragments Tutorials</h5>
+<p>Tutorial | UE4 Lighting Overview<br>
+<a href="https://www.youtube.com/watch?v=kFaEf8V8XYY">https://www.youtube.com/watch?v=kFaEf8V8XYY</a></p>
 <p>Studying Lighting in Games<br>
 <a href="https://80.lv/articles/studying-lighting-in-games-2/">https://80.lv/articles/studying-lighting-in-games-2/</a></p>
-<p>UE4 Lighting and Fog tutorial | ArtStation Challenge EP.006<br>
-<a href="https://www.youtube.com/watch?v=jsN0LBgrj14">https://www.youtube.com/watch?v=jsN0LBgrj14</a></p>
 <p>Lighting A Scene From Scratch - #19 Unreal Engine 4 Level Design Tutorial Series<br>
 <a href="https://www.youtube.com/watch?v=FsjqVIyr0O4">https://www.youtube.com/watch?v=FsjqVIyr0O4</a></p>
 <p>Create photoreal cinematics in UE4: Rebirth tutorial<br>
 <a href="https://www.youtube.com/watch?v=0iQJkSpOoOQ">https://www.youtube.com/watch?v=0iQJkSpOoOQ</a></p>
 <p>How To Set Up A Realistic Post Process - UE4 Tutorial<br>
 <a href="https://www.youtube.com/watch?v=jYxgnSGybNU">https://www.youtube.com/watch?v=jYxgnSGybNU</a></p>
-<p>Volumetric Fog and Lighting in Unreal Engine 4 | GDC 2018 | Unreal Engine<br>
-<a href="https://www.youtube.com/watch?v=Xd7-rTzfmCo">https://www.youtube.com/watch?v=Xd7-rTzfmCo</a></p>
 <p>Lighting with EMISSIVE Materials in UE4 - Unreal Engine Tutorial<br>
 <a href="https://www.youtube.com/watch?v=eVPuvCAEz4Q">https://www.youtube.com/watch?v=eVPuvCAEz4Q</a></p>
 <p>UE4 Emissive Tutorial Example Files<br>
 <a href="https://gumroad.com/l/NrLQk">https://gumroad.com/l/NrLQk</a></p>
+<h5 id="fog--volumetric-tutorials">Fog &amp; Volumetric Tutorials</h5>
+<p>UE4 Lighting and Fog tutorial | ArtStation Challenge EP.006<br>
+<a href="https://www.youtube.com/watch?v=jsN0LBgrj14">https://www.youtube.com/watch?v=jsN0LBgrj14</a></p>
+<p>Volumetric Fog and Lighting in Unreal Engine 4 | GDC 2018 | Unreal Engine<br>
+<a href="https://www.youtube.com/watch?v=Xd7-rTzfmCo">https://www.youtube.com/watch?v=Xd7-rTzfmCo</a></p>
+<h5 id="lighting-tricks">Lighting Tricks</h5>
+<p>Hiding in Shadows (Stealth) - Unreal Engine 4 Tutorial<br>
+<a href="https://www.youtube.com/watch?v=th8feIg8BR4">https://www.youtube.com/watch?v=th8feIg8BR4</a></p>
+<p>[Unreal Engine 4] - Top 5 Light Tips And Tricks<br>
+<a href="https://www.youtube.com/watch?v=hlh7ncQQLlA">https://www.youtube.com/watch?v=hlh7ncQQLlA</a></p>
 <hr>
 <p><code>我只担心一件事，我怕我配不上自己所受的苦难。----陀思妥耶夫斯基</code></p>
-
               
             </div>
           </div>
@@ -789,9 +750,9 @@ $(document).ready(function() {
     
       <script>
         var disqus_config = function () {
-          this.page.url = 'https:\/\/dawnarc.com\/2018\/04\/ue4lightings\/';
+          this.page.url = 'https:\/\/dawnarc.com\/2018\/04\/ue4lighting-notes\/';
           
-            this.page.identifier = '\/2018\/04\/ue4lightings\/'
+            this.page.identifier = '\/2018\/04\/ue4lighting-notes\/'
           
         };
         (function() {

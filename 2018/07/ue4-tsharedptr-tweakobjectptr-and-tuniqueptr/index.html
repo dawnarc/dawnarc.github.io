@@ -8,38 +8,18 @@
 <meta name="generator" content="Hugo 0.69.2 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="UE4, GarbageCollect, TSharedPtr, TWeakObjectPtr">
-<meta name="description" content="UE4 的 TSharedPtr、TWeakObjectPtr 模仿自 C&#43;&#43;11 的 shared_ptr 、 weak_ptr
-TSharedPtr Summary TSharedPtr 相当于对象的引用计数器。每当对 TSharedPtr 赋值一次，该 TSharedPtr 引用对象计数加一，当引用计数为0时，则该对象被自动销毁。
-用法：
-TSharedPtr&lt;TestClass&gt; ObjPtr = MakeShareable(new TestClass()); 如果两个 TSharedPtr 相互赋值，则会导致对象永不释放，导致内存泄漏。
- TSharedPtr 是否对 UObject 对象计数 TSharedPtr的代码注释注明其作用对象为raw pointers:
-/** Proxy structure for implicitly converting raw pointers to shared/weak pointers */// NOTE: The following is an Unreal extension to standard shared_ptr behaviortemplate&lt; class ObjectType &gt;struct FRawPtrProxy{/** The object pointer */ObjectType* Object;/** Reference controller used to destroy the object */FReferenceControllerBase* ReferenceController;/** Construct implicitly from an object */FORCEINLINE FRawPtrProxy( ObjectType* InObject ): Object ( InObject ), ReferenceController( NewDefaultReferenceController( InObject ) ){}/** Construct implicitly from an object and a custom deleter */template&lt; class Deleter &gt;FORCEINLINE FRawPtrProxy( ObjectType* InObject, Deleter&amp;&amp; InDeleter ): Object ( InObject ), ReferenceController( NewCustomReferenceController( InObject, Forward&lt; Deleter &gt;( InDeleter ) ) ){}}; 按理说：UE4的GC系统其实就相当于针对UObject类型对象的std::shared_ptr&lt;&gt;，所以TSharedPtr作用范围也没必要包含UObject。">
+<meta name="description" content="TSharedPtr and TWeakObjectPtr limitated from shared_ptr and weak_ptr of C&#43;&#43;11.">
 
 
-<meta property="og:description" content="UE4 的 TSharedPtr、TWeakObjectPtr 模仿自 C&#43;&#43;11 的 shared_ptr 、 weak_ptr
-TSharedPtr Summary TSharedPtr 相当于对象的引用计数器。每当对 TSharedPtr 赋值一次，该 TSharedPtr 引用对象计数加一，当引用计数为0时，则该对象被自动销毁。
-用法：
-TSharedPtr&lt;TestClass&gt; ObjPtr = MakeShareable(new TestClass()); 如果两个 TSharedPtr 相互赋值，则会导致对象永不释放，导致内存泄漏。
- TSharedPtr 是否对 UObject 对象计数 TSharedPtr的代码注释注明其作用对象为raw pointers:
-/** Proxy structure for implicitly converting raw pointers to shared/weak pointers */// NOTE: The following is an Unreal extension to standard shared_ptr behaviortemplate&lt; class ObjectType &gt;struct FRawPtrProxy{/** The object pointer */ObjectType* Object;/** Reference controller used to destroy the object */FReferenceControllerBase* ReferenceController;/** Construct implicitly from an object */FORCEINLINE FRawPtrProxy( ObjectType* InObject ): Object ( InObject ), ReferenceController( NewDefaultReferenceController( InObject ) ){}/** Construct implicitly from an object and a custom deleter */template&lt; class Deleter &gt;FORCEINLINE FRawPtrProxy( ObjectType* InObject, Deleter&amp;&amp; InDeleter ): Object ( InObject ), ReferenceController( NewCustomReferenceController( InObject, Forward&lt; Deleter &gt;( InDeleter ) ) ){}}; 按理说：UE4的GC系统其实就相当于针对UObject类型对象的std::shared_ptr&lt;&gt;，所以TSharedPtr作用范围也没必要包含UObject。">
+<meta property="og:description" content="TSharedPtr and TWeakObjectPtr limitated from shared_ptr and weak_ptr of C&#43;&#43;11.">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[UE4] TSharedPtr, TWeakObjectPtr and TUniquePtr">
 <meta name="twitter:title" content="[UE4] TSharedPtr, TWeakObjectPtr and TUniquePtr">
 <meta property="og:url" content="https://dawnarc.com/2018/07/ue4-tsharedptr-tweakobjectptr-and-tuniqueptr/">
 <meta property="twitter:url" content="https://dawnarc.com/2018/07/ue4-tsharedptr-tweakobjectptr-and-tuniqueptr/">
 <meta property="og:site_name" content="玄冬Wong">
-<meta property="og:description" content="UE4 的 TSharedPtr、TWeakObjectPtr 模仿自 C&#43;&#43;11 的 shared_ptr 、 weak_ptr
-TSharedPtr Summary TSharedPtr 相当于对象的引用计数器。每当对 TSharedPtr 赋值一次，该 TSharedPtr 引用对象计数加一，当引用计数为0时，则该对象被自动销毁。
-用法：
-TSharedPtr&lt;TestClass&gt; ObjPtr = MakeShareable(new TestClass()); 如果两个 TSharedPtr 相互赋值，则会导致对象永不释放，导致内存泄漏。
- TSharedPtr 是否对 UObject 对象计数 TSharedPtr的代码注释注明其作用对象为raw pointers:
-/** Proxy structure for implicitly converting raw pointers to shared/weak pointers */// NOTE: The following is an Unreal extension to standard shared_ptr behaviortemplate&lt; class ObjectType &gt;struct FRawPtrProxy{/** The object pointer */ObjectType* Object;/** Reference controller used to destroy the object */FReferenceControllerBase* ReferenceController;/** Construct implicitly from an object */FORCEINLINE FRawPtrProxy( ObjectType* InObject ): Object ( InObject ), ReferenceController( NewDefaultReferenceController( InObject ) ){}/** Construct implicitly from an object and a custom deleter */template&lt; class Deleter &gt;FORCEINLINE FRawPtrProxy( ObjectType* InObject, Deleter&amp;&amp; InDeleter ): Object ( InObject ), ReferenceController( NewCustomReferenceController( InObject, Forward&lt; Deleter &gt;( InDeleter ) ) ){}}; 按理说：UE4的GC系统其实就相当于针对UObject类型对象的std::shared_ptr&lt;&gt;，所以TSharedPtr作用范围也没必要包含UObject。">
-<meta name="twitter:description" content="UE4 的 TSharedPtr、TWeakObjectPtr 模仿自 C&#43;&#43;11 的 shared_ptr 、 weak_ptr
-TSharedPtr Summary TSharedPtr 相当于对象的引用计数器。每当对 TSharedPtr 赋值一次，该 TSharedPtr 引用对象计数加一，当引用计数为0时，则该对象被自动销毁。
-用法：
-TSharedPtr&lt;TestClass&gt; ObjPtr = MakeShareable(new TestClass()); 如果两个 TSharedPtr 相互赋值，则会导致对象永不释放，导致内存泄漏。
- TSharedPtr 是否对 UObject 对象计数 TSharedPtr的代码注释注明其作用对象为raw pointers:
-/** Proxy structure for implicitly converting raw pointers to shared/weak pointers */// NOTE: The following is an Unreal extension to standard shared_ptr behaviortemplate&lt; class ObjectType &gt;struct FRawPtrProxy{/** The object pointer */ObjectType* Object;/** Reference controller used to destroy the object */FReferenceControllerBase* ReferenceController;/** Construct implicitly from an object */FORCEINLINE FRawPtrProxy( ObjectType* InObject ): Object ( InObject ), ReferenceController( NewDefaultReferenceController( InObject ) ){}/** Construct implicitly from an object and a custom deleter */template&lt; class Deleter &gt;FORCEINLINE FRawPtrProxy( ObjectType* InObject, Deleter&amp;&amp; InDeleter ): Object ( InObject ), ReferenceController( NewCustomReferenceController( InObject, Forward&lt; Deleter &gt;( InDeleter ) ) ){}}; 按理说：UE4的GC系统其实就相当于针对UObject类型对象的std::shared_ptr&lt;&gt;，所以TSharedPtr作用范围也没必要包含UObject。">
+<meta property="og:description" content="TSharedPtr and TWeakObjectPtr limitated from shared_ptr and weak_ptr of C&#43;&#43;11.">
+<meta name="twitter:description" content="TSharedPtr and TWeakObjectPtr limitated from shared_ptr and weak_ptr of C&#43;&#43;11.">
 <meta property="og:locale" content="en-us">
 
   
@@ -369,18 +349,18 @@ if (!doNotTrack) {
           
           <div class="post-content markdown" itemprop="articleBody">
             <div class="main-content-wrap">
-              <p>UE4 的 TSharedPtr、TWeakObjectPtr 模仿自 C++11 的 shared_ptr 、 weak_ptr</p>
+              <p><code>TSharedPtr</code> and <code>TWeakObjectPtr</code> limitated from <code>shared_ptr</code> and <code>weak_ptr</code> of <code>C++11</code>.</p>
 <h3 id="tsharedptr">TSharedPtr</h3>
 <h5 id="summary">Summary</h5>
-<p><code>TSharedPtr</code> 相当于对象的引用计数器。每当对 TSharedPtr 赋值一次，该 TSharedPtr 引用对象计数加一，当引用计数为0时，则该对象被自动销毁。</p>
-<p>用法：</p>
+<p><code>TSharedPtr</code> is the counter of reference of object. The count that <code>TSharedPtr</code> reference to would increase one while <code>TSharedPtr</code> was assigned once, the object would be destroyed when the count of reference is 0.</p>
+<p>Usage:</p>
 <pre><code>TSharedPtr&lt;TestClass&gt; ObjPtr = MakeShareable(new TestClass());
 </code></pre>
 <div class="alert danger ">
-  <p>如果两个 TSharedPtr 相互赋值，则会导致对象永不释放，导致内存泄漏。</p>
+  <p>Objects would never be destroyed if two <code>TSharedPtr</code>, which are reference to a same object, were assigned to each other, resulting a memory leak.</p>
 </div>
-<h5 id="tsharedptr-是否对-uobject-对象计数">TSharedPtr 是否对 UObject 对象计数</h5>
-<p><code>TSharedPtr</code>的代码注释注明其作用对象为<code>raw pointers</code>:</p>
+<h5 id="whether-if-tsharedptr-works-for-uobject-or-not">Whether if TSharedPtr works for UObject or not</h5>
+<p>As the comments of <code>TSharedPtr</code> say, it only works for <code>raw pointers</code>:</p>
 <pre><code>/** Proxy structure for implicitly converting raw pointers to shared/weak pointers */
 // NOTE: The following is an Unreal extension to standard shared_ptr behavior
 template&lt; class ObjectType &gt;
@@ -408,16 +388,16 @@ struct FRawPtrProxy
     }
 };
 </code></pre>
-<p>按理说：UE4的GC系统其实就相当于针对<code>UObject</code>类型对象的<code>std::shared_ptr&lt;&gt;</code>，所以<code>TSharedPtr</code>作用范围也没必要包含<code>UObject</code>。<br>
-但是引擎源码<code>SharedPointerInternals.h</code>逻辑中，并没有看到不对UObject类型计数的逻辑。<br>
-但是如果你使用<code>TSharedPtr</code>对<code>UObject</code>类型对象引用：</p>
+<p>In theory, Unreal GC system is to <code>UObject</code> what <code>std::shared_ptr&lt;&gt;</code> is to raw pointer, so <code>TSharedPtr</code> don&rsquo;t need to work for <code>UObject</code>.<br>
+But, there&rsquo;s no limitation for counting <code>UObject</code> in the source code of <code>SharedPointerInternals.h</code> in engine.<br>
+If a <code>UObject</code> was passed as parameter into <code>TSharedPtr</code>:</p>
 <pre><code>void ATestPlayerController::TestFun()
 {
     TestActor = NewObject&lt;AActor&gt;(this);
     TSharedPtr&lt;AActor&gt; SharePtr2 = MakeShareable(TestActor);
 }
 </code></pre>
-<p>当跳出<code>TestFun</code>函数时，程序会崩溃：</p>
+<p>Application would crash after jumping out of function <code>TestFun</code>:</p>
 <pre><code>Assertion failed: GetFName() == NAME_None [File:D:/Build/++UE4/Sync/Engine/Source/Runtime/CoreUObject/Private/UObject/UObjectBase.cpp] [Line: 136]
 
 UE4Editor_Core!AssertFailedImplV() [d:\build\++ue4\sync\engine\source\runtime\core\private\misc\assertionmacros.cpp:105]
@@ -429,11 +409,11 @@ UE4Editor_TestTD4_Win64_DebugGame!TSharedPtr&lt;AActor,0&gt;::~TSharedPtr&lt;AAc
 UE4Editor_TestTD4_Win64_DebugGame!ATestPlayerController::TestFun() [D:\workspace\unreal_dev\TestTD4\Source\TestTD4\TestTD4PlayerController.cpp:124]
 </code></pre>
 <div class="alert danger ">
-  <p>就是说：使用<code>TSharedPtr</code>对<code>UObject</code>类型对象引用，编译正常，运行时<code>TSharedPtr</code>初始化也正常，但是当<code>TSharedPtr</code>被析构时就会导致程序崩溃。</p>
+  <p>As shown above: If <code>TSharedPtr</code> reference to <code>UObject</code>, it works at compiling, initialization of <code>TSharedPtr</code> also works at run-time, but it crashed on destruction.</p>
 </div>
-<h5 id="如何将raw-pointers加入ue4-gc系统">如何将raw pointers加入UE4 GC系统</h5>
+<h5 id="how-to-add-raw-pointers-into-gc-of-unreal">How to add raw pointers into GC of Unreal</h5>
 <div class="alert info ">
-  <p>如果raw pointers想加入GC，那么指针所指对象必须继承FGCObject类。</p>
+  <p>If want to add raw pointers into GC system of UE4, raw class must inherits from <code>FGCObject</code>.</p>
 </div>
 <h3 id="tweakobjectptr">TWeakObjectPtr</h3>
 <h5 id="summary-1">Summary</h5>
@@ -590,7 +570,6 @@ typedef TUniquePtr&lt;FLwsReceiveBufferText&gt; FLwsReceiveBufferTextPtr;
 <a href="https://docs.unrealengine.com/en-US/Programming/UnrealArchitecture/SmartPointerLibrary/index.html">https://docs.unrealengine.com/en-US/Programming/UnrealArchitecture/SmartPointerLibrary/index.html</a></p>
 <hr>
 <p><code>已识乾坤大，犹怜草木青。长空送鸟印，留幻与人灵。--- 马一浮《旷怡亭口占》</code></p>
-
               
             </div>
           </div>

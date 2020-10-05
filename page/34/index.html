@@ -475,9 +475,10 @@ if (!doNotTrack) {
       
         keywords：UE4, Memory Persist, GC, 垃圾回收, 内存管理
 防止GC的办法 一个UObject类型的变量，即使是static，默认也会被GC掉。
- 要防止该对象被GC，有4种方式：
- 作为成员变量并标记为UPROPERTY()； 创建对象后 AddToRoot() ；（退出游戏时需要RemoveFromRoot()） FStreamableManager Load资源时，bManageActiveHandle 设置为true； FGCObjectScopeGuard 在指定代码区域内保持对象；  Uobject不能使用TSharedPtr进行引用计数，非UObject才可以；如果一个非UObject的类想加入GC，那么必须继承FGCObject类。
- UPROPERTY()用法 URPOPERTY()UObject* MyObj; AddToRoot()用法 UMyObject* MyObj = NewObject&lt;UMyObject&gt;();MyObj.AddToRoot(); FStreamableManager 用法 FSoftObjectPath AssetPath(TEXT(&quot;/Game/Mannequin/Animations/ThirdPersonWalk.ThirdPersonWalk&quot;));FStreamableManager&amp; AssetLoader = UAssetManager::GetStreamableManager();//hold object in memory.TSharedPtr&lt;FStreamableHandle&gt; Handle = AssetLoader.RequestSyncLoad(AssetPath, true);UObject* Obj = Handle-&gt;GetLoadedAsset();//free memory of object.Handle-&gt;ReleaseHandle(); FGCObjectScopeGuard 用法 {FGCObjectScopeGuard(UObject* GladOS = NewObject&lt;...&gt;(...));GladOS-&gt;SpawnCell();RunGC();GladOS-&gt;IsStillAlive(); // Object will not be removed by GC} GC 常见问题   官方论坛上有人说 NewObject() 或者 LoadObject() 创建的对象才会自动被 GC ， SpawnActor 创建的对象会被自动 AddToRoot ，不会被 GC。不知早期的版本是否确实如此，但是目前版本不是这样，即使是 SpawnActor ，默认也会被 GC。
+ 要防止该对象被GC，有5种方式：
+ 作为成员变量并标记为UPROPERTY()； 创建对象后 AddToRoot() ；（退出游戏时需要RemoveFromRoot()） 对目标设置一个有效的Owner：SetOwner()； FStreamableManager Load资源时，bManageActiveHandle 设置为true； FGCObjectScopeGuard 在指定代码区域内保持对象；  Uobject不能使用TSharedPtr进行引用计数，非UObject才可以；如果一个非UObject的类想加入GC，那么必须继承FGCObject类。
+ UPROPERTY()用法 URPOPERTY()UObject* MyObj; AddToRoot()用法 UMyObject* MyObj = NewObject&lt;UMyObject&gt;();MyObj.AddToRoot(); SetOwner()用法 void AMyCharacter::BeginPlay(){Super::BeginPlay();ActorTest = NewObject&lt;AActor&gt;();ActorTest-&gt;SetOwner(this);} 只要AMyCharacter没有销毁，那么ActorTest不会被垃圾回收。
+FStreamableManager 用法 FSoftObjectPath AssetPath(TEXT(&quot;/Game/Mannequin/Animations/ThirdPersonWalk.ThirdPersonWalk&quot;));FStreamableManager&amp; AssetLoader = UAssetManager::GetStreamableManager();//hold object in memory.TSharedPtr&lt;FStreamableHandle&gt; Handle = AssetLoader.RequestSyncLoad(AssetPath, true);UObject* Obj = Handle-&gt;GetLoadedAsset();//free memory of object.
       
       <p>
         <a href="https://dawnarc.com/2017/04/ue4%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E4%B8%8E%E5%86%85%E5%AD%98%E5%B8%B8%E9%A9%BB/" class="postShorten-excerpt_link link">Continue reading</a>

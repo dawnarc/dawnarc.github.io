@@ -766,12 +766,7 @@ Add a custom Component inherit from DestructibleComponent, then override two fun
       <pubDate>Sun, 14 Oct 2018 21:02:02 +0800</pubDate>
       
       <guid>https://dawnarc.com/2018/10/ue4lnk2019-unresolved-external-symbol-getprivatestaticclass/</guid>
-      <description>UE4 Plugin Link Error:
-Error	LNK2019	unresolved external symbol &amp;quot;private: static class UClass * __cdecl UMyComponent::GetPrivateStaticClass(void)&amp;quot; (?GetPrivateStaticClass@UMyComponent@@CAPEAVUClass@@XZ) referenced in function &amp;quot;class UMyComponent * __cdecl NewObject&amp;lt;class UMyComponent&amp;gt;(class UObject *)&amp;quot; (??$NewObject@VUMyComponent@@@@YAPEAVUMyComponent@@PEAVUObject@@@Z)	ClimbWall	 Reason:
-Maybe you removed UE4&amp;rsquo;s macro in your headers.
-Solution:
-Add UE4 stylized macro MYPLUGIN_API in headers, e.g.:
-UCLASS()class MYPLUGIN_API UMyComponent : public UActorComponent{GENERATED_BODY()} Ensure all headers of your plugin have been added macro MYPLUGIN_API(even raw classes), otherwise there&amp;rsquo;s a compilication error LNK2019 if your plugin header was included in other Modules or game project.</description>
+      <description>&lt;p&gt;Keywords: UE4, Plugin, LNK2019, GetPrivateStaticClass&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -887,12 +882,7 @@ Velocity = Velocity.GetSafeNormal() * InitialSpeed; 前者速度方向是相对
       <pubDate>Wed, 04 Jul 2018 16:44:02 +0800</pubDate>
       
       <guid>https://dawnarc.com/2018/07/ue4-tsharedptr-tweakobjectptr-and-tuniqueptr/</guid>
-      <description>UE4 的 TSharedPtr、TWeakObjectPtr 模仿自 C++11 的 shared_ptr 、 weak_ptr
-TSharedPtr Summary TSharedPtr 相当于对象的引用计数器。每当对 TSharedPtr 赋值一次，该 TSharedPtr 引用对象计数加一，当引用计数为0时，则该对象被自动销毁。
-用法：
-TSharedPtr&amp;lt;TestClass&amp;gt; ObjPtr = MakeShareable(new TestClass()); 如果两个 TSharedPtr 相互赋值，则会导致对象永不释放，导致内存泄漏。
- TSharedPtr 是否对 UObject 对象计数 TSharedPtr的代码注释注明其作用对象为raw pointers:
-/** Proxy structure for implicitly converting raw pointers to shared/weak pointers */// NOTE: The following is an Unreal extension to standard shared_ptr behaviortemplate&amp;lt; class ObjectType &amp;gt;struct FRawPtrProxy{/** The object pointer */ObjectType* Object;/** Reference controller used to destroy the object */FReferenceControllerBase* ReferenceController;/** Construct implicitly from an object */FORCEINLINE FRawPtrProxy( ObjectType* InObject ): Object ( InObject ), ReferenceController( NewDefaultReferenceController( InObject ) ){}/** Construct implicitly from an object and a custom deleter */template&amp;lt; class Deleter &amp;gt;FORCEINLINE FRawPtrProxy( ObjectType* InObject, Deleter&amp;amp;&amp;amp; InDeleter ): Object ( InObject ), ReferenceController( NewCustomReferenceController( InObject, Forward&amp;lt; Deleter &amp;gt;( InDeleter ) ) ){}}; 按理说：UE4的GC系统其实就相当于针对UObject类型对象的std::shared_ptr&amp;lt;&amp;gt;，所以TSharedPtr作用范围也没必要包含UObject。</description>
+      <description>&lt;p&gt;&lt;code&gt;TSharedPtr&lt;/code&gt; and &lt;code&gt;TWeakObjectPtr&lt;/code&gt; limitated from &lt;code&gt;shared_ptr&lt;/code&gt; and &lt;code&gt;weak_ptr&lt;/code&gt; of &lt;code&gt;C++11&lt;/code&gt;.&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -1040,25 +1030,12 @@ Handling Steam Achievements – Steam Integration Part 2</description>
     </item>
     
     <item>
-      <title>[UE4]Lightings</title>
-      <link>https://dawnarc.com/2018/04/ue4lightings/</link>
+      <title>[UE4]Lighting Notes</title>
+      <link>https://dawnarc.com/2018/04/ue4lighting-notes/</link>
       <pubDate>Fri, 27 Apr 2018 14:14:02 +0800</pubDate>
       
-      <guid>https://dawnarc.com/2018/04/ue4lightings/</guid>
-      <description>keywords：UE4, Lighting, 灯光, 光源距离裁剪
-以下问题都是基于4.18，不排除后续新版本变动。
-Lighting Content Examples https://docs.unrealengine.com/en-us/Resources/ContentExamples/Lighting
-Light Propagation Volumes Light Propagation Volumes
-https://docs.unrealengine.com/en-us/Engine/Rendering/LightingAndShadows/LightPropagationVolumes
-Dynamic GI : Getting the Most out of LPV ( Light Propagation Volume )
-https://forums.unrealengine.com/community/community-content-tools-and-tutorials/103572-dynamic-gi-getting-the-most-out-of-lpv-light-propagation-volume
-Lighting Channels https://docs.unrealengine.com/en-us/Engine/Rendering/LightingAndShadows/LightingChannels
-实际应用：
-假设场景中只有一个平行光，且光照强度较大时，那么角色身上接收不到直接光照的部位（比如脖子），会明显发黑，如果增大 SkyBox 光照强度，那么会影响整个场景的亮度。有没办法只增加角色身上的光照亮度？让阴影区域变亮？解决办法是：Lighting Channels。
-解决办法：
-场景中添加两个平行光，A平行光的 Lighting Channels 只开启Channel 0，B平行光只开启Channel 1，然后角色的 Mesh 同时开启 Channel 0 和 Channel 1。
-注意事项：
- Lighting Channels是动态的，意思是：静态光(Static Lights)或者Mobility为Static的Static Mesh Actor不受Lighting Channels影响。要使用Lighting Channels，Static Mesh Actor和Lights的Mobility必须设置为Stationary或者Movable。 材质类型影响：Lighting Channels只影响直接光照(direct lighting)下Opaque类型材质，Translucent或者Masked类型材质没有效果。 Lighting Channels对性能开销不大，可以忽略不计。  移动端的Lighting Channels：</description>
+      <guid>https://dawnarc.com/2018/04/ue4lighting-notes/</guid>
+      <description>&lt;p&gt;keywords：UE4, Lighting, 灯光, 光源距离裁剪&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -2412,9 +2389,10 @@ https://github.com/tomlooman/EpicSurvivalGameSeries
       <guid>https://dawnarc.com/2017/04/ue4%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E4%B8%8E%E5%86%85%E5%AD%98%E5%B8%B8%E9%A9%BB/</guid>
       <description>keywords：UE4, Memory Persist, GC, 垃圾回收, 内存管理
 防止GC的办法 一个UObject类型的变量，即使是static，默认也会被GC掉。
- 要防止该对象被GC，有4种方式：
- 作为成员变量并标记为UPROPERTY()； 创建对象后 AddToRoot() ；（退出游戏时需要RemoveFromRoot()） FStreamableManager Load资源时，bManageActiveHandle 设置为true； FGCObjectScopeGuard 在指定代码区域内保持对象；  Uobject不能使用TSharedPtr进行引用计数，非UObject才可以；如果一个非UObject的类想加入GC，那么必须继承FGCObject类。
- UPROPERTY()用法 URPOPERTY()UObject* MyObj; AddToRoot()用法 UMyObject* MyObj = NewObject&amp;lt;UMyObject&amp;gt;();MyObj.AddToRoot(); FStreamableManager 用法 FSoftObjectPath AssetPath(TEXT(&amp;quot;/Game/Mannequin/Animations/ThirdPersonWalk.ThirdPersonWalk&amp;quot;));FStreamableManager&amp;amp; AssetLoader = UAssetManager::GetStreamableManager();//hold object in memory.TSharedPtr&amp;lt;FStreamableHandle&amp;gt; Handle = AssetLoader.RequestSyncLoad(AssetPath, true);UObject* Obj = Handle-&amp;gt;GetLoadedAsset();//free memory of object.Handle-&amp;gt;ReleaseHandle(); FGCObjectScopeGuard 用法 {FGCObjectScopeGuard(UObject* GladOS = NewObject&amp;lt;...&amp;gt;(...));GladOS-&amp;gt;SpawnCell();RunGC();GladOS-&amp;gt;IsStillAlive(); // Object will not be removed by GC} GC 常见问题   官方论坛上有人说 NewObject() 或者 LoadObject() 创建的对象才会自动被 GC ， SpawnActor 创建的对象会被自动 AddToRoot ，不会被 GC。不知早期的版本是否确实如此，但是目前版本不是这样，即使是 SpawnActor ，默认也会被 GC。</description>
+ 要防止该对象被GC，有5种方式：
+ 作为成员变量并标记为UPROPERTY()； 创建对象后 AddToRoot() ；（退出游戏时需要RemoveFromRoot()） 对目标设置一个有效的Owner：SetOwner()； FStreamableManager Load资源时，bManageActiveHandle 设置为true； FGCObjectScopeGuard 在指定代码区域内保持对象；  Uobject不能使用TSharedPtr进行引用计数，非UObject才可以；如果一个非UObject的类想加入GC，那么必须继承FGCObject类。
+ UPROPERTY()用法 URPOPERTY()UObject* MyObj; AddToRoot()用法 UMyObject* MyObj = NewObject&amp;lt;UMyObject&amp;gt;();MyObj.AddToRoot(); SetOwner()用法 void AMyCharacter::BeginPlay(){Super::BeginPlay();ActorTest = NewObject&amp;lt;AActor&amp;gt;();ActorTest-&amp;gt;SetOwner(this);} 只要AMyCharacter没有销毁，那么ActorTest不会被垃圾回收。
+FStreamableManager 用法 FSoftObjectPath AssetPath(TEXT(&amp;quot;/Game/Mannequin/Animations/ThirdPersonWalk.ThirdPersonWalk&amp;quot;));FStreamableManager&amp;amp; AssetLoader = UAssetManager::GetStreamableManager();//hold object in memory.TSharedPtr&amp;lt;FStreamableHandle&amp;gt; Handle = AssetLoader.RequestSyncLoad(AssetPath, true);UObject* Obj = Handle-&amp;gt;GetLoadedAsset();//free memory of object.</description>
     </item>
     
     <item>
