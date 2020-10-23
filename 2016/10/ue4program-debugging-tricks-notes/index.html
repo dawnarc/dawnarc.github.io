@@ -382,13 +382,46 @@ if (!doNotTrack) {
 </div>
 <h3 id="useful-api">Useful API</h3>
 <h5 id="how-to-debug-inline-function">How to debug inline function?</h5>
-<p>Use <code>FORCEINLINE_DEBUGGABLE</code>. Example from <code>Engine\Source\Runtime\RHI\Public\RHICommandList.h</code>:</p>
+<p>Use <code>FORCEINLINE_DEBUGGABLE</code>.</p>
+<p>Example:<br>
+from <code>Engine\Source\Runtime\RHI\Public\RHICommandList.h</code>:</p>
 <pre><code>FORCEINLINE_DEBUGGABLE void CopyTexture(FRHITexture* SourceTextureRHI, FRHITexture* DestTextureRHI, const FRHICopyTextureInfo&amp; CopyInfo)
 {
 }
 </code></pre>
+<p>Setup:<br>
+Modify &ldquo;Engine\Source\Runtime\Core\Public\Misc\CoreMiscDefines.h&rdquo;:<br>
+Origin:</p>
+<pre><code>#if UE_BUILD_DEBUG
+    #define FORCEINLINE_DEBUGGABLE FORCEINLINE_DEBUGGABLE_ACTUAL
+#else
+    #define FORCEINLINE_DEBUGGABLE FORCEINLINE
+#endif
+</code></pre>
+<p>New:</p>
+<pre><code>#if UE_BUILD_DEBUG
+    #define FORCEINLINE_DEBUGGABLE FORCEINLINE_DEBUGGABLE_ACTUAL
+#else
+    #if UE_BUILD_DEVELOPMENT
+        #define FORCEINLINE_DEBUGGABLE FORCEINLINE_DEBUGGABLE_ACTUAL
+    #else
+        #define FORCEINLINE_DEBUGGABLE FORCEINLINE
+    #endif
+#endif
+</code></pre>
 <h5 id="how-print-log-in-low-level">How print log in low level</h5>
 <pre><code>FPlatformMisc::LowLevelOutputDebugStringf(TEXT(&quot;FWebBrowserTextureResource:CopySample 11&quot;));
+</code></pre>
+<h5 id="how-to-record-tracing-data-for-insights">How to record tracing data for Insights</h5>
+<p>Example:</p>
+<pre><code>void UCharacterMovementComponent::TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction)
+{
+    SCOPED_NAMED_EVENT(UCharacterMovementComponent_TickComponent, FColor::Yellow);
+    SCOPE_CYCLE_COUNTER(STAT_CharacterMovement);
+    SCOPE_CYCLE_COUNTER(STAT_CharacterMovementTick);
+    CSV_SCOPED_TIMING_STAT_EXCLUSIVE(CharacterMovement);
+    ...
+}
 </code></pre>
 <hr>
 <p><code>Efficiency is doing the thing right. Effectiveness is doing the right thing. ― Peter F. Drucker</code></p>

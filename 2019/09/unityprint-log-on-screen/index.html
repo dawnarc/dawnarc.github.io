@@ -354,57 +354,46 @@ if (!doNotTrack) {
             <div class="main-content-wrap">
               <p>Keywords: Unity, Basic Usage</p>
 <h5 id="from-scratch">From scratch</h5>
-<p>C# Script:</p>
-<pre><code>using UnityEngine;
-using System.Collections;
+<p>C# Script (Thanks for <code>Jaakko Saaristo</code>):</p>
+<pre><code>using System.Collections;
+using UnityEngine;
 
-public class MyLog : MonoBehaviour
-{
-    string myLog;
-    Queue myLogQueue = new Queue();
+public class ScreenLogger : MonoBehaviour {
 
-    void Start()
-    {
-        Debug.Log(&quot;Log1&quot;);
-        Debug.Log(&quot;Log2&quot;);
-        Debug.Log(&quot;Log3&quot;);
-        Debug.Log(&quot;Log4&quot;);
+    private string log;
+    private const int MAXCHARS = 10000;
+    private Queue myLogQueue = new Queue();
+    void Start() {
+        Debug.Log(&quot;Screen logger started&quot;);
     }
 
-    void OnEnable ()
-    {
+    void OnEnable() {
         Application.logMessageReceived += HandleLog;
     }
 
-    void OnDisable ()
-    {
+    void OnDisable() {
         Application.logMessageReceived -= HandleLog;
     }
 
-    void HandleLog(string logString, string stackTrace, LogType type)
-    {
-        myLog = logString;
-        string newString = &quot;\n [&quot; + type + &quot;] : &quot; + myLog;
-        myLogQueue.Enqueue(newString);
+    void HandleLog(string logString, string stackTrace, LogType type) {
+        myLogQueue.Enqueue(&quot;\n [&quot; + type + &quot;] : &quot; + logString);
         if (type == LogType.Exception)
-        {
-            newString = &quot;\n&quot; + stackTrace;
-            myLogQueue.Enqueue(newString);
-        }
-        myLog = string.Empty;
-        foreach(string mylog in myLogQueue)
-        {
-            myLog += mylog;
-        }
+        myLogQueue.Enqueue(&quot;\n&quot; + stackTrace);
     }
 
-    void OnGUI ()
-    {
-        GUILayout.Label(myLog);
+    void Update() {
+        while (myLogQueue.Count &gt; 0)
+        log = myLogQueue.Dequeue() + log;
+        if (log.Length &gt; MAXCHARS)
+        log = log.Substring(0, MAXCHARS);
+    }
+
+    void OnGUI() {
+        GUILayout.Label(log);
     }
 }
 </code></pre>
-<p>Origin:<br>
+<p>Reference:<br>
 Print debug.log to screen? C#<br>
 <a href="https://answers.unity.com/questions/1020051/print-debuglog-to-screen-c.html">https://answers.unity.com/questions/1020051/print-debuglog-to-screen-c.html</a></p>
 <h5 id="using-plugin">Using plugin</h5>
