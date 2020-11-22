@@ -10,12 +10,12 @@
 <meta name="keywords" content="">
 <meta name="description" content="Source Path:
 Engine\Source\Runtime\CoreUObject\Private\UObject\GarbageCollection.cpp Callstack of GC in MainThread which was the thread of processing AActor::Tick()：
-UE4Editor-CoreUObject.dll!CollectGarbageInternal(EObjectFlags KeepFlags, bool bPerformFullPurge) Line 1496	UE4Editor-CoreUObject.dll!TryCollectGarbage(EObjectFlags KeepFlags, bool bPerformFullPurge) Line 1560	UE4Editor-Engine.dll!UEngine::PerformGarbageCollectionAndCleanupActors() Line 1134	UE4Editor-Engine.dll!UEngine::ConditionalCollectGarbage() Line 1108	UE4Editor-Engine.dll!UWorld::Tick(ELevelTick TickType, float DeltaSeconds) Line 1612	UE4Editor-UnrealEd.dll!UEditorEngine::Tick(float DeltaSeconds, bool bIdleMode) Line 1481	UE4Editor-UnrealEd.dll!UUnrealEdEngine::Tick(float DeltaSeconds, bool bIdleMode) Line 401	UE4Editor.exe!FEngineLoop::Tick() Line 3320	[Inline Frame] UE4Editor.exe!EngineTick() Line 62	  人才的本领叫做技术，天才的创意叫做艺术。">
+UObject::ConditionalFinishDestroy() Obj.cpp:1006IncrementalDestroyGarbage(bool,float) GarbageCollection.cpp:1494IncrementalPurgeGarbage(bool,float) GarbageCollection.cpp:1421CollectGarbageInternal(EObjectFlags,bool) GarbageCollection.cpp:1969TryCollectGarbage(EObjectFlags,bool) GarbageCollection.cpp:2088UEngine::PerformGarbageCollectionAndCleanupActors() UnrealEngine.cpp:1409UEngine::ConditionalCollectGarbage() UnrealEngine.cpp:1383UWorld::Tick(ELevelTick,float) LevelTick.cpp:1755UEditorEngine::Tick(float,bool) EditorEngine.cpp:1514UUnrealEdEngine::Tick(float,bool) UnrealEdEngine.cpp:411FEngineLoop::Tick() LaunchEngineLoop.cpp:4844GuardedMain(const wchar_t *) Launch.cpp:171WinMain(HINSTANCE__ *,HINSTANCE__ *,char *,int) LaunchWindows.cpp:257__scrt_common_main_seh() 0x00007ff64fa5146aBaseThreadInitThunk 0x00007ffd732e7c24RtlUserThreadStart 0x00007ffd748ecea1  人才的本领叫做技术，天才的创意叫做艺术。">
 
 
 <meta property="og:description" content="Source Path:
 Engine\Source\Runtime\CoreUObject\Private\UObject\GarbageCollection.cpp Callstack of GC in MainThread which was the thread of processing AActor::Tick()：
-UE4Editor-CoreUObject.dll!CollectGarbageInternal(EObjectFlags KeepFlags, bool bPerformFullPurge) Line 1496	UE4Editor-CoreUObject.dll!TryCollectGarbage(EObjectFlags KeepFlags, bool bPerformFullPurge) Line 1560	UE4Editor-Engine.dll!UEngine::PerformGarbageCollectionAndCleanupActors() Line 1134	UE4Editor-Engine.dll!UEngine::ConditionalCollectGarbage() Line 1108	UE4Editor-Engine.dll!UWorld::Tick(ELevelTick TickType, float DeltaSeconds) Line 1612	UE4Editor-UnrealEd.dll!UEditorEngine::Tick(float DeltaSeconds, bool bIdleMode) Line 1481	UE4Editor-UnrealEd.dll!UUnrealEdEngine::Tick(float DeltaSeconds, bool bIdleMode) Line 401	UE4Editor.exe!FEngineLoop::Tick() Line 3320	[Inline Frame] UE4Editor.exe!EngineTick() Line 62	  人才的本领叫做技术，天才的创意叫做艺术。">
+UObject::ConditionalFinishDestroy() Obj.cpp:1006IncrementalDestroyGarbage(bool,float) GarbageCollection.cpp:1494IncrementalPurgeGarbage(bool,float) GarbageCollection.cpp:1421CollectGarbageInternal(EObjectFlags,bool) GarbageCollection.cpp:1969TryCollectGarbage(EObjectFlags,bool) GarbageCollection.cpp:2088UEngine::PerformGarbageCollectionAndCleanupActors() UnrealEngine.cpp:1409UEngine::ConditionalCollectGarbage() UnrealEngine.cpp:1383UWorld::Tick(ELevelTick,float) LevelTick.cpp:1755UEditorEngine::Tick(float,bool) EditorEngine.cpp:1514UUnrealEdEngine::Tick(float,bool) UnrealEdEngine.cpp:411FEngineLoop::Tick() LaunchEngineLoop.cpp:4844GuardedMain(const wchar_t *) Launch.cpp:171WinMain(HINSTANCE__ *,HINSTANCE__ *,char *,int) LaunchWindows.cpp:257__scrt_common_main_seh() 0x00007ff64fa5146aBaseThreadInitThunk 0x00007ffd732e7c24RtlUserThreadStart 0x00007ffd748ecea1  人才的本领叫做技术，天才的创意叫做艺术。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[UE4]Engine Source Analysis - GarbageCollection">
 <meta name="twitter:title" content="[UE4]Engine Source Analysis - GarbageCollection">
@@ -24,10 +24,10 @@ UE4Editor-CoreUObject.dll!CollectGarbageInternal(EObjectFlags KeepFlags, bool bP
 <meta property="og:site_name" content="玄冬Wong">
 <meta property="og:description" content="Source Path:
 Engine\Source\Runtime\CoreUObject\Private\UObject\GarbageCollection.cpp Callstack of GC in MainThread which was the thread of processing AActor::Tick()：
-UE4Editor-CoreUObject.dll!CollectGarbageInternal(EObjectFlags KeepFlags, bool bPerformFullPurge) Line 1496	UE4Editor-CoreUObject.dll!TryCollectGarbage(EObjectFlags KeepFlags, bool bPerformFullPurge) Line 1560	UE4Editor-Engine.dll!UEngine::PerformGarbageCollectionAndCleanupActors() Line 1134	UE4Editor-Engine.dll!UEngine::ConditionalCollectGarbage() Line 1108	UE4Editor-Engine.dll!UWorld::Tick(ELevelTick TickType, float DeltaSeconds) Line 1612	UE4Editor-UnrealEd.dll!UEditorEngine::Tick(float DeltaSeconds, bool bIdleMode) Line 1481	UE4Editor-UnrealEd.dll!UUnrealEdEngine::Tick(float DeltaSeconds, bool bIdleMode) Line 401	UE4Editor.exe!FEngineLoop::Tick() Line 3320	[Inline Frame] UE4Editor.exe!EngineTick() Line 62	  人才的本领叫做技术，天才的创意叫做艺术。">
+UObject::ConditionalFinishDestroy() Obj.cpp:1006IncrementalDestroyGarbage(bool,float) GarbageCollection.cpp:1494IncrementalPurgeGarbage(bool,float) GarbageCollection.cpp:1421CollectGarbageInternal(EObjectFlags,bool) GarbageCollection.cpp:1969TryCollectGarbage(EObjectFlags,bool) GarbageCollection.cpp:2088UEngine::PerformGarbageCollectionAndCleanupActors() UnrealEngine.cpp:1409UEngine::ConditionalCollectGarbage() UnrealEngine.cpp:1383UWorld::Tick(ELevelTick,float) LevelTick.cpp:1755UEditorEngine::Tick(float,bool) EditorEngine.cpp:1514UUnrealEdEngine::Tick(float,bool) UnrealEdEngine.cpp:411FEngineLoop::Tick() LaunchEngineLoop.cpp:4844GuardedMain(const wchar_t *) Launch.cpp:171WinMain(HINSTANCE__ *,HINSTANCE__ *,char *,int) LaunchWindows.cpp:257__scrt_common_main_seh() 0x00007ff64fa5146aBaseThreadInitThunk 0x00007ffd732e7c24RtlUserThreadStart 0x00007ffd748ecea1  人才的本领叫做技术，天才的创意叫做艺术。">
 <meta name="twitter:description" content="Source Path:
 Engine\Source\Runtime\CoreUObject\Private\UObject\GarbageCollection.cpp Callstack of GC in MainThread which was the thread of processing AActor::Tick()：
-UE4Editor-CoreUObject.dll!CollectGarbageInternal(EObjectFlags KeepFlags, bool bPerformFullPurge) Line 1496	UE4Editor-CoreUObject.dll!TryCollectGarbage(EObjectFlags KeepFlags, bool bPerformFullPurge) Line 1560	UE4Editor-Engine.dll!UEngine::PerformGarbageCollectionAndCleanupActors() Line 1134	UE4Editor-Engine.dll!UEngine::ConditionalCollectGarbage() Line 1108	UE4Editor-Engine.dll!UWorld::Tick(ELevelTick TickType, float DeltaSeconds) Line 1612	UE4Editor-UnrealEd.dll!UEditorEngine::Tick(float DeltaSeconds, bool bIdleMode) Line 1481	UE4Editor-UnrealEd.dll!UUnrealEdEngine::Tick(float DeltaSeconds, bool bIdleMode) Line 401	UE4Editor.exe!FEngineLoop::Tick() Line 3320	[Inline Frame] UE4Editor.exe!EngineTick() Line 62	  人才的本领叫做技术，天才的创意叫做艺术。">
+UObject::ConditionalFinishDestroy() Obj.cpp:1006IncrementalDestroyGarbage(bool,float) GarbageCollection.cpp:1494IncrementalPurgeGarbage(bool,float) GarbageCollection.cpp:1421CollectGarbageInternal(EObjectFlags,bool) GarbageCollection.cpp:1969TryCollectGarbage(EObjectFlags,bool) GarbageCollection.cpp:2088UEngine::PerformGarbageCollectionAndCleanupActors() UnrealEngine.cpp:1409UEngine::ConditionalCollectGarbage() UnrealEngine.cpp:1383UWorld::Tick(ELevelTick,float) LevelTick.cpp:1755UEditorEngine::Tick(float,bool) EditorEngine.cpp:1514UUnrealEdEngine::Tick(float,bool) UnrealEdEngine.cpp:411FEngineLoop::Tick() LaunchEngineLoop.cpp:4844GuardedMain(const wchar_t *) Launch.cpp:171WinMain(HINSTANCE__ *,HINSTANCE__ *,char *,int) LaunchWindows.cpp:257__scrt_common_main_seh() 0x00007ff64fa5146aBaseThreadInitThunk 0x00007ffd732e7c24RtlUserThreadStart 0x00007ffd748ecea1  人才的本领叫做技术，天才的创意叫做艺术。">
 <meta property="og:locale" content="en-us">
 
   
@@ -363,15 +363,22 @@ if (!doNotTrack) {
 <pre><code>Engine\Source\Runtime\CoreUObject\Private\UObject\GarbageCollection.cpp
 </code></pre>
 <p>Callstack of GC in <code>MainThread</code> which was the thread of processing <code>AActor::Tick()</code>：</p>
-<pre><code>UE4Editor-CoreUObject.dll!CollectGarbageInternal(EObjectFlags KeepFlags, bool bPerformFullPurge) Line 1496	
-UE4Editor-CoreUObject.dll!TryCollectGarbage(EObjectFlags KeepFlags, bool bPerformFullPurge) Line 1560	
-UE4Editor-Engine.dll!UEngine::PerformGarbageCollectionAndCleanupActors() Line 1134	
-UE4Editor-Engine.dll!UEngine::ConditionalCollectGarbage() Line 1108	
-UE4Editor-Engine.dll!UWorld::Tick(ELevelTick TickType, float DeltaSeconds) Line 1612	
-UE4Editor-UnrealEd.dll!UEditorEngine::Tick(float DeltaSeconds, bool bIdleMode) Line 1481	
-UE4Editor-UnrealEd.dll!UUnrealEdEngine::Tick(float DeltaSeconds, bool bIdleMode) Line 401	
-UE4Editor.exe!FEngineLoop::Tick() Line 3320	
-[Inline Frame] UE4Editor.exe!EngineTick() Line 62	
+<pre><code>UObject::ConditionalFinishDestroy() Obj.cpp:1006
+IncrementalDestroyGarbage(bool,float) GarbageCollection.cpp:1494
+IncrementalPurgeGarbage(bool,float) GarbageCollection.cpp:1421
+CollectGarbageInternal(EObjectFlags,bool) GarbageCollection.cpp:1969
+TryCollectGarbage(EObjectFlags,bool) GarbageCollection.cpp:2088
+UEngine::PerformGarbageCollectionAndCleanupActors() UnrealEngine.cpp:1409
+UEngine::ConditionalCollectGarbage() UnrealEngine.cpp:1383
+UWorld::Tick(ELevelTick,float) LevelTick.cpp:1755
+UEditorEngine::Tick(float,bool) EditorEngine.cpp:1514
+UUnrealEdEngine::Tick(float,bool) UnrealEdEngine.cpp:411
+FEngineLoop::Tick() LaunchEngineLoop.cpp:4844
+GuardedMain(const wchar_t *) Launch.cpp:171
+WinMain(HINSTANCE__ *,HINSTANCE__ *,char *,int) LaunchWindows.cpp:257
+__scrt_common_main_seh() 0x00007ff64fa5146a
+BaseThreadInitThunk 0x00007ffd732e7c24
+RtlUserThreadStart 0x00007ffd748ecea1
 </code></pre>
 <hr>
 <p><code>人才的本领叫做技术，天才的创意叫做艺术。</code></p>
