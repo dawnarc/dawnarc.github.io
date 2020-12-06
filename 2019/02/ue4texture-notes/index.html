@@ -352,7 +352,7 @@ if (!doNotTrack) {
           
           <div class="post-content markdown" itemprop="articleBody">
             <div class="main-content-wrap">
-              <h3 id="optimization">Optimization</h3>
+              <h3 id="documents">Documents</h3>
 <h5 id="is-it-need-to-make-texture-lods">Is it need to make Texture LODs?</h5>
 <p>UE4 automatically make mipmaps for your textures. If you import 1024 texture to engine it&rsquo;s automatically creates 512,256,128,64,32,16,8,4,2,1 size textures from the original texture data. These are stored as mipmaps for original texture and it cost +33% more texture memory. When texture is sampled at material, pixel shader calculates what size mipmap it should sample. This automatic mipmapping prevents aliasing and saves a lot of texture memory bandwith. There is also texture streaming feature that only loads mipmap levels that are needed for object. If object is really far a way engine does not need to load the full size texture but small version of it. Let say 64x64 texture.</p>
 <p>Original Text: Texture Size LODs<br>
@@ -364,6 +364,28 @@ if (!doNotTrack) {
 <a href="https://www.youtube.com/watch?v=Tq1TSccLyiU">https://www.youtube.com/watch?v=Tq1TSccLyiU</a></p>
 <p>[TUTORIAL] Unreal Engine - How to optimize texture resolution<br>
 <a href="https://www.youtube.com/watch?v=p2YPcWETiG8">https://www.youtube.com/watch?v=p2YPcWETiG8</a></p>
+<p>[UE4] Think about how to determine the Texture Streaming Pool Size<br>
+<a href="https://qiita.com/EGJ-Nori_Shinoyama/items/cc959d201ff011df872f">https://qiita.com/EGJ-Nori_Shinoyama/items/cc959d201ff011df872f</a></p>
+<p>[UE4] About texture memory<br>
+<a href="https://qiita.com/com04/items/cea6da4949fc8774fcb8">https://qiita.com/com04/items/cea6da4949fc8774fcb8</a></p>
+<p>What is Texture Group?<br>
+<a href="https://qiita.com/EGJ-Nori_Shinoyama/items/8b3c2e4e372f05e33476">https://qiita.com/EGJ-Nori_Shinoyama/items/8b3c2e4e372f05e33476</a></p>
+<p>Q: How to set Streaming PoolSize for starting up application?<br>
+A: Modify <code>\Engine\Config\ConsoleVariables.ini</code>, add <code>r.Streaming.PoolSize=2000</code> under <code>[Startup]</code>.<br>
+Reference:<br>
+<a href="https://answers.unrealengine.com/questions/343646/texture-streaming-pool-over.html">https://answers.unrealengine.com/questions/343646/texture-streaming-pool-over.html</a><br>
+<a href="https://answers.unrealengine.com/questions/172853/how-do-i-increase-the-texture-pool.html">https://answers.unrealengine.com/questions/172853/how-do-i-increase-the-texture-pool.html</a></p>
+<p>Q: What&rsquo;s <code>non-streaming</code> texture?<br>
+A: Without respecting the <code>power of 2</code> rule.<br>
+Reference:<br>
+<a href="https://answers.unrealengine.com/questions/574012/non-streaming-texture-over-4000-mb.html">https://answers.unrealengine.com/questions/574012/non-streaming-texture-over-4000-mb.html</a></p>
+<p>Q: How to change streaming pool size?<br>
+A: At the console: <code>r.Streaming.PoolSize=150</code> or make the change permanent by editing your DefaultEngine.ini to include:</p>
+<pre><code>[/Script/Engine.RendererSettings]
+r.Streaming.PoolSize=1500
+</code></pre>
+<p>Reference:<br>
+<a href="https://answers.unrealengine.com/questions/172853/view.html">https://answers.unrealengine.com/questions/172853/view.html</a></p>
 <h5 id="parallax-occlusion-mapping">Parallax Occlusion Mapping</h5>
 <p>Bump Offset and Parallax Occlusion Mapping - UE4 Materials 101 - Episode 8<br>
 <a href="https://www.youtube.com/watch?v=wc0StMr3CQo">https://www.youtube.com/watch?v=wc0StMr3CQo</a></p>
@@ -376,6 +398,12 @@ if (!doNotTrack) {
 <h5 id="relief-mapping">Relief Mapping</h5>
 <p>RM-Methods adds many Methods of Relief Mapping beyond the actual POM shader on Unreal Engine. The plugin can generate an special Texture Map to use on the shaders.<br>
 <a href="https://www.unrealengine.com/marketplace/en-US/product/rm-methods">https://www.unrealengine.com/marketplace/en-US/product/rm-methods</a></p>
+<h5 id="detail-textures">Detail Textures</h5>
+<p>Adding Detail Textures<br>
+<a href="https://docs.unrealengine.com/en-US/Engine/Rendering/Materials/HowTo/DetailTexturing/index.html">https://docs.unrealengine.com/en-US/Engine/Rendering/Materials/HowTo/DetailTexturing/index.html</a></p>
+<h5 id="mipmap">Mipmap</h5>
+<p>[UE4] How to make a custom Mipmap<br>
+<a href="https://qiita.com/EGJ-Osamu_Saito/items/a8c9015ecb3db3cc86db">https://qiita.com/EGJ-Osamu_Saito/items/a8c9015ecb3db3cc86db</a></p>
 <h3 id="editor-notes">Editor Notes</h3>
 <h5 id="how-to-set-texture-size">How to set Texture Size</h5>
 <p>Texture Editor -&gt; Compression -&gt; Maximum Texture Size.<br>
@@ -395,9 +423,22 @@ Default value 0 means the maximum size for the format on each platform.</p>
 </code></pre>
 <p>No mipmap support for Dynamic Texture 2D
 <a href="https://answers.unrealengine.com/questions/424643/no-mipmap-support-for-dynamic-2d-texture.html">https://answers.unrealengine.com/questions/424643/no-mipmap-support-for-dynamic-2d-texture.html</a></p>
+<h5 id="how-to-change-lodbias-at-runtime">How to change LODBias at runtime</h5>
+<p>C++ code:</p>
+<pre><code>if(UTexture2D* Tex = GetTexture())
+{
+    Tex-&gt;LODBias = LODBias;
+    Tex-&gt;UpdateCachedLODBias();
+}
+</code></pre>
+<p>Cosole command:</p>
+<pre><code>r.mipmaplodbias 0
+</code></pre>
 <h5 id="reference">Reference</h5>
 <p>Texture Streaming<br>
 <a href="https://docs.unrealengine.com/en-us/Engine/Content/Types/Textures/Streaming">https://docs.unrealengine.com/en-us/Engine/Content/Types/Textures/Streaming</a></p>
+<p>Texture Streaming Configuration<br>
+<a href="https://docs.unrealengine.com/en-US/Engine/Content/Types/Textures/Streaming/Config/index.html">https://docs.unrealengine.com/en-US/Engine/Content/Types/Textures/Streaming/Config/index.html</a></p>
 <p>Virtual Texturing | Live from HQ | Inside Unreal<br>
 <a href="https://www.youtube.com/watch?v=fhoZ2qMAfa4">https://www.youtube.com/watch?v=fhoZ2qMAfa4</a></p>
 <hr>

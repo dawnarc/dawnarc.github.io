@@ -515,6 +515,61 @@ void AMyCharacter::TestRender()
         });
 }
 </code></pre>
+<h5 id="how-to-copy-texture">How to copy texture</h5>
+<p>Example:<br>
+\Engine\Plugins\Runtime\Oculus\OculusVR\Source\OculusHMD\Private\OculusHMD_CustomPresent.cpp</p>
+<pre><code>void FCustomPresent::CopyTexture_RenderThread(FRHICommandListImmediate&amp; RHICmdList, FRHITexture* DstTexture, FRHITexture* SrcTexture,
+FIntRect DstRect = FIntRect(), FIntRect SrcRect = FIntRect(), bool bAlphaPremultiply = false, 
+bool bNoAlphaWrite = false, bool bInvertY = true, bool sRGBSource = false) const;
+</code></pre>
+<h5 id="how-to-generate-mipmaps">How to Generate Mipmaps</h5>
+<p>Example:<br>
+Engine\Plugins\Runtime\Oculus\OculusVR\Source\OculusHMD\Private\OculusHMD_Layer.cpp</p>
+<pre><code>void FXRSwapChain::GenerateMips_RenderThread(FRHICommandListImmediate&amp; RHICmdList)
+</code></pre>
+<h5 id="how-to-access-directx-interface-immediately">How to access DirectX interface immediately</h5>
+<ol>
+<li>
+<p>Add <code>DX11</code> in <code>MyProj.Build.cs</code>:</p>
+<p>PublicDependencyModuleNames.AddRange(new string[] { &ldquo;Core&rdquo;, &ldquo;CoreUObject&rdquo;, &ldquo;Engine&rdquo;, &ldquo;InputCore&rdquo;, &ldquo;DX11&rdquo; });</p>
+</li>
+<li>
+<p>Include header:</p>
+<p>#if PLATFORM_WINDOWS
+#include &lt;D3D11.h&gt;
+#endif</p>
+</li>
+<li>
+<p>void AMyGameMode::StartPlay()
+{
+Super::StartPlay();</p>
+<p>#if PLATFORM_WINDOWS
+if( !IsValidRef( GD3DDevice ) || !IsValidRef( GD3DDeviceContext ) )
+{
+// Init D3D
+uint32 DeviceCreationFlags = D3D11_CREATE_DEVICE_SINGLETHREADED;
+D3D_DRIVER_TYPE DriverType = D3D_DRIVER_TYPE_HARDWARE;</p>
+<pre><code>     if( FParse::Param( FCommandLine::Get(), TEXT(&quot;d3ddebug&quot;) ) )
+     {
+         DeviceCreationFlags |= D3D11_CREATE_DEVICE_DEBUG;
+     }
+
+     const D3D_FEATURE_LEVEL FeatureLevels[] = { D3D_FEATURE_LEVEL_11_0, D3D_FEATURE_LEVEL_10_1, D3D_FEATURE_LEVEL_10_0, D3D_FEATURE_LEVEL_9_3 };
+     D3D_FEATURE_LEVEL CreatedFeatureLevel;
+     HRESULT Hr = D3D11CreateDevice( NULL, DriverType, NULL, DeviceCreationFlags, FeatureLevels,
+         sizeof(FeatureLevels)/sizeof(D3D_FEATURE_LEVEL), D3D11_SDK_VERSION, GD3DDevice.GetInitReference(),
+         &amp;CreatedFeatureLevel, GD3DDeviceContext.GetInitReference() );
+		
+     if (FAILED(Hr))
+     {
+         UE_LOG(LogTemp, Error, TEXT(&quot;D3D Device can't be initialized +++++++++++ &quot;));
+     }
+ }
+</code></pre>
+<p>#endif
+}</p>
+</li>
+</ol>
 <h3 id="issues">Issues</h3>
 <h5 id="please-use-enqueue_render_command-instead-please-update-your-code-to-the-new-api-before-upgrading-to-the-next-release">Please use ENQUEUE_RENDER_COMMAND instead Please update your code to the new API before upgrading to the next release</h5>
 <p>Warning on compiling:</p>
