@@ -531,43 +531,48 @@ Engine\Plugins\Runtime\Oculus\OculusVR\Source\OculusHMD\Private\OculusHMD_Layer.
 <ol>
 <li>
 <p>Add <code>DX11</code> in <code>MyProj.Build.cs</code>:</p>
-<p>PublicDependencyModuleNames.AddRange(new string[] { &ldquo;Core&rdquo;, &ldquo;CoreUObject&rdquo;, &ldquo;Engine&rdquo;, &ldquo;InputCore&rdquo;, &ldquo;DX11&rdquo; });</p>
+<pre><code> PublicDependencyModuleNames.AddRange(new string[] { &quot;Core&quot;, &quot;CoreUObject&quot;, &quot;Engine&quot;, &quot;InputCore&quot;, &quot;DX11&quot; });
+</code></pre>
 </li>
 <li>
 <p>Include header:</p>
-<p>#if PLATFORM_WINDOWS
-#include &lt;D3D11.h&gt;
-#endif</p>
+<pre><code> #if PLATFORM_WINDOWS
+ #include &lt;D3D11.h&gt;
+ #endif
+</code></pre>
 </li>
 <li>
-<p>void AMyGameMode::StartPlay()
-{
-Super::StartPlay();</p>
-<p>#if PLATFORM_WINDOWS
-if( !IsValidRef( GD3DDevice ) || !IsValidRef( GD3DDeviceContext ) )
-{
-// Init D3D
-uint32 DeviceCreationFlags = D3D11_CREATE_DEVICE_SINGLETHREADED;
-D3D_DRIVER_TYPE DriverType = D3D_DRIVER_TYPE_HARDWARE;</p>
-<pre><code>     if( FParse::Param( FCommandLine::Get(), TEXT(&quot;d3ddebug&quot;) ) )
-     {
-         DeviceCreationFlags |= D3D11_CREATE_DEVICE_DEBUG;
-     }
+<p>Initializ d3d device:</p>
+<pre><code> void AMyGameMode::StartPlay()
+ {
+     Super::StartPlay();
 
-     const D3D_FEATURE_LEVEL FeatureLevels[] = { D3D_FEATURE_LEVEL_11_0, D3D_FEATURE_LEVEL_10_1, D3D_FEATURE_LEVEL_10_0, D3D_FEATURE_LEVEL_9_3 };
-     D3D_FEATURE_LEVEL CreatedFeatureLevel;
-     HRESULT Hr = D3D11CreateDevice( NULL, DriverType, NULL, DeviceCreationFlags, FeatureLevels,
-         sizeof(FeatureLevels)/sizeof(D3D_FEATURE_LEVEL), D3D11_SDK_VERSION, GD3DDevice.GetInitReference(),
-         &amp;CreatedFeatureLevel, GD3DDeviceContext.GetInitReference() );
-		
-     if (FAILED(Hr))
+ #if PLATFORM_WINDOWS
+     if( !IsValidRef( GD3DDevice ) || !IsValidRef( GD3DDeviceContext ) )
      {
-         UE_LOG(LogTemp, Error, TEXT(&quot;D3D Device can't be initialized +++++++++++ &quot;));
+         // Init D3D
+         uint32 DeviceCreationFlags = D3D11_CREATE_DEVICE_SINGLETHREADED;
+         D3D_DRIVER_TYPE DriverType = D3D_DRIVER_TYPE_HARDWARE;
+
+         if( FParse::Param( FCommandLine::Get(), TEXT(&quot;d3ddebug&quot;) ) )
+         {
+             DeviceCreationFlags |= D3D11_CREATE_DEVICE_DEBUG;
+         }
+
+         const D3D_FEATURE_LEVEL FeatureLevels[] = { D3D_FEATURE_LEVEL_11_0, D3D_FEATURE_LEVEL_10_1, D3D_FEATURE_LEVEL_10_0, D3D_FEATURE_LEVEL_9_3 };
+         D3D_FEATURE_LEVEL CreatedFeatureLevel;
+         HRESULT Hr = D3D11CreateDevice( NULL, DriverType, NULL, DeviceCreationFlags, FeatureLevels,
+             sizeof(FeatureLevels)/sizeof(D3D_FEATURE_LEVEL), D3D11_SDK_VERSION, GD3DDevice.GetInitReference(),
+             &amp;CreatedFeatureLevel, GD3DDeviceContext.GetInitReference() );
+			
+         if (FAILED(Hr))
+         {
+             UE_LOG(LogTemp, Error, TEXT(&quot;D3D Device can't be initialized +++++++++++ &quot;));
+         }
      }
+ #endif
  }
 </code></pre>
-<p>#endif
-}</p>
 </li>
 </ol>
 <h3 id="issues">Issues</h3>
@@ -672,7 +677,7 @@ UE4.24源码分析 - ENQUEUE_RENDER_COMMAND<br>
         </article>
         <footer id="footer" class="main-content-wrap">
   <span class="copyrights">
-    &copy; 2020 Neil Wang. All Rights Reserved. Powered by <A href="https://gohugo.io/"> Hugo</A> | Theme created by <A href="https://github.com/kakawait/hugo-tranquilpeak-theme/"> Tranquilpeak</A>.
+    &copy; 2021 Neil Wang. All Rights Reserved. Powered by <A href="https://gohugo.io/"> Hugo</A> | Theme created by <A href="https://github.com/kakawait/hugo-tranquilpeak-theme/"> Tranquilpeak</A>.
   </span>
 </footer>
 
