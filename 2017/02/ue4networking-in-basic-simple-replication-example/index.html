@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.69.2 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.80.0 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="UE4, Networking">
 <meta name="description" content="转载请注明原文出处：https://dawnarc.com
@@ -730,7 +730,7 @@ Replicated属性只允许服务端修改后通知客户端，而不允许客户�
 如何确保某个函数只在客户端执行：最直接最安全的方式是直接判断<code>if(ENetMode::NM_Client == GetNetMode())</code>。优雅一点的方式是通过Client function修饰这些逻辑函数，前提是你能确保这些函数所在的对象一定拥有了服务端连接。</p>
 </div></p>
 <p>4，当客户端登陆成功后，客户端所有的对象都会被重置，登陆前设置的对数属性值将变为默认值。<br>
-比如在启动游戏后登陆之前，你给PlayerController上的string属性设置为&quot;abc&rdquo;，那么登陆成功后，这个属性值就变成了空字符串。</p>
+比如在启动游戏后登陆之前，你给PlayerController上的string属性设置为&quot;abc&quot;，那么登陆成功后，这个属性值就变成了空字符串。</p>
 <p>5，GameMode、AIController是为服务端设计的，PlayerController是为客户端设计的。两者虽然在客户端和服务端都可访问，但是前者是在服务端创建的，后者是在客户端创建的，比如PlayerController::GetHitResultAtScreenPosition只在客户端生效，而GameMode::PostLogin()只在服务端生效。</p>
 <p>6，服务端的AIController::MoveToLocation()的效果相当于客户端UNavigationSystem::SimpleMoveToLocation()。AIController::MoveToLocation()内部有去调用NavigationSystem相关的接口。</p>
 <p>7，客户端的PlayerController可以不用Possess玩家角色，因为客户端相关数据都是以服务端为准，操作角色也是在服务端完成，一般只需要对该角色绑定摄像机即可。Possess的意义之一是为了给 Pawn 赋予访问服务端函数的权限。</p>

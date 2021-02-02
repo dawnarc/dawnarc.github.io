@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.69.2 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.80.0 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="">
 <meta name="description" content="原文：What does C&#43;&#43; do better than D?
@@ -376,7 +376,7 @@ C++ has better compilers, better tools, more mature libraries, more bindings, mo
 <p>There are quite a few problems with the type system in D at the moment, which appear to be oversights in the design. For example, it is currently impossible to copy a const struct to a non-const struct if the struct contains class object references or pointers due to the transitivity of const and the way postblit constructors work on value types. Andrei says he knows how to solve this, but didn&rsquo;t give any details. The problem is certainly fixable (introducing C++-style copy constructors would be one fix), but it is a major problem in language at present.</p>
 <p>Another problem that has bugged me is the lack of logical const (i.e. no mutable like in C++). This is great for writing thread-safe code, but makes it difficult (impossible?) to do lazy intialisation within const objects (think of a const &lsquo;get&rsquo; function which constructs and caches the returned value on first call).</p>
 <p>Finally, given these existing problems, I&rsquo;m worried about how the rest of the type system (pure, shared, etc.) will interact with everything else in the language once they are put to use. The standard library (Phobos) currently makes very little use of D&rsquo;s advanced type system, so I think it is reasonable the question whether it will hold up under stress. I am skeptical, but optimistic.</p>
-<p>Note that C++ has some type system warts (e.g. non-transitive const, requiring iterator as well as  const_iterator) that make it quite ugly, but while C++'s type system is a little wrong at parts, it doesn&rsquo;t stop you from getting work done like D&rsquo;s sometimes does.</p>
+<p>Note that C++ has some type system warts (e.g. non-transitive const, requiring iterator as well as  const_iterator) that make it quite ugly, but while C++&rsquo;s type system is a little wrong at parts, it doesn&rsquo;t stop you from getting work done like D&rsquo;s sometimes does.</p>
 <p>Edit: To clarify, I believe that C++ has a better thought out type system &ndash; not necessarily a better one &ndash; if that makes sense. Essentially, in D I feel that there is a risk involved in using all aspects of its type system that isn&rsquo;t present in C++.</p>
 <h5 id="d-is-sometimes-a-little-too-convenient">D is sometimes a little too convenient</h5>
 <p>One criticism that you often hear of C++ is that it hides some low-level issues from you e.g. simple assignments like a = b; could be doing many things like calling conversion operators, calling overload assignment operators etc., which can be difficult to see from the code. Some people like this, some people don&rsquo;t. Either way, in D it is worse (better?) due to things like opDispatch, @property, opApply, lazy which have the potential to change innocent looking code into things that you don&rsquo;t expect.</p>
