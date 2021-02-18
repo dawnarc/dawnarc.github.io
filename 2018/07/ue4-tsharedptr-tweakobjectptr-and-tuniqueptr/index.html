@@ -466,7 +466,7 @@ Since UObjects are garbage collected and shared pointers are reference counted, 
 <p>Difference between TWeakPtr and TWeakObjectPtr?<br>
 <a href="https://answers.unrealengine.com/questions/298868/difference-between-tweakptr-and-tweakobjectptr.html">https://answers.unrealengine.com/questions/298868/difference-between-tweakptr-and-tweakobjectptr.html</a></p>
 <h5 id="convert-tweakptr-to-tsharedptr">Convert TWeakPtr to TSharedPtr</h5>
-<p>Example from <code>Engine\Source\Runtime\MediaAssets\Private\Misc\MediaTextureResource.h</code>:</p>
+<p>Example from <code>Engine\Source\Runtime\MediaAssets\Private\Misc\MediaTextureResource.cpp</code>:</p>
 <pre><code>TSharedPtr&lt;FMediaTextureSampleSource, ESPMode::ThreadSafe&gt; SampleSource = Params.SampleSource.Pin();
 </code></pre>
 <h3 id="tuniqueptr-unique-pointers">TUniquePtr (Unique Pointers)</h3>
@@ -510,13 +510,26 @@ TestQueue.Enqueue(Ptr);
 2&gt;          ]
 </code></pre>
 <p>Remove element:<br>
-1st method:</p>
+1st way:</p>
 <pre><code>TUniquePtr&lt;FTestStruct&gt; Ptr = MoveTemp(TestQueue.Peek());
 TestQueue.pop();
 </code></pre>
-<p>2nd method (recommended) :</p>
+<p>2nd way (recommended) :</p>
 <pre><code>TUniquePtr&lt;FTestStruct&gt; Buffer;
 TestQueue.Dequeue(Buffer)
+</code></pre>
+<h5 id="example--tuniqueptr--tarray">Example : TUniquePtr &amp; TArray</h5>
+<p>Add Element:</p>
+<pre><code>TUniquePtr&lt;FTestStruct&gt; Ptr = MakeUnique&lt;FTestStruct&gt;();
+TestArray.Add(MoveTemp(Ptr));
+</code></pre>
+<p>Remove element:<br>
+1st way:</p>
+<pre><code>TUniquePtr&lt;FTestStruct&gt; Ptr = MoveTemp(TestArray[TestArray.Num() - 1]);
+TestArray.RemoveAt(TestArray.Num() - 1);
+</code></pre>
+<p>2nd way (recommended) :</p>
+<pre><code>TUniquePtr&lt;FTestStruct&gt; Ptr = TestArray.Pop();
 </code></pre>
 <h5 id="issues">Issues</h5>
 <div class="alert warning ">
