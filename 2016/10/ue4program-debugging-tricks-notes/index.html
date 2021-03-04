@@ -7,19 +7,19 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="generator" content="Hugo 0.80.0 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
-<meta name="keywords" content="UE4, Program, Debug, Tricks">
-<meta name="description" content="Keywords: UE4, Programming Debug Tricks Notes, Trace, Insight">
+<meta name="keywords" content="UE4, Trace, Debug, Tricks, Memory, Insights">
+<meta name="description" content="Keywords: UE4, Programming Debug Tricks Notes, Trace, Insights, Memory">
 
 
-<meta property="og:description" content="Keywords: UE4, Programming Debug Tricks Notes, Trace, Insight">
+<meta property="og:description" content="Keywords: UE4, Programming Debug Tricks Notes, Trace, Insights, Memory">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[UE4]Program Debugging Tricks Notes">
 <meta name="twitter:title" content="[UE4]Program Debugging Tricks Notes">
 <meta property="og:url" content="https://dawnarc.com/2016/10/ue4program-debugging-tricks-notes/">
 <meta property="twitter:url" content="https://dawnarc.com/2016/10/ue4program-debugging-tricks-notes/">
 <meta property="og:site_name" content="玄冬Wong">
-<meta property="og:description" content="Keywords: UE4, Programming Debug Tricks Notes, Trace, Insight">
-<meta name="twitter:description" content="Keywords: UE4, Programming Debug Tricks Notes, Trace, Insight">
+<meta property="og:description" content="Keywords: UE4, Programming Debug Tricks Notes, Trace, Insights, Memory">
+<meta name="twitter:description" content="Keywords: UE4, Programming Debug Tricks Notes, Trace, Insights, Memory">
 <meta property="og:locale" content="en-us">
 
   
@@ -352,7 +352,7 @@ if (!doNotTrack) {
           
           <div class="post-content markdown" itemprop="articleBody">
             <div class="main-content-wrap">
-              <p>Keywords: UE4, Programming Debug Tricks Notes, Trace, Insight</p>
+              <p>Keywords: UE4, Programming Debug Tricks Notes, Trace, Insights, Memory</p>
 <h3 id="ue_log-related">UE_LOG Related</h3>
 <h5 id="shipping-版本开启log">Shipping 版本开启log</h5>
 <p>添加以下到 Target.cs 的构造函数中（Editor.Target.cs不需要添加）：</p>
@@ -436,6 +436,30 @@ A: Add <code>PLATFORM_LINUX</code> in <code>Engine\Source\Runtime\TraceLog\Publi
 <p>Origin:How to print callstack into log ?<br>
 <a href="https://answers.unrealengine.com/questions/446990/how-to-print-callstack-into-log.html">https://answers.unrealengine.com/questions/446990/how-to-print-callstack-into-log.html</a></p>
 <h5 id="memory-optimization">Memory Optimization</h5>
+<p>MallocLeakReporter Setup:</p>
+<ol>
+<li>
+<p>Add mactro in <code>[Project].Target.cs</code>:</p>
+<pre><code> GlobalDefinitions.Add(&quot;MALLOC_LEAKDETECTION=1&quot;); 
+</code></pre>
+</li>
+<li>
+<p>Ensure <code>bIncludeDebugFile=TRUE</code> in Project Settings.</p>
+</li>
+<li>
+<p>Create a package with <code>Development</code>.</p>
+</li>
+<li>
+<p>Execute command at runtime:</p>
+<pre><code> mallocleak.start // Start tracing
+ mallocleak.report // Get leak report
+ mallocleak.stop // End of trace 
+</code></pre>
+</li>
+</ol>
+<div class="alert warning ">
+  <p><code>MallocLeakReporter</code> isn&rsquo;t accurate, it&rsquo;s just a reference.</p>
+</div>
 <p>MallocLeakReporter (MALLOC_LEAKDETECTION)<br>
 <a href="https://qiita.com/donbutsu17/items/7258955cbb458c1256c9">https://qiita.com/donbutsu17/items/7258955cbb458c1256c9</a></p>
 <p>Debugging and Optimizing Memory<br>
