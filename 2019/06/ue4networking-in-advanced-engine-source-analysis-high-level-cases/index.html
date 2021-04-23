@@ -498,6 +498,59 @@ float NetPriority
 <pre><code>/** This function should only be used in the constructor of classes that need to set the RemoteRole for backwards compatibility purposes */
 void SetRemoteRoleForBackwardsCompat(const ENetRole InRemoteRole) { RemoteRole = InRemoteRole; }
 </code></pre>
+<h5 id="callstack-on-client-from-unetdriver-to-constructor-of-actor">Callstack on client from UNetDriver to constructor of Actor</h5>
+<pre><code>UE4Editor-MyProj-Win64-DebugGame.dll!MyCharacter::MyCharacter() Line 7
+    at E:\MyProj\Source\MyProj\Character\MyCharacter.cpp(7)
+UE4Editor-MyProj-Win64-DebugGame.dll!InternalConstructor&lt;AFoliageActor&gt;(const FObjectInitializer &amp; X={...}) Line 3307
+    at E:\unrealengine-4.26\Engine\Source\Runtime\CoreUObject\Public\UObject\Class.h(3307)
+UE4Editor-CoreUObject.dll!StaticConstructObject_Internal(const FStaticConstructObjectParameters &amp; Params={...}) Line 3195
+    at E:\unrealengine-4.26\Engine\Source\Runtime\CoreUObject\Private\UObject\UObjectGlobals.cpp(3195)
+[Inline Frame] UE4Editor-Engine.dll!NewObject(UObject *) Line 1160
+    at E:\unrealengine-4.26\Engine\Source\Runtime\CoreUObject\Public\UObject\UObjectGlobals.h(1160)
+UE4Editor-Engine.dll!UWorld::SpawnActor(UClass * Class=0x000001b8ab457200, const FTransform * UserTransformPtr, const FActorSpawnParameters &amp; SpawnParameters={...}) Line 508
+    at E:\unrealengine-4.26\Engine\Source\Runtime\Engine\Private\LevelActor.cpp(508)
+UE4Editor-Engine.dll!UWorld::SpawnActorAbsolute(UClass * Class=0x000001b8ab457200, const FTransform &amp; AbsoluteTransform, const FActorSpawnParameters &amp; SpawnParameters={...}) Line 289
+    at E:\unrealengine-4.26\Engine\Source\Runtime\Engine\Private\LevelActor.cpp(289)
+UE4Editor-Engine.dll!UPackageMapClient::SerializeNewActor(FArchive &amp; Ar={...}, UActorChannel * Channel=0x000001b8a9235f00, AActor * &amp; Actor=0x0000000000000000) Line 609
+    at E:\unrealengine-4.26\Engine\Source\Runtime\Engine\Private\PackageMapClient.cpp(609)
+UE4Editor-Engine.dll!UActorChannel::ProcessBunch(FInBunch &amp; Bunch={...}) Line 2764
+    at E:\unrealengine-4.26\Engine\Source\Runtime\Engine\Private\DataChannel.cpp(2764)
+UE4Editor-Engine.dll!UActorChannel::ReceivedBunch(FInBunch &amp; Bunch={...}) Line 2734
+    at E:\unrealengine-4.26\Engine\Source\Runtime\Engine\Private\DataChannel.cpp(2734)
+UE4Editor-Engine.dll!UChannel::ReceivedSequencedBunch(FInBunch &amp; Bunch={...}) Line 412
+    at E:\unrealengine-4.26\Engine\Source\Runtime\Engine\Private\DataChannel.cpp(412)
+UE4Editor-Engine.dll!UChannel::ReceivedNextBunch(FInBunch &amp; Bunch={...}, bool &amp; bOutSkipAck=false) Line 833
+    at E:\unrealengine-4.26\Engine\Source\Runtime\Engine\Private\DataChannel.cpp(833)
+UE4Editor-Engine.dll!UChannel::ReceivedRawBunch(FInBunch &amp; Bunch={...}, bool &amp; bOutSkipAck=false) Line 517
+    at E:\unrealengine-4.26\Engine\Source\Runtime\Engine\Private\DataChannel.cpp(517)
+UE4Editor-Engine.dll!UNetConnection::ReceivedPacket(FBitReader &amp; Reader, bool bIsReinjectedPacket=64) Line 2783
+    at E:\unrealengine-4.26\Engine\Source\Runtime\Engine\Private\NetConnection.cpp(2783)
+UE4Editor-Engine.dll!UNetConnection::ReceivedRawPacket(void * InData, int Count=907) Line 1316
+    at E:\unrealengine-4.26\Engine\Source\Runtime\Engine\Private\NetConnection.cpp(1316)
+UE4Editor-OnlineSubsystemUtils.dll!UIpNetDriver::TickDispatch(float DeltaTime) Line 1370
+    at E:\unrealengine-4.26\Engine\Plugins\Online\OnlineSubsystemUtils\Source\OnlineSubsystemUtils\Private\IpNetDriver.cpp(1370)
+[Inline Frame] UE4Editor-Engine.dll!Invoke(void(UNetDriver::*)(float)) Line 65
+    at E:\unrealengine-4.26\Engine\Source\Runtime\Core\Public\Templates\Invoke.h(65)
+[Inline Frame] UE4Editor-Engine.dll!UE4Tuple_Private::TTupleBase&lt;TIntegerSequence&lt;unsigned int&gt;&gt;::ApplyAfter(void(UNetDriver::*)(float) &amp;) Line 299
+    at E:\unrealengine-4.26\Engine\Source\Runtime\Core\Public\Templates\Tuple.h(299)
+UE4Editor-Engine.dll!TBaseUObjectMethodDelegateInstance&lt;0,UNetDriver,void __cdecl(float),FDefaultDelegateUserPolicy&gt;::ExecuteIfSafe(float &lt;Params_0&gt;) Line 611
+    at E:\unrealengine-4.26\Engine\Source\Runtime\Core\Public\Delegates\DelegateInstancesImpl.h(611)
+UE4Editor-Engine.dll!TMulticastDelegate&lt;void __cdecl(float),FDefaultDelegateUserPolicy&gt;::Broadcast(float &lt;Params_0&gt;) Line 955
+    at E:\unrealengine-4.26\Engine\Source\Runtime\Core\Public\Delegates\DelegateSignatureImpl.inl(955)
+UE4Editor-Engine.dll!UWorld::Tick(ELevelTick TickType=-562797776, float DeltaSeconds=0.00000000) Line 1374
+    at E:\unrealengine-4.26\Engine\Source\Runtime\Engine\Private\LevelTick.cpp(1374)
+UE4Editor-Engine.dll!UGameEngine::Tick(float DeltaSeconds, bool bIdleMode=false) Line 1794
+    at E:\unrealengine-4.26\Engine\Source\Runtime\Engine\Private\GameEngine.cpp(1794)
+UE4Editor-Win64-DebugGame.exe!FEngineLoop::Tick() Line 4836
+    at E:\unrealengine-4.26\Engine\Source\Runtime\Launch\Private\LaunchEngineLoop.cpp(4836)
+[Inline Frame] UE4Editor-Win64-DebugGame.exe!EngineTick() Line 62
+    at E:\unrealengine-4.26\Engine\Source\Runtime\Launch\Private\Launch.cpp(62)
+UE4Editor-Win64-DebugGame.exe!GuardedMain(const wchar_t * CmdLine) Line 169
+    at E:\unrealengine-4.26\Engine\Source\Runtime\Launch\Private\Launch.cpp(169)
+UE4Editor-Win64-DebugGame.exe!WinMain(HINSTANCE__ * hInInstance=0x000000000000000a, HINSTANCE__ * hPrevInstance=0x0000000000000000, char * __formal=0x0000000000000000, int nCmdShow=0) Line 257
+    at E:\unrealengine-4.26\Engine\Source\Runtime\Launch\Private\Windows\LaunchWindows.cpp(257)
+[External Code]
+</code></pre>
 <h3 id="reference">Reference</h3>
 <p>Function call replication - Sending messages between server and client<br>
 <a href="https://wiki.beyondunreal.com/Everything_you_ever_wanted_to_know_about_replication_%28but_were_afraid_to_ask%29#Function_call_replication_-_Sending_messages_between_server_and_client">https://wiki.beyondunreal.com/Everything_you_ever_wanted_to_know_about_replication_%28but_were_afraid_to_ask%29#Function_call_replication_-_Sending_messages_between_server_and_client</a></p>
