@@ -8,18 +8,18 @@
 <meta name="generator" content="Hugo 0.80.0 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="UE4, Trace, Debug, Tricks, Memory, Insights">
-<meta name="description" content="Keywords: UE4, Programming Debug Tricks Notes, Trace, Insights, Memory">
+<meta name="description" content="Keywords: UE4, Programming Debug Tricks Notes, Trace, Insights, Memory, Profiling, Optimization">
 
 
-<meta property="og:description" content="Keywords: UE4, Programming Debug Tricks Notes, Trace, Insights, Memory">
+<meta property="og:description" content="Keywords: UE4, Programming Debug Tricks Notes, Trace, Insights, Memory, Profiling, Optimization">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[UE4]Program Debugging Tricks Notes">
 <meta name="twitter:title" content="[UE4]Program Debugging Tricks Notes">
 <meta property="og:url" content="https://dawnarc.com/2016/10/ue4program-debugging-tricks-notes/">
 <meta property="twitter:url" content="https://dawnarc.com/2016/10/ue4program-debugging-tricks-notes/">
 <meta property="og:site_name" content="玄冬Wong">
-<meta property="og:description" content="Keywords: UE4, Programming Debug Tricks Notes, Trace, Insights, Memory">
-<meta name="twitter:description" content="Keywords: UE4, Programming Debug Tricks Notes, Trace, Insights, Memory">
+<meta property="og:description" content="Keywords: UE4, Programming Debug Tricks Notes, Trace, Insights, Memory, Profiling, Optimization">
+<meta name="twitter:description" content="Keywords: UE4, Programming Debug Tricks Notes, Trace, Insights, Memory, Profiling, Optimization">
 <meta property="og:locale" content="en-us">
 
   
@@ -352,7 +352,7 @@ if (!doNotTrack) {
           
           <div class="post-content markdown" itemprop="articleBody">
             <div class="main-content-wrap">
-              <p>Keywords: UE4, Programming Debug Tricks Notes, Trace, Insights, Memory</p>
+              <p>Keywords: UE4, Programming Debug Tricks Notes, Trace, Insights, Memory, Profiling, Optimization</p>
 <h3 id="ue_log-related">UE_LOG Related</h3>
 <h5 id="shipping-版本开启log">Shipping 版本开启log</h5>
 <p>添加以下到 Target.cs 的构造函数中（Editor.Target.cs不需要添加）：</p>
@@ -430,12 +430,16 @@ command:</p>
 </code></pre>
 <p>Q: How to enable Insights on Linux?<br>
 A: Add <code>PLATFORM_LINUX</code> in <code>Engine\Source\Runtime\TraceLog\Public\Trace\Config.h</code>.</p>
-<h5 id="how-to-print-call-stack">How to print call stack</h5>
+<h5 id="how-to-print-call-stack-in-log">How to print call stack in log</h5>
 <pre><code>FDebug::DumpStackTraceToLog() 
 </code></pre>
 <p>Origin:How to print callstack into log ?<br>
 <a href="https://answers.unrealengine.com/questions/446990/how-to-print-callstack-into-log.html">https://answers.unrealengine.com/questions/446990/how-to-print-callstack-into-log.html</a></p>
-<h5 id="memory-optimization">Memory Optimization</h5>
+<h5 id="how-to-use-insights-on-android">How to use Insights on Android</h5>
+<p>Using Insights on Android (UE4.24 or later)<br>
+<a href="https://qiita.com/EGJ-Takashi_Suzuki/items/4d586d73556995e3dd40">https://qiita.com/EGJ-Takashi_Suzuki/items/4d586d73556995e3dd40</a></p>
+<h3 id="memory-profiling">Memory Profiling</h3>
+<h5 id="memory-optimization-not-recommended">Memory Optimization (Not recommended)</h5>
 <p>MallocLeakReporter Setup:</p>
 <ol>
 <li>
@@ -464,9 +468,15 @@ A: Add <code>PLATFORM_LINUX</code> in <code>Engine\Source\Runtime\TraceLog\Publi
 <a href="https://qiita.com/donbutsu17/items/7258955cbb458c1256c9">https://qiita.com/donbutsu17/items/7258955cbb458c1256c9</a></p>
 <p>Debugging and Optimizing Memory<br>
 <a href="https://www.unrealengine.com/en-US/blog/debugging-and-optimizing-memory">https://www.unrealengine.com/en-US/blog/debugging-and-optimizing-memory</a></p>
-<h5 id="how-to-use-insights-on-android">How to use Insights on Android</h5>
-<p>Using Insights on Android (UE4.24 or later)<br>
-<a href="https://qiita.com/EGJ-Takashi_Suzuki/items/4d586d73556995e3dd40">https://qiita.com/EGJ-Takashi_Suzuki/items/4d586d73556995e3dd40</a></p>
+<h5 id="address-sanitizer-asan">Address Sanitizer (ASan)</h5>
+<p>modify <code>Engine/Source/Program/UnrealBuildTool/Platform/&lt;platform name&gt;/UEBuild&lt;platform name&gt;.cs</code>:</p>
+<pre><code>bEnableAddressSanitizer = true;
+</code></pre>
+<div class="alert warning ">
+  <p>This option is usable on Linux and Mac only.</p>
+</div>
+<p>Reference: Enable Address Sanitizer in [UE4] and check for memory corruption<br>
+<a href="https://qiita.com/com04/items/feadbdc5651c1ffcf36a">https://qiita.com/com04/items/feadbdc5651c1ffcf36a</a></p>
 <hr>
 <p><code>Efficiency is doing the thing right. Effectiveness is doing the right thing. ― Peter F. Drucker</code></p>
               

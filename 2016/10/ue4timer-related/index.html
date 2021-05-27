@@ -406,6 +406,25 @@ GetWorld()-&gt;GetTimerManager().SetTimer(TimerHandle, TimerDel, 5.f, false);
 </code></pre>
 <p>Reference:<br>
 <a href="https://answers.unrealengine.com/questions/165678/using-settimer-on-a-function-with-parameters.html">https://answers.unrealengine.com/questions/165678/using-settimer-on-a-function-with-parameters.html</a></p>
+<h5 id="heading"></h5>
+<p>Quoted from <code>void FTimerManager::Tick(float DeltaTime)</code> in &ldquo;Engine\Source\Runtime\Engine\Private\TimerManager.cpp&rdquo;</p>
+<pre><code>#if DO_TIMEGUARD &amp;&amp; 0
+    SCOPED_NAMED_EVENT(FTimerManager_Tick_TIMEGUARD, FColor::Orange);
+    TArray&lt;FTimerUnifiedDelegate&gt; RunTimerDelegates;
+    FTimerNameDelegate NameFunction = FTimerNameDelegate::CreateLambda([&amp;] {
+            FString ActiveDelegates;
+            for ( const FTimerUnifiedDelegate&amp; Descriptor : RunTimerDelegates )
+            {
+                ActiveDelegates += FString::Printf(TEXT(&quot;Delegate %s, &quot;), *Descriptor.ToString() );
+            }
+            return FString::Printf(TEXT(&quot;UWorld::Tick - TimerManager, %s&quot;), *ActiveDelegates);
+        });
+
+
+    // no delegate should take longer then 5ms to run 
+    SCOPE_TIME_GUARD_DELEGATE_MS(NameFunction, 5);
+#endif
+</code></pre>
 <h5 id="reference">Reference</h5>
 <p>Using C++ Timers in Unreal Engine 4<br>
 <a href="https://www.tomlooman.com/using-timers-in-ue4/">https://www.tomlooman.com/using-timers-in-ue4/</a></p>

@@ -318,6 +318,70 @@ if (!doNotTrack) {
     
     <div class="postShorten-header">
       <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2017/05/ue4c-%E5%88%9B%E5%BB%BAboxcollisionboxcomponent%E5%B9%B6%E6%B3%A8%E5%86%8Coverlap%E5%92%8Chit%E4%BA%8B%E4%BB%B6%E5%9B%9E%E8%B0%83%E5%87%BD%E6%95%B0/">
+          [UE4]C&#43;&#43;创建BoxCollision(BoxComponent)并注册Overlap和Hit事件回调函数
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2017-05-15T23:31:02&#43;08:00">
+        
+  
+  
+  
+  
+    Monday, 23:31, May 15, 2017
+  
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        keywords: UE4、Overlap、Hit、Event、Callback、C++、Blueprint、Box Collision、BoxComponent、SphereComponent、Trace Channel、碰撞
+BoxComponent的Overlap事件 1，C++中的代码编写 这里我们演示的例子，是在角色身上创建一个BoxComponent，假设角色的C++ class叫AMyCharacter。 MyCharacter.h头文件中定义：
+//Box对象UBoxComponent* CollisionMesh;//OverlapBegin事件的回调函数，注意函数签名！UFUNCTION()void OnTestOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &amp; SweepResult);//OverlapEnd事件的回调函数，注意函数签名！UFUNCTION()void OnTestOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex); 旧版本函数签名：
+UFUNCTION()void OnTestOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &amp; SweepResult);UFUNCTION()void OnTestOverlapEnd(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex); 回调函数一定要加UFUNCTION()，否则无法注册成功，因为UE4的代码生成工具需要通过该标识生成相应的代码，变相实现虚拟机编程语言（比如Java、C#）的反射。
+      
+      <p>
+        <a href="https://dawnarc.com/2017/05/ue4c-%E5%88%9B%E5%BB%BAboxcollisionboxcomponent%E5%B9%B6%E6%B3%A8%E5%86%8Coverlap%E5%92%8Chit%E4%BA%8B%E4%BB%B6%E5%9B%9E%E8%B0%83%E5%87%BD%E6%95%B0/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
         <a class="link-unstyled" href="https://dawnarc.com/2017/05/ue4%E5%A6%82%E4%BD%95%E6%98%BE%E7%A4%BAboxcomponent%E7%9A%84%E8%BE%B9%E6%A1%86%E7%BA%BF/">
           [UE4]如何显示BoxComponent的边框线
         </a>
@@ -892,7 +956,9 @@ keywords：UE4, Replication, Relicate, Reliable, RPC, RTS Movement, Dedicated Se
 void AReplTestCharacter::GetLifetimeReplicatedProps(TArray&lt; FLifetimeProperty &gt; &amp; OutLifetimeProps) const{Super::GetLifetimeReplicatedProps(OutLifetimeProps);DOREPLIFETIME(AReplTestCharacter, Alias_);} 属性同步扩展用法 如何为同步属性添加回调函数？
 用法：
 UPROPERTY(ReplicatedUsing = OnHPChanged)float HealthPoint;UFUNCTION()void OnHPChanged(); ReplicatedUsing只在客户端执行，服务端不执行。客户端相关表现逻辑可以放在ReplicatedUsing回调函数。另外函数需要添加UFUNCTION。
- RPC（远程执行调用） 步骤：
+ 蓝图对应的标记叫RepNotify
+https://docs.unrealengine.com/en-US/Resources/ContentExamples/Networking/1_4/index.html
+RPC（远程执行调用） 步骤：
 1，对需要远程执行的函数添加宏UFUNCTION(Server, Reliable, WithValidation)或者UFUNCTION(Client, Reliable)。其中Server表示在客户端调用，在服务端执行；WithValidation表示是否需要验证函数，加上的画需要添加函数：bool MyFun_Validate()，函数体内容写在MyFun_Implementation函数内。cpp中不需要与函数名同名的函数体，只需要实现_Validate和_Implementation两个函数即可。 头文件：
 //移动角色(只在服务端执行的函数)UFUNCTION(Server, Reliable, WithValidation)void ServerMoveToDest(APawn* Panw, const FVector DestLocation);bool ServerMoveToDest_Validate(APawn* Panw, const FVector DestLocation);void ServerMoveToDest_Implementation(APawn* Panw, const FVector DestLocation); CPP：
       
@@ -1217,67 +1283,6 @@ exec: error : one or more of the modules specified using the '-module' argument 
       
       <p>
         <a href="https://dawnarc.com/2016/12/ue4exec-error-one-or-more-of-the-modules-specified-using-the-module-argument-could-not-be-found/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-            
-              
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2016/12/ue4%E4%BC%98%E5%8C%96%E5%BB%BA%E8%AE%AE%E4%B8%8E%E7%BB%8F%E9%AA%8C/">
-          [UE4]优化建议与经验
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2016-12-09T19:17:02&#43;08:00">
-        
-  
-  
-  
-  
-    Friday, 19:17, Dec 9, 2016
-  
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        <p>keywords：UE4性能优化、Performance Optimization</p>
-      
-      <p>
-        <a href="https://dawnarc.com/2016/12/ue4%E4%BC%98%E5%8C%96%E5%BB%BA%E8%AE%AE%E4%B8%8E%E7%BB%8F%E9%AA%8C/" class="postShorten-excerpt_link link">Continue reading</a>
         
       </p>
     </div>
