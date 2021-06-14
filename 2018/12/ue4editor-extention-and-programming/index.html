@@ -457,8 +457,39 @@ Origin:</p>
 ]
 </code></pre>
 <p>Then delete all intermediate files and re-generate project files.</p>
+<h5 id="how-to-open-the-windows-file-explorer-open-directory-dialog-to-select-the-file">How to open the Windows file explorer (open directory dialog) to select the file</h5>
+<pre><code>void UMyUserWidget::OnTestBtnClicked()
+{
+    TSharedPtr&lt;SWindow&gt; ParentWindow = FSlateApplication::Get().FindWidgetWindow(TakeWidget());
+    void* ParentWindowHandle = (ParentWindow.IsValid() &amp;&amp; ParentWindow-&gt;GetNativeWindow().IsValid()) ? ParentWindow-&gt;GetNativeWindow()-&gt;GetOSWindowHandle() : nullptr;
+    IDesktopPlatform* DesktopPlatform = FDesktopPlatformModule::Get();
+    if (DesktopPlatform)
+    {
+        const FString ContentDireAbsolute = FPaths::ConvertRelativePathToFull(FPaths::ProjectConfigDir());
+        FString OutDire;
+        DesktopPlatform-&gt;OpenDirectoryDialog(ParentWindowHandle, TEXT(&quot;Choose Folder&quot;), ContentDireAbsolute, OutDire);
+        GEngine-&gt;AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, OutDire);
+    }
+}
+</code></pre>
+<p>Select files dialgo:</p>
+<pre><code>/*
+ * Opens a file dialog for the specified data. Leave FileTypes empty to be able to select any files.
+ * Filetypes must be in the format of: &lt;File type Description&gt;|*.&lt;actual extension&gt;
+ * You can combine multiple extensions by placing &quot;;&quot; between them
+ * For example: Text Files|*.txt|Excel files|*.csv|Image Files|*.png;*.jpg;*.bmp will display 3 lines for 3 different type of files.
+ */
+
+TArray&lt;FString&gt; OutFileNames;
+
+//Opening the file picker!
+uint32 SelectionFlag = 0; //A value of 0 represents single file selection while a value of 1 represents multiple file selection
+DesktopPlatform-&gt;OpenFileDialog(ParentWindowHandle, DialogTitle, DefaultPath, FString(&quot;&quot;), FileTypes, SelectionFlag, OutFileNames);
+</code></pre>
+<p>Reference<br>
+<a href="https://www.orfeasel.com/creating-a-file-picker/">https://www.orfeasel.com/creating-a-file-picker/</a></p>
 <hr>
-<p><code>因为太爱一个人，所以不敢做真实的自己，反而越容易分手。</code></p>
+<p><code>静水流深(Still Water Runs Deep) ---拉丁谚语</code></p>
               
             </div>
           </div>
