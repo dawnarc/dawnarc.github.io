@@ -400,6 +400,29 @@ static const FName NAME_FirstPerson = FName(TEXT(&quot;FirstPerson&quot;));
 <p>启用debug camera：</p>
 <pre><code>ToggleDebugCamera
 </code></pre>
+<p>渲染优化分析视图模式：</p>
+<pre><code>//Lit view mode shows the final result of your scene once all of the Materials and lighting have been applied. Hotkey: Alt + 4
+viewmode lit
+
+//Unlit view mode removes all lighting from the scene, showing you Base Color only. Hotkey: Alt + 3
+viewmode unlit
+
+//Wireframe shows all of the polygon edges in the scene. In the case of Brushes, you will see the resultant geometry. Hotkey: Alt + 2
+viewmode wireframe
+
+//Detail Lighting activates a neutral Material across the entire scene, using the normal maps of the original materials. This is useful for isolating whether your BaseColor is obscuring lighting by being too dark or noisy. Hotkey: Alt + 5
+viewmode lit_detaillighting
+
+//Lighting Only shows a neutral Material that is only affected by lighting. It differs from Detail Lighting mode in that you will not see normal maps. Hotkey: Alt + 6
+viewmode lightingonly
+
+//Light Complexity shows the number of non-static lights affecting your geometry. This is useful for tracking lighting cost - the more lights affecting a surface, the more expensive it will be to shade. Hotkey: Alt + 7
+viewmode lightcomplexity
+
+//Shader Complexity Mode is used to visualize the number of shader instructions being used to calculate each pixel of your scene. It is generally a good indication of how performance-friendly your scene will be. In general, it is used to test overall performance for your base scene, as well as to optimize particle effects, which tend to cause performance spikes with a large amount of overdraw for a short period of time. Hotkey: Alt + 8
+viewmode shadercomplexity
+</code></pre>
+<p><a href="https://docs.unrealengine.com/4.26/en-US/BuildingWorlds/LevelEditor/Viewports/ViewModes/">https://docs.unrealengine.com/4.26/en-US/BuildingWorlds/LevelEditor/Viewports/ViewModes/</a></p>
 <p>显示刚体</p>
 <pre><code>Show Collision
 </code></pre>
@@ -421,24 +444,6 @@ stat UnitGraph  //附带各个参数的实时曲线图
 </code></pre>
 <p>设置渲染分辨率为默认大小的50%（500就表示实际viewport大小的5倍尺寸来渲染，可以用来做压力测试）</p>
 <pre><code>r.ScreenPercentage 50
-</code></pre>
-<p>记录卡顿时间（通过<code>t.HitchThreshold</code>定义卡顿时长阀值）</p>
-<pre><code>stat Hitches    //或者stat DumpHitches 记录log文件
-</code></pre>
-<p>程序运行时一旦某帧耗时超过<code>t.HitchThreshold</code>指定的时长，则函数堆栈就会被打印出来。例如，以下 hitchdump 显示LoadObject耗时较长（当前行行首的时长减去下一行行首的时长就是当前行函数的耗时），则表示是加载资源导致顿卡</p>
-<pre><code>   477.514ms (   4)  -  Thread_4118_0 - GameThread - STATGROUP_Threads - STATCAT_Advanced
-     477.510ms (   2)  -  FrameTime - STAT_FrameTime - STATGROUP_Engine - STATCAT_Advanced
-       470.844ms (   1)  -  FrameTime - STAT_FrameTime - STATGROUP_Engine - STATCAT_Advanced
-         470.840ms (   1)  -  World Tick Time - STAT_WorldTickTime - STATGROUP_Game - STATCAT_Advanced
-           470.758ms (   5)  -  Tick Time - STAT_TickTime - STATGROUP_Game - STATCAT_Advanced
-             470.590ms (   2)  -  TG_PrePhysics - STAT_TG_PrePhysics - STATGROUP_TickGroups - STATCAT_Advanced
-               470.585ms (   2)  -  ReleaseTickGroup Block - STAT_ReleaseTickGroup_Block - STATGROUP_TickGroups - STATCAT_Advanced
-                 470.579ms (   1)  -  Game TaskGraph Tasks - STAT_TaskGraph_GameTasks - STATGROUP_Threading - STATCAT_Advanced
-                   470.512ms (  20)  -  FTickFunctionTask - STATGROUP_TaskGraphTasks - STATCAT_Advanced
-                     470.309ms (   1)  -  BaseGameMode/Game/Map/PVP/UEDPIE_0_PVP.PVP.PersistentLevel.BaseGameMode - STATGROUP_UObjects - STATCAT_Advanced
-                       469.638ms (   3)  -  LoadObject - STAT_LoadObject - STATGROUP_Object - STATCAT_Advanced
-                         377.887ms (   3)  -  Self
-                         26.688ms ( 533)  -  STAT_FArchiveAsync2_WaitRead - STATGROUP_Quick - STATCAT_Advanced
 </code></pre>
 <p>查看遮挡剔除：</p>
 <pre><code>r.visualizeOccludedPrimitives 1
@@ -463,6 +468,10 @@ HighResShot 3840x2160
 A：使用命令<code>dumpconsolecommands</code>，执行后，所有可用的命令会存储在<code>\Saved\Logs\</code>下的log文件中。</p>
 <p>参考自：Where can I find all the console commands?<br>
 <a href="https://answers.unrealengine.com/questions/255772/where-can-i-find-all-the-console-commands.html">https://answers.unrealengine.com/questions/255772/where-can-i-find-all-the-console-commands.html</a></p>
+<p>或者直接查看引擎源码：<br>
+Engine\Source\Runtime\Engine\Private\UnrealEngine.cpp</p>
+<pre><code>bool UEngine::Exec( UWorld* InWorld, const TCHAR* Cmd, FOutputDevice&amp; Ar )
+</code></pre>
 <h5 id="性能统计图工具-session-frontend">性能统计图工具 Session Frontend</h5>
 <p>用于记录某段时间内的性能分析数据。</p>
 <p>在需要开始统计的时刻执行：</p>
@@ -476,10 +485,32 @@ A：使用命令<code>dumpconsolecommands</code>，执行后，所有可用的�
 <div class="alert warning ">
   <p>性能统计自身也会消耗一定性能，有没办法将性能统计的自身消耗，从性能统计的计算结果中排除掉？答案是：No！至少目前版本不支持。</p>
 </div>
-<h5 id="gpuprofile-与-cpuprofile">GPUProfile 与 CPUProfile</h5>
-<p>GPU性能分析<br>
-在编辑器中运行游戏时，按下 Ctrl + Shift + 逗号 ，打开 GPUProfile 面板，显示当前帧的各类计算的耗时：PostProcess、Lighting 等。注意：是当前一帧的耗时，不是平均每帧的耗时。<br>
-如果是 在Development 打包模式下，Ctrl + Shift + 逗号 并不会打开 GPUProfile 面板，但是在 <code>工程名\Saved\Logs\工程名.log</code> 中会有 Profiling 记录，例如：</p>
+<h3 id="gpuprofile-与-cpuprofile">GPUProfile 与 CPUProfile</h3>
+<h5 id="cpu卡顿分析">CPU卡顿分析</h5>
+<p>记录卡顿时间（通过<code>t.HitchThreshold</code>定义卡顿时长阀值）</p>
+<pre><code>stat Hitches    //或者stat DumpHitches 记录log文件
+</code></pre>
+<p>程序运行时一旦某帧耗时超过<code>t.HitchThreshold</code>指定的时长，则函数堆栈就会被打印出来。例如，以下 hitchdump 显示LoadObject耗时较长（<code>Self</code>表示函数堆栈中上一级函数，即<code>LoadObject</code>，所占用耗时），则表示是加载资源导致顿卡</p>
+<pre><code>   477.514ms (   4)  -  Thread_4118_0 - GameThread - STATGROUP_Threads - STATCAT_Advanced
+     477.510ms (   2)  -  FrameTime - STAT_FrameTime - STATGROUP_Engine - STATCAT_Advanced
+       470.844ms (   1)  -  FrameTime - STAT_FrameTime - STATGROUP_Engine - STATCAT_Advanced
+         470.840ms (   1)  -  World Tick Time - STAT_WorldTickTime - STATGROUP_Game - STATCAT_Advanced
+           470.758ms (   5)  -  Tick Time - STAT_TickTime - STATGROUP_Game - STATCAT_Advanced
+             470.590ms (   2)  -  TG_PrePhysics - STAT_TG_PrePhysics - STATGROUP_TickGroups - STATCAT_Advanced
+               470.585ms (   2)  -  ReleaseTickGroup Block - STAT_ReleaseTickGroup_Block - STATGROUP_TickGroups - STATCAT_Advanced
+                 470.579ms (   1)  -  Game TaskGraph Tasks - STAT_TaskGraph_GameTasks - STATGROUP_Threading - STATCAT_Advanced
+                   470.512ms (  20)  -  FTickFunctionTask - STATGROUP_TaskGraphTasks - STATCAT_Advanced
+                     470.309ms (   1)  -  BaseGameMode/Game/Map/PVP/UEDPIE_0_PVP.PVP.PersistentLevel.BaseGameMode - STATGROUP_UObjects - STATCAT_Advanced
+                       469.638ms (   3)  -  LoadObject - STAT_LoadObject - STATGROUP_Object - STATCAT_Advanced
+                         377.887ms (   3)  -  Self
+                         26.688ms ( 533)  -  STAT_FArchiveAsync2_WaitRead - STATGROUP_Quick - STATCAT_Advanced
+</code></pre>
+<h5 id="gpu卡顿分析">GPU卡顿分析</h5>
+<p>在编辑器中运行游戏时，按下 Ctrl + Shift + 逗号，或者命令行输入：<code>profilegpu</code> ，打开 GPUProfile 面板，显示当前帧的各类计算的耗时：PostProcess、Lighting 等。<br>
+注意：是当前一帧的耗时，不是平均每帧的耗时。</p>
+<p>另外一个类似命令:<code>profilegpuhitches</code>，表示每当GPU有卡顿时，自动弹出一个当时所在帧的 GPUProfile 面板。</p>
+<p>GPUProfile面板上的可视化信息，在log文件（<code>工程名\Saved\Logs\工程名.log</code>）里面也会以文本形式打印出来。<br>
+在Development 打包模式下，由于无法打开GPUProfile 面板，所以分析数据只打印在log里，例如：</p>
 <pre><code>[2018.08.26-07.56.40:320][291]Profiling the next GPU frame
 [2018.08.26-07.56.40:406][294]LogD3D11RHI: Warning: 
 [2018.08.26-07.56.40:406][294]LogD3D11RHI: Warning: 
@@ -496,8 +527,8 @@ A：使用命令<code>dumpconsolecommands</code>，执行后，所有可用的�
 [2018.08.26-07.56.40:412][295]LogRHI:        0.1% 0.00ms   ViewOcclusionTests 0 16 draws 192 prims 128 verts
 [2018.08.26-07.56.40:412][295]LogRHI:           0.1% 0.00ms   IndividualQueries 16 draws 192 prims 128 verts
 </code></pre>
-<p>CPU性能分析<br>
-CPU性能分析可以通过 <code>stat scenerendering</code> 、<code>stat game</code> 等命令分析，如果某类型的 draw call 数量特别高，说明这是 CPU 的瓶颈所在。</p>
+<h5 id="其他cpu性能分析">其他CPU性能分析</h5>
+<p>CPU性能分析可以通过 <code>stat scenerendering</code> 、<code>stat game</code> 等命令分析，如果某类型的 draw call 数量特别高，说明这是 CPU 的瓶颈所在。</p>
 <div class="alert danger ">
   <p>如果是在编辑器模式，建议以“新窗口”(New Editor Window)PIE模式运行，如果是在编辑器的Viewport中运行，会把编辑器的消耗也算进去（即使是全屏模式）。</p>
 </div>
@@ -505,6 +536,7 @@ CPU性能分析可以通过 <code>stat scenerendering</code> 、<code>stat game<
 <a href="https://docs.unrealengine.com/en-us/Engine/Performance/CPU">https://docs.unrealengine.com/en-us/Engine/Performance/CPU</a></p>
 <p>GPU Profiling<br>
 <a href="https://docs.unrealengine.com/en-us/Engine/Performance/GPU">https://docs.unrealengine.com/en-us/Engine/Performance/GPU</a></p>
+<h3 id="misc">Misc</h3>
 <h5 id="工程设置相关">工程设置相关</h5>
 <div class="alert warning ">
   <p>使用stat相关命令检测性能时，需要关闭Smooth Frame Rate来保证检测结果更精准：<br>

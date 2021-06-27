@@ -367,6 +367,15 @@ if (!doNotTrack) {
 <p>Using the first console command above is the best solution right now for debugging what&rsquo;s being occluded and what&rsquo;s not for the time being.</p>
 <p>Original Text: How does object occlusion and culling work in UE4?<br>
 <a href="https://answers.unrealengine.com/questions/312646/how-does-object-occlusion-and-culling-work-in-ue4.html">https://answers.unrealengine.com/questions/312646/how-does-object-occlusion-and-culling-work-in-ue4.html</a></p>
+<h5 id="occlusion-culling-doesnt-work">Occlusion Culling doesn&rsquo;t work</h5>
+<p>Dynamic occlusion is on by default and does a pretty good job when given the opportunity. Unless all your static meshes are all one single mesh then occlusion is working.</p>
+<p>You can test this by using the console command <code>r.visualizeoccludedprimitives 1</code>. This will create a green bounding box around the actors that are occluded. This will work only while working in the editor and not while in PIE/standalone game modes. Alternatively, you can use the console command <code>freezerendering</code> to toggle the current rendering state. Move the camera to outside of the are where it&rsquo;s suppose to occlude the actors behind it. Use the console command and then you&rsquo;ll see <code>Rendering Frozen</code> in the top left of the screen. You can now freely move the camera around the scene and it will have frozen/paused the actors at their current rendering state. So if they were occluded and not being rendered they will not be visible when you move the camera behind you walls that were occluding them.</p>
+<p>This is a good method to start troubleshooting your occlusion issues. You can also use the console command <code>Stat Initviews</code> while in PIE/Standalone game and look at the counters at the bottom. Follow the stat for Visibile Satic Mesh Elements. This number should rise and lower depending on the number of Static Meshes that are visible in the viewing area.</p>
+<p>Lastly, for Precomputed Visibility Volumes, this is a static, offline, way of handling occlusion. There are some caveats to using it, but overall it can be used. Before investigating adding it to your game I would instead troubleshoot and narrow down the issues regarding your issue with dynamic occlusion before moving to something else.</p>
+<p>There is some documentation that is being worked on for Visibility Culling, Precomputed Visibility Volumes, and Cull Distance Volumes that will be available hopefully in the not too distant future.</p>
+<p>If your still having issues or something I said doesn&rsquo;t make sense feel free to post back here.</p>
+<p>Occlusion Culling doesn&rsquo;t work<br>
+<a href="https://answers.unrealengine.com/questions/458450/occlusion-culling-doesnt-work.html">https://answers.unrealengine.com/questions/458450/occlusion-culling-doesnt-work.html</a></p>
 <h5 id="occlusion-culling-switch">Occlusion Culling switch</h5>
 <p>Global Switch(In Editor):<br>
 Project Settings -&gt; Engine -&gt; Rendering -&gt; Culling -&gt; <code>Occlusion Culling</code>. It&rsquo;s checked by default.</p>
