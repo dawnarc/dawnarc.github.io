@@ -398,8 +398,42 @@ Project Settings -&gt; Engine -&gt; Rendering -&gt; -&gt; Mobile -&gt; Set <code
 </div>
 <div class="alert warning ">
   <p>If there&rsquo;s an image blurring (ghost) on mobile devices, it may be caused by the poor performance of mobile devices.<br>
-If the cost of rendering on mobile is larger then the computing power on mobile devices, image blurring would occurs.</p>
+If the cost of rendering is larger then the computing power of mobile devices, image blurring would occurs.</p>
 </div>
+<h5 id="switch-aa-method-using-console-command">Switch AA method using console command</h5>
+<pre><code>//0 = none, 1 = FXAA, 2 = TemporalAA, 3 = MSAA
+r.DefaultFeature.AntiAliasing 2
+</code></pre>
+<p>Changing AA Type via Console Command<br>
+<a href="https://answers.unrealengine.com/questions/212041/view.html">https://answers.unrealengine.com/questions/212041/view.html</a></p>
+<div class="alert warning ">
+  <p>If want to enable TAA on mobile, you must disable MSAA first:<code>r.MobileMSAA 0</code>, then execute <code>r.DefaultFeature.AntiAliasing 2</code>.</p>
+</div>
+<h5 id="msaa-sample-count">MSAA Sample Count</h5>
+<p>Engine\Source\Runtime\Renderer\Private\PostProcess\SceneRenderTargets.cpp</p>
+<pre><code>static TAutoConsoleVariable&lt;int32&gt; CVarMSAACount(
+    TEXT(&quot;r.MSAACount&quot;),
+    4,
+    TEXT(&quot;Number of MSAA samples to use with the forward renderer.  Only used when MSAA is enabled in the rendering project settings.\n&quot;)
+    TEXT(&quot;0: MSAA disabled (Temporal AA enabled)\n&quot;)
+    TEXT(&quot;1: MSAA disabled\n&quot;)
+    TEXT(&quot;2: Use 2x MSAA\n&quot;)
+    TEXT(&quot;4: Use 4x MSAA&quot;)
+    TEXT(&quot;8: Use 8x MSAA&quot;),
+    ECVF_RenderThreadSafe | ECVF_Scalability
+    );
+
+static TAutoConsoleVariable&lt;int32&gt; CVarMobileMSAA(
+    TEXT(&quot;r.MobileMSAA&quot;),
+    1,
+    TEXT(&quot;Use MSAA instead of Temporal AA on mobile:\n&quot;)
+    TEXT(&quot;1: Use Temporal AA (MSAA disabled)\n&quot;)
+    TEXT(&quot;2: Use 2x MSAA (Temporal AA disabled)\n&quot;)
+    TEXT(&quot;4: Use 4x MSAA (Temporal AA disabled)\n&quot;)
+    TEXT(&quot;8: Use 8x MSAA (Temporal AA disabled)&quot;),
+    ECVF_RenderThreadSafe | ECVF_Scalability
+    );
+</code></pre>
 <hr>
 <p><code>我希望有个如你一般的人</code><br>
 <code>如山间清爽的风</code><br>
