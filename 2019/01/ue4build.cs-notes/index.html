@@ -581,7 +581,7 @@ Build configuration coming from UBT, do not modify
     }
 }
 </code></pre>
-<h5 id="how-to-disable-function-inline">How to disable function inline</h5>
+<h5 id="how-to-disable-function-inline-in-certain-modules">How to disable function inline in certain modules</h5>
 <pre><code>public class MyProjTarget : TargetRules
 {
     public MyProjTarget(TargetInfo Target) : base(Target)
@@ -591,6 +591,65 @@ Build configuration coming from UBT, do not modify
             bUseInlining = false;
         }
     }
+}
+</code></pre>
+<h5 id="how-to-disable-function-inline-and-code-optimization-for-whole-project">How to disable function inline and code optimization for whole project</h5>
+<p>Add:</p>
+<pre><code>if (Target.Configuration != UnrealTargetConfiguration.Shipping)
+{
+    CompileEnvironment.bUseInlining = false;
+    CompileEnvironment.bOptimizeCode = false;
+}
+</code></pre>
+<p>in Engine\Source\Programs\UnrealBuildTool\Platform\Windows\VCToolChain.cs</p>
+<p>Origin:</p>
+<pre><code>// Maintain the old std::aligned_storage behavior from VS from v15.8 onwards, in case of prebuilt third party libraries are reliant on it
+AddDefinition(Arguments, &quot;_DISABLE_EXTENDED_ALIGNED_STORAGE&quot;);
+
+// Fix Incredibuild errors with helpers using heterogeneous character sets
+if (Target.WindowsPlatform.Compiler &gt;= WindowsCompiler.VisualStudio2015_DEPRECATED)
+{
+    Arguments.Add(&quot;/source-charset:utf-8&quot;);
+    Arguments.Add(&quot;/execution-charset:utf-8&quot;);
+}
+
+// Do not allow inline method expansion if E&amp;C support is enabled or inline expansion has been disabled
+if (!CompileEnvironment.bSupportEditAndContinue &amp;&amp; CompileEnvironment.bUseInlining)
+{
+    Arguments.Add(&quot;/Ob2&quot;);
+}
+else
+{
+    // Specifically disable inline expansion to override /O1,/O2/ or /Ox if set
+    Arguments.Add(&quot;/Ob0&quot;);
+}
+</code></pre>
+<p>New:</p>
+<pre><code>// Maintain the old std::aligned_storage behavior from VS from v15.8 onwards, in case of prebuilt third party libraries are reliant on it
+AddDefinition(Arguments, &quot;_DISABLE_EXTENDED_ALIGNED_STORAGE&quot;);
+
+// Fix Incredibuild errors with helpers using heterogeneous character sets
+if (Target.WindowsPlatform.Compiler &gt;= WindowsCompiler.VisualStudio2015_DEPRECATED)
+{
+    Arguments.Add(&quot;/source-charset:utf-8&quot;);
+    Arguments.Add(&quot;/execution-charset:utf-8&quot;);
+}
+
+if (Target.Configuration != UnrealTargetConfiguration.Shipping)
+{
+    CompileEnvironment.bUseInlining = false;
+    CompileEnvironment.bOptimizeCode = false;
+}
+
+// Do not allow inline method expansion if E&amp;C support is enabled or inline expansion has been disabled
+if (!CompileEnvironment.bSupportEditAndContinue &amp;&amp; CompileEnvironment.bUseInlining)
+{
+    Arguments.Add(&quot;/Ob2&quot;);
+}
+else
+{
+    // Specifically disable inline expansion to override /O1,/O2/ or /Ox if set
+    Arguments.Add(&quot;/Ob0&quot;);
 }
 </code></pre>
 <hr>

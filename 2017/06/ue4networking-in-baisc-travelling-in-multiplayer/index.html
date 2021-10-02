@@ -407,6 +407,13 @@ if (!doNotTrack) {
 <p>When ServerTravel is triggered, the server tells all clients to begin to ClientTravel to the map specified. If the ServerTravel is seamless then the client maintains its connection to the server. If it’s not seamless then all the clients disconnect from the server and reconnect once they have loaded the map. Internally, the server does a similar process: it loads in the new level, usually a game world for all the clients to play on, and begins accepting player spawn requests once ready.</p>
 <p>Reference: Map travel<br>
 <a href="https://docs.improbable.io/unreal/alpha/content/map-travel#in-native-unreal-1">https://docs.improbable.io/unreal/alpha/content/map-travel#in-native-unreal-1</a></p>
+<h5 id="enabling-seamless-travel">Enabling Seamless Travel</h5>
+<p>To enable seamless travel, you need to setup a transition map. This is configured through the UGameMapsSettings::TransitionMap property. By default this property is empty, and if your game leaves this property empty, an empty map will be created for the transition map.</p>
+<p>The reason the transition map exists, is that there must always be a world loaded (which holds the map), so we can&rsquo;t free the old map before loading the new one. Since maps can be very large, it would be a bad idea to have the old and new map in memory at the same time, so this is where the transition map comes in.</p>
+<p>So now we can travel from the current map to the transition map, and then from there we can travel to the final map. Since the transition map is very small, it doesn&rsquo;t add much extra overhead while it overlaps the current and final map.</p>
+<p>Once you have the transition map setup, you set <code>AGameModeBase::bUseSeamlessTravel</code> to true, and from there seamless travel should work!</p>
+<p>Origin:<br>
+<a href="https://docs.unrealengine.com/4.27/en-US/InteractiveExperiences/Networking/Travelling/">https://docs.unrealengine.com/4.27/en-US/InteractiveExperiences/Networking/Travelling/</a></p>
 <h3 id="api-related">API Related</h3>
 <h5 id="clienttravel">ClientTravel</h5>
 <p>See the usage of <code>APlayerController-&gt;ClientTravel()</code> in Offical Project <strong>ShooterGame</strong>.</p>

@@ -7,47 +7,19 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="generator" content="Hugo 0.80.0 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
-<meta name="keywords" content="">
-<meta name="description" content="下载：
-https://dev.mysql.com/downloads/mysql/
-解压后执行（管理员命令行）：
-mysqld --initialize-insecure --user=mysql 然后安装windows服务：
-mysqld install 启动：
-net start mysql 修改root密码（首次安装后root还未修改的情况下，即密码为空）
-mysqladmin -u root -p password 123456 my.ini找不到 Windows 10下，安装MySQL后的my.ini文件位置不再是安装目录的根目录，而是：C:\ProgramData\MySQL\MySQL Server 5.7
- 山映斜阳天接水，芳草无情，更在斜阳外。---范仲淹《苏幕遮》">
+<meta name="keywords" content="MySQL, Windows, 绿色版, 安装">
+<meta name="description" content="keywords: MySQL, Windows, 绿色版, 安装">
 
 
-<meta property="og:description" content="下载：
-https://dev.mysql.com/downloads/mysql/
-解压后执行（管理员命令行）：
-mysqld --initialize-insecure --user=mysql 然后安装windows服务：
-mysqld install 启动：
-net start mysql 修改root密码（首次安装后root还未修改的情况下，即密码为空）
-mysqladmin -u root -p password 123456 my.ini找不到 Windows 10下，安装MySQL后的my.ini文件位置不再是安装目录的根目录，而是：C:\ProgramData\MySQL\MySQL Server 5.7
- 山映斜阳天接水，芳草无情，更在斜阳外。---范仲淹《苏幕遮》">
+<meta property="og:description" content="keywords: MySQL, Windows, 绿色版, 安装">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[MySQL]Windows上安装MySQL5.7绿色版">
 <meta name="twitter:title" content="[MySQL]Windows上安装MySQL5.7绿色版">
 <meta property="og:url" content="https://dawnarc.com/2017/05/mysqlwindows%E4%B8%8A%E5%AE%89%E8%A3%85mysql5.7%E7%BB%BF%E8%89%B2%E7%89%88/">
 <meta property="twitter:url" content="https://dawnarc.com/2017/05/mysqlwindows%E4%B8%8A%E5%AE%89%E8%A3%85mysql5.7%E7%BB%BF%E8%89%B2%E7%89%88/">
 <meta property="og:site_name" content="玄冬Wong">
-<meta property="og:description" content="下载：
-https://dev.mysql.com/downloads/mysql/
-解压后执行（管理员命令行）：
-mysqld --initialize-insecure --user=mysql 然后安装windows服务：
-mysqld install 启动：
-net start mysql 修改root密码（首次安装后root还未修改的情况下，即密码为空）
-mysqladmin -u root -p password 123456 my.ini找不到 Windows 10下，安装MySQL后的my.ini文件位置不再是安装目录的根目录，而是：C:\ProgramData\MySQL\MySQL Server 5.7
- 山映斜阳天接水，芳草无情，更在斜阳外。---范仲淹《苏幕遮》">
-<meta name="twitter:description" content="下载：
-https://dev.mysql.com/downloads/mysql/
-解压后执行（管理员命令行）：
-mysqld --initialize-insecure --user=mysql 然后安装windows服务：
-mysqld install 启动：
-net start mysql 修改root密码（首次安装后root还未修改的情况下，即密码为空）
-mysqladmin -u root -p password 123456 my.ini找不到 Windows 10下，安装MySQL后的my.ini文件位置不再是安装目录的根目录，而是：C:\ProgramData\MySQL\MySQL Server 5.7
- 山映斜阳天接水，芳草无情，更在斜阳外。---范仲淹《苏幕遮》">
+<meta property="og:description" content="keywords: MySQL, Windows, 绿色版, 安装">
+<meta name="twitter:description" content="keywords: MySQL, Windows, 绿色版, 安装">
 <meta property="og:locale" content="en-us">
 
   
@@ -80,6 +52,9 @@ mysqladmin -u root -p password 123456 my.ini找不到 Windows 10下，安装MyS
 
 
 
+
+  <meta property="og:image" content="https://dawnarc.com/thumbnail/thumbnail-japen-003.jpg">
+  <meta property="twitter:image" content="https://dawnarc.com/thumbnail/thumbnail-japen-003.jpg">
 
 
 
@@ -377,12 +352,28 @@ if (!doNotTrack) {
           
           <div class="post-content markdown" itemprop="articleBody">
             <div class="main-content-wrap">
-              <p>下载：<br>
+              <p>keywords: MySQL, Windows, 绿色版, 安装</p>
+<p>下载：<br>
 <a href="https://dev.mysql.com/downloads/mysql/">https://dev.mysql.com/downloads/mysql/</a></p>
 <p>解压后执行（管理员命令行）：</p>
 <pre><code>mysqld --initialize-insecure --user=mysql
 </code></pre>
+<p>复制一份里面的my-default.ini为my.ini，（如果zip没有my-default.ini，则手动创建一个my.ini）</p>
+<pre><code>[mysqld]
+basedir = &quot;D:/mysql-5.7.18-winx64&quot;
+datadir = &quot;D:/mysql-5.7.18-winx64/data&quot;
+port = 3306
+character-set-server = utf8
+max_connections = 200
+default-storage-engine = INNODB
+ 
+[mysql]
+default-character-set = utf8
+</code></pre>
 <p>然后安装windows服务：</p>
+<pre><code>mysqld install MySQL --defaults-file=&quot;C:\ProgramData\MySQL\MySQL Server 5.7\my.ini&quot;
+</code></pre>
+<p>如果不需要ini配置文件（不推荐），可以不设置<code>defaults-file</code>：</p>
 <pre><code>mysqld install
 </code></pre>
 <p>启动：</p>
@@ -391,11 +382,17 @@ if (!doNotTrack) {
 <p>修改root密码（首次安装后root还未修改的情况下，即密码为空）</p>
 <pre><code>mysqladmin -u root -p password 123456
 </code></pre>
+<p>参考文章：<br>
+win10下zip安装mysql5.7的一些问题<br>
+<a href="https://www.cnblogs.com/jkko123/p/6294573.html">https://www.cnblogs.com/jkko123/p/6294573.html</a></p>
 <h5 id="myini找不到">my.ini找不到</h5>
 <p>Windows 10下，安装MySQL后的my.ini文件位置不再是安装目录的根目录，而是：C:\ProgramData\MySQL\MySQL Server 5.7</p>
+<h5 id="windows-services移除mysql">Windows Services移除MySQL</h5>
+<p>CMD:</p>
+<pre><code>SC DELETE mysql
+</code></pre>
 <hr>
 <p><code>山映斜阳天接水，芳草无情，更在斜阳外。---范仲淹《苏幕遮》</code></p>
-
               
             </div>
           </div>
