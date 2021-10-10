@@ -127,6 +127,7 @@ if (!doNotTrack) {
 
     
     
+<script data-ad-client="ca-pub-5816088749577387" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
   </head>
 
   <body>
@@ -399,26 +400,36 @@ static const FName NAME_FirstPerson = FName(TEXT(&quot;FirstPerson&quot;));
 <pre><code>ToggleDebugCamera
 </code></pre>
 <p>渲染优化分析视图模式：</p>
-<pre><code>//Lit view mode shows the final result of your scene once all of the Materials and lighting have been applied. Hotkey: Alt + 4
+<pre><code>//Lit view mode shows the final result of your scene once all of the Materials and lighting have been applied.
+//Hotkey: Alt + 4
 viewmode lit
 
-//Unlit view mode removes all lighting from the scene, showing you Base Color only. Hotkey: Alt + 3
+//Unlit view mode removes all lighting from the scene, showing you Base Color only.
+//Hotkey: Alt + 3
 viewmode unlit
 
-//Wireframe shows all of the polygon edges in the scene. In the case of Brushes, you will see the resultant geometry. Hotkey: Alt + 2
+//Wireframe shows all of the polygon edges in the scene. In the case of Brushes, you will see the resultant geometry. 
+//Hotkey: Alt + 2
 viewmode wireframe
 
-//Detail Lighting activates a neutral Material across the entire scene, using the normal maps of the original materials. This is useful for isolating whether your BaseColor is obscuring lighting by being too dark or noisy. Hotkey: Alt + 5
+//Detail Lighting activates a neutral Material across the entire scene, using the normal maps of the original materials. This is useful for isolating whether your BaseColor is obscuring lighting by being too dark or noisy. 
+//Hotkey: Alt + 5
 viewmode lit_detaillighting
 
-//Lighting Only shows a neutral Material that is only affected by lighting. It differs from Detail Lighting mode in that you will not see normal maps. Hotkey: Alt + 6
+//Lighting Only shows a neutral Material that is only affected by lighting. It differs from Detail Lighting mode in that you will not see normal maps. 
+//Hotkey: Alt + 6
 viewmode lightingonly
 
-//Light Complexity shows the number of non-static lights affecting your geometry. This is useful for tracking lighting cost - the more lights affecting a surface, the more expensive it will be to shade. Hotkey: Alt + 7
+//Light Complexity shows the number of non-static lights affecting your geometry. This is useful for tracking lighting cost - the more lights affecting a surface, the more expensive it will be to shade. 
+//Hotkey: Alt + 7
 viewmode lightcomplexity
 
-//Shader Complexity Mode is used to visualize the number of shader instructions being used to calculate each pixel of your scene. It is generally a good indication of how performance-friendly your scene will be. In general, it is used to test overall performance for your base scene, as well as to optimize particle effects, which tend to cause performance spikes with a large amount of overdraw for a short period of time. Hotkey: Alt + 8
+//Shader Complexity Mode is used to visualize the number of shader instructions being used to calculate each pixel of your scene. It is generally a good indication of how performance-friendly your scene will be. In general, it is used to test overall performance for your base scene, as well as to optimize particle effects, which tend to cause performance spikes with a large amount of overdraw for a short period of time. 
+//Hotkey: Alt + 8
 viewmode shadercomplexity
+
+//view quad overdraw
+viewmode quadoverdraw
 </code></pre>
 <p><a href="https://docs.unrealengine.com/4.26/en-US/BuildingWorlds/LevelEditor/Viewports/ViewModes/">https://docs.unrealengine.com/4.26/en-US/BuildingWorlds/LevelEditor/Viewports/ViewModes/</a></p>
 <p>显示刚体</p>
@@ -433,9 +444,14 @@ viewmode shadercomplexity
 <p>显示UMG Widget drawcall</p>
 <pre><code>stat slate
 </code></pre>
-<p>显示三角面数量</p>
+<p>显示static mesh、skeletal mesh的三角面数量</p>
 <pre><code>stat Engine
 </code></pre>
+<p>显示硬件级（RHI）三角面总数和drawcall总数</p>
+<pre><code>stat rhi
+</code></pre>
+<p>其中<code>Triangles drawn</code>数量包含了阴影，所以数值会显著高于<code>stat Engine</code>中的三角面数；<br>
+<code>DrawPrimitive calls</code>数量除了geometry，还包括decals, shadows, translucent lighting volumes, post processing，其数值也会明显高于<code>stat scenerendering</code>中的draw call数。</p>
 <p>显示单帧信息：总时长、Game耗时、Draw耗时、GPU耗时</p>
 <pre><code>stat Unit
 stat UnitGraph  //附带各个参数的实时曲线图
@@ -443,12 +459,19 @@ stat UnitGraph  //附带各个参数的实时曲线图
 <p>显示当前帧的CPU时间信息（各种Tick, GC Mark，Update Overlaps等）：</p>
 <pre><code>stat game
 </code></pre>
-<p>设置渲染分辨率为默认大小的50%（500就表示实际viewport大小的5倍尺寸来渲染，可以用来做压力测试）</p>
+<p>设置渲染分辨率为默认大小的50%（500就表示实际viewport大小的5倍尺寸来渲染，可以用来做压力测试，判断性能瓶颈是不是像素处理）</p>
 <pre><code>r.ScreenPercentage 50
+</code></pre>
+<p><code>r.SetRes</code>也可以判断瓶颈是否和像素相关。和<code>r.ScreenPercentage</code>相比，后者有额外开销。</p>
+<pre><code>r.SetRes 1920x1080f
 </code></pre>
 <p>查看遮挡剔除：</p>
 <pre><code>r.visualizeOccludedPrimitives 1
 </code></pre>
+<p>启用early Z pass，默认已开启：</p>
+<pre><code>r.EarlyZPass 3
+</code></pre>
+<p>较高的drawcall情况下，开启后如果basepass的overdraw较少，说明early Z pass效果明显。</p>
 <p>关闭或开启屏幕上打印信息（AddOnScreenDebugMessage）</p>
 <pre><code>DisableAllScreenMessages
 
@@ -487,11 +510,12 @@ Engine\Source\Runtime\Engine\Private\UnrealEngine.cpp</p>
   <p>性能统计自身也会消耗一定性能，有没办法将性能统计的自身消耗，从性能统计的计算结果中排除掉？答案是：No！至少目前版本不支持。</p>
 </div>
 <h3 id="gpuprofile-与-cpuprofile">GPUProfile 与 CPUProfile</h3>
-<h5 id="cpu卡顿分析">CPU卡顿分析</h5>
-<p>记录卡顿时间（通过<code>t.HitchThreshold</code>定义卡顿时长阀值）</p>
+<h5 id="cpu线程包括gamethreadrenderthread等卡顿分析">CPU线程（包括GameThread、RenderThread等）卡顿分析</h5>
+<p>记录卡顿时间（通过<code>t.HitchFrameTimeThreshold</code>（单位ms，默认60。旧版本叫<code>t.HitchThreshold</code>）定义卡顿时长阀值）</p>
 <pre><code>stat Hitches    //或者stat DumpHitches 记录log文件
 </code></pre>
-<p>程序运行时一旦某帧耗时超过<code>t.HitchThreshold</code>指定的时长，则函数堆栈就会被打印出来。例如，以下 hitchdump 显示LoadObject耗时较长（<code>Self</code>表示函数堆栈中上一级函数，即<code>LoadObject</code>，所占用耗时），则表示是加载资源导致顿卡</p>
+<p>程序运行时一旦某帧耗时超过<code>t.HitchFrameTimeThreshold</code>指定的时长，则函数堆栈就会被打印出来。<br>
+例如，以下 hitchdump 显示LoadObject耗时较长（<code>Self</code>表示函数堆栈中上一级函数，即<code>LoadObject</code>，所占用耗时），则表示是加载资源导致顿卡</p>
 <pre><code>   477.514ms (   4)  -  Thread_4118_0 - GameThread - STATGROUP_Threads - STATCAT_Advanced
      477.510ms (   2)  -  FrameTime - STAT_FrameTime - STATGROUP_Engine - STATCAT_Advanced
        470.844ms (   1)  -  FrameTime - STAT_FrameTime - STATGROUP_Engine - STATCAT_Advanced
@@ -506,27 +530,35 @@ Engine\Source\Runtime\Engine\Private\UnrealEngine.cpp</p>
                          377.887ms (   3)  -  Self
                          26.688ms ( 533)  -  STAT_FArchiveAsync2_WaitRead - STATGROUP_Quick - STATCAT_Advanced
 </code></pre>
-<h5 id="gpu卡顿分析">GPU卡顿分析</h5>
+<p><code>stat DumpHitches</code>命令有可选参数，<code>-start</code>和<code>-stop</code>，表示dump的开始和结束位置：</p>
+<pre><code>stat DumpHitches -start
+stat DumpHitches -stop
+</code></pre>
+<p>默认只会打印GameThread、RenderThread上的卡顿，如果希望打印其他线程卡顿，比如AudioThread、TaskGraph等，执行命令：<code>t.DumpHitches.AllThreads 1</code></p>
+<h5 id="gpu各个性能指标的耗时分析">GPU各个性能指标的耗时分析</h5>
 <p>在编辑器中运行游戏时，按下 Ctrl + Shift + 逗号，或者命令行输入：<code>profilegpu</code> ，打开 GPUProfile 面板，显示当前帧的各类计算的耗时：PostProcess、Lighting 等。<br>
 注意：是当前一帧的耗时，不是平均每帧的耗时。</p>
 <p>另外一个类似命令:<code>profilegpuhitches</code>，表示每当GPU有卡顿时，自动弹出一个当时所在帧的 GPUProfile 面板。</p>
 <p>GPUProfile面板上的可视化信息，在log文件（<code>工程名\Saved\Logs\工程名.log</code>）里面也会以文本形式打印出来。<br>
 在Development 打包模式下，由于无法打开GPUProfile 面板，所以分析数据只打印在log里，例如：</p>
-<pre><code>[2018.08.26-07.56.40:320][291]Profiling the next GPU frame
-[2018.08.26-07.56.40:406][294]LogD3D11RHI: Warning: 
-[2018.08.26-07.56.40:406][294]LogD3D11RHI: Warning: 
-[2018.08.26-07.56.40:411][295]LogRHI: Perf marker hierarchy, total GPU time 4.33ms
-[2018.08.26-07.56.40:411][295]LogRHI: Warning: Profiled range was continuous.
-[2018.08.26-07.56.40:412][295]LogRHI: 100.0% 4.33ms   FRAME 635 draws 16087 prims 18018 verts
-[2018.08.26-07.56.40:412][295]LogRHI: 97.1% 4.20ms   Scene 633 draws 15751 prims 17346 verts
-[2018.08.26-07.56.40:412][295]LogRHI:     1.1% 0.05ms   PrePass DDM_AllOpaque (Forced by DBuffer) 141 draws 5744 prims 5634 verts
-[2018.08.26-07.56.40:412][295]LogRHI:        0.3% 0.01ms   BeginRenderingPrePass 1 draws 0 prims 0 verts
-[2018.08.26-07.56.40:412][295]LogRHI:     0.5% 0.02ms   ComputeLightGrid 5 draws 5 prims 0 verts
-[2018.08.26-07.56.40:412][295]LogRHI:        0.3% 0.01ms   CullLights 30x17x32 NumLights 0 NumCaptures 1 4 draws 4 prims 0 verts
-[2018.08.26-07.56.40:412][295]LogRHI:        0.2% 0.01ms   Compact 1 draws 1 prims 0 verts
-[2018.08.26-07.56.40:412][295]LogRHI:     0.1% 0.00ms   BeginOcclusionTests 16 draws 192 prims 128 verts
-[2018.08.26-07.56.40:412][295]LogRHI:        0.1% 0.00ms   ViewOcclusionTests 0 16 draws 192 prims 128 verts
-[2018.08.26-07.56.40:412][295]LogRHI:           0.1% 0.00ms   IndividualQueries 16 draws 192 prims 128 verts
+<pre><code>Profiling the next GPU frame
+LogD3D11RHI: Warning: 
+LogD3D11RHI: Warning: 
+LogRHI: Perf marker hierarchy, total GPU time 4.33ms
+LogRHI: Warning: Profiled range was continuous.
+LogRHI: 100.0% 4.33ms   FRAME 635 draws 16087 prims 18018 verts
+LogRHI: 97.1% 4.20ms   Scene 633 draws 15751 prims 17346 verts
+LogRHI:     1.1% 0.05ms   PrePass DDM_AllOpaque (Forced by DBuffer) 141 draws 5744 prims 5634 verts
+LogRHI:        0.3% 0.01ms   BeginRenderingPrePass 1 draws 0 prims 0 verts
+LogRHI:     0.5% 0.02ms   ComputeLightGrid 5 draws 5 prims 0 verts
+LogRHI:        0.3% 0.01ms   CullLights 30x17x32 NumLights 0 NumCaptures 1 4 draws 4 prims 0 verts
+LogRHI:        0.2% 0.01ms   Compact 1 draws 1 prims 0 verts
+LogRHI:     0.1% 0.00ms   BeginOcclusionTests 16 draws 192 prims 128 verts
+LogRHI:        0.1% 0.00ms   ViewOcclusionTests 0 16 draws 192 prims 128 verts
+LogRHI:           0.1% 0.00ms   IndividualQueries 16 draws 192 prims 128 verts
+</code></pre>
+<p>如果不需要gpu耗时存到文本，也不需要GUI面板，只是在屏幕上实时打印，使用命令：</p>
+<pre><code>stat gpu
 </code></pre>
 <h5 id="其他cpu性能分析">其他CPU性能分析</h5>
 <p>CPU性能分析可以通过 <code>stat scenerendering</code> 、<code>stat game</code> 等命令分析，如果某类型的 draw call 数量特别高，说明这是 CPU 的瓶颈所在。</p>
@@ -601,7 +633,7 @@ scalability auto
 const float CPUIndex = State.CPUBenchmarkResults;
 const float GPUIndex = State.GPUBenchmarkResults;
 </code></pre>
-<p>Engine\Config\BaseScalability.ini</p>
+<p>返回值对应Engine\Config\BaseScalability.ini中的配置：</p>
 <pre><code>[ScalabilitySettings]
 ; PerfIndexThresholds define the thresholds that determine what the autodetected quality should be for each group.
 ; When you auto detect performance, both a CPUIndex and GPUIndex are calculated on the machine.
@@ -708,12 +740,14 @@ int32 UKismetSystemLibrary::GetConsoleVariableIntValue(UObject* WorldContextObje
 <pre><code>float RetVal = KismetSystemLibrary::GetConsoleVariableIntValue(this, TEXT(&quot;r.ScreenPercentage&quot;));
 //RetVal is 200.f
 </code></pre>
-<h3 id="官方文档">官方文档</h3>
+<h3 id="文档">文档</h3>
 <h5 id="commands">Commands</h5>
 <p>Stat Commands<br>
 <a href="https://docs-origin.unrealengine.com/latest/INT/Engine/Performance/StatCommands/">https://docs-origin.unrealengine.com/latest/INT/Engine/Performance/StatCommands/</a></p>
 <p>Unreal Engine 4 Console Variables and Commands<br>
 <a href="https://digilander.libero.it/ZioYuri78/">https://digilander.libero.it/ZioYuri78/</a></p>
+<p>Measuring Performance<br>
+<a href="https://unrealartoptimization.github.io/book/process/measuring-performance/">https://unrealartoptimization.github.io/book/process/measuring-performance/</a></p>
 
               
             </div>
