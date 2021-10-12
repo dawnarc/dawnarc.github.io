@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.80.0 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.88.1 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="">
 <meta name="description" content="文章内容大部分参考自《OpenGL 4 Shading Language Cookbook, Second Edition》书中的代码：
@@ -112,10 +112,10 @@ if (!doNotTrack) {
 	ga('send', 'pageview');
 }
 </script>
-
     
     
-<script data-ad-client="ca-pub-5816088749577387" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4843403245883139"
+     crossorigin="anonymous"></script>
   </head>
 
   <body>
@@ -458,13 +458,13 @@ GLenum properties[] = {GL_NAME_LENGTH, GL_TYPE, GL_LOCATION};
 printf(&quot;Active attributes:\n&quot;);
 for( int i = 0; i &lt; numAttribs; ++i ) 
 {
-    GLint results[3];
-    glGetProgramResourceiv(programHhandle, GL_PROGRAM_INPUT, i, 3, properties, 3, NULL, results);
-    GLint nameBufSize = results[0] + 1;
-    char * name = new char[nameBufSize];
-    glGetProgramResourceName(programHandle, GL_PROGRAM_INPUT, i, nameBufSize, NULL, name);
-    printf(&quot;%-5d %s (%s)\n&quot;, results[2], name, getTypeString(results[1]));
-    delete [] name;
+	GLint results[3];
+	glGetProgramResourceiv(programHhandle, GL_PROGRAM_INPUT, i, 3, properties, 3, NULL, results);
+	GLint nameBufSize = results[0] + 1;
+	char * name = new char[nameBufSize];
+	glGetProgramResourceName(programHandle, GL_PROGRAM_INPUT, i, nameBufSize, NULL, name);
+	printf(&quot;%-5d %s (%s)\n&quot;, results[2], name, getTypeString(results[1]));
+	delete [] name;
 }
 </code></pre>
 <div class="alert warning ">
@@ -494,8 +494,8 @@ uniform mat4 RotationMatrix;
 
 void main()
 {
-    Color = VertexColor;
-    gl_Position = RotationMatrix * vec4(VertexPosition,1.0);
+	Color = VertexColor;
+	gl_Position = RotationMatrix * vec4(VertexPosition,1.0);
 }
 </code></pre>
 <p>那么OpenGL API获取并设置Uniform variables的方式如下：</p>
@@ -532,15 +532,15 @@ GLenum properties[] = {GL_NAME_LENGTH, GL_TYPE, GL_LOCATION, GL_BLOCK_INDEX};
 printf(&quot;Active uniforms:\n&quot;);
 for( int i = 0; i &lt; numUniforms; ++i ) 
 {
-    GLint results[4];
-    glGetProgramResourceiv(handle, GL_UNIFORM, i, 4, properties, 4, NULL, results);
-    if( results[3] != -1 ) 
+	GLint results[4];
+	glGetProgramResourceiv(handle, GL_UNIFORM, i, 4, properties, 4, NULL, results);
+	if( results[3] != -1 ) 
         continue;       // Skip uniforms in blocks 
-    GLint nameBufSize = results[0] + 1;
-    char * name = new char[nameBufSize];
-    glGetProgramResourceName(handle, GL_UNIFORM, i, nameBufSize, NULL, name);
-    printf(&quot;%-5d %s (%s)\n&quot;, results[2], name, getTypeString(results[1]));
-    delete [] name;
+	GLint nameBufSize = results[0] + 1;
+	char * name = new char[nameBufSize];
+	glGetProgramResourceName(handle, GL_UNIFORM, i, nameBufSize, NULL, name);
+	printf(&quot;%-5d %s (%s)\n&quot;, results[2], name, getTypeString(results[1]));
+	delete [] name;
 }
 </code></pre>
 <div class="alert warning ">
@@ -565,8 +565,8 @@ out vec3 TexCoord;
 
 void main()
 {
-    TexCoord = VertexTexCoord;
-    gl_Position = vec4(VertexPosition,1.0);
+	TexCoord = VertexTexCoord;
+	gl_Position = vec4(VertexPosition,1.0);
 }
 </code></pre>
 <p>basic_uniformblock.vert</p>
@@ -584,10 +584,10 @@ layout (binding = 1) uniform BlobSettings {
 
 void main() 
 {
-    float dx = TexCoord.x - 0.5;
-    float dy = TexCoord.y - 0.5;
-    float dist = sqrt(dx * dx + dy * dy);
-    FragColor =
+	float dx = TexCoord.x - 0.5;
+	float dy = TexCoord.y - 0.5;
+	float dist = sqrt(dx * dx + dy * dy);
+	FragColor =
        mix( Blob.InnerColor, Blob.OuterColor,
              smoothstep( Blob.RadiusInner, Blob.RadiusOuter, dist )
             );
@@ -678,8 +678,7 @@ You might be wondering why we use glBindBuffer and glBindBufferBase with GL_UNIF
 };
 </code></pre>
 <h5 id="fragment-shader到vertex-shader之间的工作流程page-58">fragment shader到vertex shader之间的工作流程（page 58）</h5>
-<figure>
-    <img src="https://dawnarc.com/img/20170113-[Shading]OpenGL%e5%b8%b8%e7%94%a8%e5%9f%ba%e7%a1%80%e7%9f%a5%e8%af%86%28%e4%b8%aa%e4%ba%ba%e5%ad%a6%e4%b9%a0%e7%ac%94%e8%ae%b0%29/[Shading]OpenGL%e5%b8%b8%e7%94%a8%e5%9f%ba%e7%a1%80%e7%9f%a5%e8%af%86%28%e4%b8%aa%e4%ba%ba%e5%ad%a6%e4%b9%a0%e7%ac%94%e8%ae%b0%29-01.png"/> 
+<figure><img src="https://dawnarc.com/img/20170113-[Shading]OpenGL%e5%b8%b8%e7%94%a8%e5%9f%ba%e7%a1%80%e7%9f%a5%e8%af%86%28%e4%b8%aa%e4%ba%ba%e5%ad%a6%e4%b9%a0%e7%ac%94%e8%ae%b0%29/[Shading]OpenGL%e5%b8%b8%e7%94%a8%e5%9f%ba%e7%a1%80%e7%9f%a5%e8%af%86%28%e4%b8%aa%e4%ba%ba%e5%ad%a6%e4%b9%a0%e7%ac%94%e8%ae%b0%29-01.png"/>
 </figure>
 
 <p>Between the vertex and fragment shader, the vertices are assembled into primitives, clipping takes place, and the viewport transformation is applied (among other operations). The rasterization process then takes place and the polygon is filled (if necessary). The fragment shader is executed once for each fragment (pixel) of the polygon being rendered (typically in parallel). Data provided from the vertex shader is (by default) interpolated in a perspective correct manner, and provided to the fragment shader via shader input variables. The fragment shader determines the appropriate color for the pixel and sends it to the frame buffer using output variables. The depth information is handled automatically.</p>

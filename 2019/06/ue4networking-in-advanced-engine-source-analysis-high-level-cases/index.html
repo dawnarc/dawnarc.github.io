@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.80.0 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.88.1 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="UE4, Networking">
 <meta name="description" content="Keywords: UE4, Networking">
@@ -101,10 +101,10 @@ if (!doNotTrack) {
 	ga('send', 'pageview');
 }
 </script>
-
     
     
-<script data-ad-client="ca-pub-5816088749577387" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4843403245883139"
+     crossorigin="anonymous"></script>
   </head>
 
   <body>
@@ -420,34 +420,34 @@ float NetPriority;
 Engine\Source\Runtime\Engine\Private\ActorReplication.cpp</p>
 <pre><code>bool AActor::IsNetRelevantFor(const AActor* RealViewer, const AActor* ViewTarget, const FVector&amp; SrcLocation) const
 {
-    if (bAlwaysRelevant || IsOwnedBy(ViewTarget) || IsOwnedBy(RealViewer) || this == ViewTarget || ViewTarget == Instigator)
-    {
+	if (bAlwaysRelevant || IsOwnedBy(ViewTarget) || IsOwnedBy(RealViewer) || this == ViewTarget || ViewTarget == Instigator)
+	{
         return true;
-    }
-    else if ( bNetUseOwnerRelevancy &amp;&amp; Owner)
-    {
+	}
+	else if ( bNetUseOwnerRelevancy &amp;&amp; Owner)
+	{
         return Owner-&gt;IsNetRelevantFor(RealViewer, ViewTarget, SrcLocation);
-    }
-    else if ( bOnlyRelevantToOwner )
-    {
+	}
+	else if ( bOnlyRelevantToOwner )
+	{
         return false;
-    }
-    else if ( RootComponent &amp;&amp; RootComponent-&gt;GetAttachParent() &amp;&amp; RootComponent-&gt;GetAttachParent()-&gt;GetOwner() &amp;&amp; (Cast&lt;USkeletalMeshComponent&gt;(RootComponent-&gt;GetAttachParent()) || (RootComponent-&gt;GetAttachParent()-&gt;GetOwner() == Owner)) )
-    {
+	}
+	else if ( RootComponent &amp;&amp; RootComponent-&gt;GetAttachParent() &amp;&amp; RootComponent-&gt;GetAttachParent()-&gt;GetOwner() &amp;&amp; (Cast&lt;USkeletalMeshComponent&gt;(RootComponent-&gt;GetAttachParent()) || (RootComponent-&gt;GetAttachParent()-&gt;GetOwner() == Owner)) )
+	{
         return RootComponent-&gt;GetAttachParent()-&gt;GetOwner()-&gt;IsNetRelevantFor(RealViewer, ViewTarget, SrcLocation);
-    }
-    else if( bHidden &amp;&amp; (!RootComponent || !RootComponent-&gt;IsCollisionEnabled()) )
-    {
+	}
+	else if( bHidden &amp;&amp; (!RootComponent || !RootComponent-&gt;IsCollisionEnabled()) )
+	{
         return false;
-    }
+	}
 
-    if (!RootComponent)
-    {
+	if (!RootComponent)
+	{
         UE_LOG(LogNet, Warning, TEXT(&quot;Actor %s / %s has no root component in AActor::IsNetRelevantFor. (Make bAlwaysRelevant=true?)&quot;), *GetClass()-&gt;GetName(), *GetName() );
         return false;
-    }
+	}
 
-    return !GetDefault&lt;AGameNetworkManager&gt;()-&gt;bUseDistanceBasedRelevancy ||
+	return !GetDefault&lt;AGameNetworkManager&gt;()-&gt;bUseDistanceBasedRelevancy ||
             IsWithinNetRelevancyDistance(SrcLocation);
 }
 </code></pre>
@@ -478,7 +478,7 @@ uint8 bAlwaysRelevant:1;
 <h5 id="how-does-engine-check-if-strip-animation-data">How does engine check if strip animation data</h5>
 <p><code>Strip Animation Data On Dedicated Server</code> was used in <code>UAnimSequence::Serialize()</code>:</p>
 <pre><code>const bool bCookingTargetNeedsCompressedData = bIsCooking 
-    &amp;&amp; (!UAnimationSettings::Get()-&gt;bStripAnimationDataOnDedicatedServer 
+	&amp;&amp; (!UAnimationSettings::Get()-&gt;bStripAnimationDataOnDedicatedServer 
         || !bIsCookingForDedicatedServer 
         || bEnableRootMotion);
 </code></pre>
@@ -499,75 +499,75 @@ void SetRemoteRoleForBackwardsCompat(const ENetRole InRemoteRole) { RemoteRole =
 </code></pre>
 <h5 id="callstack-on-client-from-unetdriver-to-constructor-of-actor">Callstack on client from UNetDriver to constructor of Actor</h5>
 <pre><code>UE4Editor-MyProj-Win64-DebugGame.dll!MyCharacter::MyCharacter() Line 7
-    at E:\MyProj\Source\MyProj\Character\MyCharacter.cpp(7)
+	at E:\MyProj\Source\MyProj\Character\MyCharacter.cpp(7)
 UE4Editor-MyProj-Win64-DebugGame.dll!InternalConstructor&lt;AFoliageActor&gt;(const FObjectInitializer &amp; X={...}) Line 3307
-    at E:\unrealengine-4.26\Engine\Source\Runtime\CoreUObject\Public\UObject\Class.h(3307)
+	at E:\unrealengine-4.26\Engine\Source\Runtime\CoreUObject\Public\UObject\Class.h(3307)
 UE4Editor-CoreUObject.dll!StaticConstructObject_Internal(const FStaticConstructObjectParameters &amp; Params={...}) Line 3195
-    at E:\unrealengine-4.26\Engine\Source\Runtime\CoreUObject\Private\UObject\UObjectGlobals.cpp(3195)
+	at E:\unrealengine-4.26\Engine\Source\Runtime\CoreUObject\Private\UObject\UObjectGlobals.cpp(3195)
 [Inline Frame] UE4Editor-Engine.dll!NewObject(UObject *) Line 1160
-    at E:\unrealengine-4.26\Engine\Source\Runtime\CoreUObject\Public\UObject\UObjectGlobals.h(1160)
+	at E:\unrealengine-4.26\Engine\Source\Runtime\CoreUObject\Public\UObject\UObjectGlobals.h(1160)
 UE4Editor-Engine.dll!UWorld::SpawnActor(UClass * Class=0x000001b8ab457200, const FTransform * UserTransformPtr, const FActorSpawnParameters &amp; SpawnParameters={...}) Line 508
-    at E:\unrealengine-4.26\Engine\Source\Runtime\Engine\Private\LevelActor.cpp(508)
+	at E:\unrealengine-4.26\Engine\Source\Runtime\Engine\Private\LevelActor.cpp(508)
 UE4Editor-Engine.dll!UWorld::SpawnActorAbsolute(UClass * Class=0x000001b8ab457200, const FTransform &amp; AbsoluteTransform, const FActorSpawnParameters &amp; SpawnParameters={...}) Line 289
-    at E:\unrealengine-4.26\Engine\Source\Runtime\Engine\Private\LevelActor.cpp(289)
+	at E:\unrealengine-4.26\Engine\Source\Runtime\Engine\Private\LevelActor.cpp(289)
 UE4Editor-Engine.dll!UPackageMapClient::SerializeNewActor(FArchive &amp; Ar={...}, UActorChannel * Channel=0x000001b8a9235f00, AActor * &amp; Actor=0x0000000000000000) Line 609
-    at E:\unrealengine-4.26\Engine\Source\Runtime\Engine\Private\PackageMapClient.cpp(609)
+	at E:\unrealengine-4.26\Engine\Source\Runtime\Engine\Private\PackageMapClient.cpp(609)
 UE4Editor-Engine.dll!UActorChannel::ProcessBunch(FInBunch &amp; Bunch={...}) Line 2764
-    at E:\unrealengine-4.26\Engine\Source\Runtime\Engine\Private\DataChannel.cpp(2764)
+	at E:\unrealengine-4.26\Engine\Source\Runtime\Engine\Private\DataChannel.cpp(2764)
 UE4Editor-Engine.dll!UActorChannel::ReceivedBunch(FInBunch &amp; Bunch={...}) Line 2734
-    at E:\unrealengine-4.26\Engine\Source\Runtime\Engine\Private\DataChannel.cpp(2734)
+	at E:\unrealengine-4.26\Engine\Source\Runtime\Engine\Private\DataChannel.cpp(2734)
 UE4Editor-Engine.dll!UChannel::ReceivedSequencedBunch(FInBunch &amp; Bunch={...}) Line 412
-    at E:\unrealengine-4.26\Engine\Source\Runtime\Engine\Private\DataChannel.cpp(412)
+	at E:\unrealengine-4.26\Engine\Source\Runtime\Engine\Private\DataChannel.cpp(412)
 UE4Editor-Engine.dll!UChannel::ReceivedNextBunch(FInBunch &amp; Bunch={...}, bool &amp; bOutSkipAck=false) Line 833
-    at E:\unrealengine-4.26\Engine\Source\Runtime\Engine\Private\DataChannel.cpp(833)
+	at E:\unrealengine-4.26\Engine\Source\Runtime\Engine\Private\DataChannel.cpp(833)
 UE4Editor-Engine.dll!UChannel::ReceivedRawBunch(FInBunch &amp; Bunch={...}, bool &amp; bOutSkipAck=false) Line 517
-    at E:\unrealengine-4.26\Engine\Source\Runtime\Engine\Private\DataChannel.cpp(517)
+	at E:\unrealengine-4.26\Engine\Source\Runtime\Engine\Private\DataChannel.cpp(517)
 UE4Editor-Engine.dll!UNetConnection::ReceivedPacket(FBitReader &amp; Reader, bool bIsReinjectedPacket=64) Line 2783
-    at E:\unrealengine-4.26\Engine\Source\Runtime\Engine\Private\NetConnection.cpp(2783)
+	at E:\unrealengine-4.26\Engine\Source\Runtime\Engine\Private\NetConnection.cpp(2783)
 UE4Editor-Engine.dll!UNetConnection::ReceivedRawPacket(void * InData, int Count=907) Line 1316
-    at E:\unrealengine-4.26\Engine\Source\Runtime\Engine\Private\NetConnection.cpp(1316)
+	at E:\unrealengine-4.26\Engine\Source\Runtime\Engine\Private\NetConnection.cpp(1316)
 UE4Editor-OnlineSubsystemUtils.dll!UIpNetDriver::TickDispatch(float DeltaTime) Line 1370
-    at E:\unrealengine-4.26\Engine\Plugins\Online\OnlineSubsystemUtils\Source\OnlineSubsystemUtils\Private\IpNetDriver.cpp(1370)
+	at E:\unrealengine-4.26\Engine\Plugins\Online\OnlineSubsystemUtils\Source\OnlineSubsystemUtils\Private\IpNetDriver.cpp(1370)
 [Inline Frame] UE4Editor-Engine.dll!Invoke(void(UNetDriver::*)(float)) Line 65
-    at E:\unrealengine-4.26\Engine\Source\Runtime\Core\Public\Templates\Invoke.h(65)
+	at E:\unrealengine-4.26\Engine\Source\Runtime\Core\Public\Templates\Invoke.h(65)
 [Inline Frame] UE4Editor-Engine.dll!UE4Tuple_Private::TTupleBase&lt;TIntegerSequence&lt;unsigned int&gt;&gt;::ApplyAfter(void(UNetDriver::*)(float) &amp;) Line 299
-    at E:\unrealengine-4.26\Engine\Source\Runtime\Core\Public\Templates\Tuple.h(299)
+	at E:\unrealengine-4.26\Engine\Source\Runtime\Core\Public\Templates\Tuple.h(299)
 UE4Editor-Engine.dll!TBaseUObjectMethodDelegateInstance&lt;0,UNetDriver,void __cdecl(float),FDefaultDelegateUserPolicy&gt;::ExecuteIfSafe(float &lt;Params_0&gt;) Line 611
-    at E:\unrealengine-4.26\Engine\Source\Runtime\Core\Public\Delegates\DelegateInstancesImpl.h(611)
+	at E:\unrealengine-4.26\Engine\Source\Runtime\Core\Public\Delegates\DelegateInstancesImpl.h(611)
 UE4Editor-Engine.dll!TMulticastDelegate&lt;void __cdecl(float),FDefaultDelegateUserPolicy&gt;::Broadcast(float &lt;Params_0&gt;) Line 955
-    at E:\unrealengine-4.26\Engine\Source\Runtime\Core\Public\Delegates\DelegateSignatureImpl.inl(955)
+	at E:\unrealengine-4.26\Engine\Source\Runtime\Core\Public\Delegates\DelegateSignatureImpl.inl(955)
 UE4Editor-Engine.dll!UWorld::Tick(ELevelTick TickType=-562797776, float DeltaSeconds=0.00000000) Line 1374
-    at E:\unrealengine-4.26\Engine\Source\Runtime\Engine\Private\LevelTick.cpp(1374)
+	at E:\unrealengine-4.26\Engine\Source\Runtime\Engine\Private\LevelTick.cpp(1374)
 UE4Editor-Engine.dll!UGameEngine::Tick(float DeltaSeconds, bool bIdleMode=false) Line 1794
-    at E:\unrealengine-4.26\Engine\Source\Runtime\Engine\Private\GameEngine.cpp(1794)
+	at E:\unrealengine-4.26\Engine\Source\Runtime\Engine\Private\GameEngine.cpp(1794)
 UE4Editor-Win64-DebugGame.exe!FEngineLoop::Tick() Line 4836
-    at E:\unrealengine-4.26\Engine\Source\Runtime\Launch\Private\LaunchEngineLoop.cpp(4836)
+	at E:\unrealengine-4.26\Engine\Source\Runtime\Launch\Private\LaunchEngineLoop.cpp(4836)
 [Inline Frame] UE4Editor-Win64-DebugGame.exe!EngineTick() Line 62
-    at E:\unrealengine-4.26\Engine\Source\Runtime\Launch\Private\Launch.cpp(62)
+	at E:\unrealengine-4.26\Engine\Source\Runtime\Launch\Private\Launch.cpp(62)
 UE4Editor-Win64-DebugGame.exe!GuardedMain(const wchar_t * CmdLine) Line 169
-    at E:\unrealengine-4.26\Engine\Source\Runtime\Launch\Private\Launch.cpp(169)
+	at E:\unrealengine-4.26\Engine\Source\Runtime\Launch\Private\Launch.cpp(169)
 UE4Editor-Win64-DebugGame.exe!WinMain(HINSTANCE__ * hInInstance=0x000000000000000a, HINSTANCE__ * hPrevInstance=0x0000000000000000, char * __formal=0x0000000000000000, int nCmdShow=0) Line 257
-    at E:\unrealengine-4.26\Engine\Source\Runtime\Launch\Private\Windows\LaunchWindows.cpp(257)
+	at E:\unrealengine-4.26\Engine\Source\Runtime\Launch\Private\Windows\LaunchWindows.cpp(257)
 [External Code]
 </code></pre>
 <h3 id="command--configuration">Command &amp; Configuration</h3>
 <h5 id="netallowasyncloading--netdelayunmappedrpcs">net.AllowAsyncLoading &amp; net.DelayUnmappedRPCs</h5>
 <pre><code>static TAutoConsoleVariable&lt;int32&gt; CVarAllowAsyncLoading(
-    TEXT(&quot;net.AllowAsyncLoading&quot;),
-    0,
-    TEXT(&quot;Allow async loading of unloaded assets referenced in packets.&quot;
+	TEXT(&quot;net.AllowAsyncLoading&quot;),
+	0,
+	TEXT(&quot;Allow async loading of unloaded assets referenced in packets.&quot;
         &quot; If false the client will hitch and immediately load the asset,&quot;
         &quot; if true the packet will be delayed while the asset is async loaded.&quot;
         &quot; net.DelayUnmappedRPCs can be enabled to delay RPCs relying on async loading assets.&quot;)
 );
 
 static TAutoConsoleVariable&lt;int32&gt; CVarDelayUnmappedRPCs(
-    TEXT(&quot;net.DelayUnmappedRPCs&quot;),
-    0,
-    TEXT(&quot;If true delay received RPCs with unmapped object references until they are received or loaded, &quot;)
-    TEXT(&quot;if false RPCs will execute immediately with null parameters. &quot;)
-    TEXT(&quot;This can be used with net.AllowAsyncLoading to avoid null asset parameters during async loads.&quot;),
-    ECVF_Default);
+	TEXT(&quot;net.DelayUnmappedRPCs&quot;),
+	0,
+	TEXT(&quot;If true delay received RPCs with unmapped object references until they are received or loaded, &quot;)
+	TEXT(&quot;if false RPCs will execute immediately with null parameters. &quot;)
+	TEXT(&quot;This can be used with net.AllowAsyncLoading to avoid null asset parameters during async loads.&quot;),
+	ECVF_Default);
 </code></pre>
 <h3 id="reference">Reference</h3>
 <h5 id="documents">Documents</h5>

@@ -5,15 +5,15 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.80.0 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.88.1 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="Rendering, OpenGL, Pipeline">
-<meta name="description" content="Pipeline   (The blue boxes are programmable shader stages.)
+<meta name="description" content="Pipeline  (The blue boxes are programmable shader stages.)
 The OpenGL rendering pipeline works in the following order:
  Prepare vertex array data, and then render it Vertex Processing:  Each vertex is acted upon by a Vertex Shader. Each vertex in the stream is processed in turn into an output vertex. Optional primitive tessellation stages. Optional Geometry Shader primitive processing. The output is a sequence of primitives.   Vertex Post-Processing, the outputs of the last stage are adjusted or shipped to different locations.">
 
 
-<meta property="og:description" content="Pipeline   (The blue boxes are programmable shader stages.)
+<meta property="og:description" content="Pipeline  (The blue boxes are programmable shader stages.)
 The OpenGL rendering pipeline works in the following order:
  Prepare vertex array data, and then render it Vertex Processing:  Each vertex is acted upon by a Vertex Shader. Each vertex in the stream is processed in turn into an output vertex. Optional primitive tessellation stages. Optional Geometry Shader primitive processing. The output is a sequence of primitives.   Vertex Post-Processing, the outputs of the last stage are adjusted or shipped to different locations.">
 <meta property="og:type" content="article">
@@ -22,10 +22,10 @@ The OpenGL rendering pipeline works in the following order:
 <meta property="og:url" content="https://dawnarc.com/2018/06/openglrendering-pipeline%E6%B8%B2%E6%9F%93%E7%AE%A1%E7%BA%BF%E6%B5%81%E7%A8%8B%E6%A6%82%E8%BF%B0/">
 <meta property="twitter:url" content="https://dawnarc.com/2018/06/openglrendering-pipeline%E6%B8%B2%E6%9F%93%E7%AE%A1%E7%BA%BF%E6%B5%81%E7%A8%8B%E6%A6%82%E8%BF%B0/">
 <meta property="og:site_name" content="玄冬Wong">
-<meta property="og:description" content="Pipeline   (The blue boxes are programmable shader stages.)
+<meta property="og:description" content="Pipeline  (The blue boxes are programmable shader stages.)
 The OpenGL rendering pipeline works in the following order:
  Prepare vertex array data, and then render it Vertex Processing:  Each vertex is acted upon by a Vertex Shader. Each vertex in the stream is processed in turn into an output vertex. Optional primitive tessellation stages. Optional Geometry Shader primitive processing. The output is a sequence of primitives.   Vertex Post-Processing, the outputs of the last stage are adjusted or shipped to different locations.">
-<meta name="twitter:description" content="Pipeline   (The blue boxes are programmable shader stages.)
+<meta name="twitter:description" content="Pipeline  (The blue boxes are programmable shader stages.)
 The OpenGL rendering pipeline works in the following order:
  Prepare vertex array data, and then render it Vertex Processing:  Each vertex is acted upon by a Vertex Shader. Each vertex in the stream is processed in turn into an output vertex. Optional primitive tessellation stages. Optional Geometry Shader primitive processing. The output is a sequence of primitives.   Vertex Post-Processing, the outputs of the last stage are adjusted or shipped to different locations.">
 <meta property="og:locale" content="en-us">
@@ -110,10 +110,10 @@ if (!doNotTrack) {
 	ga('send', 'pageview');
 }
 </script>
-
     
     
-<script data-ad-client="ca-pub-5816088749577387" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4843403245883139"
+     crossorigin="anonymous"></script>
   </head>
 
   <body>
@@ -361,8 +361,7 @@ if (!doNotTrack) {
           <div class="post-content markdown" itemprop="articleBody">
             <div class="main-content-wrap">
               <h5 id="pipeline">Pipeline</h5>
-<p><figure>
-    <img src="https://dawnarc.com/img/20180624-[OpenGL]Rendering%20Pipeline%28%e6%b8%b2%e6%9f%93%e7%ae%a1%e7%ba%bf%29%e6%b5%81%e7%a8%8b%e6%a6%82%e8%bf%b0/[OpenGL]Rendering%20Pipeline%28%e6%b8%b2%e6%9f%93%e7%ae%a1%e7%ba%bf%29%e6%b5%81%e7%a8%8b%e6%a6%82%e8%bf%b0-01.png"/> 
+<p><figure><img src="https://dawnarc.com/img/20180624-[OpenGL]Rendering%20Pipeline%28%e6%b8%b2%e6%9f%93%e7%ae%a1%e7%ba%bf%29%e6%b5%81%e7%a8%8b%e6%a6%82%e8%bf%b0/[OpenGL]Rendering%20Pipeline%28%e6%b8%b2%e6%9f%93%e7%ae%a1%e7%ba%bf%29%e6%b5%81%e7%a8%8b%e6%a6%82%e8%bf%b0-01.png"/>
 </figure>
 
 (The blue boxes are programmable shader stages.)</p>
@@ -410,9 +409,9 @@ out vec3 Color;
 
 void main()
 {
-    Color = VertexColor;
+	Color = VertexColor;
 
-    gl_Position = vec4(VertexPosition,1.0);
+	gl_Position = vec4(VertexPosition,1.0);
 }
 </code></pre>
 <p>basic.frag</p>
@@ -422,7 +421,7 @@ in vec3 Color;
 layout (location=0) out vec4 FragColor;
 
 void main() {
-    FragColor = vec4(Color, 1.0);
+	FragColor = vec4(Color, 1.0);
 }
 </code></pre>
 <p>basic.vert中的VertexColor是绑定的顶点属性(即：vertex attribute，输入参数)，由OpenGL的库函数（一般都是编译型语言实现，例如C）<code>glBindBuffer</code>、<code>glBufferData</code>等接口绑定，然后直接赋值给输出参数Color，这个Color会被渲染管线自动传递给fragment shader，fragement shader计算完毕后，然后再输出给<code>FragColor</code>。如果 fragment shader 只有一个输出参数，那么在你的OpenGL程序中可以不用<code>glBindFragDataLocation</code>、<code>glGetFragDataLocation</code>等库函数来指定输出参数。<br>

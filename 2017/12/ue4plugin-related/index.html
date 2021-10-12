@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.80.0 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.88.1 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="UE4, Plugin">
 <meta name="description" content="Usage Plugin在构造函数中加载的问题 在GameMode构造函数中加载（LoadObject或者ConstructorHelpers::FObjectFinder）蓝图，该蓝图使用了plugin（这里我使用了一个叫Swipe的插件），如果在构造函数中加载，则会报错：
@@ -118,10 +118,10 @@ if (!doNotTrack) {
 	ga('send', 'pageview');
 }
 </script>
-
     
     
-<script data-ad-client="ca-pub-5816088749577387" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4843403245883139"
+     crossorigin="anonymous"></script>
   </head>
 
   <body>
@@ -513,8 +513,8 @@ plugin&rsquo;s configuration had changed from 4.21 onwards.</p>
 
 public class MyPlugin : ModuleRules
 {
-    public MyPlugin(ReadOnlyTargetRules Target) : base(Target)
-    {
+	public MyPlugin(ReadOnlyTargetRules Target) : base(Target)
+	{
         PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 		
         PublicIncludePaths.AddRange(
@@ -559,7 +559,7 @@ public class MyPlugin : ModuleRules
                 // ... add any modules that your module loads dynamically here ...
             }
             );
-    }
+	}
 }
 </code></pre>
 <h5 id="error-expected-mypluginh-to-be-first-header-included">Error: Expected MyPlugin.h to be first header included.</h5>
@@ -582,9 +582,9 @@ class FMyPluginModule : public IModuleInterface
 {
 public:
 
-    /** IModuleInterface implementation */
-    virtual void StartupModule() override;
-    virtual void ShutdownModule() override;
+	/** IModuleInterface implementation */
+	virtual void StartupModule() override;
+	virtual void ShutdownModule() override;
 };
 </code></pre>
 <p><code>MyProj\Plugins\MyPlugin\Source\MyPlugin\Private\MyPlugin.cpp</code></p>
@@ -594,13 +594,13 @@ public:
 DEFINE_LOG_CATEGORY(MyPlugin);
 void FMyPluginModule::StartupModule()
 {
-    // This code will execute after your module is loaded into memory; the exact timing is specified in the .uplugin file per-module
+	// This code will execute after your module is loaded into memory; the exact timing is specified in the .uplugin file per-module
 }
 
 void FMyPluginModule::ShutdownModule()
 {
-    // This function may be called during shutdown to clean up your module.  For modules that support dynamic reloading,
-    // we call this function before unloading the module.
+	// This function may be called during shutdown to clean up your module.  For modules that support dynamic reloading,
+	// we call this function before unloading the module.
 }
 
 #undef LOCTEXT_NAMESPACE
@@ -633,13 +633,13 @@ Miss required <code>PublicDependencyModuleNames</code>: <code>RHI</code> and <co
 <p>Solution:<br>
 Add module names in <code>MyPlugin.Build.cs</code></p>
 <pre><code>PublicDependencyModuleNames.AddRange(
-    new string[]
-    {
+	new string[]
+	{
         &quot;Core&quot;,
         &quot;RHI&quot;,
         &quot;RenderCore&quot;,
-    }
-    );
+	}
+	);
 </code></pre>
 <p>Origin:<br>
 <a href="https://usagi.hatenablog.jp/entry/2018/09/11/205922">https://usagi.hatenablog.jp/entry/2018/09/11/205922</a></p>

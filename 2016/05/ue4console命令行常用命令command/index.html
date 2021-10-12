@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.80.0 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.88.1 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="">
 <meta name="description" content="Editor命令（ShowFlag） 如果想在 Editor 中查看 Actor 蓝图的 Bounds（默认只能在 Static Mesh 编辑窗口中查看），可以使用 ShowFlag 命令（在编辑器窗口中按下波浪键打开输入窗口）。
@@ -124,10 +124,10 @@ if (!doNotTrack) {
 	ga('send', 'pageview');
 }
 </script>
-
     
     
-<script data-ad-client="ca-pub-5816088749577387" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4843403245883139"
+     crossorigin="anonymous"></script>
   </head>
 
   <body>
@@ -450,8 +450,11 @@ viewmode quadoverdraw
 <p>显示硬件级（RHI）三角面总数和drawcall总数</p>
 <pre><code>stat rhi
 </code></pre>
-<p>其中<code>Triangles drawn</code>数量包含了阴影，所以数值会显著高于<code>stat Engine</code>中的三角面数；<br>
-<code>DrawPrimitive calls</code>数量除了geometry，还包括decals, shadows, translucent lighting volumes, post processing，其数值也会明显高于<code>stat scenerendering</code>中的draw call数。</p>
+<p>其中：</p>
+<ul>
+<li><code>Triangles drawn</code>是最终绘制的面数，即camera frustum和occlusion culling之后的面数。数量包含了shadow和tessellation，所以数值会显著高于<code>stat Engine</code>中的三角面数；</li>
+<li><code>DrawPrimitive calls</code>数量除了geometry，还包括decals、shadows、translucent lighting volumes、post processing等，其数值也会明显高于<code>stat scenerendering</code>中的draw call数。</li>
+</ul>
 <p>显示单帧信息：总时长、Game耗时、Draw耗时、GPU耗时</p>
 <pre><code>stat Unit
 stat UnitGraph  //附带各个参数的实时曲线图
@@ -471,7 +474,7 @@ stat UnitGraph  //附带各个参数的实时曲线图
 <p>启用early Z pass，默认已开启：</p>
 <pre><code>r.EarlyZPass 3
 </code></pre>
-<p>较高的drawcall情况下，开启后如果basepass的overdraw较少，说明early Z pass效果明显。</p>
+<p>较高的drawcall情况下，开启后如果basepass的overdraw反而较少，说明early Z pass效果明显。修改值后需要重新运行游戏生效。</p>
 <p>关闭或开启屏幕上打印信息（AddOnScreenDebugMessage）</p>
 <pre><code>DisableAllScreenMessages
 
@@ -577,7 +580,7 @@ Project Settings -&gt; Engine -&gt; General Settings -&gt; Framerate -&gt; Unche
 </div>
 <h5 id="运行时期间用c执行console命名">运行时期间用C++执行console命名</h5>
 <pre><code>UKismetSystemLibrary::ExecuteConsoleCommand(UObject* WorldContextObject, 
-    const FString&amp; Command, class APlayerController* SpecificPlayer = NULL )
+	const FString&amp; Command, class APlayerController* SpecificPlayer = NULL )
 </code></pre>
 <h5 id="运行时期间修改画质级别">运行时期间修改画质级别</h5>
 <p>Unreal Engine 4 Save and Load Graphics Settings using Blueprints Tutorial<br>
@@ -614,7 +617,7 @@ Engine\Source\Runtime\Engine\Private\DeviceProfiles\DeviceProfileManager.cpp</p>
      * Startup and select the active device profile
      * Then Init the CVars from this profile and it's Device profile parent tree.
      */
-    static void InitializeCVarsForActiveDeviceProfile(bool bPushSettings=false, bool bForceDeviceProfilePriority = false);
+	static void InitializeCVarsForActiveDeviceProfile(bool bPushSettings=false, bool bForceDeviceProfilePriority = false);
 </code></pre>
 <p>手动检测硬件配置详情并自动设置画质级别：<br>
 console命令</p>
@@ -624,8 +627,8 @@ scalability auto
 <p>C++ API</p>
 <pre><code>if(UGameUserSettings* GameUserSettings = UGameUserSettings::GetGameUserSettings())
 {
-    GameUserSettings-&gt;RunHardwareBenchmark();
-    GameUserSettings-&gt;ApplyHardwareBenchmarkResults();
+	GameUserSettings-&gt;RunHardwareBenchmark();
+	GameUserSettings-&gt;ApplyHardwareBenchmarkResults();
 }
 </code></pre>
 <p>获取硬件（CPU、GPU）跑分：</p>

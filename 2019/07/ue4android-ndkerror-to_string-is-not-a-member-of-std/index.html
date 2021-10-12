@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.80.0 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.88.1 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="Android NDK, to_string, Build Failed, UE4, UnrealEngine4">
 <meta name="description" content="keywords: Android NDK, to_string, Build Failed, UE4, Unreal Engine 4">
@@ -101,10 +101,10 @@ if (!doNotTrack) {
 	ga('send', 'pageview');
 }
 </script>
-
     
     
-<script data-ad-client="ca-pub-5816088749577387" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4843403245883139"
+     crossorigin="anonymous"></script>
   </head>
 
   <body>
@@ -447,8 +447,7 @@ Origin:</p>
   <p><code>\Engine\Build\Android\Java\jni\Application.mk</code> doesn&rsquo;t take effect any more.</p>
 </div>
 <p>2, Change system environment variables of NDK, e.g. the newest NDK version UE4 support is 14b(from v4.21).</p>
-<p><figure>
-    <img src="https://dawnarc.com/img/20190701-[Android%20NDK]error%20%27to_string%27%20is%20not%20a%20member%20of%20%27std%27/[Android%20NDK]error%20%27to_string%27%20is%20not%20a%20member%20of%20%27std%27-01.gif"/> 
+<p><figure><img src="https://dawnarc.com/img/20190701-[Android%20NDK]error%20%27to_string%27%20is%20not%20a%20member%20of%20%27std%27/[Android%20NDK]error%20%27to_string%27%20is%20not%20a%20member%20of%20%27std%27-01.gif"/>
 </figure>
 
 <div class="alert info ">
@@ -461,19 +460,19 @@ Origin:</p>
 <p>Add <code>#include &lt;cmath&gt;</code> in the top of source.<br>
 Origin:</p>
 <pre><code>#if PX_ANDROID
-    // If cmath is included after math.h, it will undefine isfinite. If that's the case, use the version in the std namespace instead.
-    #ifndef isfinite
+	// If cmath is included after math.h, it will undefine isfinite. If that's the case, use the version in the std namespace instead.
+	#ifndef isfinite
         using std::isfinite;
-    #endif
+	#endif
 #endif
 </code></pre>
 <p>New:</p>
 <pre><code>#if PX_ANDROID
-    // If cmath is included after math.h, it will undefine isfinite. If that's the case, use the version in the std namespace instead.
-    #ifndef isfinite
+	// If cmath is included after math.h, it will undefine isfinite. If that's the case, use the version in the std namespace instead.
+	#ifndef isfinite
         #include &lt;cmath&gt;
         using std::isfinite;
-    #endif
+	#endif
 #endif
 </code></pre>
 <p>4, Remove plugin <code>OnlineSubsystemGooglePlay</code> and third party <code>GooglePlay</code>.<br>
@@ -502,9 +501,9 @@ bool bFileExists = File.Exists(FinalSTLSONameLLVM);
 TimeSpan Diff = File.GetLastWriteTimeUtc(FinalSTLSONameLLVM) - File.GetLastWriteTimeUtc(SourceSTLSONameLLVM);
 if (!bFileExists || Diff.TotalSeconds &lt; -1 || Diff.TotalSeconds &gt; 1)
 {
-    SafeDeleteFile(FinalSTLSOName);
-    Directory.CreateDirectory(Path.GetDirectoryName(FinalSTLSONameLLVM));
-    File.Copy(SourceSTLSONameLLVM, FinalSTLSONameLLVM, true);
+	SafeDeleteFile(FinalSTLSOName);
+	Directory.CreateDirectory(Path.GetDirectoryName(FinalSTLSONameLLVM));
+	File.Copy(SourceSTLSONameLLVM, FinalSTLSONameLLVM, true);
 }
 </code></pre>
 <p>6, If want to use a version of NDK higher than maximum version which defined in UE4, following source needs to be modified:</p>

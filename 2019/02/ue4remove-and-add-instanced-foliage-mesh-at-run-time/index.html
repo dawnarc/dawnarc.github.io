@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.80.0 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.88.1 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="UE4, InstancedFoliageActor, InstancedStaticMeshComponent">
 <meta name="description" content="Keywords：InstancedFoliageActor, AInstancedFoliageActor,">
@@ -101,10 +101,10 @@ if (!doNotTrack) {
 	ga('send', 'pageview');
 }
 </script>
-
     
     
-<script data-ad-client="ca-pub-5816088749577387" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4843403245883139"
+     crossorigin="anonymous"></script>
   </head>
 
   <body>
@@ -355,12 +355,10 @@ if (!doNotTrack) {
 <p>UInstancedStaticMeshComponent, InstancedStaticMeshComponent, Instanced Foliage, Instanced Static Mesh, Remove and Add at Run-time</p>
 <h5 id="add-and-remove-instance">Add and Remove Instance</h5>
 <p>1, Use Foliage Painter to create Instanced Foliage Mesh</p>
-<p><figure>
-    <img src="https://dawnarc.com/img/20190218-[UE4]Remove%20and%20Add%20Instanced%20Foliage%20Mesh%20at%20Run-time/[UE4]Remove%20and%20Add%20Instanced%20Foliage%20Mesh%20at%20Run-time-01.jpg"/> 
+<p><figure><img src="https://dawnarc.com/img/20190218-[UE4]Remove%20and%20Add%20Instanced%20Foliage%20Mesh%20at%20Run-time/[UE4]Remove%20and%20Add%20Instanced%20Foliage%20Mesh%20at%20Run-time-01.jpg"/>
 </figure>
 
-<figure>
-    <img src="https://dawnarc.com/img/20190218-[UE4]Remove%20and%20Add%20Instanced%20Foliage%20Mesh%20at%20Run-time/[UE4]Remove%20and%20Add%20Instanced%20Foliage%20Mesh%20at%20Run-time-02.jpg"/> 
+<figure><img src="https://dawnarc.com/img/20190218-[UE4]Remove%20and%20Add%20Instanced%20Foliage%20Mesh%20at%20Run-time/[UE4]Remove%20and%20Add%20Instanced%20Foliage%20Mesh%20at%20Run-time-02.jpg"/>
 </figure>
 </p>
 <p>2, Test code</p>
@@ -368,37 +366,37 @@ if (!doNotTrack) {
 <pre><code>UCLASS(minimalapi)
 class ATestProjGameMode : public AGameModeBase
 {
-    GENERATED_BODY()
+	GENERATED_BODY()
 
 public:
-    ATestProjGameMode();
+	ATestProjGameMode();
 
 protected:
 
-    void BeginPlay() override;
+	void BeginPlay() override;
 
-    UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable)
         void RemoveAllFoliages();
 
-    UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable)
         void AddAllFoliages();
 
 private:
 
-    //Instanced Static Mesh Components Array in current Level.
-    TArray&lt;UActorComponent*&gt; InstancedStaticMeshCompArray;
+	//Instanced Static Mesh Components Array in current Level.
+	TArray&lt;UActorComponent*&gt; InstancedStaticMeshCompArray;
 
-    //Each Instanced Static Mesh's Transform. Key: Instanced Static Mesh Component Name, Value:All Transforms in current Instanced Static Mesh Component
-    TMap&lt;FString, TArray&lt;FTransform&gt;&gt; TransformMap;
+	//Each Instanced Static Mesh's Transform. Key: Instanced Static Mesh Component Name, Value:All Transforms in current Instanced Static Mesh Component
+	TMap&lt;FString, TArray&lt;FTransform&gt;&gt; TransformMap;
 };
 </code></pre>
 <p>Begin Play</p>
 <pre><code>void ATestProjGameMode::BeginPlay()
 {
-    Super::BeginPlay();
+	Super::BeginPlay();
 
-    for (TActorIterator&lt;AInstancedFoliageActor&gt; Iter(GetWorld()); Iter; ++Iter)
-    {
+	for (TActorIterator&lt;AInstancedFoliageActor&gt; Iter(GetWorld()); Iter; ++Iter)
+	{
         if (*Iter)
         {
             //Get the all InstancedStaticMeshComponent in current Level.
@@ -411,20 +409,19 @@ private:
             }
             break;
         }
-    }
+	}
 }
 </code></pre>
-<figure>
-    <img src="https://dawnarc.com/img/20190218-[UE4]Remove%20and%20Add%20Instanced%20Foliage%20Mesh%20at%20Run-time/[UE4]Remove%20and%20Add%20Instanced%20Foliage%20Mesh%20at%20Run-time-03.jpg"/> 
+<figure><img src="https://dawnarc.com/img/20190218-[UE4]Remove%20and%20Add%20Instanced%20Foliage%20Mesh%20at%20Run-time/[UE4]Remove%20and%20Add%20Instanced%20Foliage%20Mesh%20at%20Run-time-03.jpg"/>
 </figure>
 
 <p>Remove all Foliage</p>
 <pre><code>void ATestProjGameMode::RemoveAllFoliage()
 {
-    TransformMap.Empty();
+	TransformMap.Empty();
 
-    for (UActorComponent* Comp : InstancedStaticMeshCompArray)
-    {
+	for (UActorComponent* Comp : InstancedStaticMeshCompArray)
+	{
         if (UInstancedStaticMeshComponent* InstancedComp = Cast&lt;UInstancedStaticMeshComponent&gt;(Comp))
         {
             GEngine-&gt;AddOnScreenDebugMessage(-1, 10.f, FColor::Green, FString::Printf(TEXT(&quot;%d&quot;), InstancedComp-&gt;GetInstanceCount()));
@@ -444,11 +441,10 @@ private:
 
             TransformMap.Add(InstancedComp-&gt;GetName(), TransformArray);
         }
-    }
+	}
 }
 </code></pre>
-<figure>
-    <img src="https://dawnarc.com/img/20190218-[UE4]Remove%20and%20Add%20Instanced%20Foliage%20Mesh%20at%20Run-time/[UE4]Remove%20and%20Add%20Instanced%20Foliage%20Mesh%20at%20Run-time-04.jpg"/> 
+<figure><img src="https://dawnarc.com/img/20190218-[UE4]Remove%20and%20Add%20Instanced%20Foliage%20Mesh%20at%20Run-time/[UE4]Remove%20and%20Add%20Instanced%20Foliage%20Mesh%20at%20Run-time-04.jpg"/>
 </figure>
 
 <div class="alert success ">
@@ -457,8 +453,8 @@ private:
 <p>Add all Foliage</p>
 <pre><code>void ATestProjGameMode::AddAllFoliage()
 {
-    for (UActorComponent* Comp : InstancedStaticMeshCompArray)
-    {
+	for (UActorComponent* Comp : InstancedStaticMeshCompArray)
+	{
         if (UInstancedStaticMeshComponent* InstancedComp = Cast&lt;UInstancedStaticMeshComponent&gt;(Comp))
         {
             if (TArray&lt;FTransform&gt;* TransformArray = TransformMap.Find(InstancedComp-&gt;GetName()))
@@ -471,11 +467,10 @@ private:
             }
 			
         }
-    }
+	}
 }
 </code></pre>
-<figure>
-    <img src="https://dawnarc.com/img/20190218-[UE4]Remove%20and%20Add%20Instanced%20Foliage%20Mesh%20at%20Run-time/[UE4]Remove%20and%20Add%20Instanced%20Foliage%20Mesh%20at%20Run-time-05.jpg"/> 
+<figure><img src="https://dawnarc.com/img/20190218-[UE4]Remove%20and%20Add%20Instanced%20Foliage%20Mesh%20at%20Run-time/[UE4]Remove%20and%20Add%20Instanced%20Foliage%20Mesh%20at%20Run-time-05.jpg"/>
 </figure>
 
 <div class="alert success ">
@@ -485,10 +480,10 @@ private:
 <p>e.g. code:</p>
 <pre><code>void ATestProjGameMode::BeginPlay()
 {
-    Super::BeginPlay();
+	Super::BeginPlay();
 
-    for (TActorIterator&lt;AInstancedFoliageActor&gt; Iter(GetWorld()); Iter; ++Iter)
-    {
+	for (TActorIterator&lt;AInstancedFoliageActor&gt; Iter(GetWorld()); Iter; ++Iter)
+	{
         if (*Iter)
         {
             //Get the all InstancedStaticMeshComponent in current Level.
@@ -505,16 +500,16 @@ private:
             }
             break;
         }
-    }
+	}
 }
 </code></pre>
 <h5 id="how-to-set-transform-of-instaced-mesh">How to set Transform of Instaced Mesh</h5>
 <pre><code>void ATestProjGameMode::BeginPlay()
 {
-    Super::BeginPlay();
+	Super::BeginPlay();
 
-    for (TActorIterator&lt;AInstancedFoliageActor&gt; Iter(GetWorld()); Iter; ++Iter)
-    {
+	for (TActorIterator&lt;AInstancedFoliageActor&gt; Iter(GetWorld()); Iter; ++Iter)
+	{
         if (*Iter)
         {
             //Get the all InstancedStaticMeshComponent in current Level.
@@ -534,7 +529,7 @@ private:
             }
             break;
         }
-    }
+	}
 }
 </code></pre>
 <h5 id="optimization">Optimization</h5>
@@ -546,10 +541,10 @@ Set <code>bAutoRebuildTreeOnInstanceChanges</code> to false before manipulate In
 <p>Get locations of foliage instances</p>
 <pre><code>for (TActorIterator&lt;AInstancedFoliageActor&gt; ActorItr(GetWorld()); ActorItr; ++ActorItr)
 {
-    AInstancedFoliageActor* FoliageMesh = *ActorItr;
+	AInstancedFoliageActor* FoliageMesh = *ActorItr;
 
-    for (auto&amp; MeshPair : FoliageMesh-&gt;FoliageMeshes)
-    {
+	for (auto&amp; MeshPair : FoliageMesh-&gt;FoliageMeshes)
+	{
         const FFoliageMeshInfo&amp; MeshInfo = *MeshPair.Value;
         UHierarchicalInstancedStaticMeshComponent* MeshComponent = MeshInfo.Component;
         TArray&lt;FInstancedStaticMeshInstanceData&gt; MeshDataArray = MeshComponent-&gt;PerInstanceSMData;
@@ -571,7 +566,7 @@ Set <code>bAutoRebuildTreeOnInstanceChanges</code> to false before manipulate In
                 MeshTransform.GetScale3D().Y, 
                 MeshTransform.GetScale3D().Z);
         }
-    }
+	}
 }
 </code></pre>
 <p>How to get locations of foliage instances?<br>

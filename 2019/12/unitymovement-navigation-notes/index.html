@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.80.0 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.88.1 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="Unity, Movement, Navigation">
 <meta name="description" content="Keywords: Unity, Movement, Navigation">
@@ -101,10 +101,10 @@ if (!doNotTrack) {
 	ga('send', 'pageview');
 }
 </script>
-
     
     
-<script data-ad-client="ca-pub-5816088749577387" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4843403245883139"
+     crossorigin="anonymous"></script>
   </head>
 
   <body>
@@ -371,49 +371,49 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour {
 
 
-    [Header(&quot;Camera&quot;)]
-    public Camera mainCamera;
+	[Header(&quot;Camera&quot;)]
+	public Camera mainCamera;
 
-    [Header(&quot;Movement&quot;)]
-    public Rigidbody playerRigidbody;
-    public float speed = 4.5f;
-    private Vector3 inputDirection;
-    private Vector3 movement;
-
-
-    //Rotation
-
-    private Plane playerMovementPlane;
-
-    private RaycastHit floorRaycastHit;
-
-    private Vector3 playerToMouse;
+	[Header(&quot;Movement&quot;)]
+	public Rigidbody playerRigidbody;
+	public float speed = 4.5f;
+	private Vector3 inputDirection;
+	private Vector3 movement;
 
 
-    [Header(&quot;Animation&quot;)]
-    public Animator playerAnimator;
+	//Rotation
 
-    // InputActions
-    PlayerInputActions inputAction;
+	private Plane playerMovementPlane;
 
-    // Move
-    Vector2 movementInput;
-    // FireDirection
-    Vector2 lookPosition;
+	private RaycastHit floorRaycastHit;
+
+	private Vector3 playerToMouse;
 
 
-    void Awake() {
+	[Header(&quot;Animation&quot;)]
+	public Animator playerAnimator;
+
+	// InputActions
+	PlayerInputActions inputAction;
+
+	// Move
+	Vector2 movementInput;
+	// FireDirection
+	Vector2 lookPosition;
+
+
+	void Awake() {
         CreatePlayerMovementPlane();
         inputAction = new PlayerInputActions();
         inputAction.PlayerControls.Move.performed += ctx =&gt; movementInput = ctx.ReadValue&lt;Vector2&gt;();
         inputAction.PlayerControls.FireDirection.performed += ctx =&gt; lookPosition = ctx.ReadValue&lt;Vector2&gt;();
-    }
+	}
 
-    void CreatePlayerMovementPlane() {
+	void CreatePlayerMovementPlane() {
         playerMovementPlane = new Plane(transform.up, transform.position + transform.up);
-    }
+	}
 
-    void FixedUpdate() {
+	void FixedUpdate() {
 
         //Old InputSystem Input
         float h = movementInput.x;
@@ -436,18 +436,18 @@ public class PlayerMovement : MonoBehaviour {
         MoveThePlayer(desiredDirection);
         TurnThePlayer();
         AnimateThePlayer(desiredDirection);
-    }
+	}
 
-    void MoveThePlayer(Vector3 desiredDirection) {
+	void MoveThePlayer(Vector3 desiredDirection) {
         movement.Set(desiredDirection.x, 0f, desiredDirection.z);
 
         movement = movement * speed * Time.deltaTime;
 
         playerRigidbody.MovePosition(transform.position + movement);
 
-    }
+	}
 
-    void TurnThePlayer() {
+	void TurnThePlayer() {
 
         // Old Input system
         Vector2 input = lookPosition;
@@ -462,21 +462,21 @@ public class PlayerMovement : MonoBehaviour {
             Quaternion newRotation = Quaternion.LookRotation(lookRot);
             playerRigidbody.MoveRotation(newRotation);
         }
-    }
+	}
 
-    Vector3 PlaneRayIntersection(Plane plane, Ray ray) {
+	Vector3 PlaneRayIntersection(Plane plane, Ray ray) {
         float dist = 0.0f;
         plane.Raycast(ray, out dist);
         return ray.GetPoint(dist);
-    }
+	}
 
-    Vector3 ScreenPointToWorldPointOnPlane(Vector3 screenPoint, Plane plane, Camera camera) {
+	Vector3 ScreenPointToWorldPointOnPlane(Vector3 screenPoint, Plane plane, Camera camera) {
         Ray ray = camera.ScreenPointToRay(screenPoint);
         return PlaneRayIntersection(plane, ray);
-    }
+	}
 
 
-    void AnimateThePlayer(Vector3 desiredDirection) {
+	void AnimateThePlayer(Vector3 desiredDirection) {
         if (!playerAnimator)
             return;
 
@@ -486,17 +486,17 @@ public class PlayerMovement : MonoBehaviour {
 
         playerAnimator.SetFloat(&quot;Forward&quot;, forw);
         playerAnimator.SetFloat(&quot;Strafe&quot;, stra);
-    }
+	}
 
-    private void OnEnable()
-    {
+	private void OnEnable()
+	{
         inputAction.Enable();
-    }
+	}
 
-    private void OnDisable()
-    {
+	private void OnDisable()
+	{
         inputAction.Disable();
-    }
+	}
 }
 </code></pre>
 <hr>

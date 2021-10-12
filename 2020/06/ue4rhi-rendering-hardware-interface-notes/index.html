@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.80.0 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.88.1 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="UE4, RHI, Rendering Hardware Interface">
 <meta name="description" content="Keywords: UE4, RHI (Rendering Hardware Interface) Notes">
@@ -101,10 +101,10 @@ if (!doNotTrack) {
 	ga('send', 'pageview');
 }
 </script>
-
     
     
-<script data-ad-client="ca-pub-5816088749577387" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4843403245883139"
+     crossorigin="anonymous"></script>
   </head>
 
   <body>
@@ -369,18 +369,18 @@ RHI_API int32 GNumPrimitivesDrawnRHI = 0;
 <h5 id="rhi-helper-api">RHI Helper API</h5>
 <p>Engine\Source\Runtime\RHI\Public\RHI.h</p>
 <p>How to get editor preview mode (RHI Feature Level):</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-C++" data-lang="C++"><span style="color:#75715e">// helper to check if a preview feature level has been requested.
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-C++" data-lang="C++"><span style="color:#75715e">// helper to check if a preview feature level has been requested.
 </span><span style="color:#75715e"></span>RHI_API <span style="color:#66d9ef">bool</span> <span style="color:#a6e22e">RHIGetPreviewFeatureLevel</span>(ERHIFeatureLevel<span style="color:#f92672">::</span>Type<span style="color:#f92672">&amp;</span> PreviewFeatureLevelOUT);
 </code></pre></div><p>check if a specified Pixel Format is supported:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-C++" data-lang="C++"><span style="color:#75715e">// helper to check if preferred EPixelFormat is supported, return one if it is not
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-C++" data-lang="C++"><span style="color:#75715e">// helper to check if preferred EPixelFormat is supported, return one if it is not
 </span><span style="color:#75715e"></span>RHI_API EPixelFormat <span style="color:#a6e22e">RHIPreferredPixelFormatHint</span>(EPixelFormat PreferredPixelFormat);
 </code></pre></div><h5 id="how-to-convert-texture2d-asset-to-pixel-of-image-in-raw-data-format">How to convert Texture2D asset to pixel of image in raw data format</h5>
 <p>Example:<br>
 <a href="https://github.com/EpicGames/UnrealEngine/blob/release/Engine/Source/Runtime/ImageWriteQueue/Private/ImageWriteBlueprintLibrary.cpp#L59">https://github.com/EpicGames/UnrealEngine/blob/release/Engine/Source/Runtime/ImageWriteQueue/Private/ImageWriteBlueprintLibrary.cpp#L59</a></p>
 <pre><code>FTextureResource* TextureResource = InTexture-&gt;Resource;
 ENQUEUE_RENDER_COMMAND(ResolvePixelData)(
-    [TextureResource, OnPixelsReady](FRHICommandListImmediate&amp; RHICmdList)
-    {
+	[TextureResource, OnPixelsReady](FRHICommandListImmediate&amp; RHICmdList)
+	{
         FTexture2DRHIRef Texture2D = TextureResource-&gt;TextureRHI ? TextureResource-&gt;TextureRHI-&gt;GetTexture2D() : nullptr;
         if (!Texture2D)
         {
@@ -452,7 +452,7 @@ ENQUEUE_RENDER_COMMAND(ResolvePixelData)(
         }
 
         OnPixelsReady(nullptr);
-    }
+	}
 );
 </code></pre>
 <h5 id="how-to-convert-image-raw-data-to-texture2d-asset">How to convert image raw data to Texture2D asset</h5>
@@ -476,12 +476,12 @@ TSharedPtr&lt;IImageWrapper&gt; ImageWrapper = ImageWrapperModule.CreateImageWra
 //Set the compressed bytes - we need this information on game thread to be able to determine texture size, otherwise we'll need a complete async callback
 if (ImageWrapper.IsValid() &amp;&amp; ImageWrapper-&gt;SetCompressed(ImageRawData.GetData(), ImageRawData.Num()))
 {
-    //Create image given sizes
-    Texture = UTexture2D::CreateTransient(ImageWrapper-&gt;GetWidth(), ImageWrapper-&gt;GetHeight(), PF_B8G8R8A8);
-    Texture-&gt;UpdateResource();
+	//Create image given sizes
+	Texture = UTexture2D::CreateTransient(ImageWrapper-&gt;GetWidth(), ImageWrapper-&gt;GetHeight(), PF_B8G8R8A8);
+	Texture-&gt;UpdateResource();
 
-    //Uncompress on a background thread pool
-    Async(EAsyncExecution::ThreadPool, [ImageWrapper, Texture] {
+	//Uncompress on a background thread pool
+	Async(EAsyncExecution::ThreadPool, [ImageWrapper, Texture] {
         TArray&lt;uint8&gt; UncompressedBGRA;
         if (ImageWrapper-&gt;GetRaw(ERGBFormat::BGRA, 8, UncompressedBGRA))
         {
@@ -509,7 +509,7 @@ if (ImageWrapper.IsValid() &amp;&amp; ImageWrapper-&gt;SetCompressed(ImageRawDat
 }
 else
 {
-    UE_LOG(LogTemp, Warning, TEXT(&quot;Invalid image format cannot decode %d&quot;), (int32)DetectedFormat);
+	UE_LOG(LogTemp, Warning, TEXT(&quot;Invalid image format cannot decode %d&quot;), (int32)DetectedFormat);
 }
 </code></pre>
 <h5 id="how-to-invoke-functions-of-game-source-in-render-thread">How to invoke functions of game source in render thread</h5>
@@ -584,7 +584,7 @@ Engine\Plugins\Runtime\Oculus\OculusVR\Source\OculusHMD\Private\OculusHMD_Layer.
          HRESULT Hr = D3D11CreateDevice( NULL, DriverType, NULL, DeviceCreationFlags, FeatureLevels,
              sizeof(FeatureLevels)/sizeof(D3D_FEATURE_LEVEL), D3D11_SDK_VERSION, GD3DDevice.GetInitReference(),
              &amp;CreatedFeatureLevel, GD3DDeviceContext.GetInitReference() );
-			
+
          if (FAILED(Hr))
          {
              UE_LOG(LogTemp, Error, TEXT(&quot;D3D Device can't be initialized +++++++++++ &quot;));

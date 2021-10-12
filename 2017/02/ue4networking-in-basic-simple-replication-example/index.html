@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.80.0 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.88.1 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="UE4, Networking">
 <meta name="description" content="转载请注明原文出处：https://dawnarc.com
@@ -158,10 +158,10 @@ if (!doNotTrack) {
 	ga('send', 'pageview');
 }
 </script>
-
     
     
-<script data-ad-client="ca-pub-5816088749577387" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4843403245883139"
+     crossorigin="anonymous"></script>
   </head>
 
   <body>
@@ -419,7 +419,7 @@ if (!doNotTrack) {
 1，对属性添加<code>UPROPERTY(Replicated)</code>宏：</p>
 <pre><code>//Player display name
 UPROPERTY(Replicated)
-    FString Alias_;
+	FString Alias_;
 </code></pre>
 <p>2，属性所在的class中重写函数<code>GetLifetimeReplicatedProps</code>：<br>
 需要头文件：</p>
@@ -437,10 +437,10 @@ UPROPERTY(Replicated)
 <p>如何为同步属性添加回调函数？</p>
 <p>用法：</p>
 <pre><code>UPROPERTY(ReplicatedUsing = OnHPChanged)
-    float HealthPoint;
+	float HealthPoint;
 	
 UFUNCTION()
-    void OnHPChanged();
+	void OnHPChanged();
 </code></pre>
 <div class="alert info ">
   <p><code>ReplicatedUsing</code>只在客户端执行，服务端不执行。客户端相关表现逻辑可以放在<code>ReplicatedUsing</code>回调函数。另外函数需要添加<code>UFUNCTION</code>。</p>
@@ -453,7 +453,7 @@ UFUNCTION()
 头文件：</p>
 <pre><code>//移动角色(只在服务端执行的函数)
 UFUNCTION(Server, Reliable, WithValidation)
-    void ServerMoveToDest(APawn* Panw, const FVector DestLocation);
+	void ServerMoveToDest(APawn* Panw, const FVector DestLocation);
 bool ServerMoveToDest_Validate(APawn* Panw, const FVector DestLocation);
 void ServerMoveToDest_Implementation(APawn* Panw, const FVector DestLocation);
 </code></pre>
@@ -485,19 +485,16 @@ Since the server can own actors itself, a &ldquo;Run on Owning Client&rdquo; eve
 <a href="https://docs.unrealengine.com/latest/INT/Gameplay/Networking/Blueprints/index.html">https://docs.unrealengine.com/latest/INT/Gameplay/Networking/Blueprints/index.html</a></li>
 </ul>
 <h5 id="角色身上需要设置的属性">角色身上需要设置的属性</h5>
-<p><figure>
-    <img src="https://dawnarc.com/img/20170225-[UE4]RTS%e6%b8%b8%e6%88%8f%e7%9a%84%e4%bd%8d%e7%a7%bb%e5%90%8c%e6%ad%a5%e7%a4%ba%e4%be%8b%ef%bc%88Replication%e5%92%8cRPC%ef%bc%89/[UE4]RTS%e6%b8%b8%e6%88%8f%e7%9a%84%e4%bd%8d%e7%a7%bb%e5%90%8c%e6%ad%a5%e7%a4%ba%e4%be%8b%ef%bc%88Replication%e5%92%8cRPC%ef%bc%89-01.jpg"/> 
+<p><figure><img src="https://dawnarc.com/img/20170225-[UE4]RTS%e6%b8%b8%e6%88%8f%e7%9a%84%e4%bd%8d%e7%a7%bb%e5%90%8c%e6%ad%a5%e7%a4%ba%e4%be%8b%ef%bc%88Replication%e5%92%8cRPC%ef%bc%89/[UE4]RTS%e6%b8%b8%e6%88%8f%e7%9a%84%e4%bd%8d%e7%a7%bb%e5%90%8c%e6%ad%a5%e7%a4%ba%e4%be%8b%ef%bc%88Replication%e5%92%8cRPC%ef%bc%89-01.jpg"/>
 </figure>
 
 角色蓝图上的这几个属性默认是勾选的。如果是C++，对应的属性名也是这几个。</p>
 <p>登陆界面：
-<figure>
-    <img src="https://dawnarc.com/img/20170225-[UE4]RTS%e6%b8%b8%e6%88%8f%e7%9a%84%e4%bd%8d%e7%a7%bb%e5%90%8c%e6%ad%a5%e7%a4%ba%e4%be%8b%ef%bc%88Replication%e5%92%8cRPC%ef%bc%89/[UE4]RTS%e6%b8%b8%e6%88%8f%e7%9a%84%e4%bd%8d%e7%a7%bb%e5%90%8c%e6%ad%a5%e7%a4%ba%e4%be%8b%ef%bc%88Replication%e5%92%8cRPC%ef%bc%89-02.jpg"/> 
+<figure><img src="https://dawnarc.com/img/20170225-[UE4]RTS%e6%b8%b8%e6%88%8f%e7%9a%84%e4%bd%8d%e7%a7%bb%e5%90%8c%e6%ad%a5%e7%a4%ba%e4%be%8b%ef%bc%88Replication%e5%92%8cRPC%ef%bc%89/[UE4]RTS%e6%b8%b8%e6%88%8f%e7%9a%84%e4%bd%8d%e7%a7%bb%e5%90%8c%e6%ad%a5%e7%a4%ba%e4%be%8b%ef%bc%88Replication%e5%92%8cRPC%ef%bc%89-02.jpg"/>
 </figure>
 </p>
 <p>多个客户端连上服务端的最终情景：
-<figure>
-    <img src="https://dawnarc.com/img/20170225-[UE4]RTS%e6%b8%b8%e6%88%8f%e7%9a%84%e4%bd%8d%e7%a7%bb%e5%90%8c%e6%ad%a5%e7%a4%ba%e4%be%8b%ef%bc%88Replication%e5%92%8cRPC%ef%bc%89/[UE4]RTS%e6%b8%b8%e6%88%8f%e7%9a%84%e4%bd%8d%e7%a7%bb%e5%90%8c%e6%ad%a5%e7%a4%ba%e4%be%8b%ef%bc%88Replication%e5%92%8cRPC%ef%bc%89-03.jpg"/> 
+<figure><img src="https://dawnarc.com/img/20170225-[UE4]RTS%e6%b8%b8%e6%88%8f%e7%9a%84%e4%bd%8d%e7%a7%bb%e5%90%8c%e6%ad%a5%e7%a4%ba%e4%be%8b%ef%bc%88Replication%e5%92%8cRPC%ef%bc%89/[UE4]RTS%e6%b8%b8%e6%88%8f%e7%9a%84%e4%bd%8d%e7%a7%bb%e5%90%8c%e6%ad%a5%e7%a4%ba%e4%be%8b%ef%bc%88Replication%e5%92%8cRPC%ef%bc%89-03.jpg"/>
 </figure>
 </p>
 <h3 id="同步相关的基础概念">同步相关的基础概念</h3>
@@ -596,14 +593,14 @@ UE4Editor-Engine.dll!AController::Possess(APawn * InPawn) Line 293	C++
 <p>拒绝非法登陆请求：</p>
 <pre><code>void AFPSGameMode::PreLogin(const FString&amp; Options, const FString&amp; Address, const FUniqueNetIdRepl&amp; UniqueId, FString&amp; ErrorMessage)
 {
-    Super::PreLogin(Options, Address, UniqueId, ErrorMessage);
+	Super::PreLogin(Options, Address, UniqueId, ErrorMessage);
 
-    FString UserName = UGameplayStatics::ParseOption(Options, TEXT(&quot;UserName&quot;)).TrimStart().TrimEnd();
-    if (UserName.Len() == 0 || UserMap.Find(UserName))
-    {
+	FString UserName = UGameplayStatics::ParseOption(Options, TEXT(&quot;UserName&quot;)).TrimStart().TrimEnd();
+	if (UserName.Len() == 0 || UserMap.Find(UserName))
+	{
         //deny client's login request.
         ErrorMessage = TEXT(&quot;User login repeatly!&quot;);
-    }
+	}
 }
 </code></pre>
 <p>将<code>ErrorMessage</code>设置为非空字符串，就表示拒绝客户端的链接。</p>
@@ -818,8 +815,7 @@ LogNet: Error: UActorChannel::ProcessBunch: Replicator.ReceivedBunch failed.  Cl
 </li>
 <li>
 <p>在打包版本下，客户端的玩家行走时，摄像机有抖动和卡顿（编辑器模式下正常），原因是没有勾选SpringArmComponent的Lag属性：Enable Camera Lag、Enable Camera Rotation Lag
-<figure>
-    <img src="https://dawnarc.com/img/20170225-[UE4]RTS%e6%b8%b8%e6%88%8f%e7%9a%84%e4%bd%8d%e7%a7%bb%e5%90%8c%e6%ad%a5%e7%a4%ba%e4%be%8b%ef%bc%88Replication%e5%92%8cRPC%ef%bc%89/[UE4]RTS%e6%b8%b8%e6%88%8f%e7%9a%84%e4%bd%8d%e7%a7%bb%e5%90%8c%e6%ad%a5%e7%a4%ba%e4%be%8b%ef%bc%88Replication%e5%92%8cRPC%ef%bc%89-04.jpg"/> 
+<figure><img src="https://dawnarc.com/img/20170225-[UE4]RTS%e6%b8%b8%e6%88%8f%e7%9a%84%e4%bd%8d%e7%a7%bb%e5%90%8c%e6%ad%a5%e7%a4%ba%e4%be%8b%ef%bc%88Replication%e5%92%8cRPC%ef%bc%89/[UE4]RTS%e6%b8%b8%e6%88%8f%e7%9a%84%e4%bd%8d%e7%a7%bb%e5%90%8c%e6%ad%a5%e7%a4%ba%e4%be%8b%ef%bc%88Replication%e5%92%8cRPC%ef%bc%89-04.jpg"/>
 </figure>
 
 Dedicated Servers, Jitter, Matchmaking<br>
@@ -919,13 +915,13 @@ Dedicated Servers, Jitter, Matchmaking<br>
 如果Actor不需要任何Component，建议在给其创建一个空白Component作为RootComponent。</p>
 <pre><code>AMyActor::AMyActor()
 {
-    bReplicates = true;
+	bReplicates = true;
 
-    EmptyRootComp = CreateDefaultSubobject&lt;USceneComponent&gt;(TEXT(&quot;EmptyRootComp&quot;));
-    if (EmptyRootComp)
-    {
+	EmptyRootComp = CreateDefaultSubobject&lt;USceneComponent&gt;(TEXT(&quot;EmptyRootComp&quot;));
+	if (EmptyRootComp)
+	{
         SetRootComponent(EmptyRootComp);
-    }
+	}
 }
 </code></pre>
 </li>

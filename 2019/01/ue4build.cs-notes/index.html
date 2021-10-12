@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.80.0 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.88.1 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="UE4, Sequencer">
 <meta name="description" content="Keywords: UE4, Build.cs">
@@ -101,10 +101,10 @@ if (!doNotTrack) {
 	ga('send', 'pageview');
 }
 </script>
-
     
     
-<script data-ad-client="ca-pub-5816088749577387" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4843403245883139"
+     crossorigin="anonymous"></script>
   </head>
 
   <body>
@@ -359,26 +359,26 @@ using UnrealBuildTool;
 
 public class MyProject : ModuleRules  
 {  
-    private string ProjectRoot
-    {
+	private string ProjectRoot
+	{
         get
         {
             return Path.GetFullPath(Path.Combine(ModuleDirectory, &quot;../../&quot;));
         }
-    }
+	}
 	
-    private string ThirdPartyPath
-    { 
+	private string ThirdPartyPath
+	{ 
         get 
         { 
             return Path.GetFullPath(Path.Combine(ModuleDirectory, ProjectRoot, &quot;ThirdParty&quot;)); 
         } 
-    }
+	}
 
-    public MyProject(ReadOnlyTargetRules Target) : base(Target)
-    {  
+	public MyProject(ReadOnlyTargetRules Target) : base(Target)
+	{  
 	
-    }  
+	}  
 }
 </code></pre>
 <p>Reference:<br>
@@ -389,25 +389,25 @@ using UnrealBuildTool;
   
 public class MyProject : ModuleRules  
 {  
-    RulesAssembly r;  
+	RulesAssembly r;  
   
-    private string ModulePath  
-    {  
+	private string ModulePath  
+	{  
         get { return Path.GetDirectoryName( r.GetModuleFileName(this.GetType().Name).CanonicalName); }  
-    }  
+	}  
   
-    private string ThirdPartyPath  
-    {  
+	private string ThirdPartyPath  
+	{  
         get { return Path.GetFullPath(Path.Combine(ModulePath, &quot;../../ThirdParty/&quot;)); }  
-    }  
+	}  
   
-    public MyProject(TargetInfo Target)  
-    {  
+	public MyProject(TargetInfo Target)  
+	{  
   
         FileReference CheckProjectFile;  
         UProjectInfo.TryGetProjectForTarget(&quot;MyProject&quot;, out CheckProjectFile);  
         r = RulesCompiler.CreateProjectRulesAssembly(CheckProjectFile);  
-    }  
+	}  
 }
 </code></pre>
 <h5 id="how-to-include-third-party-libraries">How to include third party libraries</h5>
@@ -417,33 +417,33 @@ using System.IO;
 
 public class TestTD : ModuleRules
 {
-    private string ProjectRoot
-    {
+	private string ProjectRoot
+	{
         get
         {
             return Path.GetFullPath(Path.Combine(ModuleDirectory, &quot;../../&quot;));
         }
-    }
+	}
 	
-    private string ThirdPartyPath
-    { 
+	private string ThirdPartyPath
+	{ 
         get 
         { 
             return Path.GetFullPath(Path.Combine(ModuleDirectory, ProjectRoot, &quot;ThirdParty&quot;)); 
         } 
-    }
+	}
 	
-    public TestTD(ReadOnlyTargetRules Target) : base(Target)
-    {
+	public TestTD(ReadOnlyTargetRules Target) : base(Target)
+	{
         PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
         PublicDependencyModuleNames.AddRange(new string[] { &quot;Core&quot;, &quot;CoreUObject&quot;, &quot;Engine&quot;, &quot;InputCore&quot;, &quot;HeadMountedDisplay&quot;, &quot;NavigationSystem&quot;, &quot;AIModule&quot; });
 
         LoadOpenCV(Target);
-    }
+	}
 	
-    public bool LoadOpenCV(ReadOnlyTargetRules Target)
-    {	
+	public bool LoadOpenCV(ReadOnlyTargetRules Target)
+	{	
         // Start OpenCV linking here!
         bool isLibrarySupported = false;
 
@@ -491,7 +491,7 @@ public class TestTD : ModuleRules
         PublicDefinitions.Add(string.Format(&quot;WITH_OPENCV_BINDING={0}&quot;, isLibrarySupported ? 1 : 0));
 
         return isLibrarySupported;
-    }
+	}
 }
 </code></pre>
 <p>If want to include a number of libraries, you can do like this:</p>
@@ -574,30 +574,30 @@ Build configuration coming from UBT, do not modify
 <h5 id="how-to-disable-code-optimization">How to disable code optimization</h5>
 <pre><code>public class MyProj : ModuleRules
 {
-    public MyProj(ReadOnlyTargetRules Target) : base(Target)
-    {
+	public MyProj(ReadOnlyTargetRules Target) : base(Target)
+	{
         OptimizeCode = CodeOptimization.InNonDebugBuilds;
-    }
+	}
 }
 </code></pre>
 <h5 id="how-to-disable-function-inline-in-certain-modules">How to disable function inline in certain modules</h5>
 <pre><code>public class MyProjTarget : TargetRules
 {
-    public MyProjTarget(TargetInfo Target) : base(Target)
-    {
+	public MyProjTarget(TargetInfo Target) : base(Target)
+	{
         if (Configuration == UnrealTargetConfiguration.Debug || Configuration == UnrealTargetConfiguration.DebugGame)
         {
             bUseInlining = false;
         }
-    }
+	}
 }
 </code></pre>
 <h5 id="how-to-disable-function-inline-and-code-optimization-for-whole-project">How to disable function inline and code optimization for whole project</h5>
 <p>Add:</p>
 <pre><code>if (Target.Configuration != UnrealTargetConfiguration.Shipping)
 {
-    CompileEnvironment.bUseInlining = false;
-    CompileEnvironment.bOptimizeCode = false;
+	CompileEnvironment.bUseInlining = false;
+	CompileEnvironment.bOptimizeCode = false;
 }
 </code></pre>
 <p>in Engine\Source\Programs\UnrealBuildTool\Platform\Windows\VCToolChain.cs</p>
@@ -608,19 +608,19 @@ AddDefinition(Arguments, &quot;_DISABLE_EXTENDED_ALIGNED_STORAGE&quot;);
 // Fix Incredibuild errors with helpers using heterogeneous character sets
 if (Target.WindowsPlatform.Compiler &gt;= WindowsCompiler.VisualStudio2015_DEPRECATED)
 {
-    Arguments.Add(&quot;/source-charset:utf-8&quot;);
-    Arguments.Add(&quot;/execution-charset:utf-8&quot;);
+	Arguments.Add(&quot;/source-charset:utf-8&quot;);
+	Arguments.Add(&quot;/execution-charset:utf-8&quot;);
 }
 
 // Do not allow inline method expansion if E&amp;C support is enabled or inline expansion has been disabled
 if (!CompileEnvironment.bSupportEditAndContinue &amp;&amp; CompileEnvironment.bUseInlining)
 {
-    Arguments.Add(&quot;/Ob2&quot;);
+	Arguments.Add(&quot;/Ob2&quot;);
 }
 else
 {
-    // Specifically disable inline expansion to override /O1,/O2/ or /Ox if set
-    Arguments.Add(&quot;/Ob0&quot;);
+	// Specifically disable inline expansion to override /O1,/O2/ or /Ox if set
+	Arguments.Add(&quot;/Ob0&quot;);
 }
 </code></pre>
 <p>New:</p>
@@ -630,25 +630,25 @@ AddDefinition(Arguments, &quot;_DISABLE_EXTENDED_ALIGNED_STORAGE&quot;);
 // Fix Incredibuild errors with helpers using heterogeneous character sets
 if (Target.WindowsPlatform.Compiler &gt;= WindowsCompiler.VisualStudio2015_DEPRECATED)
 {
-    Arguments.Add(&quot;/source-charset:utf-8&quot;);
-    Arguments.Add(&quot;/execution-charset:utf-8&quot;);
+	Arguments.Add(&quot;/source-charset:utf-8&quot;);
+	Arguments.Add(&quot;/execution-charset:utf-8&quot;);
 }
 
 if (Target.Configuration != UnrealTargetConfiguration.Shipping)
 {
-    CompileEnvironment.bUseInlining = false;
-    CompileEnvironment.bOptimizeCode = false;
+	CompileEnvironment.bUseInlining = false;
+	CompileEnvironment.bOptimizeCode = false;
 }
 
 // Do not allow inline method expansion if E&amp;C support is enabled or inline expansion has been disabled
 if (!CompileEnvironment.bSupportEditAndContinue &amp;&amp; CompileEnvironment.bUseInlining)
 {
-    Arguments.Add(&quot;/Ob2&quot;);
+	Arguments.Add(&quot;/Ob2&quot;);
 }
 else
 {
-    // Specifically disable inline expansion to override /O1,/O2/ or /Ox if set
-    Arguments.Add(&quot;/Ob0&quot;);
+	// Specifically disable inline expansion to override /O1,/O2/ or /Ox if set
+	Arguments.Add(&quot;/Ob0&quot;);
 }
 </code></pre>
 <hr>

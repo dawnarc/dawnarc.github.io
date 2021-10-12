@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.80.0 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.88.1 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="UE4, Asset Asynchronous Loading">
 <meta name="description" content="为什么需要异步加载资源，因为当一次性加载的资源较多或者单个资源较大时，普通的LoadObject()方式会阻塞引擎的主线程。
@@ -130,10 +130,10 @@ if (!doNotTrack) {
 	ga('send', 'pageview');
 }
 </script>
-
     
     
-<script data-ad-client="ca-pub-5816088749577387" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4843403245883139"
+     crossorigin="anonymous"></script>
   </head>
 
   <body>
@@ -402,21 +402,21 @@ if (!doNotTrack) {
 <p>TestTD4Character.cpp</p>
 <pre><code>void ATestTD4Character::BeginPlay()
 {
-    Super::BeginPlay();
+	Super::BeginPlay();
 
-    for (FSoftObjectPath&amp; Asset : TestAssets)
-    {
+	for (FSoftObjectPath&amp; Asset : TestAssets)
+	{
         GEngine-&gt;AddOnScreenDebugMessage(-1, 3, FColor::Cyan, Asset.ToString());
-    }
+	}
 
-    FStreamableManager&amp; AssetLoader = UAssetManager::GetStreamableManager();
-    AssetLoader.RequestAsyncLoad(TestAssets, FStreamableDelegate::CreateUObject(this, &amp;ATestTD4Character::AnimAssetsDeferred));
+	FStreamableManager&amp; AssetLoader = UAssetManager::GetStreamableManager();
+	AssetLoader.RequestAsyncLoad(TestAssets, FStreamableDelegate::CreateUObject(this, &amp;ATestTD4Character::AnimAssetsDeferred));
 }
 
 void ATestTD4Character::AnimAssetsDeferred()
 {
-    for (FSoftObjectPath SoftObj : TestAssets)
-    {
+	for (FSoftObjectPath SoftObj : TestAssets)
+	{
         TAssetPtr&lt;UAnimSequence&gt; AnimAsset(SoftObj);
 
         UAnimSequence* AnimObj = AnimAsset.Get();
@@ -424,7 +424,7 @@ void ATestTD4Character::AnimAssetsDeferred()
         {
             GEngine-&gt;AddOnScreenDebugMessage(-1, 3, FColor::Red, AnimObj-&gt;GetName());
         }
-    }
+	}
 }
 </code></pre>
 <p>打印结果：</p>
@@ -453,12 +453,12 @@ AssetLoader.RequestAsyncLoad(SoftObj, FStreamableDelegate::CreateUObject(this, &
 <p>回调函数中获取对象</p>
 <pre><code>void ATestTD4Character::AssetsDeferred()
 {
-    TSoftObjectPtr&lt;UAnimSequence&gt; AnimAsset(SoftObj);
-    UAnimSequence* AnimObj= AnimAsset.Get();
-    if (AnimObj)
-    {
+	TSoftObjectPtr&lt;UAnimSequence&gt; AnimAsset(SoftObj);
+	UAnimSequence* AnimObj= AnimAsset.Get();
+	if (AnimObj)
+	{
         GEngine-&gt;AddOnScreenDebugMessage(-1, 3, FColor::Red, AnimObj-&gt;GetName());
-    }
+	}
 }
 </code></pre>
 <h3 id="同步加载">同步加载</h3>
@@ -546,7 +546,7 @@ AssetLoader.Unload(FSoftObjectPath(AssetPath));
   {
       FStreamableDelegate Call;
       Call.BindUFunction(this, FName(&quot;AsyncLoadCallback&quot;));
-        
+
       FStreamableManager&amp; AssetLoader = UAssetManager::GetStreamableManager();
       Handle = AssetLoader.RequestAsyncLoad(FSoftObjectPath(AssetPath), Call, 0, true);
       Handle-&gt;ReleaseHandle();

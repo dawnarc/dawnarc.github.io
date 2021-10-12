@@ -14,8 +14,9 @@
       
       <guid>https://dawnarc.com/2018/03/next-gen%E9%94%88%E8%BF%B9%E6%9D%90%E8%B4%A8%E5%85%A8%E6%B5%81%E7%A8%8B%E5%AE%9E%E4%BE%8Bblender-sp-ue4/</guid>
       <description>1，准备Mesh 准备一个现成模型资源。这里从Blender中提取现成的猴头模型
-按住Shift + A -》 Mesh -》 Monkey     自动生成UV   然后执行Smooth   然后增加细分级别   最终效果：   2，导出FBX File -》 Export -》 FBX   导出选项中勾选Select Objects。   3，导入SP File -》 New，打开创建工程界面，设置Mesh的FBX文件位置（刚刚导出的FBX），其他不用修改。   因为当前示例中的AO、Normal等等贴图我们会在SP中自动生成，所以这里“Import Mesh NOrmal Map &amp;hellip;”中可以不添加任何东西，如果你的模型已经有现成的贴图，可以在这里Add。
-点击OK，在SP中可以看到默认贴图和UV     4，烘焙贴图 在Layer面板中，点击 Bake Textures，打开烘焙选项面板   不勾选ID，并设置贴图大小   点击Bake DefaultMaterial Textures，稍等一会后，就可以在Project中看到6张贴图   5，编辑材质 打开Smart Materials   选一个要想材质，这里我选择的是Steel Rust Surface   然后拖拽到Layer面板钟   立即可以看到效果   同时，在TextureSet Settings中可以看到自动帮我们设置好了前面烘焙好的各种贴图   SP提供的智能材质很多，这些材质帮你省去了手动调参数的步骤，相当于材质模版。材质里面的具体参数我没深究过，所以我也不详细讲各种参数的使用了，这些参数具体可以看SP官方视频或文档。</description>
+按住Shift + A -》 Mesh -》 Monkey   自动生成UV  然后执行Smooth  然后增加细分级别  最终效果：  2，导出FBX File -》 Export -》 FBX  导出选项中勾选Select Objects。  3，导入SP File -》 New，打开创建工程界面，设置Mesh的FBX文件位置（刚刚导出的FBX），其他不用修改。  因为当前示例中的AO、Normal等等贴图我们会在SP中自动生成，所以这里“Import Mesh NOrmal Map &amp;hellip;”中可以不添加任何东西，如果你的模型已经有现成的贴图，可以在这里Add。
+点击OK，在SP中可以看到默认贴图和UV   4，烘焙贴图 在Layer面板中，点击 Bake Textures，打开烘焙选项面板  不勾选ID，并设置贴图大小  点击Bake DefaultMaterial Textures，稍等一会后，就可以在Project中看到6张贴图  5，编辑材质 打开Smart Materials  选一个要想材质，这里我选择的是Steel Rust Surface  然后拖拽到Layer面板钟  立即可以看到效果  同时，在TextureSet Settings中可以看到自动帮我们设置好了前面烘焙好的各种贴图  SP提供的智能材质很多，这些材质帮你省去了手动调参数的步骤，相当于材质模版。材质里面的具体参数我没深究过，所以我也不详细讲各种参数的使用了，这些参数具体可以看SP官方视频或文档。
+其他两种智能材质效果   6，导出贴图 右键贴图 -》 Export Textures  Config选择UE4 -》勾选DefaultMaterial -》 Export  最终的输出图片（因为当前示例中没有用到自发光，所以没有输出Emissive贴图）  7，导入UE4 先倒入模型FBX  导入选项面板默认即可 -》 Import。  然后，在拖拽到场景中  然后新建Material  然后导入贴图  打开Material蓝图，如下编辑材质  OcclusionRoughnessMetallic贴图的红色通道连AO（环境光遮蔽）、绿色通道连Roughness（粗燥度）、蓝色通道连Metallic（金属度），其他两张贴图用混合通道连对应名称。</description>
     </item>
     
     <item>
@@ -27,12 +28,13 @@
       <description>Keywords：Substance Painter、Normals Maps Baking、UV seams、Cage、烘焙法线贴图、接缝
 这里SP版本为2017.3；Maya版本为2018.1。
 1，准备好高模、低模、Cage 这里以Maya为例。
-高模   硬边低模   低模UV，因为全部是硬边，这里全部切开   平均法线的Cage   Cage的制作方式： 这里的Cage是直接在Maya中对硬边低模Duplicate（Ctrl+D）后再扩大（Move Tool），然后再执行平均法线（Mesh Display -》 Average）。
-平均法线之前：   平均法线之后：   注意：是Average Normals平均法线的Cage，不是软边的Cage！否则仍然会有明显的UV接缝。
+高模  硬边低模  低模UV，因为全部是硬边，这里全部切开  平均法线的Cage  Cage的制作方式： 这里的Cage是直接在Maya中对硬边低模Duplicate（Ctrl+D）后再扩大（Move Tool），然后再执行平均法线（Mesh Display -》 Average）。
+平均法线之前：  平均法线之后：  注意：是Average Normals平均法线的Cage，不是软边的Cage！否则仍然会有明显的UV接缝。
  平均法线和软边的法线方向还是有略微差距，法线方向如下：
-Cage和低模都为软边   Cage为平均法线，低模软边   2，将模型的OBJ文件导入SP 先将上述的三个对象导出为OBJ。当前示例导出的3个OBJ文件为：low.obj、high.obj、cage.obj。
-然后打开SP，New project（File -》 New）。   然后选择前面导出的低模OBJ   导入之后，再点击TextureSet Settings面板钟的Bake Textures   弹出的Baking面板中，我们只勾选Normal，因为这里只演示法线贴图的烘焙；   常用参数解释
- Output Size：贴图尺寸。 High Definition Meshes：高模obj。 Use Cage：是否使用cage。 Cage File：cage的文件位置。 Average Normals：是否使用平均法线。 Antialiasing：抗锯齿级别。  烘焙完带cage的法线后，再烘焙一张无cage的法线：去掉勾选Use Cage、Average Normals。   将两张法线贴图导出，然后再贴到低模上看效果。（因为在SP上看法线效果区别没有Maya明显，所以这里的的法线预览效果我转到了Maya中查看）</description>
+Cage和低模都为软边  Cage为平均法线，低模软边  2，将模型的OBJ文件导入SP 先将上述的三个对象导出为OBJ。当前示例导出的3个OBJ文件为：low.obj、high.obj、cage.obj。
+然后打开SP，New project（File -》 New）。  然后选择前面导出的低模OBJ  导入之后，再点击TextureSet Settings面板钟的Bake Textures  弹出的Baking面板中，我们只勾选Normal，因为这里只演示法线贴图的烘焙；  常用参数解释
+ Output Size：贴图尺寸。 High Definition Meshes：高模obj。 Use Cage：是否使用cage。 Cage File：cage的文件位置。 Average Normals：是否使用平均法线。 Antialiasing：抗锯齿级别。  烘焙完带cage的法线后，再烘焙一张无cage的法线：去掉勾选Use Cage、Average Normals。  将两张法线贴图导出，然后再贴到低模上看效果。（因为在SP上看法线效果区别没有Maya明显，所以这里的的法线预览效果我转到了Maya中查看）
+不同角度上的法线效果如下（为了方便观察，这六张图片未压缩也不加水印）：       扭曲问题 Cage虽然可以更好的处理UV接缝，但是对于凹凸结构会产生扭曲（Distortion），通用的解决方案是在PS中用Cage和无Cage的两张法线贴图合成，将有Cage法线的UV边界合并到无Cage的法线贴图中。篇幅有限这里不讲解如何在PS中合并，后面单独写篇文章讲解如何处理扭曲。   另外，可以看出： 如果凹凸结构落差较大，即使是无Cage法线贴图，对于高度的表现并不好，所以对于落差较大的凹凸结构，低模上最好保留相应结构。</description>
     </item>
     
     <item>
