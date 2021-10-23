@@ -393,7 +393,7 @@ new string[]
 1，Double click <code>NVPACK/android-sdk-windows/tools/android.bat</code>;<br>
 2，Click &ldquo;Deselect All&rdquo;;<br>
 3，Check <code>Extras / Android Support Repository</code>, then click <code>Install</code>;</p>
-<p>Solution 2:<br>
+<p>Solution 2 (<span class="highlight-text green">Recommended</span>):<br>
 Delete all files, which were the cooked content, under <code>[Project]/intermediate/Android</code>.</p>
 <h5 id="how-to-enable-opengl-es31-and-vulkan">How to enable OpenGL ES3.1 and Vulkan</h5>
 <p>Project Settings -》 Platforms -》 Android -》 Build -》 Support OpenGL ES3.1, By default is using OpenGL ES2.</p>
@@ -424,7 +424,7 @@ Delete all files, which were the cooked content, under <code>[Project]/intermedi
 <h5 id="run-ue4-on-linux">Run UE4 on Linux</h5>
 <p>Linux Quick Start. Learn how to download, build, and run UE4 on Linux.
 <a href="https://docs.unrealengine.com/en-US/SharingAndReleasing/Linux/BeginnerLinuxDeveloper/SettingUpAnUnrealWorkflow/index.html">https://docs.unrealengine.com/en-US/SharingAndReleasing/Linux/BeginnerLinuxDeveloper/SettingUpAnUnrealWorkflow/index.html</a></p>
-<h5 id="linux-issues">Linux Issues</h5>
+<h5 id="linux-issues---failed-to-load-vulkan-driver">Linux Issues - Failed to load Vulkan Driver</h5>
 <p>Error on startup editor on Linux:</p>
 <pre><code>Failed to load Vulkan Driver which is required to run the engine. The engine no longer fallbacks to OpenGL4 which has been deprecated.
 </code></pre>
@@ -433,6 +433,19 @@ Delete all files, which were the cooked content, under <code>[Project]/intermedi
 </code></pre>
 <p>Reference:<br>
 <a href="https://linuxconfig.org/install-and-test-vulkan-on-linux">https://linuxconfig.org/install-and-test-vulkan-on-linux</a></p>
+<h5 id="linux-issues---thirdpartycef3linux-not-in-executable-format-is-a-directory">Linux Issues - ThirdParty/CEF3/Linux: not in executable format: Is a directory</h5>
+<p>Error while running UE4 client on Linux:</p>
+<pre><code>Error while mapping shared library sections:
+`/home/stars_client/LinuxNoEditor_debuggame/Stars/Binaries/Linux/../../../Engine/Binaries/ThirdParty/CEF3/Linux': not in executable format: Is a directory
+</code></pre>
+<p>Solution:<br>
+Add <code>USE_NULL_RHI=1</code> in [Project].Build.cs</p>
+<pre><code>if(Target.Platform == UnrealTargetPlatform.Linux &amp;&amp; Type == TargetType.Game)
+{
+    GlobalDefinitions.Add(&quot;USE_NULL_RHI=1&quot;);
+    System.Console.Out.WriteLine(&quot;===================== USE_NULL_RHI=1&quot;);
+}
+</code></pre>
 <hr>
 <p><code>岂能尽如人意，但求无愧我心。──丁聪</code></p>
               

@@ -397,6 +397,10 @@ if (!doNotTrack) {
 向指定进程发送<code>Ctrl + C</code>（通知进程正常关闭）</p>
 <pre><code>kill -SIGINT 进程ID
 </code></pre>
+<p>通过进程名杀掉进程：</p>
+<pre><code># my_process_name 为目标进程的名称
+ps aux  |  grep -i my_process_name  |  awk '{print $2}'  |  xargs sudo kill -9
+</code></pre>
 <h5 id="find">find</h5>
 <p>示例：<code>find / -name httpd.conf</code> 表示在整个系统根目录下查找httpd.conf文件</p>
 <h5 id="ps">ps</h5>
@@ -480,9 +484,15 @@ tar tf aaa.gz  查看aaa.gz中的文件名
 <pre><code>zipinfo -l -M aaa.zip
 </code></pre>
 <h5 id="chmod">chmod</h5>
-<p>改变一个文件的权限：<code>chmod [mode] file.txt</code><br>
-改变一个目录的权限：<code>chmod [mode] dir</code><br>
-改变一个目录和其子目录的权限： <code>chmod [mode] dir -R</code></p>
+<p>改变一个文件的权限：</p>
+<pre><code>chmod [mode] file.txt
+</code></pre>
+<p>改变一个目录的权限：</p>
+<pre><code>chmod [mode] dir
+</code></pre>
+<p>改变一个目录和其子目录的权限：</p>
+<pre><code>chmod [mode] dir -R
+</code></pre>
 <p>mode = 777 or 752 and so on.<br>
 mode的三个数字，分别表示owner,group,others所具备的权限。<br>
 1＝x 执行<br>
@@ -581,6 +591,32 @@ date -s 18:24  设置时间
 可以使用下面的命令显示物理硬盘的个数以及对应的接口，还有硬盘的具体型号信息：</p>
 <pre><code>#cat /proc/scsi/scsi
 </code></pre>
+<h3 id="shell">Shell</h3>
+<h5 id="shell脚本转换windows下的字符串结束符">Shell脚本：转换Windows下的字符串结束符</h5>
+<p>使用dos2unix命令转换字符串结束符：</p>
+<pre><code>dos2unix filename
+</code></pre>
+<p>或者在vim的命令状态下如下设置：</p>
+<pre><code>:set fileformat=unix
+</code></pre>
+<p>Origin:<br>
+<a href="https://stackoverflow.com/a/39527986/1645289">https://stackoverflow.com/a/39527986/1645289</a></p>
+<h5 id="并行执行多个shell脚本">并行执行多个shell脚本</h5>
+<pre><code>for((i=1;i&lt;100;i++)); do nohup bash script${i}.sh &amp; done
+</code></pre>
+<p>Calling multiple bash scripts and running them in parallel, not in sequence<br>
+<a href="https://unix.stackexchange.com/a/169328/446854">https://unix.stackexchange.com/a/169328/446854</a></p>
+<h5 id="如何后台运行linux脚本">如何后台运行Linux脚本</h5>
+<p>Command:</p>
+<pre><code>nohup script.sh &amp;
+</code></pre>
+<p>How to run a shell script in background?<br>
+<a href="https://askubuntu.com/a/88092/1476756">https://askubuntu.com/a/88092/1476756</a></p>
+<h5 id="如何修改nohup输出文件名">如何修改nohup输出文件名</h5>
+<pre><code>nohup some_command &amp;&gt; nohup2.out &amp;
+</code></pre>
+<p>Origin: Can I change the name of <code>nohup.out</code>?<br>
+<a href="https://stackoverflow.com/a/4549515/1645289">https://stackoverflow.com/a/4549515/1645289</a></p>
 <h5 id="connect-remote-host-using-ssh-without-password">Connect remote host using ssh without password</h5>
 <pre><code>C:\Users\neil&gt;ssh-keygen
 
@@ -599,6 +635,44 @@ Copy content of <code>id_rsa.pub</code> to <code>authorized_keys</code>:</p>
 <p>Now you can login remote host without password:</p>
 <pre><code>C:\Users\neil\.ssh&gt;ssh root@192.168.1.2
 </code></pre>
+<h3 id="compilation--debugging">Compilation &amp; Debugging</h3>
+<h5 id="gdb-installation">GDB Installation</h5>
+<p>Error on back trace under GDB:</p>
+<pre><code>Missing separate debuginfo for the main executable file
+Try: yum --enablerepo='*debug*' install /usr/lib/debug/.build-id/23/3d7fc1208d8219
+
+Missing separate debuginfos. use: debuginfo-install alsa-lib-1.1.8-1.el7.x86_64
+debuginfo-install alsa-lib-1.1.8-1.el7.x86_64 atk-2.28.1-2.el7.x86_64 bzip2-libs-1.0.6-13.el7.x86_64 cairo-1.15.12-4.el7.x86_64 dbus-libs-1.10.24-15.el7.x86_64 elfutils-libelf-0.176-5.el7.x86_64 elfutils-libs-0.176-5.el7.x86_64 expat-2.1.0-12.el7.x86_64 fontconfig-2.13.0-4.3.el7.x86_64 freetype-2.8-14.el7.x86_64 fribidi-1.0.2-1.el7_7.1.x86_64 glib2-2.56.1-7.el7.x86_64 graphite2-1.3.10-1.el7_3.x86_64 harfbuzz-1.7.5-2.el7.x86_64 libX11-1.6.7-2.el7.x86_64 libXScrnSaver-1.2.2-6.1.el7.x86_64 libXau-1.0.8-2.1.el7.x86_64 libXcomposite-0.4.4-4.1.el7.x86_64 libXcursor-1.1.15-1.el7.x86_64 libXdamage-1.1.4-4.1.el7.x86_64 libXext-1.3.3-3.el7.x86_64 libXfixes-5.0.3-1.el7.x86_64 libXi-1.7.9-1.el7.x86_64 libXrandr-1.5.1-2.el7.x86_64 libXrender-0.9.10-1.el7.x86_64 libXtst-1.2.3-1.el7.x86_64 libattr-2.4.46-13.el7.x86_64 libcap-2.22-11.el7.x86_64 libffi-3.0.13-19.el7.x86_64 libgcc-4.8.5-44.el7.x86_64 libgcrypt-1.5.3-14.el7.x86_64 libglvnd-1.0.1-0.8.git5baa1e5.el7.x86_64 libglvnd-egl-1.0.1-0.8.git5baa1e5.el7.x86_64 libglvnd-glx-1.0.1-0.8.git5baa1e5.el7.x86_64 libgpg-error-1.12-3.el7.x86_64 libpng-1.5.13-8.el7.x86_64 libselinux-2.5-15.el7.x86_64 libthai-0.1.14-9.el7.x86_64 libuuid-2.23.2-65.el7.x86_64 libxcb-1.13-1.el7.x86_64 lz4-1.8.3-1.el7.x86_64 nspr-4.21.0-1.el7.x86_64 nss-3.44.0-7.el7_7.x86_64 nss-util-3.44.0-4.el7_7.x86_64 pango-1.42.4-4.el7_7.x86_64 pcre-8.32-17.el7.x86_64 pixman-0.34.0-1.el7.x86_64 systemd-libs-219-78.el7.x86_64 xz-libs-5.2.2-1.el7.x86_64 zlib-1.2.7-18.el7.x86_64cd
+</code></pre>
+<p>Solution:<br>
+debuginfo-install is a command of yum-utils, so</p>
+<ol>
+<li><code>yum install yum-utils</code></li>
+<li><code>debuginfo-install glibc</code></li>
+<li>if the warning&rsquo;s still there, edit <code>/etc/yum.repos.d/CentOS-Debuginfo.repo</code>, set <code>enabled=1</code></li>
+</ol>
+<p>Origin:<br>
+<a href="https://stackoverflow.com/a/17194583">https://stackoverflow.com/a/17194583</a></p>
+<h5 id="gdb-how-do-i-list-the-symbols-in-a-so-file">GDB: How do I list the symbols in a .so file</h5>
+<p>The standard tool for listing symbols is nm, you can use it simply like this:</p>
+<pre><code>nm -gD yourLib.so
+</code></pre>
+<p>If you want to see symbols of a C++ library, add the &ldquo;-C&rdquo; option which demangle the symbols (it&rsquo;s far more readable demangled):</p>
+<pre><code>nm -gDC yourLib.so
+</code></pre>
+<p>Origin:<br>
+<a href="https://stackoverflow.com/a/34796/1645289">https://stackoverflow.com/a/34796/1645289</a></p>
+<h5 id="g-undefined-reference-although-symbol-is-present-in-so-file">g++ undefined reference although symbol is present in *.so file</h5>
+<p>The pedantically correct way to check that a .so exports a symbol is:</p>
+<pre><code>nm --demangle --dynamic --defined-only --extern-only &lt;lib.so&gt; | grep &lt;symbol&gt;.
+</code></pre>
+<p>Without <code>--defined-only</code> your command also shows undefined symbols.</p>
+<p>Without <code>--extern-only</code> it also shows symbols with internal linkage which are unavailable for linking.</p>
+<p>Origin:<br>
+<a href="https://stackoverflow.com/a/43257338/1645289">https://stackoverflow.com/a/43257338/1645289</a></p>
+<h5 id="compilation-documents">Compilation Documents</h5>
+<p>Object Files and Symbols<br>
+<a href="http://nickdesaulniers.github.io/blog/2016/08/13/object-files-and-symbols/">http://nickdesaulniers.github.io/blog/2016/08/13/object-files-and-symbols/</a></p>
 <hr>
 <p><code>The best way to predict your future is to create it. ― Peter Drucker</code></p>
               
