@@ -370,7 +370,7 @@ if (!doNotTrack) {
 
               <p>Keywords: Linux命令、常用命令、备忘</p>
 <h5 id="自动补全历史命令">自动补全历史命令</h5>
-<p>如果你以前使用了<code>cp -r /root/a   /home/test/</code>，下次还想使用同样的命令，可以采用：<code>!cp</code> 试试。</p>
+<p>如果你以前使用了<code>cp -r /root/home/test/</code>，下次还想使用同样的命令，可以采用：<code>!cp</code> 试试。</p>
 <p>或者</p>
 <p>在终端按下<code>ctrl + r</code>然后输入以前用过的命令，如<code>cp -r</code>会自动补全</p>
 <h5 id="pwd">pwd</h5>
@@ -602,6 +602,20 @@ date -s 18:24  设置时间
 可以使用下面的命令显示物理硬盘的个数以及对应的接口，还有硬盘的具体型号信息：</p>
 <pre><code>#cat /proc/scsi/scsi
 </code></pre>
+<h5 id="how-to-disable-intel-turbo-boost">How to disable Intel Turbo Boost</h5>
+<p>Ensure that P-State driver is works in active (governor) or passive (cpufreq) mode.</p>
+<pre><code>$ cat /sys/devices/system/cpu/intel_pstate/status
+
+active
+</code></pre>
+<p>Inspect current Intel Turbo Boost status. <code>0</code> states that it is not disabled, <code>1</code> that it disabled.</p>
+<pre><code>$ cat /sys/devices/system/cpu/intel_pstate/no_turbo
+</code></pre>
+<p>Disable Intel Turbo Boost.</p>
+<pre><code>$ echo 1 | sudo tee /sys/devices/system/cpu/intel_pstate/no_turbo
+</code></pre>
+<p>Origin:<br>
+<a href="https://sleeplessbeastie.eu/2019/07/15/how-to-disable-intel-turbo-boost/">https://sleeplessbeastie.eu/2019/07/15/how-to-disable-intel-turbo-boost/</a></p>
 <h3 id="shell">Shell</h3>
 <h5 id="shell脚本转换windows下的字符串结束符">Shell脚本：转换Windows下的字符串结束符</h5>
 <p>使用dos2unix命令转换字符串结束符：</p>
@@ -647,6 +661,30 @@ Copy content of <code>id_rsa.pub</code> to <code>authorized_keys</code>:</p>
 <pre><code>C:\Users\neil\.ssh&gt;ssh root@192.168.1.2
 </code></pre>
 <h3 id="compilation--debugging">Compilation &amp; Debugging</h3>
+<h5 id="enable-core-dump">Enable Core Dump</h5>
+<p>1, To check where the core dumps are generated, run:</p>
+<pre><code>sysctl kernel.core_pattern
+</code></pre>
+<p>or:</p>
+<pre><code>cat /proc/sys/kernel/core_pattern
+</code></pre>
+<p>where <code>%e</code> is the process name and <code>%t</code> the system time. You can change it in <code>/etc/sysctl.conf</code> and reloading by <code>sysctl -p</code>.</p>
+<p>2, Check the limits by:</p>
+<pre><code>ulimit -a
+</code></pre>
+<p>If your core file size is limited, run:</p>
+<pre><code>ulimit -S -c unlimited
+</code></pre>
+<p>You can test it by:</p>
+<pre><code>sleep 10 &amp;
+killall -SIGSEGV sleep
+</code></pre>
+<p>If core dumping is successful, you will see “(core dumped)” after the segmentation fault indication.</p>
+<p>Reference:<br>
+How to generate a core dump in Linux on a segmentation fault?<br>
+<a href="https://stackoverflow.com/a/32461658/1645289">https://stackoverflow.com/a/32461658/1645289</a></p>
+<p>Core dump file is not generated<br>
+<a href="https://stackoverflow.com/a/18428840/1645289">https://stackoverflow.com/a/18428840/1645289</a></p>
 <h5 id="gdb-installation">GDB Installation</h5>
 <p>Error on back trace under GDB:</p>
 <pre><code>Missing separate debuginfo for the main executable file
@@ -664,6 +702,19 @@ debuginfo-install is a command of yum-utils, so</p>
 </ol>
 <p>Origin:<br>
 <a href="https://stackoverflow.com/a/17194583">https://stackoverflow.com/a/17194583</a></p>
+<h5 id="get-call-stack-from-core-dump">Get call stack from core dump</h5>
+<pre><code>gdb /usr/bin/myapp.binary corefile
+</code></pre>
+<p>Then, use one of:</p>
+<pre><code>(gdb) bt
+(gdb) bt full
+(gdb) info threads
+(gdb) thread apply all bt
+(gdb) thread apply all bt full
+</code></pre>
+<p>Reference:<br>
+getting stacktrace from core dump<br>
+<a href="https://stackoverflow.com/a/5745312/1645289">https://stackoverflow.com/a/5745312/1645289</a></p>
 <h5 id="gdb-how-do-i-list-the-symbols-in-a-so-file">GDB: How do I list the symbols in a .so file</h5>
 <p>The standard tool for listing symbols is nm, you can use it simply like this:</p>
 <pre><code>nm -gD yourLib.so
