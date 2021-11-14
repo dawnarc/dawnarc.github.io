@@ -354,7 +354,9 @@ if (!doNotTrack) {
           
           <div class="post-content markdown" itemprop="articleBody">
 			<amp-auto-ads type="adsense"
-					data-ad-client="ca-pub-4843403245883139">
+                    style="display:block;height:120px"
+					data-ad-client="ca-pub-4843403245883139"
+                    data-ad-format="fluid">
 			</amp-auto-ads>
             <div class="main-content-wrap">
                 
@@ -430,10 +432,76 @@ Add <code>USE_NULL_RHI=1</code> in [Project].Build.cs</p>
     System.Console.Out.WriteLine(&quot;===================== USE_NULL_RHI=1&quot;);
 }
 </code></pre>
-<h5 id="how-to-generate-core-dump-file-in-shipping-on-linux">How to generate core dump file in shipping on Linux</h5>
+<h5 id="how-to-generate-core-dump-file-when-games-crashed-in-shipping-on-linux">How to generate core dump file when games crashed in shipping on Linux</h5>
 <p>Pass <code>-core</code> when running applicaton on Linux:</p>
 <pre><code>MyProj/Binaries/MyProjServer-Linux-Shipping -core -log -port=7777
 </code></pre>
+<h3 id="deubg-in-shipping">Deubg in Shipping</h3>
+<h5 id="displaying-debug-information">Displaying Debug information</h5>
+<p>Project Settings -&gt; Packaging -&gt; Project -&gt; check <code>Include Debug Files</code>.</p>
+<h5 id="logging">Logging</h5>
+<p>Engine\Source\Programs\UnrealBuildTool\Configuration\TargetRules.cs</p>
+<pre><code>/// &lt;summary&gt;
+/// Whether to turn on logging for test/shipping builds.
+/// &lt;/summary&gt;
+[RequiresUniqueBuildEnvironment]
+public bool bUseLoggingInShipping = true;
+</code></pre>
+<p>Or modify <code>[Project].Target.cs</code>:</p>
+<pre><code>if (Configuration == UnrealTargetConfiguration.Shipping)
+{
+    bUseLoggingInShipping = true;
+}
+</code></pre>
+<h5 id="check">Check</h5>
+<p>Engine\Source\Programs\UnrealBuildTool\Configuration\TargetRules.cs</p>
+<pre><code>/// &lt;summary&gt;
+/// Whether to turn on checks (asserts) for test/shipping builds.
+/// &lt;/summary&gt;
+[RequiresUniqueBuildEnvironment]
+public bool bUseChecksInShipping = true;
+</code></pre>
+<p>Or modify <code>[Project].Target.cs</code>:</p>
+<pre><code>if (Configuration == UnrealTargetConfiguration.Shipping)
+{
+    bUseChecksInShipping= true;
+}
+</code></pre>
+<h5 id="console-command">Console Command</h5>
+<p>Engine\Source\Runtime\Core\Public\Misc\Build.h</p>
+<pre><code>#ifndef ALLOW_CONSOLE_IN_SHIPPING
+    #define ALLOW_CONSOLE_IN_SHIPPING 1
+#endif
+</code></pre>
+<p>Or modify <code>[Project].Target.cs</code>:</p>
+<pre><code>if (Configuration == UnrealTargetConfiguration.Shipping)
+{
+    GlobalDefinitions.Add(&quot;ALLOW_CONSOLE_IN_SHIPPING=1&quot;);
+}
+</code></pre>
+<p>[Available]
+Some stat commands such as stat unit, stat levels, stat fps<br>
+Some dump commands such as dumpticks, dumplevelcollections, etc.<br>
+open, travel, log, r.xxx, a.xxx, t.xxx, gc.xxx, etc.</p>
+<p>[Unavailable]
+Some stat commands such as stat unitgprah, stat collision, stat startfile / stopfile<br>
+A series of commands such as showflag, obj, memreport<br>
+shot/hiresshot, toggledrawevents, profilegpu</p>
+<h5 id="stats">Stats</h5>
+<p>Engine\Source\Runtime\Core\Public\Misc\Build.h</p>
+<pre><code>/** Compile flag to force stats to be compiled */
+#ifndef FORCE_USE_STATS
+    #define FORCE_USE_STATS 1
+#endif
+</code></pre>
+<p>Or modify <code>[Project].Target.cs</code>:</p>
+<pre><code>if (Configuration == UnrealTargetConfiguration.Shipping)
+{
+    GlobalDefinitions.Add(&quot;FORCE_USE_STATS=1&quot;);
+}
+</code></pre>
+<p>Reference:<br>
+<a href="https://qiita.com/donbutsu17/items/76ea5c5531aa4da77f9d">https://qiita.com/donbutsu17/items/76ea5c5531aa4da77f9d</a></p>
 <hr>
 <p><code>岂能尽如人意，但求无愧我心。──丁聪</code></p>
               
