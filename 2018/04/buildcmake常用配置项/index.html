@@ -14,25 +14,31 @@
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="">
 <meta name="description" content="常用设置 设置编译输出路径 在CMakeList.txt中如下设置后，无论是编译可执行文件还是编译静态库，都会输出到指定目录下，而不再是默认的当前目录。
-# etc. etc.set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY &quot;lib/&quot;) 参考自：
-https://stackoverflow.com/questions/38445335/cmake-library-output-directory-not-affected-by-cmake-library-output-director/38450844
-获取指定目录下的所有源文件 file(GLOB cpp_files ./src/*.cpp)add_library(mylib STATIC ${cpp_files}) 打印log if (NOT CMAKE_VERSION VERSION_GREATER &quot;3.0&quot;)message(FATAL_ERROR &quot;cmake version 3.x is required!&quot;)endif() 打印变量 message(STATUS &quot;foo include dir: ${foo_INCLUDE}&quot;) 修改默认的CMAKE_MODULE_PATH目录 CMAKE_MODULE_PATH是供find_package搜索第三方库用的。cmake的默认Modules目录在安装目录中：cmake-3.11.3-win64-x64\share\cmake-3.11\Modules。
-如果要追加Modules目录，有3种方式：
-set(CMAKE_MODULE_PATH &quot;${CMAKE_SOURCE_PATH}:${CMAKE_MODULE_PATH}&quot;)LIST(APPEND CMAKE_MODULE_PATH &quot;${CMAKE_SOURCE_PREFIX}&quot;)set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake) find_package用法 通常情况下，包含第三方库需要写以下内容
-include_directories(&quot;${project_root_path}/include/&quot;) link_directories(./lib)add_executable(myapp myapp.cpp)target_link_libraries(myapp mylib)  如果引用的很多个第三方库，那么类似上面的内容会写很多，且如果自己的多个项目都引用了某个第三方库，那么我每个项目的CmakeList.txt都得写一遍，重复劳动很多。那么有没办法为每个第三方库只定义一次它的头文件和库文件信息，然后在自己的工程中只指定名称即可？（类似编译Java的Maven仓库）答案是当然可以，find_package帮你解决。
-find_package定义在自己工程的CmakeList.txt中：
-find_package( XXX CONFIG REQUIRED ) 然后cmake就会在默认的Modules(即CMAKE_MODULE_PATH指定的目录)目录中搜索这个XXX第三方库。">
+#静态库输出目录(lib, a)set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY &quot;lib/&quot;)#编译时动态库输出目录(dll &#43; lib)set(CMAKE_LIBRARY_OUTPUT_DIRECTORY &quot;lib/&quot;)#动态库输出目录(dll, so)set(CMAKE_RUNTIME_OUTPUT_DIRECTORY &quot;lib/&quot;)#可执行文件输出目录set(EXECUTABLE_OUTPUT_PATH &quot;bin/&quot;) 参考：
+is CMake ignoring CMAKE_LIBRARY_OUTPUT_DIRECTORY?
+https://stackoverflow.com/a/38450844/1645289
+How do I make CMake output into a &lsquo;bin&rsquo; dir? https://stackoverflow.com/a/6595001/1645289
+cmake 常用设定及函数
+https://blog.csdn.net/LaineGates/article/details/79190398
+获取指定目录下的所有源文件 获取./src目录下的所有hpp和cpp文件（只获取./src当前目录文件，不递归查询./src下的子目录）：
+file(GLOB CPP_FILES ./src/*.hpp ./src/*.cpp)add_library(mylib STATIC ${CPP_FILES}) 获取./src/player/目录和./src/monster/目录下的所有cpp文件（同时递归这两个目录下的所有子目录）：
+file(GLOB_RECURSE CPP_FILES./src/player/*.cpp./src/monster/*.cpp) 参考：How to use cmake GLOB_RECURSE for only some subdirectories
+https://stackoverflow.com/a/27994855/1645289
+打印log if (NOT CMAKE_VERSION VERSION_GREATER &quot;3.">
 
 
 <meta property="og:description" content="常用设置 设置编译输出路径 在CMakeList.txt中如下设置后，无论是编译可执行文件还是编译静态库，都会输出到指定目录下，而不再是默认的当前目录。
-# etc. etc.set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY &quot;lib/&quot;) 参考自：
-https://stackoverflow.com/questions/38445335/cmake-library-output-directory-not-affected-by-cmake-library-output-director/38450844
-获取指定目录下的所有源文件 file(GLOB cpp_files ./src/*.cpp)add_library(mylib STATIC ${cpp_files}) 打印log if (NOT CMAKE_VERSION VERSION_GREATER &quot;3.0&quot;)message(FATAL_ERROR &quot;cmake version 3.x is required!&quot;)endif() 打印变量 message(STATUS &quot;foo include dir: ${foo_INCLUDE}&quot;) 修改默认的CMAKE_MODULE_PATH目录 CMAKE_MODULE_PATH是供find_package搜索第三方库用的。cmake的默认Modules目录在安装目录中：cmake-3.11.3-win64-x64\share\cmake-3.11\Modules。
-如果要追加Modules目录，有3种方式：
-set(CMAKE_MODULE_PATH &quot;${CMAKE_SOURCE_PATH}:${CMAKE_MODULE_PATH}&quot;)LIST(APPEND CMAKE_MODULE_PATH &quot;${CMAKE_SOURCE_PREFIX}&quot;)set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake) find_package用法 通常情况下，包含第三方库需要写以下内容
-include_directories(&quot;${project_root_path}/include/&quot;) link_directories(./lib)add_executable(myapp myapp.cpp)target_link_libraries(myapp mylib)  如果引用的很多个第三方库，那么类似上面的内容会写很多，且如果自己的多个项目都引用了某个第三方库，那么我每个项目的CmakeList.txt都得写一遍，重复劳动很多。那么有没办法为每个第三方库只定义一次它的头文件和库文件信息，然后在自己的工程中只指定名称即可？（类似编译Java的Maven仓库）答案是当然可以，find_package帮你解决。
-find_package定义在自己工程的CmakeList.txt中：
-find_package( XXX CONFIG REQUIRED ) 然后cmake就会在默认的Modules(即CMAKE_MODULE_PATH指定的目录)目录中搜索这个XXX第三方库。">
+#静态库输出目录(lib, a)set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY &quot;lib/&quot;)#编译时动态库输出目录(dll &#43; lib)set(CMAKE_LIBRARY_OUTPUT_DIRECTORY &quot;lib/&quot;)#动态库输出目录(dll, so)set(CMAKE_RUNTIME_OUTPUT_DIRECTORY &quot;lib/&quot;)#可执行文件输出目录set(EXECUTABLE_OUTPUT_PATH &quot;bin/&quot;) 参考：
+is CMake ignoring CMAKE_LIBRARY_OUTPUT_DIRECTORY?
+https://stackoverflow.com/a/38450844/1645289
+How do I make CMake output into a &lsquo;bin&rsquo; dir? https://stackoverflow.com/a/6595001/1645289
+cmake 常用设定及函数
+https://blog.csdn.net/LaineGates/article/details/79190398
+获取指定目录下的所有源文件 获取./src目录下的所有hpp和cpp文件（只获取./src当前目录文件，不递归查询./src下的子目录）：
+file(GLOB CPP_FILES ./src/*.hpp ./src/*.cpp)add_library(mylib STATIC ${CPP_FILES}) 获取./src/player/目录和./src/monster/目录下的所有cpp文件（同时递归这两个目录下的所有子目录）：
+file(GLOB_RECURSE CPP_FILES./src/player/*.cpp./src/monster/*.cpp) 参考：How to use cmake GLOB_RECURSE for only some subdirectories
+https://stackoverflow.com/a/27994855/1645289
+打印log if (NOT CMAKE_VERSION VERSION_GREATER &quot;3.">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[Build]cmake常用配置项">
 <meta name="twitter:title" content="[Build]cmake常用配置项">
@@ -40,23 +46,29 @@ find_package( XXX CONFIG REQUIRED ) 然后cmake就会在默认的Modules(即CMA
 <meta property="twitter:url" content="https://dawnarc.com/2018/04/buildcmake%E5%B8%B8%E7%94%A8%E9%85%8D%E7%BD%AE%E9%A1%B9/">
 <meta property="og:site_name" content="玄冬Wong">
 <meta property="og:description" content="常用设置 设置编译输出路径 在CMakeList.txt中如下设置后，无论是编译可执行文件还是编译静态库，都会输出到指定目录下，而不再是默认的当前目录。
-# etc. etc.set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY &quot;lib/&quot;) 参考自：
-https://stackoverflow.com/questions/38445335/cmake-library-output-directory-not-affected-by-cmake-library-output-director/38450844
-获取指定目录下的所有源文件 file(GLOB cpp_files ./src/*.cpp)add_library(mylib STATIC ${cpp_files}) 打印log if (NOT CMAKE_VERSION VERSION_GREATER &quot;3.0&quot;)message(FATAL_ERROR &quot;cmake version 3.x is required!&quot;)endif() 打印变量 message(STATUS &quot;foo include dir: ${foo_INCLUDE}&quot;) 修改默认的CMAKE_MODULE_PATH目录 CMAKE_MODULE_PATH是供find_package搜索第三方库用的。cmake的默认Modules目录在安装目录中：cmake-3.11.3-win64-x64\share\cmake-3.11\Modules。
-如果要追加Modules目录，有3种方式：
-set(CMAKE_MODULE_PATH &quot;${CMAKE_SOURCE_PATH}:${CMAKE_MODULE_PATH}&quot;)LIST(APPEND CMAKE_MODULE_PATH &quot;${CMAKE_SOURCE_PREFIX}&quot;)set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake) find_package用法 通常情况下，包含第三方库需要写以下内容
-include_directories(&quot;${project_root_path}/include/&quot;) link_directories(./lib)add_executable(myapp myapp.cpp)target_link_libraries(myapp mylib)  如果引用的很多个第三方库，那么类似上面的内容会写很多，且如果自己的多个项目都引用了某个第三方库，那么我每个项目的CmakeList.txt都得写一遍，重复劳动很多。那么有没办法为每个第三方库只定义一次它的头文件和库文件信息，然后在自己的工程中只指定名称即可？（类似编译Java的Maven仓库）答案是当然可以，find_package帮你解决。
-find_package定义在自己工程的CmakeList.txt中：
-find_package( XXX CONFIG REQUIRED ) 然后cmake就会在默认的Modules(即CMAKE_MODULE_PATH指定的目录)目录中搜索这个XXX第三方库。">
+#静态库输出目录(lib, a)set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY &quot;lib/&quot;)#编译时动态库输出目录(dll &#43; lib)set(CMAKE_LIBRARY_OUTPUT_DIRECTORY &quot;lib/&quot;)#动态库输出目录(dll, so)set(CMAKE_RUNTIME_OUTPUT_DIRECTORY &quot;lib/&quot;)#可执行文件输出目录set(EXECUTABLE_OUTPUT_PATH &quot;bin/&quot;) 参考：
+is CMake ignoring CMAKE_LIBRARY_OUTPUT_DIRECTORY?
+https://stackoverflow.com/a/38450844/1645289
+How do I make CMake output into a &lsquo;bin&rsquo; dir? https://stackoverflow.com/a/6595001/1645289
+cmake 常用设定及函数
+https://blog.csdn.net/LaineGates/article/details/79190398
+获取指定目录下的所有源文件 获取./src目录下的所有hpp和cpp文件（只获取./src当前目录文件，不递归查询./src下的子目录）：
+file(GLOB CPP_FILES ./src/*.hpp ./src/*.cpp)add_library(mylib STATIC ${CPP_FILES}) 获取./src/player/目录和./src/monster/目录下的所有cpp文件（同时递归这两个目录下的所有子目录）：
+file(GLOB_RECURSE CPP_FILES./src/player/*.cpp./src/monster/*.cpp) 参考：How to use cmake GLOB_RECURSE for only some subdirectories
+https://stackoverflow.com/a/27994855/1645289
+打印log if (NOT CMAKE_VERSION VERSION_GREATER &quot;3.">
 <meta name="twitter:description" content="常用设置 设置编译输出路径 在CMakeList.txt中如下设置后，无论是编译可执行文件还是编译静态库，都会输出到指定目录下，而不再是默认的当前目录。
-# etc. etc.set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY &quot;lib/&quot;) 参考自：
-https://stackoverflow.com/questions/38445335/cmake-library-output-directory-not-affected-by-cmake-library-output-director/38450844
-获取指定目录下的所有源文件 file(GLOB cpp_files ./src/*.cpp)add_library(mylib STATIC ${cpp_files}) 打印log if (NOT CMAKE_VERSION VERSION_GREATER &quot;3.0&quot;)message(FATAL_ERROR &quot;cmake version 3.x is required!&quot;)endif() 打印变量 message(STATUS &quot;foo include dir: ${foo_INCLUDE}&quot;) 修改默认的CMAKE_MODULE_PATH目录 CMAKE_MODULE_PATH是供find_package搜索第三方库用的。cmake的默认Modules目录在安装目录中：cmake-3.11.3-win64-x64\share\cmake-3.11\Modules。
-如果要追加Modules目录，有3种方式：
-set(CMAKE_MODULE_PATH &quot;${CMAKE_SOURCE_PATH}:${CMAKE_MODULE_PATH}&quot;)LIST(APPEND CMAKE_MODULE_PATH &quot;${CMAKE_SOURCE_PREFIX}&quot;)set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake) find_package用法 通常情况下，包含第三方库需要写以下内容
-include_directories(&quot;${project_root_path}/include/&quot;) link_directories(./lib)add_executable(myapp myapp.cpp)target_link_libraries(myapp mylib)  如果引用的很多个第三方库，那么类似上面的内容会写很多，且如果自己的多个项目都引用了某个第三方库，那么我每个项目的CmakeList.txt都得写一遍，重复劳动很多。那么有没办法为每个第三方库只定义一次它的头文件和库文件信息，然后在自己的工程中只指定名称即可？（类似编译Java的Maven仓库）答案是当然可以，find_package帮你解决。
-find_package定义在自己工程的CmakeList.txt中：
-find_package( XXX CONFIG REQUIRED ) 然后cmake就会在默认的Modules(即CMAKE_MODULE_PATH指定的目录)目录中搜索这个XXX第三方库。">
+#静态库输出目录(lib, a)set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY &quot;lib/&quot;)#编译时动态库输出目录(dll &#43; lib)set(CMAKE_LIBRARY_OUTPUT_DIRECTORY &quot;lib/&quot;)#动态库输出目录(dll, so)set(CMAKE_RUNTIME_OUTPUT_DIRECTORY &quot;lib/&quot;)#可执行文件输出目录set(EXECUTABLE_OUTPUT_PATH &quot;bin/&quot;) 参考：
+is CMake ignoring CMAKE_LIBRARY_OUTPUT_DIRECTORY?
+https://stackoverflow.com/a/38450844/1645289
+How do I make CMake output into a &lsquo;bin&rsquo; dir? https://stackoverflow.com/a/6595001/1645289
+cmake 常用设定及函数
+https://blog.csdn.net/LaineGates/article/details/79190398
+获取指定目录下的所有源文件 获取./src目录下的所有hpp和cpp文件（只获取./src当前目录文件，不递归查询./src下的子目录）：
+file(GLOB CPP_FILES ./src/*.hpp ./src/*.cpp)add_library(mylib STATIC ${CPP_FILES}) 获取./src/player/目录和./src/monster/目录下的所有cpp文件（同时递归这两个目录下的所有子目录）：
+file(GLOB_RECURSE CPP_FILES./src/player/*.cpp./src/monster/*.cpp) 参考：How to use cmake GLOB_RECURSE for only some subdirectories
+https://stackoverflow.com/a/27994855/1645289
+打印log if (NOT CMAKE_VERSION VERSION_GREATER &quot;3.">
 <meta property="og:locale" content="en-us">
 
   
@@ -386,7 +398,6 @@ if (!doNotTrack) {
 					data-ad-client="ca-pub-4843403245883139">
 			</amp-auto-ads>
             <div class="main-content-wrap">
-                
                 <ins class="adsbygoogle"
                      style="display:block;height:120px"
                      data-ad-client="ca-pub-4843403245883139"
@@ -396,19 +407,40 @@ if (!doNotTrack) {
                 <script>
                      (adsbygoogle = window.adsbygoogle || []).push({});
                 </script>
-
               <h3 id="常用设置">常用设置</h3>
 <h5 id="设置编译输出路径">设置编译输出路径</h5>
 <p>在CMakeList.txt中如下设置后，无论是编译可执行文件还是编译静态库，都会输出到指定目录下，而不再是默认的当前目录。</p>
-<pre><code># etc. etc.
+<pre><code>#静态库输出目录(lib, a)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY &quot;lib/&quot;)
+
+#编译时动态库输出目录(dll + lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY  &quot;lib/&quot;)
+
+#动态库输出目录(dll, so)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY  &quot;lib/&quot;)
+
+#可执行文件输出目录
+set(EXECUTABLE_OUTPUT_PATH  &quot;bin/&quot;)
 </code></pre>
-<p>参考自：<br>
-<a href="https://stackoverflow.com/questions/38445335/cmake-library-output-directory-not-affected-by-cmake-library-output-director/38450844">https://stackoverflow.com/questions/38445335/cmake-library-output-directory-not-affected-by-cmake-library-output-director/38450844</a></p>
+<p>参考：<br>
+is CMake ignoring CMAKE_LIBRARY_OUTPUT_DIRECTORY?<br>
+<a href="https://stackoverflow.com/a/38450844/1645289">https://stackoverflow.com/a/38450844/1645289</a></p>
+<p>How do I make CMake output into a &lsquo;bin&rsquo; dir?
+<a href="https://stackoverflow.com/a/6595001/1645289">https://stackoverflow.com/a/6595001/1645289</a></p>
+<p>cmake 常用设定及函数<br>
+<a href="https://blog.csdn.net/LaineGates/article/details/79190398">https://blog.csdn.net/LaineGates/article/details/79190398</a></p>
 <h5 id="获取指定目录下的所有源文件">获取指定目录下的所有源文件</h5>
-<pre><code>file(GLOB cpp_files ./src/*.cpp)
-add_library(mylib STATIC ${cpp_files})
+<p>获取<code>./src</code>目录下的所有hpp和cpp文件（只获取<code>./src</code>当前目录文件，不递归查询<code>./src</code>下的子目录）：</p>
+<pre><code>file(GLOB CPP_FILES ./src/*.hpp ./src/*.cpp)
+add_library(mylib STATIC ${CPP_FILES})
 </code></pre>
+<p>获取<code>./src/player/</code>目录和<code>./src/monster/</code>目录下的所有cpp文件（同时递归这两个目录下的所有子目录）：</p>
+<pre><code>file(GLOB_RECURSE CPP_FILES
+   ./src/player/*.cpp
+   ./src/monster/*.cpp)
+</code></pre>
+<p>参考：How to use cmake GLOB_RECURSE for only some subdirectories<br>
+<a href="https://stackoverflow.com/a/27994855/1645289">https://stackoverflow.com/a/27994855/1645289</a></p>
 <h5 id="打印log">打印log</h5>
 <pre><code>if (NOT CMAKE_VERSION VERSION_GREATER &quot;3.0&quot;)
 	message(FATAL_ERROR &quot;cmake version 3.x is required!&quot;)
@@ -494,6 +526,11 @@ What&rsquo;s the proper way to enable AddressSanitizer in CMake that works in Xc
 </code></pre>
 <p>Origin:<br>
 <a href="https://stackoverflow.com/a/59789571/1645289">https://stackoverflow.com/a/59789571/1645289</a></p>
+<h3 id="compiler">Compiler</h3>
+<h5 id="how-to-enable-c17-features-for-compiler">How to enable C++17 features for compiler</h5>
+<pre><code>#enable C++17 features
+target_compile_features(${MY_PROJECT_NAME} PRIVATE cxx_std_17)
+</code></pre>
 <h3 id="cmake-examples">CMake Examples</h3>
 <h5 id="comprehensive">Comprehensive</h5>
 <p>Command line C++ barcode reader for Windows, Linux, and macOS.<br>

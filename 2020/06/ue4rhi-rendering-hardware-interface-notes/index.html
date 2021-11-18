@@ -357,7 +357,6 @@ if (!doNotTrack) {
 					data-ad-client="ca-pub-4843403245883139">
 			</amp-auto-ads>
             <div class="main-content-wrap">
-                
                 <ins class="adsbygoogle"
                      style="display:block;height:120px"
                      data-ad-client="ca-pub-4843403245883139"
@@ -367,7 +366,6 @@ if (!doNotTrack) {
                 <script>
                      (adsbygoogle = window.adsbygoogle || []).push({});
                 </script>
-
               <p>Keywords: UE4, RHI (Rendering Hardware Interface) Notes</p>
 <h3 id="usages">Usages</h3>
 <h5 id="rhi-global-variables">RHI Global Variables</h5>
@@ -396,8 +394,8 @@ RHI_API int32 GNumPrimitivesDrawnRHI = 0;
 <a href="https://github.com/EpicGames/UnrealEngine/blob/release/Engine/Source/Runtime/ImageWriteQueue/Private/ImageWriteBlueprintLibrary.cpp#L59">https://github.com/EpicGames/UnrealEngine/blob/release/Engine/Source/Runtime/ImageWriteQueue/Private/ImageWriteBlueprintLibrary.cpp#L59</a></p>
 <pre><code>FTextureResource* TextureResource = InTexture-&gt;Resource;
 ENQUEUE_RENDER_COMMAND(ResolvePixelData)(
-	[TextureResource, OnPixelsReady](FRHICommandListImmediate&amp; RHICmdList)
-	{
+    [TextureResource, OnPixelsReady](FRHICommandListImmediate&amp; RHICmdList)
+    {
         FTexture2DRHIRef Texture2D = TextureResource-&gt;TextureRHI ? TextureResource-&gt;TextureRHI-&gt;GetTexture2D() : nullptr;
         if (!Texture2D)
         {
@@ -413,15 +411,12 @@ ENQUEUE_RENDER_COMMAND(ResolvePixelData)(
                 TArray&lt;FFloat16Color&gt; RawPixels;
                 RawPixels.SetNum(SourceRect.Width() * SourceRect.Height());
                 RHICmdList.ReadSurfaceFloatData(Texture2D, SourceRect, RawPixels, (ECubeFace)0, 0, 0);
-
                 TUniquePtr&lt;TImagePixelData&lt;FFloat16Color&gt;&gt; PixelData = MakeUnique&lt;TImagePixelData&lt;FFloat16Color&gt;&gt;(SourceRect.Size(), TArray64&lt;FFloat16Color&gt;(MoveTemp(RawPixels)));
-
                 if (PixelData-&gt;IsDataWellFormed())
                 {
                     OnPixelsReady(MoveTemp(PixelData));
                     return;
                 }
-
                 break;
             }
 
@@ -429,7 +424,6 @@ ENQUEUE_RENDER_COMMAND(ResolvePixelData)(
             {
                 FReadSurfaceDataFlags ReadDataFlags(RCM_MinMax);
                 ReadDataFlags.SetLinearToGamma(false);
-
 
                 TArray&lt;FLinearColor&gt; RawPixels;
                 RawPixels.SetNum(SourceRect.Width() * SourceRect.Height());
@@ -440,10 +434,8 @@ ENQUEUE_RENDER_COMMAND(ResolvePixelData)(
                     OnPixelsReady(MoveTemp(PixelData));
                     return;
                 }
-
                 break;
             }
-
             case PF_R8G8B8A8:
             case PF_B8G8R8A8:
             {
@@ -465,11 +457,11 @@ ENQUEUE_RENDER_COMMAND(ResolvePixelData)(
             }
 
             default:
-                break;
+            break;
         }
 
         OnPixelsReady(nullptr);
-	}
+    }
 );
 </code></pre>
 <h5 id="how-to-convert-image-raw-data-to-texture2d-asset">How to convert image raw data to Texture2D asset</h5>
@@ -493,16 +485,15 @@ TSharedPtr&lt;IImageWrapper&gt; ImageWrapper = ImageWrapperModule.CreateImageWra
 //Set the compressed bytes - we need this information on game thread to be able to determine texture size, otherwise we'll need a complete async callback
 if (ImageWrapper.IsValid() &amp;&amp; ImageWrapper-&gt;SetCompressed(ImageRawData.GetData(), ImageRawData.Num()))
 {
-	//Create image given sizes
-	Texture = UTexture2D::CreateTransient(ImageWrapper-&gt;GetWidth(), ImageWrapper-&gt;GetHeight(), PF_B8G8R8A8);
-	Texture-&gt;UpdateResource();
+    //Create image given sizes
+    Texture = UTexture2D::CreateTransient(ImageWrapper-&gt;GetWidth(), ImageWrapper-&gt;GetHeight(), PF_B8G8R8A8);
+    Texture-&gt;UpdateResource();
 
-	//Uncompress on a background thread pool
-	Async(EAsyncExecution::ThreadPool, [ImageWrapper, Texture] {
+    //Uncompress on a background thread pool
+    Async(EAsyncExecution::ThreadPool, [ImageWrapper, Texture] {
         TArray&lt;uint8&gt; UncompressedBGRA;
         if (ImageWrapper-&gt;GetRaw(ERGBFormat::BGRA, 8, UncompressedBGRA))
         {
-
             FUpdateTextureData* UpdateData = new FUpdateTextureData;
             UpdateData-&gt;Texture2D = Texture;
             UpdateData-&gt;Region = FUpdateTextureRegion2D(0, 0, 0, 0, Texture-&gt;GetSizeX(), Texture-&gt;GetSizeY());
@@ -512,21 +503,20 @@ if (ImageWrapper.IsValid() &amp;&amp; ImageWrapper-&gt;SetCompressed(ImageRawDat
 
             ENQUEUE_RENDER_COMMAND(UpdateTextureDataCommand)([UpdateData](FRHICommandListImmediate&amp; RHICmdList) {
                 RHIUpdateTexture2D(
-                    ((FTexture2DResource*)UpdateData-&gt;Texture2D-&gt;Resource)-&gt;GetTexture2DRHI(),
-                    0,
-                    UpdateData-&gt;Region,
-                    UpdateData-&gt;Pitch,
-                    UpdateData-&gt;BufferArray-&gt;GetData()
+                ((FTexture2DResource*)UpdateData-&gt;Texture2D-&gt;Resource)-&gt;GetTexture2DRHI(),
+                0,
+                UpdateData-&gt;Region,
+                UpdateData-&gt;Pitch,
+                UpdateData-&gt;BufferArray-&gt;GetData()
                 );
                 delete UpdateData; //now that we've updated the texture data, we can finally release any data we're holding on to
-                });//End Enqueue
+            });//End Enqueue
         }
-        }
-        );
+    });
 }
 else
 {
-	UE_LOG(LogTemp, Warning, TEXT(&quot;Invalid image format cannot decode %d&quot;), (int32)DetectedFormat);
+    UE_LOG(LogTemp, Warning, TEXT(&quot;Invalid image format cannot decode %d&quot;), (int32)DetectedFormat);
 }
 </code></pre>
 <h5 id="how-to-invoke-functions-of-game-source-in-render-thread">How to invoke functions of game source in render thread</h5>
@@ -544,7 +534,7 @@ else
 void AMyCharacter::TestRender()
 {
     AMyActor* Actor = CreateTestActor();
-    
+
     ENQUEUE_RENDER_COMMAND(MyRenderingCommand)(
         [Actor](FRHICommandListImmediate&amp; RHICmdList)
         {
@@ -584,7 +574,7 @@ Engine\Plugins\Runtime\Oculus\OculusVR\Source\OculusHMD\Private\OculusHMD_Layer.
  {
      Super::StartPlay();
 
- #if PLATFORM_WINDOWS
+     #if PLATFORM_WINDOWS
      if( !IsValidRef( GD3DDevice ) || !IsValidRef( GD3DDeviceContext ) )
      {
          // Init D3D
@@ -600,14 +590,14 @@ Engine\Plugins\Runtime\Oculus\OculusVR\Source\OculusHMD\Private\OculusHMD_Layer.
          D3D_FEATURE_LEVEL CreatedFeatureLevel;
          HRESULT Hr = D3D11CreateDevice( NULL, DriverType, NULL, DeviceCreationFlags, FeatureLevels,
              sizeof(FeatureLevels)/sizeof(D3D_FEATURE_LEVEL), D3D11_SDK_VERSION, GD3DDevice.GetInitReference(),
-             &amp;CreatedFeatureLevel, GD3DDeviceContext.GetInitReference() );
+             &amp;CreatedFeatureLevel, GD3DDeviceContext.GetInitReference());
 
          if (FAILED(Hr))
          {
              UE_LOG(LogTemp, Error, TEXT(&quot;D3D Device can't be initialized +++++++++++ &quot;));
          }
      }
- #endif
+     #endif
  }
 </code></pre>
 </li>

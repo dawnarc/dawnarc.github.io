@@ -358,7 +358,6 @@ if (!doNotTrack) {
 					data-ad-client="ca-pub-4843403245883139">
 			</amp-auto-ads>
             <div class="main-content-wrap">
-                
                 <ins class="adsbygoogle"
                      style="display:block;height:120px"
                      data-ad-client="ca-pub-4843403245883139"
@@ -368,7 +367,6 @@ if (!doNotTrack) {
                 <script>
                      (adsbygoogle = window.adsbygoogle || []).push({});
                 </script>
-
               <p>Keywords：change post process settings when game is running, 运行时期间修改后处理设置</p>
 <h5 id="modify-properties-of-post-process-settings-of-camera-at-run-time">Modify properties of Post Process Settings of Camera at run-time</h5>
 <p>1，Get reference to Camera Component and drag out “Set members in PostProcessSettings” node.
@@ -472,23 +470,22 @@ If you want to change Post Process Materials only and keep other parameters unch
 <h5 id="manipulate-post-process-volume-using-c">Manipulate Post Process Volume using C++</h5>
 <p>Header</p>
 <pre><code>UPROPERTY(EditDefaultsOnly, Category = &quot;Post Process&quot;)
-	UMaterialInstance* TestMatIns = nullptr;
+    UMaterialInstance* TestMatIns = nullptr;
 
 UPROPERTY()
-	UMaterialInstanceDynamic* TestMatInsDyna = nullptr;
+    UMaterialInstanceDynamic* TestMatInsDyna = nullptr;
 </code></pre>
 <p>CPP</p>
 <pre><code>void AMyPlayerController::AddDynaMatForPostProcessVolume()
 {
-	TArray&lt;AActor*&gt; Actors;
-	UGameplayStatics::GetAllActorsOfClass(this, APostProcessVolume::StaticClass(), Actors);
-	if (Actors.Num() &gt; 0)
-	{
+    TArray&lt;AActor*&gt; Actors;
+    UGameplayStatics::GetAllActorsOfClass(this, APostProcessVolume::StaticClass(), Actors);
+    if (Actors.Num() &gt; 0)
+    {
         APostProcessVolume* PPV = Cast&lt;APostProcessVolume&gt;(Actors[0]);
         if (PPV)
         {
             FPostProcessSettings&amp; PostProcessSettings = PPV-&gt;Settings;
-
             if (TestMatIns)
             {
                 TestMatInsDyna = UKismetMaterialLibrary::CreateDynamicMaterialInstance(this, TestMatIns);
@@ -499,20 +496,20 @@ UPROPERTY()
                 PostProcessSettings.WeightedBlendables.Array.Add(WeightedBlendable);
             }
         }
-	}
+    }
 }
 
 void AMyPlayerController::UpdatePawnLocMaterial()
 {
-	if (TestMatInsDyna)
-	{
+    if (TestMatInsDyna)
+    {
         if (APawn* Pawn = GetPawn())
         {
             FVector Loc = Pawn-&gt;GetActorLocation();
             FLinearColor LocParam(Loc.X, Loc.Y, Loc.Z, 0.f);
             TestMatInsDyna-&gt;SetVectorParameterValue(TEXT(&quot;Location&quot;), LocParam);
         }
-	}
+    }
 }
 </code></pre>
 <h5 id="reference">Reference</h5>
