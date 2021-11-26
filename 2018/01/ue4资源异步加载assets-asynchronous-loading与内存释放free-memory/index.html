@@ -518,12 +518,12 @@ if (WidgetClass)
 <div class="alert success ">
   <p>只要对象失去引用后就会被自动释放，无需手动Destroy。如果是异步加载，对象只在回调函数中有效，回调函数执行完毕后，就会被标记为可收回状态，如果此时ForceGC，则对象会立即销毁。</p>
 </div>
-<h5 id="手动回收">手动回收</h5>
-<p>在执行加载时，将bManageActiveHandle标记为true，默认为false：表示是否手动管理FStreamableHandle。如果设置为true，则对象会一直常驻内存直到手动释放。</p>
+<h5 id="手动回收---manageactivehandle">手动回收 - ManageActiveHandle</h5>
+<p>在执行加载时，将<code>bManageActiveHandle</code>标记为<code>true</code>，默认为<code>false</code>：表示是否手动管理<code>FStreamableHandle</code>。如果设置为<code>true</code>，则对象会一直常驻内存直到手动释放。</p>
 <pre><code>FStreamableManager&amp; AssetLoader = UAssetManager::GetStreamableManager();
 UParticleSystem* AimObj = AssetLoader.LoadSynchronous&lt;UParticleSystem&gt;(FSoftObjectPath(AssetPath), true);
 </code></pre>
-<p>当对象不再需要时，再手动执行执行Unload。之后对象就会被自动回收：</p>
+<p>当对象不再需要时，再手动执行执行<code>Unload</code>。之后对象就会被自动回收：</p>
 <pre><code>FStreamableManager&amp; AssetLoader = UAssetManager::GetStreamableManager();
 AssetLoader.Unload(FSoftObjectPath(AssetPath));
 </code></pre>
@@ -531,8 +531,15 @@ AssetLoader.Unload(FSoftObjectPath(AssetPath));
 <pre><code>GEngine-&gt;ForceGarbageCollection(true);
 </code></pre>
 <div class="alert danger ">
-  <p>在编辑器模式下，上述两种回收方式都不起效，会一直常驻内存，只有在打包运行版本中才会生效。如果在编辑器运行模式下强制Destroy()或者MarkPendingKill()，则对象可以从内存中销毁，但是无法再次Load，除非重启编辑器。</p>
+  <p>在编辑器模式下，上述两种回收方式都不起效，会一直常驻内存，只有在打包运行版本中才会生效。如果在编辑器运行模式下强制<code>Destroy()</code>或者<code>MarkPendingKill()</code>，则对象可以从内存中销毁，但是无法再次Load，除非重启编辑器。</p>
 </div>
+<h5 id="手动回收---tsharedptrfstreamablehandle">手动回收 - TSharedPtr<!-- raw HTML omitted --></h5>
+<p><code>FStreamableManager::RequestAsyncLoad()</code>会返回一个共享指针<code>TSharedPtr&lt;FStreamableHandle&gt;</code>，逻辑上去控制这个智能指针的生命周期，当返回值<code>Handle</code>的<code>TSharedPtr</code>引用关系全部失效时，就会自动销毁当前Asset。</p>
+<pre><code>TSharedPtr&lt;FStreamableHandle&gt; Handle = FStreamableManager::RequestAsyncLoad();
+</code></pre>
+<p>前述的<code>ManageActiveHandle</code>控制内存回收方式，其实是<code>FStreamableManager</code>内部帮你做好了智能指针的对象引用管理。</p>
+<p>UE4智能指针文档：<br>
+<a href="https://dawnarc.com/2018/07/ue4-tsharedptr-tweakobjectptr-and-tuniqueptr/">[UE4] TSharedPtr, TWeakObjectPtr and TUniquePtr</a></p>
 <h3 id="加载资源中的引用关系">加载资源中的引用关系</h3>
 <p>2017年用4.18版本测试的结果如下：<br>
 <div class="alert warning ">
