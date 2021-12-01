@@ -475,7 +475,9 @@ static FVector VectorPlaneProject(const FVector&amp; V, const FVector&amp; Plane
  */
 static CORE_API FVector GetReflectionVector(const FVector&amp; Direction, const FVector&amp; SurfaceNormal);
 </code></pre>
-<h5 id="以rotator自身朝向为x轴获取对应的xyz轴方向的世界坐标系方向">以Rotator自身朝向为X轴，获取对应的X、Y、Z轴方向的世界坐标系方向</h5>
+<h5 id="获取世界rotator对应世界坐标系的3个轴向向量">获取世界Rotator对应世界坐标系的3个轴向向量</h5>
+<p>另一种等价表述：以Rotator自身朝向为X轴，获取对应的X、Y、Z轴方向的世界坐标系方向</p>
+<p>接口1：</p>
 <pre><code>FMatrix RotMatrix = FRotationMatrix(ActorB-&gt;GetActorRotation());
 FVector ForwardVector = RotMatrix.GetScaledAxis(EAxis::X);
 FVector RightVector = RotMatrix.GetScaledAxis(EAxis::Y);
@@ -484,15 +486,14 @@ FVector TopVector = RotMatrix.GetScaledAxis(EAxis::Z);
 <p>如果是想获取对应的方向向量使用：</p>
 <pre><code>FVector FMatrix::GetUnitAxis( EAxis::Type InAxis ) const
 </code></pre>
-<h5 id="获取世界rotator对应世界坐标系的3个轴向向量">获取世界Rotator对应世界坐标系的3个轴向向量</h5>
-<p>接口1；</p>
+<p>接口2：</p>
 <pre><code>FRotator TestRot(450.f, 45.f, 0.f);
 FVector OutX;
 FVector OutY;
 FVector OutZ;
 UKismetMathLibrary::GetAxes(TestRot, OutX, OutY, OutZ);
 </code></pre>
-<p>接口2；</p>
+<p>接口3：</p>
 <pre><code>FVector VecFwd = UKismetMathLibrary::GetForwardVector(TestRot);
 FVector VecRight = UKismetMathLibrary::GetRightVector(TestRot);
 FVector VecUp = UKismetMathLibrary::GetUpVector(TestRot);
@@ -514,6 +515,79 @@ float RightSpeed = VeclocityInNewDire.Y;
 FVector BaseDire(0, -1.f, 0.f);
 FVector OffsetDire = BaseDire.Rotation().UnrotateVector(Direction);
 </code></pre>
+<h5 id="计算方向的相反反向">计算方向的相反反向</h5>
+<pre><code>FVector UKismetMathLibrary::NegateVector(FVector A)
+</code></pre>
+<p>或者</p>
+<pre><code>FVector Direction;
+FVector InverseDire = -Direction;
+</code></pre>
+<h3 id="插值相关">插值相关</h3>
+<h5 id="interpolate">Interpolate</h5>
+<p>使用简单弹簧模型（Spring）来 interpolate 浮点数值（范围从 Current 到 Target）</p>
+<pre><code>float UKismetMathLibrary::FloatSpringInterp(float Current, float Target, UPARAM(ref) FFloatSpringState&amp; SpringState, 
+    float Stiffness, float CriticalDampingFactor, float DeltaTime, float Mass = 1.f);
+</code></pre>
+<p>同上，数值类型为 Vector：</p>
+<pre><code>FVector UKismetMathLibrary::VectorSpringInterp(FVector Current, FVector Target, UPARAM(ref) FVectorSpringState&amp; SpringState, float Stiffness, float CriticalDampingFactor, float DeltaTime, float Mass = 1.f);
+</code></pre>
+<p>Transform 插值计算：</p>
+<pre><code>FTransform UKismetMathLibrary::TInterpTo(const FTransform&amp; Current, const FTransform&amp; Target, float DeltaTime, float InterpSpeed);
+</code></pre>
+<h3 id="coordinate-system-related">Coordinate System Related</h3>
+<h5 id="rotation-transform">Rotation Transform</h5>
+<p>Transform rotation from World Space to Local Space:</p>
+<pre><code>FORCEINLINE FQuat FTransform::InverseTransformRotation(const FQuat&amp; Q) const;
+</code></pre>
+<p>example:</p>
+<pre><code>FRotator DestWorldRot(100.f, 100.f, 0.f);
+FQuat QuatWorld = DestWorldRot.Quaternion();
+FQuat QuatLocal = MyActor-&gt;GetComponentTransform().InverseTransformRotation(QuatWorld);
+FRotator RotOffset = QuatLocal.Rotator();
+</code></pre>
+<p>Transform rotation from Local Space to World Space:</p>
+<pre><code>FORCEINLINE FQuat FTransform::TransformRotation(const FQuat&amp; Q) const;
+</code></pre>
+<p>example:</p>
+<pre><code>FRotator DestRotOffset(100.f, 100.f, 0.f);
+FRotator DestRotInWorld = FTransform(CameraRotInWorld).TransformRotation(DestRotOffset.Quaternion()).Rotator();
+</code></pre>
+<h5 id="location-transform">Location Transform</h5>
+<p>World Space To Local Space:</p>
+<pre><code>FORCEINLINE FVector FTransform::InverseTransformPositionNoScale(const FVector &amp;V) const;
+</code></pre>
+<p>Blueprint Node:</p>
+<pre><code>InverseTransformLocation
+</code></pre>
+<p>Local Space To World Space:</p>
+<pre><code>FORCEINLINE FVector FTransform::TransformPositionNoScale(const FVector&amp; V) const;
+</code></pre>
+<div class="alert danger ">
+  <p>If you want only to calculate the Position Offset between two points, Rotation and Scale must be set to Zero. Otherwise the offset Vector would take account of direction. e.g. use <code>FTransform(Comp1-&gt;GetComponentLocation()).InverseTransformPosition(Loc2);</code> rather than <code>Comp1-&gt;GetComponentTransform().InverseTransformPosition(Loc2);</code></p>
+</div>
+<h5 id="direction-transform">Direction Transform</h5>
+<p>World To Local:</p>
+<pre><code>FORCEINLINE FVector FTransform::InverseTransformVectorNoScale(const FVector &amp;V) const
+</code></pre>
+<p>example:</p>
+<pre><code>//return the offset from Camera's World Rotation to Character's World Rotation.
+FRotator ASBaseCharacter::GetAimOffsets() const
+{
+	const FVector AimDirWS = GetBaseAimRotation().Vector();
+	const FVector AimDirLS = ActorToWorld().InverseTransformVectorNoScale(AimDirWS);
+	const FRotator AimRotLS = AimDirLS.Rotation();
+
+	return AimRotLS;
+}
+</code></pre>
+<p>Origin:<br>
+[SBaseCharacter in EpicSurvivalGameSeries]https://github.com/tomlooman/EpicSurvivalGameSeries/blob/4a6ee9a6081529fadbe0f693b2e4e6729d5ec08d/SurvivalGame/Source/SurvivalGame/Private/Player/SBaseCharacter.cpp#L374)</p>
+<p>Local To World:</p>
+<pre><code>FORCEINLINE FVector FTransform::TransformVectorNoScale(const FVector&amp; V) const
+</code></pre>
+<div class="alert warning ">
+  <p>If you want to calculate the Offset only between two Rotation (take no account of Location and Scale), the simplest way is to minus:<code>FRotator Offset = R2 - R1;</code>, but the result need to be corrected, because degrees may less than -180 or larger than 180.</p>
+</div>
 <h5 id="local-space-position-direction-or-rotation-to-world-space">Local Space (Position, Direction or Rotation) to World Space</h5>
 <p>Transform a position:</p>
 <pre><code>/** 
@@ -585,78 +659,6 @@ T.InverseTransformRotation(Rotation.Quaternion()).Rotator();
 </code></pre>
 <div class="alert info ">
   <p>Inner of InverseTransformXXX is using <code>UnrotateVector</code>.</p>
-</div>
-<h5 id="计算方向的相反反向">计算方向的相反反向</h5>
-<pre><code>FVector UKismetMathLibrary::NegateVector(FVector A)
-</code></pre>
-<p>或者</p>
-<pre><code>FVector Direction;
-FVector InverseDire = -Direction;
-</code></pre>
-<h3 id="插值相关">插值相关</h3>
-<p>使用简单弹簧模型（Spring）来 interpolate 浮点数值（范围从 Current 到 Target）</p>
-<pre><code>float UKismetMathLibrary::FloatSpringInterp(float Current, float Target, UPARAM(ref) FFloatSpringState&amp; SpringState, 
-    float Stiffness, float CriticalDampingFactor, float DeltaTime, float Mass = 1.f);
-</code></pre>
-<p>同上，数值类型为 Vector：</p>
-<pre><code>FVector UKismetMathLibrary::VectorSpringInterp(FVector Current, FVector Target, UPARAM(ref) FVectorSpringState&amp; SpringState, float Stiffness, float CriticalDampingFactor, float DeltaTime, float Mass = 1.f);
-</code></pre>
-<p>Transform 插值计算：</p>
-<pre><code>FTransform UKismetMathLibrary::TInterpTo(const FTransform&amp; Current, const FTransform&amp; Target, float DeltaTime, float InterpSpeed);
-</code></pre>
-<h3 id="coordinate-system-related">Coordinate System Related</h3>
-<h5 id="rotation-transform">Rotation Transform</h5>
-<p>Transform rotation from World Space to Local Space:</p>
-<pre><code>FORCEINLINE FQuat FTransform::InverseTransformRotation(const FQuat&amp; Q) const;
-</code></pre>
-<p>example:</p>
-<pre><code>FRotator DestWorldRot(100.f, 100.f, 0.f);
-FQuat QuatWorld = DestWorldRot.Quaternion();
-FQuat QuatLocal = MyActor-&gt;GetComponentTransform().InverseTransformRotation(QuatWorld);
-FRotator RotOffset = QuatLocal.Rotator();
-</code></pre>
-<p>Transform rotation from Local Space to World Space:</p>
-<pre><code>FORCEINLINE FQuat FTransform::TransformRotation(const FQuat&amp; Q) const;
-</code></pre>
-<p>example:</p>
-<pre><code>FRotator DestRotOffset(100.f, 100.f, 0.f);
-FRotator DestRotInWorld = FTransform(CameraRotInWorld).TransformRotation(DestRotOffset.Quaternion()).Rotator();
-</code></pre>
-<h5 id="location-transform">Location Transform</h5>
-<p>World Space To Local Space:</p>
-<pre><code>FORCEINLINE FVector FTransform::InverseTransformPositionNoScale(const FVector &amp;V) const;
-</code></pre>
-<p>Blueprint Node:</p>
-<pre><code>InverseTransformLocation
-</code></pre>
-<p>Local Space To World Space:</p>
-<pre><code>FORCEINLINE FVector FTransform::TransformPositionNoScale(const FVector&amp; V) const;
-</code></pre>
-<div class="alert danger ">
-  <p>If you want only to calculate the Position Offset between two points, Rotation and Scale must be set to Zero. Otherwise the offset Vector would take account of direction. e.g. use <code>FTransform(Comp1-&gt;GetComponentLocation()).InverseTransformPosition(Loc2);</code> rather than <code>Comp1-&gt;GetComponentTransform().InverseTransformPosition(Loc2);</code></p>
-</div>
-<h5 id="direction-transform">Direction Transform</h5>
-<p>World To Local:</p>
-<pre><code>FORCEINLINE FVector FTransform::InverseTransformVectorNoScale(const FVector &amp;V) const
-</code></pre>
-<p>example:</p>
-<pre><code>//return the offset from Camera's World Rotation to Character's World Rotation.
-FRotator ASBaseCharacter::GetAimOffsets() const
-{
-	const FVector AimDirWS = GetBaseAimRotation().Vector();
-	const FVector AimDirLS = ActorToWorld().InverseTransformVectorNoScale(AimDirWS);
-	const FRotator AimRotLS = AimDirLS.Rotation();
-
-	return AimRotLS;
-}
-</code></pre>
-<p>Origin:<br>
-<a href="https://github.com/tomlooman/EpicSurvivalGameSeries/blob/4a6ee9a6081529fadbe0f693b2e4e6729d5ec08d/SurvivalGame/Source/SurvivalGame/Private/Player/SBaseCharacter.cpp#L374">https://github.com/tomlooman/EpicSurvivalGameSeries/blob/4a6ee9a6081529fadbe0f693b2e4e6729d5ec08d/SurvivalGame/Source/SurvivalGame/Private/Player/SBaseCharacter.cpp#L374</a></p>
-<p>Local To World:</p>
-<pre><code>FORCEINLINE FVector FTransform::TransformVectorNoScale(const FVector&amp; V) const
-</code></pre>
-<div class="alert warning ">
-  <p>If you want to calculate the Offset only between two Rotation (take no account of Location and Scale), the simplest way is to minus:<code>FRotator Offset = R2 - R1;</code>, but the result need to be corrected, because degrees may less than -180 or larger than 180.</p>
 </div>
 <h3 id="cruve-related">Cruve Related</h3>
 <h5 id="bezier-cruve">Bezier Cruve</h5>
