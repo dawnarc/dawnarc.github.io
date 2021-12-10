@@ -545,12 +545,6 @@ Unity3D提供的类似封装为：function TransformDirection (direction : Vecto
 {
 }
 </code></pre>
-<p>TArray的排序用法
-如果有一组Character对象，想以他们的坐标和某个特定坐标作比较并排序，方式如下：</p>
-<pre><code>TArray&lt;ACharacter &gt; Arr;
-FVector FromLoc(1000.f, 1000.f, 0.f);
-Arr.Sort(FactorArrayDistanceSort2D(FromLoc));
-</code></pre>
 <p>UE4编译蓝图的引擎API<br>
 FKismetCompilerModule::CompileBlueprint()，其内部回去创建一个FBlueprintCompileReinstancer对象，该对象内部会创建待编译蓝图的DuplicatedClass。
 ULinkerLoad::CreateExport(int index)，其内部会去加载蓝图引用的相关资源。</p>
@@ -595,22 +589,9 @@ error : g:\Source\Work\Game20171205\program\client\TestTD\Source\TestTD\TestTD.B
 <p>解决办法：<br>
 在Build.cs中添加命令空间：<br>
 using Tools.DotNETCommon;</p>
-<p>【2017-12-07T19:45】<br>
-UE4集成Protobuf 3.5版本时的一些问题<br>
-错误：wire_format_lite.h(863): error C4146: unary minus operator applied to unsigned type, result still unsigned<br>
-解决办法：disable warning或者切换到3.4版本</p>
-<p>错误：type_traits(605): error C4647: behavior change: __is_pod(google::protobuf::internal::AuxillaryParseTableField) has different value in previous versions<br>
-解决办法：<br>
-修改generated_messages_table_driven.h<br>
-将<br>
-static_assert(std::is_pod<!-- raw HTML omitted -->::value, &ldquo;&quot;);<br>
-注释掉</p>
-<p>UE4集成3.X版本的protobuf有一些问题（比如无法静态链接protobuf-lite.lib），建议能用2.x版本就用2.x版本。</p>
 <p>相关参考：<br>
 <a href="https://github.com/hanbim520/protobuffer-for-Unreal-Engine-4-/issues/1">https://github.com/hanbim520/protobuffer-for-Unreal-Engine-4-/issues/1</a><br>
 <a href="https://medium.com/@0xflarion/using-ue4-w-google-protocol-buffers-ae7cab820d84">https://medium.com/@0xflarion/using-ue4-w-google-protocol-buffers-ae7cab820d84</a></p>
-<p>【2017-12-10T18:57】 
-UObject::ConditionalBeginDestroy()是异步销毁对象内存；AActor::Destroy();是同步销毁对象内存且是在当前帧结束时立即执行。这里说的销毁不是硬指针delete内存，而是从内存池中抹掉数据。</p>
 <p>【2017-12-14T14:24】<br>
 编译时引擎代码报错：</p>
 <pre><code>'SetPipelineState': illegal qualified name in member declaration
@@ -770,16 +751,6 @@ Windows Package full screen(Windows 打包版本全屏显示)<br>
 <p>如果还是无效，删掉<code>\Intermediate\Build</code>和<code>\Saved</code>两个目录，再重新构建。</p>
 <p>参考：<br>
 <a href="https://answers.unrealengine.com/questions/206504/how-to-default-fullscreen-in-shipping-package.html">https://answers.unrealengine.com/questions/206504/how-to-default-fullscreen-in-shipping-package.html</a></p>
-<p>【2018-10-26T17:33】<br>
-获取文件的最后修改时间<br>
-需要头文件：</p>
-<pre><code>#include &quot;Runtime/Core/Public/GenericPlatform/GenericPlatformFile.h&quot;
-#include &quot;HAL/PlatformFilemanager.h&quot;
-</code></pre>
-<p>API：</p>
-<pre><code>IPlatformFile&amp; Handle = FPlatformFileManager::Get().GetPlatformFile();
-FDateTime Time = Handle.GetTimeStamp(TEXT(&quot;path-to-file&quot;));
-</code></pre>
 <p>【2018-11-26T10:23】<br>
 UMG 的文本动换行<br>
 TextBox 控件：然后修改<code>Auto Warp Text</code>为：true。
@@ -814,9 +785,8 @@ How to get current Level Name using C++:</p>
 <p><a href="https://answers.unrealengine.com/questions/565218/how-do-i-get-the-name-of-the-streaming-level-that.html">https://answers.unrealengine.com/questions/565218/how-do-i-get-the-name-of-the-streaming-level-that.html</a></p>
 <p>【2019-03-29T14:58】<br>
 UProperty min &amp; max values ?</p>
-<pre><code>UPROPERTY(EditAnywhere, Category = &quot;Camera&quot;, 
-meta = (ClampMin = &quot;-89.0&quot;, ClampMax = &quot;0.0&quot;, UIMin = &quot;-89.0&quot;, UIMax = &quot;0.0&quot;))
- float CameraMinPitch;
+<pre><code>UPROPERTY(EditAnywhere, Category = &quot;Camera&quot;, meta = (ClampMin = &quot;-89.0&quot;, ClampMax = &quot;0.0&quot;, UIMin = &quot;-89.0&quot;, UIMax = &quot;0.0&quot;))
+float CameraMinPitch;
 </code></pre>
 <p>【2019-04-23T14:58】<br>
 Use <code>IsA</code> before <code>Cast</code>, because <code>Cast</code> would cause crash if the parent class of source and target are different.</p>
@@ -886,6 +856,15 @@ FGameDelegates::Get().GetExitCommandDelegate().AddUObject(this, &amp;UMyGameInst
 	}
 }
 </code></pre>
+<p>【2021-12-05T20:40】</p>
+<p>Blueprint runtime error:</p>
+<pre><code>Accessed none trying to read property material.
+</code></pre>
+<p>Solution:<br>
+Add <code>IsValid</code> node to check property.</p>
+<p>Origin:<br>
+What Does &ldquo;Accessed None Trying To Read Property&rdquo; Error Mean And How To Fix It - Unreal Engine<br>
+<a href="https://www.youtube.com/watch?v=x5yx7XqZrrA">https://www.youtube.com/watch?v=x5yx7XqZrrA</a></p>
 <hr>
 <p><code>凡心所向，素履以往。生如逆旅，一苇以航。----木心</code></p>
 

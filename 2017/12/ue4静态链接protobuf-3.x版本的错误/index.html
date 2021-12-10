@@ -13,102 +13,50 @@
 <meta name="generator" content="Hugo 0.88.1 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="UE4, Error, Protobuf">
-<meta name="description" content="如果使用3.x，将protoc生成的代码打成lib链接到UE4工程时，会出现以下错误（当template文件中有string字段时会报错，如果没有string可以编译通过）：
-2&gt;TestTDGameMode.cpp.obj : error LNK2019: unresolved external symbol &quot;public: void __cdecl my_proto::login_info::set_account(char const *)&quot; (?set_account@login_info@fh_proto@@QEAAXPEBD@Z) referenced in function &quot;public: virtual void __cdecl ATestTDGameMode::BeginPlay(void)&quot; (?BeginPlay@ATestTDGameMode@@UEAAXXZ)2&gt;G:\Source\Work\Game20171205\program\client\TestTD\Binaries\Win64\UE4Editor-TestTD-4710.dll : fatal error LNK1120: 1 unresolved externals Python脚本对protoc生成代码二次转换，然后与UE4工程编译(Protobuf 3.x) https://github.com/thejinchao/libprotobuf
-https://thecodeway.com/blog/?p=1394
-BAT脚本对protobuf官方源码修改以适配UE4编译（强烈推荐）
-Build Protobuf for Unreal Engine 4 with Jenkins Pipeline.
-https://github.com/kingsoftgames/protobuf-ue4
-修改Protobuf 3.x源码并作为UE4 plugin编译
-https://github.com/jashking/UE4Protobuf
-我基于该项目的protobuf代码，做了一个cmake自动构建配置：
-https://github.com/dawnarc/protobuf_ue4_cmake
-将protobuf3.x作为插件集成进UE4
-https://github.com/marshal-it/Protobuffer_UE4
-如果使用protobuf 2.x版本，可以不用修改任何代码，直接作为一个lib链接UE4工程。
-2020年7月更新 如果是protobuf 3.9.x之前的版本，需要按照以下方式对源码做多处修改：
-https://github.com/jashking/UE4Protobuf
-3.9.x及之后的版本，只需要按照以下脚本执行即可：
-https://github.com/kingsoftgames/protobuf-ue4
- 景色如冬
-萧瑟如枫
-攻势如弓
-魂断犹如梦中
-----《黄金甲》">
+<meta name="description" content="3.5版本编译问题 UE4集成Protobuf 3.5版本时的一些问题
+错误：wire_format_lite.h(863): error C4146: unary minus operator applied to unsigned type, result still unsigned
+解决办法：disable warning或者切换到3.4版本
+错误： type_traits(605): error C4647: behavior change: __is_pod(google::protobuf::internal::AuxillaryParseTableField) has different value in previous versions
+解决办法：
+修改generated_messages_table_driven.h。
+将static_assert(std::is_pod&lt;AuxillaryParseTableField&gt;::value, &quot;&quot;);注释掉
+3.5之后版本编译 如果使用3.x，将protoc生成的代码打成lib链接到UE4工程时，会出现以下错误（当template文件中有string字段时会报错，如果没有string可以编译通过）：
+2&gt;TestTDGameMode.cpp.obj : error LNK2019: unresolved external symbol &quot;public: void __cdecl my_proto::login_info::set_account(char const *)&quot; (?set_account@login_info@fh_proto@@QEAAXPEBD@Z) referenced in function &quot;public: virtual void __cdecl ATestTDGameMode::BeginPlay(void)&quot; (?BeginPlay@ATestTDGameMode@@UEAAXXZ)2&gt;G:\Source\Work\Game20171205\program\client\TestTD\Binaries\Win64\UE4Editor-TestTD-4710.dll : fatal error LNK1120: 1 unresolved externals Python脚本对protoc生成代码二次转换，然后与UE4工程编译(Protobuf 3.">
 
 
-<meta property="og:description" content="如果使用3.x，将protoc生成的代码打成lib链接到UE4工程时，会出现以下错误（当template文件中有string字段时会报错，如果没有string可以编译通过）：
-2&gt;TestTDGameMode.cpp.obj : error LNK2019: unresolved external symbol &quot;public: void __cdecl my_proto::login_info::set_account(char const *)&quot; (?set_account@login_info@fh_proto@@QEAAXPEBD@Z) referenced in function &quot;public: virtual void __cdecl ATestTDGameMode::BeginPlay(void)&quot; (?BeginPlay@ATestTDGameMode@@UEAAXXZ)2&gt;G:\Source\Work\Game20171205\program\client\TestTD\Binaries\Win64\UE4Editor-TestTD-4710.dll : fatal error LNK1120: 1 unresolved externals Python脚本对protoc生成代码二次转换，然后与UE4工程编译(Protobuf 3.x) https://github.com/thejinchao/libprotobuf
-https://thecodeway.com/blog/?p=1394
-BAT脚本对protobuf官方源码修改以适配UE4编译（强烈推荐）
-Build Protobuf for Unreal Engine 4 with Jenkins Pipeline.
-https://github.com/kingsoftgames/protobuf-ue4
-修改Protobuf 3.x源码并作为UE4 plugin编译
-https://github.com/jashking/UE4Protobuf
-我基于该项目的protobuf代码，做了一个cmake自动构建配置：
-https://github.com/dawnarc/protobuf_ue4_cmake
-将protobuf3.x作为插件集成进UE4
-https://github.com/marshal-it/Protobuffer_UE4
-如果使用protobuf 2.x版本，可以不用修改任何代码，直接作为一个lib链接UE4工程。
-2020年7月更新 如果是protobuf 3.9.x之前的版本，需要按照以下方式对源码做多处修改：
-https://github.com/jashking/UE4Protobuf
-3.9.x及之后的版本，只需要按照以下脚本执行即可：
-https://github.com/kingsoftgames/protobuf-ue4
- 景色如冬
-萧瑟如枫
-攻势如弓
-魂断犹如梦中
-----《黄金甲》">
+<meta property="og:description" content="3.5版本编译问题 UE4集成Protobuf 3.5版本时的一些问题
+错误：wire_format_lite.h(863): error C4146: unary minus operator applied to unsigned type, result still unsigned
+解决办法：disable warning或者切换到3.4版本
+错误： type_traits(605): error C4647: behavior change: __is_pod(google::protobuf::internal::AuxillaryParseTableField) has different value in previous versions
+解决办法：
+修改generated_messages_table_driven.h。
+将static_assert(std::is_pod&lt;AuxillaryParseTableField&gt;::value, &quot;&quot;);注释掉
+3.5之后版本编译 如果使用3.x，将protoc生成的代码打成lib链接到UE4工程时，会出现以下错误（当template文件中有string字段时会报错，如果没有string可以编译通过）：
+2&gt;TestTDGameMode.cpp.obj : error LNK2019: unresolved external symbol &quot;public: void __cdecl my_proto::login_info::set_account(char const *)&quot; (?set_account@login_info@fh_proto@@QEAAXPEBD@Z) referenced in function &quot;public: virtual void __cdecl ATestTDGameMode::BeginPlay(void)&quot; (?BeginPlay@ATestTDGameMode@@UEAAXXZ)2&gt;G:\Source\Work\Game20171205\program\client\TestTD\Binaries\Win64\UE4Editor-TestTD-4710.dll : fatal error LNK1120: 1 unresolved externals Python脚本对protoc生成代码二次转换，然后与UE4工程编译(Protobuf 3.">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[UE4]静态链接Protobuf 3.x版本的错误">
 <meta name="twitter:title" content="[UE4]静态链接Protobuf 3.x版本的错误">
 <meta property="og:url" content="https://dawnarc.com/2017/12/ue4%E9%9D%99%E6%80%81%E9%93%BE%E6%8E%A5protobuf-3.x%E7%89%88%E6%9C%AC%E7%9A%84%E9%94%99%E8%AF%AF/">
 <meta property="twitter:url" content="https://dawnarc.com/2017/12/ue4%E9%9D%99%E6%80%81%E9%93%BE%E6%8E%A5protobuf-3.x%E7%89%88%E6%9C%AC%E7%9A%84%E9%94%99%E8%AF%AF/">
 <meta property="og:site_name" content="玄冬Wong">
-<meta property="og:description" content="如果使用3.x，将protoc生成的代码打成lib链接到UE4工程时，会出现以下错误（当template文件中有string字段时会报错，如果没有string可以编译通过）：
-2&gt;TestTDGameMode.cpp.obj : error LNK2019: unresolved external symbol &quot;public: void __cdecl my_proto::login_info::set_account(char const *)&quot; (?set_account@login_info@fh_proto@@QEAAXPEBD@Z) referenced in function &quot;public: virtual void __cdecl ATestTDGameMode::BeginPlay(void)&quot; (?BeginPlay@ATestTDGameMode@@UEAAXXZ)2&gt;G:\Source\Work\Game20171205\program\client\TestTD\Binaries\Win64\UE4Editor-TestTD-4710.dll : fatal error LNK1120: 1 unresolved externals Python脚本对protoc生成代码二次转换，然后与UE4工程编译(Protobuf 3.x) https://github.com/thejinchao/libprotobuf
-https://thecodeway.com/blog/?p=1394
-BAT脚本对protobuf官方源码修改以适配UE4编译（强烈推荐）
-Build Protobuf for Unreal Engine 4 with Jenkins Pipeline.
-https://github.com/kingsoftgames/protobuf-ue4
-修改Protobuf 3.x源码并作为UE4 plugin编译
-https://github.com/jashking/UE4Protobuf
-我基于该项目的protobuf代码，做了一个cmake自动构建配置：
-https://github.com/dawnarc/protobuf_ue4_cmake
-将protobuf3.x作为插件集成进UE4
-https://github.com/marshal-it/Protobuffer_UE4
-如果使用protobuf 2.x版本，可以不用修改任何代码，直接作为一个lib链接UE4工程。
-2020年7月更新 如果是protobuf 3.9.x之前的版本，需要按照以下方式对源码做多处修改：
-https://github.com/jashking/UE4Protobuf
-3.9.x及之后的版本，只需要按照以下脚本执行即可：
-https://github.com/kingsoftgames/protobuf-ue4
- 景色如冬
-萧瑟如枫
-攻势如弓
-魂断犹如梦中
-----《黄金甲》">
-<meta name="twitter:description" content="如果使用3.x，将protoc生成的代码打成lib链接到UE4工程时，会出现以下错误（当template文件中有string字段时会报错，如果没有string可以编译通过）：
-2&gt;TestTDGameMode.cpp.obj : error LNK2019: unresolved external symbol &quot;public: void __cdecl my_proto::login_info::set_account(char const *)&quot; (?set_account@login_info@fh_proto@@QEAAXPEBD@Z) referenced in function &quot;public: virtual void __cdecl ATestTDGameMode::BeginPlay(void)&quot; (?BeginPlay@ATestTDGameMode@@UEAAXXZ)2&gt;G:\Source\Work\Game20171205\program\client\TestTD\Binaries\Win64\UE4Editor-TestTD-4710.dll : fatal error LNK1120: 1 unresolved externals Python脚本对protoc生成代码二次转换，然后与UE4工程编译(Protobuf 3.x) https://github.com/thejinchao/libprotobuf
-https://thecodeway.com/blog/?p=1394
-BAT脚本对protobuf官方源码修改以适配UE4编译（强烈推荐）
-Build Protobuf for Unreal Engine 4 with Jenkins Pipeline.
-https://github.com/kingsoftgames/protobuf-ue4
-修改Protobuf 3.x源码并作为UE4 plugin编译
-https://github.com/jashking/UE4Protobuf
-我基于该项目的protobuf代码，做了一个cmake自动构建配置：
-https://github.com/dawnarc/protobuf_ue4_cmake
-将protobuf3.x作为插件集成进UE4
-https://github.com/marshal-it/Protobuffer_UE4
-如果使用protobuf 2.x版本，可以不用修改任何代码，直接作为一个lib链接UE4工程。
-2020年7月更新 如果是protobuf 3.9.x之前的版本，需要按照以下方式对源码做多处修改：
-https://github.com/jashking/UE4Protobuf
-3.9.x及之后的版本，只需要按照以下脚本执行即可：
-https://github.com/kingsoftgames/protobuf-ue4
- 景色如冬
-萧瑟如枫
-攻势如弓
-魂断犹如梦中
-----《黄金甲》">
+<meta property="og:description" content="3.5版本编译问题 UE4集成Protobuf 3.5版本时的一些问题
+错误：wire_format_lite.h(863): error C4146: unary minus operator applied to unsigned type, result still unsigned
+解决办法：disable warning或者切换到3.4版本
+错误： type_traits(605): error C4647: behavior change: __is_pod(google::protobuf::internal::AuxillaryParseTableField) has different value in previous versions
+解决办法：
+修改generated_messages_table_driven.h。
+将static_assert(std::is_pod&lt;AuxillaryParseTableField&gt;::value, &quot;&quot;);注释掉
+3.5之后版本编译 如果使用3.x，将protoc生成的代码打成lib链接到UE4工程时，会出现以下错误（当template文件中有string字段时会报错，如果没有string可以编译通过）：
+2&gt;TestTDGameMode.cpp.obj : error LNK2019: unresolved external symbol &quot;public: void __cdecl my_proto::login_info::set_account(char const *)&quot; (?set_account@login_info@fh_proto@@QEAAXPEBD@Z) referenced in function &quot;public: virtual void __cdecl ATestTDGameMode::BeginPlay(void)&quot; (?BeginPlay@ATestTDGameMode@@UEAAXXZ)2&gt;G:\Source\Work\Game20171205\program\client\TestTD\Binaries\Win64\UE4Editor-TestTD-4710.dll : fatal error LNK1120: 1 unresolved externals Python脚本对protoc生成代码二次转换，然后与UE4工程编译(Protobuf 3.">
+<meta name="twitter:description" content="3.5版本编译问题 UE4集成Protobuf 3.5版本时的一些问题
+错误：wire_format_lite.h(863): error C4146: unary minus operator applied to unsigned type, result still unsigned
+解决办法：disable warning或者切换到3.4版本
+错误： type_traits(605): error C4647: behavior change: __is_pod(google::protobuf::internal::AuxillaryParseTableField) has different value in previous versions
+解决办法：
+修改generated_messages_table_driven.h。
+将static_assert(std::is_pod&lt;AuxillaryParseTableField&gt;::value, &quot;&quot;);注释掉
+3.5之后版本编译 如果使用3.x，将protoc生成的代码打成lib链接到UE4工程时，会出现以下错误（当template文件中有string字段时会报错，如果没有string可以编译通过）：
+2&gt;TestTDGameMode.cpp.obj : error LNK2019: unresolved external symbol &quot;public: void __cdecl my_proto::login_info::set_account(char const *)&quot; (?set_account@login_info@fh_proto@@QEAAXPEBD@Z) referenced in function &quot;public: virtual void __cdecl ATestTDGameMode::BeginPlay(void)&quot; (?BeginPlay@ATestTDGameMode@@UEAAXXZ)2&gt;G:\Source\Work\Game20171205\program\client\TestTD\Binaries\Win64\UE4Editor-TestTD-4710.dll : fatal error LNK1120: 1 unresolved externals Python脚本对protoc生成代码二次转换，然后与UE4工程编译(Protobuf 3.">
 <meta property="og:locale" content="en-us">
 
   
@@ -447,7 +395,17 @@ if (!doNotTrack) {
                 <script>
                      (adsbygoogle = window.adsbygoogle || []).push({});
                 </script>
-              <p>如果使用3.x，将protoc生成的代码打成lib链接到UE4工程时，会出现以下错误（当template文件中有string字段时会报错，如果没有string可以编译通过）：</p>
+              <h5 id="35版本编译问题">3.5版本编译问题</h5>
+<p>UE4集成Protobuf 3.5版本时的一些问题<br>
+错误：wire_format_lite.h(863): error C4146: unary minus operator applied to unsigned type, result still unsigned<br>
+解决办法：disable warning或者切换到3.4版本</p>
+<p>错误：
+type_traits(605): error C4647: behavior change: __is_pod(google::protobuf::internal::AuxillaryParseTableField) has different value in previous versions</p>
+<p>解决办法：<br>
+修改<code>generated_messages_table_driven.h</code>。<br>
+将<code>static_assert(std::is_pod&lt;AuxillaryParseTableField&gt;::value, &quot;&quot;);</code>注释掉</p>
+<h5 id="35之后版本编译">3.5之后版本编译</h5>
+<p>如果使用3.x，将protoc生成的代码打成lib链接到UE4工程时，会出现以下错误（当template文件中有string字段时会报错，如果没有string可以编译通过）：</p>
 <pre><code>2&gt;TestTDGameMode.cpp.obj : error LNK2019: unresolved external symbol &quot;public: void __cdecl my_proto::login_info::set_account(char const *)&quot; (?set_account@login_info@fh_proto@@QEAAXPEBD@Z) referenced in function &quot;public: virtual void __cdecl ATestTDGameMode::BeginPlay(void)&quot; (?BeginPlay@ATestTDGameMode@@UEAAXXZ)
 2&gt;G:\Source\Work\Game20171205\program\client\TestTD\Binaries\Win64\UE4Editor-TestTD-4710.dll : fatal error LNK1120: 1 unresolved externals
 </code></pre>
@@ -469,6 +427,7 @@ Build Protobuf for Unreal Engine 4 with Jenkins Pipeline.<br>
 <a href="https://github.com/jashking/UE4Protobuf">https://github.com/jashking/UE4Protobuf</a></p>
 <p>3.9.x及之后的版本，只需要按照以下脚本执行即可：<br>
 <a href="https://github.com/kingsoftgames/protobuf-ue4">https://github.com/kingsoftgames/protobuf-ue4</a></p>
+<p>3.12.x 版本已经不需要做改动。</p>
 <hr>
 <p><code>景色如冬</code><br>
 <code>萧瑟如枫</code><br>

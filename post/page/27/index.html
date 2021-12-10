@@ -321,6 +321,72 @@ if (!doNotTrack) {
     
     <div class="postShorten-header">
       <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2017/12/ue4switch-weapon-at-run-time-attachtocomponent/">
+          [UE4]Switch Weapon at run-time (AttachToComponent)
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2017-12-19T18:55:02&#43;08:00">
+        
+  
+  
+  
+  
+    Tuesday, 18:55, Dec 19, 2017
+  
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        https://github.com/tomlooman/EpicSurvivalGameSeries/blob/4a6ee9a6081529fadbe0f693b2e4e6729d5ec08d/SurvivalGame/Source/SurvivalGame/Private/Items/SWeapon.cpp#L106
+EpicSurvivalGameSeries\SurvivalGame\Source\SurvivalGame\Private\Items\SWeapon.cpp
+void ASWeapon::AttachMeshToPawn(EInventorySlot Slot){if (MyPawn){// Remove and hideDetachMeshFromPawn();USkeletalMeshComponent* PawnMesh = MyPawn-&gt;GetMesh();FName AttachPoint = MyPawn-&gt;GetInventoryAttachPoint(Slot);Mesh-&gt;SetHiddenInGame(false);Mesh-&gt;AttachToComponent(PawnMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, AttachPoint);}}void ASWeapon::DetachMeshFromPawn(){Mesh-&gt;DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);Mesh-&gt;SetHiddenInGame(true);} It&rsquo;s better to use FAttachmentTransformRules::SnapToTargetNotIncludingScale when attaching, otherwise maybe there&rsquo;s a big location offset between two actors when using KeepWorldTransform.
+ StaticMeshComponent无法附加到SkeletalMeshComponent上，附加后StaticMeshComponent会出现在场景中的随机位置，而不是父级SkeletalMeshComponent身上，且此时即使设置LocationOffset也无效。
+ 通过NewObject&lt;USkeletalMeshComponent&gt;(Owner)运行时创建的SkeletalMeshComponent可以附加到父级SkeletalMeshComponent上，但是无法播放父级SkeletalMeshComponent的动画，即使设置了WeaponComp-&gt;SetMasterPoseComponent(PawnMesh)。建议在构造函数中创建后SkeletalMeshComponent，然后再run-time修改SkeletalMesh模型，run-time修改指定SkeletalMeshComponent的SkeletalMesh是没有问题的，且可以正常播放父级的动画。
+  念去去、千里烟波，暮霭沉沉楚天阔。----北宋·柳永《雨霖铃》
+      
+      <p>
+        <a href="https://dawnarc.com/2017/12/ue4switch-weapon-at-run-time-attachtocomponent/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
         <a class="link-unstyled" href="https://dawnarc.com/2017/12/ue4skeletal-mesh-sockets%E7%94%A8%E6%B3%95/">
           [UE4]Skeletal Mesh Sockets用法
         </a>
@@ -748,28 +814,15 @@ dx11 feature level 10.0 is required to run the engine （运行引擎需要dx11�
     </div>
     <div class="postShorten-excerpt" itemprop="articleBody">
       
-        如果使用3.x，将protoc生成的代码打成lib链接到UE4工程时，会出现以下错误（当template文件中有string字段时会报错，如果没有string可以编译通过）：
-2&gt;TestTDGameMode.cpp.obj : error LNK2019: unresolved external symbol &quot;public: void __cdecl my_proto::login_info::set_account(char const *)&quot; (?set_account@login_info@fh_proto@@QEAAXPEBD@Z) referenced in function &quot;public: virtual void __cdecl ATestTDGameMode::BeginPlay(void)&quot; (?BeginPlay@ATestTDGameMode@@UEAAXXZ)2&gt;G:\Source\Work\Game20171205\program\client\TestTD\Binaries\Win64\UE4Editor-TestTD-4710.dll : fatal error LNK1120: 1 unresolved externals Python脚本对protoc生成代码二次转换，然后与UE4工程编译(Protobuf 3.x) https://github.com/thejinchao/libprotobuf
-https://thecodeway.com/blog/?p=1394
-BAT脚本对protobuf官方源码修改以适配UE4编译（强烈推荐）
-Build Protobuf for Unreal Engine 4 with Jenkins Pipeline.
-https://github.com/kingsoftgames/protobuf-ue4
-修改Protobuf 3.x源码并作为UE4 plugin编译
-https://github.com/jashking/UE4Protobuf
-我基于该项目的protobuf代码，做了一个cmake自动构建配置：
-https://github.com/dawnarc/protobuf_ue4_cmake
-将protobuf3.x作为插件集成进UE4
-https://github.com/marshal-it/Protobuffer_UE4
-如果使用protobuf 2.x版本，可以不用修改任何代码，直接作为一个lib链接UE4工程。
-2020年7月更新 如果是protobuf 3.9.x之前的版本，需要按照以下方式对源码做多处修改：
-https://github.com/jashking/UE4Protobuf
-3.9.x及之后的版本，只需要按照以下脚本执行即可：
-https://github.com/kingsoftgames/protobuf-ue4
- 景色如冬
-萧瑟如枫
-攻势如弓
-魂断犹如梦中
-----《黄金甲》
+        3.5版本编译问题 UE4集成Protobuf 3.5版本时的一些问题
+错误：wire_format_lite.h(863): error C4146: unary minus operator applied to unsigned type, result still unsigned
+解决办法：disable warning或者切换到3.4版本
+错误： type_traits(605): error C4647: behavior change: __is_pod(google::protobuf::internal::AuxillaryParseTableField) has different value in previous versions
+解决办法：
+修改generated_messages_table_driven.h。
+将static_assert(std::is_pod&lt;AuxillaryParseTableField&gt;::value, &quot;&quot;);注释掉
+3.5之后版本编译 如果使用3.x，将protoc生成的代码打成lib链接到UE4工程时，会出现以下错误（当template文件中有string字段时会报错，如果没有string可以编译通过）：
+2&gt;TestTDGameMode.cpp.obj : error LNK2019: unresolved external symbol &quot;public: void __cdecl my_proto::login_info::set_account(char const *)&quot; (?set_account@login_info@fh_proto@@QEAAXPEBD@Z) referenced in function &quot;public: virtual void __cdecl ATestTDGameMode::BeginPlay(void)&quot; (?BeginPlay@ATestTDGameMode@@UEAAXXZ)2&gt;G:\Source\Work\Game20171205\program\client\TestTD\Binaries\Win64\UE4Editor-TestTD-4710.dll : fatal error LNK1120: 1 unresolved externals Python脚本对protoc生成代码二次转换，然后与UE4工程编译(Protobuf 3.
       
       <p>
         <a href="https://dawnarc.com/2017/12/ue4%E9%9D%99%E6%80%81%E9%93%BE%E6%8E%A5protobuf-3.x%E7%89%88%E6%9C%AC%E7%9A%84%E9%94%99%E8%AF%AF/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -1236,71 +1289,6 @@ Cage和低模都为软边  Cage为平均法线，低模软边  2，将模型的O
       
       <p>
         <a href="https://dawnarc.com/2017/12/map-bakingsp%E7%83%98%E7%84%99%E6%B3%95%E7%BA%BF%E8%B4%B4%E5%9B%BE%E4%BD%BF%E7%94%A8cage%E5%A4%84%E7%90%86uv%E6%8E%A5%E7%BC%9D/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-          
-            
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2017/11/ue4%E6%A8%A1%E5%9E%8B%E4%BB%8E3d-maxmayablender%E5%AF%BC%E5%85%A5ue4%E6%97%B6%E5%A6%82%E4%BD%95%E4%BF%9D%E7%95%99%E9%A1%B6%E7%82%B9%E6%B3%95%E7%BA%BF/">
-          [UE4]模型从3D Max、Maya、Blender导入UE4时如何保留顶点法线
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2017-11-18T23:36:40&#43;08:00">
-        
-  
-  
-  
-  
-    Saturday, 23:36, Nov 18, 2017
-  
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        keywords：UE4、FBX、Maya、3D Max、Blender、Vertices Normals、顶点法线、Soften Edges、Harden Edges
-顶点法线在Max中叫做光滑组（Smoothing Group），在Maya中叫软硬边（Soften Edges/Harden Edges），Blender中叫光滑边（Smoothing Edge）。
-3D Max FBX  OBJ  Maya Maya无论导出FBX还是OBJ，都不需要在参数面板中勾选（根本就没有参数面板。。），导出时会默认保留对象上的软边和硬边。如果模型上有软边但又不希望导出，那么在导出前将这些边改成硬边。
-Blender FBX  OBJ  导入游戏引擎 UE4 UE4导入资源的面板参数中，Normal Import Method表示是否使用资源自带的法线，默认是使用资源自带的（Import Normals）。  Unity3D Unity导入资源提供的选项：automatically calculate normals，不勾选就表示使用自带的顶点法线。
- 杜郎老矣，想旧事、花须能说。记少年、一梦扬州，二十四桥明月。—周密《瑶华》
-      
-      <p>
-        <a href="https://dawnarc.com/2017/11/ue4%E6%A8%A1%E5%9E%8B%E4%BB%8E3d-maxmayablender%E5%AF%BC%E5%85%A5ue4%E6%97%B6%E5%A6%82%E4%BD%95%E4%BF%9D%E7%95%99%E9%A1%B6%E7%82%B9%E6%B3%95%E7%BA%BF/" class="postShorten-excerpt_link link">Continue reading</a>
         
       </p>
     </div>
