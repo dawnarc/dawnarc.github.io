@@ -10,7 +10,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.88.1 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.92.2 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="">
 <meta name="description" content="Hugo tranquilpeak theme demo">
@@ -299,6 +299,136 @@ if (!doNotTrack) {
                ">
         <section class="postShorten-group main-content-wrap">
           
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2017/02/ue4overlap%E6%A3%80%E6%B5%8B%E7%9A%84%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7%E5%87%BD%E6%95%B0/">
+          [UE4]Overlap检测的常用工具函数
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2017-02-22T17:27:40&#43;08:00">
+        
+  
+  
+  
+  
+    Wednesday, 17:27, Feb 22, 2017
+  
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        keyword: Overlap、Test、Blocking
+World.h
+/*** Test the collision of a shape at the supplied location using a specific channel, and return if any blocking overlap is found* @param Pos Location of center of box to test against the world* @param TraceChannel The 'channel' that this query is in, used to determine which components to hit* @param CollisionShape	CollisionShape - supports Box, Sphere, Capsule, Convex* @param Params Additional parameters used for the trace* @param ResponseParam	ResponseContainer to be used for this trace* @return TRUE if any blocking results are found*/bool OverlapBlockingTestByChannel(const FVector&amp; Pos, const FQuat&amp; Rot, ECollisionChannel TraceChannel, const FCollisionShape&amp; CollisionShape, const FCollisionQueryParams&amp; Params = FCollisionQueryParams::DefaultQueryParam, const FCollisionResponseParams&amp; ResponseParam = FCollisionResponseParams::DefaultResponseParam) const;/*** Test the collision of a shape at the supplied location using a specific channel, and return if any blocking or overlapping shape is found* @param Pos Location of center of box to test against the world* @param TraceChannel The 'channel' that this query is in, used to determine which components to hit* @param CollisionShape	CollisionShape - supports Box, Sphere, Capsule, Convex* @param Params Additional parameters used for the trace* @param ResponseParam	ResponseContainer to be used for this trace* @return TRUE if any blocking or overlapping results are found*/bool OverlapAnyTestByChannel(const FVector&amp; Pos, const FQuat&amp; Rot, ECollisionChannel TraceChannel, const FCollisionShape&amp; CollisionShape, const FCollisionQueryParams&amp; Params = FCollisionQueryParams::DefaultQueryParam, const FCollisionResponseParams&amp; ResponseParam = FCollisionResponseParams::DefaultResponseParam) const;/*** Test the collision of a shape at the supplied location using object types, and return if any overlap is found* @param Pos Location of center of box to test against the world* @param ObjectQueryParams	List of object types it's looking for* @param CollisionShape	CollisionShape - supports Box, Sphere, Capsule, Convex* @param Params Additional parameters used for the trace* @return TRUE if any blocking results are found*/bool OverlapAnyTestByObjectType(const FVector&amp; Pos, const FQuat&amp; Rot, const FCollisionObjectQueryParams&amp; ObjectQueryParams, const FCollisionShape&amp; CollisionShape, const FCollisionQueryParams&amp; Params = FCollisionQueryParams::DefaultQueryParam) const;/*** Test the collision of a shape at the supplied location using a specific profile, and return if any blocking overlap is found* @param Pos Location of center of box to test against the world* @param ProfileName The 'profile' used to determine which components to hit* @param	CollisionShape	CollisionShape - supports Box, Sphere, Capsule* @param Params Additional parameters used for the trace* @return TRUE if any blocking results are found*/bool OverlapBlockingTestByProfile(const FVector&amp; Pos, const FQuat&amp; Rot, FName ProfileName, const FCollisionShape&amp; CollisionShape, const FCollisionQueryParams&amp; Params = FCollisionQueryParams::DefaultQueryParam) const;/*** Test the collision of a shape at the supplied location using a specific profile, and return if any blocking or overlap is found* @param Pos Location of center of box to test against the world* @param ProfileName The 'profile' used to determine which components to hit* @param	CollisionShape	CollisionShape - supports Box, Sphere, Capsule* @param Params Additional parameters used for the trace* @return TRUE if any blocking or overlapping results are found*/bool OverlapAnyTestByProfile(const FVector&amp; Pos, const FQuat&amp; Rot, FName ProfileName, const FCollisionShape&amp; CollisionShape, const FCollisionQueryParams&amp; Params = FCollisionQueryParams::DefaultQueryParam) const;/*** Test the collision of a shape at the supplied location using a specific channel, and determine the set of components that it overlaps* @param OutOverlaps Array of components found to overlap supplied box* @param Pos Location of center of shape to test against the world* @param TraceChannel The 'channel' that this query is in, used to determine which components to hit* @param	CollisionShape	CollisionShape - supports Box, Sphere, Capsule* @param Params Additional parameters used for the trace* @param ResponseParam	ResponseContainer to be used for this trace* @return TRUE if OutOverlaps contains any blocking results*/bool OverlapMultiByChannel(TArray&lt;struct FOverlapResult&gt;&amp; OutOverlaps, const FVector&amp; Pos, const FQuat&amp; Rot, ECollisionChannel TraceChannel, const FCollisionShape&amp; CollisionShape, const FCollisionQueryParams&amp; Params = FCollisionQueryParams::DefaultQueryParam, const FCollisionResponseParams&amp; ResponseParam = FCollisionResponseParams::DefaultResponseParam) const;/*** Test the collision of a shape at the supplied location using object types, and determine the set of components that it overlaps* @param OutOverlaps Array of components found to overlap supplied box* @param Pos Location of center of shape to test against the world*	@param	ObjectQueryParams	List of object types it's looking for* @param	CollisionShape	CollisionShape - supports Box, Sphere, Capsule* @param Params Additional parameters used for the trace* @return TRUE if any overlap is found*/bool OverlapMultiByObjectType(TArray&lt;struct FOverlapResult&gt;&amp; OutOverlaps, const FVector&amp; Pos, const FQuat&amp; Rot, const FCollisionObjectQueryParams&amp; ObjectQueryParams, const FCollisionShape&amp; CollisionShape, const FCollisionQueryParams&amp; Params = FCollisionQueryParams::DefaultQueryParam) const;/*** Test the collision of a shape at the supplied location using a specific profile, and determine the set of components that it overlaps* @param OutOverlaps Array of components found to overlap supplied box* @param Pos Location of center of shape to test against the world* @param ProfileName The 'profile' used to determine which components to hit* @param	CollisionShape	CollisionShape - supports Box, Sphere, Capsule* @param Params Additional parameters used for the trace* @return TRUE if OutOverlaps contains any blocking results*/bool OverlapMultiByProfile(TArray&lt;struct FOverlapResult&gt;&amp; OutOverlaps, const FVector&amp; Pos, const FQuat&amp; Rot, FName ProfileName, const FCollisionShape&amp; CollisionShape, const FCollisionQueryParams&amp; Params = FCollisionQueryParams::DefaultQueryParam) const;  今年花胜去年红。可惜明年花更好，知与谁同？—欧阳修《浪淘沙》
+      
+      <p>
+        <a href="https://dawnarc.com/2017/02/ue4overlap%E6%A3%80%E6%B5%8B%E7%9A%84%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7%E5%87%BD%E6%95%B0/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2017/02/math%E5%85%B1%E8%BD%AD%E7%9F%A9%E9%98%B5%E9%80%86%E7%9F%A9%E9%98%B5%E5%A4%8D%E7%9F%A9%E9%98%B5/">
+          [Math]共轭矩阵、逆矩阵、复矩阵
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2017-02-22T14:32:02&#43;08:00">
+        
+  
+  
+  
+  
+    Wednesday, 14:32, Feb 22, 2017
+  
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/math">Math</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        共轭矩阵
+http://baike.baidu.com/item/%E5%85%B1%E8%BD%AD%E7%9F%A9%E9%98%B5
+逆矩阵
+http://baike.baidu.com/item/%E9%80%86%E7%9F%A9%E9%98%B5
+复矩阵
+http://baike.baidu.com/item/%E5%A4%8D%E7%9F%A9%E9%98%B5
+ 目察秋毫之末，耳不闻雷霆之声；耳调玉石之声，目不见太山之高。---《淮南子》
+      
+      <p>
+        <a href="https://dawnarc.com/2017/02/math%E5%85%B1%E8%BD%AD%E7%9F%A9%E9%98%B5%E9%80%86%E7%9F%A9%E9%98%B5%E5%A4%8D%E7%9F%A9%E9%98%B5/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
           
             
   
@@ -1138,147 +1268,6 @@ EditSketch 打开Tool -》 Sketch，取消EditSketch之后，就可以以X光显
       
       <p>
         <a href="https://dawnarc.com/2017/01/zbrushzsphere%E4%BD%BF%E7%94%A8/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-          
-            
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2017/01/zbrush%E5%A6%82%E4%BD%95%E6%97%8B%E8%BD%AC%E6%8B%89%E4%BC%B8%E7%A7%BB%E5%8A%A8%E6%A8%A1%E5%9E%8B/">
-          [ZBrush]如何旋转、拉伸、移动模型
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2017-01-14T04:08:40&#43;08:00">
-        
-  
-  
-  
-  
-    Saturday, 04:08, Jan 14, 2017
-  
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/zbrush">ZBrush</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        Keywords: ZBrush、Rotate、Scale、Move
-Transpose控制线 注意：要使用Transpose，必须将模型转换为PolyMesh3D。  大多数3D软件，包括游戏引擎，都有提供物体的Transform操作：旋转(path，yaw，roll)，大小伸缩（scale）、位置移动（x、y、z）。这个功能4R8才提供，4R8之前的版本，要实现transform操作，使用的是Transpose，它是笔刷的一个种类。具体用法是： 按下w键（或者点击菜单面板上Move图标），然后点击鼠标左键拖动，就可以拉出一根行动线，如果想让拉出的行动线与坐标轴保持平行或垂直，再按住shift键。   将鼠标悬停在黄色圆框内时，其内部会显示一个小圆框  3个圆框均可以按住来拖拽，拖拽的作用分别是：
- 左边圆框是伸缩物体； 中间红框是移动物体； 左边红框是切削物体（比如把一个球切掉一半）；  复制 在Transpose笔刷下，除了拖拽中间的圆圈来实现移动外，也可以使用按住Alt键、通过拖拽鼠标来移动物体。
-如果要复制一个物体，可以按住Ctrl键，然后鼠标按住中间的圆圈进行拖拽，来复制一个物体。
-注意：复制的操作，必须是在删掉Lower Subdiv Level情况下，否则无法通过上面两种方式来移动和复制。  移动 点击Transform –》 Move， 或者按W键  然后拉出一条Transpose，再按住3个圆圈之一，进行拖拽，来实现不同方向上的移动。  伸缩 点击Transform –》 Scale，或者按E键
-旋转 点击Transform –》 Rotate，或者按R键
-Transform的另外一种方式是，去掉Edit模式  然后按住其中一个圆圈不放（一共三个，分别代表Pitch、Roll、Yaw），然后拖动鼠标或压感笔，就可以实现移动、伸缩或旋转。注意，当圆圈被选中时会变宽。  注意： 移动、旋转、伸缩时一定要关闭Transform下面的对称，否则旋转就会出现变形。  Transpose控制线拉伸/伸缩 模型伸缩的规则，有两种方式：
-  Scale模式下的伸缩（快捷键E）
- 假如在一个立方体模型的某一个面上，拉出一条从左到右（绿色圆圈和蓝色圆圈的那一头表示线条起点）的水平Transpose控制线。  然后按住中间的黄色圆圈，沿着控制线终点方向（红色箭头方向，此例子中的从左往右）拖动，那么当前面的上下两侧就会往外拉伸。  如果逆着控制线的方向，按住中间的黄色圆圈拖动，那么当前面的上下两侧就会往内压缩。  以正方体为例，这种模式下，控制线所在的一面的高度可以增加或减小，但是左右的两个面的长和宽会保持比例缩放    Move模式下的伸缩（快捷键W）
- Move模式下，是按住终点圆圈不放，然后左右移动鼠标，（如果想保持直线移动，可以按住shift键），来实现拉伸或缩短尺寸。移动的方向就是拉伸或者缩短的方向。   如果想让模型某一端固定不变，让另一端自由伸缩甚至弯曲，可以先把鼠标悬停在右边圆圈后，然后按住Alt键不放，然后拖动鼠标。拖动鼠标过程中也可以同时按住shift键来保持直线移动。      如果冬天来了，春天还会远吗？---《雪莱诗选》
-      
-      <p>
-        <a href="https://dawnarc.com/2017/01/zbrush%E5%A6%82%E4%BD%95%E6%97%8B%E8%BD%AC%E6%8B%89%E4%BC%B8%E7%A7%BB%E5%8A%A8%E6%A8%A1%E5%9E%8B/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-          
-            
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2017/01/zbrush%E5%85%B3%E4%BA%8E%E7%BC%A9%E6%94%BE%E7%9A%84%E4%B8%89%E7%A7%8D%E6%96%B9%E5%BC%8F/">
-          [ZBrush]关于缩放的三种方式
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2017-01-14T01:50:40&#43;08:00">
-        
-  
-  
-  
-  
-    Saturday, 01:50, Jan 14, 2017
-  
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/zbrush">ZBrush</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        原文：http://www.zbrushcn.com/jichu/Zb-suofang.html
-ZBrush因为自己独特的界面和操方式经常会有朋友感到困惑，缩放就是其中一个，在ZBrush®中缩放有三种方式，文本将逐一介绍。还让朋友们纠结的是，在ZBrush中怎样用快捷键放大缩小画面，因为缩放的快捷键和移动画面的快捷键有些相像，所以有不少朋友迷糊了一下，本文小编也为大家详细比较一下。
-缩放的三种方式
-一、画布缩放 画布的缩放快捷键是-/+,作用是缩放整个画布，表现是模型画布同时在缩小或放大。
-二、视角缩放 视角缩放实际上是把模型拉远或放近，这个操作相当于使用放大镜，模型其实没有真的放大，可以使用右侧常用工具栏中的“Scale”按钮进行缩放。方法：将鼠标放在“Scale”按钮上上下左右拖动鼠标。
-这里还需要说明一下怎么用快捷键放大缩小画面。
-因为这个快捷键和移动画面有些相似，所以有不少朋友迷糊了一下。呵呵，这里给大家详细比较一下。
-平移视角：alt建＋左键在空白处单击并拖动 。
-缩放视角：alt键＋左键然后放开alt键在空白处拖动并平移鼠标。
-三、缩放模型 模型缩放就是真的将模型本身放大或缩小了，快捷键是E，然后拖动行动线的两端。
-  历史喜爱英勇豪迈的事迹，同时也谴责这种事迹所造成的后果。---《神秘岛》
-      
-      <p>
-        <a href="https://dawnarc.com/2017/01/zbrush%E5%85%B3%E4%BA%8E%E7%BC%A9%E6%94%BE%E7%9A%84%E4%B8%89%E7%A7%8D%E6%96%B9%E5%BC%8F/" class="postShorten-excerpt_link link">Continue reading</a>
         
       </p>
     </div>

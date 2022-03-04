@@ -10,7 +10,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.88.1 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.92.2 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="C&#43;&#43;, Map, Struct as Key">
 <meta name="description" content="keywords: C&#43;&#43;, std map, struct as key">
@@ -374,11 +374,11 @@ if (!doNotTrack) {
 	int x, y; 
 
 	bool operator==(const coord &amp;o) const {
-        return x == o.x &amp;&amp; y == o.y;
+		return x == o.x &amp;&amp; y == o.y;
 	}
 
 	bool operator&lt;(const coord &amp;o)  const {
-        return x &lt; o.x || (x == o.x &amp;&amp; y &lt; o.y);
+		return x &lt; o.x || (x == o.x &amp;&amp; y &lt; o.y);
 	}
 };
 </code></pre>
@@ -400,8 +400,8 @@ How can I use a struct as key in a std::map?<br>
 
   bool operator==(const Key &amp;other) const
   { return (first == other.first
-            &amp;&amp; second == other.second
-            &amp;&amp; third == other.third);
+			&amp;&amp; second == other.second
+			&amp;&amp; third == other.third);
   }
 };
 
@@ -412,18 +412,18 @@ struct hash&lt;Key&gt;
 {
 	std::size_t operator()(const Key&amp; k) const
 	{
-        using std::size_t;
-        using std::hash;
-        using std::string;
+		using std::size_t;
+		using std::hash;
+		using std::string;
 
-        // Compute individual hash values for first,
-        // second and third and combine them using XOR
-        // and bit shifting:
+		// Compute individual hash values for first,
+		// second and third and combine them using XOR
+		// and bit shifting:
 
-        return ((hash&lt;string&gt;()(k.first)
-        ^ (hash&lt;string&gt;()(k.second) &lt;&lt; 1)) &gt;&gt; 1)
-        ^ (hash&lt;int&gt;()(k.third) &lt;&lt; 1);
-        }
+		return ((hash&lt;string&gt;()(k.first)
+		^ (hash&lt;string&gt;()(k.second) &lt;&lt; 1)) &gt;&gt; 1)
+		^ (hash&lt;int&gt;()(k.third) &lt;&lt; 1);
+		}
 	};
 }
 

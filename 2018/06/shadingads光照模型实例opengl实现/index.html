@@ -10,27 +10,25 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.88.1 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.92.2 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="Shading, OpenGL, ADS">
 <meta name="description" content="keywords：ambient diffuse specular、Phong Shading、Phong reflection model
 公式概述 ADS光照模型又称为“冯氏反射模型”(Phong reflection model)，为什么叫冯氏：
 裴祥风（Bùi Tường Phong音译, 1942年—1975年），美国电脑CG研究学者，于越南出生。他于1973年在尤他大学取得哲学博士学位，并发明了Phong反射模型及Phong著色法，并广为CG界采用。1975死于白血病。
  ADS光照模型公式缩写：
-LightIntensity = Ambient &#43; Diffuse &#43; Specular; 参数说明：
+LightIntensity = Ambient &#43; Diffuse &#43; Specular; 参数说明：
  Ambient 环境光 Diffuse 漫反射 Specular 全反射光 / 镜面光  三个参数渲染效果示例：  三个参数拆解如下：
-Ambient = La * Ka; Diffuse = Ld * Kd * max( dot(s, n), 0.0 ); Specular = Ls * Ks * pow( max( dot(r, v), 0.0 ), f ); 参数说明：
- La 环境光强度(Ambient light intensity) Ka 材质环境光反射率 / 材质环境光反射系数(Ambient reflectivity) Ld 漫射光强度 / 散射光强度(Diffuse light intensity) Kd 材质漫反射率 / 材质漫反射系数(Diffuse reflectivity) s 顶点 / 曲面点 到光源方向的单位向量(Direction from the surface point to the light source) n 顶点 / 曲面点 的法线单位向量(Normal vector at the surface point) Ls 镜面光强度 / 全反射光强度(Specular light intensity) Ks 材质镜面反射率 / 材质镜面反射系数(Specular reflectivity) r 完全反射向量( the vector of perfect reflection) v 顶点 / 曲面点 到摄像机方向的向量( the vector towards the viewer) f 镜面高光(specular highlights)，值范围在1到200之间，值越小，镜面亮点越大   光源出射强度 / 出射光强度(Intensity of the outgoing light ) I 的完整计算公式如下：">
+Ambient = La * Ka;Diffuse = Ld * Kd * max( dot(s, n), 0.0 );Specular = Ls * Ks * pow( max( dot(r, v), 0.0 ), f ); 参数说明：">
 
 
 <meta property="og:description" content="keywords：ambient diffuse specular、Phong Shading、Phong reflection model
 公式概述 ADS光照模型又称为“冯氏反射模型”(Phong reflection model)，为什么叫冯氏：
 裴祥风（Bùi Tường Phong音译, 1942年—1975年），美国电脑CG研究学者，于越南出生。他于1973年在尤他大学取得哲学博士学位，并发明了Phong反射模型及Phong著色法，并广为CG界采用。1975死于白血病。
  ADS光照模型公式缩写：
-LightIntensity = Ambient &#43; Diffuse &#43; Specular; 参数说明：
+LightIntensity = Ambient &#43; Diffuse &#43; Specular; 参数说明：
  Ambient 环境光 Diffuse 漫反射 Specular 全反射光 / 镜面光  三个参数渲染效果示例：  三个参数拆解如下：
-Ambient = La * Ka; Diffuse = Ld * Kd * max( dot(s, n), 0.0 ); Specular = Ls * Ks * pow( max( dot(r, v), 0.0 ), f ); 参数说明：
- La 环境光强度(Ambient light intensity) Ka 材质环境光反射率 / 材质环境光反射系数(Ambient reflectivity) Ld 漫射光强度 / 散射光强度(Diffuse light intensity) Kd 材质漫反射率 / 材质漫反射系数(Diffuse reflectivity) s 顶点 / 曲面点 到光源方向的单位向量(Direction from the surface point to the light source) n 顶点 / 曲面点 的法线单位向量(Normal vector at the surface point) Ls 镜面光强度 / 全反射光强度(Specular light intensity) Ks 材质镜面反射率 / 材质镜面反射系数(Specular reflectivity) r 完全反射向量( the vector of perfect reflection) v 顶点 / 曲面点 到摄像机方向的向量( the vector towards the viewer) f 镜面高光(specular highlights)，值范围在1到200之间，值越小，镜面亮点越大   光源出射强度 / 出射光强度(Intensity of the outgoing light ) I 的完整计算公式如下：">
+Ambient = La * Ka;Diffuse = Ld * Kd * max( dot(s, n), 0.0 );Specular = Ls * Ks * pow( max( dot(r, v), 0.0 ), f ); 参数说明：">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[Shading]ADS光照模型实例(OpenGL实现)">
 <meta name="twitter:title" content="[Shading]ADS光照模型实例(OpenGL实现)">
@@ -41,18 +39,16 @@ Ambient = La * Ka; Diffuse = Ld * Kd * max( dot(s, n), 0.0 ); Specular = Ls * Ks
 公式概述 ADS光照模型又称为“冯氏反射模型”(Phong reflection model)，为什么叫冯氏：
 裴祥风（Bùi Tường Phong音译, 1942年—1975年），美国电脑CG研究学者，于越南出生。他于1973年在尤他大学取得哲学博士学位，并发明了Phong反射模型及Phong著色法，并广为CG界采用。1975死于白血病。
  ADS光照模型公式缩写：
-LightIntensity = Ambient &#43; Diffuse &#43; Specular; 参数说明：
+LightIntensity = Ambient &#43; Diffuse &#43; Specular; 参数说明：
  Ambient 环境光 Diffuse 漫反射 Specular 全反射光 / 镜面光  三个参数渲染效果示例：  三个参数拆解如下：
-Ambient = La * Ka; Diffuse = Ld * Kd * max( dot(s, n), 0.0 ); Specular = Ls * Ks * pow( max( dot(r, v), 0.0 ), f ); 参数说明：
- La 环境光强度(Ambient light intensity) Ka 材质环境光反射率 / 材质环境光反射系数(Ambient reflectivity) Ld 漫射光强度 / 散射光强度(Diffuse light intensity) Kd 材质漫反射率 / 材质漫反射系数(Diffuse reflectivity) s 顶点 / 曲面点 到光源方向的单位向量(Direction from the surface point to the light source) n 顶点 / 曲面点 的法线单位向量(Normal vector at the surface point) Ls 镜面光强度 / 全反射光强度(Specular light intensity) Ks 材质镜面反射率 / 材质镜面反射系数(Specular reflectivity) r 完全反射向量( the vector of perfect reflection) v 顶点 / 曲面点 到摄像机方向的向量( the vector towards the viewer) f 镜面高光(specular highlights)，值范围在1到200之间，值越小，镜面亮点越大   光源出射强度 / 出射光强度(Intensity of the outgoing light ) I 的完整计算公式如下：">
+Ambient = La * Ka;Diffuse = Ld * Kd * max( dot(s, n), 0.0 );Specular = Ls * Ks * pow( max( dot(r, v), 0.0 ), f ); 参数说明：">
 <meta name="twitter:description" content="keywords：ambient diffuse specular、Phong Shading、Phong reflection model
 公式概述 ADS光照模型又称为“冯氏反射模型”(Phong reflection model)，为什么叫冯氏：
 裴祥风（Bùi Tường Phong音译, 1942年—1975年），美国电脑CG研究学者，于越南出生。他于1973年在尤他大学取得哲学博士学位，并发明了Phong反射模型及Phong著色法，并广为CG界采用。1975死于白血病。
  ADS光照模型公式缩写：
-LightIntensity = Ambient &#43; Diffuse &#43; Specular; 参数说明：
+LightIntensity = Ambient &#43; Diffuse &#43; Specular; 参数说明：
  Ambient 环境光 Diffuse 漫反射 Specular 全反射光 / 镜面光  三个参数渲染效果示例：  三个参数拆解如下：
-Ambient = La * Ka; Diffuse = Ld * Kd * max( dot(s, n), 0.0 ); Specular = Ls * Ks * pow( max( dot(r, v), 0.0 ), f ); 参数说明：
- La 环境光强度(Ambient light intensity) Ka 材质环境光反射率 / 材质环境光反射系数(Ambient reflectivity) Ld 漫射光强度 / 散射光强度(Diffuse light intensity) Kd 材质漫反射率 / 材质漫反射系数(Diffuse reflectivity) s 顶点 / 曲面点 到光源方向的单位向量(Direction from the surface point to the light source) n 顶点 / 曲面点 的法线单位向量(Normal vector at the surface point) Ls 镜面光强度 / 全反射光强度(Specular light intensity) Ks 材质镜面反射率 / 材质镜面反射系数(Specular reflectivity) r 完全反射向量( the vector of perfect reflection) v 顶点 / 曲面点 到摄像机方向的向量( the vector towards the viewer) f 镜面高光(specular highlights)，值范围在1到200之间，值越小，镜面亮点越大   光源出射强度 / 出射光强度(Intensity of the outgoing light ) I 的完整计算公式如下：">
+Ambient = La * Ka;Diffuse = Ld * Kd * max( dot(s, n), 0.0 );Specular = Ls * Ks * pow( max( dot(r, v), 0.0 ), f ); 参数说明：">
 <meta property="og:locale" content="en-us">
 
   
@@ -394,36 +390,30 @@ if (!doNotTrack) {
                      (adsbygoogle = window.adsbygoogle || []).push({});
                 </script>
               <p>keywords：ambient diffuse specular、Phong Shading、Phong reflection model</p>
-
 <h4 id="公式概述">公式概述</h4>
-
 <p>ADS光照模型又称为“冯氏反射模型”(Phong reflection model)，为什么叫冯氏：</p>
-
 <div class="alert info ">
   <p>裴祥风（Bùi Tường Phong音译, 1942年—1975年），美国电脑CG研究学者，于越南出生。他于1973年在尤他大学取得哲学博士学位，并发明了Phong反射模型及Phong著色法，并广为CG界采用。1975死于白血病。</p>
 </div>
-
 <p>ADS光照模型公式缩写：</p>
-<pre tabindex="0"><code>LightIntensity = Ambient + Diffuse + Specular;</code></pre>
+<pre><code>LightIntensity = Ambient + Diffuse + Specular;
+</code></pre>
 <p>参数说明：</p>
-
 <ul>
 <li>Ambient 环境光</li>
 <li>Diffuse 漫反射</li>
 <li>Specular 全反射光 / 镜面光</li>
 </ul>
-
 <p>三个参数渲染效果示例：
 <figure><img src="https://dawnarc.com/img/20180603-[Shading]ADS%e5%85%89%e7%85%a7%e6%a8%a1%e5%9e%8b%e5%ae%9e%e4%be%8b%28OpenGL%e5%ae%9e%e7%8e%b0%29/[Shading]ADS%e5%85%89%e7%85%a7%e6%a8%a1%e5%9e%8b%e5%ae%9e%e4%be%8b%28OpenGL%e5%ae%9e%e7%8e%b0%29-04.jpg"/>
 </figure>
 </p>
-
 <p>三个参数拆解如下：</p>
-<pre tabindex="0"><code>Ambient = La * Ka;
+<pre><code>Ambient = La * Ka;
 Diffuse = Ld * Kd * max( dot(s, n), 0.0 );
-Specular = Ls * Ks * pow( max( dot(r, v), 0.0 ), f );</code></pre>
+Specular = Ls * Ks * pow( max( dot(r, v), 0.0 ), f );
+</code></pre>
 <p>参数说明：</p>
-
 <ul>
 <li>La 环境光强度(Ambient light intensity)</li>
 <li>Ka 材质环境光反射率 / 材质环境光反射系数(Ambient reflectivity)</li>
@@ -437,30 +427,22 @@ Specular = Ls * Ks * pow( max( dot(r, v), 0.0 ), f );</code></pre>
 <li>v 顶点 / 曲面点 到摄像机方向的向量( the vector towards the viewer)</li>
 <li>f 镜面高光(specular highlights)，值范围在1到200之间，值越小，镜面亮点越大</li>
 </ul>
-
 <figure><img src="https://dawnarc.com/img/20180603-[Shading]ADS%e5%85%89%e7%85%a7%e6%a8%a1%e5%9e%8b%e5%ae%9e%e4%be%8b%28OpenGL%e5%ae%9e%e7%8e%b0%29/[Shading]ADS%e5%85%89%e7%85%a7%e6%a8%a1%e5%9e%8b%e5%ae%9e%e4%be%8b%28OpenGL%e5%ae%9e%e7%8e%b0%29-02.png"/>
 </figure>
 
-
 <p>光源出射强度 / 出射光强度(Intensity of the outgoing light ) <code>I</code> 的完整计算公式如下：</p>
-
-<p><span  class="math">\[
+<p>$$
 I = La \cdot Ka+Ld \cdot Kd \cdot \left(\vec{s} \cdot \vec{n}\right)+Ls \cdot Ks \cdot \left(\vec{r} \cdot \vec{v}\right)^f
-\]</span></p>
-
+$$</p>
 <h4 id="渲染实例">渲染实例</h4>
-
 <p>OpenGL API 版本为4.1。</p>
-
 <p>假设不考虑环境光和镜面光，只考虑漫射光，渲染效果：</p>
-
 <figure><img src="https://dawnarc.com/img/20180603-[Shading]ADS%e5%85%89%e7%85%a7%e6%a8%a1%e5%9e%8b%e5%ae%9e%e4%be%8b%28OpenGL%e5%ae%9e%e7%8e%b0%29/[Shading]ADS%e5%85%89%e7%85%a7%e6%a8%a1%e5%9e%8b%e5%ae%9e%e4%be%8b%28OpenGL%e5%ae%9e%e7%8e%b0%29-01.jpg"/>
 </figure>
 
-
 <p>shader 代码：<br>
 diffuse.vert</p>
-<pre tabindex="0"><code>#version 410
+<pre><code>#version 410
 
 layout (location = 0) in vec3 VertexPosition;
 layout (location = 1) in vec3 VertexNormal;
@@ -478,32 +460,33 @@ uniform mat4 MVP;
 
 void main()
 {
-    vec3 tnorm = normalize( NormalMatrix * VertexNormal);
-    vec4 eyeCoords = ModelViewMatrix * vec4(VertexPosition,1.0);
-    vec3 s = normalize(vec3(LightPosition - eyeCoords));
+	vec3 tnorm = normalize( NormalMatrix * VertexNormal);
+	vec4 eyeCoords = ModelViewMatrix * vec4(VertexPosition,1.0);
+	vec3 s = normalize(vec3(LightPosition - eyeCoords));
 
-    LightIntensity = Ld * Kd * max( dot( s, tnorm ), 0.0 );
+	LightIntensity = Ld * Kd * max( dot( s, tnorm ), 0.0 );
 
-    gl_Position = MVP * vec4(VertexPosition,1.0);
-}</code></pre>
+	gl_Position = MVP * vec4(VertexPosition,1.0);
+}
+</code></pre>
 <p>diffuse.frag</p>
-<pre tabindex="0"><code>#version 410
+<pre><code>#version 410
 
 in vec3 LightIntensity;
 
 layout( location = 0 ) out vec4 FragColor;
 
 void main() {
-    FragColor = vec4(LightIntensity, 1.0);
-}</code></pre>
+	FragColor = vec4(LightIntensity, 1.0);
+}
+</code></pre>
 <p>同时计算环境光、漫反射、镜面反射的渲染效果：
 <figure><img src="https://dawnarc.com/img/20180603-[Shading]ADS%e5%85%89%e7%85%a7%e6%a8%a1%e5%9e%8b%e5%ae%9e%e4%be%8b%28OpenGL%e5%ae%9e%e7%8e%b0%29/[Shading]ADS%e5%85%89%e7%85%a7%e6%a8%a1%e5%9e%8b%e5%ae%9e%e4%be%8b%28OpenGL%e5%ae%9e%e7%8e%b0%29-03.jpg"/>
 </figure>
 </p>
-
 <p>shader 代码：<br>
 phong.vert</p>
-<pre tabindex="0"><code>#version 410
+<pre><code>#version 410
 
 layout (location = 0) in vec3 VertexPosition;
 layout (location = 1) in vec3 VertexNormal;
@@ -533,37 +516,37 @@ uniform mat4 MVP;
 
 void main()
 {
-    vec3 tnorm = normalize( NormalMatrix * VertexNormal);
-    vec4 eyeCoords = ModelViewMatrix * vec4(VertexPosition,1.0);
-    vec3 s = normalize(vec3(Light.Position - eyeCoords));
-    vec3 v = normalize(-eyeCoords.xyz);
-    vec3 r = reflect( -s, tnorm );
-    float sDotN = max( dot(s,tnorm), 0.0 );
-    vec3 ambient = Light.La * Material.Ka;
-    vec3 diffuse = Light.Ld * Material.Kd * sDotN;
-    vec3 spec = vec3(0.0);
-    if( sDotN &gt; 0.0 )
-       spec = Light.Ls * Material.Ks *
-              pow( max( dot(r,v), 0.0 ), Material.Shininess );
+	vec3 tnorm = normalize( NormalMatrix * VertexNormal);
+	vec4 eyeCoords = ModelViewMatrix * vec4(VertexPosition,1.0);
+	vec3 s = normalize(vec3(Light.Position - eyeCoords));
+	vec3 v = normalize(-eyeCoords.xyz);
+	vec3 r = reflect( -s, tnorm );
+	float sDotN = max( dot(s,tnorm), 0.0 );
+	vec3 ambient = Light.La * Material.Ka;
+	vec3 diffuse = Light.Ld * Material.Kd * sDotN;
+	vec3 spec = vec3(0.0);
+	if( sDotN &gt; 0.0 )
+	   spec = Light.Ls * Material.Ks *
+			  pow( max( dot(r,v), 0.0 ), Material.Shininess );
 
-    LightIntensity = ambient + diffuse + spec;
-    gl_Position = MVP * vec4(VertexPosition,1.0);
-}</code></pre>
+	LightIntensity = ambient + diffuse + spec;
+	gl_Position = MVP * vec4(VertexPosition,1.0);
+}
+</code></pre>
 <p>phong.frag</p>
-<pre tabindex="0"><code>#version 410
+<pre><code>#version 410
 
 in vec3 LightIntensity;
 
 layout( location = 0 ) out vec4 FragColor;
 
 void main() {
-    FragColor = vec4(LightIntensity, 1.0);
-}</code></pre>
+	FragColor = vec4(LightIntensity, 1.0);
+}
+</code></pre>
 <p>demo完整代码：<br>
 <a href="https://github.com/dawnarc/ShadingDemo">https://github.com/dawnarc/ShadingDemo</a></p>
-
 <hr>
-
 <p><code>在各种事物的常理中，爱情是无法改变和阻挡的，因为就本性而言，爱只会自行消亡，任何计谋都难以使它逆转。---意大利·薄伽丘《十日谈》</code></p>
 
               

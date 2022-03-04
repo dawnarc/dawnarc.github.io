@@ -10,7 +10,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.88.1 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.92.2 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="UE4, InstancedFoliageActor, InstancedStaticMeshComponent">
 <meta name="description" content="Keywords：InstancedFoliageActor, AInstancedFoliageActor,">
@@ -391,10 +391,10 @@ protected:
 	void BeginPlay() override;
 
 	UFUNCTION(BlueprintCallable)
-        void RemoveAllFoliages();
+		void RemoveAllFoliages();
 
 	UFUNCTION(BlueprintCallable)
-        void AddAllFoliages();
+		void AddAllFoliages();
 
 private:
 
@@ -412,18 +412,18 @@ private:
 
 	for (TActorIterator&lt;AInstancedFoliageActor&gt; Iter(GetWorld()); Iter; ++Iter)
 	{
-        if (*Iter)
-        {
-            //Get the all InstancedStaticMeshComponent in current Level.
-            InstancedStaticMeshCompArray = Iter-&gt;GetComponentsByClass(UInstancedStaticMeshComponent::StaticClass());
+		if (*Iter)
+		{
+			//Get the all InstancedStaticMeshComponent in current Level.
+			InstancedStaticMeshCompArray = Iter-&gt;GetComponentsByClass(UInstancedStaticMeshComponent::StaticClass());
 
-            //Print the name of InstancedStaticMeshComponent
-            for (UActorComponent* ActorComp : InstancedStaticMeshCompArray)
-            {
-                GEngine-&gt;AddOnScreenDebugMessage(-1, 10.f, FColor::Red, ActorComp-&gt;GetName());
-            }
-            break;
-        }
+			//Print the name of InstancedStaticMeshComponent
+			for (UActorComponent* ActorComp : InstancedStaticMeshCompArray)
+			{
+				GEngine-&gt;AddOnScreenDebugMessage(-1, 10.f, FColor::Red, ActorComp-&gt;GetName());
+			}
+			break;
+		}
 	}
 }
 </code></pre>
@@ -437,25 +437,25 @@ private:
 
 	for (UActorComponent* Comp : InstancedStaticMeshCompArray)
 	{
-        if (UInstancedStaticMeshComponent* InstancedComp = Cast&lt;UInstancedStaticMeshComponent&gt;(Comp))
-        {
-            GEngine-&gt;AddOnScreenDebugMessage(-1, 10.f, FColor::Green, FString::Printf(TEXT(&quot;%d&quot;), InstancedComp-&gt;GetInstanceCount()));
+		if (UInstancedStaticMeshComponent* InstancedComp = Cast&lt;UInstancedStaticMeshComponent&gt;(Comp))
+		{
+			GEngine-&gt;AddOnScreenDebugMessage(-1, 10.f, FColor::Green, FString::Printf(TEXT(&quot;%d&quot;), InstancedComp-&gt;GetInstanceCount()));
 
-            TArray&lt;FTransform&gt; TransformArray;
+			TArray&lt;FTransform&gt; TransformArray;
 
-            for (int i = InstancedComp-&gt;GetInstanceCount() - 1; i &gt;= 0; i--)
-            {
-                //Save the transform of current Instance.
-                FTransform Out;
-                InstancedComp-&gt;GetInstanceTransform(i, Out);
-                TransformArray.Add(Out);
+			for (int i = InstancedComp-&gt;GetInstanceCount() - 1; i &gt;= 0; i--)
+			{
+				//Save the transform of current Instance.
+				FTransform Out;
+				InstancedComp-&gt;GetInstanceTransform(i, Out);
+				TransformArray.Add(Out);
 
-                //Remove Instance at Run-time.
-                InstancedComp-&gt;RemoveInstance(i);
-            }
+				//Remove Instance at Run-time.
+				InstancedComp-&gt;RemoveInstance(i);
+			}
 
-            TransformMap.Add(InstancedComp-&gt;GetName(), TransformArray);
-        }
+			TransformMap.Add(InstancedComp-&gt;GetName(), TransformArray);
+		}
 	}
 }
 </code></pre>
@@ -470,18 +470,18 @@ private:
 {
 	for (UActorComponent* Comp : InstancedStaticMeshCompArray)
 	{
-        if (UInstancedStaticMeshComponent* InstancedComp = Cast&lt;UInstancedStaticMeshComponent&gt;(Comp))
-        {
-            if (TArray&lt;FTransform&gt;* TransformArray = TransformMap.Find(InstancedComp-&gt;GetName()))
-            {
-                for (FTransform&amp; Trans : *TransformArray)
-                {
-                    //Add Instance at Run-time, use the previous Transform.
-                    InstancedComp-&gt;AddInstance(Trans);
-                }
-            }
+		if (UInstancedStaticMeshComponent* InstancedComp = Cast&lt;UInstancedStaticMeshComponent&gt;(Comp))
+		{
+			if (TArray&lt;FTransform&gt;* TransformArray = TransformMap.Find(InstancedComp-&gt;GetName()))
+			{
+				for (FTransform&amp; Trans : *TransformArray)
+				{
+					//Add Instance at Run-time, use the previous Transform.
+					InstancedComp-&gt;AddInstance(Trans);
+				}
+			}
 			
-        }
+		}
 	}
 }
 </code></pre>
@@ -499,22 +499,22 @@ private:
 
 	for (TActorIterator&lt;AInstancedFoliageActor&gt; Iter(GetWorld()); Iter; ++Iter)
 	{
-        if (*Iter)
-        {
-            //Get the all InstancedStaticMeshComponent in current Level.
-            TArray&lt;UActorComponent*&gt; InstancedStaticMeshCompArray = Iter-&gt;GetComponentsByClass(UInstancedStaticMeshComponent::StaticClass());
+		if (*Iter)
+		{
+			//Get the all InstancedStaticMeshComponent in current Level.
+			TArray&lt;UActorComponent*&gt; InstancedStaticMeshCompArray = Iter-&gt;GetComponentsByClass(UInstancedStaticMeshComponent::StaticClass());
 			
-            for (UActorComponent* ActorComp : InstancedStaticMeshCompArray)
-            {
-                if (UInstancedStaticMeshComponent* InstancedComp = Cast&lt;UInstancedStaticMeshComponent&gt;(ActorComp))
-                {
-                    UStaticMesh* Mesh = InstancedComp-&gt;GetStaticMesh();
+			for (UActorComponent* ActorComp : InstancedStaticMeshCompArray)
+			{
+				if (UInstancedStaticMeshComponent* InstancedComp = Cast&lt;UInstancedStaticMeshComponent&gt;(ActorComp))
+				{
+					UStaticMesh* Mesh = InstancedComp-&gt;GetStaticMesh();
 
-                    TArray&lt;UMaterialInterface*&gt; Materials = InstancedComp-&gt;GetMaterials();
-                }
-            }
-            break;
-        }
+					TArray&lt;UMaterialInterface*&gt; Materials = InstancedComp-&gt;GetMaterials();
+				}
+			}
+			break;
+		}
 	}
 }
 </code></pre>
@@ -525,25 +525,25 @@ private:
 
 	for (TActorIterator&lt;AInstancedFoliageActor&gt; Iter(GetWorld()); Iter; ++Iter)
 	{
-        if (*Iter)
-        {
-            //Get the all InstancedStaticMeshComponent in current Level.
-            TArray&lt;UActorComponent*&gt; InstancedStaticMeshCompArray = Iter-&gt;GetComponentsByClass(UInstancedStaticMeshComponent::StaticClass());
+		if (*Iter)
+		{
+			//Get the all InstancedStaticMeshComponent in current Level.
+			TArray&lt;UActorComponent*&gt; InstancedStaticMeshCompArray = Iter-&gt;GetComponentsByClass(UInstancedStaticMeshComponent::StaticClass());
 			
-            for (UActorComponent* ActorComp : InstancedStaticMeshCompArray)
-            {
-                if (UInstancedStaticMeshComponent* InstancedComp = Cast&lt;UInstancedStaticMeshComponent&gt;(ActorComp))
-                {
-                    for (int i = InstancedComp-&gt;GetInstanceCount() - 1; i &gt;= 0; i--)
-                    {
-                        //Set Transform of Instance
-                        FTransform NewTransform;
-                        InstancedComp-&gt;UpdateInstanceTransform(i, NewTransform);
-                    }
-                }
-            }
-            break;
-        }
+			for (UActorComponent* ActorComp : InstancedStaticMeshCompArray)
+			{
+				if (UInstancedStaticMeshComponent* InstancedComp = Cast&lt;UInstancedStaticMeshComponent&gt;(ActorComp))
+				{
+					for (int i = InstancedComp-&gt;GetInstanceCount() - 1; i &gt;= 0; i--)
+					{
+						//Set Transform of Instance
+						FTransform NewTransform;
+						InstancedComp-&gt;UpdateInstanceTransform(i, NewTransform);
+					}
+				}
+			}
+			break;
+		}
 	}
 }
 </code></pre>
@@ -560,27 +560,27 @@ Set <code>bAutoRebuildTreeOnInstanceChanges</code> to false before manipulate In
 
 	for (auto&amp; MeshPair : FoliageMesh-&gt;FoliageMeshes)
 	{
-        const FFoliageMeshInfo&amp; MeshInfo = *MeshPair.Value;
-        UHierarchicalInstancedStaticMeshComponent* MeshComponent = MeshInfo.Component;
-        TArray&lt;FInstancedStaticMeshInstanceData&gt; MeshDataArray = MeshComponent-&gt;PerInstanceSMData;
-        FString MeshName = MeshComponent-&gt;GetStaticMesh()-&gt;GetName();
+		const FFoliageMeshInfo&amp; MeshInfo = *MeshPair.Value;
+		UHierarchicalInstancedStaticMeshComponent* MeshComponent = MeshInfo.Component;
+		TArray&lt;FInstancedStaticMeshInstanceData&gt; MeshDataArray = MeshComponent-&gt;PerInstanceSMData;
+		FString MeshName = MeshComponent-&gt;GetStaticMesh()-&gt;GetName();
 
-        for (auto&amp; MeshMatrix : MeshDataArray)
-        {
-            FTransform MeshTransform = FTransform(MeshMatrix.Transform);
+		for (auto&amp; MeshMatrix : MeshDataArray)
+		{
+			FTransform MeshTransform = FTransform(MeshMatrix.Transform);
 
-            UE_LOG(LogTemp, Warning, TEXT(&quot;%s, %f, %f, %f, %f, %f, %f, %f, %f, %f,&quot;),
-                *MeshName,
-                MeshTransform.GetLocation().X,
-                MeshTransform.GetLocation().Y,
-                MeshTransform.GetLocation().Z,
-                MeshTransform.GetRotation().X,
-                MeshTransform.GetRotation().Y,
-                MeshTransform.GetRotation().Z,
-                MeshTransform.GetScale3D().X,
-                MeshTransform.GetScale3D().Y, 
-                MeshTransform.GetScale3D().Z);
-        }
+			UE_LOG(LogTemp, Warning, TEXT(&quot;%s, %f, %f, %f, %f, %f, %f, %f, %f, %f,&quot;),
+				*MeshName,
+				MeshTransform.GetLocation().X,
+				MeshTransform.GetLocation().Y,
+				MeshTransform.GetLocation().Z,
+				MeshTransform.GetRotation().X,
+				MeshTransform.GetRotation().Y,
+				MeshTransform.GetRotation().Z,
+				MeshTransform.GetScale3D().X,
+				MeshTransform.GetScale3D().Y, 
+				MeshTransform.GetScale3D().Z);
+		}
 	}
 }
 </code></pre>

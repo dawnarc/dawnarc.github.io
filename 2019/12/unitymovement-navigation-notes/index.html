@@ -10,7 +10,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.88.1 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.92.2 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="Unity, Movement, Navigation">
 <meta name="description" content="Keywords: Unity, Movement, Navigation">
@@ -418,99 +418,99 @@ public class PlayerMovement : MonoBehaviour {
 
 
 	void Awake() {
-        CreatePlayerMovementPlane();
-        inputAction = new PlayerInputActions();
-        inputAction.PlayerControls.Move.performed += ctx =&gt; movementInput = ctx.ReadValue&lt;Vector2&gt;();
-        inputAction.PlayerControls.FireDirection.performed += ctx =&gt; lookPosition = ctx.ReadValue&lt;Vector2&gt;();
+		CreatePlayerMovementPlane();
+		inputAction = new PlayerInputActions();
+		inputAction.PlayerControls.Move.performed += ctx =&gt; movementInput = ctx.ReadValue&lt;Vector2&gt;();
+		inputAction.PlayerControls.FireDirection.performed += ctx =&gt; lookPosition = ctx.ReadValue&lt;Vector2&gt;();
 	}
 
 	void CreatePlayerMovementPlane() {
-        playerMovementPlane = new Plane(transform.up, transform.position + transform.up);
+		playerMovementPlane = new Plane(transform.up, transform.position + transform.up);
 	}
 
 	void FixedUpdate() {
 
-        //Old InputSystem Input
-        float h = movementInput.x;
-        float v = movementInput.y;
+		//Old InputSystem Input
+		float h = movementInput.x;
+		float v = movementInput.y;
 
-        var targetInput = new Vector3(h, 0, v);
-        inputDirection = Vector3.Lerp(inputDirection, targetInput, Time.deltaTime * 10f);
+		var targetInput = new Vector3(h, 0, v);
+		inputDirection = Vector3.Lerp(inputDirection, targetInput, Time.deltaTime * 10f);
 
-        //Camera Direction
-        var cameraForward = mainCamera.transform.forward;
-        var cameraRight = mainCamera.transform.right;
+		//Camera Direction
+		var cameraForward = mainCamera.transform.forward;
+		var cameraRight = mainCamera.transform.right;
 
-        cameraForward.y = 0f;
-        cameraRight.y = 0f;
+		cameraForward.y = 0f;
+		cameraRight.y = 0f;
 
-        //Try not to use var for roadshows or learning code
-        Vector3 desiredDirection = cameraForward * inputDirection.z + cameraRight * inputDirection.x;
+		//Try not to use var for roadshows or learning code
+		Vector3 desiredDirection = cameraForward * inputDirection.z + cameraRight * inputDirection.x;
 
-        //Why not just pass the vector instead of breaking it up only to remake it on the other side?
-        MoveThePlayer(desiredDirection);
-        TurnThePlayer();
-        AnimateThePlayer(desiredDirection);
+		//Why not just pass the vector instead of breaking it up only to remake it on the other side?
+		MoveThePlayer(desiredDirection);
+		TurnThePlayer();
+		AnimateThePlayer(desiredDirection);
 	}
 
 	void MoveThePlayer(Vector3 desiredDirection) {
-        movement.Set(desiredDirection.x, 0f, desiredDirection.z);
+		movement.Set(desiredDirection.x, 0f, desiredDirection.z);
 
-        movement = movement * speed * Time.deltaTime;
+		movement = movement * speed * Time.deltaTime;
 
-        playerRigidbody.MovePosition(transform.position + movement);
+		playerRigidbody.MovePosition(transform.position + movement);
 
 	}
 
 	void TurnThePlayer() {
 
-        // Old Input system
-        Vector2 input = lookPosition;
+		// Old Input system
+		Vector2 input = lookPosition;
 
-        // Convert &quot;input&quot; to a Vector3 where the Y axis will be used as the Z axis
-        Vector3 lookDirection = new Vector3(input.x, 0, input.y);
-        var lookRot = mainCamera.transform.TransformDirection(lookDirection);
-        lookRot = Vector3.ProjectOnPlane(lookRot, Vector3.up);
+		// Convert &quot;input&quot; to a Vector3 where the Y axis will be used as the Z axis
+		Vector3 lookDirection = new Vector3(input.x, 0, input.y);
+		var lookRot = mainCamera.transform.TransformDirection(lookDirection);
+		lookRot = Vector3.ProjectOnPlane(lookRot, Vector3.up);
 		
-        if (lookRot != Vector3.zero)
-        {
-            Quaternion newRotation = Quaternion.LookRotation(lookRot);
-            playerRigidbody.MoveRotation(newRotation);
-        }
+		if (lookRot != Vector3.zero)
+		{
+			Quaternion newRotation = Quaternion.LookRotation(lookRot);
+			playerRigidbody.MoveRotation(newRotation);
+		}
 	}
 
 	Vector3 PlaneRayIntersection(Plane plane, Ray ray) {
-        float dist = 0.0f;
-        plane.Raycast(ray, out dist);
-        return ray.GetPoint(dist);
+		float dist = 0.0f;
+		plane.Raycast(ray, out dist);
+		return ray.GetPoint(dist);
 	}
 
 	Vector3 ScreenPointToWorldPointOnPlane(Vector3 screenPoint, Plane plane, Camera camera) {
-        Ray ray = camera.ScreenPointToRay(screenPoint);
-        return PlaneRayIntersection(plane, ray);
+		Ray ray = camera.ScreenPointToRay(screenPoint);
+		return PlaneRayIntersection(plane, ray);
 	}
 
 
 	void AnimateThePlayer(Vector3 desiredDirection) {
-        if (!playerAnimator)
-            return;
+		if (!playerAnimator)
+			return;
 
-        Vector3 movement = new Vector3(desiredDirection.x, 0f, desiredDirection.z);
-        float forw = Vector3.Dot(movement, transform.forward);
-        float stra = Vector3.Dot(movement, transform.right);
+		Vector3 movement = new Vector3(desiredDirection.x, 0f, desiredDirection.z);
+		float forw = Vector3.Dot(movement, transform.forward);
+		float stra = Vector3.Dot(movement, transform.right);
 
-        playerAnimator.SetFloat(&quot;Forward&quot;, forw);
-        playerAnimator.SetFloat(&quot;Strafe&quot;, stra);
+		playerAnimator.SetFloat(&quot;Forward&quot;, forw);
+		playerAnimator.SetFloat(&quot;Strafe&quot;, stra);
 	}
 
 	private void OnEnable()
 	{
-        inputAction.Enable();
+		inputAction.Enable();
 	}
 
 	private void OnDisable()
 	{
-        inputAction.Disable();
+		inputAction.Disable();
 	}
 }
 </code></pre>

@@ -10,7 +10,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.88.1 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.92.2 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="UE4, Networking">
 <meta name="description" content="Keywords: UE4, Networking">
@@ -446,33 +446,33 @@ Engine\Source\Runtime\Engine\Private\ActorReplication.cpp</p>
 {
 	if (bAlwaysRelevant || IsOwnedBy(ViewTarget) || IsOwnedBy(RealViewer) || this == ViewTarget || ViewTarget == Instigator)
 	{
-        return true;
+		return true;
 	}
 	else if ( bNetUseOwnerRelevancy &amp;&amp; Owner)
 	{
-        return Owner-&gt;IsNetRelevantFor(RealViewer, ViewTarget, SrcLocation);
+		return Owner-&gt;IsNetRelevantFor(RealViewer, ViewTarget, SrcLocation);
 	}
 	else if ( bOnlyRelevantToOwner )
 	{
-        return false;
+		return false;
 	}
 	else if ( RootComponent &amp;&amp; RootComponent-&gt;GetAttachParent() &amp;&amp; RootComponent-&gt;GetAttachParent()-&gt;GetOwner() &amp;&amp; (Cast&lt;USkeletalMeshComponent&gt;(RootComponent-&gt;GetAttachParent()) || (RootComponent-&gt;GetAttachParent()-&gt;GetOwner() == Owner)) )
 	{
-        return RootComponent-&gt;GetAttachParent()-&gt;GetOwner()-&gt;IsNetRelevantFor(RealViewer, ViewTarget, SrcLocation);
+		return RootComponent-&gt;GetAttachParent()-&gt;GetOwner()-&gt;IsNetRelevantFor(RealViewer, ViewTarget, SrcLocation);
 	}
 	else if( bHidden &amp;&amp; (!RootComponent || !RootComponent-&gt;IsCollisionEnabled()) )
 	{
-        return false;
+		return false;
 	}
 
 	if (!RootComponent)
 	{
-        UE_LOG(LogNet, Warning, TEXT(&quot;Actor %s / %s has no root component in AActor::IsNetRelevantFor. (Make bAlwaysRelevant=true?)&quot;), *GetClass()-&gt;GetName(), *GetName() );
-        return false;
+		UE_LOG(LogNet, Warning, TEXT(&quot;Actor %s / %s has no root component in AActor::IsNetRelevantFor. (Make bAlwaysRelevant=true?)&quot;), *GetClass()-&gt;GetName(), *GetName() );
+		return false;
 	}
 
 	return !GetDefault&lt;AGameNetworkManager&gt;()-&gt;bUseDistanceBasedRelevancy ||
-            IsWithinNetRelevancyDistance(SrcLocation);
+			IsWithinNetRelevancyDistance(SrcLocation);
 }
 </code></pre>
 <p>Call Stack:</p>
@@ -503,8 +503,8 @@ uint8 bAlwaysRelevant:1;
 <p><code>Strip Animation Data On Dedicated Server</code> was used in <code>UAnimSequence::Serialize()</code>:</p>
 <pre><code>const bool bCookingTargetNeedsCompressedData = bIsCooking 
 	&amp;&amp; (!UAnimationSettings::Get()-&gt;bStripAnimationDataOnDedicatedServer 
-        || !bIsCookingForDedicatedServer 
-        || bEnableRootMotion);
+		|| !bIsCookingForDedicatedServer 
+		|| bEnableRootMotion);
 </code></pre>
 <h5 id="rpc-related-engine-api">RPC Related Engine API</h5>
 <p>Functions:</p>
@@ -580,9 +580,9 @@ UE4Editor-Win64-DebugGame.exe!WinMain(HINSTANCE__ * hInInstance=0x00000000000000
 	TEXT(&quot;net.AllowAsyncLoading&quot;),
 	0,
 	TEXT(&quot;Allow async loading of unloaded assets referenced in packets.&quot;
-        &quot; If false the client will hitch and immediately load the asset,&quot;
-        &quot; if true the packet will be delayed while the asset is async loaded.&quot;
-        &quot; net.DelayUnmappedRPCs can be enabled to delay RPCs relying on async loading assets.&quot;)
+		&quot; If false the client will hitch and immediately load the asset,&quot;
+		&quot; if true the packet will be delayed while the asset is async loaded.&quot;
+		&quot; net.DelayUnmappedRPCs can be enabled to delay RPCs relying on async loading assets.&quot;)
 );
 
 static TAutoConsoleVariable&lt;int32&gt; CVarDelayUnmappedRPCs(

@@ -10,7 +10,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.88.1 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.92.2 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="UE4, Networking">
 <meta name="description" content="Keywords: UE4, Networking, Dedicated Server,ClientTravel, ServerTravel, UEngine::Browse">
@@ -443,20 +443,20 @@ if (!doNotTrack) {
 	APlayerController* LocalPlayerController = nullptr;
 	for (FConstPlayerControllerIterator Iterator = GetWorld()-&gt;GetPlayerControllerIterator(); Iterator; ++Iterator)
 	{
-        if (APlayerController* PlayerController = Iterator-&gt;Get())
-        {
-            if (Cast&lt;UNetConnection&gt;(PlayerController-&gt;Player) != nullptr)
-            {
-                // Remote player
-                PlayerController-&gt;ClientTravel(FURL, TRAVEL_Relative, bSeamless, NextMapGuid);
-            }
-            else
-            {
-                // Local player
-                LocalPlayerController = PlayerController;
-                PlayerController-&gt;PreClientTravel(FURL, bAbsolute ? TRAVEL_Absolute : TRAVEL_Relative, bSeamless);
-            }
-        }
+		if (APlayerController* PlayerController = Iterator-&gt;Get())
+		{
+			if (Cast&lt;UNetConnection&gt;(PlayerController-&gt;Player) != nullptr)
+			{
+				// Remote player
+				PlayerController-&gt;ClientTravel(FURL, TRAVEL_Relative, bSeamless, NextMapGuid);
+			}
+			else
+			{
+				// Local player
+				LocalPlayerController = PlayerController;
+				PlayerController-&gt;PreClientTravel(FURL, bAbsolute ? TRAVEL_Absolute : TRAVEL_Relative, bSeamless);
+			}
+		}
 	}
 
 	return LocalPlayerController;
@@ -474,19 +474,19 @@ if (!doNotTrack) {
 	FString NextMap;
 	if (URL.ToUpper().Contains(TEXT(&quot;?RESTART&quot;)))
 	{
-        NextMap = UWorld::RemovePIEPrefix(GetOutermost()-&gt;GetName());
+		NextMap = UWorld::RemovePIEPrefix(GetOutermost()-&gt;GetName());
 	}
 	else
 	{
-        int32 OptionStart = URL.Find(TEXT(&quot;?&quot;));
-        if (OptionStart == INDEX_NONE)
-        {
-            NextMap = URL;
-        }
-        else
-        {
-            NextMap = URL.Left(OptionStart);
-        }
+		int32 OptionStart = URL.Find(TEXT(&quot;?&quot;));
+		if (OptionStart == INDEX_NONE)
+		{
+			NextMap = URL;
+		}
+		else
+		{
+			NextMap = URL.Left(OptionStart);
+		}
 	}
 
 	FGuid NextMapGuid = UEngine::GetPackageGuid(FName(*NextMap), GetWorld()-&gt;IsPlayInEditor());
@@ -503,13 +503,13 @@ if (!doNotTrack) {
 
 	if (bSeamless)
 	{
-        World-&gt;SeamlessTravel(World-&gt;NextURL, bAbsolute);
-        World-&gt;NextURL = TEXT(&quot;&quot;);
+		World-&gt;SeamlessTravel(World-&gt;NextURL, bAbsolute);
+		World-&gt;NextURL = TEXT(&quot;&quot;);
 	}
 	// Switch immediately if not networking.
 	else if (NetMode != NM_DedicatedServer &amp;&amp; NetMode != NM_ListenServer)
 	{
-        World-&gt;NextSwitchCountdown = 0.0f;
+		World-&gt;NextSwitchCountdown = 0.0f;
 	}
 #endif // WITH_SERVER_CODE
 }

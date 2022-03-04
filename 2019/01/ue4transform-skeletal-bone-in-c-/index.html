@@ -10,7 +10,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.88.1 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.92.2 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="UE4, skeletal bone, Transform, Anim Graph Node, AnimGraphNode">
 <meta name="description" content="Keywords: UE4, Animation, Transform Bone, Anim Graph Node, AnimGraphNode">
@@ -550,57 +550,57 @@ private:
 
 	if (ScaleMode != BMM_Ignore)
 	{
-        // Convert to Bone Space.
-        FAnimationRuntime::ConvertCSTransformToBoneSpace(ComponentTransform, Output.Pose, NewBoneTM, CompactPoseBoneToModify, ScaleSpace);
+		// Convert to Bone Space.
+		FAnimationRuntime::ConvertCSTransformToBoneSpace(ComponentTransform, Output.Pose, NewBoneTM, CompactPoseBoneToModify, ScaleSpace);
 
-        if (ScaleMode == BMM_Additive)
-        {
-            NewBoneTM.SetScale3D(NewBoneTM.GetScale3D() * Scale);
-        }
-        else
-        {
-            NewBoneTM.SetScale3D(Scale);
-        }
+		if (ScaleMode == BMM_Additive)
+		{
+			NewBoneTM.SetScale3D(NewBoneTM.GetScale3D() * Scale);
+		}
+		else
+		{
+			NewBoneTM.SetScale3D(Scale);
+		}
 
-        // Convert back to Component Space.
-        FAnimationRuntime::ConvertBoneSpaceTransformToCS(ComponentTransform, Output.Pose, NewBoneTM, CompactPoseBoneToModify, ScaleSpace);
+		// Convert back to Component Space.
+		FAnimationRuntime::ConvertBoneSpaceTransformToCS(ComponentTransform, Output.Pose, NewBoneTM, CompactPoseBoneToModify, ScaleSpace);
 	}
 
 	if (RotationMode != BMM_Ignore)
 	{
-        // Convert to Bone Space.
-        FAnimationRuntime::ConvertCSTransformToBoneSpace(ComponentTransform, Output.Pose, NewBoneTM, CompactPoseBoneToModify, RotationSpace);
+		// Convert to Bone Space.
+		FAnimationRuntime::ConvertCSTransformToBoneSpace(ComponentTransform, Output.Pose, NewBoneTM, CompactPoseBoneToModify, RotationSpace);
 
-        const FQuat BoneQuat(Rotation);
-        if (RotationMode == BMM_Additive)
-        {	
-            NewBoneTM.SetRotation(BoneQuat * NewBoneTM.GetRotation());
-        }
-        else
-        {
-            NewBoneTM.SetRotation(BoneQuat);
-        }
+		const FQuat BoneQuat(Rotation);
+		if (RotationMode == BMM_Additive)
+		{	
+			NewBoneTM.SetRotation(BoneQuat * NewBoneTM.GetRotation());
+		}
+		else
+		{
+			NewBoneTM.SetRotation(BoneQuat);
+		}
 
-        // Convert back to Component Space.
-        FAnimationRuntime::ConvertBoneSpaceTransformToCS(ComponentTransform, Output.Pose, NewBoneTM, CompactPoseBoneToModify, RotationSpace);
+		// Convert back to Component Space.
+		FAnimationRuntime::ConvertBoneSpaceTransformToCS(ComponentTransform, Output.Pose, NewBoneTM, CompactPoseBoneToModify, RotationSpace);
 	}
 	
 	if (TranslationMode != BMM_Ignore)
 	{
-        // Convert to Bone Space.
-        FAnimationRuntime::ConvertCSTransformToBoneSpace(ComponentTransform, Output.Pose, NewBoneTM, CompactPoseBoneToModify, TranslationSpace);
+		// Convert to Bone Space.
+		FAnimationRuntime::ConvertCSTransformToBoneSpace(ComponentTransform, Output.Pose, NewBoneTM, CompactPoseBoneToModify, TranslationSpace);
 
-        if (TranslationMode == BMM_Additive)
-        {
-            NewBoneTM.AddToTranslation(Translation);
-        }
-        else
-        {
-            NewBoneTM.SetTranslation(Translation);
-        }
+		if (TranslationMode == BMM_Additive)
+		{
+			NewBoneTM.AddToTranslation(Translation);
+		}
+		else
+		{
+			NewBoneTM.SetTranslation(Translation);
+		}
 
-        // Convert back to Component Space.
-        FAnimationRuntime::ConvertBoneSpaceTransformToCS(ComponentTransform, Output.Pose, NewBoneTM, CompactPoseBoneToModify, TranslationSpace);
+		// Convert back to Component Space.
+		FAnimationRuntime::ConvertBoneSpaceTransformToCS(ComponentTransform, Output.Pose, NewBoneTM, CompactPoseBoneToModify, TranslationSpace);
 	}
 	
 	OutBoneTransforms.Add( FBoneTransform(BoneToModify.GetCompactPoseIndex(BoneContainer), NewBoneTM) );

@@ -10,7 +10,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.88.1 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.92.2 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="UE4, Asset Asynchronous Loading">
 <meta name="description" content="为什么需要异步加载资源，因为当一次性加载的资源较多或者单个资源较大时，普通的LoadObject()方式会阻塞引擎的主线程。
@@ -408,7 +408,7 @@ if (!doNotTrack) {
 </code></pre>
 <p>TestTD4Character.h</p>
 <pre><code>UPROPERTY(Config)
-        TArray&lt;FSoftObjectPath&gt; TestAssets;
+		TArray&lt;FSoftObjectPath&gt; TestAssets;
 </code></pre>
 <p>这个属性的意思是：加Config标签表示从DefaultGame.ini读取，TestAssets就是DefaultGame.ini中配置的属性名，当游戏启动时，这个数组会被自动填充3个元素，即资源的路径。</p>
 <div class="alert warning ">
@@ -421,7 +421,7 @@ if (!doNotTrack) {
 
 	for (FSoftObjectPath&amp; Asset : TestAssets)
 	{
-        GEngine-&gt;AddOnScreenDebugMessage(-1, 3, FColor::Cyan, Asset.ToString());
+		GEngine-&gt;AddOnScreenDebugMessage(-1, 3, FColor::Cyan, Asset.ToString());
 	}
 
 	FStreamableManager&amp; AssetLoader = UAssetManager::GetStreamableManager();
@@ -432,13 +432,13 @@ void ATestTD4Character::AnimAssetsDeferred()
 {
 	for (FSoftObjectPath SoftObj : TestAssets)
 	{
-        TAssetPtr&lt;UAnimSequence&gt; AnimAsset(SoftObj);
+		TAssetPtr&lt;UAnimSequence&gt; AnimAsset(SoftObj);
 
-        UAnimSequence* AnimObj = AnimAsset.Get();
-        if (AnimObj)
-        {
-            GEngine-&gt;AddOnScreenDebugMessage(-1, 3, FColor::Red, AnimObj-&gt;GetName());
-        }
+		UAnimSequence* AnimObj = AnimAsset.Get();
+		if (AnimObj)
+		{
+			GEngine-&gt;AddOnScreenDebugMessage(-1, 3, FColor::Red, AnimObj-&gt;GetName());
+		}
 	}
 }
 </code></pre>
@@ -472,7 +472,7 @@ AssetLoader.RequestAsyncLoad(SoftObj, FStreamableDelegate::CreateUObject(this, &
 	UAnimSequence* AnimObj= AnimAsset.Get();
 	if (AnimObj)
 	{
-        GEngine-&gt;AddOnScreenDebugMessage(-1, 3, FColor::Red, AnimObj-&gt;GetName());
+		GEngine-&gt;AddOnScreenDebugMessage(-1, 3, FColor::Red, AnimObj-&gt;GetName());
 	}
 }
 </code></pre>
@@ -489,7 +489,7 @@ AssetLoader.RequestAsyncLoad(SoftObj, FStreamableDelegate::CreateUObject(this, &
 <pre><code>  TSharedPtr&lt;FStreamableHandle&gt; Handle = AssetLoader.RequestSyncLoad(FSoftObjectPath(TEXT(&quot;/Game/Assets/ThirdPerson_Jump.ThirdPerson_Jump&quot;)));
   if (Handle.IsValid())
   {
-      UAnimSequence* AnimiObj = Cast&lt;UAnimSequence&gt;(Handle-&gt;GetLoadedAsset());
+  	UAnimSequence* AnimiObj = Cast&lt;UAnimSequence&gt;(Handle-&gt;GetLoadedAsset());
   }
 </code></pre>
 </li>

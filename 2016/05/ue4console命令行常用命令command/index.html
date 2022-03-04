@@ -10,7 +10,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.88.1 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.92.2 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="UE4, Console, Command">
 <meta name="description" content="Keywords: UE4, Console, Command">
@@ -639,17 +639,11 @@ Project Settings -&gt; Engine -&gt; General Settings -&gt; Framerate -&gt; Unche
 <a href="https://www.youtube.com/watch?v=T90vqA9x5so">https://www.youtube.com/watch?v=T90vqA9x5so</a></p>
 <p>Command:</p>
 <pre><code>r.PostProcessAAQuality 0
- 
 sg.PostProcessQuality 0
- 
 sg.ShadowQuality 0
-
 sg.TextureQuality 0
-
 sg.EffectsQuality 0
-
 r.DetailMode 0
-
 foliage.DensityScale 0.25
 grass.DensityScale 0.25
 </code></pre>
@@ -661,12 +655,25 @@ grass.DensityScale 0.25
 <p>移动端修改画质级别（安卓为例）：</p>
 <pre><code>\Engine\Config\Android\AndroidScalability.ini
 </code></pre>
+<p>不同设备的默认配置（\Engine\Config\BaseDeviceProfiles.ini），以高端安卓机为例：</p>
+<pre><code>[Android_High DeviceProfile]
+DeviceType=Android
+BaseProfileName=Android
++CVars=sg.ViewDistanceQuality=2
++CVars=sg.AntiAliasingQuality=2
++CVars=sg.ShadowQuality=2
++CVars=sg.PostProcessQuality=2
++CVars=sg.TextureQuality=2
++CVars=sg.EffectsQuality=2
++CVars=sg.FoliageQuality=2
++CVars=r.MobileContentScaleFactor=1.0
+</code></pre>
 <p>程序启动时自动设置画质级别的位置：<br>
 Engine\Source\Runtime\Engine\Private\DeviceProfiles\DeviceProfileManager.cpp</p>
-<pre><code>    /**
-     * Startup and select the active device profile
-     * Then Init the CVars from this profile and it's Device profile parent tree.
-     */
+<pre><code>	/**
+	 * Startup and select the active device profile
+	 * Then Init the CVars from this profile and it's Device profile parent tree.
+	 */
 	static void InitializeCVarsForActiveDeviceProfile(bool bPushSettings=false, bool bForceDeviceProfilePriority = false);
 </code></pre>
 <p>手动检测硬件配置详情并自动设置画质级别：<br>
