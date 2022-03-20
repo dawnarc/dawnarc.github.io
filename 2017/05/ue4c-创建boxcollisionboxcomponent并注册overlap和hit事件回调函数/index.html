@@ -384,16 +384,16 @@ UBoxComponent* CollisionMesh;
 
 //OverlapBegin事件的回调函数，注意函数签名！
 UFUNCTION()
-	void OnTestOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &amp; SweepResult);
+    void OnTestOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &amp; SweepResult);
 
 //OverlapEnd事件的回调函数，注意函数签名！
 UFUNCTION()
-	void OnTestOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+    void OnTestOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 </code></pre>
 <p>旧版本函数签名：</p>
 <pre><code>UFUNCTION()
     void OnTestOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &amp; SweepResult);
-	
+    
 UFUNCTION()
     void OnTestOverlapEnd(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 </code></pre>
@@ -605,11 +605,11 @@ virtual void AActor::NotifyHit(class UPrimitiveComponent* MyComp, AActor* Other,
 <p>注册回调</p>
 <pre><code> void AMyCharacter::BeginPlay()
  {
- 	Super::BeginPlay();
+     Super::BeginPlay();
 
- 	FScriptDelegate Del;
- 	Del.BindUFunction(this, TEXT(&quot;OnOverlap&quot;));
- 	OnActorBeginOverlap.Add(Del);
+     FScriptDelegate Del;
+     Del.BindUFunction(this, TEXT(&quot;OnOverlap&quot;));
+     OnActorBeginOverlap.Add(Del);
  }
 </code></pre>
 </li>
@@ -622,16 +622,16 @@ virtual void AActor::NotifyHit(class UPrimitiveComponent* MyComp, AActor* Other,
 <p>cpp</p>
 <pre><code> void ATestTD2Character::OnOverlap(AActor* OverlappedActor, AActor* OtherActor)
  {
- 	GEngine-&gt;AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT(&quot;%s  %s  %s&quot;), *GetName(), *OverlappedActor-&gt;GetName(), *OtherActor-&gt;GetName()));
+     GEngine-&gt;AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT(&quot;%s  %s  %s&quot;), *GetName(), *OverlappedActor-&gt;GetName(), *OtherActor-&gt;GetName()));
  }
 </code></pre>
 </li>
 </ol>
 <h5 id="方式2重写-notifyactorbeginoverlap-函数">方式2：重写 NotifyActorBeginOverlap 函数</h5>
 <pre><code>/** 
- *	Event when this actor overlaps another actor, for example a player walking into a trigger.
- *	For events when objects have a blocking collision, for example a player hitting a wall, see 'Hit' events.
- *	@note Components on both this and the other Actor must have bGenerateOverlapEvents set to true to generate overlap events.
+ *    Event when this actor overlaps another actor, for example a player walking into a trigger.
+ *    For events when objects have a blocking collision, for example a player hitting a wall, see 'Hit' events.
+ *    @note Components on both this and the other Actor must have bGenerateOverlapEvents set to true to generate overlap events.
  */
 virtual void AActor::NotifyActorBeginOverlap(AActor* OtherActor);
 </code></pre>
@@ -660,10 +660,10 @@ UPrimitiveComponent::OverlapComponent();
 <pre><code>protected:
 
 UFUNCTION()
-	void OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &amp; SweepResult);
+    void OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &amp; SweepResult);
 
 UFUNCTION()
-	void OnOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+    void OnOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 </code></pre>
 <p>Constructor</p>
 <pre><code>GunMesh = CreateDefaultSubobject&lt;USkeletalMeshComponent&gt;(TEXT(&quot;GunMesh&quot;));
@@ -671,7 +671,7 @@ GunMesh-&gt;SetupAttachment(RootComponent);
 static ConstructorHelpers::FObjectFinder&lt;USkeletalMesh&gt; GunAsset(TEXT(&quot;SkeletalMesh'/Game/Assets/Weapons/Meshes/AR4/SK_AR4.SK_AR4'&quot;));
 if (GunAsset.Succeeded())
 {
-	GunMesh-&gt;SetSkeletalMesh(GunAsset.Object);
+    GunMesh-&gt;SetSkeletalMesh(GunAsset.Object);
 }
 GunMesh-&gt;SetRelativeLocation(FVector(200.f, 0.f, 100.f));
 GunMesh-&gt;SetGenerateOverlapEvents(true);
@@ -680,22 +680,22 @@ GunMesh-&gt;SetCollisionProfileName(&quot;OverlapAll&quot;);
 <p>Register Event：</p>
 <pre><code>void ATestTD2Character::BeginPlay()
 {
-	Super::BeginPlay();
+    Super::BeginPlay();
 
-	GunMeshComp-&gt;OnComponentBeginOverlap.AddDynamic(this, &amp;ATestTD2Character::OnOverlapBegin);
+    GunMeshComp-&gt;OnComponentBeginOverlap.AddDynamic(this, &amp;ATestTD2Character::OnOverlapBegin);
 
-	GunMeshComp-&gt;OnComponentEndOverlap.AddDynamic(this, &amp;ATestTD2Character::OnOverlapEnd);
+    GunMeshComp-&gt;OnComponentEndOverlap.AddDynamic(this, &amp;ATestTD2Character::OnOverlapEnd);
 }
 
 
 void ATestTD2Character::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &amp; SweepResult)
 {
-	GEngine-&gt;AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString(&quot;Weapon Overlap Begin ++++++&quot;));
+    GEngine-&gt;AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString(&quot;Weapon Overlap Begin ++++++&quot;));
 }
 
 void ATestTD2Character::OnOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	GEngine-&gt;AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString(&quot;Weapon Overlap End ------&quot;));
+    GEngine-&gt;AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString(&quot;Weapon Overlap End ------&quot;));
 }
 </code></pre>
 <div class="alert warning ">

@@ -405,7 +405,7 @@ void ATestTD4Character::BeginPlay(){Super::BeginPlay();for (FSoftObjectPath&a
 </code></pre>
 <p>TestTD4Character.h</p>
 <pre><code>UPROPERTY(Config)
-		TArray&lt;FSoftObjectPath&gt; TestAssets;
+        TArray&lt;FSoftObjectPath&gt; TestAssets;
 </code></pre>
 <p>这个属性的意思是：加Config标签表示从DefaultGame.ini读取，TestAssets就是DefaultGame.ini中配置的属性名，当游戏启动时，这个数组会被自动填充3个元素，即资源的路径。</p>
 <div class="alert warning ">
@@ -414,29 +414,29 @@ void ATestTD4Character::BeginPlay(){Super::BeginPlay();for (FSoftObjectPath&a
 <p>TestTD4Character.cpp</p>
 <pre><code>void ATestTD4Character::BeginPlay()
 {
-	Super::BeginPlay();
+    Super::BeginPlay();
 
-	for (FSoftObjectPath&amp; Asset : TestAssets)
-	{
-		GEngine-&gt;AddOnScreenDebugMessage(-1, 3, FColor::Cyan, Asset.ToString());
-	}
+    for (FSoftObjectPath&amp; Asset : TestAssets)
+    {
+        GEngine-&gt;AddOnScreenDebugMessage(-1, 3, FColor::Cyan, Asset.ToString());
+    }
 
-	FStreamableManager&amp; AssetLoader = UAssetManager::GetStreamableManager();
-	AssetLoader.RequestAsyncLoad(TestAssets, FStreamableDelegate::CreateUObject(this, &amp;ATestTD4Character::AnimAssetsDeferred));
+    FStreamableManager&amp; AssetLoader = UAssetManager::GetStreamableManager();
+    AssetLoader.RequestAsyncLoad(TestAssets, FStreamableDelegate::CreateUObject(this, &amp;ATestTD4Character::AnimAssetsDeferred));
 }
 
 void ATestTD4Character::AnimAssetsDeferred()
 {
-	for (FSoftObjectPath SoftObj : TestAssets)
-	{
-		TAssetPtr&lt;UAnimSequence&gt; AnimAsset(SoftObj);
+    for (FSoftObjectPath SoftObj : TestAssets)
+    {
+        TAssetPtr&lt;UAnimSequence&gt; AnimAsset(SoftObj);
 
-		UAnimSequence* AnimObj = AnimAsset.Get();
-		if (AnimObj)
-		{
-			GEngine-&gt;AddOnScreenDebugMessage(-1, 3, FColor::Red, AnimObj-&gt;GetName());
-		}
-	}
+        UAnimSequence* AnimObj = AnimAsset.Get();
+        if (AnimObj)
+        {
+            GEngine-&gt;AddOnScreenDebugMessage(-1, 3, FColor::Red, AnimObj-&gt;GetName());
+        }
+    }
 }
 </code></pre>
 <p>打印结果：</p>
@@ -465,12 +465,12 @@ AssetLoader.RequestAsyncLoad(SoftObj, FStreamableDelegate::CreateUObject(this, &
 <p>回调函数中获取对象</p>
 <pre><code>void ATestTD4Character::AssetsDeferred()
 {
-	TSoftObjectPtr&lt;UAnimSequence&gt; AnimAsset(SoftObj);
-	UAnimSequence* AnimObj= AnimAsset.Get();
-	if (AnimObj)
-	{
-		GEngine-&gt;AddOnScreenDebugMessage(-1, 3, FColor::Red, AnimObj-&gt;GetName());
-	}
+    TSoftObjectPtr&lt;UAnimSequence&gt; AnimAsset(SoftObj);
+    UAnimSequence* AnimObj= AnimAsset.Get();
+    if (AnimObj)
+    {
+        GEngine-&gt;AddOnScreenDebugMessage(-1, 3, FColor::Red, AnimObj-&gt;GetName());
+    }
 }
 </code></pre>
 <h3 id="同步加载">同步加载</h3>
@@ -486,7 +486,7 @@ AssetLoader.RequestAsyncLoad(SoftObj, FStreamableDelegate::CreateUObject(this, &
 <pre><code>  TSharedPtr&lt;FStreamableHandle&gt; Handle = AssetLoader.RequestSyncLoad(FSoftObjectPath(TEXT(&quot;/Game/Assets/ThirdPerson_Jump.ThirdPerson_Jump&quot;)));
   if (Handle.IsValid())
   {
-  	UAnimSequence* AnimiObj = Cast&lt;UAnimSequence&gt;(Handle-&gt;GetLoadedAsset());
+      UAnimSequence* AnimiObj = Cast&lt;UAnimSequence&gt;(Handle-&gt;GetLoadedAsset());
   }
 </code></pre>
 </li>

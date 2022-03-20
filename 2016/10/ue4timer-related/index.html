@@ -397,7 +397,7 @@ GetWorld()-&gt;GetTimerManager().SetTimer(TimerHandle, TimerDel, 5.f, false);
 <pre><code>FTimerHandle TimerHandle;
 GetWorld()-&gt;GetTimerManager().SetTimer(TimerHandle, [=]()
 {
-	GEngine-&gt;AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString(&quot;test+++&quot;));
+    GEngine-&gt;AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString(&quot;test+++&quot;));
 }, 0.3, false);
 </code></pre>
 <h5 id="clean-timer">Clean Timer</h5>
@@ -431,20 +431,20 @@ GetWorld()-&gt;GetTimerManager().SetTimer(TimerHandle, TimerDel, 5.f, false);
 <h5 id="profiling-record-cost-time-of-function">Profiling: record cost time of function</h5>
 <p>Quoted from <code>void FTimerManager::Tick(float DeltaTime)</code> in &ldquo;Engine\Source\Runtime\Engine\Private\TimerManager.cpp&rdquo;</p>
 <pre><code>#if DO_TIMEGUARD &amp;&amp; 0
-	SCOPED_NAMED_EVENT(FTimerManager_Tick_TIMEGUARD, FColor::Orange);
-	TArray&lt;FTimerUnifiedDelegate&gt; RunTimerDelegates;
-	FTimerNameDelegate NameFunction = FTimerNameDelegate::CreateLambda([&amp;] {
-			FString ActiveDelegates;
-			for ( const FTimerUnifiedDelegate&amp; Descriptor : RunTimerDelegates )
-			{
-				ActiveDelegates += FString::Printf(TEXT(&quot;Delegate %s, &quot;), *Descriptor.ToString() );
-			}
-			return FString::Printf(TEXT(&quot;UWorld::Tick - TimerManager, %s&quot;), *ActiveDelegates);
-		});
+    SCOPED_NAMED_EVENT(FTimerManager_Tick_TIMEGUARD, FColor::Orange);
+    TArray&lt;FTimerUnifiedDelegate&gt; RunTimerDelegates;
+    FTimerNameDelegate NameFunction = FTimerNameDelegate::CreateLambda([&amp;] {
+            FString ActiveDelegates;
+            for ( const FTimerUnifiedDelegate&amp; Descriptor : RunTimerDelegates )
+            {
+                ActiveDelegates += FString::Printf(TEXT(&quot;Delegate %s, &quot;), *Descriptor.ToString() );
+            }
+            return FString::Printf(TEXT(&quot;UWorld::Tick - TimerManager, %s&quot;), *ActiveDelegates);
+        });
 
 
-	// no delegate should take longer then 5ms to run 
-	SCOPE_TIME_GUARD_DELEGATE_MS(NameFunction, 5);
+    // no delegate should take longer then 5ms to run 
+    SCOPE_TIME_GUARD_DELEGATE_MS(NameFunction, 5);
 #endif
 </code></pre>
 <h5 id="reference">Reference</h5>

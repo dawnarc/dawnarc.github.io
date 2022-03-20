@@ -418,115 +418,115 @@
 <pre><code>UCLASS(meta=(Keywords = &quot;Modify Transform&quot;))
 class ANIMGRAPH_API UAnimGraphNode_ModifyBone : public UAnimGraphNode_SkeletalControlBase
 {
-	GENERATED_UCLASS_BODY()
+    GENERATED_UCLASS_BODY()
 
-	UPROPERTY(EditAnywhere, Category=Settings)
-	FAnimNode_ModifyBone Node;
+    UPROPERTY(EditAnywhere, Category=Settings)
+    FAnimNode_ModifyBone Node;
 
 public:
-	// UEdGraphNode interface
-	virtual FText GetNodeTitle(ENodeTitleType::Type TitleType) const override;
-	virtual FText GetTooltipText() const override;
-	// End of UEdGraphNode interface
+    // UEdGraphNode interface
+    virtual FText GetNodeTitle(ENodeTitleType::Type TitleType) const override;
+    virtual FText GetTooltipText() const override;
+    // End of UEdGraphNode interface
 
 protected:
-	// UAnimGraphNode_Base interface
-	virtual void ValidateAnimNodeDuringCompilation(USkeleton* ForSkeleton, FCompilerResultsLog&amp; MessageLog) override;
-	virtual FEditorModeID GetEditorMode() const override;
-	virtual void CopyNodeDataToPreviewNode(FAnimNode_Base* InPreviewNode) override;
-	virtual void CopyPinDefaultsToNodeData(UEdGraphPin* InPin) override;
-	// End of UAnimGraphNode_Base interface
+    // UAnimGraphNode_Base interface
+    virtual void ValidateAnimNodeDuringCompilation(USkeleton* ForSkeleton, FCompilerResultsLog&amp; MessageLog) override;
+    virtual FEditorModeID GetEditorMode() const override;
+    virtual void CopyNodeDataToPreviewNode(FAnimNode_Base* InPreviewNode) override;
+    virtual void CopyPinDefaultsToNodeData(UEdGraphPin* InPin) override;
+    // End of UAnimGraphNode_Base interface
 
-	// UAnimGraphNode_SkeletalControlBase interface
-	virtual FText GetControllerDescription() const override;
-	virtual const FAnimNode_SkeletalControlBase* GetNode() const override { return &amp;Node; }
-	// End of UAnimGraphNode_SkeletalControlBase interface
+    // UAnimGraphNode_SkeletalControlBase interface
+    virtual FText GetControllerDescription() const override;
+    virtual const FAnimNode_SkeletalControlBase* GetNode() const override { return &amp;Node; }
+    // End of UAnimGraphNode_SkeletalControlBase interface
 
 private:
-	/** Constructing FText strings can be costly, so we cache the node's title */
-	FNodeTitleTextTable CachedNodeTitles;
+    /** Constructing FText strings can be costly, so we cache the node's title */
+    FNodeTitleTextTable CachedNodeTitles;
 
-	// storing current widget mode 
-	int32 CurWidgetMode;
+    // storing current widget mode 
+    int32 CurWidgetMode;
 };
 </code></pre>
 <p>Engine\Source\Runtime\AnimGraphRuntime\Public\BoneControllers\AnimNode_ModifyBone.h</p>
 <pre><code>UENUM()
 enum EBoneModificationMode
 {
-	/** The modifier ignores this channel (keeps the existing bone translation, rotation, or scale). */
-	BMM_Ignore UMETA(DisplayName = &quot;Ignore&quot;),
+    /** The modifier ignores this channel (keeps the existing bone translation, rotation, or scale). */
+    BMM_Ignore UMETA(DisplayName = &quot;Ignore&quot;),
 
-	/** The modifier replaces the existing translation, rotation, or scale. */
-	BMM_Replace UMETA(DisplayName = &quot;Replace Existing&quot;),
+    /** The modifier replaces the existing translation, rotation, or scale. */
+    BMM_Replace UMETA(DisplayName = &quot;Replace Existing&quot;),
 
-	/** The modifier adds to the existing translation, rotation, or scale. */
-	BMM_Additive UMETA(DisplayName = &quot;Add to Existing&quot;)
+    /** The modifier adds to the existing translation, rotation, or scale. */
+    BMM_Additive UMETA(DisplayName = &quot;Add to Existing&quot;)
 };
 
 /**
- *	Simple controller that replaces or adds to the translation/rotation of a single bone.
+ *    Simple controller that replaces or adds to the translation/rotation of a single bone.
  */
 USTRUCT(BlueprintInternalUseOnly)
 struct ANIMGRAPHRUNTIME_API FAnimNode_ModifyBone : public FAnimNode_SkeletalControlBase
 {
-	GENERATED_USTRUCT_BODY()
+    GENERATED_USTRUCT_BODY()
 
-	/** Name of bone to control. This is the main bone chain to modify from. **/
-	UPROPERTY(EditAnywhere, Category=SkeletalControl) 
-	FBoneReference BoneToModify;
+    /** Name of bone to control. This is the main bone chain to modify from. **/
+    UPROPERTY(EditAnywhere, Category=SkeletalControl) 
+    FBoneReference BoneToModify;
 
-	/** New translation of bone to apply. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Translation, meta=(PinShownByDefault))
-	FVector Translation;
+    /** New translation of bone to apply. */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Translation, meta=(PinShownByDefault))
+    FVector Translation;
 
-	/** New rotation of bone to apply. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Rotation, meta=(PinShownByDefault))
-	FRotator Rotation;
+    /** New rotation of bone to apply. */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Rotation, meta=(PinShownByDefault))
+    FRotator Rotation;
 
-	/** New Scale of bone to apply. This is only worldspace. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Scale, meta=(PinShownByDefault))
-	FVector Scale;
+    /** New Scale of bone to apply. This is only worldspace. */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Scale, meta=(PinShownByDefault))
+    FVector Scale;
 
-	/** Whether and how to modify the translation of this bone. */
-	UPROPERTY(EditAnywhere, Category=Translation)
-	TEnumAsByte&lt;EBoneModificationMode&gt; TranslationMode;
+    /** Whether and how to modify the translation of this bone. */
+    UPROPERTY(EditAnywhere, Category=Translation)
+    TEnumAsByte&lt;EBoneModificationMode&gt; TranslationMode;
 
-	/** Whether and how to modify the translation of this bone. */
-	UPROPERTY(EditAnywhere, Category=Rotation)
-	TEnumAsByte&lt;EBoneModificationMode&gt; RotationMode;
+    /** Whether and how to modify the translation of this bone. */
+    UPROPERTY(EditAnywhere, Category=Rotation)
+    TEnumAsByte&lt;EBoneModificationMode&gt; RotationMode;
 
-	/** Whether and how to modify the translation of this bone. */
-	UPROPERTY(EditAnywhere, Category=Scale)
-	TEnumAsByte&lt;EBoneModificationMode&gt; ScaleMode;
+    /** Whether and how to modify the translation of this bone. */
+    UPROPERTY(EditAnywhere, Category=Scale)
+    TEnumAsByte&lt;EBoneModificationMode&gt; ScaleMode;
 
-	/** Reference frame to apply Translation in. */
-	UPROPERTY(EditAnywhere, Category=Translation)
-	TEnumAsByte&lt;enum EBoneControlSpace&gt; TranslationSpace;
+    /** Reference frame to apply Translation in. */
+    UPROPERTY(EditAnywhere, Category=Translation)
+    TEnumAsByte&lt;enum EBoneControlSpace&gt; TranslationSpace;
 
-	/** Reference frame to apply Rotation in. */
-	UPROPERTY(EditAnywhere, Category=Rotation)
-	TEnumAsByte&lt;enum EBoneControlSpace&gt; RotationSpace;
+    /** Reference frame to apply Rotation in. */
+    UPROPERTY(EditAnywhere, Category=Rotation)
+    TEnumAsByte&lt;enum EBoneControlSpace&gt; RotationSpace;
 
-	/** Reference frame to apply Scale in. */
-	UPROPERTY(EditAnywhere, Category=Scale)
-	TEnumAsByte&lt;enum EBoneControlSpace&gt; ScaleSpace;
+    /** Reference frame to apply Scale in. */
+    UPROPERTY(EditAnywhere, Category=Scale)
+    TEnumAsByte&lt;enum EBoneControlSpace&gt; ScaleSpace;
 
-	FAnimNode_ModifyBone();
+    FAnimNode_ModifyBone();
 
-	// FAnimNode_Base interface
-	virtual void GatherDebugData(FNodeDebugData&amp; DebugData) override;
-	// End of FAnimNode_Base interface
+    // FAnimNode_Base interface
+    virtual void GatherDebugData(FNodeDebugData&amp; DebugData) override;
+    // End of FAnimNode_Base interface
 
-	// FAnimNode_SkeletalControlBase interface
-	virtual void EvaluateSkeletalControl_AnyThread(FComponentSpacePoseContext&amp; Output, TArray&lt;FBoneTransform&gt;&amp; OutBoneTransforms) override;
-	virtual bool IsValidToEvaluate(const USkeleton* Skeleton, const FBoneContainer&amp; RequiredBones) override;
-	// End of FAnimNode_SkeletalControlBase interface
+    // FAnimNode_SkeletalControlBase interface
+    virtual void EvaluateSkeletalControl_AnyThread(FComponentSpacePoseContext&amp; Output, TArray&lt;FBoneTransform&gt;&amp; OutBoneTransforms) override;
+    virtual bool IsValidToEvaluate(const USkeleton* Skeleton, const FBoneContainer&amp; RequiredBones) override;
+    // End of FAnimNode_SkeletalControlBase interface
 
 private:
-	// FAnimNode_SkeletalControlBase interface
-	virtual void InitializeBoneReferences(const FBoneContainer&amp; RequiredBones) override;
-	// End of FAnimNode_SkeletalControlBase interface
+    // FAnimNode_SkeletalControlBase interface
+    virtual void InitializeBoneReferences(const FBoneContainer&amp; RequiredBones) override;
+    // End of FAnimNode_SkeletalControlBase interface
 };
 </code></pre>
 <div class="alert success ">
@@ -534,79 +534,79 @@ private:
 </div>
 <pre><code>void FAnimNode_ModifyBone::EvaluateSkeletalControl_AnyThread(FComponentSpacePoseContext&amp; Output, TArray&lt;FBoneTransform&gt;&amp; OutBoneTransforms)
 {
-	check(OutBoneTransforms.Num() == 0);
+    check(OutBoneTransforms.Num() == 0);
 
-	// the way we apply transform is same as FMatrix or FTransform
-	// we apply scale first, and rotation, and translation
-	// if you'd like to translate first, you'll need two nodes that first node does translate and second nodes to rotate.
-	const FBoneContainer&amp; BoneContainer = Output.Pose.GetPose().GetBoneContainer();
+    // the way we apply transform is same as FMatrix or FTransform
+    // we apply scale first, and rotation, and translation
+    // if you'd like to translate first, you'll need two nodes that first node does translate and second nodes to rotate.
+    const FBoneContainer&amp; BoneContainer = Output.Pose.GetPose().GetBoneContainer();
 
-	FCompactPoseBoneIndex CompactPoseBoneToModify = BoneToModify.GetCompactPoseIndex(BoneContainer);
-	FTransform NewBoneTM = Output.Pose.GetComponentSpaceTransform(CompactPoseBoneToModify);
-	FTransform ComponentTransform = Output.AnimInstanceProxy-&gt;GetComponentTransform();
+    FCompactPoseBoneIndex CompactPoseBoneToModify = BoneToModify.GetCompactPoseIndex(BoneContainer);
+    FTransform NewBoneTM = Output.Pose.GetComponentSpaceTransform(CompactPoseBoneToModify);
+    FTransform ComponentTransform = Output.AnimInstanceProxy-&gt;GetComponentTransform();
 
-	if (ScaleMode != BMM_Ignore)
-	{
-		// Convert to Bone Space.
-		FAnimationRuntime::ConvertCSTransformToBoneSpace(ComponentTransform, Output.Pose, NewBoneTM, CompactPoseBoneToModify, ScaleSpace);
+    if (ScaleMode != BMM_Ignore)
+    {
+        // Convert to Bone Space.
+        FAnimationRuntime::ConvertCSTransformToBoneSpace(ComponentTransform, Output.Pose, NewBoneTM, CompactPoseBoneToModify, ScaleSpace);
 
-		if (ScaleMode == BMM_Additive)
-		{
-			NewBoneTM.SetScale3D(NewBoneTM.GetScale3D() * Scale);
-		}
-		else
-		{
-			NewBoneTM.SetScale3D(Scale);
-		}
+        if (ScaleMode == BMM_Additive)
+        {
+            NewBoneTM.SetScale3D(NewBoneTM.GetScale3D() * Scale);
+        }
+        else
+        {
+            NewBoneTM.SetScale3D(Scale);
+        }
 
-		// Convert back to Component Space.
-		FAnimationRuntime::ConvertBoneSpaceTransformToCS(ComponentTransform, Output.Pose, NewBoneTM, CompactPoseBoneToModify, ScaleSpace);
-	}
+        // Convert back to Component Space.
+        FAnimationRuntime::ConvertBoneSpaceTransformToCS(ComponentTransform, Output.Pose, NewBoneTM, CompactPoseBoneToModify, ScaleSpace);
+    }
 
-	if (RotationMode != BMM_Ignore)
-	{
-		// Convert to Bone Space.
-		FAnimationRuntime::ConvertCSTransformToBoneSpace(ComponentTransform, Output.Pose, NewBoneTM, CompactPoseBoneToModify, RotationSpace);
+    if (RotationMode != BMM_Ignore)
+    {
+        // Convert to Bone Space.
+        FAnimationRuntime::ConvertCSTransformToBoneSpace(ComponentTransform, Output.Pose, NewBoneTM, CompactPoseBoneToModify, RotationSpace);
 
-		const FQuat BoneQuat(Rotation);
-		if (RotationMode == BMM_Additive)
-		{	
-			NewBoneTM.SetRotation(BoneQuat * NewBoneTM.GetRotation());
-		}
-		else
-		{
-			NewBoneTM.SetRotation(BoneQuat);
-		}
+        const FQuat BoneQuat(Rotation);
+        if (RotationMode == BMM_Additive)
+        {    
+            NewBoneTM.SetRotation(BoneQuat * NewBoneTM.GetRotation());
+        }
+        else
+        {
+            NewBoneTM.SetRotation(BoneQuat);
+        }
 
-		// Convert back to Component Space.
-		FAnimationRuntime::ConvertBoneSpaceTransformToCS(ComponentTransform, Output.Pose, NewBoneTM, CompactPoseBoneToModify, RotationSpace);
-	}
-	
-	if (TranslationMode != BMM_Ignore)
-	{
-		// Convert to Bone Space.
-		FAnimationRuntime::ConvertCSTransformToBoneSpace(ComponentTransform, Output.Pose, NewBoneTM, CompactPoseBoneToModify, TranslationSpace);
+        // Convert back to Component Space.
+        FAnimationRuntime::ConvertBoneSpaceTransformToCS(ComponentTransform, Output.Pose, NewBoneTM, CompactPoseBoneToModify, RotationSpace);
+    }
+    
+    if (TranslationMode != BMM_Ignore)
+    {
+        // Convert to Bone Space.
+        FAnimationRuntime::ConvertCSTransformToBoneSpace(ComponentTransform, Output.Pose, NewBoneTM, CompactPoseBoneToModify, TranslationSpace);
 
-		if (TranslationMode == BMM_Additive)
-		{
-			NewBoneTM.AddToTranslation(Translation);
-		}
-		else
-		{
-			NewBoneTM.SetTranslation(Translation);
-		}
+        if (TranslationMode == BMM_Additive)
+        {
+            NewBoneTM.AddToTranslation(Translation);
+        }
+        else
+        {
+            NewBoneTM.SetTranslation(Translation);
+        }
 
-		// Convert back to Component Space.
-		FAnimationRuntime::ConvertBoneSpaceTransformToCS(ComponentTransform, Output.Pose, NewBoneTM, CompactPoseBoneToModify, TranslationSpace);
-	}
-	
-	OutBoneTransforms.Add( FBoneTransform(BoneToModify.GetCompactPoseIndex(BoneContainer), NewBoneTM) );
+        // Convert back to Component Space.
+        FAnimationRuntime::ConvertBoneSpaceTransformToCS(ComponentTransform, Output.Pose, NewBoneTM, CompactPoseBoneToModify, TranslationSpace);
+    }
+    
+    OutBoneTransforms.Add( FBoneTransform(BoneToModify.GetCompactPoseIndex(BoneContainer), NewBoneTM) );
 }
 </code></pre>
 <p>Taking <code>Rotation</code> as an example, computing rotation of bones is in these code (as shown in the following source) which is in function <code>EvaluateSkeletalControl_AnyThread()</code>:</p>
 <pre><code>const FQuat BoneQuat(Rotation);
 if (RotationMode == BMM_Additive)
-{	
+{    
     NewBoneTM.SetRotation(BoneQuat * NewBoneTM.GetRotation());
 }
 else

@@ -384,87 +384,87 @@ static FPoolInfo* AllocatePoolMemory(FMallocBinned&amp; Allocator, FPoolTable* T
 <p>Initialization of Memory Pool:</p>
 <pre><code>static FPoolInfo* AllocatePoolMemory(FMallocBinned&amp; Allocator, FPoolTable* Table, uint32 PoolSize, uint16 TableIndex)
 {
-	const uint32 PageSize = Allocator.PageSize;
+    const uint32 PageSize = Allocator.PageSize;
 
-	// Must create a new pool.
-	uint32 Blocks   = PoolSize / Table-&gt;BlockSize;
-	uint32 Bytes    = Blocks * Table-&gt;BlockSize;
-	UPTRINT OsBytes = Align(Bytes, PageSize);
+    // Must create a new pool.
+    uint32 Blocks   = PoolSize / Table-&gt;BlockSize;
+    uint32 Bytes    = Blocks * Table-&gt;BlockSize;
+    UPTRINT OsBytes = Align(Bytes, PageSize);
 
-	checkSlow(Blocks &gt;= 1);
-	checkSlow(Blocks * Table-&gt;BlockSize &lt;= Bytes &amp;&amp; PoolSize &gt;= Bytes);
+    checkSlow(Blocks &gt;= 1);
+    checkSlow(Blocks * Table-&gt;BlockSize &lt;= Bytes &amp;&amp; PoolSize &gt;= Bytes);
 
-	// Allocate memory.
-	FFreeMem* Free = nullptr;
-	SIZE_T ActualPoolSize; //TODO: use this to reduce waste?
-	Free = (FFreeMem*)OSAlloc(Allocator, OsBytes, ActualPoolSize);
+    // Allocate memory.
+    FFreeMem* Free = nullptr;
+    SIZE_T ActualPoolSize; //TODO: use this to reduce waste?
+    Free = (FFreeMem*)OSAlloc(Allocator, OsBytes, ActualPoolSize);
 
-	checkSlow(!((UPTRINT)Free &amp; (PageSize - 1)));
-	if( !Free )
-	{
-		OutOfMemory(OsBytes);
-	}
+    checkSlow(!((UPTRINT)Free &amp; (PageSize - 1)));
+    if( !Free )
+    {
+        OutOfMemory(OsBytes);
+    }
 
-	// Create pool in the indirect table.
-	FPoolInfo* Pool;
-	{
+    // Create pool in the indirect table.
+    FPoolInfo* Pool;
+    {
 #ifdef USE_FINE_GRAIN_LOCKS
-		FScopeLock PoolInfoLock(&amp;Allocator.AccessGuard);
+        FScopeLock PoolInfoLock(&amp;Allocator.AccessGuard);
 #endif
-		Pool = GetPoolInfo(Allocator, (UPTRINT)Free);
-		for (UPTRINT i = (UPTRINT)PageSize, Offset = 0; i &lt; OsBytes; i += PageSize, ++Offset)
-		{
-			FPoolInfo* TrailingPool = GetPoolInfo(Allocator, ((UPTRINT)Free) + i);
-			check(TrailingPool);
+        Pool = GetPoolInfo(Allocator, (UPTRINT)Free);
+        for (UPTRINT i = (UPTRINT)PageSize, Offset = 0; i &lt; OsBytes; i += PageSize, ++Offset)
+        {
+            FPoolInfo* TrailingPool = GetPoolInfo(Allocator, ((UPTRINT)Free) + i);
+            check(TrailingPool);
 
-			//Set trailing pools to point back to first pool
-			TrailingPool-&gt;SetAllocationSizes(0, 0, Offset, Allocator.BinnedOSTableIndex);
-		}
+            //Set trailing pools to point back to first pool
+            TrailingPool-&gt;SetAllocationSizes(0, 0, Offset, Allocator.BinnedOSTableIndex);
+        }
 
-		
-		BINNED_PEAK_STATCOUNTER(Allocator.OsPeak,    BINNED_ADD_STATCOUNTER(Allocator.OsCurrent,    OsBytes));
-		BINNED_PEAK_STATCOUNTER(Allocator.WastePeak, BINNED_ADD_STATCOUNTER(Allocator.WasteCurrent, (OsBytes - Bytes)));
-	}
+        
+        BINNED_PEAK_STATCOUNTER(Allocator.OsPeak,    BINNED_ADD_STATCOUNTER(Allocator.OsCurrent,    OsBytes));
+        BINNED_PEAK_STATCOUNTER(Allocator.WastePeak, BINNED_ADD_STATCOUNTER(Allocator.WasteCurrent, (OsBytes - Bytes)));
+    }
 
-	// Init pool.
-	Pool-&gt;Link( Table-&gt;FirstPool );
-	Pool-&gt;SetAllocationSizes(Bytes, OsBytes, TableIndex, Allocator.BinnedOSTableIndex);
-	Pool-&gt;Taken		 = 0;
-	Pool-&gt;FirstMem   = Free;
+    // Init pool.
+    Pool-&gt;Link( Table-&gt;FirstPool );
+    Pool-&gt;SetAllocationSizes(Bytes, OsBytes, TableIndex, Allocator.BinnedOSTableIndex);
+    Pool-&gt;Taken         = 0;
+    Pool-&gt;FirstMem   = Free;
 
 #if STATS
-	Table-&gt;NumActivePools++;
-	Table-&gt;MaxActivePools = FMath::Max(Table-&gt;MaxActivePools, Table-&gt;NumActivePools);
+    Table-&gt;NumActivePools++;
+    Table-&gt;MaxActivePools = FMath::Max(Table-&gt;MaxActivePools, Table-&gt;NumActivePools);
 #endif
-	// Create first free item.
-	Free-&gt;NumFreeBlocks = Blocks;
-	Free-&gt;Next          = nullptr;
+    // Create first free item.
+    Free-&gt;NumFreeBlocks = Blocks;
+    Free-&gt;Next          = nullptr;
 
-	return Pool;
+    return Pool;
 }
 </code></pre>
 <p>Allocate space for objects in Memory Pool:</p>
 <pre><code>static FORCEINLINE FFreeMem* AllocateBlockFromPool(FMallocBinned&amp; Allocator, FPoolTable* Table, FPoolInfo* Pool, uint32 Alignment)
 {
-	// Pick first available block and unlink it.
-	Pool-&gt;Taken++;
-	checkSlow(Pool-&gt;TableIndex &lt; Allocator.BinnedOSTableIndex); // if this is false, FirstMem is actually a size not a pointer
-	checkSlow(Pool-&gt;FirstMem);
-	checkSlow(Pool-&gt;FirstMem-&gt;NumFreeBlocks &gt; 0);
-	checkSlow(Pool-&gt;FirstMem-&gt;NumFreeBlocks &lt; PAGE_SIZE_LIMIT);
-	FFreeMem* Free = (FFreeMem*)((uint8*)Pool-&gt;FirstMem + --Pool-&gt;FirstMem-&gt;NumFreeBlocks * Table-&gt;BlockSize);
-	if( !Pool-&gt;FirstMem-&gt;NumFreeBlocks )
-	{
-		Pool-&gt;FirstMem = Pool-&gt;FirstMem-&gt;Next;
-		if( !Pool-&gt;FirstMem )
-		{
-			// Move to exhausted list.
-			Pool-&gt;Unlink();
-			Pool-&gt;Link( Table-&gt;ExhaustedPool );
-		}
-	}
-	BINNED_PEAK_STATCOUNTER(Allocator.UsedPeak, BINNED_ADD_STATCOUNTER(Allocator.UsedCurrent, Table-&gt;BlockSize));
-	return Align(Free, Alignment);
+    // Pick first available block and unlink it.
+    Pool-&gt;Taken++;
+    checkSlow(Pool-&gt;TableIndex &lt; Allocator.BinnedOSTableIndex); // if this is false, FirstMem is actually a size not a pointer
+    checkSlow(Pool-&gt;FirstMem);
+    checkSlow(Pool-&gt;FirstMem-&gt;NumFreeBlocks &gt; 0);
+    checkSlow(Pool-&gt;FirstMem-&gt;NumFreeBlocks &lt; PAGE_SIZE_LIMIT);
+    FFreeMem* Free = (FFreeMem*)((uint8*)Pool-&gt;FirstMem + --Pool-&gt;FirstMem-&gt;NumFreeBlocks * Table-&gt;BlockSize);
+    if( !Pool-&gt;FirstMem-&gt;NumFreeBlocks )
+    {
+        Pool-&gt;FirstMem = Pool-&gt;FirstMem-&gt;Next;
+        if( !Pool-&gt;FirstMem )
+        {
+            // Move to exhausted list.
+            Pool-&gt;Unlink();
+            Pool-&gt;Link( Table-&gt;ExhaustedPool );
+        }
+    }
+    BINNED_PEAK_STATCOUNTER(Allocator.UsedPeak, BINNED_ADD_STATCOUNTER(Allocator.UsedCurrent, Table-&gt;BlockSize));
+    return Align(Free, Alignment);
 }
 </code></pre>
 <p>Free memory in Memory Pool (Not in RAM):</p>
@@ -474,11 +474,11 @@ static FPoolInfo* AllocatePoolMemory(FMallocBinned&amp; Allocator, FPoolTable* T
 */
 static void FreeInternal(FMallocBinned&amp; Allocator, void* Ptr)
 {
-	MEM_TIME(MemTime -= FPlatformTime::Seconds());
-	BINNED_DECREMENT_STATCOUNTER(Allocator.CurrentAllocs);
+    MEM_TIME(MemTime -= FPlatformTime::Seconds());
+    BINNED_DECREMENT_STATCOUNTER(Allocator.CurrentAllocs);
 
-	UPTRINT BasePtr;
-	FPoolInfo* Pool = FindPoolInfo(Allocator, (UPTRINT)Ptr, BasePtr);
+    UPTRINT BasePtr;
+    FPoolInfo* Pool = FindPoolInfo(Allocator, (UPTRINT)Ptr, BasePtr);
 #if PLATFORM_IOS || PLATFORM_MAC
     if (Pool == NULL)
     {
@@ -486,69 +486,69 @@ static void FreeInternal(FMallocBinned&amp; Allocator, void* Ptr)
         return;
     }
 #endif
-	checkSlow(Pool);
-	checkSlow(Pool-&gt;GetBytes() != 0);
-	if (Pool-&gt;TableIndex &lt; Allocator.BinnedOSTableIndex)
-	{
-		FPoolTable* Table = Allocator.MemSizeToPoolTable[Pool-&gt;TableIndex];
+    checkSlow(Pool);
+    checkSlow(Pool-&gt;GetBytes() != 0);
+    if (Pool-&gt;TableIndex &lt; Allocator.BinnedOSTableIndex)
+    {
+        FPoolTable* Table = Allocator.MemSizeToPoolTable[Pool-&gt;TableIndex];
 #ifdef USE_FINE_GRAIN_LOCKS
-		FScopeLock TableLock(&amp;Table-&gt;CriticalSection);
+        FScopeLock TableLock(&amp;Table-&gt;CriticalSection);
 #endif
 #if STATS
-		Table-&gt;ActiveRequests--;
+        Table-&gt;ActiveRequests--;
 #endif
-		// If this pool was exhausted, move to available list.
-		if( !Pool-&gt;FirstMem )
-		{
-			Pool-&gt;Unlink();
-			Pool-&gt;Link( Table-&gt;FirstPool );
-		}
+        // If this pool was exhausted, move to available list.
+        if( !Pool-&gt;FirstMem )
+        {
+            Pool-&gt;Unlink();
+            Pool-&gt;Link( Table-&gt;FirstPool );
+        }
 
-		void* BaseAddress = (void*)BasePtr;
-		uint32 BlockSize = Table-&gt;BlockSize;
-		PTRINT OffsetFromBase = (PTRINT)Ptr - (PTRINT)BaseAddress;
-		check(OffsetFromBase &gt;= 0);
-		uint32 AlignOffset = OffsetFromBase % BlockSize;
+        void* BaseAddress = (void*)BasePtr;
+        uint32 BlockSize = Table-&gt;BlockSize;
+        PTRINT OffsetFromBase = (PTRINT)Ptr - (PTRINT)BaseAddress;
+        check(OffsetFromBase &gt;= 0);
+        uint32 AlignOffset = OffsetFromBase % BlockSize;
 
-		// Patch pointer to include previously applied alignment.
-		Ptr = (void*)((PTRINT)Ptr - (PTRINT)AlignOffset);
+        // Patch pointer to include previously applied alignment.
+        Ptr = (void*)((PTRINT)Ptr - (PTRINT)AlignOffset);
 
-		// Free a pooled allocation.
-		FFreeMem* Free		= (FFreeMem*)Ptr;
-		Free-&gt;NumFreeBlocks	= 1;
-		Free-&gt;Next			= Pool-&gt;FirstMem;
-		Pool-&gt;FirstMem		= Free;
-		BINNED_ADD_STATCOUNTER(Allocator.UsedCurrent, -(int64)(Table-&gt;BlockSize));
+        // Free a pooled allocation.
+        FFreeMem* Free        = (FFreeMem*)Ptr;
+        Free-&gt;NumFreeBlocks    = 1;
+        Free-&gt;Next            = Pool-&gt;FirstMem;
+        Pool-&gt;FirstMem        = Free;
+        BINNED_ADD_STATCOUNTER(Allocator.UsedCurrent, -(int64)(Table-&gt;BlockSize));
 
-		// Free this pool.
-		checkSlow(Pool-&gt;Taken &gt;= 1);
-		if( --Pool-&gt;Taken == 0 )
-		{
+        // Free this pool.
+        checkSlow(Pool-&gt;Taken &gt;= 1);
+        if( --Pool-&gt;Taken == 0 )
+        {
 #if STATS
-			Table-&gt;NumActivePools--;
+            Table-&gt;NumActivePools--;
 #endif
-			// Free the OS memory.
-			SIZE_T OsBytes = Pool-&gt;GetOsBytes(Allocator.PageSize, Allocator.BinnedOSTableIndex);
-			BINNED_ADD_STATCOUNTER(Allocator.OsCurrent,    -(int64)OsBytes);
-			BINNED_ADD_STATCOUNTER(Allocator.WasteCurrent, -(int64)(OsBytes - Pool-&gt;GetBytes()));
-			Pool-&gt;Unlink();
-			Pool-&gt;SetAllocationSizes(0, 0, 0, Allocator.BinnedOSTableIndex);
-			OSFree(Allocator, (void*)BasePtr, OsBytes);
-		}
-	}
-	else
-	{
-		// Free an OS allocation.
-		checkSlow(!((UPTRINT)Ptr &amp; (Allocator.PageSize - 1)));
-		SIZE_T OsBytes = Pool-&gt;GetOsBytes(Allocator.PageSize, Allocator.BinnedOSTableIndex);
+            // Free the OS memory.
+            SIZE_T OsBytes = Pool-&gt;GetOsBytes(Allocator.PageSize, Allocator.BinnedOSTableIndex);
+            BINNED_ADD_STATCOUNTER(Allocator.OsCurrent,    -(int64)OsBytes);
+            BINNED_ADD_STATCOUNTER(Allocator.WasteCurrent, -(int64)(OsBytes - Pool-&gt;GetBytes()));
+            Pool-&gt;Unlink();
+            Pool-&gt;SetAllocationSizes(0, 0, 0, Allocator.BinnedOSTableIndex);
+            OSFree(Allocator, (void*)BasePtr, OsBytes);
+        }
+    }
+    else
+    {
+        // Free an OS allocation.
+        checkSlow(!((UPTRINT)Ptr &amp; (Allocator.PageSize - 1)));
+        SIZE_T OsBytes = Pool-&gt;GetOsBytes(Allocator.PageSize, Allocator.BinnedOSTableIndex);
 
-		BINNED_ADD_STATCOUNTER(Allocator.UsedCurrent,  -(int64)Pool-&gt;GetBytes());
-		BINNED_ADD_STATCOUNTER(Allocator.OsCurrent,    -(int64)OsBytes);
-		BINNED_ADD_STATCOUNTER(Allocator.WasteCurrent, -(int64)(OsBytes - Pool-&gt;GetBytes()));
-		OSFree(Allocator, (void*)BasePtr, OsBytes);
-	}
+        BINNED_ADD_STATCOUNTER(Allocator.UsedCurrent,  -(int64)Pool-&gt;GetBytes());
+        BINNED_ADD_STATCOUNTER(Allocator.OsCurrent,    -(int64)OsBytes);
+        BINNED_ADD_STATCOUNTER(Allocator.WasteCurrent, -(int64)(OsBytes - Pool-&gt;GetBytes()));
+        OSFree(Allocator, (void*)BasePtr, OsBytes);
+    }
 
-	MEM_TIME(MemTime += FPlatformTime::Seconds());
+    MEM_TIME(MemTime += FPlatformTime::Seconds());
 }
 </code></pre>
 <h6 id="references">References</h6>

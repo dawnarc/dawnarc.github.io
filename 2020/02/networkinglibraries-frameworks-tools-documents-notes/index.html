@@ -454,43 +454,43 @@
 <p>Linux socket example:</p>
 <pre><code>bool InitSocket()
 {
-	int server_sockfd = socket(AF_INET, SOCK_STREAM, 0);
+    int server_sockfd = socket(AF_INET, SOCK_STREAM, 0);
 
-	//set non blocking mode
-	int flags  = fcntl(server_sockfd, F_GETFL, 0);
-	if(fcntl(server_sockfd, F_SETFL, flags | O_NONBLOCK) != 0)
-	{
-		close(server_sockfd);
-		return false;
-	}
+    //set non blocking mode
+    int flags  = fcntl(server_sockfd, F_GETFL, 0);
+    if(fcntl(server_sockfd, F_SETFL, flags | O_NONBLOCK) != 0)
+    {
+        close(server_sockfd);
+        return false;
+    }
 
-	//bind
-	oAddr.sin_family = AF_INET;
-	oAddr.sin_addr.s_addr = INADDR_ANY;
-	oAddr.sin_port = htons((u_short)6666);
-	if (bind(server_sockfd,(sockaddr*)&amp;oAddr, sizeof(oAddr)) != 0)
-	{
-		close(server_sockfd);
-		return false;
-	}
-	
-	const int MAX_CONNECTION = 100;
-	if (listen(server_sockfd, MAX_CONNECTION) != 0)
-	{
-		close(server_sockfd);
-		return false;
-	}
-	return true;
+    //bind
+    oAddr.sin_family = AF_INET;
+    oAddr.sin_addr.s_addr = INADDR_ANY;
+    oAddr.sin_port = htons((u_short)6666);
+    if (bind(server_sockfd,(sockaddr*)&amp;oAddr, sizeof(oAddr)) != 0)
+    {
+        close(server_sockfd);
+        return false;
+    }
+    
+    const int MAX_CONNECTION = 100;
+    if (listen(server_sockfd, MAX_CONNECTION) != 0)
+    {
+        close(server_sockfd);
+        return false;
+    }
+    return true;
 }
 
 void recv_thread()
 {
-	while(true)
-	{
-		int client_sockfd = accept(....);
-		int flags = fcntl(client_sockfd, F_GETFL, 0);
-		fcntl(client_sockfd, F_SETFL, flags | O_NONBLOCK);	//!!! don't use `if(fcntl(...) != 0)`;
-	}
+    while(true)
+    {
+        int client_sockfd = accept(....);
+        int flags = fcntl(client_sockfd, F_GETFL, 0);
+        fcntl(client_sockfd, F_SETFL, flags | O_NONBLOCK);    //!!! don't use `if(fcntl(...) != 0)`;
+    }
 }
 </code></pre>
 <p>How to give a specific ip address to server and client?<br>

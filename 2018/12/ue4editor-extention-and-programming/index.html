@@ -378,10 +378,10 @@
 <h5 id="how-to-set-display-index--order-of-property-in-editor">How to set display index / order of property in Editor</h5>
 <p>e.g.</p>
 <pre><code>UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (DisplayPriority = &quot;1&quot;))
-	int32 Value1 = -1;
+    int32 Value1 = -1;
 
 UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (DisplayPriority = &quot;2&quot;))
-	int32 Value1 = -1;
+    int32 Value1 = -1;
 </code></pre>
 <p>Reference:<br>
 Metadata Specifiers<br>
@@ -401,10 +401,10 @@ virtual void PostEditMove(bool bFinished);
 <h5 id="how-to-customize-transform-of-actor-in-editor">How to customize Transform of Actor in Editor</h5>
 <p>Header: Add <code>VisibleAnywhere</code> on properties.</p>
 <pre><code>UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = CameraEvent)
-	UBoxComponent* BoxComp;
-	
+    UBoxComponent* BoxComp;
+    
 UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = CameraEvent)
-	UArrowComponent* DirectionComp;
+    UArrowComponent* DirectionComp;
 </code></pre>
 <p>Constructor:</p>
 <pre><code>BoxComp = CreateDefaultSubobject&lt;UBoxComponent&gt;(TEXT(&quot;BoxComp&quot;));
@@ -433,7 +433,7 @@ DirectionComp-&gt;SetupAttachment(BoxComp);
 <h5 id="how-to-spawn-actor-in-editor">How to spawn actor in Editor</h5>
 <p>example:</p>
 <pre><code>AActor* newActor = GEditor-&gt;AddActor(
-	GEditor-&gt;LevelViewportClients[0]-&gt;GetWorld()-&gt;GetCurrentLevel(), AMyActorClass, MyTransform);
+    GEditor-&gt;LevelViewportClients[0]-&gt;GetWorld()-&gt;GetCurrentLevel(), AMyActorClass, MyTransform);
 // modify properties on newActor
 newActor-&gt;RerunConstructionScripts();
 </code></pre>
@@ -447,36 +447,36 @@ Solution:<br>
 Modify <code>MyPlugin.uplugin</code>.<br>
 Origin:</p>
 <pre><code>&quot;Modules&quot;: [
-	{
-		&quot;Name&quot;: &quot;MyExtender&quot;,
-		&quot;Type&quot;: &quot;Runtime&quot;,
-		&quot;LoadingPhase&quot;: &quot;Default&quot;
-	}
+    {
+        &quot;Name&quot;: &quot;MyExtender&quot;,
+        &quot;Type&quot;: &quot;Runtime&quot;,
+        &quot;LoadingPhase&quot;: &quot;Default&quot;
+    }
 ]
 </code></pre>
 <p>New:</p>
 <pre><code>&quot;Modules&quot;: [
-	{
-		&quot;Name&quot;: &quot;CppEditorWidget&quot;,
-		&quot;Type&quot;: &quot;Editor&quot;,
-		&quot;LoadingPhase&quot;: &quot;PostEngineInit&quot;
-	}
+    {
+        &quot;Name&quot;: &quot;CppEditorWidget&quot;,
+        &quot;Type&quot;: &quot;Editor&quot;,
+        &quot;LoadingPhase&quot;: &quot;PostEngineInit&quot;
+    }
 ]
 </code></pre>
 <p>Then delete all intermediate files and re-generate project files.</p>
 <h5 id="how-to-open-the-windows-file-explorer-open-directory-dialog-to-select-the-file">How to open the Windows file explorer (open directory dialog) to select the file</h5>
 <pre><code>void UMyUserWidget::OnTestBtnClicked()
 {
-	TSharedPtr&lt;SWindow&gt; ParentWindow = FSlateApplication::Get().FindWidgetWindow(TakeWidget());
-	void* ParentWindowHandle = (ParentWindow.IsValid() &amp;&amp; ParentWindow-&gt;GetNativeWindow().IsValid()) ? ParentWindow-&gt;GetNativeWindow()-&gt;GetOSWindowHandle() : nullptr;
-	IDesktopPlatform* DesktopPlatform = FDesktopPlatformModule::Get();
-	if (DesktopPlatform)
-	{
-		const FString ContentDireAbsolute = FPaths::ConvertRelativePathToFull(FPaths::ProjectConfigDir());
-		FString OutDire;
-		DesktopPlatform-&gt;OpenDirectoryDialog(ParentWindowHandle, TEXT(&quot;Choose Folder&quot;), ContentDireAbsolute, OutDire);
-		GEngine-&gt;AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, OutDire);
-	}
+    TSharedPtr&lt;SWindow&gt; ParentWindow = FSlateApplication::Get().FindWidgetWindow(TakeWidget());
+    void* ParentWindowHandle = (ParentWindow.IsValid() &amp;&amp; ParentWindow-&gt;GetNativeWindow().IsValid()) ? ParentWindow-&gt;GetNativeWindow()-&gt;GetOSWindowHandle() : nullptr;
+    IDesktopPlatform* DesktopPlatform = FDesktopPlatformModule::Get();
+    if (DesktopPlatform)
+    {
+        const FString ContentDireAbsolute = FPaths::ConvertRelativePathToFull(FPaths::ProjectConfigDir());
+        FString OutDire;
+        DesktopPlatform-&gt;OpenDirectoryDialog(ParentWindowHandle, TEXT(&quot;Choose Folder&quot;), ContentDireAbsolute, OutDire);
+        GEngine-&gt;AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, OutDire);
+    }
 }
 </code></pre>
 <p>Select files dialog:</p>

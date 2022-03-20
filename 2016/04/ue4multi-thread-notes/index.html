@@ -370,232 +370,232 @@ Example<br>
 Header:</p>
 <pre><code>//~~~~~ Multi Threading ~~~
 class FPrimeNumberWorker : public FRunnable
-{	
-	/** Singleton instance, can access the thread any time via static accessor, if it is active! */
-	static  FPrimeNumberWorker* Runnable;
+{    
+    /** Singleton instance, can access the thread any time via static accessor, if it is active! */
+    static  FPrimeNumberWorker* Runnable;
  
-	/** Thread to run the worker FRunnable on */
-	FRunnableThread* Thread;
+    /** Thread to run the worker FRunnable on */
+    FRunnableThread* Thread;
  
-	/** The Data Ptr */
-	TArray&lt;uint32&gt;* PrimeNumbers;
+    /** The Data Ptr */
+    TArray&lt;uint32&gt;* PrimeNumbers;
  
-	/** The PC */
-	AVictoryGamePlayerController* ThePC;
+    /** The PC */
+    AVictoryGamePlayerController* ThePC;
  
-	/** Stop this thread? Uses Thread Safe Counter */
-	FThreadSafeCounter StopTaskCounter;
+    /** Stop this thread? Uses Thread Safe Counter */
+    FThreadSafeCounter StopTaskCounter;
  
-	//The actual finding of prime numbers
-	int32 FindNextPrimeNumber();
+    //The actual finding of prime numbers
+    int32 FindNextPrimeNumber();
  
 private:
-	int32				PrimesFoundCount;
+    int32                PrimesFoundCount;
 public:
  
-	int32				TotalPrimesToFind;
+    int32                TotalPrimesToFind;
  
-	//Done?
-	bool IsFinished() const
-	{
-		return PrimesFoundCount &gt;= TotalPrimesToFind;
-	}
+    //Done?
+    bool IsFinished() const
+    {
+        return PrimesFoundCount &gt;= TotalPrimesToFind;
+    }
  
-	//~~~ Thread Core Functions ~~~
+    //~~~ Thread Core Functions ~~~
  
-	//Constructor / Destructor
-	FPrimeNumberWorker(TArray&lt;uint32&gt;&amp; TheArray, const int32 IN_PrimesToFindPerTick, AVictoryGamePlayerController* IN_PC);
-	virtual ~FPrimeNumberWorker();
+    //Constructor / Destructor
+    FPrimeNumberWorker(TArray&lt;uint32&gt;&amp; TheArray, const int32 IN_PrimesToFindPerTick, AVictoryGamePlayerController* IN_PC);
+    virtual ~FPrimeNumberWorker();
  
-	// Begin FRunnable interface.
-	virtual bool Init();
-	virtual uint32 Run();
-	virtual void Stop();
-	// End FRunnable interface
+    // Begin FRunnable interface.
+    virtual bool Init();
+    virtual uint32 Run();
+    virtual void Stop();
+    // End FRunnable interface
  
-	/** Makes sure this thread has stopped properly */
-	void EnsureCompletion();
- 
- 
- 
-	//~~~ Starting and Stopping Thread ~~~
+    /** Makes sure this thread has stopped properly */
+    void EnsureCompletion();
  
  
  
-	/* 
-		Start the thread and the worker from static (easy access)! 
-		This code ensures only 1 Prime Number thread will be able to run at a time. 
-		This function returns a handle to the newly started instance.
-	*/
-	static FPrimeNumberWorker* JoyInit(TArray&lt;uint32&gt;&amp; TheArray, const int32 IN_TotalPrimesToFind, AVictoryGamePlayerController* IN_PC);
+    //~~~ Starting and Stopping Thread ~~~
  
-	/** Shuts down the thread. Static so it can easily be called from outside the thread context */
-	static void Shutdown();
  
-	static bool IsThreadFinished();
+ 
+    /* 
+        Start the thread and the worker from static (easy access)! 
+        This code ensures only 1 Prime Number thread will be able to run at a time. 
+        This function returns a handle to the newly started instance.
+    */
+    static FPrimeNumberWorker* JoyInit(TArray&lt;uint32&gt;&amp; TheArray, const int32 IN_TotalPrimesToFind, AVictoryGamePlayerController* IN_PC);
+ 
+    /** Shuts down the thread. Static so it can easily be called from outside the thread context */
+    static void Shutdown();
+ 
+    static bool IsThreadFinished();
 };
 </code></pre>
 <p>CPP:</p>
 <pre><code>//***********************************************************
 //Thread Worker Starts as NULL, prior to being instanced
-//		This line is essential! Compiler error without it
+//        This line is essential! Compiler error without it
 FPrimeNumberWorker* FPrimeNumberWorker::Runnable = NULL;
 //***********************************************************
  
 FPrimeNumberWorker::FPrimeNumberWorker(TArray&lt;uint32&gt;&amp; TheArray, const int32 IN_TotalPrimesToFind, AVictoryGamePlayerController* IN_PC)
-	: ThePC(IN_PC)
-	, TotalPrimesToFind(IN_TotalPrimesToFind)
-	, StopTaskCounter(0)
-	, PrimesFoundCount(0)
+    : ThePC(IN_PC)
+    , TotalPrimesToFind(IN_TotalPrimesToFind)
+    , StopTaskCounter(0)
+    , PrimesFoundCount(0)
 {
-	//Link to where data should be stored
-	PrimeNumbers = &amp;TheArray;
+    //Link to where data should be stored
+    PrimeNumbers = &amp;TheArray;
  
-	Thread = FRunnableThread::Create(this, TEXT(&quot;FPrimeNumberWorker&quot;), 0, TPri_BelowNormal); //windows default = 8mb for thread, could specify more
+    Thread = FRunnableThread::Create(this, TEXT(&quot;FPrimeNumberWorker&quot;), 0, TPri_BelowNormal); //windows default = 8mb for thread, could specify more
 }
  
 FPrimeNumberWorker::~FPrimeNumberWorker()
 {
-	delete Thread;
-	Thread = NULL;
+    delete Thread;
+    Thread = NULL;
 }
  
 //Init
 bool FPrimeNumberWorker::Init()
 {
-	//Init the Data 
-	PrimeNumbers-&gt;Empty();
-	PrimeNumbers-&gt;Add(2);
-	PrimeNumbers-&gt;Add(3);
+    //Init the Data 
+    PrimeNumbers-&gt;Empty();
+    PrimeNumbers-&gt;Add(2);
+    PrimeNumbers-&gt;Add(3);
  
-	if(ThePC) 
-	{
-		ThePC-&gt;ClientMessage(&quot;**********************************&quot;);
-		ThePC-&gt;ClientMessage(&quot;Prime Number Thread Started!&quot;);
-		ThePC-&gt;ClientMessage(&quot;**********************************&quot;);
-	}
-	return true;
+    if(ThePC) 
+    {
+        ThePC-&gt;ClientMessage(&quot;**********************************&quot;);
+        ThePC-&gt;ClientMessage(&quot;Prime Number Thread Started!&quot;);
+        ThePC-&gt;ClientMessage(&quot;**********************************&quot;);
+    }
+    return true;
 }
  
 //Run
 uint32 FPrimeNumberWorker::Run()
 {
-	//Initial wait before starting
-	FPlatformProcess::Sleep(0.03);
+    //Initial wait before starting
+    FPlatformProcess::Sleep(0.03);
  
-	//While not told to stop this thread 
-	//		and not yet finished finding Prime Numbers
-	while (StopTaskCounter.GetValue() == 0 &amp;&amp; ! IsFinished())
-	{
-		PrimeNumbers-&gt;Add(FindNextPrimeNumber());
-		PrimesFoundCount++;
+    //While not told to stop this thread 
+    //        and not yet finished finding Prime Numbers
+    while (StopTaskCounter.GetValue() == 0 &amp;&amp; ! IsFinished())
+    {
+        PrimeNumbers-&gt;Add(FindNextPrimeNumber());
+        PrimesFoundCount++;
  
-		//***************************************
-		//Show Incremental Results in Main Game Thread!
+        //***************************************
+        //Show Incremental Results in Main Game Thread!
  
-		//	Please note you should not create, destroy, or modify UObjects here.
-		//	  Do those sort of things after all thread are completed.
+        //    Please note you should not create, destroy, or modify UObjects here.
+        //      Do those sort of things after all thread are completed.
  
-		//	  All calcs for making stuff can be done in the threads
-		//	     But the actual making/modifying of the UObjects should be done in main game thread.
-		ThePC-&gt;ClientMessage(FString::FromInt(PrimeNumbers-&gt;Last()));
-		//***************************************
+        //      All calcs for making stuff can be done in the threads
+        //         But the actual making/modifying of the UObjects should be done in main game thread.
+        ThePC-&gt;ClientMessage(FString::FromInt(PrimeNumbers-&gt;Last()));
+        //***************************************
  
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		//prevent thread from using too many resources
-		//FPlatformProcess::Sleep(0.01);
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	}
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        //prevent thread from using too many resources
+        //FPlatformProcess::Sleep(0.01);
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    }
  
-	//Run FPrimeNumberWorker::Shutdown() from the timer in Game Thread that is watching
-		//to see when FPrimeNumberWorker::IsThreadFinished()
+    //Run FPrimeNumberWorker::Shutdown() from the timer in Game Thread that is watching
+        //to see when FPrimeNumberWorker::IsThreadFinished()
  
-	return 0;
+    return 0;
 }
  
 //stop
 void FPrimeNumberWorker::Stop()
 {
-	StopTaskCounter.Increment();
+    StopTaskCounter.Increment();
 }
  
 FPrimeNumberWorker* FPrimeNumberWorker::JoyInit(TArray&lt;uint32&gt;&amp; TheArray, const int32 IN_TotalPrimesToFind, AVictoryGamePlayerController* IN_PC)
 {
-	//Create new instance of thread if it does not exist
-	//		and the platform supports multi threading!
-	if (!Runnable &amp;&amp; FPlatformProcess::SupportsMultithreading())
-	{
-		Runnable = new FPrimeNumberWorker(TheArray,IN_TotalPrimesToFind,IN_PC);			
-	}
-	return Runnable;
+    //Create new instance of thread if it does not exist
+    //        and the platform supports multi threading!
+    if (!Runnable &amp;&amp; FPlatformProcess::SupportsMultithreading())
+    {
+        Runnable = new FPrimeNumberWorker(TheArray,IN_TotalPrimesToFind,IN_PC);            
+    }
+    return Runnable;
 }
  
 void FPrimeNumberWorker::EnsureCompletion()
 {
-	Stop();
-	Thread-&gt;WaitForCompletion();
+    Stop();
+    Thread-&gt;WaitForCompletion();
 }
  
 void FPrimeNumberWorker::Shutdown()
 {
-	if (Runnable)
-	{
-		Runnable-&gt;EnsureCompletion();
-		delete Runnable;
-		Runnable = NULL;
-	}
+    if (Runnable)
+    {
+        Runnable-&gt;EnsureCompletion();
+        delete Runnable;
+        Runnable = NULL;
+    }
 }
  
 bool FPrimeNumberWorker::IsThreadFinished()
 {
-	if(Runnable) return Runnable-&gt;IsFinished();
-	return true;
+    if(Runnable) return Runnable-&gt;IsFinished();
+    return true;
 }
 int32 FPrimeNumberWorker::FindNextPrimeNumber()
 {
-	//Last known prime number  + 1
-	int32 TestPrime = PrimeNumbers-&gt;Last();
+    //Last known prime number  + 1
+    int32 TestPrime = PrimeNumbers-&gt;Last();
  
-	bool NumIsPrime = false;
-	while( ! NumIsPrime)
-	{
-		NumIsPrime = true;
+    bool NumIsPrime = false;
+    while( ! NumIsPrime)
+    {
+        NumIsPrime = true;
  
-		//Try Next Number
-		TestPrime++;
+        //Try Next Number
+        TestPrime++;
  
-		//Modulus from 2 to current number - 1 
-		for(int32 b = 2; b &lt; TestPrime; b++)
-		{
-			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			//prevent thread from using too many resources
-			//FPlatformProcess::Sleep(0.01);
-			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        //Modulus from 2 to current number - 1 
+        for(int32 b = 2; b &lt; TestPrime; b++)
+        {
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            //prevent thread from using too many resources
+            //FPlatformProcess::Sleep(0.01);
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  
-			if(TestPrime % b == 0) 
-			{
-				NumIsPrime = false;
-				break;
-				//~~~
-			}
-		}
-	}
+            if(TestPrime % b == 0) 
+            {
+                NumIsPrime = false;
+                break;
+                //~~~
+            }
+        }
+    }
  
-	//Success!
-	return TestPrime;
+    //Success!
+    return TestPrime;
 }
 </code></pre>
 <p>Start thread:</p>
 <pre><code>//player controller .cpp
 //Multi-threading, returns handle that could be cached.
-//		use static function FPrimeNumberWorker::Shutdown() if necessary
+//        use static function FPrimeNumberWorker::Shutdown() if necessary
 FPrimeNumberWorker::JoyInit(PrimeNumbers, 50000, this);
 </code></pre>
 <p>Stop thread:</p>
 <pre><code>void FPrimeNumberWorker::EnsureCompletion()  
 {  
-	Stop();  
-	Thread-&gt;WaitForCompletion();  
+    Stop();  
+    Thread-&gt;WaitForCompletion();  
 }
 </code></pre>
 <h5 id="how-to-get-current-thread-name">How to get current thread name</h5>

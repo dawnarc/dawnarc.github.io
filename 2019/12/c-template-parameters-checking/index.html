@@ -369,14 +369,14 @@
 <pre><code>template&lt;class T&gt;
 std::string optionalToString(T* obj)
 {
-	constexpr bool has_toString = requires(const T&amp; t) {
-		t.toString();
-	};
+    constexpr bool has_toString = requires(const T&amp; t) {
+        t.toString();
+    };
 
-	if constexpr (has_toString)
-		return obj-&gt;toString();
-	else
-		return &quot;toString not defined&quot;;
+    if constexpr (has_toString)
+        return obj-&gt;toString();
+    else
+        return &quot;toString not defined&quot;;
 }
 </code></pre>
 <p>Pre-C++20 - Detection toolkit:</p>
@@ -390,10 +390,10 @@ constexpr bool has_toString = std::is_detected_v&lt;toString_t, T&gt;;
 <pre><code>template&lt;class T&gt;
 std::string optionalToString(T* obj)
 {
-	if constexpr (has_toString&lt;T&gt;)
-		return obj-&gt;toString();
-	else
-		return &quot;toString not defined&quot;;
+    if constexpr (has_toString&lt;T&gt;)
+        return obj-&gt;toString();
+    else
+        return &quot;toString not defined&quot;;
 }
 </code></pre>
 <p>Reference:<br>
@@ -405,7 +405,7 @@ std::string optionalToString(T* obj)
 template &lt;typename T&gt;
 void foo()
 {
-	if (std::is_same&lt;T, animal&gt;::value) { /* ... */ }  // optimizable...
+    if (std::is_same&lt;T, animal&gt;::value) { /* ... */ }  // optimizable...
 }
 </code></pre>
 <p>Usually, that&rsquo;s a totally unworkable design, though, and you really want to specialize:</p>
@@ -425,7 +425,7 @@ struct is_pointer&lt;T*&gt; { static const bool value = true; };
 
 template&lt;typename T&gt;
 void func(const std::vector&lt;T&gt;&amp; v) {
-	std::cout &lt;&lt; &quot;is it a pointer? &quot; &lt;&lt; is_pointer&lt;T&gt;::value &lt;&lt; std::endl;
+    std::cout &lt;&lt; &quot;is it a pointer? &quot; &lt;&lt; is_pointer&lt;T&gt;::value &lt;&lt; std::endl;
 }
 </code></pre>
 <p><a href="https://stackoverflow.com/questions/301330/determine-if-type-is-a-pointer-in-a-template-function">https://stackoverflow.com/questions/301330/determine-if-type-is-a-pointer-in-a-template-function</a></p>
@@ -433,12 +433,12 @@ void func(const std::vector&lt;T&gt;&amp; v) {
 <p>With a C++11 compliant compiler, you can do something like this:</p>
 <pre><code>template&lt;class Derived&gt; class MyClass {
 
-	MyClass() {
-		// Compile-time sanity check
-		static_assert(std::is_base_of&lt;BaseClass, Derived&gt;::value, &quot;Derived not derived from BaseClass&quot;);
+    MyClass() {
+        // Compile-time sanity check
+        static_assert(std::is_base_of&lt;BaseClass, Derived&gt;::value, &quot;Derived not derived from BaseClass&quot;);
 
-		// Do other construction related stuff...
-		...
+        // Do other construction related stuff...
+        ...
    }
 }
 </code></pre>

@@ -379,41 +379,41 @@
 <p>Source:</p>
 <pre><code>public class ExtractMaterials : MonoBehaviour {
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start () {
 
-		var materialsPath = &quot;Assets/Materials&quot;;
-		Directory.CreateDirectory(materialsPath);
-	 
-		var texturesPath = &quot;Assets/Textures&quot;;
-		Directory.CreateDirectory(texturesPath);
+        var materialsPath = &quot;Assets/Materials&quot;;
+        Directory.CreateDirectory(materialsPath);
+     
+        var texturesPath = &quot;Assets/Textures&quot;;
+        Directory.CreateDirectory(texturesPath);
 
-		var assetsToReload = new HashSet&lt;string&gt;();
-		foreach (string assetPath in AssetDatabase.GetAllAssetPaths())
-		{
-			if (assetPath.ToLower().Contains(&quot;.fbx&quot;))
-			{
-				Debug.Log(&quot;Extracting for asset: &quot; + assetPath);
-				var importer = AssetImporter.GetAtPath(assetPath) as ModelImporter;
+        var assetsToReload = new HashSet&lt;string&gt;();
+        foreach (string assetPath in AssetDatabase.GetAllAssetPaths())
+        {
+            if (assetPath.ToLower().Contains(&quot;.fbx&quot;))
+            {
+                Debug.Log(&quot;Extracting for asset: &quot; + assetPath);
+                var importer = AssetImporter.GetAtPath(assetPath) as ModelImporter;
 
-				var materials = AssetDatabase.LoadAllAssetsAtPath(importer.assetPath).Where(x =&gt; x.GetType() == typeof(Material));
-				foreach (var material in materials)
-				{
-					var newAssetPath = string.Join(Path.DirectorySeparatorChar.ToString(), new[] { materialsPath, material.name }) + &quot;.mat&quot;;
-					var error = AssetDatabase.ExtractAsset(material, newAssetPath);
-					if (string.IsNullOrEmpty(error))
-					{
-						assetsToReload.Add(importer.assetPath);
-					}
-				}
-			}
-		}
-		foreach (var path in assetsToReload)
-		{
-			AssetDatabase.WriteImportSettingsIfDirty(path);
-			AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceUpdate);
-		}
-	}
+                var materials = AssetDatabase.LoadAllAssetsAtPath(importer.assetPath).Where(x =&gt; x.GetType() == typeof(Material));
+                foreach (var material in materials)
+                {
+                    var newAssetPath = string.Join(Path.DirectorySeparatorChar.ToString(), new[] { materialsPath, material.name }) + &quot;.mat&quot;;
+                    var error = AssetDatabase.ExtractAsset(material, newAssetPath);
+                    if (string.IsNullOrEmpty(error))
+                    {
+                        assetsToReload.Add(importer.assetPath);
+                    }
+                }
+            }
+        }
+        foreach (var path in assetsToReload)
+        {
+            AssetDatabase.WriteImportSettingsIfDirty(path);
+            AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceUpdate);
+        }
+    }
 }
 </code></pre>
 <p>Origin:<br>

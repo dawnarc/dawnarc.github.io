@@ -373,7 +373,7 @@
 1，对属性添加<code>UPROPERTY(Replicated)</code>宏：</p>
 <pre><code>//Player display name
 UPROPERTY(Replicated)
-	FString Alias_;
+    FString Alias_;
 </code></pre>
 <p>2，属性所在的class中重写函数<code>GetLifetimeReplicatedProps</code>：<br>
 需要头文件：</p>
@@ -391,10 +391,10 @@ UPROPERTY(Replicated)
 <p>如何为同步属性添加回调函数？</p>
 <p>用法：</p>
 <pre><code>UPROPERTY(ReplicatedUsing = OnHPChanged)
-	float HealthPoint;
-	
+    float HealthPoint;
+    
 UFUNCTION()
-	void OnHPChanged();
+    void OnHPChanged();
 </code></pre>
 <div class="alert info ">
   <p><code>ReplicatedUsing</code>只在客户端执行，服务端不执行。客户端相关表现逻辑可以放在<code>ReplicatedUsing</code>回调函数。另外函数需要添加<code>UFUNCTION</code>。</p>
@@ -407,7 +407,7 @@ UFUNCTION()
 头文件：</p>
 <pre><code>//移动角色(只在服务端执行的函数)
 UFUNCTION(Server, Reliable, WithValidation)
-	void ServerMoveToDest(APawn* Panw, const FVector DestLocation);
+    void ServerMoveToDest(APawn* Panw, const FVector DestLocation);
 bool ServerMoveToDest_Validate(APawn* Panw, const FVector DestLocation);
 void ServerMoveToDest_Implementation(APawn* Panw, const FVector DestLocation);
 </code></pre>
@@ -495,11 +495,11 @@ bool IsRunningClientOnly()
   <p>服务端<code>SpawnActor</code>创建的Character，若开启了Replication，则其在客户端会生成一个<code>ROLE_SimulatedProxy</code>的Character，此时在服务端用其对应的PlayerController对其Possess，则该客户端Character的Role会变成<code>ROLE_AutonomousProxy</code>。</p>
 </div>
 <p>从执行<code>Possess</code>到<code>Role</code>被修改为<code>ROLE_AutonomousProxy</code>的堆栈：</p>
-<pre><code>UE4Editor-Engine.dll!AActor::SetAutonomousProxy(const bool bInAutonomousProxy, const bool bAllowForcePropertyCompare) Line 3268	C++
-UE4Editor-Engine.dll!APawn::PossessedBy(AController * NewController) Line 511	C++
-UE4Editor-Engine.dll!ACharacter::PossessedBy(AController * NewController) Line 822	C++
-UE4Editor-Engine.dll!APlayerController::OnPossess(APawn * PawnToPossess) Line 770	C++
-UE4Editor-Engine.dll!AController::Possess(APawn * InPawn) Line 293	C++
+<pre><code>UE4Editor-Engine.dll!AActor::SetAutonomousProxy(const bool bInAutonomousProxy, const bool bAllowForcePropertyCompare) Line 3268    C++
+UE4Editor-Engine.dll!APawn::PossessedBy(AController * NewController) Line 511    C++
+UE4Editor-Engine.dll!ACharacter::PossessedBy(AController * NewController) Line 822    C++
+UE4Editor-Engine.dll!APlayerController::OnPossess(APawn * PawnToPossess) Line 770    C++
+UE4Editor-Engine.dll!AController::Possess(APawn * InPawn) Line 293    C++
 </code></pre>
 <h3 id="同步相关的常见问题">同步相关的常见问题</h3>
 <h5 id="如何让一个role_simulatedproxy对象变成role_autonomousproxy">如何让一个ROLE_SimulatedProxy对象变成ROLE_AutonomousProxy</h5>
@@ -805,14 +805,14 @@ Dedicated Servers, Jitter, Matchmaking<br>
 有些情况下，我们不希望使用 <code>Controller Rotation Yaw</code> 作为角色的朝向，那么此时想旋转角色方向，使用如下方式：</p>
 <pre><code> void AMyPlayerController::Turn(float Rate)
  {
- 	// calculate delta for this frame from the rate information
- 	if (Rate != 0.f)
- 	{
- 		if (AActor* Target = GetViewTarget())
- 		{
- 			Target-&gt;AddActorWorldRotation(FRotator(0.f, Rate * InputYawScale, 0.f));
- 		}
- 	}
+     // calculate delta for this frame from the rate information
+     if (Rate != 0.f)
+     {
+         if (AActor* Target = GetViewTarget())
+         {
+             Target-&gt;AddActorWorldRotation(FRotator(0.f, Rate * InputYawScale, 0.f));
+         }
+     }
  }
 </code></pre>
 <div class="alert danger ">

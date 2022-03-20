@@ -377,26 +377,26 @@
 template&lt; class ObjectType &gt;
 struct FRawPtrProxy
 {
-	/** The object pointer */
-	ObjectType* Object;
+    /** The object pointer */
+    ObjectType* Object;
 
-	/** Reference controller used to destroy the object */
-	FReferenceControllerBase* ReferenceController;
+    /** Reference controller used to destroy the object */
+    FReferenceControllerBase* ReferenceController;
 
-	/** Construct implicitly from an object */
-	FORCEINLINE FRawPtrProxy( ObjectType* InObject )
-		: Object             ( InObject )
-		, ReferenceController( NewDefaultReferenceController( InObject ) )
-	{
-	}
+    /** Construct implicitly from an object */
+    FORCEINLINE FRawPtrProxy( ObjectType* InObject )
+        : Object             ( InObject )
+        , ReferenceController( NewDefaultReferenceController( InObject ) )
+    {
+    }
 
-	/** Construct implicitly from an object and a custom deleter */
-	template&lt; class Deleter &gt;
-	FORCEINLINE FRawPtrProxy( ObjectType* InObject, Deleter&amp;&amp; InDeleter )
-		: Object             ( InObject )
-		, ReferenceController( NewCustomReferenceController( InObject, Forward&lt; Deleter &gt;( InDeleter ) ) )
-	{
-	}
+    /** Construct implicitly from an object and a custom deleter */
+    template&lt; class Deleter &gt;
+    FORCEINLINE FRawPtrProxy( ObjectType* InObject, Deleter&amp;&amp; InDeleter )
+        : Object             ( InObject )
+        , ReferenceController( NewCustomReferenceController( InObject, Forward&lt; Deleter &gt;( InDeleter ) ) )
+    {
+    }
 };
 </code></pre>
 <p>In theory, Unreal GC system is to <code>UObject</code> what <code>std::shared_ptr&lt;&gt;</code> is to raw pointer, so <code>TSharedPtr</code> doesn&rsquo;t need to work for <code>UObject</code>.<br>
@@ -440,12 +440,12 @@ MyWeakActor = MyActor;
 <p>or</p>
 <pre><code>if(MyWeakActor.Get())
 {
-	ACharacter* Character = Cast&lt;ACharacter&gt;(MyWeakActor);
+    ACharacter* Character = Cast&lt;ACharacter&gt;(MyWeakActor);
 }
 </code></pre>
 <p>if <code>MyActor</code> has been destroyed, <code>MyWeakActor.Get()</code> would return <code>nullptr</code></p>
 <pre><code>MyActor-&gt;Destroy();
-bool IsValid = MyWeakActor.Get() != nullptr;	//false
+bool IsValid = MyWeakActor.Get() != nullptr;    //false
 </code></pre>
 <div class="alert danger ">
   <p>if <code>MyActor</code> has been recycled by GC, <code>Cast&lt;AMyCharacter&gt;(MyActor)</code> would cause crash after a while, but <code>Cast&lt;AMyCharacter&gt;(MyWeakActor)</code> would not.</p>
@@ -458,15 +458,15 @@ APawn* MyPawn = GetWorld()-&gt;SpawnActor&lt;APawn&gt;(MyPawnClass, FVector(200.
 TestArray.Add(TWeakObjectPtr&lt;APawn&gt;(TestPawn));
 TestArray.Add(TWeakObjectPtr&lt;APawn&gt;(MyPawn));
 
-int Num = TestArray.Num();	// 2
+int Num = TestArray.Num();    // 2
 
 TWeakObjectPtr&lt;APawn&gt; WeakPtr1(TestPawn);
 TestArray.Remove(WeakPtr1);
-int Num = TestArray.Num();	// 1
+int Num = TestArray.Num();    // 1
 
 TWeakObjectPtr&lt;APawn&gt; WeakPtr2(TestPawn);
 TestArray.Remove(WeakPtr2);
-int Num2 = TestArray.Num();	// 1
+int Num2 = TestArray.Num();    // 1
 </code></pre>
 <h3 id="tweakptr">TWeakPtr</h3>
 <h5 id="difference-between-tweakptr-and-tweakobjectptr">Difference between TWeakPtr and TWeakObjectPtr</h5>
@@ -492,15 +492,15 @@ Since UObjects are garbage collected and shared pointers are reference counted, 
 </code></pre>
 <p>Instantiate:</p>
 <pre><code>MTOctree = MakeUnique&lt;FMeshTriOctree&gt;(
-	Bounds.GetCenter(),
-	Bounds.GetExtent().GetMax()
+    Bounds.GetCenter(),
+    Bounds.GetExtent().GetMax()
 );
 </code></pre>
 <h5 id="example--tuniqueptr--tqueue">Example : TUniquePtr &amp; TQueue</h5>
 <p>Add element:</p>
 <pre><code>class FTestStruct 
 {
-	public:
+    public:
 
 };
 
@@ -550,16 +550,16 @@ TestArray.RemoveAt(TestArray.Num() - 1);
 Engine\Source\Runtime\Online\WebSockets\Private\Lws\LwsWebSocket.h</p>
 <pre><code>struct FLwsReceiveBufferText
 {
-	/**
-	 * Constructor
-	 * @param InText The packet contents
-	 */
-	FLwsReceiveBufferText(FString&amp;&amp; InText) : Text(MoveTemp(InText))
-	{
-	}
+    /**
+     * Constructor
+     * @param InText The packet contents
+     */
+    FLwsReceiveBufferText(FString&amp;&amp; InText) : Text(MoveTemp(InText))
+    {
+    }
 
-	/** Text packet received */
-	const FString Text;
+    /** Text packet received */
+    const FString Text;
 };
 
 typedef TUniquePtr&lt;FLwsReceiveBufferText&gt; FLwsReceiveBufferTextPtr;

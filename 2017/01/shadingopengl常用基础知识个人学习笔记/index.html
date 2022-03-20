@@ -470,13 +470,13 @@ GLenum properties[] = {GL_NAME_LENGTH, GL_TYPE, GL_LOCATION};
 printf(&quot;Active attributes:\n&quot;);
 for( int i = 0; i &lt; numAttribs; ++i ) 
 {
-	GLint results[3];
-	glGetProgramResourceiv(programHhandle, GL_PROGRAM_INPUT, i, 3, properties, 3, NULL, results);
-	GLint nameBufSize = results[0] + 1;
-	char * name = new char[nameBufSize];
-	glGetProgramResourceName(programHandle, GL_PROGRAM_INPUT, i, nameBufSize, NULL, name);
-	printf(&quot;%-5d %s (%s)\n&quot;, results[2], name, getTypeString(results[1]));
-	delete [] name;
+    GLint results[3];
+    glGetProgramResourceiv(programHhandle, GL_PROGRAM_INPUT, i, 3, properties, 3, NULL, results);
+    GLint nameBufSize = results[0] + 1;
+    char * name = new char[nameBufSize];
+    glGetProgramResourceName(programHandle, GL_PROGRAM_INPUT, i, nameBufSize, NULL, name);
+    printf(&quot;%-5d %s (%s)\n&quot;, results[2], name, getTypeString(results[1]));
+    delete [] name;
 }
 </code></pre>
 <div class="alert warning ">
@@ -506,8 +506,8 @@ uniform mat4 RotationMatrix;
 
 void main()
 {
-	Color = VertexColor;
-	gl_Position = RotationMatrix * vec4(VertexPosition,1.0);
+    Color = VertexColor;
+    gl_Position = RotationMatrix * vec4(VertexPosition,1.0);
 }
 </code></pre>
 <p>那么OpenGL API获取并设置Uniform variables的方式如下：</p>
@@ -544,15 +544,15 @@ GLenum properties[] = {GL_NAME_LENGTH, GL_TYPE, GL_LOCATION, GL_BLOCK_INDEX};
 printf(&quot;Active uniforms:\n&quot;);
 for( int i = 0; i &lt; numUniforms; ++i ) 
 {
-	GLint results[4];
-	glGetProgramResourceiv(handle, GL_UNIFORM, i, 4, properties, 4, NULL, results);
-	if( results[3] != -1 ) 
-		continue;       // Skip uniforms in blocks 
-	GLint nameBufSize = results[0] + 1;
-	char * name = new char[nameBufSize];
-	glGetProgramResourceName(handle, GL_UNIFORM, i, nameBufSize, NULL, name);
-	printf(&quot;%-5d %s (%s)\n&quot;, results[2], name, getTypeString(results[1]));
-	delete [] name;
+    GLint results[4];
+    glGetProgramResourceiv(handle, GL_UNIFORM, i, 4, properties, 4, NULL, results);
+    if( results[3] != -1 ) 
+        continue;       // Skip uniforms in blocks 
+    GLint nameBufSize = results[0] + 1;
+    char * name = new char[nameBufSize];
+    glGetProgramResourceName(handle, GL_UNIFORM, i, nameBufSize, NULL, name);
+    printf(&quot;%-5d %s (%s)\n&quot;, results[2], name, getTypeString(results[1]));
+    delete [] name;
 }
 </code></pre>
 <div class="alert warning ">
@@ -577,8 +577,8 @@ out vec3 TexCoord;
 
 void main()
 {
-	TexCoord = VertexTexCoord;
-	gl_Position = vec4(VertexPosition,1.0);
+    TexCoord = VertexTexCoord;
+    gl_Position = vec4(VertexPosition,1.0);
 }
 </code></pre>
 <p>basic_uniformblock.vert</p>
@@ -596,13 +596,13 @@ layout (binding = 1) uniform BlobSettings {
 
 void main() 
 {
-	float dx = TexCoord.x - 0.5;
-	float dy = TexCoord.y - 0.5;
-	float dist = sqrt(dx * dx + dy * dy);
-	FragColor =
-	   mix( Blob.InnerColor, Blob.OuterColor,
-			 smoothstep( Blob.RadiusInner, Blob.RadiusOuter, dist )
-			);
+    float dx = TexCoord.x - 0.5;
+    float dy = TexCoord.y - 0.5;
+    float dist = sqrt(dx * dx + dy * dy);
+    FragColor =
+       mix( Blob.InnerColor, Blob.OuterColor,
+             smoothstep( Blob.RadiusInner, Blob.RadiusOuter, dist )
+            );
 }
 </code></pre>
 <p>OpenGL API 代码：</p>

@@ -414,7 +414,7 @@ float AnimLength = 0.f;if (USkeletalMeshComponent *Mesh = MyActor-&gt;FindCompo
 <p>如果只是播放Animation Sequence，不需要Montage，可以使用 PlayAnimation()：</p>
 <pre><code>if (USkeletalMeshComponent *Mesh = GetMesh())
 {
-	Mesh-&gt;PlayAnimation(AnimSequence, false);
+    Mesh-&gt;PlayAnimation(AnimSequence, false);
 }
 </code></pre>
 <div class="alert warning ">
@@ -504,7 +504,7 @@ if (USkeletalMeshComponent *Mesh = MyActor-&gt;FindComponentByClass&lt;USkeletal
 </div>
 <h5 id="获取当前正在播放的montage">获取当前正在播放的Montage</h5>
 <pre><code>/** Get a current Active Montage in this AnimInstance. 
-	Note that there might be multiple Active at the same time. This will only return the first active one it finds. **/
+    Note that there might be multiple Active at the same time. This will only return the first active one it finds. **/
 UAnimMontage* UAnimInstance::GetCurrentActiveMontage() const
 </code></pre>
 <h5 id="停止montage播放">停止Montage播放</h5>
@@ -521,26 +521,26 @@ UAnimMontage* UAnimInstance::GetCurrentActiveMontage() const
 <p>Source in Engine:</p>
 <pre><code>void UAnimInstance::Montage_Stop(float InBlendOutTime, const UAnimMontage* Montage)
 {
-	if (Montage)
-	{
-		FAnimMontageInstance* MontageInstance = GetActiveInstanceForMontage(Montage);
-		if (MontageInstance)
-		{
-			MontageInstance-&gt;Stop(FAlphaBlend(Montage-&gt;BlendOut, InBlendOutTime));
-		}
-	}
-	else
-	{
-		// If no Montage reference, do it on all active ones.
-		for (int32 InstanceIndex = 0; InstanceIndex &lt; MontageInstances.Num(); InstanceIndex++)
-		{
-			FAnimMontageInstance* MontageInstance = MontageInstances[InstanceIndex];
-			if (MontageInstance &amp;&amp; MontageInstance-&gt;IsActive())
-			{
-				MontageInstance-&gt;Stop(FAlphaBlend(MontageInstance-&gt;Montage-&gt;BlendOut, InBlendOutTime));
-			}
-		}
-	}
+    if (Montage)
+    {
+        FAnimMontageInstance* MontageInstance = GetActiveInstanceForMontage(Montage);
+        if (MontageInstance)
+        {
+            MontageInstance-&gt;Stop(FAlphaBlend(Montage-&gt;BlendOut, InBlendOutTime));
+        }
+    }
+    else
+    {
+        // If no Montage reference, do it on all active ones.
+        for (int32 InstanceIndex = 0; InstanceIndex &lt; MontageInstances.Num(); InstanceIndex++)
+        {
+            FAnimMontageInstance* MontageInstance = MontageInstances[InstanceIndex];
+            if (MontageInstance &amp;&amp; MontageInstance-&gt;IsActive())
+            {
+                MontageInstance-&gt;Stop(FAlphaBlend(MontageInstance-&gt;Montage-&gt;BlendOut, InBlendOutTime));
+            }
+        }
+    }
 }
 </code></pre>
 <p>方式3：</p>
