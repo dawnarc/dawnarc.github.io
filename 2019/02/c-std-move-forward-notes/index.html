@@ -10,7 +10,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.92.2 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.93.2 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="">
 <meta name="description" content="keywords: VS2019, Code Analysis, Code Checking, std::move">
@@ -376,6 +376,47 @@
 <a href="https://blogs.msdn.microsoft.com/vcblog/2019/01/28/new-code-analysis-checks-in-visual-studio-2019-use-after-move-and-coroutine">https://blogs.msdn.microsoft.com/vcblog/2019/01/28/new-code-analysis-checks-in-visual-studio-2019-use-after-move-and-coroutine</a></p>
 <p>Move constructors(since C++11)<br>
 <a href="https://en.cppreference.com/w/cpp/language/move_constructor">https://en.cppreference.com/w/cpp/language/move_constructor</a></p>
+<h3 id="examples">Examples</h3>
+<h5 id="stdmove-with-reference">std::move with reference</h5>
+<pre><code>#include &lt;vector&gt;
+#include &lt;iostream&gt;
+
+struct A {
+    int a[100];
+    A() {}
+    A(const A&amp; other) {
+        std::cout &lt;&lt; &quot;copy&quot; &lt;&lt; std::endl;
+    }
+    A(A&amp;&amp; other) {
+        std::cout &lt;&lt; &quot;move&quot; &lt;&lt; std::endl;
+    }
+};
+
+void foo(const A&amp; a) {
+    std::vector&lt;A&gt; vA;
+    vA.push_back(std::move(a));
+}
+
+void bar(A&amp;&amp; a) {
+    std::vector&lt;A&gt; vA;
+    vA.push_back(std::move(a));
+}
+
+void baz(A&amp; a) {
+    std::vector&lt;A&gt; vA;
+    vA.push_back(std::move(a));
+}
+
+int main() {
+    A a;
+    foo(a);            // &quot;copy&quot;
+    foo(std::move(a)); // &quot;copy&quot;
+    bar(std::move(a)); // &quot;move&quot;
+    //baz(std::move(a)); // compilation error!!
+}
+</code></pre>
+<p>origin: Does <code>std::move</code> work with lvalue references?<br>
+<a href="https://stackoverflow.com/a/49305927/1645289">https://stackoverflow.com/a/49305927/1645289</a></p>
 <hr>
 <p><code>当我们表达的时候，我们应当像文学一样说话，而不让文学像我们的生活一样。</code></p>
               
@@ -547,7 +588,8 @@
     
   
     
-      <div id="cover" style="background-image:url('https://dawnarc.com/cover-v1.2.0.jpg');"></div>
+      
+      <div id="cover" style="background-image:url('https://dawnarc.com/images/cover-v1.2.0.jpg');"></div>
     
   
 

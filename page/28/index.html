@@ -10,7 +10,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.92.2 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.93.2 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Neil Wang">
 <meta name="keywords" content="">
 <meta name="description" content="Hugo tranquilpeak theme demo">
@@ -296,6 +296,145 @@
                ">
         <section class="postShorten-group main-content-wrap">
           
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2017/12/ue4%E9%9D%99%E6%80%81%E9%93%BE%E6%8E%A5protobuf-3.x%E7%89%88%E6%9C%AC%E7%9A%84%E9%94%99%E8%AF%AF/">
+          [UE4]静态链接Protobuf 3.x版本的错误
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2017-12-09T16:44:40&#43;08:00">
+        
+  
+  
+  
+  
+    Saturday, 16:44, Dec 9, 2017
+  
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        3.5版本编译问题 UE4集成Protobuf 3.5版本时的一些问题
+错误：wire_format_lite.h(863): error C4146: unary minus operator applied to unsigned type, result still unsigned
+解决办法：disable warning或者切换到3.4版本
+错误： type_traits(605): error C4647: behavior change: __is_pod(google::protobuf::internal::AuxillaryParseTableField) has different value in previous versions
+解决办法：
+修改generated_messages_table_driven.h。
+将static_assert(std::is_pod&lt;AuxillaryParseTableField&gt;::value, &quot;&quot;);注释掉
+3.5之后版本编译 如果使用3.x，将protoc生成的代码打成lib链接到UE4工程时，会出现以下错误（当template文件中有string字段时会报错，如果没有string可以编译通过）：
+2&gt;TestTDGameMode.cpp.obj : error LNK2019: unresolved external symbol &quot;public: void __cdecl my_proto::login_info::set_account(char const *)&quot; (?set_account@login_info@fh_proto@@QEAAXPEBD@Z) referenced in function &quot;public: virtual void __cdecl ATestTDGameMode::BeginPlay(void)&quot; (?BeginPlay@ATestTDGameMode@@UEAAXXZ)2&gt;G:\Source\Work\Game20171205\program\client\TestTD\Binaries\Win64\UE4Editor-TestTD-4710.dll : fatal error LNK1120: 1 unresolved externals Python脚本对protoc生成代码二次转换，然后与UE4工程编译(Protobuf 3.
+      
+      <p>
+        <a href="https://dawnarc.com/2017/12/ue4%E9%9D%99%E6%80%81%E9%93%BE%E6%8E%A5protobuf-3.x%E7%89%88%E6%9C%AC%E7%9A%84%E9%94%99%E8%AF%AF/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2017/12/buildnmake%E4%B8%8B%E4%B8%80%E4%BA%9B%E9%94%99%E8%AF%AF%E7%9A%84%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95/">
+          [Build]nmake下一些错误的解决办法
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2017-12-09T15:32:28&#43;08:00">
+        
+  
+  
+  
+  
+    Saturday, 15:32, Dec 9, 2017
+  
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/build">Build</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        原文：
+http://10305101ivy.blog.163.com/blog/static/584765892012227322607
+最近编译工程用到了windows下nmake工具，遇到了很多的问题，在网上苦寻答案，终于得到解决。现在把遇到的问题及解决办法写下来，希望给大家一些帮助。
+1.NMAKE:fatal error U1077.“cl.exe” return code 0xc0000135 产生原因：在安装visual studio的时候没有勾选注册环境变量导致的。
+解决办法：在系统环境变量中加入visual studio的安装路径：vs安装路径\VC\Bin,以及vs安装路径\Common7\IDE
+2.NMAKE:fatal error U1077. return code 0x2 产生原因：找不到代码文件中包含的头文件
+解决办法：cmd下进入到vs安装路径\VC\Bin下，执行vcvars32,此时会执行vcvas32.bat自动为vs设置环境变量
+3.NMAKE:fatal error U1077. return code 0x460 产生原因：你的工程中连接了一个lib文件，链接的时候却出现不能解析的外部符号。可能问题是你包含的lib是错的，或者有不兼容问题。我的问题就是后者，我的系统的32位的，但是链接了一个64位的lib.
+解决办法：链接正确的lib
+ 乱石穿空，惊涛拍岸，卷起千堆雪。江山如画，一时多少豪杰。----北宋·苏轼《念奴娇·赤壁怀古》
+      
+      <p>
+        <a href="https://dawnarc.com/2017/12/buildnmake%E4%B8%8B%E4%B8%80%E4%BA%9B%E9%94%99%E8%AF%AF%E7%9A%84%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
           
             
   
@@ -1134,134 +1273,6 @@ Align 对齐 在UV Toolkit面板中的Align一共有5种方式，依次是：左
 </article>
 
           
-            
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2017/11/mayauvselect/">
-          [Maya][UV]Select
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2017-11-05T17:27:40&#43;08:00">
-        
-  
-  
-  
-  
-    Sunday, 17:27, Nov 5, 2017
-  
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/maya">Maya</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        Maya版本为2018.1
-在UV Toolkit的顶部，是UV选择模式的按钮  Selection 选择模式 左边三个是建模时的点、线、面选择模式  右边两个分别是UV编辑模式下的点选择、UV壳选择。  在建模模式下，选择点、线的时候，maya会自动帮你选中其他UV壳上与之公用的点、线。   如果UV模式下，选择点，则不会选中其他UV壳上与之关联的点。  建模模式下选中的点为黄色，UV模式下选中的点为绿色。
- All/Clear/Inverse 全选、清除、反选   All 全选（Ctrl + Shift + A）   Clear 清除   Inverse 反选  注意：多边形建模时的Ctrl、Shift、Ctrl+Shift框选方式同样对UV适用。例如按住Shift反选。
-    Shrink/Grow Selection 收缩/扩张选择模式 在UV Toolkit面板中有以下几种   Grow Selection along loop （第4个）     Grow Selection （第3个）     Shrink Selection （第2个） 相当于Grow Selection的倒序操作。
-如果是这种情况下执行Shrink Selection，则会全部一次性全部取消选中。
-      
-      <p>
-        <a href="https://dawnarc.com/2017/11/mayauvselect/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-          
-            
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2017/11/mayauvcut-and-sew/">
-          [Maya][UV]Cut and Sew
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2017-11-05T13:23:40&#43;08:00">
-        
-  
-  
-  
-  
-    Sunday, 13:23, Nov 5, 2017
-  
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/maya">Maya</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        Maya版本为2018.1
-UV Toolkit面板中展开Cut and Sew选项  Auto-Seams 自动接缝 按住shift键点击Auto-Seams，弹出参数面板  参数说明
- Seams：是直接帮你裁切好，还是只是帮你选中可裁切的边，默认是Cut直接裁切。 Method：接缝方式，是自动，还是沿着硬边裁切。 Shell Splittings Tolerance：一个UV壳（shell）被裁切多个UV壳的可能性，0到1。相当于你预估一个现有的UV shell有多大的可能行被裁切。 Connect Holes：是否自动补洞，自动补洞可以减少扭曲。  Cut（UV裁切） 先选中要裁切的边线  然后点击Cut，则会以这条边线为边界，裁切出一个新的UV壳。  Cut Tool（UV裁切工具） 先点击Cut Tool之后，再单击需要裁切的边线，这样就可以边点击边裁切UV。    Sew（UV缝合） 假设要风格的位置如下  先选择要缝合的边线  然后点击Sew。   同欲者相憎，同忧者相亲。---《战国策》
-      
-      <p>
-        <a href="https://dawnarc.com/2017/11/mayauvcut-and-sew/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-          
           
   <div class="pagination-bar">
     <ul class="pagination">
@@ -1332,7 +1343,8 @@ UV Toolkit面板中展开Cut and Sew选项  Auto-Seams 自动接缝 按住shift�
     
   
     
-      <div id="cover" style="background-image:url('https://dawnarc.com/cover-v1.2.0.jpg');"></div>
+      
+      <div id="cover" style="background-image:url('https://dawnarc.com/images/cover-v1.2.0.jpg');"></div>
     
   
 

@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4843403245883139"
+     crossorigin="anonymous"></script>
+
+<script async custom-element="amp-auto-ads"
+        src="https://cdn.ampproject.org/v0/amp-auto-ads-0.1.js">
+</script>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.93.2 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="author" content="Neil Wang">
+<meta name="keywords" content="">
+<meta name="description" content="原文：https://www.cnblogs.com/kevingrace/p/5896706.html
+使用下面的关系区别这两个操作：
+git pull = git fetch &#43; git merge
+git pull --rebase = git fetch &#43; git rebase
+现在来看看git merge和git rebase的区别。
+假设有3次提交A,B,C。  在远程分支origin的基础上创建一个名为&quot;mywork&quot;的分支并提交了，同时有其他人在&quot;origin&quot;上做了一些修改并提交了。  其实这个时候E不应该提交，因为提交后会发生冲突。如何解决这些冲突呢？有以下两种方法：
+ git merge
+用git pull命令把&quot;origin&quot;分支上的修改pull下来与本地提交合并（merge）成版本M，但这样会形成图中的菱形，让人很困惑。   git rebase
+创建一个新的提交R，R的文件内容和上面M的一样，但我们将E提交废除，当它不存在（图中用虚线表示）。由于这种删除，小李不应该push其他的repository.rebase的好处是避免了菱形的产生，保持提交曲线为直线，让大家易于理解。    在rebase的过程中，有时也会有conflict，这时Git会停止rebase并让用户去解决冲突，解决完冲突后，用git add命令去更新这些内容，然后不用执行git-commit,直接执行git rebase &ndash;continue,这样git会继续apply余下的补丁。 在任何时候，都可以用git rebase &ndash;abort参数来终止rebase的行动，并且mywork分支会回到rebase开始前的状态。
+ 不能忍受无聊的一代人，将是平庸的一代人。不能忍耐无聊，生活就会变成持续的对无聊的逃离。──罗素（Rusell）">
+
+
+<meta property="og:description" content="原文：https://www.cnblogs.com/kevingrace/p/5896706.html
+使用下面的关系区别这两个操作：
+git pull = git fetch &#43; git merge
+git pull --rebase = git fetch &#43; git rebase
+现在来看看git merge和git rebase的区别。
+假设有3次提交A,B,C。  在远程分支origin的基础上创建一个名为&quot;mywork&quot;的分支并提交了，同时有其他人在&quot;origin&quot;上做了一些修改并提交了。  其实这个时候E不应该提交，因为提交后会发生冲突。如何解决这些冲突呢？有以下两种方法：
+ git merge
+用git pull命令把&quot;origin&quot;分支上的修改pull下来与本地提交合并（merge）成版本M，但这样会形成图中的菱形，让人很困惑。   git rebase
+创建一个新的提交R，R的文件内容和上面M的一样，但我们将E提交废除，当它不存在（图中用虚线表示）。由于这种删除，小李不应该push其他的repository.rebase的好处是避免了菱形的产生，保持提交曲线为直线，让大家易于理解。    在rebase的过程中，有时也会有conflict，这时Git会停止rebase并让用户去解决冲突，解决完冲突后，用git add命令去更新这些内容，然后不用执行git-commit,直接执行git rebase &ndash;continue,这样git会继续apply余下的补丁。 在任何时候，都可以用git rebase &ndash;abort参数来终止rebase的行动，并且mywork分支会回到rebase开始前的状态。
+ 不能忍受无聊的一代人，将是平庸的一代人。不能忍耐无聊，生活就会变成持续的对无聊的逃离。──罗素（Rusell）">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[VersionControl]转载：简单对比git pull和git pull --rebase的使用">
+<meta name="twitter:title" content="[VersionControl]转载：简单对比git pull和git pull --rebase的使用">
+<meta property="og:url" content="https://dawnarc.com/2018/11/versioncontrol%E8%BD%AC%E8%BD%BD%E7%AE%80%E5%8D%95%E5%AF%B9%E6%AF%94git-pull%E5%92%8Cgit-pull--rebase%E7%9A%84%E4%BD%BF%E7%94%A8/">
+<meta property="twitter:url" content="https://dawnarc.com/2018/11/versioncontrol%E8%BD%AC%E8%BD%BD%E7%AE%80%E5%8D%95%E5%AF%B9%E6%AF%94git-pull%E5%92%8Cgit-pull--rebase%E7%9A%84%E4%BD%BF%E7%94%A8/">
+<meta property="og:site_name" content="玄冬Wong">
+<meta property="og:description" content="原文：https://www.cnblogs.com/kevingrace/p/5896706.html
+使用下面的关系区别这两个操作：
+git pull = git fetch &#43; git merge
+git pull --rebase = git fetch &#43; git rebase
+现在来看看git merge和git rebase的区别。
+假设有3次提交A,B,C。  在远程分支origin的基础上创建一个名为&quot;mywork&quot;的分支并提交了，同时有其他人在&quot;origin&quot;上做了一些修改并提交了。  其实这个时候E不应该提交，因为提交后会发生冲突。如何解决这些冲突呢？有以下两种方法：
+ git merge
+用git pull命令把&quot;origin&quot;分支上的修改pull下来与本地提交合并（merge）成版本M，但这样会形成图中的菱形，让人很困惑。   git rebase
+创建一个新的提交R，R的文件内容和上面M的一样，但我们将E提交废除，当它不存在（图中用虚线表示）。由于这种删除，小李不应该push其他的repository.rebase的好处是避免了菱形的产生，保持提交曲线为直线，让大家易于理解。    在rebase的过程中，有时也会有conflict，这时Git会停止rebase并让用户去解决冲突，解决完冲突后，用git add命令去更新这些内容，然后不用执行git-commit,直接执行git rebase &ndash;continue,这样git会继续apply余下的补丁。 在任何时候，都可以用git rebase &ndash;abort参数来终止rebase的行动，并且mywork分支会回到rebase开始前的状态。
+ 不能忍受无聊的一代人，将是平庸的一代人。不能忍耐无聊，生活就会变成持续的对无聊的逃离。──罗素（Rusell）">
+<meta name="twitter:description" content="原文：https://www.cnblogs.com/kevingrace/p/5896706.html
+使用下面的关系区别这两个操作：
+git pull = git fetch &#43; git merge
+git pull --rebase = git fetch &#43; git rebase
+现在来看看git merge和git rebase的区别。
+假设有3次提交A,B,C。  在远程分支origin的基础上创建一个名为&quot;mywork&quot;的分支并提交了，同时有其他人在&quot;origin&quot;上做了一些修改并提交了。  其实这个时候E不应该提交，因为提交后会发生冲突。如何解决这些冲突呢？有以下两种方法：
+ git merge
+用git pull命令把&quot;origin&quot;分支上的修改pull下来与本地提交合并（merge）成版本M，但这样会形成图中的菱形，让人很困惑。   git rebase
+创建一个新的提交R，R的文件内容和上面M的一样，但我们将E提交废除，当它不存在（图中用虚线表示）。由于这种删除，小李不应该push其他的repository.rebase的好处是避免了菱形的产生，保持提交曲线为直线，让大家易于理解。    在rebase的过程中，有时也会有conflict，这时Git会停止rebase并让用户去解决冲突，解决完冲突后，用git add命令去更新这些内容，然后不用执行git-commit,直接执行git rebase &ndash;continue,这样git会继续apply余下的补丁。 在任何时候，都可以用git rebase &ndash;abort参数来终止rebase的行动，并且mywork分支会回到rebase开始前的状态。
+ 不能忍受无聊的一代人，将是平庸的一代人。不能忍耐无聊，生活就会变成持续的对无聊的逃离。──罗素（Rusell）">
+<meta property="og:locale" content="en-us">
+
+  
+    <meta property="article:published_time" content="2018-11-06T21:13:02">
+  
+  
+    <meta property="article:modified_time" content="2018-11-06T21:13:02">
+  
+  
+  
+    
+      <meta property="article:section" content="VersionControl">
+    
+  
+  
+    
+      <meta property="article:tag" content="Git">
+    
+  
+
+
+<meta name="twitter:card" content="summary">
+
+  <meta name="twitter:site" content="@dawn_arc">
+
+
+  <meta name="twitter:creator" content="@dawn_arc">
+
+
+
+
+
+
+
+
+
+
+  <meta property="og:image" content="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=640">
+  <meta property="twitter:image" content="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=640">
+
+
+    <title>[VersionControl]转载：简单对比git pull和git pull --rebase的使用</title>
+
+    <link rel="icon" href="https://dawnarc.com/favicon.png">
+    
+
+    
+
+    <link rel="canonical" href="https://dawnarc.com/2018/11/versioncontrol%E8%BD%AC%E8%BD%BD%E7%AE%80%E5%8D%95%E5%AF%B9%E6%AF%94git-pull%E5%92%8Cgit-pull--rebase%E7%9A%84%E4%BD%BF%E7%94%A8/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/jquery.fancybox.min.css" integrity="sha256-vuXZ9LGmmwtjqFX1F+EKin1ThZMub58gKULUyf0qECk=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/helpers/jquery.fancybox-thumbs.min.css" integrity="sha256-SEa4XYAHihTcEP1f5gARTB2K26Uk8PsndQYHQC1f4jU=" crossorigin="anonymous" />
+    
+    
+    <link rel="stylesheet" href="https://dawnarc.com/css/style-twzjdbqhmnnacqs0pwwdzcdbt8yhv8giawvjqjmyfoqnvazl0dalmnhdkvp7.min.css" />
+    
+    
+      
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/solarized-light.min.css">
+      
+    
+
+    
+    
+    
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-78064851-2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-78064851-2');
+</script>
+
+  
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="4">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="https://dawnarc.com/">玄冬Wong</a>
+  </div>
+  
+    
+      <a class="header-right-picture "
+         href="https://dawnarc.com/#about">
+    
+    
+    
+      
+        <img class="header-picture" src="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=90" alt="Author&#39;s picture" />
+      
+    
+    </a>
+    
+</header>
+
+      <nav id="sidebar" data-behavior="4">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="https://dawnarc.com/#about">
+          <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=110" alt="Author&#39;s picture" />
+        </a>
+        <h4 class="sidebar-profile-name">Neil Wang</h4>
+        
+          <h5 class="sidebar-profile-bio">久长唯有品格</h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/categories">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+      
+      <span class="sidebar-button-desc">Categories</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/tags">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+      
+      <span class="sidebar-button-desc">Tags</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/archives">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+      
+      <span class="sidebar-button-desc">Archives</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/#about">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+      
+      <span class="sidebar-button-desc">About</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+      
+      <span class="sidebar-button-desc">Home</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/index.xml">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://stackoverflow.com/users/1645289/protoss" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-stack-overflow"></i>
+      
+      <span class="sidebar-button-desc">Stack Overflow</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://www.facebook.com/koanland" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-facebook"></i>
+      
+      <span class="sidebar-button-desc">Facebook</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/dawnarc" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://www.instagram.com/dawn_arc/" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-instagram"></i>
+      
+      <span class="sidebar-button-desc">Instagram</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://www.linkedin.com/in/dawnarc/" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-linkedin"></i>
+      
+      <span class="sidebar-button-desc">Linkedin</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://www.pinterest.com/wangaiguo/" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-pinterest"></i>
+      
+      <span class="sidebar-button-desc">Pinterest</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://steamcommunity.com/id/dawnarc" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-steam"></i>
+      
+      <span class="sidebar-button-desc">Steam</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://twitter.com/dawn_arc" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-twitter"></i>
+      
+      <span class="sidebar-button-desc">Twitter</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://weibo.com/koanland" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-weibo"></i>
+      
+      <span class="sidebar-button-desc">Weibo</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+
+    </ul>
+  </div>
+</nav>
+
+      
+
+      <div id="main" data-behavior="4"
+        class="
+               hasCoverMetaIn
+               ">
+        <article class="post" itemscope itemType="http://schema.org/BlogPosting">
+          
+          
+            <div class="post-header main-content-wrap text-left">
+  
+    <h1 class="post-title" itemprop="headline">
+      [VersionControl]转载：简单对比git pull和git pull --rebase的使用
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2018-11-06T21:13:02&#43;08:00">
+        
+  
+  
+  
+  
+    Tuesday, 21:13, Nov 6, 2018
+  
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/versioncontrol">VersionControl</a>
+    
+  
+
+  </div>
+
+</div>
+          
+          <div class="post-content markdown" itemprop="articleBody">
+			<amp-auto-ads type="adsense"
+					data-ad-client="ca-pub-4843403245883139">
+			</amp-auto-ads>
+            <div class="main-content-wrap">
+                <ins class="adsbygoogle"
+                     style="display:block;height:120px"
+                     data-ad-client="ca-pub-4843403245883139"
+                     data-ad-slot="2321022024"
+                     data-ad-format="fluid"
+                     data-full-width-responsive="true"></ins>
+                <script>
+                     (adsbygoogle = window.adsbygoogle || []).push({});
+                </script>
+              <p>原文：https://www.cnblogs.com/kevingrace/p/5896706.html</p>
+<p>使用下面的关系区别这两个操作：<br>
+<span class="highlight-text green">git pull = git fetch + git merge</span><br>
+<span class="highlight-text green">git pull --rebase = git fetch + git rebase</span></p>
+<p>现在来看看git merge和git rebase的区别。</p>
+<p>假设有3次提交A,B,C。
+<figure><img src="https://dawnarc.com/img/20181106-[VersionControl]%e8%bd%ac%e8%bd%bd%ef%bc%9a%e7%ae%80%e5%8d%95%e5%af%b9%e6%af%94git%20pull%e5%92%8cgit%20pull%20--rebase%e7%9a%84%e4%bd%bf%e7%94%a8/[VersionControl]%e8%bd%ac%e8%bd%bd%ef%bc%9a%e7%ae%80%e5%8d%95%e5%af%b9%e6%af%94git%20pull%e5%92%8cgit%20pull%20--rebase%e7%9a%84%e4%bd%bf%e7%94%a8-01.png"/>
+</figure>
+</p>
+<p>在远程分支origin的基础上创建一个名为&quot;mywork&quot;的分支并提交了，同时有其他人在&quot;origin&quot;上做了一些修改并提交了。
+<figure><img src="https://dawnarc.com/img/20181106-[VersionControl]%e8%bd%ac%e8%bd%bd%ef%bc%9a%e7%ae%80%e5%8d%95%e5%af%b9%e6%af%94git%20pull%e5%92%8cgit%20pull%20--rebase%e7%9a%84%e4%bd%bf%e7%94%a8/[VersionControl]%e8%bd%ac%e8%bd%bd%ef%bc%9a%e7%ae%80%e5%8d%95%e5%af%b9%e6%af%94git%20pull%e5%92%8cgit%20pull%20--rebase%e7%9a%84%e4%bd%bf%e7%94%a8-02.png"/>
+</figure>
+</p>
+<p>其实这个时候E不应该提交，因为提交后会发生冲突。如何解决这些冲突呢？有以下两种方法：</p>
+<ol>
+<li><strong>git merge</strong><br>
+用git pull命令把&quot;origin&quot;分支上的修改pull下来与本地提交合并（merge）成版本M，但这样会形成图中的菱形，让人很困惑。
+<figure><img src="https://dawnarc.com/img/20181106-[VersionControl]%e8%bd%ac%e8%bd%bd%ef%bc%9a%e7%ae%80%e5%8d%95%e5%af%b9%e6%af%94git%20pull%e5%92%8cgit%20pull%20--rebase%e7%9a%84%e4%bd%bf%e7%94%a8/[VersionControl]%e8%bd%ac%e8%bd%bd%ef%bc%9a%e7%ae%80%e5%8d%95%e5%af%b9%e6%af%94git%20pull%e5%92%8cgit%20pull%20--rebase%e7%9a%84%e4%bd%bf%e7%94%a8-03.png"/>
+</figure>
+</li>
+<li><strong>git rebase</strong><br>
+创建一个新的提交R，R的文件内容和上面M的一样，但我们将E提交废除，当它不存在（图中用虚线表示）。由于这种删除，小李不应该push其他的repository.rebase的好处是避免了菱形的产生，保持提交曲线为直线，让大家易于理解。
+<figure><img src="https://dawnarc.com/img/20181106-[VersionControl]%e8%bd%ac%e8%bd%bd%ef%bc%9a%e7%ae%80%e5%8d%95%e5%af%b9%e6%af%94git%20pull%e5%92%8cgit%20pull%20--rebase%e7%9a%84%e4%bd%bf%e7%94%a8/[VersionControl]%e8%bd%ac%e8%bd%bd%ef%bc%9a%e7%ae%80%e5%8d%95%e5%af%b9%e6%af%94git%20pull%e5%92%8cgit%20pull%20--rebase%e7%9a%84%e4%bd%bf%e7%94%a8-04.png"/>
+</figure>
+</li>
+</ol>
+<p>在rebase的过程中，有时也会有conflict，这时Git会停止rebase并让用户去解决冲突，解决完冲突后，用git add命令去更新这些内容，然后不用执行git-commit,直接执行git rebase &ndash;continue,这样git会继续apply余下的补丁。
+在任何时候，都可以用git rebase &ndash;abort参数来终止rebase的行动，并且mywork分支会回到rebase开始前的状态。</p>
+<hr>
+<p><code>不能忍受无聊的一代人，将是平庸的一代人。不能忍耐无聊，生活就会变成持续的对无聊的逃离。</code>──罗素（Rusell）</p>
+
+              
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+                
+                
+                  <div class="post-footer-tags">
+                    <span class="text-color-light text-small">TAGGED IN</span><br/>
+                    
+  <a class="tag tag--primary tag--small" href="https://dawnarc.com/tags/git/">Git</a>
+
+                  </div>
+                
+              
+            
+            <div class="post-actions-wrap">
+  
+      <nav >
+        <ul class="post-actions post-action-nav">
+          
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2018/11/ue4pass-parameters-before-triggering-beginplay-spawnactordeferred/" data-tooltip="[UE4]Pass Parameters before triggering BeginPlay (SpawnActorDeferred)">
+              
+                  <i class="fa fa-angle-left"></i>
+                  <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+                </a>
+            </li>
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2018/11/ue4particle-emitter-related/" data-tooltip="[UE4]Particle Emitter Related">
+              
+                  <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+                  <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+          
+        </ul>
+      </nav>
+    <ul class="post-actions post-action-share" >
+      
+        <li class="post-action hide-lg hide-md hide-sm">
+          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
+            <i class="fa fa-share-alt"></i>
+          </a>
+        </li>
+        
+      
+      
+      <li class="post-action">
+        
+          <a class="post-action-btn btn btn--default" href="#">
+        
+          <i class="fa fa-list"></i>
+        </a>
+      </li>
+    </ul>
+  
+</div>
+
+            <script src="https://utteranc.es/client.js"
+  repo="dawnarc/dawnarc.github.io"
+  issue-term="pathname"
+  label="Comment"
+  theme="github-light"
+  crossorigin="anonymous"
+  async>
+</script>
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2022 Neil Wang. All Rights Reserved. Powered by <A href="https://gohugo.io/"> Hugo</A> | Theme <A href="https://github.com/kakawait/hugo-tranquilpeak-theme/">Tranquilpeak</A>.
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+        <div class="post-actions-wrap">
+  
+      <nav >
+        <ul class="post-actions post-action-nav">
+          
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2018/11/ue4pass-parameters-before-triggering-beginplay-spawnactordeferred/" data-tooltip="[UE4]Pass Parameters before triggering BeginPlay (SpawnActorDeferred)">
+              
+                  <i class="fa fa-angle-left"></i>
+                  <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+                </a>
+            </li>
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2018/11/ue4particle-emitter-related/" data-tooltip="[UE4]Particle Emitter Related">
+              
+                  <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+                  <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+          
+        </ul>
+      </nav>
+    <ul class="post-actions post-action-share" >
+      
+        <li class="post-action hide-lg hide-md hide-sm">
+          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
+            <i class="fa fa-share-alt"></i>
+          </a>
+        </li>
+        
+      
+      
+      <li class="post-action">
+        
+          <a class="post-action-btn btn btn--default" href="#">
+        
+          <i class="fa fa-list"></i>
+        </a>
+      </li>
+    </ul>
+  
+</div>
+
+      </div>
+      <div id="share-options-bar" class="share-options-bar" data-behavior="4">
+  <i id="btn-close-shareoptions" class="fa fa-close"></i>
+  <ul class="share-options">
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-remove"></i>
+    </div>
+    
+      <img id="about-card-picture" src="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=110" alt="Author&#39;s picture" />
+    
+    <h4 id="about-card-name">Neil Wang</h4>
+    
+      <div id="about-card-bio">久长唯有品格</div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        Developer
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker"></i>
+        <br/>
+        Yichang, Hubei
+      </div>
+    
+  </div>
+</div>
+
+    
+
+    
+  
+    
+      
+      <div id="cover" style="background-image:url('https://dawnarc.com/images/cover-v1.2.0.jpg');"></div>
+    
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+
+	<link rel="stylesheet"
+      href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/solarized-light.min.css">
+	<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.7/js/jquery.fancybox.min.js" integrity="sha256-GEAnjcTqVP+vBp3SSc8bEDQqvWAZMiHyUSIorrWwH50=" crossorigin="anonymous"></script>
+
+
+<script src="https://dawnarc.com/js/script-pcw6v3xilnxydl1vddzazdverrnn9ctynvnxgwho987mfyqkuylcb1nlt.min.js"></script>
+
+
+<script lang="javascript">
+window.onload = updateMinWidth;
+window.onresize = updateMinWidth;
+document.getElementById("sidebar").addEventListener("transitionend", updateMinWidth);
+function updateMinWidth() {
+  var sidebar = document.getElementById("sidebar");
+  var main = document.getElementById("main");
+  main.style.minWidth = "";
+  var w1 = getComputedStyle(main).getPropertyValue("min-width");
+  var w2 = getComputedStyle(sidebar).getPropertyValue("width");
+  var w3 = getComputedStyle(sidebar).getPropertyValue("left");
+  main.style.minWidth = `calc(${w1} - ${w2} - ${w3})`;
+}
+</script>
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+  
+    
+  
+
+
+
+
+
+
+    
+  </body>
+</html>
+
