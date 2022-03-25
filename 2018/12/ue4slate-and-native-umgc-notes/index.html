@@ -497,7 +497,8 @@ auto  screenSize = geometry.LocalToAbsolute(localSize) - screenPosition; // BotR
         {
             for (int i = 0; i &lt; 5; i++)
             {
-                UMyItemWidget* Item = WidgetTree-&gt;ConstructWidget&lt;UMyItemWidget&gt;(MyWidgetClass);
+                FString ChildID = FString::Printf(TEXT(&quot;MyWidget_%d&quot;), i);
+                UMyItemWidget* Item = WidgetTree-&gt;ConstructWidget&lt;UMyItemWidget&gt;(MyWidgetClass, ChildID);
                 UPanelSlot* Slot = HorBox-&gt;AddChild(Item);
                 if (UHorizontalBoxSlot* HorSlot = Cast&lt;UHorizontalBoxSlot&gt;(Slot))
                 {
@@ -516,6 +517,9 @@ auto  screenSize = geometry.LocalToAbsolute(localSize) - screenPosition; // BotR
     }
 }
 </code></pre>
+<div class="alert warning ">
+  <p>You must pass different argument <code>WidgetName</code> for each child widget when create multiple child using <code>WidgetTree-&gt;ConstructWidget()</code>, otherwise events (e.g. OnClicked) of child widget will not work.</p>
+</div>
 <h5 id="filling-uniformgridpanel-at-run-time">Filling UniformGridPanel At Run-time</h5>
 <pre><code>void UMyUserWidget::NativeConstruct()
 {

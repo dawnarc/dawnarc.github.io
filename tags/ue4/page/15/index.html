@@ -306,6 +306,69 @@
               
   
     
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2017/02/ue4overlap%E6%A3%80%E6%B5%8B%E7%9A%84%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7%E5%87%BD%E6%95%B0/">
+          [UE4]Overlap检测的常用工具函数
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2017-02-22T17:27:40&#43;08:00">
+        
+  
+  
+  
+  
+    Wednesday, 17:27, Feb 22, 2017
+  
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        keyword: Overlap、Test、Blocking
+World.h
+/*** Test the collision of a shape at the supplied location using a specific channel, and return if any blocking overlap is found* @param Pos Location of center of box to test against the world* @param TraceChannel The 'channel' that this query is in, used to determine which components to hit* @param CollisionShape CollisionShape - supports Box, Sphere, Capsule, Convex* @param Params Additional parameters used for the trace* @param ResponseParam ResponseContainer to be used for this trace* @return TRUE if any blocking results are found*/bool OverlapBlockingTestByChannel(const FVector&amp; Pos, const FQuat&amp; Rot, ECollisionChannel TraceChannel, const FCollisionShape&amp; CollisionShape, const FCollisionQueryParams&amp; Params = FCollisionQueryParams::DefaultQueryParam, const FCollisionResponseParams&amp; ResponseParam = FCollisionResponseParams::DefaultResponseParam) const;/*** Test the collision of a shape at the supplied location using a specific channel, and return if any blocking or overlapping shape is found* @param Pos Location of center of box to test against the world* @param TraceChannel The 'channel' that this query is in, used to determine which components to hit* @param CollisionShape CollisionShape - supports Box, Sphere, Capsule, Convex* @param Params Additional parameters used for the trace* @param ResponseParam ResponseContainer to be used for this trace* @return TRUE if any blocking or overlapping results are found*/bool OverlapAnyTestByChannel(const FVector&amp; Pos, const FQuat&amp; Rot, ECollisionChannel TraceChannel, const FCollisionShape&amp; CollisionShape, const FCollisionQueryParams&amp; Params = FCollisionQueryParams::DefaultQueryParam, const FCollisionResponseParams&amp; ResponseParam = FCollisionResponseParams::DefaultResponseParam) const;/*** Test the collision of a shape at the supplied location using object types, and return if any overlap is found* @param Pos Location of center of box to test against the world* @param ObjectQueryParams List of object types it's looking for* @param CollisionShape CollisionShape - supports Box, Sphere, Capsule, Convex* @param Params Additional parameters used for the trace* @return TRUE if any blocking results are found*/bool OverlapAnyTestByObjectType(const FVector&amp; Pos, const FQuat&amp; Rot, const FCollisionObjectQueryParams&amp; ObjectQueryParams, const FCollisionShape&amp; CollisionShape, const FCollisionQueryParams&amp; Params = FCollisionQueryParams::DefaultQueryParam) const;/*** Test the collision of a shape at the supplied location using a specific profile, and return if any blocking overlap is found* @param Pos Location of center of box to test against the world* @param ProfileName The 'profile' used to determine which components to hit* @param CollisionShape CollisionShape - supports Box, Sphere, Capsule* @param Params Additional parameters used for the trace* @return TRUE if any blocking results are found*/bool OverlapBlockingTestByProfile(const FVector&amp; Pos, const FQuat&amp; Rot, FName ProfileName, const FCollisionShape&amp; CollisionShape, const FCollisionQueryParams&amp; Params = FCollisionQueryParams::DefaultQueryParam) const;/*** Test the collision of a shape at the supplied location using a specific profile, and return if any blocking or overlap is found* @param Pos Location of center of box to test against the world* @param ProfileName The 'profile' used to determine which components to hit* @param CollisionShape CollisionShape - supports Box, Sphere, Capsule* @param Params Additional parameters used for the trace* @return TRUE if any blocking or overlapping results are found*/bool OverlapAnyTestByProfile(const FVector&amp; Pos, const FQuat&amp; Rot, FName ProfileName, const FCollisionShape&amp; CollisionShape, const FCollisionQueryParams&amp; Params = FCollisionQueryParams::DefaultQueryParam) const;/*** Test the collision of a shape at the supplied location using a specific channel, and determine the set of components that it overlaps* @param OutOverlaps Array of components found to overlap supplied box* @param Pos Location of center of shape to test against the world* @param TraceChannel The 'channel' that this query is in, used to determine which components to hit* @param CollisionShape CollisionShape - supports Box, Sphere, Capsule* @param Params Additional parameters used for the trace* @param ResponseParam ResponseContainer to be used for this trace* @return TRUE if OutOverlaps contains any blocking results*/bool OverlapMultiByChannel(TArray&lt;struct FOverlapResult&gt;&amp; OutOverlaps, const FVector&amp; Pos, const FQuat&amp; Rot, ECollisionChannel TraceChannel, const FCollisionShape&amp; CollisionShape, const FCollisionQueryParams&amp; Params = FCollisionQueryParams::DefaultQueryParam, const FCollisionResponseParams&amp; ResponseParam = FCollisionResponseParams::DefaultResponseParam) const;/*** Test the collision of a shape at the supplied location using object types, and determine the set of components that it overlaps* @param OutOverlaps Array of components found to overlap supplied box* @param Pos Location of center of shape to test against the world* @param ObjectQueryParams List of object types it's looking for* @param CollisionShape CollisionShape - supports Box, Sphere, Capsule* @param Params Additional parameters used for the trace* @return TRUE if any overlap is found*/bool OverlapMultiByObjectType(TArray&lt;struct FOverlapResult&gt;&amp; OutOverlaps, const FVector&amp; Pos, const FQuat&amp; Rot, const FCollisionObjectQueryParams&amp; ObjectQueryParams, const FCollisionShape&amp; CollisionShape, const FCollisionQueryParams&amp; Params = FCollisionQueryParams::DefaultQueryParam) const;/*** Test the collision of a shape at the supplied location using a specific profile, and determine the set of components that it overlaps* @param OutOverlaps Array of components found to overlap supplied box* @param Pos Location of center of shape to test against the world* @param ProfileName The 'profile' used to determine which components to hit* @param CollisionShape CollisionShape - supports Box, Sphere, Capsule* @param Params Additional parameters used for the trace* @return TRUE if OutOverlaps contains any blocking results*/bool OverlapMultiByProfile(TArray&lt;struct FOverlapResult&gt;&amp; OutOverlaps, const FVector&amp; Pos, const FQuat&amp; Rot, FName ProfileName, const FCollisionShape&amp; CollisionShape, const FCollisionQueryParams&amp; Params = FCollisionQueryParams::DefaultQueryParam) const;  今年花胜去年红。可惜明年花更好，知与谁同？—欧阳修《浪淘沙》
+      
+      <p>
+        <a href="https://dawnarc.com/2017/02/ue4overlap%E6%A3%80%E6%B5%8B%E7%9A%84%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7%E5%87%BD%E6%95%B0/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+            
+              
+  
+    
   
 
 
@@ -1192,68 +1255,6 @@ protected:/** Canvas to Draw HUD on. Only valid during PostRender() event. */U
       
       <p>
         <a href="https://dawnarc.com/2016/10/ue4hud%E7%9A%84canvas%E5%8F%98%E9%87%8F%E4%B8%BAnull%E7%9A%84%E9%97%AE%E9%A2%98/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-            
-              
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2016/10/ue4tmap%E4%BD%BF%E7%94%A8struct%E5%BD%93%E4%BD%9Ckey%E6%97%B6%E9%9C%80%E8%A6%81%E9%87%8D%E8%BD%BD%E7%9A%84%E6%93%8D%E4%BD%9C%E7%AC%A6/">
-          [UE4]TMap使用Struct当作key时需要重载的操作符
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2016-10-23T17:20:40&#43;08:00">
-        
-  
-  
-  
-  
-    Sunday, 17:20, Oct 23, 2016
-  
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        定义struct：
-struct FMyStruct{// String which identifies our keyFString UniqueID;// Some state which doesn't affect struct identityfloat SomeFloat;explicit FMyStruct(float InFloat): UniqueID (FGuid::NewGuid().ToString()), SomeFloat(InFloat){}};template &lt;typename ValueType&gt;struct TMyStructMapKeyFuncs :BaseKeyFuncs&lt;TPair&lt;FMyStruct, ValueType&gt;,FString&gt;{private:typedef BaseKeyFuncs&lt;TPair&lt;FMyStruct, ValueType&gt;,FString&gt; Super;public:typedef typename Super::ElementInitType ElementInitType;typedef typename Super::KeyInitType KeyInitType;static KeyInitType GetSetKey(ElementInitType Element){return Element.Key.UniqueID;}static bool Matches(KeyInitType A, KeyInitType B){return A.
-      
-      <p>
-        <a href="https://dawnarc.com/2016/10/ue4tmap%E4%BD%BF%E7%94%A8struct%E5%BD%93%E4%BD%9Ckey%E6%97%B6%E9%9C%80%E8%A6%81%E9%87%8D%E8%BD%BD%E7%9A%84%E6%93%8D%E4%BD%9C%E7%AC%A6/" class="postShorten-excerpt_link link">Continue reading</a>
         
       </p>
     </div>
