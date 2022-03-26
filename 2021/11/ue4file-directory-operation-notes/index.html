@@ -388,6 +388,28 @@ FFileHelper::SaveStringToFile(FBase64::Encode(Stream), *FilePath);
 Stream.Add(1);
 FFileHelper::SaveArrayToFile(Stream, *FilePath);
 </code></pre>
+<h5 id="how-to-find-the-latest-modified-file-in-directory">How to find the latest modified file in directory?</h5>
+<pre><code>TMap&lt;int32, FString&gt; FileMap;
+TArray&lt;int32&gt; TimeArray;
+TArray&lt;FString&gt; FoundFiles;
+FString Directory = GetDefault&lt;UEngine&gt;()-&gt;GameScreenshotSaveDirectory.Path;
+FString fileExt = TEXT(&quot;png&quot;);
+IFileManager::Get().FindFiles(FoundFiles, *Directory, *fileExt);
+
+for(FString FileName : FoundFiles)
+{
+    FDateTime Data = IFileManager::Get().GetTimeStamp(*FileName);
+    int32 UnixTimestamp = Data.GetSecond();
+    FileMap.Add(UnixTimestamp, FileName);
+    TimeArray.Add(UnixTimestamp);
+}
+TimeArray.Sort();
+if(TimeArray.Num() &gt; 0)
+{
+    FString* LatestFile = FileMap.Find(TimeArray[0]);
+    UE_LOG(LogTemp, Log, TEXT(&quot;latestfile: %s&quot;), *LatestFile);
+}
+</code></pre>
 <h5 id="how-to-get-directory-of-custom-config-file-savestringtofile-on-android-failed">How to get directory of custom config file? (SaveStringToFile on android failed)</h5>
 <p><code>FPaths::ProjectDir()</code> works on Windows, but would fail on Android.<br>
 Solution:</p>
