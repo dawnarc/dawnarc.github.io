@@ -28,10 +28,10 @@
 <meta property="og:locale" content="en-us">
 
   
-    <meta property="article:published_time" content="2021-11-22T00:09:28">
+    <meta property="article:published_time" content="2021-11-22T00:09:29">
   
   
-    <meta property="article:modified_time" content="2021-11-22T00:09:28">
+    <meta property="article:modified_time" content="2021-11-22T00:09:29">
   
   
   
@@ -325,7 +325,7 @@
   
   <div class="postShorten-meta post-meta">
     
-      <time itemprop="datePublished" datetime="2021-11-22T00:09:28&#43;08:00">
+      <time itemprop="datePublished" datetime="2021-11-22T00:09:29&#43;08:00">
         
   
   
@@ -379,6 +379,64 @@
 <li>The speed of running pure script: <code>Puerts</code> is 67 times <code>sLua</code>, has the same performance of <code>Unreal.js</code>.</li>
 <li>Pure C++ vs. Pure TypeScript (<code>PuerTS</code>): C++ is 3.5 times <code>PuerTS</code>, as a comparison, C++ is twice performance of nativing Blueprint of UE4.</li>
 </ul>
+<h5 id="extension-how-to-addbind-other-unreal-api-in-uedts">Extension: how to add(bind) other Unreal API in ue.d.ts</h5>
+<p>Add <code>UUserWidget::GetWidgetFromName()</code> in ue.d.ts:</p>
+<pre><code>#include &quot;CoreMinimal.h&quot;
+#include &quot;Binding.hpp&quot;
+#include &quot;UEDataBinding.hpp&quot;
+#include &quot;Blueprint/UserWidget.h&quot;
+
+UsingUClass(UObject);
+UsingUClass(UClass);
+#if !defined(ENGINE_INDEPENDENT_JSENV)
+UsingUClass(UWorld);    // for return type
+UsingUClass(USceneComponent);
+UsingUClass(UActorComponent);
+UsingUClass(UUserWidget);
+UsingUClass(UWidget);
+#endif
+
+struct AutoRegisterForUE
+{
+    AutoRegisterForUE()
+    {
+        puerts::DefineClass&lt;UObject&gt;()
+#if ENGINE_MAJOR_VERSION &gt;= 4 &amp;&amp; ENGINE_MINOR_VERSION &gt;= 23
+            .Method(&quot;CreateDefaultSubobject&quot;,
+                SelectFunction(UObject * (UObject::*) (FName, UClass*, UClass*, bool, bool), &amp;UObject::CreateDefaultSubobject))
+#else
+            .Method(&quot;CreateDefaultSubobject&quot;, SelectFunction(UObject * (UObject::*) (FName, UClass*, UClass*, bool, bool, bool),
+                                                  &amp;UObject::CreateDefaultSubobject))
+#endif
+            .Method(&quot;GetName&quot;, SelectFunction(FString(UObjectBaseUtility::*)() const, &amp;UObjectBaseUtility::GetName))
+            .Method(&quot;GetOuter&quot;, MakeFunction(&amp;UObject::GetOuter))
+            .Method(&quot;GetClass&quot;, MakeFunction(&amp;UObject::GetClass))
+#if !defined(ENGINE_INDEPENDENT_JSENV)
+            .Method(&quot;GetWorld&quot;, MakeFunction(&amp;UObject::GetWorld))
+#endif
+            .Register();
+
+#if !defined(ENGINE_INDEPENDENT_JSENV)
+        puerts::DefineClass&lt;USceneComponent&gt;()
+            .Method(&quot;SetupAttachment&quot;, MakeFunction(&amp;USceneComponent::SetupAttachment))
+            .Register();
+
+        puerts::DefineClass&lt;UActorComponent&gt;()
+            .Method(&quot;RegisterComponent&quot;, MakeFunction(&amp;UActorComponent::RegisterComponent))
+            .Register();
+        
+        puerts::DefineClass&lt;UUserWidget&gt;()
+            .Method(&quot;GetWidgetFromName&quot;, SelectFunction(UWidget* (UUserWidget::*) (const FName&amp;) const, &amp;UUserWidget::GetWidgetFromName))
+            .Register();
+#endif
+    }
+};
+
+AutoRegisterForUE _AutoRegisterForUE__;
+</code></pre>
+<h5 id="binding">Binding</h5>
+<p>Dynamic delegate VS Call function directly<br>
+<a href="https://github.com/Tencent/puerts/issues/749">https://github.com/Tencent/puerts/issues/749</a></p>
 <h3 id="issues">Issues</h3>
 <h5 id="crash-on-startup--asyncloadingthreadrecursionnotallowedincrement--1">Crash on startup : AsyncLoadingThread.RecursionNotAllowed.Increment() == 1</h5>
 <p>Packaged application startup failed with pop error (works right in editor):</p>
@@ -427,8 +485,124 @@ There&rsquo;s some compilation error in TypeScript source caused by C++ interfac
 <p>Solution:<br>
 Fix the compilation error. Build C++ project if C++ source was modified.
 <div class="alert info ">
-  <p>You&rsquo;d better close editor and remove <code>tsconfig.json</code>, then re-execute command <code>node enable_puerts_module.js</code>.</p>
+  <p>You&rsquo;d better close editor and remove <code>tsconfig.json</code>, then re-execute command <code>node enable_puerts_module.js</code>.<br>
+Or generate <code>ue.d.ts</code>, then restart editor, then regenerate <code>ue.d.ts</code> again.</p>
 </div></p>
+<h5 id="crash-internalfixstalelefttrimmedhandlesvisitorvisitrootpointers">Crash: <code>internal::FixStaleLeftTrimmedHandlesVisitor::VisitRootPointers()</code></h5>
+<p>Crash callstack:</p>
+<pre tabindex="0"><code>PuertsTestError: === Critical error: ===
+PuertsTestError: 
+PuertsTestError: Fatal error!
+PuertsTestError: 
+PuertsTestError: Unhandled Exception: EXCEPTION_ACCESS_VIOLATION reading address 0xffffffffffffffff
+PuertsTestError: 
+PuertsTestError: [Callstack] 0x00007ff74197ccb9 Test.exe!v8::internal::FixStaleLeftTrimmedHandlesVisitor::VisitRootPointers() []
+PuertsTestError: [Callstack] 0x00007ff74192193f Test.exe!v8::internal::HandleScopeImplementer::IterateThis() []
+PuertsTestError: [Callstack] 0x00007ff741971c8e Test.exe!v8::internal::Heap::IterateStrongRoots() []
+PuertsTestError: [Callstack] 0x00007ff741971a72 Test.exe!v8::internal::Heap::IterateRoots() []
+PuertsTestError: [Callstack] 0x00007ff741b58632 Test.exe!v8::internal::ScavengerCollector::CollectGarbage() []
+PuertsTestError: [Callstack] 0x00007ff74197a1b2 Test.exe!v8::internal::Heap::Scavenge() []
+PuertsTestError: [Callstack] 0x00007ff741974829 Test.exe!v8::internal::Heap::PerformGarbageCollection() []
+PuertsTestError: [Callstack] 0x00007ff741968d53 Test.exe!v8::internal::Heap::CollectGarbage() []
+PuertsTestError: [Callstack] 0x00007ff741967084 Test.exe!v8::internal::Heap::AllocateRawWithRetryOrFail() []
+PuertsTestError: [Callstack] 0x00007ff741984bed Test.exe!v8::internal::Factory::CopyJSObjectWithAllocationSite() []
+PuertsTestError: [Callstack] 0x00007ff741984a81 Test.exe!v8::internal::Factory::CopyJSObject() []
+PuertsTestError: [Callstack] 0x00007ff7419c3257 Test.exe!v8::internal::ApiNatives::InstantiateFunction() []
+PuertsTestError: [Callstack] 0x00007ff7419c35a5 Test.exe!v8::internal::ApiNatives::InstantiateObject() []
+PuertsTestError: [Callstack] 0x00007ff741aa2308 Test.exe!v8::internal::CustomArguments&lt;v8::FunctionCallbackInfo&lt;v8::Value&gt; &gt;::GetReturnValue&lt;v8::internal::Object&gt;() []
+PuertsTestError: [Callstack] 0x00007ff741aa3807 Test.exe!v8::internal::Builtins::InvokeApiFunction() []
+PuertsTestError: [Callstack] 0x00007ff741945a69 Test.exe!v8::internal::Execution::CallWasm() []
+PuertsTestError: [Callstack] 0x00007ff741945f7b Test.exe!v8::internal::Execution::New() []
+PuertsTestError: [Callstack] 0x00007ff7419298b6 Test.exe!v8::Function::NewInstanceWithSideEffectType() []
+PuertsTestError: [Callstack] 0x00007ff741929240 Test.exe!v8::Function::NewInstance() []
+PuertsTestError: [Callstack] 0x00007ff73b1c803d Test.exe!puerts::FJsEnvImpl::FindOrAdd() [D:\TestProj\Plugins\Puerts\Source\JsEnv\Private\JsEnvImpl.cpp:1541]
+PuertsTestError: [Callstack] 0x00007ff73b0884b5 Test.exe!puerts::internal::FuncCallHelper&lt;std::pair&lt;UObject *,std::tuple&lt;FName,UClass *,UClass *,bool,bool&gt; &gt;,0&gt;::callMethod&lt;UObject,UObject * (__cdecl UObject::*)(FName,UClass *,UClass *,bool,bool),0,1,2,3,4&gt;() [D:\TestProj\Plugins\Puerts\Source\JsEnv\Public\Binding.hpp:403]
+PuertsTestError: [Callstack] 0x00007ff73b185dd3 Test.exe!puerts::FuncCallWrapper&lt;UObject * (__cdecl UObject::*)(FName,UClass *,UClass *,bool,bool),&amp;UObject::CreateDefaultSubobject&gt;::call() [D:\TestProj\Plugins\Puerts\Source\JsEnv\Public\Binding.hpp:464]
+PuertsTestError: [Callstack] 0x00007ff741aa3250 Test.exe!v8::internal::FunctionCallbackArguments::Call() []
+PuertsTestError: [Callstack] 0x00007ff741aa273f Test.exe!v8::internal::CustomArguments&lt;v8::FunctionCallbackInfo&lt;v8::Value&gt; &gt;::GetReturnValue&lt;v8::internal::Object&gt;() []
+PuertsTestError: [Callstack] 0x00007ff741aa2abf Test.exe!v8::internal::Builtin_HandleApiCallAsFunction() []
+PuertsTestError: [Callstack] 0x00007ff741aa28be Test.exe!v8::internal::Builtin_HandleApiCall() []
+PuertsTestError: [Callstack] 0x00007ff74216ddbd Test.exe!Builtins_CEntry_Return1_DontSaveFPRegs_ArgvOnStack_BuiltinExit() []
+PuertsTestError: [Callstack] 0x00007ff7420ec8ec Test.exe!Builtins_InterpreterEntryTrampoline() []
+PuertsTestError: [Callstack] 0x00007ff7420ec8ec Test.exe!Builtins_InterpreterEntryTrampoline() []
+PuertsTestError: [Callstack] 0x00007ff7420e9ea1 Test.exe!Builtins_JSEntryTrampoline() []
+PuertsTestError: [Callstack] 0x00007ff7420e9a8c Test.exe!Builtins_JSEntry() []
+PuertsTestError: [Callstack] 0x00007ff741945cd3 Test.exe!v8::internal::Execution::CallWasm() []
+PuertsTestError: [Callstack] 0x00007ff741945646 Test.exe!v8::internal::Execution::Call() []
+PuertsTestError: [Callstack] 0x00007ff741907eeb Test.exe!v8::Function::Call() []
+PuertsTestError: [Callstack] 0x00007ff73b1e04ca Test.exe!puerts::FJsEnvImpl::TsConstruct() [D:\TestProj\Plugins\Puerts\Source\JsEnv\Private\JsEnvImpl.cpp:1809]
+PuertsTestError: [Callstack] 0x00007ff73b219132 Test.exe!UTypeScriptGeneratedClass::ObjectInitialize() [D:\TestProj\Plugins\Puerts\Source\JsEnv\Private\TypeScriptGeneratedClass.cpp:71]
+PuertsTestError: [Callstack] 0x00007ff73b21c462 Test.exe!UTypeScriptGeneratedClass::StaticConstructor() [D:\TestProj\Plugins\Puerts\Source\JsEnv\Private\TypeScriptGeneratedClass.cpp:53]
+PuertsTestError: [Callstack] 0x00007ff73cb96a6b Test.exe!StaticConstructObject_Internal() []
+PuertsTestError: [Callstack] 0x00007ff7400aa368 Test.exe!UWorld::SpawnActor() []
+PuertsTestError: [Callstack] 0x00007ff73ff161d3 Test.exe!UGameplayStatics::BeginDeferredActorSpawnFromClass() []
+PuertsTestError: [Callstack] 0x00007ff740a474c0 Test.exe!UGameplayStatics::execBeginDeferredActorSpawnFromClass() []
+PuertsTestError: [Callstack] 0x00007ff73c8f6839 Test.exe!UFunction::Invoke() []
+PuertsTestError: [Callstack] 0x00007ff73cb79d8c Test.exe!UObject::ProcessEvent() []
+PuertsTestError: [Callstack] 0x00007ff73b0971ec Test.exe!puerts::FFunctionTranslator::Call() [D:\TestProj\Plugins\Puerts\Source\JsEnv\Private\FunctionTranslator.cpp:259]
+PuertsTestError: [Callstack] 0x00007ff73b097450 Test.exe!puerts::FFunctionTranslator::Call() [D:\TestProj\Plugins\Puerts\Source\JsEnv\Private\FunctionTranslator.cpp:205]
+PuertsTestError: [Callstack] 0x00007ff741aa3250 Test.exe!v8::internal::FunctionCallbackArguments::Call() []
+PuertsTestError: [Callstack] 0x00007ff741aa273f Test.exe!v8::internal::CustomArguments&lt;v8::FunctionCallbackInfo&lt;v8::Value&gt; &gt;::GetReturnValue&lt;v8::internal::Object&gt;() []
+PuertsTestError: [Callstack] 0x00007ff741aa2abf Test.exe!v8::internal::Builtin_HandleApiCallAsFunction() []
+PuertsTestError: [Callstack] 0x00007ff741aa28be Test.exe!v8::internal::Builtin_HandleApiCall() []
+PuertsTestError: [Callstack] 0x00007ff74216ddbd Test.exe!Builtins_CEntry_Return1_DontSaveFPRegs_ArgvOnStack_BuiltinExit() []
+PuertsTestError: [Callstack] 0x00007ff7420ec8ec Test.exe!Builtins_InterpreterEntryTrampoline() []
+PuertsTestError: [Callstack] 0x00007ff7420e9ea1 Test.exe!Builtins_JSEntryTrampoline() []
+PuertsTestError: [Callstack] 0x00007ff7420e9a8c Test.exe!Builtins_JSEntry() []
+PuertsTestError: [Callstack] 0x00007ff741945cd3 Test.exe!v8::internal::Execution::CallWasm() []
+PuertsTestError: [Callstack] 0x00007ff741945646 Test.exe!v8::internal::Execution::Call() []
+PuertsTestError: [Callstack] 0x00007ff741907eeb Test.exe!v8::Function::Call() []
+PuertsTestError: [Callstack] 0x00007ff73b098408 Test.exe!puerts::FFunctionTranslator::CallJs() [D:\TestProj\Plugins\Puerts\Source\JsEnv\Private\FunctionTranslator.cpp:452]
+PuertsTestError: [Callstack] 0x00007ff73b1cb5f0 Test.exe!puerts::FJsEnvImpl::InvokeTsMethod() [D:\TestProj\Plugins\Puerts\Source\JsEnv\Private\JsEnvImpl.cpp:1982]
+PuertsTestError: [Callstack] 0x00007ff73b22c95f Test.exe!UTypeScriptGeneratedClass::execCallJS() [D:\TestProj\Plugins\Puerts\Source\JsEnv\Private\TypeScriptGeneratedClass.cpp:27]
+PuertsTestError: [Callstack] 0x00007ff73c8f6839 Test.exe!UFunction::Invoke() []
+PuertsTestError: [Callstack] 0x00007ff73cb79d8c Test.exe!UObject::ProcessEvent() []
+PuertsTestError: [Callstack] 0x00007ff73b0971ec Test.exe!puerts::FFunctionTranslator::Call() [D:\TestProj\Plugins\Puerts\Source\JsEnv\Private\FunctionTranslator.cpp:259]
+PuertsTestError: [Callstack] 0x00007ff73b097450 Test.exe!puerts::FFunctionTranslator::Call() [D:\TestProj\Plugins\Puerts\Source\JsEnv\Private\FunctionTranslator.cpp:205]
+PuertsTestError: [Callstack] 0x00007ff741aa3250 Test.exe!v8::internal::FunctionCallbackArguments::Call() []
+PuertsTestError: [Callstack] 0x00007ff741aa273f Test.exe!v8::internal::CustomArguments&lt;v8::FunctionCallbackInfo&lt;v8::Value&gt; &gt;::GetReturnValue&lt;v8::internal::Object&gt;() []
+PuertsTestError: [Callstack] 0x00007ff741aa2abf Test.exe!v8::internal::Builtin_HandleApiCallAsFunction() []
+PuertsTestError: [Callstack] 0x00007ff741aa28be Test.exe!v8::internal::Builtin_HandleApiCall() []
+PuertsTestError: [Callstack] 0x00007ff74216ddbd Test.exe!Builtins_CEntry_Return1_DontSaveFPRegs_ArgvOnStack_BuiltinExit() []
+PuertsTestError: [Callstack] 0x00007ff7420ec8ec Test.exe!Builtins_InterpreterEntryTrampoline() []
+PuertsTestError: [Callstack] 0x00007ff7420e9ea1 Test.exe!Builtins_JSEntryTrampoline() []
+PuertsTestError: [Callstack] 0x00007ff7420e9a8c Test.exe!Builtins_JSEntry() []
+PuertsTestError: [Callstack] 0x00007ff741945cd3 Test.exe!v8::internal::Execution::CallWasm() []
+PuertsTestError: [Callstack] 0x00007ff741945646 Test.exe!v8::internal::Execution::Call() []
+PuertsTestError: [Callstack] 0x00007ff741907eeb Test.exe!v8::Function::Call() []
+PuertsTestError: [Callstack] 0x00007ff73b098408 Test.exe!puerts::FFunctionTranslator::CallJs() [D:\TestProj\Plugins\Puerts\Source\JsEnv\Private\FunctionTranslator.cpp:452]
+PuertsTestError: [Callstack] 0x00007ff73b1cb5f0 Test.exe!puerts::FJsEnvImpl::InvokeTsMethod() [D:\TestProj\Plugins\Puerts\Source\JsEnv\Private\JsEnvImpl.cpp:1982]
+PuertsTestError: [Callstack] 0x00007ff73b22c95f Test.exe!UTypeScriptGeneratedClass::execCallJS() [D:\TestProj\Plugins\Puerts\Source\JsEnv\Private\TypeScriptGeneratedClass.cpp:27]
+PuertsTestError: [Callstack] 0x00007ff73c8f6839 Test.exe!UFunction::Invoke() []
+PuertsTestError: [Callstack] 0x00007ff73cb79d8c Test.exe!UObject::ProcessEvent() []
+PuertsTestError: [Callstack] 0x00007ff73b0971ec Test.exe!puerts::FFunctionTranslator::Call() [D:\TestProj\Plugins\Puerts\Source\JsEnv\Private\FunctionTranslator.cpp:259]
+PuertsTestError: [Callstack] 0x00007ff73b097450 Test.exe!puerts::FFunctionTranslator::Call() [D:\TestProj\Plugins\Puerts\Source\JsEnv\Private\FunctionTranslator.cpp:205]
+PuertsTestError: [Callstack] 0x00007ff741aa3250 Test.exe!v8::internal::FunctionCallbackArguments::Call() []
+PuertsTestError: [Callstack] 0x00007ff741aa273f Test.exe!v8::internal::CustomArguments&lt;v8::FunctionCallbackInfo&lt;v8::Value&gt; &gt;::GetReturnValue&lt;v8::internal::Object&gt;() []
+PuertsTestError: [Callstack] 0x00007ff741aa2abf Test.exe!v8::internal::Builtin_HandleApiCallAsFunction() []
+PuertsTestError: [Callstack] 0x00007ff741aa28be Test.exe!v8::internal::Builtin_HandleApiCall() []
+PuertsTestError: [Callstack] 0x00007ff74216ddbd Test.exe!Builtins_CEntry_Return1_DontSaveFPRegs_ArgvOnStack_BuiltinExit() []
+PuertsTestError: [Callstack] 0x00007ff7420ec8ec Test.exe!Builtins_InterpreterEntryTrampoline() []
+PuertsTestError: [Callstack] 0x00007ff7420e9ea1 Test.exe!Builtins_JSEntryTrampoline() []
+PuertsTestError: [Callstack] 0x00007ff7420e9a8c Test.exe!Builtins_JSEntry() []
+PuertsTestError: [Callstack] 0x00007ff741945cd3 Test.exe!v8::internal::Execution::CallWasm() []
+PuertsTestError: [Callstack] 0x00007ff741945646 Test.exe!v8::internal::Execution::Call() []
+PuertsTestError: [Callstack] 0x00007ff741907eeb Test.exe!v8::Function::Call() []
+PuertsTestError: [Callstack] 0x00007ff73b0986c1 Test.exe!puerts::FFunctionTranslator::CallJs() [D:\TestProj\Plugins\Puerts\Source\JsEnv\Private\FunctionTranslator.cpp:338]
+PuertsTestError: [Callstack] 0x00007ff73b1caf80 Test.exe!puerts::FJsEnvImpl::InvokeJsCallback() [D:\TestProj\Plugins\Puerts\Source\JsEnv\Private\JsEnvImpl.cpp:1668]
+PuertsTestError: [Callstack] 0x00007ff73b178ac4 Test.exe!UDynamicDelegateProxy::ProcessEvent() [D:\TestProj\Plugins\Puerts\Source\JsEnv\Private\DynamicDelegateProxy.cpp:23]
+PuertsTestError: [Callstack] 0x00007ff73c22113f Test.exe!UITTcpLibrary::Tick() [D:\TestProj\Source\Avatar\Network\ITTcpLibrary.cpp:517]
+PuertsTestError: [Callstack] 0x00007ff73c229299 Test.exe!AAvatarGameMode::Tick() [D:\TestProj\Source\Avatar\AvatarGameMode.cpp:28]
+PuertsTestError: [Callstack] 0x00007ff73f9f9a3e Test.exe!AActor::TickActor() []
+PuertsTestError: [Callstack] 0x00007ff73f9d60ae Test.exe!FActorTickFunction::ExecuteTick() []
+PuertsTestError: [Callstack] 0x00007ff7407a0b7b Test.exe!FTickFunctionTask::DoTask() []
+</code></pre><p>Caused by:<br>
+Issue of js V8<br>
+<a href="https://github.com/Tencent/puerts/issues/346">https://github.com/Tencent/puerts/issues/346</a><br>
+<a href="https://github.com/Tencent/puerts/issues/603">https://github.com/Tencent/puerts/issues/603</a></p>
+<p>Solution:<br>
+update v8 to the latest version<br>
+<a href="https://github.com/Tencent/puerts/blob/master/doc/unreal/install.md">https://github.com/Tencent/puerts/blob/master/doc/unreal/install.md</a></p>
 <hr>
 <p><code>“There's no coming to consciousness without pain.” ― Carl Gustav Jung</code></p>
               
