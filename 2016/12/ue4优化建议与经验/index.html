@@ -28,10 +28,10 @@
 <meta property="og:locale" content="en-us">
 
   
-    <meta property="article:published_time" content="2016-12-09T19:17:02">
+    <meta property="article:published_time" content="2016-12-09T19:18:02">
   
   
-    <meta property="article:modified_time" content="2016-12-09T19:17:02">
+    <meta property="article:modified_time" content="2016-12-09T19:18:02">
   
   
   
@@ -326,13 +326,13 @@
   
   <div class="postShorten-meta post-meta">
     
-      <time itemprop="datePublished" datetime="2016-12-09T19:17:02&#43;08:00">
+      <time itemprop="datePublished" datetime="2016-12-09T19:18:02&#43;08:00">
         
   
   
   
   
-    Friday, 19:17, Dec 9, 2016
+    Friday, 19:18, Dec 9, 2016
   
 
       </time>
@@ -406,11 +406,39 @@ UE4做了优化，当你使用<code>FTransform::TransformXXX()</code>时，如�
 <p>如何断点调试UE4中的内联函数：我们知道加了<code>FORCEINLINE</code>的函数无法断点调试，但是<code>FORCEINLINE_DEBUGGABLE</code>可以，这样保证函数既能在debug模式下调试，又能在shipping打包时让函数内联。</p>
 </li>
 <li>
-<p>开发模式下开启宏定义<code>LOOKING_FOR_PERF_ISSUES</code>，用来打印引擎内部的性能问题，比如，一帧内spawn的actor数量超过一个，这对客户端来说是一个潜在的性能问题，<code>LOOKING_FOR_PERF_ISSUES</code>开启后，最自动打印出这些信息。</p>
+<p>开发模式下开启宏定义<code>LOOKING_FOR_PERF_ISSUES</code>，用来打印引擎内部的潜在性能问题。比如，一帧内spawn的actor数量超过一定数量时，这对客户端来说是一个潜在的性能问题，<code>LOOKING_FOR_PERF_ISSUES</code>开启后，最自动打印出这些信息。</p>
 </li>
 </ol>
 <h5 id="代码算法优化仅限ue4-api相关">代码算法优化（仅限UE4 API相关）</h5>
 <ol>
+<li>
+<p>为容器指定内存分配器（Allocator），默认是<code>TSizedDefaultAllocator</code>，堆上分配内存；如果分配大小可以预估且空间不大（Windows上不超过1MB，Linux上不超过8MB），可以使用<code>TInlineAllocator</code>，栈上分配内存，如果元素个数超过指定数量，会将旧的数据复制到新的内存空间上。例如：</p>
+<pre><code> //默认为TSizedDefaultAllocator，堆内存分配空间
+ TArray&lt;Shape*&gt; MyShapeArray;
+
+ //TInlineAllocator，前16个元素在栈内存上，第17个元素添加时，会在堆内存上分配空间，
+ //并将这17个元素复制到堆内存中，并销毁旧的栈内存。
+ TArray&lt;Shape*, TInlineAllocator&lt;16&gt;&gt; MyShapeArray;
+
+ //同上，区别是，添加第17个元素时，会重新分配内存空间，但是依然在栈内存，
+ //当添加第33个元素时，则新内存空间在堆内存。（无限套娃）
+ TArray&lt;Shape*, TInlineAllocator&lt;16, TInlineAllocator&lt;32&gt;&gt;&gt; MyShapeArray;
+</code></pre>
+<p>参考：<a href="https://www.unrealengine.com/en-US/blog/optimizing-tarray-usage-for-performance">Optimizing TArray Usage for Performance</a></p>
+</li>
+<li>
+<p>如果TArray元素class没有移动构造函数（move constructor）时，使用<code>Emplace()</code>代替<code>Add()</code>，避免值传递时复制内存；如果元素class自带move constructor（<code>MyStruct(MyStruct&amp;&amp; src)</code>），此时<code>Add(MoveTemp(MyStruct01))</code>等价于<code>Emplace(Arg01, Arg02)</code>。</p>
+<pre><code> struct MyStruct
+ {
+     MyStruct(int32 Arg01_, int32 Arg02_) : Arg01(Arg01_), Arg02(Arg02_) { }
+
+     MyStruct(MyStruct&amp;&amp; src) noexcept : Arg01(src.Arg01), Arg02(src.Arg02) {}
+
+     int32 Arg01;
+     int32 Arg02;
+ };
+</code></pre>
+</li>
 <li>
 <p>清空TArray时，如果该TArray对象还会继续使用，使用<code>Reset()</code>代替<code>Empty()</code>，因为前者不会销毁内存空间。</p>
 </li>
