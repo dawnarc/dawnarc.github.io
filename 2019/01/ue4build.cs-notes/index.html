@@ -28,10 +28,10 @@
 <meta property="og:locale" content="en-us">
 
   
-    <meta property="article:published_time" content="2019-01-14T14:25:02">
+    <meta property="article:published_time" content="2019-01-14T14:27:02">
   
   
-    <meta property="article:modified_time" content="2019-01-14T14:25:02">
+    <meta property="article:modified_time" content="2019-01-14T14:27:02">
   
   
   
@@ -325,13 +325,13 @@
   
   <div class="postShorten-meta post-meta">
     
-      <time itemprop="datePublished" datetime="2019-01-14T14:25:02&#43;08:00">
+      <time itemprop="datePublished" datetime="2019-01-14T14:27:02&#43;08:00">
         
   
   
   
   
-    Monday, 14:25, Jan 14, 2019
+    Monday, 14:27, Jan 14, 2019
   
 
       </time>
@@ -582,6 +582,26 @@ Build configuration coming from UBT, do not modify
     #define UE_BUILD_DOCS                0
 #endif
 </code></pre>
+<h5 id="how-to-add-macro-in-buildcs">How to add macro in build.cs</h5>
+<p>1st way<br>
+Build.cs:</p>
+<pre><code>PublicDefinitions.Add(&quot;TEST&quot;);
+</code></pre>
+<p>C++:</p>
+<pre><code>#ifdef TEST
+    //other code
+#endif
+</code></pre>
+<p>2nd way<br>
+Build.cs:</p>
+<pre><code>PublicDefinitions.Add(&quot;TEST=1&quot;);
+</code></pre>
+<p>C++:</p>
+<pre><code>#if TEST
+    //other code
+#endif
+</code></pre>
+<p>using <code>GlobalDefinitions.Add(&quot;TEST=1&quot;);</code> if want to give a global macro.</p>
 <h5 id="how-to-disable-code-optimization">How to disable code optimization</h5>
 <pre><code>public class MyProj : ModuleRules
 {
@@ -663,25 +683,18 @@ else
 }
 </code></pre>
 <h5 id="check-if-target-type-is-editor-or-client-or-server">Check if target type is editor, or client, or server</h5>
-<pre><code>using UnrealBuildTool;
-using System.Collections.Generic;
-
-[SupportedPlatforms(UnrealPlatformClass.All)]
-public class UE4GameTarget : TargetRules
+<pre><code>if (Target.Type != TargetType.Server)
 {
-    public UE4GameTarget( TargetInfo Target ) : base(Target)
+    PrivateDependencyModuleNames.AddRange(new string[]
     {
-        Type = TargetType.Game;
-        BuildEnvironment = TargetBuildEnvironment.Shared;
-        ExtraModuleNames.Add(&quot;UE4Game&quot;);
-
-        if(Target.Platform == UnrealTargetPlatform.Linux &amp;&amp; Type == TargetType.Game)
-        {
-            GlobalDefinitions.Add(&quot;USE_NULL_RHI=1&quot;);
-            System.Console.Out.WriteLine(&quot;===================== USE_NULL_RHI=1&quot;);
-        }
-    }
+        &quot;Imgui&quot;
+    });
 }
+</code></pre>
+<p>Other ways:</p>
+<pre><code>if (Target.Type == TargetType.Editor)
+
+if (Target.bBuildEditor)
 </code></pre>
 <hr>
 <p><code>我年轻时，听一位教授讲：“人生都只有一个想法，终其一生不过是不断丰富它。”我当时觉得：“一辈子只围绕一个念头转？这未免也太反动了！”五十岁时，我明白他是对的：我这一辈子都在追随一个想法，问题是我从来都不知道是哪个。──翁贝托·埃科《密涅瓦火柴盒》</code></p>

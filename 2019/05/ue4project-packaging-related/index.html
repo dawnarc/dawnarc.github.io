@@ -28,10 +28,10 @@
 <meta property="og:locale" content="en-us">
 
   
-    <meta property="article:published_time" content="2019-05-11T16:48:02">
+    <meta property="article:published_time" content="2019-05-11T16:49:02">
   
   
-    <meta property="article:modified_time" content="2019-05-11T16:48:02">
+    <meta property="article:modified_time" content="2019-05-11T16:49:02">
   
   
   
@@ -325,13 +325,13 @@
   
   <div class="postShorten-meta post-meta">
     
-      <time itemprop="datePublished" datetime="2019-05-11T16:48:02&#43;08:00">
+      <time itemprop="datePublished" datetime="2019-05-11T16:49:02&#43;08:00">
         
   
   
   
   
-    Saturday, 16:48, May 11, 2019
+    Saturday, 16:49, May 11, 2019
   
 
       </time>
@@ -394,6 +394,28 @@ new string[]
 <p>append argument <code>-NotInstalled</code> on game startup</p>
 <pre><code>MyGame.exe -NotInstalled
 </code></pre>
+<h5 id="how-to-disable-plugin-compiling-in-specified-platform">How to disable plugin compiling in specified platform</h5>
+<p>Add <code>WhitelistPlatforms</code> in <code>.uplugin</code>:</p>
+<pre><code>&quot;WhitelistPlatforms&quot;: [ &quot;Win64&quot;, &quot;Mac&quot;, &quot;IOS&quot;, &quot;Android&quot;, &quot;Linux&quot; ]
+</code></pre>
+<p>Example:</p>
+<pre><code>&quot;Modules&quot;: [
+    {
+        &quot;Name&quot;: &quot;UnLua&quot;,
+        &quot;Type&quot;: &quot;Runtime&quot;,
+        &quot;LoadingPhase&quot;: &quot;PreDefault&quot;,
+        &quot;WhitelistPlatforms&quot;: [ &quot;Win64&quot;, &quot;Mac&quot;, &quot;IOS&quot;, &quot;Android&quot;, &quot;Linux&quot; ]
+    },
+    {
+        &quot;Name&quot;: &quot;UnLuaEditor&quot;,
+        &quot;Type&quot;: &quot;Editor&quot;,
+        &quot;LoadingPhase&quot;: &quot;Default&quot;,
+        &quot;WhitelistPlatforms&quot;: [ &quot;Win64&quot;, &quot;Mac&quot; ]
+    }
+]
+</code></pre>
+<p>Reference:<br>
+<a href="https://github.com/Tencent/UnLua/blob/master/Plugins/UnLua/UnLua.uplugin">https://github.com/Tencent/UnLua/blob/master/Plugins/UnLua/UnLua.uplugin</a></p>
 <h3 id="linux">Linux</h3>
 <h5 id="cross-compiling-for-linux">Cross-Compiling for Linux</h5>
 <p>Cross-Compiling for Linux<br>
@@ -499,6 +521,18 @@ shot/hiresshot, toggledrawevents, profilegpu</p>
 </code></pre>
 <p>Reference:<br>
 <a href="https://qiita.com/donbutsu17/items/76ea5c5531aa4da77f9d">https://qiita.com/donbutsu17/items/76ea5c5531aa4da77f9d</a></p>
+<h3 id="issues">Issues</h3>
+<h5 id="ue4-editor-modifies-the-value-of-globaldefinitions-this-is-not-allowed">UE4 Editor modifies the value of GlobalDefinitions. This is not allowed.</h5>
+<p>Error on building:</p>
+<pre><code>UE4 Editor modifies the value of GlobalDefinitions. This is not allowed, as MyProjectEditor has build products in common with UE4Editor.
+</code></pre>
+<p>Solution:</p>
+<p>Add <code>BuildEnvironment = TargetBuildEnvironment.Unique;</code> into MyEditor.Target.cs</p>
+<pre><code>BuildEnvironment = TargetBuildEnvironment.Unique;
+GlobalDefinitions.Add(&quot;AAA=1&quot;);
+</code></pre>
+<p>Origin:<br>
+<a href="https://answers.unrealengine.com/questions/920431/view.html">https://answers.unrealengine.com/questions/920431/view.html</a></p>
 <hr>
 <p><code>岂能尽如人意，但求无愧我心。──丁聪</code></p>
               
