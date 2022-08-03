@@ -11,7 +11,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="generator" content="Hugo 0.93.2 with theme Tranquilpeak 0.4.7-BETA">
-<meta name="author" content="Neil Wang">
+<meta name="author" content="Wang Aiguo">
 <meta name="keywords" content="UE4, Global variables">
 <meta name="description" content="File path:
 Engine\Source\Runtime\Core\Private\Misc\CoreGlobals.cpp">
@@ -32,10 +32,10 @@ Engine\Source\Runtime\Core\Private\Misc\CoreGlobals.cpp">
 <meta property="og:locale" content="en-us">
 
   
-    <meta property="article:published_time" content="2018-12-14T18:45:02">
+    <meta property="article:published_time" content="2018-12-14T18:46:02">
   
   
-    <meta property="article:modified_time" content="2018-12-14T18:45:02">
+    <meta property="article:modified_time" content="2018-12-14T18:46:02">
   
   
   
@@ -140,7 +140,7 @@ Engine\Source\Runtime\Core\Private\Misc\CoreGlobals.cpp">
         <a href="https://dawnarc.com/#about">
           <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=110" alt="Author&#39;s picture" />
         </a>
-        <h4 class="sidebar-profile-name">Neil Wang</h4>
+        <h4 class="sidebar-profile-name">Wang Aiguo</h4>
         
           <h5 class="sidebar-profile-bio">久长唯有品格</h5>
         
@@ -329,13 +329,13 @@ Engine\Source\Runtime\Core\Private\Misc\CoreGlobals.cpp">
   
   <div class="postShorten-meta post-meta">
     
-      <time itemprop="datePublished" datetime="2018-12-14T18:45:02&#43;08:00">
+      <time itemprop="datePublished" datetime="2018-12-14T18:46:02&#43;08:00">
         
   
   
   
   
-    Friday, 18:45, Dec 14, 2018
+    Friday, 18:46, Dec 14, 2018
   
 
       </time>
@@ -675,6 +675,40 @@ FAutoConsoleCommand ToggleDebugGPUCrashedCmd(
     FConsoleCommandWithArgsDelegate::CreateStatic(&amp;ToggleGDebugPUCrashedFlag),
     ECVF_Cheat);
 </code></pre>
+<h5 id="how-to-check-if-game-is-running">How to check if game is running</h5>
+<p>1st way:</p>
+<pre><code>#if WITH_EDITOR
+#include &quot;Editor.h&quot;
+#endif
+
+bool UVCamBlueprintFunctionLibrary::IsGameRunning()
+{
+#if WITH_EDITOR
+    return (GEditor &amp;&amp; GEditor-&gt;IsPlaySessionInProgress());
+#endif
+    return true;
+}
+</code></pre>
+<p>Reference:<br>
+<a href="https://docs.unrealengine.com/4.26/en-US/BlueprintAPI/VirtualCamera_1/IsGameRunning/">https://docs.unrealengine.com/4.26/en-US/BlueprintAPI/VirtualCamera_1/IsGameRunning/</a></p>
+<p>2nd way:</p>
+<pre><code>static bool IsGameRunning(UObject* Object)
+{
+    if(!Object)
+    {
+        return false;
+    }
+    
+    if (auto world = Object-&gt;GetWorld())
+    {
+        return world-&gt;WorldType == EWorldType::Game || world-&gt;WorldType == EWorldType::PIE;
+    }
+
+    return false;
+}
+</code></pre>
+<p>Reference:<br>
+<a href="https://forums.unrealengine.com/t/how-to-check-if-game-is-running/441567/12">https://forums.unrealengine.com/t/how-to-check-if-game-is-running/441567/12</a></p>
 <hr>
 <p><code>过好自己，别人的故事不需要你。</code></p>
               
@@ -751,7 +785,7 @@ FAutoConsoleCommand ToggleDebugGPUCrashedCmd(
         </article>
         <footer id="footer" class="main-content-wrap">
   <span class="copyrights">
-    &copy; 2022 Neil Wang. All Rights Reserved. Powered by <A href="https://gohugo.io/"> Hugo</A> | Theme <A href="https://github.com/kakawait/hugo-tranquilpeak-theme/">Tranquilpeak</A>.
+    &copy; 2022 Wang Aiguo. All Rights Reserved. Powered by <A href="https://gohugo.io/"> Hugo</A> | Theme <A href="https://github.com/kakawait/hugo-tranquilpeak-theme/">Tranquilpeak</A>.
   </span>
 </footer>
 
@@ -820,7 +854,7 @@ FAutoConsoleCommand ToggleDebugGPUCrashedCmd(
     
       <img id="about-card-picture" src="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=110" alt="Author&#39;s picture" />
     
-    <h4 id="about-card-name">Neil Wang</h4>
+    <h4 id="about-card-name">Wang Aiguo</h4>
     
       <div id="about-card-bio">久长唯有品格</div>
     

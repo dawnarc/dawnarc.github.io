@@ -11,7 +11,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="generator" content="Hugo 0.93.2 with theme Tranquilpeak 0.4.7-BETA">
-<meta name="author" content="Neil Wang">
+<meta name="author" content="Wang Aiguo">
 <meta name="keywords" content="UE4, Networking">
 <meta name="description" content="keywords：UE4, Replication, Relicate, Reliable, RPC, RTS Movement, Dedicated Server, 专用服务器">
 
@@ -136,7 +136,7 @@
         <a href="https://dawnarc.com/#about">
           <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=110" alt="Author&#39;s picture" />
         </a>
-        <h4 class="sidebar-profile-name">Neil Wang</h4>
+        <h4 class="sidebar-profile-name">Wang Aiguo</h4>
         
           <h5 class="sidebar-profile-bio">久长唯有品格</h5>
         
@@ -550,10 +550,21 @@ UE4Editor-Engine.dll!AController::Possess(APawn * InPawn) Line 293    C++
 <h5 id="netmulticast-function-没有在-client-触发的问题">NetMulticast function 没有在 Client 触发的问题</h5>
 <p><span class="highlight-text red">并不是定义了 NetMulticast function ，就一定会在 Client 执行。</span><br>
 <span class="highlight-text red">比如，在服务端生成了一个 Actor ，且在服务端执行该 Actor 上的 Multicast function ，默认情况下该 Multicast function 只会在 Server 执行。</span><br>
-如果要使该 Actor 的 Multicast function 在客户端也能够执行，需要执行以下步骤（缺一不可。4.19开始，之前的版本不需要这样设置）：</p>
+如果要使该 Actor 的 Multicast function 在客户端也能够执行，分两种情况：</p>
+<ul>
+<li>
+<p>如果是手榴弹这种属于某个角色的Actor：</p>
 <ul>
 <li>除了对该 Actor 执行 <code>bReplicates = true;</code> 外，还要执行 <code>bNetUseOwnerRelevancy = true;</code></li>
 <li>该 Actor Spawn 之后，需要执行 <code>Actor-&gt;SetOwner(NewOwner);</code>，这个 NewOwner 是一个 Replicated 对象，比如 Character 。<span class="highlight-text green">NewOwner对象必须拥有服务端连接。</span>对应的Get接口为：<code>GetOwner()</code>。</li>
+</ul>
+</li>
+<li>
+<p>如果是类似场景机关这种对所有玩家共享的Actor，构造函数中执行：</p>
+<pre><code>  bReplicates = true;
+  bOnlyRelevantToOwner = false;
+</code></pre>
+</li>
 </ul>
 <h5 id="关键函数">关键函数</h5>
 <p>1，客户端登陆</p>
@@ -1019,7 +1030,7 @@ Dedicated Servers, Jitter, Matchmaking<br>
         </article>
         <footer id="footer" class="main-content-wrap">
   <span class="copyrights">
-    &copy; 2022 Neil Wang. All Rights Reserved. Powered by <A href="https://gohugo.io/"> Hugo</A> | Theme <A href="https://github.com/kakawait/hugo-tranquilpeak-theme/">Tranquilpeak</A>.
+    &copy; 2022 Wang Aiguo. All Rights Reserved. Powered by <A href="https://gohugo.io/"> Hugo</A> | Theme <A href="https://github.com/kakawait/hugo-tranquilpeak-theme/">Tranquilpeak</A>.
   </span>
 </footer>
 
@@ -1088,7 +1099,7 @@ Dedicated Servers, Jitter, Matchmaking<br>
     
       <img id="about-card-picture" src="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=110" alt="Author&#39;s picture" />
     
-    <h4 id="about-card-name">Neil Wang</h4>
+    <h4 id="about-card-name">Wang Aiguo</h4>
     
       <div id="about-card-bio">久长唯有品格</div>
     
