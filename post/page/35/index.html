@@ -318,6 +318,137 @@
     
     <div class="postShorten-header">
       <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2017/06/ue4%E8%BD%AC%E8%BD%BDuengine-browse%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B/">
+          [UE4]转载：UEngine Browse()执行流程
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2017-06-01T13:00:40&#43;08:00">
+        
+  
+  
+  
+  
+    Thursday, 13:00, Jun 1, 2017
+  
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        原文：http://blog.csdn.net/xiaozhi0999/article/details/51393704
+ue4中，客户端登陆流程如下，调用UEngine::Browse方法，在这个方法中，判断如果是客户端，则创建UPendingNetGame实例，代码如下：
+WorldContext.PendingNetGame = NewObject&lt;UPendingNetGame&gt;(); WorldContext.PendingNetGame-&gt;Initialize(URL); WorldContext.PendingNetGame-&gt;InitNetDriver();  而在InitNetDriver函数中，会向服务器发送 NMT_Hello 协议，我们转到NMT_Hello 的定义，如下：
+DEFINE_CONTROL_CHANNEL_MESSAGE_TWOPARAM(Hello, 0, uint8, uint32); // initial client connection message  参数1：大端还是小端
+参数2：客户端版本号
+客户端处理协议的地方是如下两个函数：
+void UPendingNetGame::NotifyControlMessage(UNetConnection* Connection, uint8 MessageType, class FInBunch&amp; Bunch) void UWorld::NotifyControlMessage(UNetConnection* Connection, uint8 MessageType, class FInBunch&amp; Bunch)  服务器处理协议的地方是下面这个函数：
+void UWorld::NotifyControlMessage(UNetConnection* Connection, uint8 MessageType, class FInBunch&amp; Bunch)  在服务器的协议处理函数，我们可以看到NMT_Hello协议的处理过程，先调用Receive接收消息，然后判断版本号是否一致，不一致发送NMT_Upgrade消息，一致则发送NMT_Challenge消息
+DEFINE_CONTROL_CHANNEL_MESSAGE_ONEPARAM(Challenge, 3, FString); // server sends client challenge string to verify integrity  客户端收到NMT_Challenge消息后，向服务器发送NMT_Login消息，NMT_Login消息携带三个参数，如下：
+DEFINE_CONTROL_CHANNEL_MESSAGE_THREEPARAM(Login, 5, FString, FString, FUniqueNetIdRepl); // client requests to be admitted to the game  参数1：客户端响应
+      
+      <p>
+        <a href="https://dawnarc.com/2017/06/ue4%E8%BD%AC%E8%BD%BDuengine-browse%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2017/06/ue4networking-in-baisc-travelling-in-multiplayer/">
+          [UE4]Networking in Baisc - Travelling in Multiplayer
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2017-06-01T11:05:40&#43;08:00">
+        
+  
+  
+  
+  
+    Thursday, 11:05, Jun 1, 2017
+  
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        <p>Keywords: UE4, Networking, Dedicated Server,ClientTravel, ServerTravel, UEngine::Browse</p>
+      
+      <p>
+        <a href="https://dawnarc.com/2017/06/ue4networking-in-baisc-travelling-in-multiplayer/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
         <a class="link-unstyled" href="https://dawnarc.com/2017/06/ue4c-%E8%8E%B7%E5%8F%96%E6%B8%B8%E6%88%8F%E5%BD%93%E5%89%8D%E7%99%BB%E5%BD%95%E7%9A%84%E6%9C%8D%E5%8A%A1%E5%99%A8ip%E5%92%8C%E7%AB%AF%E5%8F%A3/">
           [UE4]C&#43;&#43;获取游戏当前登录的服务器IP和端口
         </a>
@@ -1130,133 +1261,6 @@ https://github.com/tomlooman/EpicSurvivalGameSeries
       
       <p>
         <a href="https://dawnarc.com/2017/05/ue4c-%E5%BC%80%E5%8F%91fsp%E6%B8%B8%E6%88%8F%E7%9A%84%E5%AE%98%E6%96%B9wiki%E6%95%99%E7%A8%8B/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-          
-            
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2017/05/zbrushsurface-noise%E5%99%AA%E6%B3%A2/">
-          [ZBrush]Surface Noise(噪波)
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2017-05-14T15:31:40&#43;08:00">
-        
-  
-  
-  
-  
-    Sunday, 15:31, May 14, 2017
-  
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/zbrush">ZBrush</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        keywords: surface noise、噪波
-噪波应用： 一般用来生成石头或者皮肤的表面细节纹理
-注意事项： Noise使用之前需要将模型转换为PolyMesh3D。
-点击Tool -》 Surface -》 Noise。  然后会弹出一个噪波阅览界面，修改Magnify By Mask和Strength来生成噪波。  生成的噪波效果：  还可以点击Lightbox》NoiseMaskers打开ZB提供的现成的噪波贴图：    可以点击Edit，打开编辑面板，调成噪波曲线来调整效果：    面包！面包！我们要面包！---《萌芽》
-      
-      <p>
-        <a href="https://dawnarc.com/2017/05/zbrushsurface-noise%E5%99%AA%E6%B3%A2/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-          
-            
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2017/05/zbrushmirror%E9%95%9C%E5%83%8F%E6%93%8D%E4%BD%9C/">
-          [ZBrush]Mirror镜像操作
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2017-05-07T23:18:40&#43;08:00">
-        
-  
-  
-  
-  
-    Sunday, 23:18, May 7, 2017
-  
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/zbrush">ZBrush</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        反向镜像 点击：Tool -》 Deformation -》 Mirror，就可以将模型反向。  Mirror按钮的右上角可以选择镜像基准轴向，可选的有X、Y、Z轴，默认是X轴。
-执行前：  执行后：  轴对称镜像 点击：Tool -》 Geometry -》 Modifier Topology -》 Mirror And Weld，可以将模型左边的部分复制模型右边。  按钮的右上角可以选择镜像基准轴向，可选的有X、Y、Z轴，默认是X轴。
-执行前：  执行后：  如何判定模型的X、Y、Z方向 比如要镜像模型时，如何判断当前模型的朝向。可以按下W键或E键，并保证当前模型是PolyMesh3D，就可以看到Transform线条，红、绿、蓝三种颜色，分别代表X、Y、Z轴。   你瞧，桑丘·潘沙朋友，那边出现了三十多个大得出奇的巨人。---《堂·吉诃德》
-      
-      <p>
-        <a href="https://dawnarc.com/2017/05/zbrushmirror%E9%95%9C%E5%83%8F%E6%93%8D%E4%BD%9C/" class="postShorten-excerpt_link link">Continue reading</a>
         
       </p>
     </div>
