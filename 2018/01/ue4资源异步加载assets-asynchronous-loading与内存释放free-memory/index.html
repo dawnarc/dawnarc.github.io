@@ -10,7 +10,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.93.2 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.96.0 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Wang Aiguo">
 <meta name="keywords" content="UE4, Asset Asynchronous Loading">
 <meta name="description" content="为什么需要异步加载资源，因为当一次性加载的资源较多或者单个资源较大时，普通的LoadObject()方式会阻塞引擎的主线程。
@@ -474,6 +474,7 @@ AssetLoader.RequestAsyncLoad(SoftObj, FStreamableDelegate::CreateUObject(this, &
 }
 </code></pre>
 <h3 id="同步加载">同步加载</h3>
+<h5 id="加载资产">加载资产</h5>
 <p>同步加载有两种API：</p>
 <ul>
 <li>
@@ -508,6 +509,19 @@ if (WidgetClass)
         Widget-&gt;AddToViewport();
     }
 }
+</code></pre>
+<h5 id="tsoftobjectptr-同步加载">TSoftObjectPtr 同步加载</h5>
+<p>header:</p>
+<pre><code>UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = &quot;Test&quot;)
+TSoftObjectPtr&lt;UParticleSystem&gt; Particle;
+</code></pre>
+<p>cpp:</p>
+<pre><code>if (!Particle.IsValid())
+{
+    Particle.LoadSynchronous();
+}
+UParticleSystem* DestParticle = Particle.Get();
+UGameplayStatics::SpawnEmitterAtLocation(this, DestParticle, Location, Rotation, Scale);
 </code></pre>
 <h3 id="资源内存释放">资源内存释放</h3>
 <p>用上述方式加载资源后（包括同步加载和异步加载），如何再释放资源并从内存中销毁？两种情况：</p>
