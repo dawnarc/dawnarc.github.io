@@ -10,7 +10,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.96.0 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.102.3 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Wang Aiguo">
 <meta name="keywords" content="">
 <meta name="description" content="Hugo tranquilpeak theme demo">
@@ -69,7 +69,7 @@
     
     
       
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/solarized-light.min.css">
+        <link rel="stylesheet" href="https://dawnarc.com/cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/styles/paraiso-light.min.css">
       
     
 
@@ -354,10 +354,10 @@
       
         https://github.com/tomlooman/EpicSurvivalGameSeries/blob/4a6ee9a6081529fadbe0f693b2e4e6729d5ec08d/SurvivalGame/Source/SurvivalGame/Private/Items/SWeapon.cpp#L106
 EpicSurvivalGameSeries\SurvivalGame\Source\SurvivalGame\Private\Items\SWeapon.cpp
-void ASWeapon::AttachMeshToPawn(EInventorySlot Slot){if (MyPawn){// Remove and hideDetachMeshFromPawn();USkeletalMeshComponent* PawnMesh = MyPawn-&gt;GetMesh();FName AttachPoint = MyPawn-&gt;GetInventoryAttachPoint(Slot);Mesh-&gt;SetHiddenInGame(false);Mesh-&gt;AttachToComponent(PawnMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, AttachPoint);}}void ASWeapon::DetachMeshFromPawn(){Mesh-&gt;DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);Mesh-&gt;SetHiddenInGame(true);} It&rsquo;s better to use FAttachmentTransformRules::SnapToTargetNotIncludingScale when attaching, otherwise maybe there&rsquo;s a big location offset between two actors when using KeepWorldTransform.
- StaticMeshComponent无法附加到SkeletalMeshComponent上，附加后StaticMeshComponent会出现在场景中的随机位置，而不是父级SkeletalMeshComponent身上，且此时即使设置LocationOffset也无效。
- 通过NewObject&lt;USkeletalMeshComponent&gt;(Owner)运行时创建的SkeletalMeshComponent可以附加到父级SkeletalMeshComponent上，但是无法播放父级SkeletalMeshComponent的动画，即使设置了WeaponComp-&gt;SetMasterPoseComponent(PawnMesh)。建议在构造函数中创建后SkeletalMeshComponent，然后再run-time修改SkeletalMesh模型，run-time修改指定SkeletalMeshComponent的SkeletalMesh是没有问题的，且可以正常播放父级的动画。
-  念去去、千里烟波，暮霭沉沉楚天阔。----北宋·柳永《雨霖铃》
+void ASWeapon::AttachMeshToPawn(EInventorySlot Slot){if (MyPawn){// Remove and hideDetachMeshFromPawn();USkeletalMeshComponent* PawnMesh = MyPawn-&gt;GetMesh();FName AttachPoint = MyPawn-&gt;GetInventoryAttachPoint(Slot);Mesh-&gt;SetHiddenInGame(false);Mesh-&gt;AttachToComponent(PawnMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, AttachPoint);}}void ASWeapon::DetachMeshFromPawn(){Mesh-&gt;DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);Mesh-&gt;SetHiddenInGame(true);}It&rsquo;s better to use FAttachmentTransformRules::SnapToTargetNotIncludingScale when attaching, otherwise maybe there&rsquo;s a big location offset between two actors when using KeepWorldTransform.
+StaticMeshComponent无法附加到SkeletalMeshComponent上，附加后StaticMeshComponent会出现在场景中的随机位置，而不是父级SkeletalMeshComponent身上，且此时即使设置LocationOffset也无效。
+通过NewObject&lt;USkeletalMeshComponent&gt;(Owner)运行时创建的SkeletalMeshComponent可以附加到父级SkeletalMeshComponent上，但是无法播放父级SkeletalMeshComponent的动画，即使设置了WeaponComp-&gt;SetMasterPoseComponent(PawnMesh)。建议在构造函数中创建后SkeletalMeshComponent，然后再run-time修改SkeletalMesh模型，run-time修改指定SkeletalMeshComponent的SkeletalMesh是没有问题的，且可以正常播放父级的动画。
+念去去、千里烟波，暮霭沉沉楚天阔。----北宋·柳永《雨霖铃》
       
       <p>
         <a href="https://dawnarc.com/2017/12/ue4switch-weapon-at-run-time-attachtocomponent/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -422,7 +422,7 @@ void ASWeapon::AttachMeshToPawn(EInventorySlot Slot){if (MyPawn){// Remove a
 https://docs.unrealengine.com/latest/INT/Engine/Content/Types/SkeletalMeshes/Sockets/
 Setting Up and Using Sockets With Static Meshes
 https://docs.unrealengine.com/latest/INT/Engine/Content/Types/StaticMeshes/HowTo/Sockets/
- 雕栏玉砌应犹在，只是朱颜改。----李煜《虞美人》
+雕栏玉砌应犹在，只是朱颜改。----李煜《虞美人》
       
       <p>
         <a href="https://dawnarc.com/2017/12/ue4skeletal-mesh-sockets%E7%94%A8%E6%B3%95/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -484,11 +484,11 @@ https://docs.unrealengine.com/latest/INT/Engine/Content/Types/StaticMeshes/HowTo
     <div class="postShorten-excerpt" itemprop="articleBody">
       
         Usage Plugin在构造函数中加载的问题 在GameMode构造函数中加载（LoadObject或者ConstructorHelpers::FObjectFinder）蓝图，该蓝图使用了plugin（这里我使用了一个叫Swipe的插件），如果在构造函数中加载，则会报错：
-/Game/Demo/Female/Blueprints/FemaleCharBP : Can't find file for asset. /Script/SwipeFailed to load /Script/Swipe.SwipeComponent Referenced by K2Node_ComponentBoundEvent_2Failed to load /Script/Swipe.SwipeComponent Referenced by K2Node_ComponentBoundEvent_3Failed to load /Script/Swipe.SwipeComponent Referenced by SCS_Node_1 另外一种解决办法：给C++的GameMode套一个蓝图，然后在该蓝图中设置DefaultPawnClass、PlayerControllerClass等GameMode属性，此时即使这些PawnClass或者PlayerControllerClass蓝图使用了plugin，也不会报错。
+/Game/Demo/Female/Blueprints/FemaleCharBP : Can't find file for asset. /Script/SwipeFailed to load /Script/Swipe.SwipeComponent Referenced by K2Node_ComponentBoundEvent_2Failed to load /Script/Swipe.SwipeComponent Referenced by K2Node_ComponentBoundEvent_3Failed to load /Script/Swipe.SwipeComponent Referenced by SCS_Node_1另外一种解决办法：给C++的GameMode套一个蓝图，然后在该蓝图中设置DefaultPawnClass、PlayerControllerClass等GameMode属性，此时即使这些PawnClass或者PlayerControllerClass蓝图使用了plugin，也不会报错。
 添加第三方Plugin（2018-08-10更新） 工程.uproject 需要添加两处地方：
 1，在 Modules 中添加 plugin 名字字符串；
 2，在 Plugins 添加 plugin 信息：包括 Name 和 Enabled；
-{&quot;FileVersion&quot;: 3,&quot;EngineAssociation&quot;: &quot;4.20&quot;,&quot;Category&quot;: &quot;&quot;,&quot;Description&quot;: &quot;&quot;,&quot;Modules&quot;: [{&quot;Name&quot;: &quot;MyProj&quot;,&quot;Type&quot;: &quot;Runtime&quot;,&quot;LoadingPhase&quot;: &quot;Default&quot;,&quot;AdditionalDependencies&quot;: [&quot;UMG&quot;,&quot;Engine&quot;,&quot;CoreUObject&quot;,&quot;AIModule&quot;,&quot;ApexDestruction&quot;,&quot;MyPlugin&quot;]}],&quot;Plugins&quot;: [{&quot;Name&quot;: &quot;ApexDestruction&quot;,&quot;Enabled&quot;: true},{&quot;Name&quot;: &quot;MyPlugin&quot;,&quot;Enabled&quot;: true}]} 往 Plugin 中添加 C++ 代码（2018-08-13更新） 貌似没有好的办法，只能手动添加 C++ 类文件
+{&quot;FileVersion&quot;: 3,&quot;EngineAssociation&quot;: &quot;4.20&quot;,&quot;Category&quot;: &quot;&quot;,&quot;Description&quot;: &quot;&quot;,&quot;Modules&quot;: [{&quot;Name&quot;: &quot;MyProj&quot;,&quot;Type&quot;: &quot;Runtime&quot;,&quot;LoadingPhase&quot;: &quot;Default&quot;,&quot;AdditionalDependencies&quot;: [&quot;UMG&quot;,&quot;Engine&quot;,&quot;CoreUObject&quot;,&quot;AIModule&quot;,&quot;ApexDestruction&quot;,&quot;MyPlugin&quot;]}],&quot;Plugins&quot;: [{&quot;Name&quot;: &quot;ApexDestruction&quot;,&quot;Enabled&quot;: true},{&quot;Name&quot;: &quot;MyPlugin&quot;,&quot;Enabled&quot;: true}]}往 Plugin 中添加 C++ 代码（2018-08-13更新） 貌似没有好的办法，只能手动添加 C++ 类文件
       
       <p>
         <a href="https://dawnarc.com/2017/12/ue4plugin-related/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -554,7 +554,7 @@ https://docs.unrealengine.com/latest/INT/Engine/Content/Types/StaticMeshes/HowTo
 Why can&rsquo;t I tag a delegate created with DECLARE_EVENT as a UPROPERTY
 https://answers.unrealengine.com/questions/357296/why-cant-i-tag-a-delegate-created-with-declare-eve.html
 Creating a multicast delegate https://www.packtpub.com/mapt/book/game_development/9781785885549/5/ch05lvl1sec69/creating-a-multicast-delegate
- 枯藤老树昏鸦，
+枯藤老树昏鸦，
 小桥流水人家，
 古道西风瘦马。
 夕阳西下，
@@ -621,8 +621,8 @@ Creating a multicast delegate https://www.packtpub.com/mapt/book/game_developmen
     <div class="postShorten-excerpt" itemprop="articleBody">
       
         可能是场景的StaticMesh的Bounds Box范围有问题，需要在Max或者Maya中修改 Collision 。
- 也可以在UE4中修改Bounds大小  如果 Static Mesh 用于制作 Destructible Mesh，修改 Static Mesh 的 Bounds 后需要重新创建 Destructible Mesh，否则 Destructible Mesh Bounds还是使用之前的Bounds。
-  衡量一个人的成功标志，不是看他登到顶峰的高度，而是看他跌到低谷的反弹力。----王石
+也可以在UE4中修改Bounds大小 如果 Static Mesh 用于制作 Destructible Mesh，修改 Static Mesh 的 Bounds 后需要重新创建 Destructible Mesh，否则 Destructible Mesh Bounds还是使用之前的Bounds。
+衡量一个人的成功标志，不是看他登到顶峰的高度，而是看他跌到低谷的反弹力。----王石
       
       <p>
         <a href="https://dawnarc.com/2017/12/ue4%E8%A7%92%E8%89%B2%E6%82%AC%E5%9C%A8%E5%8D%8A%E7%A9%BA%E7%9A%84%E9%97%AE%E9%A2%98boundsbox/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -683,10 +683,11 @@ Creating a multicast delegate https://www.packtpub.com/mapt/book/game_developmen
     </div>
     <div class="postShorten-excerpt" itemprop="articleBody">
       
-        How to get Touch Position on screen   New C++ class inherit from GameViewportClient
-  Project Settings -&gt; Engine -&gt; General Settings -&gt; Default Classes -&gt; set Game Viewport Client Class as your customized class.
-  Override function InputTouch
- virtual bool InputTouch(FViewport* Viewport, int32 ControllerId, uint32 Handle, ETouchType::Type Type, const FVector2D&amp; TouchLocation, float Force, FDateTime DeviceTimestamp, uint32 TouchpadIndex) override; Argument TouchLocation is the Touch Position.
+        How to get Touch Position on screen New C++ class inherit from GameViewportClient
+Project Settings -&gt; Engine -&gt; General Settings -&gt; Default Classes -&gt; set Game Viewport Client Class as your customized class.
+Override function InputTouch
+virtual bool InputTouch(FViewport* Viewport, int32 ControllerId, uint32 Handle, ETouchType::Type Type, const FVector2D&amp; TouchLocation, float Force, FDateTime DeviceTimestamp, uint32 TouchpadIndex) override;Argument TouchLocation is the Touch Position.
+Mobile Input - Swipe and Pinch A plugin for Unreal Engine 4 that exposes touches and swipes on mobile devices as events in blueprints
       
       <p>
         <a href="https://dawnarc.com/2017/12/ue4controller-and-input-related/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -748,11 +749,11 @@ Creating a multicast delegate https://www.packtpub.com/mapt/book/game_developmen
     <div class="postShorten-excerpt" itemprop="articleBody">
       
         UE4源码编译的UE4Editor启动时崩溃：
-dx11 feature level 10.0 is required to run the engine （运行引擎需要dx11功能等级10.0） 原因：显卡驱动有问题。
+dx11 feature level 10.0 is required to run the engine （运行引擎需要dx11功能等级10.0）原因：显卡驱动有问题。
 解决办法：卸载显卡驱动，并从AMD或者NVIDIA官网下载对应的驱动。如果更新驱动后还是出现这个问题，则清理掉UE4源码工程重新编译一次（如果是使用引擎源码编译的话）。
 另外，如果自己游戏工程是在旧的驱动下面编译的，那么最好把这些编译中间文件删掉。
 另外，删除编译中间文件时最好手动删除文件夹，而不要直接使用VS中的构建清理，因为即使执行“仅清理当前工程”，也会把整个UE4源码工程清理掉，导致下次编译时又得重新编译整个UE4源码。
- 勤俭节约，未有不兴，骄奢倦怠，未有不败。----《曾国藩家书》
+勤俭节约，未有不兴，骄奢倦怠，未有不败。----《曾国藩家书》
       
       <p>
         <a href="https://dawnarc.com/2017/12/ue4ue4editor.exe-crashdx11-feature-level-10.0-is-required-to-run-the-engine/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -821,7 +822,7 @@ dx11 feature level 10.0 is required to run the engine （运行引擎需要dx11�
 修改generated_messages_table_driven.h。
 将static_assert(std::is_pod&lt;AuxillaryParseTableField&gt;::value, &quot;&quot;);注释掉
 3.5之后版本编译 如果使用3.x，将protoc生成的代码打成lib链接到UE4工程时，会出现以下错误（当template文件中有string字段时会报错，如果没有string可以编译通过）：
-2&gt;TestTDGameMode.cpp.obj : error LNK2019: unresolved external symbol &quot;public: void __cdecl my_proto::login_info::set_account(char const *)&quot; (?set_account@login_info@fh_proto@@QEAAXPEBD@Z) referenced in function &quot;public: virtual void __cdecl ATestTDGameMode::BeginPlay(void)&quot; (?BeginPlay@ATestTDGameMode@@UEAAXXZ)2&gt;G:\Source\Work\Game20171205\program\client\TestTD\Binaries\Win64\UE4Editor-TestTD-4710.dll : fatal error LNK1120: 1 unresolved externals Python脚本对protoc生成代码二次转换，然后与UE4工程编译(Protobuf 3.
+2&gt;TestTDGameMode.cpp.obj : error LNK2019: unresolved external symbol &quot;public: void __cdecl my_proto::login_info::set_account(char const *)&quot; (?set_account@login_info@fh_proto@@QEAAXPEBD@Z) referenced in function &quot;public: virtual void __cdecl ATestTDGameMode::BeginPlay(void)&quot; (?BeginPlay@ATestTDGameMode@@UEAAXXZ)2&gt;G:\Source\Work\Game20171205\program\client\TestTD\Binaries\Win64\UE4Editor-TestTD-4710.dll : fatal error LNK1120: 1 unresolved externalsPython脚本对protoc生成代码二次转换，然后与UE4工程编译(Protobuf 3.x) https://github.
       
       <p>
         <a href="https://dawnarc.com/2017/12/ue4%E9%9D%99%E6%80%81%E9%93%BE%E6%8E%A5protobuf-3.x%E7%89%88%E6%9C%AC%E7%9A%84%E9%94%99%E8%AF%AF/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -883,15 +884,15 @@ dx11 feature level 10.0 is required to run the engine （运行引擎需要dx11�
     <div class="postShorten-excerpt" itemprop="articleBody">
       
         UE4.18.1源码编译错误：
-Error C2039 'MergeShaderCacheFiles': is not a member of 'FShaderCache' ShaderCacheTool C:\Users\xC0DEB10C\Documents\Git\UnrealEngine\Engine\Source\Programs\Mac\ShaderCacheTool\Private\ShaderCacheTool.cpp 66Error C1083 Cannot open include file: 'Interfaces/IAutomationWorkerModule.h': No such file or directory BuildPatchTool C:\Users\xC0DEB10C\Documents\Git\UnrealEngine\Engine\Source\Programs\BuildPatchTool\Private\ToolModes\AutomationMode.cpp 12 这是官方已经确定的bug，4.19修复。
+Error C2039 'MergeShaderCacheFiles': is not a member of 'FShaderCache' ShaderCacheTool C:\Users\xC0DEB10C\Documents\Git\UnrealEngine\Engine\Source\Programs\Mac\ShaderCacheTool\Private\ShaderCacheTool.cpp 66Error C1083 Cannot open include file: 'Interfaces/IAutomationWorkerModule.h': No such file or directory BuildPatchTool C:\Users\xC0DEB10C\Documents\Git\UnrealEngine\Engine\Source\Programs\BuildPatchTool\Private\ToolModes\AutomationMode.cpp 12这是官方已经确定的bug，4.19修复。
 手动修改方式如下：
 打开
 Engine/Source/Programs/Mac/ShaderCacheTool/Private/ShaderCacheTool.cpp
 将
-bool bOK = FShaderCache::MergeShaderCacheFiles(RunInfo.InputFile1, RunInfo.InputFile2, RunInfo.OutputFile); 修改为
-bool bOK = true; 具体参考：
+bool bOK = FShaderCache::MergeShaderCacheFiles(RunInfo.InputFile1, RunInfo.InputFile2, RunInfo.OutputFile);修改为
+bool bOK = true;具体参考：
 https://github.com/EpicGames/UnrealEngine/pull/4222/files
- 世界只有一个，就是此刻压迫着你的这个，你也只在这一分钟活着，就是此刻这一分钟；而唯一的生命之道，就是接纳每一分钟，视之为独一无二的奇迹。
+世界只有一个，就是此刻压迫着你的这个，你也只在这一分钟活着，就是此刻这一分钟；而唯一的生命之道，就是接纳每一分钟，视之为独一无二的奇迹。
       
       <p>
         <a href="https://dawnarc.com/2017/12/ue44.18.1%E5%BC%95%E6%93%8E%E7%BC%96%E8%AF%91bugmergeshadercachefiles-is-not-a-member-of-fshadercache-shadercachetool/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -954,9 +955,9 @@ https://github.com/EpicGames/UnrealEngine/pull/4222/files
       
         keywords: UE4, Visual Studio 2017, VisualStudio, VS, VS2017
 编译错误：
-c:\memspect\vsassert\pch.h(20): fatal error C1083: Cannot open include file: 'metahost.h': No such file or directory 解决办法：
-重新打开VS2017的安装器，下面的都勾上，然后安装。  参考： https://blogs.msdn.microsoft.com/calvin_hsia/2017/02/13/cannot-open-include-file-metahost-h-no-such-file-or-directory/
- 不降志，不屈身，不追赶时髦，也不回避危险。──胡适
+c:\memspect\vsassert\pch.h(20): fatal error C1083: Cannot open include file: 'metahost.h': No such file or directory解决办法：
+重新打开VS2017的安装器，下面的都勾上，然后安装。 参考： https://blogs.msdn.microsoft.com/calvin_hsia/2017/02/13/cannot-open-include-file-metahost-h-no-such-file-or-directory/
+不降志，不屈身，不追赶时髦，也不回避危险。──胡适
       
       <p>
         <a href="https://dawnarc.com/2017/12/ue4vs2017%E7%BC%96%E8%AF%91%E5%BC%95%E6%93%8E%E9%94%99%E8%AF%AFerror-c1083-cannot-open-include-file-metahost.h/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -1019,9 +1020,9 @@ c:\memspect\vsassert\pch.h(20): fatal error C1083: Cannot open include file: 'me
       
         keywords：UE4、FBX、Maya、3D Max、Blender、Vertices Normals、顶点法线、Soften Edges、Harden Edges
 顶点法线在Max中叫做光滑组（Smoothing Group），在Maya中叫软硬边（Soften Edges/Harden Edges），Blender中叫光滑边（Smoothing Edge）。
-3D Max FBX  OBJ  Maya Maya无论导出FBX还是OBJ，都不需要在参数面板中勾选（根本就没有参数面板。。），导出时会默认保留对象上的软边和硬边。如果模型上有软边但又不希望导出，那么在导出前将这些边改成硬边。
-Blender FBX  OBJ  导入游戏引擎 UE4 UE4导入资源的面板参数中，Normal Import Method表示是否使用资源自带的法线，默认是使用资源自带的（Import Normals）。  Unity3D Unity导入资源提供的选项：automatically calculate normals，不勾选就表示使用自带的顶点法线。
- 杜郎老矣，想旧事、花须能说。记少年、一梦扬州，二十四桥明月。—周密《瑶华》
+3D Max FBX OBJ Maya Maya无论导出FBX还是OBJ，都不需要在参数面板中勾选（根本就没有参数面板。。），导出时会默认保留对象上的软边和硬边。如果模型上有软边但又不希望导出，那么在导出前将这些边改成硬边。
+Blender FBX OBJ 导入游戏引擎 UE4 UE4导入资源的面板参数中，Normal Import Method表示是否使用资源自带的法线，默认是使用资源自带的（Import Normals）。 Unity3D Unity导入资源提供的选项：automatically calculate normals，不勾选就表示使用自带的顶点法线。
+杜郎老矣，想旧事、花须能说。记少年、一梦扬州，二十四桥明月。—周密《瑶华》
       
       <p>
         <a href="https://dawnarc.com/2017/11/ue4%E6%A8%A1%E5%9E%8B%E4%BB%8E3d-maxmayablender%E5%AF%BC%E5%85%A5ue4%E6%97%B6%E5%A6%82%E4%BD%95%E4%BF%9D%E7%95%99%E9%A1%B6%E7%82%B9%E6%B3%95%E7%BA%BF/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -1147,8 +1148,8 @@ Blender FBX  OBJ  导入游戏引擎 UE4 UE4导入资源的面板参数中，Nor
       
         keywords：UE4、Fixed Frame rate、Dedicated Server、Crash
 如果锁定帧率（Project Settings -》 Engine -》 General Settings -》 Use Fixed Frame Rate），专用服务器启动时会报错：
-LogWindows: Error: Fatal error: [File:D:\sdk\UnrealEngine-4.17.1-release\Engine\Source\Runtime\Engine\Private\UnrealEngine.cpp] [Line: 1385] LogWindows: Error: Detected negative delta time - on AMD systems please install http://files.aoaforums.com/I3199-setup.zip.html - DeltaTime:-0.000259, bUseFixedFrameRate:1, bTimeWasManipulatedDebug:1, FixedFrameRate:30.000000 感觉这是个bug，提示我要打AMD的补丁，但是我机器是Intel的U。
- 凝碧旧池头，一听管弦凄切，多少梨园声在，总不堪华发。—韩元吉《好事近》
+LogWindows: Error: Fatal error: [File:D:\sdk\UnrealEngine-4.17.1-release\Engine\Source\Runtime\Engine\Private\UnrealEngine.cpp] [Line: 1385] LogWindows: Error: Detected negative delta time - on AMD systems please install http://files.aoaforums.com/I3199-setup.zip.html - DeltaTime:-0.000259, bUseFixedFrameRate:1, bTimeWasManipulatedDebug:1, FixedFrameRate:30.000000感觉这是个bug，提示我要打AMD的补丁，但是我机器是Intel的U。
+凝碧旧池头，一听管弦凄切，多少梨园声在，总不堪华发。—韩元吉《好事近》
       
       <p>
         <a href="https://dawnarc.com/2017/09/ue4error-detected-negative-delta-time-on-amd-systems-please-install/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -1221,7 +1222,7 @@ https://docs.unrealengine.com/latest/INT/Gameplay/Networking/CharacterMovementCo
 Custom Character Movement Component
 https://wiki.unrealengine.com/Custom_Character_Movement_Component
 Dedicated Server 的 Movement 优化 如果仅仅为了性能，不希望服务端实时修正客户端坐标，以客户端发过来的坐标为准，可以开启以下选项：
-[/Script/Engine.GameNetworkManager]MAXPOSITIONERRORSQUARED=625ClientAuthorativePosition=true 但是这么做会被外挂 hack
+[/Script/Engine.GameNetworkManager]MAXPOSITIONERRORSQUARED=625ClientAuthorativePosition=true但是这么做会被外挂 hack
 参考自：How am I able to Replicate movement when using &ldquo;AddMovement Input&rdquo;, but not AddLocalTransform?
 https://answers.unrealengine.com/questions/26116/able-to-replicate-movement-when-using-addmovement.html
 Console Commands int32 NetShowCorrections = 0;FAutoConsoleVariableRef CVarNetShowCorrections(TEXT(&quot;p.
@@ -1286,11 +1287,11 @@ Console Commands int32 NetShowCorrections = 0;FAutoConsoleVariableRef CVarNetSh
     <div class="postShorten-excerpt" itemprop="articleBody">
       
         服务端错误提示：
-PIE: Error: Only Local Player Controllers can be assigned to widgets. MyPlayerController_0 is not a Local Player Controller. 原因：
+PIE: Error: Only Local Player Controllers can be assigned to widgets. MyPlayerController_0 is not a Local Player Controller.原因：
 在服务端创建客户端相关的对象时，则会报这个错误，比如创建一个Widget，需要判断下是客户端还是服务端。
 解决办法：
 在创建Widget时判断下是否为服务器，例如：
-void AReplTestPlayerController::BeginPlay(){if (GetNetMode() == NM_Standalone){if (UClass* BPClass = LoadClass&lt;UMyUserWidget&gt;(NULL, TEXT(&quot;WidgetBlueprint'/Game/TopDownCPP/Blueprints/NewWidgetBlueprint.NewWidgetBlueprint_C'&quot;))){LoginWidget = CreateWidget&lt;UMyUserWidget&gt;(this, BPClass);if (LoginWidget){LoginWidget-&gt;AddToViewport();}}}}  花自飘零水自流。一种相思，两处闲愁。
+void AReplTestPlayerController::BeginPlay(){if (GetNetMode() == NM_Standalone){if (UClass* BPClass = LoadClass&lt;UMyUserWidget&gt;(NULL, TEXT(&quot;WidgetBlueprint'/Game/TopDownCPP/Blueprints/NewWidgetBlueprint.NewWidgetBlueprint_C'&quot;))){LoginWidget = CreateWidget&lt;UMyUserWidget&gt;(this, BPClass);if (LoginWidget){LoginWidget-&gt;AddToViewport();}}}}花自飘零水自流。一种相思，两处闲愁。
 此情无计可消除，才下眉头，却上心头。
 ----李清照《一剪梅》
       

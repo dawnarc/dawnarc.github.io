@@ -10,7 +10,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.96.0 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.102.3 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Wang Aiguo">
 <meta name="keywords" content="">
 <meta name="description" content="Hugo tranquilpeak theme demo">
@@ -69,7 +69,7 @@
     
     
       
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/solarized-light.min.css">
+        <link rel="stylesheet" href="https://dawnarc.com/cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/styles/paraiso-light.min.css">
       
     
 
@@ -415,22 +415,22 @@
       
         UObject ConditionalBeginDestroy()导致无法第二次重新Load的问题 现象：
 如果一个材质对象首次执行垃圾回收（ConditionalBeginDestroy是对BeginDestroy的封装，BeginDestroy是不管任何因素强制回收）：
-UObject::ConditionalBeginDestroy() 或者：
-UObject::BeginDestroy() 之后又需要再次加载该材质，那么调用LoadObject()时，第一个参数不能为NULL:
-UObject* Obj = LoadObject&lt;UObject&gt;(NULL, Path); 原因：
+UObject::ConditionalBeginDestroy()或者：
+UObject::BeginDestroy()之后又需要再次加载该材质，那么调用LoadObject()时，第一个参数不能为NULL:
+UObject* Obj = LoadObject&lt;UObject&gt;(NULL, Path);原因：
 在编辑器模式下，通过LoadObject加载出来的对象，如果执行了Destroy，那么在不重启编辑器模式的情况下，第二次执行LoadObject&lt;UObject&gt;(NULL, Path);会返回NULL，即使在编辑器模式下重新启动游戏也返回NULL
 解决办法：
 上述情况只存在编辑器模式下，如果是打包版本，即使一开始 Destroy，第二次 LoadObject 的时候仍然可以加载成功。
 如果非得希望在编辑器模式下，Destroy资源之后仍然能够正常第二次 LoadObject 该资源，方式如下：
 手动new一个UObject，作为LoadObject的第一个参数
-UObject* Obj = NewObject&lt;UTexture2D&gt;();LoadObject&lt;UObject&gt;(Obj, Path); 这样就能正确加载了。
+UObject* Obj = NewObject&lt;UTexture2D&gt;();LoadObject&lt;UObject&gt;(Obj, Path);这样就能正确加载了。
 通过上述表现可以推算出，编辑器和引擎的Runtime公用了同一个对象
- 且该对象没有随着编辑器模式下退出游戏而被清理； 且该对象在编辑器和Runtime分别存在一个是否已销毁的标记； 且该对象在PIE（Play In Editor）模式下 Destroy 后，并没有标记该对象在编辑器中已非法；  所以在PIE模式下第二次 LoadObject 时认为该对象还存在，并且直接返回了这个已经被Destroy的空对象。
+且该对象没有随着编辑器模式下退出游戏而被清理； 且该对象在编辑器和Runtime分别存在一个是否已销毁的标记； 且该对象在PIE（Play In Editor）模式下 Destroy 后，并没有标记该对象在编辑器中已非法； 所以在PIE模式下第二次 LoadObject 时认为该对象还存在，并且直接返回了这个已经被Destroy的空对象。
 如果UE4资源管理的引擎代码写的足够好，对于Destroy对象的操作，应该提供两个版本：一个PIE、一个Game Runtime。
 内存持久化 (Memory Persistence) 上述问题中，即使在第二次加载时手动 NewObject 创建一个对象，仍然存在问题：会发现，过几秒以后，再次使用这个UObject时会出现指针非法的错误，原因是刚刚自己New的UObject被引擎从内存中回收了。 如何禁止引擎对该UObject自动垃圾回收，而是我们自己手动执行？执行下AddToRoot：
-Obj-&gt;AddToRoot(); 注：如果执行了AddToRoot()，那么退出程序前需要执行RemoveFromRoot()，否则在引擎在清理内存时会错误。
+Obj-&gt;AddToRoot();注：如果执行了AddToRoot()，那么退出程序前需要执行RemoveFromRoot()，否则在引擎在清理内存时会错误。
 如果一个UObject是SpawnActor创建出来的，那么执行Destroy()之后，再次执行Spawn是可以正常创建出来的。这点和LoadObject有区别。 ConditionalBeginDestroy()并不推荐在业务逻辑中使用 UE4官方论坛上，很多帖子或资料告诉你，如果要销毁对象，需要执行ConditionalBeginDestroy()。其实这个API不是给上层逻辑使用的，如果要销毁对象，只要保证该对象失去引用或者RemoveFromRoot()即可，否则就会出现上述问题，即：Destroy之后，无法第二次Load。但是这个问题只存在编辑器运行模式下，如果是打包版本（或者Play时选择下拉菜单：Standalone），即使Destroy()，第二次LoadObject()，第一个参数为NULL，也是可以正常加载的。
- DedicatedServer 中的问题 如果在 DedicatedServer 模式下，SpawnActor生成Actor，且这个Actor bReplicates 设置为true，执行 ConditionalBeginDestroy() ，一定时间后客户端会崩掉，但是使用 Destroy() 没问题。对于服务端生成的 Actor，销毁对象时绝对不要 ConditionalBeginDestroy()。
+DedicatedServer 中的问题 如果在 DedicatedServer 模式下，SpawnActor生成Actor，且这个Actor bReplicates 设置为true，执行 ConditionalBeginDestroy() ，一定时间后客户端会崩掉，但是使用 Destroy() 没问题。对于服务端生成的 Actor，销毁对象时绝对不要 ConditionalBeginDestroy()。
       
       <p>
         <a href="https://dawnarc.com/2016/05/ue4uobject-conditionalbegindestroy%E7%9B%B8%E5%85%B3/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -617,14 +617,14 @@ Obj-&gt;AddToRoot(); 注：如果执行了AddToRoot()，那么退出程序前�
       
         常用API C++如何播放Montage动画 Character接口：
 假设是在Character内执行，其中MontagePtr为Montage指针：
-float AnimDuration = PlayAnimMontage(MontagePtr) / (GetMesh() &amp;&amp; GetMesh()-&gt;GlobalAnimRateScale &gt; 0 ? GetMesh()-&gt;GlobalAnimRateScale : 1); AnimInstace接口：
-float AnimDuration = Montage_Play(Param.Montage, Param.PlayRate); 如果只是播放Animation Sequence，不需要Montage，可以使用 PlayAnimation()：
-if (USkeletalMeshComponent *Mesh = GetMesh()){Mesh-&gt;PlayAnimation(AnimSequence, false);} 注意：PlayAnimation可以直接来播放AnimSequence，但是不能混合动作。比如当播放完攻击动作后，无法自动回到空闲状态，但是通过Montage的Slot可以完成自动切换动作。
- 其他参考：
+float AnimDuration = PlayAnimMontage(MontagePtr) / (GetMesh() &amp;&amp; GetMesh()-&gt;GlobalAnimRateScale &gt; 0 ? GetMesh()-&gt;GlobalAnimRateScale : 1);AnimInstace接口：
+float AnimDuration = Montage_Play(Param.Montage, Param.PlayRate);如果只是播放Animation Sequence，不需要Montage，可以使用 PlayAnimation()：
+if (USkeletalMeshComponent *Mesh = GetMesh()){Mesh-&gt;PlayAnimation(AnimSequence, false);}注意：PlayAnimation可以直接来播放AnimSequence，但是不能混合动作。比如当播放完攻击动作后，无法自动回到空闲状态，但是通过Montage的Slot可以完成自动切换动作。
+其他参考：
 How can I play animations strictly from C++?
 https://answers.unrealengine.com/questions/292345/how-can-i-play-animations-strictly-from-c.html
 C++动态播放Montage（通过AnimSequence创建） keywords：UE4, C++, AnimSequence, AnimMontage, Slot, 动态创建, 播放动画
-首先要在动画蓝图中添加Slot节点，默认的Slot名字为DefaultSlot。这个名字会在C++代码中使用  假设已经获取了要播放的AnimSequence对象指针：AnimSeq
+首先要在动画蓝图中添加Slot节点，默认的Slot名字为DefaultSlot。这个名字会在C++代码中使用 假设已经获取了要播放的AnimSequence对象指针：AnimSeq
 float AnimLength = 0.f;if (USkeletalMeshComponent *Mesh = MyActor-&gt;FindComponentByClass&lt;USkeletalMeshComponent&gt;()){if (UAnimInstance *AnimInst = Mesh-&gt;GetAnimInstance()){if (UAnimMontage* Mtg = AnimInst-&gt;PlaySlotAnimationAsDynamicMontage(AnimSeq, TEXT(&quot;DefaultSlot&quot;), 0.
       
       <p>
@@ -769,10 +769,10 @@ UE4中的C++类继承规则：只能直接继承自两种类，一种是非UObje
 如果同一批美术材质，在两个不同工程下的渲染效果不一样，比如同一个粒子特效，实际效果在两个工程中有差异，则可能是工程的设置项问题。解决办法：将两个工程中的Config/DefaultEngine.ini中的[/Script/Engine.RendererSettings]配置参数，设置统一即可。
 【2017-02-06】
 用宏控制debug相关代码的开启和关闭
-#if UE_BUILD_SHIPPING//debug code...#endif UE4数据同步相关的引擎源码
-Runtime\Engine\Private\ActorReplication.cppRuntime\Engine\Private\ Replication.cppRuntime\Engine\Public\Net \DataReplication.cppEngine\Plugins\Messaging\TcpMessaging\Source\TcpMessaging\Private\TcpMessagingModule.cpp SpawnActor和NewObject创建出来的对象如何获取父对象
+#if UE_BUILD_SHIPPING//debug code...#endifUE4数据同步相关的引擎源码
+Runtime\Engine\Private\ActorReplication.cppRuntime\Engine\Private\ Replication.cppRuntime\Engine\Public\Net \DataReplication.cppEngine\Plugins\Messaging\TcpMessaging\Source\TcpMessaging\Private\TcpMessagingModule.cppSpawnActor和NewObject创建出来的对象如何获取父对象
 SpawnActor()有个参数：FActorSpawnParameters，这个参数中有很多属性，设置相关属性后，可以更方便的来控制这个被spawn出来的Actor，比如Owner属性：
-FActorSpawnParameters Param;Param.Owner = MyActor1; AActor MyActor2 = GetWorld()-&gt;SpawnActor&lt;MyActor&gt;(MyClass, Param);//此时的Owner就是MyActor1MyActor Owner= MyActor2-&gt;GetOwner(); NewObject直接通过构造函数参数指定：
+FActorSpawnParameters Param;Param.Owner = MyActor1; AActor MyActor2 = GetWorld()-&gt;SpawnActor&lt;MyActor&gt;(MyClass, Param);//此时的Owner就是MyActor1MyActor Owner= MyActor2-&gt;GetOwner();NewObject直接通过构造函数参数指定：
       
       <p>
         <a href="https://dawnarc.com/2015/12/ue4%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9%E4%B8%8E%E7%AC%94%E8%AE%B0/" class="postShorten-excerpt_link link">Continue reading</a>

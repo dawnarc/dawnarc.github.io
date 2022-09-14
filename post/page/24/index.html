@@ -10,7 +10,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.96.0 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.102.3 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Wang Aiguo">
 <meta name="keywords" content="">
 <meta name="description" content="Hugo tranquilpeak theme demo">
@@ -69,7 +69,7 @@
     
     
       
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/solarized-light.min.css">
+        <link rel="stylesheet" href="https://dawnarc.com/cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/styles/paraiso-light.min.css">
       
     
 
@@ -318,6 +318,72 @@
     
     <div class="postShorten-header">
       <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2018/03/ue4event-delegate-multi-cast-related/">
+          [UE4]Event, Delegate, Multi-cast Related
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2018-03-30T18:27:02&#43;08:00">
+        
+  
+  
+  
+  
+    Friday, 18:27, Mar 30, 2018
+  
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        keywords：UE4, BindRaw, BindUFunction, BindUObject, Pass Arguments, Variable
+Examples Delegate示例（BindUFunction传递参数） 示例1：
+void UMyClass::FunctionWithVar(const FString&amp; MyVar, TFunction&lt;void(const FString&amp;)&gt; InFunction){MyLambdaHandle = OnMyDelegate.BindStatic([MyVar](TFunction&lt;void(const FString&amp;)&gt; callback) {callback(MyVar);}, InFunction);// TODO: You have to track MyLambdaHandle to be able to unregister it when needed}https://answers.unrealengine.com/questions/715835/bindufunction-with-variable-capture-in-c.html
+示例2：
+使用固定参数绑定
+DECLARE_DELEGATE(RefreshOne);class MyClass{public:MyClass(){one.BindRaw(this, &amp;MyClass::MyFunction, (uint8)1);}void MyFunction(uint8 Val){// Whatever}void Invoke(){one.Execute(); // Will call this-&gt;MyFunction((uint8)1);}private:RefreshOne one;};使用动态参数绑定
+      
+      <p>
+        <a href="https://dawnarc.com/2018/03/ue4event-delegate-multi-cast-related/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
         <a class="link-unstyled" href="https://dawnarc.com/2018/03/android-ndkarm-eabi-addr2line-android%E5%BA%94%E7%94%A8%E5%B4%A9%E6%BA%83%E7%9A%84%E8%B0%83%E8%AF%95%E6%96%B9%E6%B3%95/">
           [Android NDK]arm-eabi-addr2line android应用崩溃的调试方法
         </a>
@@ -352,16 +418,18 @@
       
         原文：https://blog.csdn.net/tommy_wxie/article/details/12841735
 1.将ndk中的arm-linux-androideabi-addr2line可执行文件的路径加入配置文件~/.bashrc中，例如：
-export PATH=$PATH:~/dlna/android-ndk-r6b/toolchains/arm-linux-androideabi-4.4.3/prebuilt/linux-x86/bin 2.使配置生效：
-source ~/.bashrc 3.使用工具。例如：
-arm-linux-androideabi-addr2line -C -f -e ~/workspace/DLNA/libs/armeabi/libctrlpt.so 0003deb4 其中，0003deb4为堆栈信息中pc的值。
+export PATH=$PATH:~/dlna/android-ndk-r6b/toolchains/arm-linux-androideabi-4.4.3/prebuilt/linux-x86/bin2.使配置生效：
+source ~/.bashrc3.使用工具。例如：
+arm-linux-androideabi-addr2line -C -f -e ~/workspace/DLNA/libs/armeabi/libctrlpt.so 0003deb4其中，0003deb4为堆栈信息中pc的值。
 android应用崩溃的调试方法 有两种方法可以分析 crash 的堆栈信息
 1，google提供了一个python脚本，可以从 https://github.com/maxme/android-ndk-stacktrace-analyzer 下载这个python脚本，然后使用 adb logcat -d &gt; logfile 导出 crash 的log,使用 arm-eabi-objdump 位于build/prebuilt/linux-x86/arm-eabi-4.2.1/bin下面把so或exe转换成汇编代码，如：arm-eabi-objdump -S mylib.so &gt; mylib.asm,使用脚本
-python parse_stack.py &lt;asm-file&gt; &lt;logcat-file&gt; 2，直接使用NDK下面的arm-linux-androideabi-addr2line
+python parse_stack.py &lt;asm-file&gt; &lt;logcat-file&gt;2，直接使用NDK下面的arm-linux-androideabi-addr2line
 (D:\android-ndk-r8\toolchains\arm-linux- androideabi-4.4.3\prebuilt\windows\bin\arm-linux-androideabi-addr2line.exe)
 例如：
-arm-linux-androideabi-addr2line -C -f -e libxxx.so 0x#####(address) 出现 ??:0 , 没法展示源代码行数的问题 在Android.mk 文件中:
-LOCAL_CFLAGS := -D__STDC_CONSTANT_MACROS -Wl,-Map=test.map -g  补充2个编译参数 -Wl,-Map=test.map -g .
+arm-linux-androideabi-addr2line -C -f -e libxxx.so 0x#####(address)出现 ??:0 , 没法展示源代码行数的问题 在Android.mk 文件中:
+LOCAL_CFLAGS := -D__STDC_CONSTANT_MACROS -Wl,-Map=test.map -g 补充2个编译参数 -Wl,-Map=test.map -g . 增加gcc警告和调试标志
+执行命令：
+arm-linux-androideabi-addr2line -C -f -e /项目目录/obj/local/armeabi/libfaa_jni.
       
       <p>
         <a href="https://dawnarc.com/2018/03/android-ndkarm-eabi-addr2line-android%E5%BA%94%E7%94%A8%E5%B4%A9%E6%BA%83%E7%9A%84%E8%B0%83%E8%AF%95%E6%96%B9%E6%B3%95/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -430,7 +498,7 @@ VaTexAtlas：一款支持TexturePacker json数据导入UE4插件
 https://github.com/ufna/VaTexAtlas
 UMG Animation
 https://docs.unrealengine.com/latest/INT/Engine/UMG/UserGuide/Animation/index.html
- 甚爱必大费，多藏必厚亡。 ----老子《道德经》
+甚爱必大费，多藏必厚亡。 ----老子《道德经》
       
       <p>
         <a href="https://dawnarc.com/2018/03/ue42d%E5%8A%A8%E7%94%BB%E5%BA%8F%E5%88%97%E5%B8%A7paper-sprite/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -496,7 +564,7 @@ https://docs.unrealengine.com/latest/INT/Engine/UMG/UserGuide/Animation/index.ht
 http://www.tomlooman.com/circular-progress-bar-for-umg/
 下载地址：
 https://pan.baidu.com/s/1kfzODWw8i_VXfd9L5ughmg
- 静待一树花开，盼你叶落归来。----安意如《人生若只如初见》
+静待一树花开，盼你叶落归来。----安意如《人生若只如初见》
       
       <p>
         <a href="https://dawnarc.com/2018/03/ue4%E7%8E%AF%E5%BD%A2%E8%BF%9B%E5%BA%A6%E6%9D%A1%E6%9D%90%E8%B4%A8-umg%E5%8A%A8%E7%94%BBcircular-progress-bar-for-umg/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -684,10 +752,9 @@ void UMyMenuWidget::AssignAnimations(){UProperty* prop = GetClass()-&gt;Proper
     <div class="postShorten-excerpt" itemprop="articleBody">
       
         Keywords: UE4, Baking lighting cross multiple hosts, cooking, package, 联机烘焙, 联机构建
-Steps Start SwarmAgent.exe (Directory: Engine\Binaries\DotNET\)  Swtich to Settings tab, and modify properties as shown in following:
-AgentGroupName：WORKGROUPAllowedRemoteAgentGroup：WORKGROUPCoordinatorRemotingHost：10.10.10.14  AgentGroupName is the name of Workgroup on Windows OS, you can find it here: right click This PC -&gt; Properties.
-
-Then click Ping Coordinator:  If there&rsquo;s no error log (red font), it means that it worked:  You don&rsquo;t need to disable Firewall of windows, because Swarm Agent would be added to whitelist of Firewall automatically on installing UE4.
+Steps Start SwarmAgent.exe (Directory: Engine\Binaries\DotNET\) Swtich to Settings tab, and modify properties as shown in following:
+AgentGroupName：WORKGROUPAllowedRemoteAgentGroup：WORKGROUPCoordinatorRemotingHost：10.10.10.14AgentGroupName is the name of Workgroup on Windows OS, you can find it here: right click This PC -&gt; Properties.
+Then click Ping Coordinator: If there&rsquo;s no error log (red font), it means that it worked: You don&rsquo;t need to disable Firewall of windows, because Swarm Agent would be added to whitelist of Firewall automatically on installing UE4.
       
       <p>
         <a href="https://dawnarc.com/2018/03/ue4baking-lighting-across-multiple-hosts/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -750,12 +817,12 @@ Then click Ping Coordinator:  If there&rsquo;s no error log (red font), it means
       
         原文
 http://wangjie.rocks/2017/11/30/ue4-ios-build-on-windows/
-问题一 ssh_exchange_identification: Connection closed by remote hostrsync: connection unexpectedly closed (0 bytes received so far) [sender]rsync error: error in rsync protocol data stream (code 12) at /home/lapo/packaging/rsync-3.0.4-1/src/rsync-3.0.4/io.c(632) [sender=3.0.4] 解决方法
+问题一 ssh_exchange_identification: Connection closed by remote hostrsync: connection unexpectedly closed (0 bytes received so far) [sender]rsync error: error in rsync protocol data stream (code 12) at /home/lapo/packaging/rsync-3.0.4-1/src/rsync-3.0.4/io.c(632) [sender=3.0.4]解决方法
 首先保证远程机器 OSX 上的 ssh 并发数配置足够，使用命令查看
-grep MaxStartups /etc/ssh/sshd_config 一般输出如下格式 10/20/30 意思是连接达到10之后以20%的概率拒绝新连接直到30为止，可以根据需求调大第一个值并重启
+grep MaxStartups /etc/ssh/sshd_config一般输出如下格式 10/20/30 意思是连接达到10之后以20%的概率拒绝新连接直到30为止，可以根据需求调大第一个值并重启
 其次保证 RemoteToolChainPrivate.key 文件存在于 C:\Users\用户名\AppData\Roaming\Unreal Engine\UnrealBuildTool\SSHKeys\远程机器地址\mac 文件夹下，没有的话需要在 Edit -&gt; Project Settings&hellip; -&gt; Platforms -&gt; iOS -&gt; Build 中进行配置，配置好远程 OSX 机器的地址，用户名，然后点击 Generate SSH Key 生成
 问题二 编译失败，出现如下错误
-clang: error: argument unused during compilation: '-fno-objc-exceptions' [-Werror,-Wunused-command-line-argument] 解决方法
+clang: error: argument unused during compilation: '-fno-objc-exceptions' [-Werror,-Wunused-command-line-argument]解决方法
       
       <p>
         <a href="https://dawnarc.com/2018/03/ue4%E8%BD%AC%E8%BD%BDwindows-%E8%BF%9C%E7%A8%8B%E7%BC%96%E8%AF%91ios%E8%8B%A5%E5%B9%B2%E9%97%AE%E9%A2%98/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -817,12 +884,12 @@ clang: error: argument unused during compilation: '-fno-objc-exceptions' [-Werro
     <div class="postShorten-excerpt" itemprop="articleBody">
       
         Keywords：android、mobile、material、building、low quality
-Rendering参数 现在版本的UE4编译android版本时，默认使用的是最高特效，如果想是为了低配设备编译，可以在Project Settings –》 Engine –》 Rendering -》Mobile中，去掉HDR和Shadowing  OpenGL和Vulkan版本选择 以Android版本为例：
+Rendering参数 现在版本的UE4编译android版本时，默认使用的是最高特效，如果想是为了低配设备编译，可以在Project Settings –》 Engine –》 Rendering -》Mobile中，去掉HDR和Shadowing OpenGL和Vulkan版本选择 以Android版本为例：
 Project Settings -》 Platforms -》 Android -》 Build -》 Support OpenGL ES3.1。默认只使用OpenGL ES2。
 iOS版本材质丢失或马赛克的问题(Material Mosaic) 问题现象：
 在Mac上以ios渲染模式运行，材质丢失，打包到真机上运行，材质变成马赛克。
 解决办法：
-打开材质蓝图，勾选Use Full Precision。  参考自：
+打开材质蓝图，勾选Use Full Precision。 参考自：
 https://answers.unrealengine.com/questions/211323/layered-landscape-material-on-mobile.html
 移动端无法run-time修改Instanced Static Mesh的问题 解决办法：
 InstancedStaticMeshComponent::UseDynamicInstanceBuffer 设置为true，默认为false。
@@ -830,7 +897,7 @@ InstancedStaticMeshComponent::UseDynamicInstanceBuffer 设置为true，默认为
 Performance Guidelines for Mobile Devices
 https://docs.unrealengine.com/latest/INT/Platforms/Mobile/Performance/
 Materials for Mobile Platforms https://docs.unrealengine.com/latest/INT/Platforms/Mobile/Materials/
- 只有诗人同圣徒才能相信，在沥青路上辛勤浇水会培养出百合花来。 ----毛姆
+只有诗人同圣徒才能相信，在沥青路上辛勤浇水会培养出百合花来。 ----毛姆
       
       <p>
         <a href="https://dawnarc.com/2018/03/ue4%E7%A7%BB%E5%8A%A8%E7%AB%AF%E6%9D%90%E8%B4%A8%E4%B8%8E%E8%B4%B4%E5%9B%BE%E9%97%AE%E9%A2%98/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -891,13 +958,13 @@ Materials for Mobile Platforms https://docs.unrealengine.com/latest/INT/Platform
     </div>
     <div class="postShorten-excerpt" itemprop="articleBody">
       
-        添加头文件目录  Header Search Paths对应系统或者第三方库的头文件；#include &lt;&gt;
+        添加头文件目录 Header Search Paths对应系统或者第三方库的头文件；#include &lt;&gt;
 User Header Search Paths 对应用户自己代码的头文件；#include “”
-添加静态库依赖  设置证书签名 https://stackoverflow.com/questions/34346436/xcode-7-2-no-matching-provisioning-profiles-found  清除缓存 点击xcode偏好设置-&gt;Locations-&gt;Derived Data，点击箭头定位到目标文件夹，将此文件夹清空并清空回收站，再重新编译即可。 有时候这个错误可以通过清理缓存解决：
-Command /usr/bin/codesign failed with exit code 1 编译静态库 http://blog.csdn.net/weidfyr/article/details/50590693
+添加静态库依赖 设置证书签名 https://stackoverflow.com/questions/34346436/xcode-7-2-no-matching-provisioning-profiles-found 清除缓存 点击xcode偏好设置-&gt;Locations-&gt;Derived Data，点击箭头定位到目标文件夹，将此文件夹清空并清空回收站，再重新编译即可。 有时候这个错误可以通过清理缓存解决：
+Command /usr/bin/codesign failed with exit code 1编译静态库 http://blog.csdn.net/weidfyr/article/details/50590693
 如果用模拟器版本静态库去链接真机版本，可能会出现的错误：
-file was built for archive which is not the architecture being linked (arm64) 解决办法：静态库编译成真机版本
-Add preprocessor macro to a target in xcode（添加预处理宏）  Select project file Select the target you want Go to Build Settings Search for &lsquo;preprocessor&rsquo; Add your preprocessor macro either for Debug, Release, or both.
+file was built for archive which is not the architecture being linked (arm64)解决办法：静态库编译成真机版本
+Add preprocessor macro to a target in xcode（添加预处理宏） Select project file Select the target you want Go to Build Settings Search for &lsquo;preprocessor&rsquo; Add your preprocessor macro either for Debug, Release, or both.
       
       <p>
         <a href="https://dawnarc.com/2018/03/xcode%E5%B8%B8%E7%94%A8%E8%AE%BE%E7%BD%AE%E4%B8%8E%E9%97%AE%E9%A2%98/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -959,12 +1026,12 @@ Add preprocessor macro to a target in xcode（添加预处理宏）  Select proj
     <div class="postShorten-excerpt" itemprop="articleBody">
       
         生成Xcode project file之后，打开Xcode并编译运行（Cmd + R ），提示以下错误:
-Command /Users/Shared/EpicGames/UE_4.18/Engine/Build/BatchFiles/Mac/Build.sh failed with exit code 5 解决办法：
+Command /Users/Shared/EpicGames/UE_4.18/Engine/Build/BatchFiles/Mac/Build.sh failed with exit code 5解决办法：
 打开Launcher -》 Library -》 点击对应引擎版本下拉框 -》 Verify。然后继续编译Xcode工程（不用清理，如果清理重编，可能还会出现exit code 5的错误）
 感觉是UE4的bug，出现这种问题的环境是：
 Mac OSX 10.13.3，Xcode 9.3，UE4.18 / 4.19
 出现这个问题的原因，是因为我的UE4工程引用的第三方库没有对应的Mac版本（x86_64），所以每次一清理就出现exit code 5的错误，将工程所引用的所有第三方库都编译出对应的Mac版本，即可彻底解决此问题。xcode之前没用过，不知道其他C++工程对于缺少链接库的编译错误，是否都报exit code 5错误。
- 你锋芒太露，这是你的弱点，你像把无鞘刀，锋利，但好刀应在刀鞘里。---- 黑泽明《穿心剑》
+你锋芒太露，这是你的弱点，你像把无鞘刀，锋利，但好刀应在刀鞘里。---- 黑泽明《穿心剑》
       
       <p>
         <a href="https://dawnarc.com/2018/03/ue4xcode-build-project-failed-build.sh-failed-with-exit-code-5/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -1026,7 +1093,7 @@ Mac OSX 10.13.3，Xcode 9.3，UE4.18 / 4.19
     <div class="postShorten-excerpt" itemprop="articleBody">
       
         command:
-cd &quot;/Users/Shared/Epic Games/UE_4.19/Engine/Build/BatchFiles/Mac&quot; sh &quot;/Users/Shared/Epic Games/UE_4.19/Engine/Build/BatchFiles/Mac/GenerateProjectFiles.sh&quot; -project=&quot;/Path/To/Project/TestProj/TestProj.uproject&quot; -game  纵然万劫不复，纵然相思入骨，我也待你眉眼如初，岁月如故。----《没有因为没有所以》
+cd &quot;/Users/Shared/Epic Games/UE_4.19/Engine/Build/BatchFiles/Mac&quot; sh &quot;/Users/Shared/Epic Games/UE_4.19/Engine/Build/BatchFiles/Mac/GenerateProjectFiles.sh&quot; -project=&quot;/Path/To/Project/TestProj/TestProj.uproject&quot; -game纵然万劫不复，纵然相思入骨，我也待你眉眼如初，岁月如故。----《没有因为没有所以》
       
       <p>
         <a href="https://dawnarc.com/2018/03/ue4mac-generate-xcode-project-files-command/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -1094,7 +1161,7 @@ Volume - Lightmass Character Indirect Detail in Unreal Engine 4
 https://www.youtube.com/watch?v=_WrCZ3b2Yys
 [UE4]Lighting筆記-Indirect Lighting Cache(間接光照緩存)
 https://home.gamer.com.tw/creationDetail.php?sn=3315244
- 十年饮冰，难凉热血。----梁启超《饮冰室全集》
+十年饮冰，难凉热血。----梁启超《饮冰室全集》
       
       <p>
         <a href="https://dawnarc.com/2018/03/ue4lightmass-character-indirect-detail-volume/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -1156,11 +1223,11 @@ https://home.gamer.com.tw/creationDetail.php?sn=3315244
     <div class="postShorten-excerpt" itemprop="articleBody">
       
         清除mobileprovision [Windows]
- C:\Users\&lt;you&gt;\AppData\Local\Apple Computer\MobileDevice\Provisioning Profiles [Mac]
-~/Library/MobileDevice/Provisioning Profiles/Library/MobileDevice/Provisioning Profiles 参考：Remove obsolete mobileprovision profiles (iOS)
+C:\Users\&lt;you&gt;\AppData\Local\Apple Computer\MobileDevice\Provisioning Profiles[Mac]
+~/Library/MobileDevice/Provisioning Profiles/Library/MobileDevice/Provisioning Profiles参考：Remove obsolete mobileprovision profiles (iOS)
 https://answers.unrealengine.com/questions/223227/remove-obsolete-mobileprovision-profiles-ios.html
 清除Certificate [Windows]
-运行（Win +R ） -》输入certmgr.msc，回车 -》 个人 -》 证书 -》删除和Mac相关的证书  当你凝视深渊时，深渊也在凝视着你。----尼采《善恶的彼岸》
+运行（Win +R ） -》输入certmgr.msc，回车 -》 个人 -》 证书 -》删除和Mac相关的证书当你凝视深渊时，深渊也在凝视着你。----尼采《善恶的彼岸》
       
       <p>
         <a href="https://dawnarc.com/2018/03/ue4%E5%88%A0%E9%99%A4%E6%97%A7%E7%9A%84mobileprovision%E6%96%87%E4%BB%B6clean-ios-mobileprovision-history/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -1233,83 +1300,10 @@ UE4持续集成打包（Mac脚本自动化打包）
 https://blog.csdn.net/xlyrh/article/details/89553655
 打包含iOS平台的安装版引擎（Installed Build）相关问题记录
 https://zhuanlan.zhihu.com/p/141434942
-BaseEngine.ini相关 ios远程打包时，\Engine\Config\BaseEngine.ini中需要修复手动配置RemoteServerName和SSHPrivateKeyOverridePath，否则会有奇怪的报错。   如果一切看起来尽在掌控之中，那说明你跑得不够快；如果你身高会中冷箭，说明你走在他们面前；如果你会被他们伤到，说明你走得不够远，还在他们的射程以内。不要停下来解释，只需要继续前进，把他们远远甩在后面。
+BaseEngine.ini相关 ios远程打包时，\Engine\Config\BaseEngine.ini中需要修复手动配置RemoteServerName和SSHPrivateKeyOverridePath，否则会有奇怪的报错。 如果一切看起来尽在掌控之中，那说明你跑得不够快；如果你身高会中冷箭，说明你走在他们面前；如果你会被他们伤到，说明你走得不够远，还在他们的射程以内。不要停下来解释，只需要继续前进，把他们远远甩在后面。
       
       <p>
         <a href="https://dawnarc.com/2018/03/ue4%E8%BD%AC%E8%BD%BD%E5%9C%A8windows-pc%E4%B8%8A%E4%BD%BF%E7%94%A8remote-build%E6%89%93%E5%8C%85ios-app/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-          
-            
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2018/03/xcode%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C/">
-          [Xcode]常用操作
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2018-03-07T20:29:02&#43;08:00">
-        
-  
-  
-  
-  
-    Wednesday, 20:29, Mar 7, 2018
-  
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/xcode">Xcode</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        构建 command + R
-清理工程 command + shift + K
-当前工程根目录的环境变量（.xcworkspace文件所在目录） $(SRCROOT) 头文件搜索路径 Always Search User Paths 是否优先使用User Header Search Paths
-Header Search Paths 编译器的头文件目录
-User Header Search Paths 自己工程的头文件目录
-修改编译输出目录 Build Settings -&gt; Build Locations -&gt; Build Products Path
-修改后需要重启xcode才会生效。
-参考：http://blog.csdn.net/tintinr/article/details/50936313
-iOS 静态库制作（Xcode9.0）
-http://blog.csdn.net/wanna_dance/article/details/78687676
-查看SDK版本号 命令：
-$&gt; xcodebuild -showsdks 输出结果：
-$&gt; OS X SDKs:OS X 10.8 -sdk macosx10.8OS X 10.9 -sdk macosx10.9iOS SDKs:iOS 6.
-      
-      <p>
-        <a href="https://dawnarc.com/2018/03/xcode%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C/" class="postShorten-excerpt_link link">Continue reading</a>
         
       </p>
     </div>

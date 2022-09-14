@@ -10,25 +10,27 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.96.0 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.102.3 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Wang Aiguo">
 <meta name="keywords" content="Shading, OpenGL, ADS">
 <meta name="description" content="keywords：ambient diffuse specular、Phong Shading、Phong reflection model
 公式概述 ADS光照模型又称为“冯氏反射模型”(Phong reflection model)，为什么叫冯氏：
 裴祥风（Bùi Tường Phong音译, 1942年—1975年），美国电脑CG研究学者，于越南出生。他于1973年在尤他大学取得哲学博士学位，并发明了Phong反射模型及Phong著色法，并广为CG界采用。1975死于白血病。
- ADS光照模型公式缩写：
-LightIntensity = Ambient &#43; Diffuse &#43; Specular; 参数说明：
- Ambient 环境光 Diffuse 漫反射 Specular 全反射光 / 镜面光  三个参数渲染效果示例：  三个参数拆解如下：
-Ambient = La * Ka;Diffuse = Ld * Kd * max( dot(s, n), 0.0 );Specular = Ls * Ks * pow( max( dot(r, v), 0.0 ), f ); 参数说明：">
+ADS光照模型公式缩写：
+LightIntensity = Ambient &#43; Diffuse &#43; Specular;参数说明：
+Ambient 环境光 Diffuse 漫反射 Specular 全反射光 / 镜面光 三个参数渲染效果示例： 三个参数拆解如下：
+Ambient = La * Ka;Diffuse = Ld * Kd * max( dot(s, n), 0.0 );Specular = Ls * Ks * pow( max( dot(r, v), 0.0 ), f );参数说明：
+La 环境光强度(Ambient light intensity) Ka 材质环境光反射率 / 材质环境光反射系数(Ambient reflectivity) Ld 漫射光强度 / 散射光强度(Diffuse light intensity) Kd 材质漫反射率 / 材质漫反射系数(Diffuse reflectivity) s 顶点 / 曲面点 到光源方向的单位向量(Direction from the surface point to the light source) n 顶点 / 曲面点 的法线单位向量(Normal vector at the surface point) Ls 镜面光强度 / 全反射光强度(Specular light intensity) Ks 材质镜面反射率 / 材质镜面反射系数(Specular reflectivity) r 完全反射向量( the vector of perfect reflection) v 顶点 / 曲面点 到摄像机方向的向量( the vector towards the viewer) f 镜面高光(specular highlights)，值范围在1到200之间，值越小，镜面亮点越大 光源出射强度 / 出射光强度(Intensity of the outgoing light ) I 的完整计算公式如下：">
 
 
 <meta property="og:description" content="keywords：ambient diffuse specular、Phong Shading、Phong reflection model
 公式概述 ADS光照模型又称为“冯氏反射模型”(Phong reflection model)，为什么叫冯氏：
 裴祥风（Bùi Tường Phong音译, 1942年—1975年），美国电脑CG研究学者，于越南出生。他于1973年在尤他大学取得哲学博士学位，并发明了Phong反射模型及Phong著色法，并广为CG界采用。1975死于白血病。
- ADS光照模型公式缩写：
-LightIntensity = Ambient &#43; Diffuse &#43; Specular; 参数说明：
- Ambient 环境光 Diffuse 漫反射 Specular 全反射光 / 镜面光  三个参数渲染效果示例：  三个参数拆解如下：
-Ambient = La * Ka;Diffuse = Ld * Kd * max( dot(s, n), 0.0 );Specular = Ls * Ks * pow( max( dot(r, v), 0.0 ), f ); 参数说明：">
+ADS光照模型公式缩写：
+LightIntensity = Ambient &#43; Diffuse &#43; Specular;参数说明：
+Ambient 环境光 Diffuse 漫反射 Specular 全反射光 / 镜面光 三个参数渲染效果示例： 三个参数拆解如下：
+Ambient = La * Ka;Diffuse = Ld * Kd * max( dot(s, n), 0.0 );Specular = Ls * Ks * pow( max( dot(r, v), 0.0 ), f );参数说明：
+La 环境光强度(Ambient light intensity) Ka 材质环境光反射率 / 材质环境光反射系数(Ambient reflectivity) Ld 漫射光强度 / 散射光强度(Diffuse light intensity) Kd 材质漫反射率 / 材质漫反射系数(Diffuse reflectivity) s 顶点 / 曲面点 到光源方向的单位向量(Direction from the surface point to the light source) n 顶点 / 曲面点 的法线单位向量(Normal vector at the surface point) Ls 镜面光强度 / 全反射光强度(Specular light intensity) Ks 材质镜面反射率 / 材质镜面反射系数(Specular reflectivity) r 完全反射向量( the vector of perfect reflection) v 顶点 / 曲面点 到摄像机方向的向量( the vector towards the viewer) f 镜面高光(specular highlights)，值范围在1到200之间，值越小，镜面亮点越大 光源出射强度 / 出射光强度(Intensity of the outgoing light ) I 的完整计算公式如下：">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[Shading]ADS光照模型实例(OpenGL实现)">
 <meta name="twitter:title" content="[Shading]ADS光照模型实例(OpenGL实现)">
@@ -38,17 +40,19 @@ Ambient = La * Ka;Diffuse = Ld * Kd * max( dot(s, n), 0.0 );Specular = Ls * Ks
 <meta property="og:description" content="keywords：ambient diffuse specular、Phong Shading、Phong reflection model
 公式概述 ADS光照模型又称为“冯氏反射模型”(Phong reflection model)，为什么叫冯氏：
 裴祥风（Bùi Tường Phong音译, 1942年—1975年），美国电脑CG研究学者，于越南出生。他于1973年在尤他大学取得哲学博士学位，并发明了Phong反射模型及Phong著色法，并广为CG界采用。1975死于白血病。
- ADS光照模型公式缩写：
-LightIntensity = Ambient &#43; Diffuse &#43; Specular; 参数说明：
- Ambient 环境光 Diffuse 漫反射 Specular 全反射光 / 镜面光  三个参数渲染效果示例：  三个参数拆解如下：
-Ambient = La * Ka;Diffuse = Ld * Kd * max( dot(s, n), 0.0 );Specular = Ls * Ks * pow( max( dot(r, v), 0.0 ), f ); 参数说明：">
+ADS光照模型公式缩写：
+LightIntensity = Ambient &#43; Diffuse &#43; Specular;参数说明：
+Ambient 环境光 Diffuse 漫反射 Specular 全反射光 / 镜面光 三个参数渲染效果示例： 三个参数拆解如下：
+Ambient = La * Ka;Diffuse = Ld * Kd * max( dot(s, n), 0.0 );Specular = Ls * Ks * pow( max( dot(r, v), 0.0 ), f );参数说明：
+La 环境光强度(Ambient light intensity) Ka 材质环境光反射率 / 材质环境光反射系数(Ambient reflectivity) Ld 漫射光强度 / 散射光强度(Diffuse light intensity) Kd 材质漫反射率 / 材质漫反射系数(Diffuse reflectivity) s 顶点 / 曲面点 到光源方向的单位向量(Direction from the surface point to the light source) n 顶点 / 曲面点 的法线单位向量(Normal vector at the surface point) Ls 镜面光强度 / 全反射光强度(Specular light intensity) Ks 材质镜面反射率 / 材质镜面反射系数(Specular reflectivity) r 完全反射向量( the vector of perfect reflection) v 顶点 / 曲面点 到摄像机方向的向量( the vector towards the viewer) f 镜面高光(specular highlights)，值范围在1到200之间，值越小，镜面亮点越大 光源出射强度 / 出射光强度(Intensity of the outgoing light ) I 的完整计算公式如下：">
 <meta name="twitter:description" content="keywords：ambient diffuse specular、Phong Shading、Phong reflection model
 公式概述 ADS光照模型又称为“冯氏反射模型”(Phong reflection model)，为什么叫冯氏：
 裴祥风（Bùi Tường Phong音译, 1942年—1975年），美国电脑CG研究学者，于越南出生。他于1973年在尤他大学取得哲学博士学位，并发明了Phong反射模型及Phong著色法，并广为CG界采用。1975死于白血病。
- ADS光照模型公式缩写：
-LightIntensity = Ambient &#43; Diffuse &#43; Specular; 参数说明：
- Ambient 环境光 Diffuse 漫反射 Specular 全反射光 / 镜面光  三个参数渲染效果示例：  三个参数拆解如下：
-Ambient = La * Ka;Diffuse = Ld * Kd * max( dot(s, n), 0.0 );Specular = Ls * Ks * pow( max( dot(r, v), 0.0 ), f ); 参数说明：">
+ADS光照模型公式缩写：
+LightIntensity = Ambient &#43; Diffuse &#43; Specular;参数说明：
+Ambient 环境光 Diffuse 漫反射 Specular 全反射光 / 镜面光 三个参数渲染效果示例： 三个参数拆解如下：
+Ambient = La * Ka;Diffuse = Ld * Kd * max( dot(s, n), 0.0 );Specular = Ls * Ks * pow( max( dot(r, v), 0.0 ), f );参数说明：
+La 环境光强度(Ambient light intensity) Ka 材质环境光反射率 / 材质环境光反射系数(Ambient reflectivity) Ld 漫射光强度 / 散射光强度(Diffuse light intensity) Kd 材质漫反射率 / 材质漫反射系数(Diffuse reflectivity) s 顶点 / 曲面点 到光源方向的单位向量(Direction from the surface point to the light source) n 顶点 / 曲面点 的法线单位向量(Normal vector at the surface point) Ls 镜面光强度 / 全反射光强度(Specular light intensity) Ks 材质镜面反射率 / 材质镜面反射系数(Specular reflectivity) r 完全反射向量( the vector of perfect reflection) v 顶点 / 曲面点 到摄像机方向的向量( the vector towards the viewer) f 镜面高光(specular highlights)，值范围在1到200之间，值越小，镜面亮点越大 光源出射强度 / 出射光强度(Intensity of the outgoing light ) I 的完整计算公式如下：">
 <meta property="og:locale" content="en-us">
 
   
@@ -111,7 +115,7 @@ Ambient = La * Ka;Diffuse = Ld * Kd * max( dot(s, n), 0.0 );Specular = Ls * Ks
     
     
       
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/solarized-light.min.css">
+        <link rel="stylesheet" href="https://dawnarc.com/cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/styles/paraiso-light.min.css">
       
     
 
@@ -772,9 +776,9 @@ $(document).ready(function() {
 
 
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq" crossorigin="anonymous">
-<script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz" crossorigin="anonymous"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.3/dist/katex.min.css" integrity="sha384-KiWOvVjnN8qwAZbuQyWDIbfCLFhLXNETzBQjA/92pIowpC0d2O3nppDGQVgwd2nB" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.3/dist/katex.min.js" integrity="sha384-0fdwu/T/EQMsQlrHCCHoH10pkPLlKA1jL5dFyUOvB3lfeT2540/2g6YgSi2BL14p" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.3/dist/contrib/auto-render.min.js" integrity="sha384-+XBljXPPiv+OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR" crossorigin="anonymous"
     onload="renderMathInElement(document.body);"></script>
 
 
