@@ -35,9 +35,9 @@
       
       <guid>https://dawnarc.com/2016/10/ue4collision%E7%A2%B0%E6%92%9E%E7%9B%B8%E5%85%B3/</guid>
       <description>如何禁用角色的刚体碰撞检测Collision 禁用Actor上所有Component的碰撞：
-MyCharacter-&amp;gt;SetActorEnableCollision(false); 设置以后，角色就可以忽视一切障碍物或者刚体来进行移动了，但是这样会导致 AddMovementInput 失效， SetActorLocation 没问题 。
+MyCharacter-&amp;gt;SetActorEnableCollision(false);设置以后，角色就可以忽视一切障碍物或者刚体来进行移动了， 但是这样会导致 AddMovementInput 失效， SetActorLocation 没问题 。
 禁用指定 Component 的碰撞：
-MyCharacter-&amp;gt;GetMesh()-&amp;gt;SetCollisionEnabled(ECollisionEnabled::NoCollision); GetOverlappingActors() 注意事项 GetOverlappingActors() 是获取与当前 Collision 相碰撞的 Actor ，如果一个角色身上有两个 CollisionComponent ，且这两个 CollisionComponent 之间有重叠，即使这两个 CollisionComponent没有和其他 Actor碰撞， GetOverlappingActors() 也会返回当前角色 Actor 。</description>
+MyCharacter-&amp;gt;GetMesh()-&amp;gt;SetCollisionEnabled(ECollisionEnabled::NoCollision);GetOverlappingActors() 注意事项 GetOverlappingActors() 是获取与当前 Collision 相碰撞的 Actor ，如果一个角色身上有两个 CollisionComponent ，且这两个 CollisionComponent 之间有重叠，即使这两个 CollisionComponent没有和其他 Actor碰撞， GetOverlappingActors() 也会返回当前角色 Actor 。</description>
     </item>
     
     <item>
@@ -47,8 +47,8 @@ MyCharacter-&amp;gt;GetMesh()-&amp;gt;SetCollisionEnabled(ECollisionEnabled::NoC
       
       <guid>https://dawnarc.com/2016/10/ue4%E5%A6%82%E4%BD%95%E6%9B%BF%E6%8D%A2%E8%A7%92%E8%89%B2mesh%E4%B8%8A%E7%9A%84material%E6%9D%90%E8%B4%A8/</guid>
       <description>.h (located in pawn header file and assigned in Blueprint editor)
-UPROPERTY(EditAnywhere)TArray&amp;lt;UMaterialInterface*&amp;gt; Materials; .h (located in pawn manager responsible for spawning them)
-TSubclassOf&amp;lt;class AMyPawn&amp;gt; PawnClass; .cpp
+UPROPERTY(EditAnywhere)TArray&amp;lt;UMaterialInterface*&amp;gt; Materials;.h (located in pawn manager responsible for spawning them)
+TSubclassOf&amp;lt;class AMyPawn&amp;gt; PawnClass;.cpp
 FVector spawnLocation = FVector(0.0f, 0.0f, 0.0f);FRotator spawnRotation = FRotator::ZeroRotator;AMyPawn* pawn = GetWorld()-&amp;gt;SpawnActor&amp;lt;AMyPawn&amp;gt;(PawnClass, spawnLocation, spawnRotation);if (pawn != nullptr){AMyPawn* defaultPawn = PawnClass.GetDefaultObject();int32 materialCount = defaultPawn-&amp;gt;Materials.Num();int m = FMath::RandRange(0, materialCount - 1);const TArray&amp;lt;UActorComponent*&amp;gt;&amp;amp; theComponents = pawn-&amp;gt;GetComponents();int32 componentCount = theComponents.</description>
     </item>
     
@@ -60,9 +60,9 @@ FVector spawnLocation = FVector(0.0f, 0.0f, 0.0f);FRotator spawnRotation = FRot
       <guid>https://dawnarc.com/2016/09/ue4%E5%A6%82%E4%BD%95%E9%81%8D%E5%8E%86%E5%9C%BA%E6%99%AF%E4%B8%AD%E7%9A%84%E6%89%80%E6%9C%89actor%E5%92%8Cobjectc-/</guid>
       <description>原文： https://wiki.unrealengine.com/Iterators:_Object_%26_Actor_Iterators,_Optional_Class_Scope_For_Faster_Search
 遍历所有SkeletalMeshComponent
-for ( TObjectIterator&amp;lt;USkeletalMeshComponent&amp;gt; Itr; Itr; ++Itr ){// Access the subclass instance with the * or -&amp;gt; operators.USkeletalMeshCompoment *Component = *Itr;ClientMessage(Itr-&amp;gt;GetName());} 遍历所有Texture
-for(TObjectIterator&amp;lt;UTexture2D&amp;gt; Iter; Iter; ++Iter){if(UTexture2D* Tex = *Iter){Tex-&amp;gt;LODBias = LODBias;Tex-&amp;gt;UpdateResource();}} 遍历所有StaticMeshActor
-for (TActorIterator&amp;lt;AStaticMeshActor&amp;gt; ActorItr(GetWorld()); ActorItr; ++ActorItr){// Same as with the Object Iterator, access the subclass instance with the * or -&amp;gt; operators.</description>
+for ( TObjectIterator&amp;lt;USkeletalMeshComponent&amp;gt; Itr; Itr; ++Itr ){// Access the subclass instance with the * or -&amp;gt; operators.USkeletalMeshCompoment *Component = *Itr;ClientMessage(Itr-&amp;gt;GetName());}遍历所有Texture
+for(TObjectIterator&amp;lt;UTexture2D&amp;gt; Iter; Iter; ++Iter){if(UTexture2D* Tex = *Iter){Tex-&amp;gt;LODBias = LODBias;Tex-&amp;gt;UpdateResource();}}遍历所有StaticMeshActor
+for (TActorIterator&amp;lt;AStaticMeshActor&amp;gt; ActorItr(GetWorld()); ActorItr; ++ActorItr){// Same as with the Object Iterator, access the subclass instance with the * or -&amp;gt; operators.AStaticMeshActor *Mesh = *ActorItr;ClientMessage(ActorItr-&amp;gt;GetName());ClientMessage(ActorItr-&amp;gt;GetActorLocation().</description>
     </item>
     
     <item>
@@ -78,10 +78,10 @@ C++方式
 引擎的C++代码有个叫 ADetourCrowdAIController 的class，但是这个class无法继承；
 要在C++中使用Detour Crowd AI，需要借助 UCrowdFollowingComponent，在AIController的构造函数中设置即可
 头文件：
-MyAIController(const FObjectInitializer&amp;amp; ObjectInitializer = FObjectInitializer::Get()); cpp：
-MyAIController::MyAIController(const FObjectInitializer&amp;amp; ObjectInitializer): Super(ObjectInitializer.SetDefaultSubobjectClass&amp;lt;UCrowdFollowingComponent&amp;gt;(TEXT(&amp;quot;PathFollowingComponent&amp;quot;))){ } 转向抖动问题 使用默认的UCrowdFollowingComponent，角色在转向时会抖动，要解决这个问题，需要将属性UCrowdFollowingComponent::bSuspendCrowdSimulation设置为true。
+MyAIController(const FObjectInitializer&amp;amp; ObjectInitializer = FObjectInitializer::Get());cpp：
+MyAIController::MyAIController(const FObjectInitializer&amp;amp; ObjectInitializer): Super(ObjectInitializer.SetDefaultSubobjectClass&amp;lt;UCrowdFollowingComponent&amp;gt;(TEXT(&amp;quot;PathFollowingComponent&amp;quot;))){ }转向抖动问题 使用默认的UCrowdFollowingComponent，角色在转向时会抖动，要解决这个问题，需要将属性UCrowdFollowingComponent::bSuspendCrowdSimulation设置为true。
 完整代码：
-#include &amp;quot;Navigation/CrowdFollowingComponent.h&amp;quot;AMyAIController::AMyAIController(const FObjectInitializer&amp;amp; ObjectInitializer): Super(ObjectInitializer.SetDefaultSubobjectClass&amp;lt;UCrowdFollowingComponent&amp;gt;(TEXT(&amp;quot;PathFollowingComponent&amp;quot;))){if (UCrowdFollowingComponent* CrowdComp = Cast&amp;lt;UCrowdFollowingComponent&amp;gt;(GetComponentByClass(UCrowdFollowingComponent::StaticClass()))){CrowdComp-&amp;gt;SuspendCrowdSteering(true);//CrowdComp-&amp;gt;SetCrowdAnticipateTurns(true);//CrowdComp-&amp;gt;SetCrowdSeparation(true);//CrowdComp-&amp;gt;SetCrowdPathOffset(true);//CrowdComp-&amp;gt;SetCrowdAvoidanceQuality(ECrowdAvoidanceQuality::High);}} 但是`SuspendCrowdSteering` 设置为true后，自动避让面前单位的功能就失效了，如果要处理这个问题，建议重写 UCrowdFollowingComponent 中的转向逻辑，因为其内部没有考虑慢速转向的问题。 Crowd Manager 配置 Project Settings -》Engine -》 Navigation System -》 Crowd Manager Class</description>
+#include &amp;quot;Navigation/CrowdFollowingComponent.h&amp;quot;AMyAIController::AMyAIController(const FObjectInitializer&amp;amp; ObjectInitializer): Super(ObjectInitializer.SetDefaultSubobjectClass&amp;lt;UCrowdFollowingComponent&amp;gt;(TEXT(&amp;quot;PathFollowingComponent&amp;quot;))){if (UCrowdFollowingComponent* CrowdComp = Cast&amp;lt;UCrowdFollowingComponent&amp;gt;(GetComponentByClass(UCrowdFollowingComponent::StaticClass()))){CrowdComp-&amp;gt;SuspendCrowdSteering(true);//CrowdComp-&amp;gt;SetCrowdAnticipateTurns(true);//CrowdComp-&amp;gt;SetCrowdSeparation(true);//CrowdComp-&amp;gt;SetCrowdPathOffset(true);//CrowdComp-&amp;gt;SetCrowdAvoidanceQuality(ECrowdAvoidanceQuality::High);}}但是`SuspendCrowdSteering` 设置为true后，自动避让面前单位的功能就失效了，如果要处理这个问题，建议重写 UCrowdFollowingComponent 中的转向逻辑，因为其内部没有考虑慢速转向的问题。Crowd Manager 配置 Project Settings -》Engine -》 Navigation System -》 Crowd Manager Class</description>
     </item>
     
     <item>
@@ -92,9 +92,10 @@ MyAIController::MyAIController(const FObjectInitializer&amp;amp; ObjectInitializ
       <guid>https://dawnarc.com/2016/07/ue4%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0%E5%B7%B2%E7%9F%A5%E6%96%B9%E5%90%91%E5%90%91%E9%87%8F%E6%B1%82%E8%AF%A5%E5%90%91%E9%87%8F%E4%B8%8E%E7%A9%BA%E9%97%B4%E5%9D%90%E6%A0%87%E8%BD%B4%E7%9A%84%E5%A4%B9%E8%A7%92/</guid>
       <description>原始的数学公式不列举了，需要的话找个Math库看下源码。这里以UE4的API说明：
 情况一：已知两个坐标点，求连线与空间坐标的夹角 已知空间中两个点FVector V1, V2，方向向量V3 = V2 - V1，求V3与空间坐标的夹角：
-FRotator R = (V2 - V1).Rotation(); 情况二：单个向量与世界坐标的夹角 已知方向向量Vector V1，求V1与空间坐标轴的夹角Rotator R1：即将Vector转换为Rotator
-FRotator R1 = FVector(100.f, 100.f, 0.f).Rotation();FRotator R2 = FVector(-100.f, -100.f, 0.f).Rotation();FRotator R3 = FVector(100.f, 0.f, 0.f).Rotation();FRotator R4 = FVector(0.f, 100.f, 0.f).Rotation(); 结果分别是：
-R1 = {Pitch=0.0 Yaw=45.0 Roll=0.0 }R2 = {Pitch=0.0 Yaw=-135.0 Roll=0.0 }R3 = {Pitch=0.0 Yaw=0.0 Roll=0.0 }R4 = {Pitch=0.0 Yaw=90.0 Roll=0.0 } FVector::Rotation()函数的内部实现（局部）：</description>
+FRotator R = (V2 - V1).Rotation();情况二：单个向量与世界坐标的夹角 已知方向向量Vector V1，求V1与空间坐标轴的夹角Rotator R1：即将Vector转换为Rotator
+FRotator R1 = FVector(100.f, 100.f, 0.f).Rotation();FRotator R2 = FVector(-100.f, -100.f, 0.f).Rotation();FRotator R3 = FVector(100.f, 0.f, 0.f).Rotation();FRotator R4 = FVector(0.f, 100.f, 0.f).Rotation();结果分别是：
+R1 = {Pitch=0.0 Yaw=45.0 Roll=0.0 }R2 = {Pitch=0.0 Yaw=-135.0 Roll=0.0 }R3 = {Pitch=0.0 Yaw=0.0 Roll=0.0 }R4 = {Pitch=0.0 Yaw=90.0 Roll=0.0 }FVector::Rotation()函数的内部实现（局部）：
+FRotator R;// Find yaw.</description>
     </item>
     
     <item>
@@ -104,9 +105,9 @@ R1 = {Pitch=0.0 Yaw=45.0 Roll=0.0 }R2 = {Pitch=0.0 Yaw=-135.0 Roll=0.0 }R3 = {
       
       <guid>https://dawnarc.com/2016/06/ue4linear-algebra-plane-geometry-api/</guid>
       <description>keywords：UE4、Linear Algebra、Plane Geometry、线性代数、解析几何
-范围判定 检测一个点是否在一个多边形(或矩形)的内部(2D和3D) FBox2D::IsInside(const FVector2D&amp;amp; TestPoint)FBox::IsInside(const FVector&amp;amp; TestPoint)FIntRect::Contains( FIntPoint P ) 角度计算 计算两个向量的夹角(Get an angle between 2 Vectors)，范围：(0, 180) float AimAtAngle = FMath::RadiansToDegrees(acosf(FVector::DotProduct(PlayerDirection, MouseDirection))); 参考：How to get an angle between 2 Vectors?
+范围判定 检测一个点是否在一个多边形(或矩形)的内部(2D和3D) FBox2D::IsInside(const FVector2D&amp;amp; TestPoint)FBox::IsInside(const FVector&amp;amp; TestPoint)FIntRect::Contains( FIntPoint P )角度计算 计算两个向量的夹角(Get an angle between 2 Vectors)，范围：(0, 180) float AimAtAngle = FMath::RadiansToDegrees(acosf(FVector::DotProduct(PlayerDirection, MouseDirection)));参考：How to get an angle between 2 Vectors?
 https://answers.unrealengine.com/questions/31058/how-to-get-an-angle-between-2-vectors.html
-计算方向向量与空间坐标轴（X、Y、Z）的夹角，范围：(-180, 180) FRotator Rot = UKismetMathLibrary::MakeRotFromX(TestVector);float Angle = Rot.Yaw; //(-180, 180) 判断角色A在角色B的左边还是右边（或者角色A相对角色B的四个方向） 参考自引擎代码：UAnimInstance::CalculateDirection()
+计算方向向量与空间坐标轴（X、Y、Z）的夹角，范围：(-180, 180) FRotator Rot = UKismetMathLibrary::MakeRotFromX(TestVector);float Angle = Rot.Yaw; //(-180, 180)判断角色A在角色B的左边还是右边（或者角色A相对角色B的四个方向） 参考自引擎代码：UAnimInstance::CalculateDirection()
 //-180到0表示 ActorA 在 ActorB 左边，0到180表示 ActorA 在 ActorB 右边float CalculateDirecton(const AActor* ActorA, const AActor* ActorB){FVector TestDire = ActorA-&amp;gt;GetActorLocation() - ActorB-&amp;gt;GetActorLocation();FMatrix RotMatrix = FRotationMatrix(ActorB-&amp;gt;GetActorRotation());FVector ForwardVector = RotMatrix.</description>
     </item>
     
@@ -116,13 +117,17 @@ https://answers.unrealengine.com/questions/31058/how-to-get-an-angle-between-2-v
       <pubDate>Sun, 19 Jun 2016 17:33:02 +0800</pubDate>
       
       <guid>https://dawnarc.com/2016/06/ue4movement%E4%B8%8Enavigation%E7%9B%B8%E5%85%B3%E7%9A%84api/</guid>
-      <description>如何修改角色的最大移动速度 if (UCharacterMovementComponent* Movement = MyCharacter-&amp;gt;GetCharacterMovement()){Movement-&amp;gt;MaxWalkSpeed *= 0.5;} 如何修改角色的当前移动速度 Tick() 中执行：
-GetCharacterMovement()-&amp;gt;Velocity = FVector(0.f, 500.f, 0.f); 如何停止正在移动的Pawn AController::StopMovement() 修改重力加速度(Gravity)   编辑器中设置全局重力加速度
+      <description>如何修改角色的最大移动速度 if (UCharacterMovementComponent* Movement = MyCharacter-&amp;gt;GetCharacterMovement()){Movement-&amp;gt;MaxWalkSpeed *= 0.5;}如何修改角色的当前移动速度 Tick() 中执行：
+GetCharacterMovement()-&amp;gt;Velocity = FVector(0.f, 500.f, 0.f);如何停止正在移动的Pawn AController::StopMovement()修改重力加速度(Gravity) 编辑器中设置全局重力加速度
 Project Settings -》 Engine -》 Physics -》 Default Physics Settings -》 Default Gravity Z。
-  运行时runtime期间设置全局重力加速度：
- AWorldSettings* MyWorldSetting=GetWorldSettings();MyWorldSetting-&amp;gt;bGlobalGravitySet=true;MyWorldSetting-&amp;gt;GlobalGravityZ = 900.f;   设置单个角色的重力加速度（倍率）
- MyCharacter-&amp;gt;GetCharacterMovement()-&amp;gt;GravityScale = 100.f   飞行模式中的加速减速问题 CharacterMovement默认有一个加速效果（属性值为MaxAcceleration，默认为2048，表示加速率），如果MovementMode设置为Walking模式，当调用Controller-&amp;gt;StopMovement()来立即停止移动； 但是Flying Mode时，即使不再执行AddMovementInput()，Actor仍然会继续滑行一段距离，如果希望此时立即停止不滑行，需要将减速速率（默认为0）设置为加速速率的大小：
-GetCharacterMovement()-&amp;gt;BrakingDecelerationFlying = GetCharacterMovement()-&amp;gt;MaxAcceleration; 设置MovementMode时的注意事项 如果一个Actor被Spawn出来之后，其MovementMode默认状态是Walking，如果此时Spawn的位置在空中，在没有Controller对其Possess的情况下，其静止在空中，当Possess之后，MovementMode会自动变为Falling，如果想让其继续停留在空中(比如飞行类的角色)，此时再手动将其MovementMode设置为Flying。绝对不能在possess之前设置，否则设置状态会被引擎修改掉。</description>
+运行时runtime期间设置全局重力加速度：
+AWorldSettings* MyWorldSetting=GetWorldSettings();MyWorldSetting-&amp;gt;bGlobalGravitySet=true;MyWorldSetting-&amp;gt;GlobalGravityZ = 900.f;设置单个角色的重力加速度（倍率）
+MyCharacter-&amp;gt;GetCharacterMovement()-&amp;gt;GravityScale = 100.f飞行模式中的加速减速问题 CharacterMovement默认有一个加速效果（属性值为MaxAcceleration，默认为2048，表示加速率），如果MovementMode设置为Walking模式，当调用Controller-&amp;gt;StopMovement()来立即停止移动； 但是Flying Mode时，即使不再执行AddMovementInput()，Actor仍然会继续滑行一段距离，如果希望此时立即停止不滑行，需要将减速速率（默认为0）设置为加速速率的大小：
+GetCharacterMovement()-&amp;gt;BrakingDecelerationFlying = GetCharacterMovement()-&amp;gt;MaxAcceleration;设置MovementMode时的注意事项 如果一个Actor被Spawn出来之后，其MovementMode默认状态是Walking，如果此时Spawn的位置在空中，在没有Controller对其Possess的情况下，其静止在空中，当Possess之后，MovementMode会自动变为Falling，如果想让其继续停留在空中(比如飞行类的角色)，此时再手动将其MovementMode设置为Flying。绝对不能在possess之前设置，否则设置状态会被引擎修改掉。
+Controller.StopMovement()和MovementComponent.StopMovementImmediately()的区别 前者只执行：
+PathFollowingComp-&amp;gt;AbortMove(*this, FPathFollowingResultFlags::MovementStop);后者先执行：
+Velocity = FVector::ZeroVector;接着再执行：
+PathFollowingComp-&amp;gt;AbortMove(*this, FPathFollowingResultFlags::MovementStop);NavigationSystem寻路相关的API 检测某个坐标点是否在navmesh内，即可以作为寻路的坐标点。 UNavigationSystem::TestPathSync 实例用法：</description>
     </item>
     
     <item>
@@ -133,20 +138,20 @@ GetCharacterMovement()-&amp;gt;BrakingDecelerationFlying = GetCharacterMovement(
       <guid>https://dawnarc.com/2016/06/ue4%E7%A7%BB%E5%8A%A8%E7%89%A9%E4%BD%93%E7%9A%84%E5%87%A0%E7%A7%8D%E6%96%B9%E6%B3%95/</guid>
       <description>keywords: UE4、Movement
 1，Actor-&amp;gt;SetActorLocation
-Actor-&amp;gt;SetActorLocation() 2，AActor::AddActorWorldOffset(), AActor::AddActorLocalOffset()
+Actor-&amp;gt;SetActorLocation()2，AActor::AddActorWorldOffset(), AActor::AddActorLocalOffset()
 AddActorWorldOffset与AddActorLocalOffset区别：如果期望Actor沿着某个世界坐标系方向移动，那么使用AddActorWorldOffset并且参数为世界坐标系的DeltaLocation；如果期望Actor沿着当前Actor局部坐标系方向移动，那么使用AddActorLocalOffset并且参数为相对当前Actor的DeltaLocation Offset（比如想做螺旋轨迹但又不想计算其世界空间坐标，那么就用LocalOffset）。
- 如果使用AddActorWorldOffset或者AddActorLocalOffset移动Character，那么MovementMode必须设置为fly，否则当DeltaLocation较小时，角色会始终往下掉（即使禁用物理模拟），UCharacterMovementComponent::SetMovementMode(EMovementMode::MOVE_Flying);。或者Unpossess Controller。
- 3，Velocity
-ACharacter-&amp;gt;GetCharacterMovement()-&amp;gt;Velocity += FVector(5.f, 5.f, 0.f); 4，将一个Controller（PlayerController或者AIController）possess到一个Actor上，然后调用：
-Controller-&amp;gt;MoveTo(); 5，将一个Controller（PlayerController或者AIController）possess到一个Actor上，然后调用
-GetWorld()-&amp;gt;GetNavigationSystem()-&amp;gt;SimpleMoveToLocation(Controller, DestLocation); 注意：如果使用Controller-&amp;gt;MoveTo或者使用NavigationSystem的Move函数，前提条件是你使用了Navigation组件并build了地形，否则无效。
- 6，APawn-&amp;gt;AddMovementInput
-APawn-&amp;gt;AddMovementInput(FVector WorldDirection, float ScaleValue = 1.0f, bool bForce = false); 其中WorldDirection是方向，ScaleValue是速率倍速，bForce表示是否忽略Controller中的IgnoreMoveInput属性值，强制移动。
+如果使用AddActorWorldOffset或者AddActorLocalOffset移动Character，那么MovementMode必须设置为fly，否则当DeltaLocation较小时，角色会始终往下掉（即使禁用物理模拟），UCharacterMovementComponent::SetMovementMode(EMovementMode::MOVE_Flying);。或者Unpossess Controller。
+3，Velocity
+ACharacter-&amp;gt;GetCharacterMovement()-&amp;gt;Velocity += FVector(5.f, 5.f, 0.f);4，将一个Controller（PlayerController或者AIController）possess到一个Actor上，然后调用：
+Controller-&amp;gt;MoveTo();5，将一个Controller（PlayerController或者AIController）possess到一个Actor上，然后调用
+GetWorld()-&amp;gt;GetNavigationSystem()-&amp;gt;SimpleMoveToLocation(Controller, DestLocation);注意：如果使用Controller-&amp;gt;MoveTo或者使用NavigationSystem的Move函数，前提条件是你使用了Navigation组件并build了地形，否则无效。
+6，APawn-&amp;gt;AddMovementInput
+APawn-&amp;gt;AddMovementInput(FVector WorldDirection, float ScaleValue = 1.0f, bool bForce = false);其中WorldDirection是方向，ScaleValue是速率倍速，bForce表示是否忽略Controller中的IgnoreMoveInput属性值，强制移动。
 7，UCharacterMovementComponent::AddImpulse
-void UCharacterMovementComponent::AddImpulse( FVector Impulse, bool bVelocityChange ) AddImpulse 一般用来做投掷、爆炸、击飞等物理效果。添加的是一个瞬间的力，之后就不需要每帧做处理了。 注意：AddImpulse 作用对象一般都是 StaticMeshComponent ，而不能是 CollisionComponent，否则无效。且 StaticMeshComponent 要开启物理：SetSimulatePhysics(true) ，否则也无效。
-
+void UCharacterMovementComponent::AddImpulse( FVector Impulse, bool bVelocityChange )AddImpulse 一般用来做投掷、爆炸、击飞等物理效果。添加的是一个瞬间的力，之后就不需要每帧做处理了。 注意：AddImpulse 作用对象一般都是 StaticMeshComponent ，而不能是 CollisionComponent，否则无效。且 StaticMeshComponent 要开启物理：SetSimulatePhysics(true) ，否则也无效。
 8，UCharacterMovementComponent::AddForce
-void UCharacterMovementComponent::AddForce( FVector Force ) 如果想让物体保持移动，需要每帧都执行AddForce()函数，也就说如果加速度是实时变化的，那么就可以用AddForce。 两者的区别：</description>
+void UCharacterMovementComponent::AddForce( FVector Force )如果想让物体保持移动，需要每帧都执行AddForce()函数，也就说如果加速度是实时变化的，那么就可以用AddForce。 两者的区别：
+AddForce accounts for delta time and should be used for applying force over more than one frame, AddImpulse does not account for delta time and should be used for single &#39;pushes&#39;, like from an explosion or being thrown by a player.</description>
     </item>
     
     <item>
@@ -156,14 +161,14 @@ void UCharacterMovementComponent::AddForce( FVector Force ) 如果想让物体�
       
       <guid>https://dawnarc.com/2016/05/ue4constructor%E4%B8%8Eruntime%E4%B8%A4%E7%A7%8D%E7%8E%AF%E5%A2%83%E4%B8%8B%E5%88%9B%E5%BB%BAcomponent%E5%B9%B6attach%E7%9A%84%E6%96%B9%E5%BC%8F/</guid>
       <description>Component MyActor.h：
-UShapeComponent * CollisionMesh; Constructor中 Create &amp;amp; Attach MyActor.cpp：
-CollisionMesh = CreateDefaultSubobject&amp;lt;UBoxComponent&amp;gt;(TEXT(&amp;quot;TestCollision&amp;quot;));if(CollisionMesh){CollisionMesh-&amp;gt;SetupAttachment(GetRootComponent());} Runtime中（非构造） Create &amp;amp; Attach MyActor.cpp：
-CollisionMesh = NewObject&amp;lt;UBoxComponent&amp;gt;(this);if (CollisionMesh){CollisionMesh-&amp;gt;RegisterComponent();CollisionMesh-&amp;gt;AttachToComponent(GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);} Actor Constructor中 Create &amp;amp; Attach 很少情况下需要在构造函数执行Actor之间的相关Attach。
-ConstructorHelpers::FObjectFinder&amp;lt;UMaterial&amp;gt; DecalMaterialAsset(TEXT(&amp;quot;Material&#39;/Game/TopDownCPP/Blueprints/M_Cursor_Decal.M_Cursor_Decal&#39;&amp;quot;));if (DecalMaterialAsset.Succeeded()){DecalMaterialAsset.AttachToActor(MyActor, FAttachmentTransformRules::KeepRelativeTransform);} Runtime中Actor和Actor之间相互Attach Actor1 = GetWorld()-&amp;gt;SpawnActor&amp;lt;AMyActor&amp;gt;(AMyActor::StaticClass());if(Actor1){Actor1-&amp;gt;AttachToActor(Actor2, FAttachmentTransformRules::KeepRelativeTransform);} AttachToComponent()为引擎的仅次于UObject的子类ActorComponent的函数； AttachToActor为引擎的仅次于UObject的子类Actor的函数。
- 通过NewObject创建Component之后，执行Register的目的是为了触发OnComponentCreate等回调。不执行Create相关的Initial回调会导致后续的Attach失效。
- 注意：Actor::AttachToActor()和Actor::AttachTo()为4.12的新版API，旧版本的工程迁移至4.12后，编译提示警告：
+UShapeComponent * CollisionMesh;Constructor中 Create &amp;amp; Attach MyActor.cpp：
+CollisionMesh = CreateDefaultSubobject&amp;lt;UBoxComponent&amp;gt;(TEXT(&amp;quot;TestCollision&amp;quot;));if(CollisionMesh){CollisionMesh-&amp;gt;SetupAttachment(GetRootComponent());}Runtime中（非构造） Create &amp;amp; Attach MyActor.cpp：
+CollisionMesh = NewObject&amp;lt;UBoxComponent&amp;gt;(this);if (CollisionMesh){CollisionMesh-&amp;gt;RegisterComponent();CollisionMesh-&amp;gt;AttachToComponent(GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);}Actor Constructor中 Create &amp;amp; Attach 很少情况下需要在构造函数执行Actor之间的相关Attach。
+ConstructorHelpers::FObjectFinder&amp;lt;UMaterial&amp;gt; DecalMaterialAsset(TEXT(&amp;quot;Material&#39;/Game/TopDownCPP/Blueprints/M_Cursor_Decal.M_Cursor_Decal&#39;&amp;quot;));if (DecalMaterialAsset.Succeeded()){DecalMaterialAsset.AttachToActor(MyActor, FAttachmentTransformRules::KeepRelativeTransform);}Runtime中Actor和Actor之间相互Attach Actor1 = GetWorld()-&amp;gt;SpawnActor&amp;lt;AMyActor&amp;gt;(AMyActor::StaticClass());if(Actor1){Actor1-&amp;gt;AttachToActor(Actor2, FAttachmentTransformRules::KeepRelativeTransform);}AttachToComponent()为引擎的仅次于UObject的子类ActorComponent的函数； AttachToActor为引擎的仅次于UObject的子类Actor的函数。
+通过NewObject创建Component之后，执行Register的目的是为了触发OnComponentCreate等回调。不执行Create相关的Initial回调会导致后续的Attach失效。
+注意：Actor::AttachToActor()和Actor::AttachTo()为4.12的新版API，旧版本的工程迁移至4.12后，编译提示警告：
 AActor::AttachRootComponentToActor已废弃，需要使用AttachToActor替换
-获取 ActorComponent 所属的 Actor AActor* GetOwner() const; GetOwner() 会沿着 ActorComponent 到 RootComponent 之间的从属链一直往上走，找到 RootComponent 并返回 RootComponent 所属的 Actor 对象。</description>
+获取 ActorComponent 所属的 Actor AActor* GetOwner() const;GetOwner() 会沿着 ActorComponent 到 RootComponent 之间的从属链一直往上走，找到 RootComponent 并返回 RootComponent 所属的 Actor 对象。</description>
     </item>
     
     <item>
@@ -173,7 +178,7 @@ AActor::AttachRootComponentToActor已废弃，需要使用AttachToActor替换
       
       <guid>https://dawnarc.com/2016/05/ue4c-%E7%9A%84k2-api%E5%92%8C%E6%99%AE%E9%80%9Aapi%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB/</guid>
       <description>比如我们看到很多API都有一个以K2开头的API，比如 AActor::AttachRootComponentTo对应的有一个API叫
-AActor::K2_AttachRootComponentTo 这些K2的和常规API有什么区别：K2是给蓝图用调换的，如果你使用C++编码，那么这些K2的开头的不需要关心。 蓝图的前身是UDK的Kismet，所以有人认为K2是Kismet 2.0的意思，即蓝图。
+AActor::K2_AttachRootComponentTo这些K2的和常规API有什么区别：K2是给蓝图用调换的，如果你使用C++编码，那么这些K2的开头的不需要关心。 蓝图的前身是UDK的Kismet，所以有人认为K2是Kismet 2.0的意思，即蓝图。
 参考：https://answers.unrealengine.com/questions/38197/what-is-k2-functions.html</description>
     </item>
     
@@ -194,14 +199,14 @@ AActor::K2_AttachRootComponentTo 这些K2的和常规API有什么区别：K2是
       <guid>https://dawnarc.com/2016/02/ue4animation-montage%E5%8A%A8%E7%94%BB%E7%9B%B8%E5%85%B3/</guid>
       <description>常用API C++如何播放Montage动画 Character接口：
 假设是在Character内执行，其中MontagePtr为Montage指针：
-float AnimDuration = PlayAnimMontage(MontagePtr) / (GetMesh() &amp;amp;&amp;amp; GetMesh()-&amp;gt;GlobalAnimRateScale &amp;gt; 0 ? GetMesh()-&amp;gt;GlobalAnimRateScale : 1); AnimInstace接口：
-float AnimDuration = Montage_Play(Param.Montage, Param.PlayRate); 如果只是播放Animation Sequence，不需要Montage，可以使用 PlayAnimation()：
-if (USkeletalMeshComponent *Mesh = GetMesh()){Mesh-&amp;gt;PlayAnimation(AnimSequence, false);} 注意：PlayAnimation可以直接来播放AnimSequence，但是不能混合动作。比如当播放完攻击动作后，无法自动回到空闲状态，但是通过Montage的Slot可以完成自动切换动作。
- 其他参考：
+float AnimDuration = PlayAnimMontage(MontagePtr) / (GetMesh() &amp;amp;&amp;amp; GetMesh()-&amp;gt;GlobalAnimRateScale &amp;gt; 0 ? GetMesh()-&amp;gt;GlobalAnimRateScale : 1);AnimInstace接口：
+float AnimDuration = Montage_Play(Param.Montage, Param.PlayRate);如果只是播放Animation Sequence，不需要Montage，可以使用 PlayAnimation()：
+if (USkeletalMeshComponent *Mesh = GetMesh()){Mesh-&amp;gt;PlayAnimation(AnimSequence, false);}注意：PlayAnimation可以直接来播放AnimSequence，但是不能混合动作。比如当播放完攻击动作后，无法自动回到空闲状态，但是通过Montage的Slot可以完成自动切换动作。
+其他参考：
 How can I play animations strictly from C++?
 https://answers.unrealengine.com/questions/292345/how-can-i-play-animations-strictly-from-c.html
 C++动态播放Montage（通过AnimSequence创建） keywords：UE4, C++, AnimSequence, AnimMontage, Slot, 动态创建, 播放动画
-首先要在动画蓝图中添加Slot节点，默认的Slot名字为DefaultSlot。这个名字会在C++代码中使用  假设已经获取了要播放的AnimSequence对象指针：AnimSeq
+首先要在动画蓝图中添加Slot节点，默认的Slot名字为DefaultSlot。这个名字会在C++代码中使用 假设已经获取了要播放的AnimSequence对象指针：AnimSeq
 float AnimLength = 0.f;if (USkeletalMeshComponent *Mesh = MyActor-&amp;gt;FindComponentByClass&amp;lt;USkeletalMeshComponent&amp;gt;()){if (UAnimInstance *AnimInst = Mesh-&amp;gt;GetAnimInstance()){if (UAnimMontage* Mtg = AnimInst-&amp;gt;PlaySlotAnimationAsDynamicMontage(AnimSeq, TEXT(&amp;quot;DefaultSlot&amp;quot;), 0.</description>
     </item>
     

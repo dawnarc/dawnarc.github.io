@@ -10,35 +10,39 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.96.0 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.102.3 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Wang Aiguo">
 <meta name="keywords" content="">
 <meta name="description" content="原文：https://blog.csdn.net/tommy_wxie/article/details/12841735
 1.将ndk中的arm-linux-androideabi-addr2line可执行文件的路径加入配置文件~/.bashrc中，例如：
-export PATH=$PATH:~/dlna/android-ndk-r6b/toolchains/arm-linux-androideabi-4.4.3/prebuilt/linux-x86/bin 2.使配置生效：
-source ~/.bashrc 3.使用工具。例如：
-arm-linux-androideabi-addr2line -C -f -e ~/workspace/DLNA/libs/armeabi/libctrlpt.so 0003deb4 其中，0003deb4为堆栈信息中pc的值。
+export PATH=$PATH:~/dlna/android-ndk-r6b/toolchains/arm-linux-androideabi-4.4.3/prebuilt/linux-x86/bin2.使配置生效：
+source ~/.bashrc3.使用工具。例如：
+arm-linux-androideabi-addr2line -C -f -e ~/workspace/DLNA/libs/armeabi/libctrlpt.so 0003deb4其中，0003deb4为堆栈信息中pc的值。
 android应用崩溃的调试方法 有两种方法可以分析 crash 的堆栈信息
 1，google提供了一个python脚本，可以从 https://github.com/maxme/android-ndk-stacktrace-analyzer 下载这个python脚本，然后使用 adb logcat -d &gt; logfile 导出 crash 的log,使用 arm-eabi-objdump 位于build/prebuilt/linux-x86/arm-eabi-4.2.1/bin下面把so或exe转换成汇编代码，如：arm-eabi-objdump -S mylib.so &gt; mylib.asm,使用脚本
-python parse_stack.py &lt;asm-file&gt; &lt;logcat-file&gt; 2，直接使用NDK下面的arm-linux-androideabi-addr2line
+python parse_stack.py &lt;asm-file&gt; &lt;logcat-file&gt;2，直接使用NDK下面的arm-linux-androideabi-addr2line
 (D:\android-ndk-r8\toolchains\arm-linux- androideabi-4.4.3\prebuilt\windows\bin\arm-linux-androideabi-addr2line.exe)
 例如：
-arm-linux-androideabi-addr2line -C -f -e libxxx.so 0x#####(address) 出现 ??:0 , 没法展示源代码行数的问题 在Android.mk 文件中:
-LOCAL_CFLAGS := -D__STDC_CONSTANT_MACROS -Wl,-Map=test.map -g  补充2个编译参数 -Wl,-Map=test.map -g .">
+arm-linux-androideabi-addr2line -C -f -e libxxx.so 0x#####(address)出现 ??:0 , 没法展示源代码行数的问题 在Android.mk 文件中:
+LOCAL_CFLAGS := -D__STDC_CONSTANT_MACROS -Wl,-Map=test.map -g 补充2个编译参数 -Wl,-Map=test.map -g . 增加gcc警告和调试标志
+执行命令：
+arm-linux-androideabi-addr2line -C -f -e /项目目录/obj/local/armeabi/libfaa_jni.">
 
 
 <meta property="og:description" content="原文：https://blog.csdn.net/tommy_wxie/article/details/12841735
 1.将ndk中的arm-linux-androideabi-addr2line可执行文件的路径加入配置文件~/.bashrc中，例如：
-export PATH=$PATH:~/dlna/android-ndk-r6b/toolchains/arm-linux-androideabi-4.4.3/prebuilt/linux-x86/bin 2.使配置生效：
-source ~/.bashrc 3.使用工具。例如：
-arm-linux-androideabi-addr2line -C -f -e ~/workspace/DLNA/libs/armeabi/libctrlpt.so 0003deb4 其中，0003deb4为堆栈信息中pc的值。
+export PATH=$PATH:~/dlna/android-ndk-r6b/toolchains/arm-linux-androideabi-4.4.3/prebuilt/linux-x86/bin2.使配置生效：
+source ~/.bashrc3.使用工具。例如：
+arm-linux-androideabi-addr2line -C -f -e ~/workspace/DLNA/libs/armeabi/libctrlpt.so 0003deb4其中，0003deb4为堆栈信息中pc的值。
 android应用崩溃的调试方法 有两种方法可以分析 crash 的堆栈信息
 1，google提供了一个python脚本，可以从 https://github.com/maxme/android-ndk-stacktrace-analyzer 下载这个python脚本，然后使用 adb logcat -d &gt; logfile 导出 crash 的log,使用 arm-eabi-objdump 位于build/prebuilt/linux-x86/arm-eabi-4.2.1/bin下面把so或exe转换成汇编代码，如：arm-eabi-objdump -S mylib.so &gt; mylib.asm,使用脚本
-python parse_stack.py &lt;asm-file&gt; &lt;logcat-file&gt; 2，直接使用NDK下面的arm-linux-androideabi-addr2line
+python parse_stack.py &lt;asm-file&gt; &lt;logcat-file&gt;2，直接使用NDK下面的arm-linux-androideabi-addr2line
 (D:\android-ndk-r8\toolchains\arm-linux- androideabi-4.4.3\prebuilt\windows\bin\arm-linux-androideabi-addr2line.exe)
 例如：
-arm-linux-androideabi-addr2line -C -f -e libxxx.so 0x#####(address) 出现 ??:0 , 没法展示源代码行数的问题 在Android.mk 文件中:
-LOCAL_CFLAGS := -D__STDC_CONSTANT_MACROS -Wl,-Map=test.map -g  补充2个编译参数 -Wl,-Map=test.map -g .">
+arm-linux-androideabi-addr2line -C -f -e libxxx.so 0x#####(address)出现 ??:0 , 没法展示源代码行数的问题 在Android.mk 文件中:
+LOCAL_CFLAGS := -D__STDC_CONSTANT_MACROS -Wl,-Map=test.map -g 补充2个编译参数 -Wl,-Map=test.map -g . 增加gcc警告和调试标志
+执行命令：
+arm-linux-androideabi-addr2line -C -f -e /项目目录/obj/local/armeabi/libfaa_jni.">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[Android NDK]arm-eabi-addr2line android应用崩溃的调试方法">
 <meta name="twitter:title" content="[Android NDK]arm-eabi-addr2line android应用崩溃的调试方法">
@@ -47,28 +51,32 @@ LOCAL_CFLAGS := -D__STDC_CONSTANT_MACROS -Wl,-Map=test.map -g  补充2个编译�
 <meta property="og:site_name" content="玄冬Wong">
 <meta property="og:description" content="原文：https://blog.csdn.net/tommy_wxie/article/details/12841735
 1.将ndk中的arm-linux-androideabi-addr2line可执行文件的路径加入配置文件~/.bashrc中，例如：
-export PATH=$PATH:~/dlna/android-ndk-r6b/toolchains/arm-linux-androideabi-4.4.3/prebuilt/linux-x86/bin 2.使配置生效：
-source ~/.bashrc 3.使用工具。例如：
-arm-linux-androideabi-addr2line -C -f -e ~/workspace/DLNA/libs/armeabi/libctrlpt.so 0003deb4 其中，0003deb4为堆栈信息中pc的值。
+export PATH=$PATH:~/dlna/android-ndk-r6b/toolchains/arm-linux-androideabi-4.4.3/prebuilt/linux-x86/bin2.使配置生效：
+source ~/.bashrc3.使用工具。例如：
+arm-linux-androideabi-addr2line -C -f -e ~/workspace/DLNA/libs/armeabi/libctrlpt.so 0003deb4其中，0003deb4为堆栈信息中pc的值。
 android应用崩溃的调试方法 有两种方法可以分析 crash 的堆栈信息
 1，google提供了一个python脚本，可以从 https://github.com/maxme/android-ndk-stacktrace-analyzer 下载这个python脚本，然后使用 adb logcat -d &gt; logfile 导出 crash 的log,使用 arm-eabi-objdump 位于build/prebuilt/linux-x86/arm-eabi-4.2.1/bin下面把so或exe转换成汇编代码，如：arm-eabi-objdump -S mylib.so &gt; mylib.asm,使用脚本
-python parse_stack.py &lt;asm-file&gt; &lt;logcat-file&gt; 2，直接使用NDK下面的arm-linux-androideabi-addr2line
+python parse_stack.py &lt;asm-file&gt; &lt;logcat-file&gt;2，直接使用NDK下面的arm-linux-androideabi-addr2line
 (D:\android-ndk-r8\toolchains\arm-linux- androideabi-4.4.3\prebuilt\windows\bin\arm-linux-androideabi-addr2line.exe)
 例如：
-arm-linux-androideabi-addr2line -C -f -e libxxx.so 0x#####(address) 出现 ??:0 , 没法展示源代码行数的问题 在Android.mk 文件中:
-LOCAL_CFLAGS := -D__STDC_CONSTANT_MACROS -Wl,-Map=test.map -g  补充2个编译参数 -Wl,-Map=test.map -g .">
+arm-linux-androideabi-addr2line -C -f -e libxxx.so 0x#####(address)出现 ??:0 , 没法展示源代码行数的问题 在Android.mk 文件中:
+LOCAL_CFLAGS := -D__STDC_CONSTANT_MACROS -Wl,-Map=test.map -g 补充2个编译参数 -Wl,-Map=test.map -g . 增加gcc警告和调试标志
+执行命令：
+arm-linux-androideabi-addr2line -C -f -e /项目目录/obj/local/armeabi/libfaa_jni.">
 <meta name="twitter:description" content="原文：https://blog.csdn.net/tommy_wxie/article/details/12841735
 1.将ndk中的arm-linux-androideabi-addr2line可执行文件的路径加入配置文件~/.bashrc中，例如：
-export PATH=$PATH:~/dlna/android-ndk-r6b/toolchains/arm-linux-androideabi-4.4.3/prebuilt/linux-x86/bin 2.使配置生效：
-source ~/.bashrc 3.使用工具。例如：
-arm-linux-androideabi-addr2line -C -f -e ~/workspace/DLNA/libs/armeabi/libctrlpt.so 0003deb4 其中，0003deb4为堆栈信息中pc的值。
+export PATH=$PATH:~/dlna/android-ndk-r6b/toolchains/arm-linux-androideabi-4.4.3/prebuilt/linux-x86/bin2.使配置生效：
+source ~/.bashrc3.使用工具。例如：
+arm-linux-androideabi-addr2line -C -f -e ~/workspace/DLNA/libs/armeabi/libctrlpt.so 0003deb4其中，0003deb4为堆栈信息中pc的值。
 android应用崩溃的调试方法 有两种方法可以分析 crash 的堆栈信息
 1，google提供了一个python脚本，可以从 https://github.com/maxme/android-ndk-stacktrace-analyzer 下载这个python脚本，然后使用 adb logcat -d &gt; logfile 导出 crash 的log,使用 arm-eabi-objdump 位于build/prebuilt/linux-x86/arm-eabi-4.2.1/bin下面把so或exe转换成汇编代码，如：arm-eabi-objdump -S mylib.so &gt; mylib.asm,使用脚本
-python parse_stack.py &lt;asm-file&gt; &lt;logcat-file&gt; 2，直接使用NDK下面的arm-linux-androideabi-addr2line
+python parse_stack.py &lt;asm-file&gt; &lt;logcat-file&gt;2，直接使用NDK下面的arm-linux-androideabi-addr2line
 (D:\android-ndk-r8\toolchains\arm-linux- androideabi-4.4.3\prebuilt\windows\bin\arm-linux-androideabi-addr2line.exe)
 例如：
-arm-linux-androideabi-addr2line -C -f -e libxxx.so 0x#####(address) 出现 ??:0 , 没法展示源代码行数的问题 在Android.mk 文件中:
-LOCAL_CFLAGS := -D__STDC_CONSTANT_MACROS -Wl,-Map=test.map -g  补充2个编译参数 -Wl,-Map=test.map -g .">
+arm-linux-androideabi-addr2line -C -f -e libxxx.so 0x#####(address)出现 ??:0 , 没法展示源代码行数的问题 在Android.mk 文件中:
+LOCAL_CFLAGS := -D__STDC_CONSTANT_MACROS -Wl,-Map=test.map -g 补充2个编译参数 -Wl,-Map=test.map -g . 增加gcc警告和调试标志
+执行命令：
+arm-linux-androideabi-addr2line -C -f -e /项目目录/obj/local/armeabi/libfaa_jni.">
 <meta property="og:locale" content="en-us">
 
   
@@ -129,7 +137,7 @@ LOCAL_CFLAGS := -D__STDC_CONSTANT_MACROS -Wl,-Map=test.map -g  补充2个编译�
     
     
       
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/solarized-light.min.css">
+        <link rel="stylesheet" href="https://dawnarc.com/cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/styles/paraiso-light.min.css">
       
     
 

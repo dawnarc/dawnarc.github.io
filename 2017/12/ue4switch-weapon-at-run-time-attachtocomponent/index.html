@@ -10,23 +10,23 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.96.0 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.102.3 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Wang Aiguo">
 <meta name="keywords" content="UE4, AttachToComponent">
 <meta name="description" content="https://github.com/tomlooman/EpicSurvivalGameSeries/blob/4a6ee9a6081529fadbe0f693b2e4e6729d5ec08d/SurvivalGame/Source/SurvivalGame/Private/Items/SWeapon.cpp#L106
 EpicSurvivalGameSeries\SurvivalGame\Source\SurvivalGame\Private\Items\SWeapon.cpp
-void ASWeapon::AttachMeshToPawn(EInventorySlot Slot){if (MyPawn){// Remove and hideDetachMeshFromPawn();USkeletalMeshComponent* PawnMesh = MyPawn-&gt;GetMesh();FName AttachPoint = MyPawn-&gt;GetInventoryAttachPoint(Slot);Mesh-&gt;SetHiddenInGame(false);Mesh-&gt;AttachToComponent(PawnMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, AttachPoint);}}void ASWeapon::DetachMeshFromPawn(){Mesh-&gt;DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);Mesh-&gt;SetHiddenInGame(true);} It&rsquo;s better to use FAttachmentTransformRules::SnapToTargetNotIncludingScale when attaching, otherwise maybe there&rsquo;s a big location offset between two actors when using KeepWorldTransform.
- StaticMeshComponent无法附加到SkeletalMeshComponent上，附加后StaticMeshComponent会出现在场景中的随机位置，而不是父级SkeletalMeshComponent身上，且此时即使设置LocationOffset也无效。
- 通过NewObject&lt;USkeletalMeshComponent&gt;(Owner)运行时创建的SkeletalMeshComponent可以附加到父级SkeletalMeshComponent上，但是无法播放父级SkeletalMeshComponent的动画，即使设置了WeaponComp-&gt;SetMasterPoseComponent(PawnMesh)。建议在构造函数中创建后SkeletalMeshComponent，然后再run-time修改SkeletalMesh模型，run-time修改指定SkeletalMeshComponent的SkeletalMesh是没有问题的，且可以正常播放父级的动画。
-  念去去、千里烟波，暮霭沉沉楚天阔。----北宋·柳永《雨霖铃》">
+void ASWeapon::AttachMeshToPawn(EInventorySlot Slot){if (MyPawn){// Remove and hideDetachMeshFromPawn();USkeletalMeshComponent* PawnMesh = MyPawn-&gt;GetMesh();FName AttachPoint = MyPawn-&gt;GetInventoryAttachPoint(Slot);Mesh-&gt;SetHiddenInGame(false);Mesh-&gt;AttachToComponent(PawnMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, AttachPoint);}}void ASWeapon::DetachMeshFromPawn(){Mesh-&gt;DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);Mesh-&gt;SetHiddenInGame(true);}It&rsquo;s better to use FAttachmentTransformRules::SnapToTargetNotIncludingScale when attaching, otherwise maybe there&rsquo;s a big location offset between two actors when using KeepWorldTransform.
+StaticMeshComponent无法附加到SkeletalMeshComponent上，附加后StaticMeshComponent会出现在场景中的随机位置，而不是父级SkeletalMeshComponent身上，且此时即使设置LocationOffset也无效。
+通过NewObject&lt;USkeletalMeshComponent&gt;(Owner)运行时创建的SkeletalMeshComponent可以附加到父级SkeletalMeshComponent上，但是无法播放父级SkeletalMeshComponent的动画，即使设置了WeaponComp-&gt;SetMasterPoseComponent(PawnMesh)。建议在构造函数中创建后SkeletalMeshComponent，然后再run-time修改SkeletalMesh模型，run-time修改指定SkeletalMeshComponent的SkeletalMesh是没有问题的，且可以正常播放父级的动画。
+念去去、千里烟波，暮霭沉沉楚天阔。----北宋·柳永《雨霖铃》">
 
 
 <meta property="og:description" content="https://github.com/tomlooman/EpicSurvivalGameSeries/blob/4a6ee9a6081529fadbe0f693b2e4e6729d5ec08d/SurvivalGame/Source/SurvivalGame/Private/Items/SWeapon.cpp#L106
 EpicSurvivalGameSeries\SurvivalGame\Source\SurvivalGame\Private\Items\SWeapon.cpp
-void ASWeapon::AttachMeshToPawn(EInventorySlot Slot){if (MyPawn){// Remove and hideDetachMeshFromPawn();USkeletalMeshComponent* PawnMesh = MyPawn-&gt;GetMesh();FName AttachPoint = MyPawn-&gt;GetInventoryAttachPoint(Slot);Mesh-&gt;SetHiddenInGame(false);Mesh-&gt;AttachToComponent(PawnMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, AttachPoint);}}void ASWeapon::DetachMeshFromPawn(){Mesh-&gt;DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);Mesh-&gt;SetHiddenInGame(true);} It&rsquo;s better to use FAttachmentTransformRules::SnapToTargetNotIncludingScale when attaching, otherwise maybe there&rsquo;s a big location offset between two actors when using KeepWorldTransform.
- StaticMeshComponent无法附加到SkeletalMeshComponent上，附加后StaticMeshComponent会出现在场景中的随机位置，而不是父级SkeletalMeshComponent身上，且此时即使设置LocationOffset也无效。
- 通过NewObject&lt;USkeletalMeshComponent&gt;(Owner)运行时创建的SkeletalMeshComponent可以附加到父级SkeletalMeshComponent上，但是无法播放父级SkeletalMeshComponent的动画，即使设置了WeaponComp-&gt;SetMasterPoseComponent(PawnMesh)。建议在构造函数中创建后SkeletalMeshComponent，然后再run-time修改SkeletalMesh模型，run-time修改指定SkeletalMeshComponent的SkeletalMesh是没有问题的，且可以正常播放父级的动画。
-  念去去、千里烟波，暮霭沉沉楚天阔。----北宋·柳永《雨霖铃》">
+void ASWeapon::AttachMeshToPawn(EInventorySlot Slot){if (MyPawn){// Remove and hideDetachMeshFromPawn();USkeletalMeshComponent* PawnMesh = MyPawn-&gt;GetMesh();FName AttachPoint = MyPawn-&gt;GetInventoryAttachPoint(Slot);Mesh-&gt;SetHiddenInGame(false);Mesh-&gt;AttachToComponent(PawnMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, AttachPoint);}}void ASWeapon::DetachMeshFromPawn(){Mesh-&gt;DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);Mesh-&gt;SetHiddenInGame(true);}It&rsquo;s better to use FAttachmentTransformRules::SnapToTargetNotIncludingScale when attaching, otherwise maybe there&rsquo;s a big location offset between two actors when using KeepWorldTransform.
+StaticMeshComponent无法附加到SkeletalMeshComponent上，附加后StaticMeshComponent会出现在场景中的随机位置，而不是父级SkeletalMeshComponent身上，且此时即使设置LocationOffset也无效。
+通过NewObject&lt;USkeletalMeshComponent&gt;(Owner)运行时创建的SkeletalMeshComponent可以附加到父级SkeletalMeshComponent上，但是无法播放父级SkeletalMeshComponent的动画，即使设置了WeaponComp-&gt;SetMasterPoseComponent(PawnMesh)。建议在构造函数中创建后SkeletalMeshComponent，然后再run-time修改SkeletalMesh模型，run-time修改指定SkeletalMeshComponent的SkeletalMesh是没有问题的，且可以正常播放父级的动画。
+念去去、千里烟波，暮霭沉沉楚天阔。----北宋·柳永《雨霖铃》">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[UE4]Switch Weapon at run-time (AttachToComponent)">
 <meta name="twitter:title" content="[UE4]Switch Weapon at run-time (AttachToComponent)">
@@ -35,16 +35,16 @@ void ASWeapon::AttachMeshToPawn(EInventorySlot Slot){if (MyPawn){// Remove a
 <meta property="og:site_name" content="玄冬Wong">
 <meta property="og:description" content="https://github.com/tomlooman/EpicSurvivalGameSeries/blob/4a6ee9a6081529fadbe0f693b2e4e6729d5ec08d/SurvivalGame/Source/SurvivalGame/Private/Items/SWeapon.cpp#L106
 EpicSurvivalGameSeries\SurvivalGame\Source\SurvivalGame\Private\Items\SWeapon.cpp
-void ASWeapon::AttachMeshToPawn(EInventorySlot Slot){if (MyPawn){// Remove and hideDetachMeshFromPawn();USkeletalMeshComponent* PawnMesh = MyPawn-&gt;GetMesh();FName AttachPoint = MyPawn-&gt;GetInventoryAttachPoint(Slot);Mesh-&gt;SetHiddenInGame(false);Mesh-&gt;AttachToComponent(PawnMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, AttachPoint);}}void ASWeapon::DetachMeshFromPawn(){Mesh-&gt;DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);Mesh-&gt;SetHiddenInGame(true);} It&rsquo;s better to use FAttachmentTransformRules::SnapToTargetNotIncludingScale when attaching, otherwise maybe there&rsquo;s a big location offset between two actors when using KeepWorldTransform.
- StaticMeshComponent无法附加到SkeletalMeshComponent上，附加后StaticMeshComponent会出现在场景中的随机位置，而不是父级SkeletalMeshComponent身上，且此时即使设置LocationOffset也无效。
- 通过NewObject&lt;USkeletalMeshComponent&gt;(Owner)运行时创建的SkeletalMeshComponent可以附加到父级SkeletalMeshComponent上，但是无法播放父级SkeletalMeshComponent的动画，即使设置了WeaponComp-&gt;SetMasterPoseComponent(PawnMesh)。建议在构造函数中创建后SkeletalMeshComponent，然后再run-time修改SkeletalMesh模型，run-time修改指定SkeletalMeshComponent的SkeletalMesh是没有问题的，且可以正常播放父级的动画。
-  念去去、千里烟波，暮霭沉沉楚天阔。----北宋·柳永《雨霖铃》">
+void ASWeapon::AttachMeshToPawn(EInventorySlot Slot){if (MyPawn){// Remove and hideDetachMeshFromPawn();USkeletalMeshComponent* PawnMesh = MyPawn-&gt;GetMesh();FName AttachPoint = MyPawn-&gt;GetInventoryAttachPoint(Slot);Mesh-&gt;SetHiddenInGame(false);Mesh-&gt;AttachToComponent(PawnMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, AttachPoint);}}void ASWeapon::DetachMeshFromPawn(){Mesh-&gt;DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);Mesh-&gt;SetHiddenInGame(true);}It&rsquo;s better to use FAttachmentTransformRules::SnapToTargetNotIncludingScale when attaching, otherwise maybe there&rsquo;s a big location offset between two actors when using KeepWorldTransform.
+StaticMeshComponent无法附加到SkeletalMeshComponent上，附加后StaticMeshComponent会出现在场景中的随机位置，而不是父级SkeletalMeshComponent身上，且此时即使设置LocationOffset也无效。
+通过NewObject&lt;USkeletalMeshComponent&gt;(Owner)运行时创建的SkeletalMeshComponent可以附加到父级SkeletalMeshComponent上，但是无法播放父级SkeletalMeshComponent的动画，即使设置了WeaponComp-&gt;SetMasterPoseComponent(PawnMesh)。建议在构造函数中创建后SkeletalMeshComponent，然后再run-time修改SkeletalMesh模型，run-time修改指定SkeletalMeshComponent的SkeletalMesh是没有问题的，且可以正常播放父级的动画。
+念去去、千里烟波，暮霭沉沉楚天阔。----北宋·柳永《雨霖铃》">
 <meta name="twitter:description" content="https://github.com/tomlooman/EpicSurvivalGameSeries/blob/4a6ee9a6081529fadbe0f693b2e4e6729d5ec08d/SurvivalGame/Source/SurvivalGame/Private/Items/SWeapon.cpp#L106
 EpicSurvivalGameSeries\SurvivalGame\Source\SurvivalGame\Private\Items\SWeapon.cpp
-void ASWeapon::AttachMeshToPawn(EInventorySlot Slot){if (MyPawn){// Remove and hideDetachMeshFromPawn();USkeletalMeshComponent* PawnMesh = MyPawn-&gt;GetMesh();FName AttachPoint = MyPawn-&gt;GetInventoryAttachPoint(Slot);Mesh-&gt;SetHiddenInGame(false);Mesh-&gt;AttachToComponent(PawnMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, AttachPoint);}}void ASWeapon::DetachMeshFromPawn(){Mesh-&gt;DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);Mesh-&gt;SetHiddenInGame(true);} It&rsquo;s better to use FAttachmentTransformRules::SnapToTargetNotIncludingScale when attaching, otherwise maybe there&rsquo;s a big location offset between two actors when using KeepWorldTransform.
- StaticMeshComponent无法附加到SkeletalMeshComponent上，附加后StaticMeshComponent会出现在场景中的随机位置，而不是父级SkeletalMeshComponent身上，且此时即使设置LocationOffset也无效。
- 通过NewObject&lt;USkeletalMeshComponent&gt;(Owner)运行时创建的SkeletalMeshComponent可以附加到父级SkeletalMeshComponent上，但是无法播放父级SkeletalMeshComponent的动画，即使设置了WeaponComp-&gt;SetMasterPoseComponent(PawnMesh)。建议在构造函数中创建后SkeletalMeshComponent，然后再run-time修改SkeletalMesh模型，run-time修改指定SkeletalMeshComponent的SkeletalMesh是没有问题的，且可以正常播放父级的动画。
-  念去去、千里烟波，暮霭沉沉楚天阔。----北宋·柳永《雨霖铃》">
+void ASWeapon::AttachMeshToPawn(EInventorySlot Slot){if (MyPawn){// Remove and hideDetachMeshFromPawn();USkeletalMeshComponent* PawnMesh = MyPawn-&gt;GetMesh();FName AttachPoint = MyPawn-&gt;GetInventoryAttachPoint(Slot);Mesh-&gt;SetHiddenInGame(false);Mesh-&gt;AttachToComponent(PawnMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, AttachPoint);}}void ASWeapon::DetachMeshFromPawn(){Mesh-&gt;DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);Mesh-&gt;SetHiddenInGame(true);}It&rsquo;s better to use FAttachmentTransformRules::SnapToTargetNotIncludingScale when attaching, otherwise maybe there&rsquo;s a big location offset between two actors when using KeepWorldTransform.
+StaticMeshComponent无法附加到SkeletalMeshComponent上，附加后StaticMeshComponent会出现在场景中的随机位置，而不是父级SkeletalMeshComponent身上，且此时即使设置LocationOffset也无效。
+通过NewObject&lt;USkeletalMeshComponent&gt;(Owner)运行时创建的SkeletalMeshComponent可以附加到父级SkeletalMeshComponent上，但是无法播放父级SkeletalMeshComponent的动画，即使设置了WeaponComp-&gt;SetMasterPoseComponent(PawnMesh)。建议在构造函数中创建后SkeletalMeshComponent，然后再run-time修改SkeletalMesh模型，run-time修改指定SkeletalMeshComponent的SkeletalMesh是没有问题的，且可以正常播放父级的动画。
+念去去、千里烟波，暮霭沉沉楚天阔。----北宋·柳永《雨霖铃》">
 <meta property="og:locale" content="en-us">
 
   
@@ -105,7 +105,7 @@ void ASWeapon::AttachMeshToPawn(EInventorySlot Slot){if (MyPawn){// Remove a
     
     
       
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/solarized-light.min.css">
+        <link rel="stylesheet" href="https://dawnarc.com/cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/styles/paraiso-light.min.css">
       
     
 

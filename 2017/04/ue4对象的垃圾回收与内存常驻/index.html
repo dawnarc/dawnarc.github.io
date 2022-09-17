@@ -10,23 +10,23 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.96.0 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.102.3 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Wang Aiguo">
 <meta name="keywords" content="UE4, Memory, GC, Persist, 垃圾回收, 内存管理">
 <meta name="description" content="keywords：UE4, Memory Persist, GC, 垃圾回收, 内存管理
 防止GC的办法 一个UObject类型的变量，即使是static，默认也会被GC掉。
- 要防止该对象被GC，有5种方式：
- 作为成员变量并标记为UPROPERTY()； 创建对象后 AddToRoot() ；（退出游戏时需要RemoveFromRoot()） 对目标设置一个有效的Owner：SetOwner()； FStreamableManager Load资源时，bManageActiveHandle 设置为true； FGCObjectScopeGuard 在指定代码区域内保持对象；  Uobject不能使用TSharedPtr进行引用计数，非UObject才可以；如果一个非UObject的类想加入GC，那么必须继承FGCObject类。
- UPROPERTY()用法 URPOPERTY()UObject* MyObj; AddToRoot()用法 UMyObject* MyObj = NewObject&lt;UMyObject&gt;();MyObj.AddToRoot(); SetOwner()用法 void AMyCharacter::BeginPlay(){Super::BeginPlay();ActorTest = NewObject&lt;AActor&gt;();ActorTest-&gt;SetOwner(this);} 只要AMyCharacter没有销毁，那么ActorTest不会被垃圾回收。
-FStreamableManager 用法 FSoftObjectPath AssetPath(TEXT(&quot;/Game/Mannequin/Animations/ThirdPersonWalk.ThirdPersonWalk&quot;));FStreamableManager&amp; AssetLoader = UAssetManager::GetStreamableManager();//hold object in memory.TSharedPtr&lt;FStreamableHandle&gt; Handle = AssetLoader.RequestSyncLoad(AssetPath, true);UObject* Obj = Handle-&gt;GetLoadedAsset();//free memory of object.">
+要防止该对象被GC，有5种方式：
+作为成员变量并标记为UPROPERTY()； 创建对象后 AddToRoot() ；（退出游戏时需要RemoveFromRoot()） 对目标设置一个有效的Owner：SetOwner()； FStreamableManager Load资源时，bManageActiveHandle 设置为true； FGCObjectScopeGuard 在指定代码区域内保持对象； Uobject不能使用TSharedPtr进行引用计数，非UObject才可以；如果一个非UObject的类想加入GC，那么必须继承FGCObject类。
+UPROPERTY()用法 URPOPERTY()UObject* MyObj;AddToRoot()用法 UMyObject* MyObj = NewObject&lt;UMyObject&gt;();MyObj.AddToRoot();SetOwner()用法 void AMyCharacter::BeginPlay(){Super::BeginPlay();ActorTest = NewObject&lt;AActor&gt;();ActorTest-&gt;SetOwner(this);}只要AMyCharacter没有销毁，那么ActorTest不会被垃圾回收。
+FStreamableManager 用法 FSoftObjectPath AssetPath(TEXT(&quot;/Game/Mannequin/Animations/ThirdPersonWalk.ThirdPersonWalk&quot;));FStreamableManager&amp; AssetLoader = UAssetManager::GetStreamableManager();//hold object in memory.TSharedPtr&lt;FStreamableHandle&gt; Handle = AssetLoader.RequestSyncLoad(AssetPath, true);UObject* Obj = Handle-&gt;GetLoadedAsset();//free memory of object.Handle-&gt;ReleaseHandle();FGCObjectScopeGuard 用法 {FGCObjectScopeGuard(UObject* GladOS = NewObject&lt;.">
 
 
 <meta property="og:description" content="keywords：UE4, Memory Persist, GC, 垃圾回收, 内存管理
 防止GC的办法 一个UObject类型的变量，即使是static，默认也会被GC掉。
- 要防止该对象被GC，有5种方式：
- 作为成员变量并标记为UPROPERTY()； 创建对象后 AddToRoot() ；（退出游戏时需要RemoveFromRoot()） 对目标设置一个有效的Owner：SetOwner()； FStreamableManager Load资源时，bManageActiveHandle 设置为true； FGCObjectScopeGuard 在指定代码区域内保持对象；  Uobject不能使用TSharedPtr进行引用计数，非UObject才可以；如果一个非UObject的类想加入GC，那么必须继承FGCObject类。
- UPROPERTY()用法 URPOPERTY()UObject* MyObj; AddToRoot()用法 UMyObject* MyObj = NewObject&lt;UMyObject&gt;();MyObj.AddToRoot(); SetOwner()用法 void AMyCharacter::BeginPlay(){Super::BeginPlay();ActorTest = NewObject&lt;AActor&gt;();ActorTest-&gt;SetOwner(this);} 只要AMyCharacter没有销毁，那么ActorTest不会被垃圾回收。
-FStreamableManager 用法 FSoftObjectPath AssetPath(TEXT(&quot;/Game/Mannequin/Animations/ThirdPersonWalk.ThirdPersonWalk&quot;));FStreamableManager&amp; AssetLoader = UAssetManager::GetStreamableManager();//hold object in memory.TSharedPtr&lt;FStreamableHandle&gt; Handle = AssetLoader.RequestSyncLoad(AssetPath, true);UObject* Obj = Handle-&gt;GetLoadedAsset();//free memory of object.">
+要防止该对象被GC，有5种方式：
+作为成员变量并标记为UPROPERTY()； 创建对象后 AddToRoot() ；（退出游戏时需要RemoveFromRoot()） 对目标设置一个有效的Owner：SetOwner()； FStreamableManager Load资源时，bManageActiveHandle 设置为true； FGCObjectScopeGuard 在指定代码区域内保持对象； Uobject不能使用TSharedPtr进行引用计数，非UObject才可以；如果一个非UObject的类想加入GC，那么必须继承FGCObject类。
+UPROPERTY()用法 URPOPERTY()UObject* MyObj;AddToRoot()用法 UMyObject* MyObj = NewObject&lt;UMyObject&gt;();MyObj.AddToRoot();SetOwner()用法 void AMyCharacter::BeginPlay(){Super::BeginPlay();ActorTest = NewObject&lt;AActor&gt;();ActorTest-&gt;SetOwner(this);}只要AMyCharacter没有销毁，那么ActorTest不会被垃圾回收。
+FStreamableManager 用法 FSoftObjectPath AssetPath(TEXT(&quot;/Game/Mannequin/Animations/ThirdPersonWalk.ThirdPersonWalk&quot;));FStreamableManager&amp; AssetLoader = UAssetManager::GetStreamableManager();//hold object in memory.TSharedPtr&lt;FStreamableHandle&gt; Handle = AssetLoader.RequestSyncLoad(AssetPath, true);UObject* Obj = Handle-&gt;GetLoadedAsset();//free memory of object.Handle-&gt;ReleaseHandle();FGCObjectScopeGuard 用法 {FGCObjectScopeGuard(UObject* GladOS = NewObject&lt;.">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[UE4]对象的垃圾回收与内存常驻">
 <meta name="twitter:title" content="[UE4]对象的垃圾回收与内存常驻">
@@ -35,16 +35,16 @@ FStreamableManager 用法 FSoftObjectPath AssetPath(TEXT(&quot;/Game/Mannequin/A
 <meta property="og:site_name" content="玄冬Wong">
 <meta property="og:description" content="keywords：UE4, Memory Persist, GC, 垃圾回收, 内存管理
 防止GC的办法 一个UObject类型的变量，即使是static，默认也会被GC掉。
- 要防止该对象被GC，有5种方式：
- 作为成员变量并标记为UPROPERTY()； 创建对象后 AddToRoot() ；（退出游戏时需要RemoveFromRoot()） 对目标设置一个有效的Owner：SetOwner()； FStreamableManager Load资源时，bManageActiveHandle 设置为true； FGCObjectScopeGuard 在指定代码区域内保持对象；  Uobject不能使用TSharedPtr进行引用计数，非UObject才可以；如果一个非UObject的类想加入GC，那么必须继承FGCObject类。
- UPROPERTY()用法 URPOPERTY()UObject* MyObj; AddToRoot()用法 UMyObject* MyObj = NewObject&lt;UMyObject&gt;();MyObj.AddToRoot(); SetOwner()用法 void AMyCharacter::BeginPlay(){Super::BeginPlay();ActorTest = NewObject&lt;AActor&gt;();ActorTest-&gt;SetOwner(this);} 只要AMyCharacter没有销毁，那么ActorTest不会被垃圾回收。
-FStreamableManager 用法 FSoftObjectPath AssetPath(TEXT(&quot;/Game/Mannequin/Animations/ThirdPersonWalk.ThirdPersonWalk&quot;));FStreamableManager&amp; AssetLoader = UAssetManager::GetStreamableManager();//hold object in memory.TSharedPtr&lt;FStreamableHandle&gt; Handle = AssetLoader.RequestSyncLoad(AssetPath, true);UObject* Obj = Handle-&gt;GetLoadedAsset();//free memory of object.">
+要防止该对象被GC，有5种方式：
+作为成员变量并标记为UPROPERTY()； 创建对象后 AddToRoot() ；（退出游戏时需要RemoveFromRoot()） 对目标设置一个有效的Owner：SetOwner()； FStreamableManager Load资源时，bManageActiveHandle 设置为true； FGCObjectScopeGuard 在指定代码区域内保持对象； Uobject不能使用TSharedPtr进行引用计数，非UObject才可以；如果一个非UObject的类想加入GC，那么必须继承FGCObject类。
+UPROPERTY()用法 URPOPERTY()UObject* MyObj;AddToRoot()用法 UMyObject* MyObj = NewObject&lt;UMyObject&gt;();MyObj.AddToRoot();SetOwner()用法 void AMyCharacter::BeginPlay(){Super::BeginPlay();ActorTest = NewObject&lt;AActor&gt;();ActorTest-&gt;SetOwner(this);}只要AMyCharacter没有销毁，那么ActorTest不会被垃圾回收。
+FStreamableManager 用法 FSoftObjectPath AssetPath(TEXT(&quot;/Game/Mannequin/Animations/ThirdPersonWalk.ThirdPersonWalk&quot;));FStreamableManager&amp; AssetLoader = UAssetManager::GetStreamableManager();//hold object in memory.TSharedPtr&lt;FStreamableHandle&gt; Handle = AssetLoader.RequestSyncLoad(AssetPath, true);UObject* Obj = Handle-&gt;GetLoadedAsset();//free memory of object.Handle-&gt;ReleaseHandle();FGCObjectScopeGuard 用法 {FGCObjectScopeGuard(UObject* GladOS = NewObject&lt;.">
 <meta name="twitter:description" content="keywords：UE4, Memory Persist, GC, 垃圾回收, 内存管理
 防止GC的办法 一个UObject类型的变量，即使是static，默认也会被GC掉。
- 要防止该对象被GC，有5种方式：
- 作为成员变量并标记为UPROPERTY()； 创建对象后 AddToRoot() ；（退出游戏时需要RemoveFromRoot()） 对目标设置一个有效的Owner：SetOwner()； FStreamableManager Load资源时，bManageActiveHandle 设置为true； FGCObjectScopeGuard 在指定代码区域内保持对象；  Uobject不能使用TSharedPtr进行引用计数，非UObject才可以；如果一个非UObject的类想加入GC，那么必须继承FGCObject类。
- UPROPERTY()用法 URPOPERTY()UObject* MyObj; AddToRoot()用法 UMyObject* MyObj = NewObject&lt;UMyObject&gt;();MyObj.AddToRoot(); SetOwner()用法 void AMyCharacter::BeginPlay(){Super::BeginPlay();ActorTest = NewObject&lt;AActor&gt;();ActorTest-&gt;SetOwner(this);} 只要AMyCharacter没有销毁，那么ActorTest不会被垃圾回收。
-FStreamableManager 用法 FSoftObjectPath AssetPath(TEXT(&quot;/Game/Mannequin/Animations/ThirdPersonWalk.ThirdPersonWalk&quot;));FStreamableManager&amp; AssetLoader = UAssetManager::GetStreamableManager();//hold object in memory.TSharedPtr&lt;FStreamableHandle&gt; Handle = AssetLoader.RequestSyncLoad(AssetPath, true);UObject* Obj = Handle-&gt;GetLoadedAsset();//free memory of object.">
+要防止该对象被GC，有5种方式：
+作为成员变量并标记为UPROPERTY()； 创建对象后 AddToRoot() ；（退出游戏时需要RemoveFromRoot()） 对目标设置一个有效的Owner：SetOwner()； FStreamableManager Load资源时，bManageActiveHandle 设置为true； FGCObjectScopeGuard 在指定代码区域内保持对象； Uobject不能使用TSharedPtr进行引用计数，非UObject才可以；如果一个非UObject的类想加入GC，那么必须继承FGCObject类。
+UPROPERTY()用法 URPOPERTY()UObject* MyObj;AddToRoot()用法 UMyObject* MyObj = NewObject&lt;UMyObject&gt;();MyObj.AddToRoot();SetOwner()用法 void AMyCharacter::BeginPlay(){Super::BeginPlay();ActorTest = NewObject&lt;AActor&gt;();ActorTest-&gt;SetOwner(this);}只要AMyCharacter没有销毁，那么ActorTest不会被垃圾回收。
+FStreamableManager 用法 FSoftObjectPath AssetPath(TEXT(&quot;/Game/Mannequin/Animations/ThirdPersonWalk.ThirdPersonWalk&quot;));FStreamableManager&amp; AssetLoader = UAssetManager::GetStreamableManager();//hold object in memory.TSharedPtr&lt;FStreamableHandle&gt; Handle = AssetLoader.RequestSyncLoad(AssetPath, true);UObject* Obj = Handle-&gt;GetLoadedAsset();//free memory of object.Handle-&gt;ReleaseHandle();FGCObjectScopeGuard 用法 {FGCObjectScopeGuard(UObject* GladOS = NewObject&lt;.">
 <meta property="og:locale" content="en-us">
 
   
@@ -105,7 +105,7 @@ FStreamableManager 用法 FSoftObjectPath AssetPath(TEXT(&quot;/Game/Mannequin/A
     
     
       
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/solarized-light.min.css">
+        <link rel="stylesheet" href="https://dawnarc.com/cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/styles/paraiso-light.min.css">
       
     
 
@@ -526,11 +526,11 @@ Handle-&gt;ReleaseHandle();
 </code></pre>
 <p>蓝图 第一时间 用一个变量 mBehavData 引用住，就可以防止这个对象被gc掉。切记第一时间。
 <figure><img src="https://dawnarc.com/img/20170426-[UE4]%e5%86%85%e5%ad%98%e7%ae%a1%e7%90%86%20%e2%80%93%20%e5%ae%9e%e8%b7%b5/[UE4]%e5%86%85%e5%ad%98%e7%ae%a1%e7%90%86%20%e2%80%93%20%e5%ae%9e%e8%b7%b5-01.jpg"/>
-</figure>
+    </figure>
 </p>
 <p>将蓝图中的变量 mBehavData 设为 null，则对象会被gc不定时回收掉 
 <figure><img src="https://dawnarc.com/img/20170426-[UE4]%e5%86%85%e5%ad%98%e7%ae%a1%e7%90%86%20%e2%80%93%20%e5%ae%9e%e8%b7%b5/[UE4]%e5%86%85%e5%ad%98%e7%ae%a1%e7%90%86%20%e2%80%93%20%e5%ae%9e%e8%b7%b5-02.jpg"/>
-</figure>
+    </figure>
 </p>
 </li>
 <li>
