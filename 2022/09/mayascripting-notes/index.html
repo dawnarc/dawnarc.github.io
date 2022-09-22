@@ -528,6 +528,53 @@ On task beginning:</p>
 </span></span><span style="display:flex;"><span>    drop_to_floor()
 </span></span></code></pre></div><p>Origin:<br>
 <a href="https://www.reddit.com/r/Maya/comments/m7tdzx/comment/grglstl/?utm_source=share&amp;utm_medium=web2x&amp;context=3">https://www.reddit.com/r/Maya/comments/m7tdzx/comment/grglstl/?utm_source=share&amp;utm_medium=web2x&amp;context=3</a></p>
+<h5 id="how-to-list-all-materials-used-in-scene">How to list all materials used in scene</h5>
+<p>CLI without graphics:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Python" data-lang="Python"><span style="display:flex;"><span><span style="color:#f92672">from</span> maya <span style="color:#f92672">import</span> cmds
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Doing it with purely cmds</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">get_materials_in_scene</span>():
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> shading_engine <span style="color:#f92672">in</span> cmds<span style="color:#f92672">.</span>ls(type<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;shadingEngine&#39;</span>):
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> cmds<span style="color:#f92672">.</span>sets(shading_engine, q<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>):
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">for</span> material <span style="color:#f92672">in</span> cmds<span style="color:#f92672">.</span>ls(cmds<span style="color:#f92672">.</span>listConnections(shading_engine), materials<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>):
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">yield</span> material
+</span></span></code></pre></div><p>Pymel version (GUI input bar):</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Python" data-lang="Python"><span style="display:flex;"><span><span style="color:#f92672">import</span> pymel.core <span style="color:#66d9ef">as</span> pm
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">get_materials_in_scene</span>():
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># No need to pass in a string to `type`, if you don&#39;t want to.</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> shading_engine <span style="color:#f92672">in</span> pm<span style="color:#f92672">.</span>ls(type<span style="color:#f92672">=</span>pm<span style="color:#f92672">.</span>nt<span style="color:#f92672">.</span>ShadingEngine):
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># ShadingEngines are collections, so you can check against their length</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> len(shading_engine):
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e"># You can call listConnections directly on the attribute you&#39;re looking for.</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">for</span> material <span style="color:#f92672">in</span> shading_engine<span style="color:#f92672">.</span>surfaceShader<span style="color:#f92672">.</span>listConnections():
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">yield</span> material
+</span></span></code></pre></div><p>One line code:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Python" data-lang="Python"><span style="display:flex;"><span><span style="color:#75715e"># And because it is stupid, here it is as a one liner</span>
+</span></span><span style="display:flex;"><span>sorted(set(cmds<span style="color:#f92672">.</span>ls([mat <span style="color:#66d9ef">for</span> item <span style="color:#f92672">in</span> cmds<span style="color:#f92672">.</span>ls(type<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;shadingEngine&#39;</span>) <span style="color:#66d9ef">for</span> mat <span style="color:#f92672">in</span> cmds<span style="color:#f92672">.</span>listConnections(item) <span style="color:#66d9ef">if</span> cmds<span style="color:#f92672">.</span>sets(item, q<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)], materials<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)))
+</span></span></code></pre></div><p>Origin:<br>
+<a href="https://discourse.techart.online/t/list-all-materials-used-in-scene/10185/4">https://discourse.techart.online/t/list-all-materials-used-in-scene/10185/4</a></p>
+<h3 id="issues">Issues</h3>
+<h5 id="cannot-find-procedure-internaltimeunitstringtodisplayfpsstring">Cannot find procedure &ldquo;internalTimeUnitStringToDisplayFPSString&rdquo;</h5>
+<p>Error on executing <code>cmds.file</code>, code:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Python" data-lang="Python"><span style="display:flex;"><span>new_nodes <span style="color:#f92672">=</span> cmds<span style="color:#f92672">.</span>file(<span style="color:#e6db74">&#39;D:/test01.fbx&#39;</span>, i<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>, rnn<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>, type<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;FBX&#34;</span>)
+</span></span></code></pre></div><p>Log:</p>
+<pre tabindex="0"><code>Warning: Frame rate mismatch:  The imported scene frame rate &#39;ntsc&#39; differs from the existing frame rate &#39;film&#39;.
+Imported animation keys may not match scene frames and become fractional.
+File read in  0.31 seconds.
+Error: line 1: Cannot find procedure &#34;internalTimeUnitStringToDisplayFPSString&#34;.
+</code></pre><p>Solution:<br>
+Use <code>o=True</code> instead of <code>i=True</code>.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Python" data-lang="Python"><span style="display:flex;"><span>new_nodes <span style="color:#f92672">=</span> cmds<span style="color:#f92672">.</span>file(<span style="color:#e6db74">&#39;D:/test01.fbx&#39;</span>, o<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>, rnn<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>, type<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;FBX&#34;</span>)
+</span></span></code></pre></div><h5 id="runtimeerror-unsaved-changes">RuntimeError: Unsaved changes.</h5>
+<p>Error on executing <code>cmds.file()</code>, code:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Python" data-lang="Python"><span style="display:flex;"><span>new_nodes <span style="color:#f92672">=</span> cmds<span style="color:#f92672">.</span>file(<span style="color:#e6db74">&#39;D:/test01.fbx&#39;</span>, o<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>, rnn<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>, type<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;FBX&#34;</span>)
+</span></span></code></pre></div><p>Log:</p>
+<pre tabindex="0"><code>RuntimeError: Unsaved changes.
+</code></pre><p>Solution:<br>
+Run <code>cmds.file(new=True, force=True)</code> before open new file.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Python" data-lang="Python"><span style="display:flex;"><span>cmds<span style="color:#f92672">.</span>file(new<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>, force<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)
+</span></span><span style="display:flex;"><span>new_nodes <span style="color:#f92672">=</span> cmds<span style="color:#f92672">.</span>file(<span style="color:#e6db74">&#39;D:/test01.fbx&#39;</span>, o<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>, rnn<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>, type<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;FBX&#34;</span>)
+</span></span></code></pre></div><p>Origin:<br>
+<a href="https://stackoverflow.com/a/43438675/1645289">https://stackoverflow.com/a/43438675/1645289</a></p>
 <h3 id="references">References</h3>
 <h5 id="blogs">Blogs</h5>
 <p>Python maya.cmds模塊代碼示例<br>
@@ -536,6 +583,8 @@ On task beginning:</p>
 <a href="https://gist.github.com/BigRoy">https://gist.github.com/BigRoy</a></p>
 <p>BATCHING ASSETS USING HEADLESS MAYA<br>
 <a href="https://www.simplygon.com/posts/81ddb551-d62e-4634-b02b-de1fb230a585">https://www.simplygon.com/posts/81ddb551-d62e-4634-b02b-de1fb230a585</a></p>
+<p>Roy Nieterau<br>
+<a href="https://gist.github.com/BigRoy">https://gist.github.com/BigRoy</a></p>
 <hr>
 <p><code>“Whatever is rejected from the self, appears in the world as an event.” ― Carl Gustav Jung</code></p>
               
@@ -721,8 +770,8 @@ On task beginning:</p>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
 
 	<link rel="stylesheet"
-      href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/solarized-light.min.css">
-	<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
+      href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/styles/school-book.min.css">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/highlight.min.js"></script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.7/js/jquery.fancybox.min.js" integrity="sha256-GEAnjcTqVP+vBp3SSc8bEDQqvWAZMiHyUSIorrWwH50=" crossorigin="anonymous"></script>
 
@@ -746,13 +795,9 @@ function updateMinWidth() {
 </script>
 
 <script>
-$(document).ready(function() {
-  hljs.configure({ classPrefix: '', useBR: false });
-  $('pre.code-highlight > code, pre > code').each(function(i, block) {
-    if (!$(this).hasClass('codeblock')) {
-      $(this).addClass('codeblock');
-    }
-    hljs.highlightBlock(block);
+document.addEventListener('DOMContentLoaded', (event) => {
+  document.querySelectorAll('pre code').forEach((el) => {
+    hljs.highlightElement(el);
   });
 });
 </script>

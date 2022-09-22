@@ -320,6 +320,70 @@
     
     <div class="postShorten-header">
       <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2016/10/ue4hud%E7%9A%84canvas%E5%8F%98%E9%87%8F%E4%B8%BAnull%E7%9A%84%E9%97%AE%E9%A2%98/">
+          [UE4]HUD的Canvas变量为NULL的问题
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2016-10-24T23:06:40&#43;08:00">
+        
+  
+  
+  
+  
+    Monday, 23:06, Oct 24, 2016
+  
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        AHUD中的成员变量Canvas只在PostRender()事件中有效，离开此函数后就会被引擎置空。 要想使用HUD的Canvas，必须重写HUD的两个函数之一：
+/** PostRender is the main draw loop. */virtual void PostRenderFor();/** The Main Draw loop for the hud. Gets called before any messaging. Should be subclassed */virtual void DrawHUD();其中DrawHUD为HUD独有的函数，而PostRender是所有Actor都有函数。 另外注意：PostRenderFor()不是重写了就会触发，还需要执行AHUD::AddPostRenderedActor()，将需要触发的Actor加入PostRenderActors数组中。
+Canvas的引擎源码注释：
+protected:/** Canvas to Draw HUD on. Only valid during PostRender() event. */UPROPERTY()UCanvas* Canvas;
+      
+      <p>
+        <a href="https://dawnarc.com/2016/10/ue4hud%E7%9A%84canvas%E5%8F%98%E9%87%8F%E4%B8%BAnull%E7%9A%84%E9%97%AE%E9%A2%98/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
         <a class="link-unstyled" href="https://dawnarc.com/2016/10/ue4tmap%E4%BD%BF%E7%94%A8struct%E5%BD%93%E4%BD%9Ckey%E6%97%B6%E9%9C%80%E8%A6%81%E9%87%8D%E8%BD%BD%E7%9A%84%E6%93%8D%E4%BD%9C%E7%AC%A6/">
           [UE4]TMap使用Struct当作key时需要重载的操作符
         </a>
@@ -1194,72 +1258,6 @@ UCLASS()class TOWERDEFENSE_API UAnimNotify_Test : public UAnimNotify{GENERATE
 </article>
 
             
-              
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2016/10/ue4%E7%B2%92%E5%AD%90%E7%89%B9%E6%95%88%E7%A2%B0%E6%92%9E%E5%9C%B0%E9%9D%A2%E6%97%A0%E6%B3%95%E8%A7%A6%E5%8F%91%E7%A2%B0%E6%92%9E%E4%BA%8B%E4%BB%B6%E7%9A%84%E9%97%AE%E9%A2%98/">
-          [UE4]粒子特效碰撞地面无法触发碰撞事件的问题
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2016-10-09T01:22:40&#43;08:00">
-        
-  
-  
-  
-  
-    Sunday, 01:22, Oct 9, 2016
-  
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        Keyword：UE4、Particle、Emitter、Collision、Hit、Event、Floor
-问题表现：粒子特效中有个事件类型为collision的Event Generator
-但是当粒子发生碰撞时（比如撞击地面时），并没有触发此Event。原因可能如下：
-1， 碰撞的物体没有设置为static 2， 碰撞方式没有设置default或者BlockAll 3， 如果是4.15之前的版本，修改Config/DefaultEngine.ini中[/Script/Engine.Engine]节点下的参数bUseFixedFrameRate设置为true，删掉这个参数或者设为false即可：
-bUseFixedFrameRate=True
-这是UE4的一个bug，在4.15版本修复了：https://issues.unrealengine.com/issue/UE-37210
-      
-      <p>
-        <a href="https://dawnarc.com/2016/10/ue4%E7%B2%92%E5%AD%90%E7%89%B9%E6%95%88%E7%A2%B0%E6%92%9E%E5%9C%B0%E9%9D%A2%E6%97%A0%E6%B3%95%E8%A7%A6%E5%8F%91%E7%A2%B0%E6%92%9E%E4%BA%8B%E4%BB%B6%E7%9A%84%E9%97%AE%E9%A2%98/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-            
             
   <div class="pagination-bar">
     <ul class="pagination">
@@ -1341,8 +1339,8 @@ bUseFixedFrameRate=True
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
 
 	<link rel="stylesheet"
-      href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/solarized-light.min.css">
-	<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
+      href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/styles/school-book.min.css">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/highlight.min.js"></script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.7/js/jquery.fancybox.min.js" integrity="sha256-GEAnjcTqVP+vBp3SSc8bEDQqvWAZMiHyUSIorrWwH50=" crossorigin="anonymous"></script>
 
@@ -1366,13 +1364,9 @@ function updateMinWidth() {
 </script>
 
 <script>
-$(document).ready(function() {
-  hljs.configure({ classPrefix: '', useBR: false });
-  $('pre.code-highlight > code, pre > code').each(function(i, block) {
-    if (!$(this).hasClass('codeblock')) {
-      $(this).addClass('codeblock');
-    }
-    hljs.highlightBlock(block);
+document.addEventListener('DOMContentLoaded', (event) => {
+  document.querySelectorAll('pre code').forEach((el) => {
+    hljs.highlightElement(el);
   });
 });
 </script>
