@@ -418,9 +418,9 @@
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">return</span> foo
 </span></span></code></pre></div><p>main.cpp</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;lauxlib.h&gt;</span><span style="color:#75715e">
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;lua.h&gt;</span><span style="color:#75715e">
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;lualib.h&gt;</span><span style="color:#75715e">
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">#pragma once
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;lua.hpp&gt;</span><span style="color:#75715e">
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;stdio.h&gt;</span><span style="color:#75715e">
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;stdlib.h&gt;</span><span style="color:#75715e">
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
@@ -444,6 +444,30 @@
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>Origin:<br>
 <a href="https://stackoverflow.com/questions/55062121/how-can-i-call-lua-scripts-from-a-c-program">https://stackoverflow.com/questions/55062121/how-can-i-call-lua-scripts-from-a-c-program</a></p>
+<h3 id="issues">Issues</h3>
+<h5 id="lnk2019-unresolved-external-symbol-lual_newstate">LNK2019: unresolved external symbol luaL_newstate</h5>
+<p>Error on building:</p>
+<pre tabindex="0"><code class="language-Log" data-lang="Log">error LNK2019: unresolved external symbol &#34;void __cdecl lua_close(struct lua_State *)&#34; (?lua_close@@YAXPEAUlua_State@@@Z) referenced in function main
+error LNK2019: unresolved external symbol &#34;char const * __cdecl lua_tolstring(struct lua_State *,int,unsigned __int64 *)&#34; (?lua_tolstring@@YAPEBDPEAUlua_State@@HPEA_K@Z) referenced in function main
+error LNK2019: unresolved external symbol &#34;int __cdecl lua_pcallk(struct lua_State *,int,int,int,__int64,int (__cdecl*)(struct lua_State *,int,__int64))&#34; (?lua_pcallk@@YAHPEAUlua_State@@HHH_JP6AH0H1@Z@Z) referenced in function main
+error LNK2019: unresolved external symbol &#34;int __cdecl luaL_loadfilex(struct lua_State *,char const *,char const *)&#34; (?luaL_loadfilex@@YAHPEAUlua_State@@PEBD1@Z) referenced in function main
+error LNK2019: unresolved external symbol &#34;struct lua_State * __cdecl luaL_newstate(void)&#34; (?luaL_newstate@@YAPEAUlua_State@@XZ) referenced in function main
+error LNK2019: unresolved external symbol &#34;void __cdecl luaL_openlibs(struct lua_State *)&#34; (?luaL_openlibs@@YAXPEAUlua_State@@@Z) referenced in function main
+</code></pre><p>Solution:</p>
+<p>You have choices:<br>
+Change the file extension of this file to .c instead of .cpp, so that it runs through the C compiler instead of the C++ compiler (caveat: depending on compiler)</p>
+<p>or<br>
+Add extern &ldquo;C&rdquo; around the includes like this:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C" data-lang="C"><span style="display:flex;"><span><span style="color:#66d9ef">extern</span> <span style="color:#e6db74">&#34;C&#34;</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;lua.h&#34;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;lauxlib.h&#34;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;lualib.h&#34;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span></code></pre></div><p>or</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;lua.hpp&#34;</span><span style="color:#75715e">
+</span></span></span></code></pre></div><p>Origin:<br>
+<a href="https://stackoverflow.com/a/23030232/1645289">https://stackoverflow.com/a/23030232/1645289</a></p>
 <hr>
 <p><code>“Every form of addiction is bad, no matter whether the narcotic be alcohol, morphine or idealism.” ― Carl Gustav Jung</code></p>
               

@@ -4062,11 +4062,11 @@ https://stackoverflow.com/questions/7505988/importing-from-a-relative-path-in-py
       <pubDate>Wed, 31 Jan 2018 15:29:40 +0800</pubDate>
       
       <guid>https://dawnarc.com/2018/01/hugo%E9%9B%86%E6%88%90highlight.js/</guid>
-      <description>方式一：修改config.toml（推荐） 在config.toml中开启highlight.js
-[params]syntaxHighlighter = &amp;quot;highlight.js&amp;quot;customCSS = [&amp;quot;https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/solarized-light.min.css&amp;quot;]其中customCSS指定的是highlight的style名称，如果不设置，则会使用highlight.js的默认style。
-这种方式需要hugo的theme提供highlight.js支持，hugo默认theme不支持这种方式。已知的支持highlight.js的hugo theme：https://github.com/kakawait/hugo-tranquilpeak-theme
-方式二：修改header.html 在theme的./layouts/partials或者./layouts/chrome/目录下，找到header.html、或者header.includes.html或者script.html等文件，在&amp;lt;header&amp;gt;标签内添加cdn地址：
-&amp;lt;link rel=&amp;quot;stylesheet&amp;quot;href=&amp;quot;//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css&amp;quot;&amp;gt;&amp;lt;script src=&amp;quot;//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js&amp;quot;&amp;gt;&amp;lt;/script&amp;gt;&amp;lt;script&amp;gt;hljs.initHighlightingOnLoad();&amp;lt;/script&amp;gt;highlight.js的最新cdn地址获取
+      <description>步骤 1, 修改config.toml
+在config.toml中添加自定义参数：
+[params]syntaxHighlighter = &amp;#34;highlight.js&amp;#34; 2, 修改header.html
+在theme的./layouts/partials或者./layouts/chrome/目录下，找到header.html、或者header.includes.html或者script.html等文件，在&amp;lt;header&amp;gt;标签内添加cdn地址：
+{{ if eq .Site.Params.syntaxHighlighter &amp;#34;highlight.js&amp;#34; }} &amp;lt;link rel=&amp;#34;stylesheet&amp;#34; href=&amp;#34;//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css&amp;#34;&amp;gt; &amp;lt;script src=&amp;#34;//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js&amp;#34;&amp;gt;&amp;lt;/script&amp;gt; &amp;lt;script&amp;gt;hljs.initHighlightingOnLoad();&amp;lt;/script&amp;gt; &amp;lt;script&amp;gt; document.addEventListener(&amp;#39;DOMContentLoaded&amp;#39;, (event) =&amp;gt; { document.querySelectorAll(&amp;#39;pre code&amp;#39;).forEach((el) =&amp;gt; { hljs.highlightElement(el); }); }); &amp;lt;/script&amp;gt; {{ end }} highlight.js的最新cdn地址获取
 https://highlightjs.org/download/
 如果要修改style，直接修改default.min.css的名字，比如想使用vs风格，那么就将
 href=&amp;quot;//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css&amp;quot;修改为
@@ -4657,14 +4657,12 @@ Blender FBX OBJ 导入游戏引擎 UE4 UE4导入资源的面板参数中，Norma
     </item>
     
     <item>
-      <title>[Maya]Hypershade编辑</title>
-      <link>https://dawnarc.com/2017/11/mayahypershade%E7%BC%96%E8%BE%91/</link>
+      <title>[Maya]Material Notes</title>
+      <link>https://dawnarc.com/2017/11/mayamaterial-notes/</link>
       <pubDate>Thu, 16 Nov 2017 15:45:40 +0800</pubDate>
       
-      <guid>https://dawnarc.com/2017/11/mayahypershade%E7%BC%96%E8%BE%91/</guid>
-      <description>Maya版本为2018
-Hypershade是Maya中编辑shader材质的工具，比如制作ID贴图时会用到Hypershader。
-打开Hypershade窗口 点击Windows -》 Rendering Editors -》 Hypershade。设置shader材质 首次打开后，默认只有3种材质(Material) 编辑Shader材质 要创建自定义颜色的材质，先在Create面板中找到需要的材质模板，单击一下即可在Material栏中创建一个。这里我们使用Lambert这种默认材质。 选中材质后，再在中间的材质编辑栏中选中主体属性框 然后再在右边的Property Editor中单击Color属性，打开取色器。 然后选择需要的颜色。这里择取红色 然后就可以将自定义材质设置为指定的颜色。 用途：给模型着色 在模型中选中需要上色的面 然后再在材质栏中右键单击需要上色的材质 -》 Assign Material To Selection。 这样选中的面就会被涂上指定的颜色材质。 人之有德于我也，不可忘也；吾有德于人也，不可不忘也。---《战国策》</description>
+      <guid>https://dawnarc.com/2017/11/mayamaterial-notes/</guid>
+      <description>&lt;p&gt;Maya版本为2018。 Material Notes&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -6657,7 +6655,7 @@ hugo new 章节名称/文章名称.md2，生成HTML、js等静态web文件：
 hugo -v这里-v是&amp;ndash;verbose的缩写，只是打印信息。
 注意，文章有个属性draft=true，表示当前文章为草稿，默认构建是不会为草稿生成html文件发的。如果生成时希望把草稿也生成出来，需要使用参数：&amp;ndash;buildDrafts，例如：
 hugo --buildDrafts3，启动http服务器（测试用），3中方式：
-hugo serverhugo server --buildDraftshugo server --theme=hugo_theme_robust --buildDrafts或者执行完第2步之后，将publish目录下的所有文件拷贝到web服务器的相应目录下，比如nginx/html/</description>
+hugo serverhugo server --buildDraftshugo server --theme=hugo_theme_robust --buildDrafts或者执行完第2步之后，将publish目录下的所有文件拷贝到web服务器的相应目录下，比如nginx/html/，或者github pages。</description>
     </item>
     
     <item>
@@ -6763,16 +6761,12 @@ Fatal error: [File:D:\Build\++UE4+Release-4.13+Compile\Sync\Engine\Source\Runtim
     </item>
     
     <item>
-      <title>[UE4][C&#43;&#43;]隐藏物体的时候如何将其所有子对象也隐藏</title>
-      <link>https://dawnarc.com/2016/10/ue4c-%E9%9A%90%E8%97%8F%E7%89%A9%E4%BD%93%E7%9A%84%E6%97%B6%E5%80%99%E5%A6%82%E4%BD%95%E5%B0%86%E5%85%B6%E6%89%80%E6%9C%89%E5%AD%90%E5%AF%B9%E8%B1%A1%E4%B9%9F%E9%9A%90%E8%97%8F/</link>
+      <title>[UE4]Hide Actor at Runtime</title>
+      <link>https://dawnarc.com/2016/10/ue4hide-actor-at-runtime/</link>
       <pubDate>Tue, 25 Oct 2016 23:25:40 +0800</pubDate>
       
-      <guid>https://dawnarc.com/2016/10/ue4c-%E9%9A%90%E8%97%8F%E7%89%A9%E4%BD%93%E7%9A%84%E6%97%B6%E5%80%99%E5%A6%82%E4%BD%95%E5%B0%86%E5%85%B6%E6%89%80%E6%9C%89%E5%AD%90%E5%AF%B9%E8%B1%A1%E4%B9%9F%E9%9A%90%E8%97%8F/</guid>
-      <description>keywords: SetActorHiddenInGame、Children、Child、Batch
-设置MeshComponent的ToggleVisibility为true，默认为false。这样每当设置当前Actor的visibility的时候，附加在其上的所有child也都会同时显示或隐藏。
-Actor-&amp;gt;GetStaticMeshComponent()-&amp;gt;ToggleVisibility(true);完整示例：
-MeshActor-&amp;gt;SetActorHiddenInGame(true);MeshActor-&amp;gt;GetStaticMeshComponent()-&amp;gt;ToggleVisibility(true);注意： 隐藏子对象只对附加在其上（执行过AttachTo）的子对象有效。另外在编辑器中对某对象右键-》AttachTo或者直接拖拽到某个对象下，这样的子对象也是受ToggleVisibility影响的。
-MeshComponent中类似函数还有ToggleActive()</description>
+      <guid>https://dawnarc.com/2016/10/ue4hide-actor-at-runtime/</guid>
+      <description>&lt;p&gt;keyword: UE4, SetActorHiddenInGame, Children, Child, Batch, hide Actor at runtime&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -6944,18 +6938,6 @@ Definitions.Add(&amp;quot;_GLIBCXX_PERMIT_BACKWARD_HASH&amp;quot;);</descriptio
 解决办法：
 UParticleSystemComponent::bAbsoluteScale = true;例子：
 UParticleSystemComponent* PSC = UGameplayStatics::SpawnEmitterAttached(ParticleTemplate, Unit-&amp;gt;GetMesh());PSC-&amp;gt;SetAbsolute(false, false, true); </description>
-    </item>
-    
-    <item>
-      <title>[UE4]如何隐藏Actor</title>
-      <link>https://dawnarc.com/2016/10/ue4%E5%A6%82%E4%BD%95%E9%9A%90%E8%97%8Factor/</link>
-      <pubDate>Wed, 12 Oct 2016 20:21:40 +0800</pubDate>
-      
-      <guid>https://dawnarc.com/2016/10/ue4%E5%A6%82%E4%BD%95%E9%9A%90%E8%97%8Factor/</guid>
-      <description>三种方式：
-1，MyActor-&amp;gt;bHidden = true;
-2, MyActor-&amp;gt;GetMesh()-&amp;gt;SetVisibility(false);
-3，MyActor-&amp;gt;SetActorHiddenInGame(true);</description>
     </item>
     
     <item>

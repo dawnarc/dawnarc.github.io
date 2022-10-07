@@ -352,11 +352,11 @@
     </div>
     <div class="postShorten-excerpt" itemprop="articleBody">
       
-        方式一：修改config.toml（推荐） 在config.toml中开启highlight.js
-[params]syntaxHighlighter = &quot;highlight.js&quot;customCSS = [&quot;https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/solarized-light.min.css&quot;]其中customCSS指定的是highlight的style名称，如果不设置，则会使用highlight.js的默认style。
-这种方式需要hugo的theme提供highlight.js支持，hugo默认theme不支持这种方式。已知的支持highlight.js的hugo theme：https://github.com/kakawait/hugo-tranquilpeak-theme
-方式二：修改header.html 在theme的./layouts/partials或者./layouts/chrome/目录下，找到header.html、或者header.includes.html或者script.html等文件，在&lt;header&gt;标签内添加cdn地址：
-&lt;link rel=&quot;stylesheet&quot;href=&quot;//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css&quot;&gt;&lt;script src=&quot;//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js&quot;&gt;&lt;/script&gt;&lt;script&gt;hljs.initHighlightingOnLoad();&lt;/script&gt;highlight.js的最新cdn地址获取
+        步骤 1, 修改config.toml
+在config.toml中添加自定义参数：
+[params]syntaxHighlighter = &#34;highlight.js&#34; 2, 修改header.html
+在theme的./layouts/partials或者./layouts/chrome/目录下，找到header.html、或者header.includes.html或者script.html等文件，在&lt;header&gt;标签内添加cdn地址：
+{{ if eq .Site.Params.syntaxHighlighter &#34;highlight.js&#34; }} &lt;link rel=&#34;stylesheet&#34; href=&#34;//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css&#34;&gt; &lt;script src=&#34;//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js&#34;&gt;&lt;/script&gt; &lt;script&gt;hljs.initHighlightingOnLoad();&lt;/script&gt; &lt;script&gt; document.addEventListener(&#39;DOMContentLoaded&#39;, (event) =&gt; { document.querySelectorAll(&#39;pre code&#39;).forEach((el) =&gt; { hljs.highlightElement(el); }); }); &lt;/script&gt; {{ end }} highlight.js的最新cdn地址获取
 https://highlightjs.org/download/
 如果要修改style，直接修改default.min.css的名字，比如想使用vs风格，那么就将
 href=&quot;//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css&quot;修改为
