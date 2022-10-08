@@ -508,7 +508,7 @@ DFAO相关的两个优化选项：</p>
 </ul>
 </li>
 <li>
-<p>如果场景中有大量点光源和聚光灯且都是动态的，此时通过<code>Distance Field</code>动态地对LightComponet执行<code>SetVisibility</code>和<code>SetHiddenInGame</code>，那么性能可提高30%到60%。这个结论是基于对官方商城一款付费插件 <a href="https://devblogs.microsoft.com/cppblog">Dynamic Lighting Portal System (Performance Booster)</a> 的源码研读。引擎本身有对灯光<code>Occlusion Culling</code>，至于为什么<code>SetVisibility</code>和<code>SetHiddenInGame</code>之后还能有这么大性能提升，估计需要仔细研究UE4渲染相关代码，个人不成熟的推测：以deferred shading为例，每个光源的在image space处理像素时，即使某个光源没有对当前像素产生明显影响，但是对应的计算过程仍然执行了，可能渲染层并没有因上层应用是游戏项目还是影视动画渲染而去做专门优化，而这个插件通过将灯光隐藏并禁用后，那么在处理各个像素光照信息时，这些光源的计算逻辑直接跳过了，所以可以大幅提升性能。</p>
+<p>如果场景中有大量点光源和聚光灯且都是动态的，此时通过<code>Distance Field</code>动态地对LightComponet执行<code>SetVisibility</code>和<code>SetHiddenInGame</code>，那么性能可提高30%到60%。这个结论是基于对官方商城一款付费插件 <a href="https://devblogs.microsoft.com/cppblog">Dynamic Lighting Portal System (Performance Booster)</a> 的源码研读。引擎本身有对灯光<code>Occlusion Culling</code>，至于为什么<code>SetVisibility</code>和<code>SetHiddenInGame</code>之后还能有这么大性能提升，估计需要仔细研究UE4渲染相关代码，个人不成熟的推测：以deferred shading为例，每个光源在image space处理像素时，即使某个光源没有对当前像素产生明显影响，但是对应的计算过程仍然执行了，可能渲染层并没有因上层应用是游戏项目还是影视动画渲染而去做专门优化，而这个插件通过将灯光隐藏并禁用后，那么在处理各个像素光照信息时，这些光源的计算逻辑直接跳过了，所以可以大幅提升性能。</p>
 </li>
 </ol>
 <h5 id="阴影优化">阴影优化</h5>
@@ -549,6 +549,9 @@ Dynamic Shadow Distance 表示在多少距离内使用动态阴影，超过这�
 </li>
 <li>
 <p>场景中的材质种类要提前规划好，拼场景时只在规划好的材质中选择。如果同屏的材质种类较多，会增加draw call。特别是场景美术用网上素材东拼西凑，很容易导致材质种类数量急剧上涨。</p>
+</li>
+<li>
+<p>一般针对材质的优化方式是，抓帧查看shader instruction count，但这种毕竟需要手工操作，时间、人力成本大。引擎提供了工具函数<code>FMaterialStatistics Stats = UMaterialEditingLibrary::GetStatistics(_YourMaterialInterfaceObject_);</code>，自己写个插件，批量导出所有材质的最贵指令数量，并支持排序，一劳永逸。</p>
 </li>
 </ol>
 <p>Performance Guidelines for Artists and Designers<br>
