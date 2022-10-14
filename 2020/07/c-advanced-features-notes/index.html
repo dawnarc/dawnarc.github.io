@@ -431,6 +431,25 @@ In what ways do C++ exceptions slow down code when there are no exceptions thown
 <h5 id="newstdnothrow">new(std::nothrow)</h5>
 <p>std::nothrow<br>
 <a href="https://en.cppreference.com/w/cpp/memory/new/nothrow">https://en.cppreference.com/w/cpp/memory/new/nothrow</a></p>
+<h5 id="lock_guard-raii">lock_guard (RAII)</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>std<span style="color:#f92672">::</span>mutex m;
+</span></span><span style="display:flex;"><span> 
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">bad</span>() 
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    m.lock();                    <span style="color:#75715e">// acquire the mutex
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    f();                         <span style="color:#75715e">// if f() throws an exception, the mutex is never released
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span>(<span style="color:#f92672">!</span>everything_ok()) <span style="color:#66d9ef">return</span>; <span style="color:#75715e">// early return, the mutex is never released
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    m.unlock();                  <span style="color:#75715e">// if bad() reaches this statement, the mutex is released
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span><span style="display:flex;"><span> 
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">good</span>()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    std<span style="color:#f92672">::</span>lock_guard<span style="color:#f92672">&lt;</span>std<span style="color:#f92672">::</span>mutex<span style="color:#f92672">&gt;</span> lk(m); <span style="color:#75715e">// RAII class: mutex acquisition is initialization
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    f();                               <span style="color:#75715e">// if f() throws an exception, the mutex is released
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span>(<span style="color:#f92672">!</span>everything_ok()) <span style="color:#66d9ef">return</span>;       <span style="color:#75715e">// early return, the mutex is released
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span></code></pre></div><p>Origin:<br>
+<a href="https://en.cppreference.com/w/cpp/language/raii">https://en.cppreference.com/w/cpp/language/raii</a></p>
 <h3 id="lambda">Lambda</h3>
 <h5 id="memory-leak">Memory leak</h5>
 <p>Lambda + shared_ptr&lt;&gt; = memory leak<br>
@@ -440,24 +459,22 @@ In what ways do C++ exceptions slow down code when there are no exceptions thown
 <a href="https://stackoverflow.com/questions/33575563/c-lambda-capture-this-vs-capture-by-reference">https://stackoverflow.com/questions/33575563/c-lambda-capture-this-vs-capture-by-reference</a></p>
 <h5 id="-vs-"><code>=</code> VS <code>&amp;</code></h5>
 <p>Quick example</p>
-<pre><code>int x = 1;
-auto valueLambda = [=]() 
-{
-    cout &lt;&lt; x &lt;&lt; endl;
-};
-auto refLambda = [&amp;]() 
-{
-    cout &lt;&lt; x &lt;&lt; endl;
-};
-x = 13;
-valueLambda();
-refLambda();
-</code></pre>
-<p>This code will print</p>
-<pre><code>1
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">int</span> x <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">auto</span> valueLambda <span style="color:#f92672">=</span> [<span style="color:#f92672">=</span>]() 
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    cout <span style="color:#f92672">&lt;&lt;</span> x <span style="color:#f92672">&lt;&lt;</span> endl;
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">auto</span> refLambda <span style="color:#f92672">=</span> [<span style="color:#f92672">&amp;</span>]() 
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    cout <span style="color:#f92672">&lt;&lt;</span> x <span style="color:#f92672">&lt;&lt;</span> endl;
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>x <span style="color:#f92672">=</span> <span style="color:#ae81ff">13</span>;
+</span></span><span style="display:flex;"><span>valueLambda();
+</span></span><span style="display:flex;"><span>refLambda();
+</span></span></code></pre></div><p>Output:</p>
+<pre tabindex="0"><code class="language-Log" data-lang="Log">1
 13
-</code></pre>
-<p>Is there any difference betwen [=] and [&amp;] in lambda functions?<br>
+</code></pre><p>Is there any difference betwen [=] and [&amp;] in lambda functions?<br>
 <a href="https://stackoverflow.com/a/21105182/1645289">https://stackoverflow.com/a/21105182/1645289</a></p>
 <h5 id="weak_ptr">weak_ptr</h5>
 <p>Binding to a weak_ptr<br>
