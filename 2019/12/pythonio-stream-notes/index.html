@@ -13,18 +13,18 @@
 <meta name="generator" content="Hugo 0.102.3 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Wang Aiguo">
 <meta name="keywords" content="Python, read, write, IO">
-<meta name="description" content="keywords: Python, How to read and write unicode (UTF-8) files">
+<meta name="description" content="keywords: Python, IO Stream Notes">
 
 
-<meta property="og:description" content="keywords: Python, How to read and write unicode (UTF-8) files">
+<meta property="og:description" content="keywords: Python, IO Stream Notes">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[Python]IO Stream Notes">
 <meta name="twitter:title" content="[Python]IO Stream Notes">
 <meta property="og:url" content="https://dawnarc.com/2019/12/pythonio-stream-notes/">
 <meta property="twitter:url" content="https://dawnarc.com/2019/12/pythonio-stream-notes/">
 <meta property="og:site_name" content="玄冬Wong">
-<meta property="og:description" content="keywords: Python, How to read and write unicode (UTF-8) files">
-<meta name="twitter:description" content="keywords: Python, How to read and write unicode (UTF-8) files">
+<meta property="og:description" content="keywords: Python, IO Stream Notes">
+<meta name="twitter:description" content="keywords: Python, IO Stream Notes">
 <meta property="og:locale" content="en-us">
 
   
@@ -363,7 +363,7 @@
                 <script>
                      (adsbygoogle = window.adsbygoogle || []).push({});
                 </script>
-              <p>keywords: Python, How to read and write unicode (UTF-8) files</p>
+              <p>keywords: Python, IO Stream Notes</p>
 <h5 id="how-to-read-and-write-unicode-utf-8-files">How to read and write unicode (UTF-8) files</h5>
 <p>source:</p>
 <pre><code>import io
@@ -436,39 +436,49 @@ shutil.rmtree('/folder_name', ignore_errors=True)
 <a href="https://stackoverflow.com/questions/303200/how-do-i-remove-delete-a-folder-that-is-not-empty">https://stackoverflow.com/questions/303200/how-do-i-remove-delete-a-folder-that-is-not-empty</a></p>
 <h5 id="list-files-in-directory-recursively">List files in directory recursively</h5>
 <p>Recursive sub folder search and return files in a list (since Python 3.5):</p>
-<pre><code>import glob
-
-# my_path/     the dir
-# **/       every file and dir under my_path
-# *.txt     every file that ends with '.txt'
-files = glob.glob(my_path + '/**/*.txt', recursive=True)
-
-for file in glob.iglob(my_path, recursive=False):
-# ...
-</code></pre>
-<p>Reference:<br>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Python" data-lang="Python"><span style="display:flex;"><span><span style="color:#f92672">import</span> glob
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># my_path/     the dir</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># **/       every file and dir under my_path</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># *.txt     every file that ends with &#39;.txt&#39;</span>
+</span></span><span style="display:flex;"><span>files <span style="color:#f92672">=</span> glob<span style="color:#f92672">.</span>glob(my_path <span style="color:#f92672">+</span> <span style="color:#e6db74">&#39;/**/*.txt&#39;</span>, recursive<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> file <span style="color:#f92672">in</span> glob<span style="color:#f92672">.</span>iglob(my_path, recursive<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>):
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># ...</span>
+</span></span></code></pre></div><p>Reference:<br>
 <a href="https://stackoverflow.com/a/40755802/1645289">https://stackoverflow.com/a/40755802/1645289</a></p>
+<h5 id="check-if-path-is-file-or-directory">Check if path is file or directory</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Python" data-lang="Python"><span style="display:flex;"><span>fpath <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;D:/workspace/python/&#39;</span>
+</span></span><span style="display:flex;"><span>isFile <span style="color:#f92672">=</span> os<span style="color:#f92672">.</span>path<span style="color:#f92672">.</span>isfile(fpath)
+</span></span><span style="display:flex;"><span>isDirectory <span style="color:#f92672">=</span> os<span style="color:#f92672">.</span>path<span style="color:#f92672">.</span>isdir(fpath)
+</span></span></code></pre></div><h5 id="get-file-size">Get file size</h5>
+<pre tabindex="0"><code>&gt;&gt;&gt; import os
+&gt;&gt;&gt; os.path.getsize(&#34;/path/to/file.mp3&#34;)
+2071611
+</code></pre><p>or:</p>
+<pre tabindex="0"><code>os.stat(filename).st_size
+</code></pre><p>Origin:<br>
+<a href="https://stackoverflow.com/a/2104083/1645289">https://stackoverflow.com/a/2104083/1645289</a></p>
 <h5 id="list-files-and-directories-in-a-specific-directory">List files and directories in a specific directory</h5>
-<pre><code>import os
-
-drc = 'D:/workspace/python_dev'
-
-for dirpath, dirname, filename in os.walk(drc):#Getting a list of the full paths of files
-    print(dirpath)
-    
-print('++++++++++++++++')
-
-for dirpath, dirname, filename in os.walk(drc):
-    for fname in dirname:
-        print(fname)
-    
-print('++++++++++++++++')
-    
-for dirpath, dirname, filename in os.walk(drc):
-    for fname in filename:
-        print(fname)
-</code></pre>
-<p>Output:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Python" data-lang="Python"><span style="display:flex;"><span><span style="color:#f92672">import</span> os
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>drc <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;D:/workspace/python_dev&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> dirpath, dirname, filename <span style="color:#f92672">in</span> os<span style="color:#f92672">.</span>walk(drc):<span style="color:#75715e">#Getting a list of the full paths of files</span>
+</span></span><span style="display:flex;"><span>    print(dirpath)
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>print(<span style="color:#e6db74">&#39;++++++++++++++++&#39;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> dirpath, dirname, filename <span style="color:#f92672">in</span> os<span style="color:#f92672">.</span>walk(drc):
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> fname <span style="color:#f92672">in</span> dirname:
+</span></span><span style="display:flex;"><span>        print(fname)
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>print(<span style="color:#e6db74">&#39;++++++++++++++++&#39;</span>)
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> dirpath, dirname, filename <span style="color:#f92672">in</span> os<span style="color:#f92672">.</span>walk(drc):
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> fname <span style="color:#f92672">in</span> filename:
+</span></span><span style="display:flex;"><span>        print(fname)
+</span></span></code></pre></div><p>Output:</p>
 <pre><code>D:/workspace/python_dev
 D:/workspace/python_dev\a
 D:/workspace/python_dev\a\b
@@ -488,48 +498,46 @@ batch_replace_string.py
 </code></pre>
 <h5 id="how-to-read-a-file-without-newlines">How to read a file without newlines</h5>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Python" data-lang="Python"><span style="display:flex;"><span><span style="color:#66d9ef">with</span> open(filename, <span style="color:#e6db74">&#39;r&#39;</span>) <span style="color:#66d9ef">as</span> fileobj:
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> row <span style="color:#f92672">in</span> fileobj:
-</span></span><span style="display:flex;"><span>            print(row<span style="color:#f92672">.</span>rstrip(<span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#39;</span>))
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> row <span style="color:#f92672">in</span> fileobj:
+</span></span><span style="display:flex;"><span>        print(row<span style="color:#f92672">.</span>rstrip(<span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#39;</span>))
 </span></span></code></pre></div><h5 id="replace-multiple-words-in-a-file">Replace multiple words in a file</h5>
-<pre><code>checkWords = (&quot;old_text1&quot;,&quot;old_text2&quot;,&quot;old_text3&quot;,&quot;old_text4&quot;)
-repWords = (&quot;new_text1&quot;,&quot;new_text2&quot;,&quot;new_text3&quot;,&quot;new_text4&quot;)
-
-for line in f1:
-    for check, rep in zip(checkWords, repWords):
-        line = line.replace(check, rep)
-    f2.write(line)
-f1.close()
-f2.close()
-</code></pre>
-<p>Reference:<br>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Python" data-lang="Python"><span style="display:flex;"><span>checkWords <span style="color:#f92672">=</span> (<span style="color:#e6db74">&#34;old_text1&#34;</span>,<span style="color:#e6db74">&#34;old_text2&#34;</span>,<span style="color:#e6db74">&#34;old_text3&#34;</span>,<span style="color:#e6db74">&#34;old_text4&#34;</span>)
+</span></span><span style="display:flex;"><span>repWords <span style="color:#f92672">=</span> (<span style="color:#e6db74">&#34;new_text1&#34;</span>,<span style="color:#e6db74">&#34;new_text2&#34;</span>,<span style="color:#e6db74">&#34;new_text3&#34;</span>,<span style="color:#e6db74">&#34;new_text4&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> line <span style="color:#f92672">in</span> f1:
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> check, rep <span style="color:#f92672">in</span> zip(checkWords, repWords):
+</span></span><span style="display:flex;"><span>        line <span style="color:#f92672">=</span> line<span style="color:#f92672">.</span>replace(check, rep)
+</span></span><span style="display:flex;"><span>    f2<span style="color:#f92672">.</span>write(line)
+</span></span><span style="display:flex;"><span>f1<span style="color:#f92672">.</span>close()
+</span></span><span style="display:flex;"><span>f2<span style="color:#f92672">.</span>close()
+</span></span></code></pre></div><p>Reference:<br>
 find and replace multiple words in a file python<br>
 <a href="https://stackoverflow.com/a/51240945/1645289">https://stackoverflow.com/a/51240945/1645289</a></p>
 <h5 id="replace-a-string-in-multiple-files-with-in-a-directory">Replace a string in multiple files with in a directory</h5>
-<pre><code>import os
-import glob
-import io
-
-dir = 'D:/test'
-
-dic = { &quot;src&quot;: &quot;dest&quot;, &quot;aaa&quot;: &quot;bbb&quot;}
-        
-def replace_all(text, dic):
-    for i, j in dic.items():
-        text = text.replace(i, j)
-    return text
-        
-for file in glob.iglob(dir + '/**/*.txt', recursive=True):
-    print(file)
-    new_text = ''
-    with io.open(file,'r',encoding='utf8') as f:
-        text = f.read()
-    
-        new_text = replace_all(text, dic);
-        
-    with io.open(file,'w',encoding='utf8') as f:
-        f.write(new_text)
-</code></pre>
-<h5 id="encode-string-using-base64">Encode string using base64</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Python" data-lang="Python"><span style="display:flex;"><span><span style="color:#f92672">import</span> os
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> glob
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> io
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>dir <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;D:/test&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>dic <span style="color:#f92672">=</span> { <span style="color:#e6db74">&#34;src&#34;</span>: <span style="color:#e6db74">&#34;dest&#34;</span>, <span style="color:#e6db74">&#34;aaa&#34;</span>: <span style="color:#e6db74">&#34;bbb&#34;</span>}
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">replace_all</span>(text, dic):
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> i, j <span style="color:#f92672">in</span> dic<span style="color:#f92672">.</span>items():
+</span></span><span style="display:flex;"><span>        text <span style="color:#f92672">=</span> text<span style="color:#f92672">.</span>replace(i, j)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> text
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> file <span style="color:#f92672">in</span> glob<span style="color:#f92672">.</span>iglob(dir <span style="color:#f92672">+</span> <span style="color:#e6db74">&#39;/**/*.txt&#39;</span>, recursive<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>):
+</span></span><span style="display:flex;"><span>    print(file)
+</span></span><span style="display:flex;"><span>    new_text <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;&#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">with</span> io<span style="color:#f92672">.</span>open(file,<span style="color:#e6db74">&#39;r&#39;</span>,encoding<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;utf8&#39;</span>) <span style="color:#66d9ef">as</span> f:
+</span></span><span style="display:flex;"><span>        text <span style="color:#f92672">=</span> f<span style="color:#f92672">.</span>read()
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>        new_text <span style="color:#f92672">=</span> replace_all(text, dic);
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">with</span> io<span style="color:#f92672">.</span>open(file,<span style="color:#e6db74">&#39;w&#39;</span>,encoding<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;utf8&#39;</span>) <span style="color:#66d9ef">as</span> f:
+</span></span><span style="display:flex;"><span>        f<span style="color:#f92672">.</span>write(new_text)
+</span></span></code></pre></div><h5 id="encode-string-using-base64">Encode string using base64</h5>
 <pre><code>&gt;&gt;&gt; data = base64.b64encode(b'data to be encoded')
 &gt;&gt;&gt; print(data)
 b'ZGF0YSB0byBiZSBlbmNvZGVk'
@@ -544,58 +552,55 @@ b'ZGF0YSB0byBiZSBlbmNvZGVk'
 <a href="https://stackoverflow.com/a/41437531/1645289">https://stackoverflow.com/a/41437531/1645289</a></p>
 <h5 id="convert-binary-to-string-using-python">Convert binary to string using Python</h5>
 <p>Example:</p>
-<pre><code># Python3 code to demonstrate working of  
-# Converting binary to string 
-# Using BinarytoDecimal(binary)+chr() 
-   
-  
-# Defining BinarytoDecimal() function 
-def BinaryToDecimal(binary):  
-         
-    binary1 = binary  
-    decimal, i, n = 0, 0, 0
-    while(binary != 0):  
-        dec = binary % 10
-        decimal = decimal + dec * pow(2, i)  
-        binary = binary//10
-        i += 1
-    return (decimal)     
-  
-# Driver's code  
-# initializing binary data 
-bin_data ='10001111100101110010111010111110011'
-   
-# print binary data 
-print(&quot;The binary value is:&quot;, bin_data) 
-   
-# initializing a empty string for  
-# storing the string data 
-str_data =' '
-   
-# slicing the input and converting it  
-# in decimal and then converting it in string 
-for i in range(0, len(bin_data), 7): 
-      
-    # slicing the bin_data from index range [0, 6] 
-    # and storing it as integer in temp_data 
-    temp_data = int(bin_data[i:i + 7]) 
-       
-    # passing temp_data in BinarytoDecimal() function 
-    # to get decimal value of corresponding temp_data 
-    decimal_data = BinaryToDecimal(temp_data) 
-       
-    # Deccoding the decimal value returned by  
-    # BinarytoDecimal() function, using chr()  
-    # function which return the string corresponding  
-    # character for given ASCII value, and store it  
-    # in str_data 
-    str_data = str_data + chr(decimal_data)  
-   
-# printing the result 
-print(&quot;The Binary value after string conversion is:&quot;,  
-       str_data) 
-</code></pre>
-<p>Output:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Python" data-lang="Python"><span style="display:flex;"><span><span style="color:#75715e"># Python3 code to demonstrate working of  </span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Converting binary to string </span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Using BinarytoDecimal(binary)+chr() </span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Defining BinarytoDecimal() function </span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">BinaryToDecimal</span>(binary):  
+</span></span><span style="display:flex;"><span>    binary1 <span style="color:#f92672">=</span> binary  
+</span></span><span style="display:flex;"><span>    decimal, i, n <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">while</span>(binary <span style="color:#f92672">!=</span> <span style="color:#ae81ff">0</span>):  
+</span></span><span style="display:flex;"><span>        dec <span style="color:#f92672">=</span> binary <span style="color:#f92672">%</span> <span style="color:#ae81ff">10</span>
+</span></span><span style="display:flex;"><span>        decimal <span style="color:#f92672">=</span> decimal <span style="color:#f92672">+</span> dec <span style="color:#f92672">*</span> pow(<span style="color:#ae81ff">2</span>, i)  
+</span></span><span style="display:flex;"><span>        binary <span style="color:#f92672">=</span> binary<span style="color:#f92672">//</span><span style="color:#ae81ff">10</span>
+</span></span><span style="display:flex;"><span>        i <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> (decimal)     
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Driver&#39;s code  </span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># initializing binary data </span>
+</span></span><span style="display:flex;"><span>bin_data <span style="color:#f92672">=</span><span style="color:#e6db74">&#39;10001111100101110010111010111110011&#39;</span>
+</span></span><span style="display:flex;"><span>   
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># print binary data </span>
+</span></span><span style="display:flex;"><span>print(<span style="color:#e6db74">&#34;The binary value is:&#34;</span>, bin_data) 
+</span></span><span style="display:flex;"><span>   
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># initializing a empty string for  </span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># storing the string data </span>
+</span></span><span style="display:flex;"><span>str_data <span style="color:#f92672">=</span><span style="color:#e6db74">&#39; &#39;</span>
+</span></span><span style="display:flex;"><span>   
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># slicing the input and converting it  </span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># in decimal and then converting it in string </span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> i <span style="color:#f92672">in</span> range(<span style="color:#ae81ff">0</span>, len(bin_data), <span style="color:#ae81ff">7</span>): 
+</span></span><span style="display:flex;"><span>      
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># slicing the bin_data from index range [0, 6] </span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># and storing it as integer in temp_data </span>
+</span></span><span style="display:flex;"><span>    temp_data <span style="color:#f92672">=</span> int(bin_data[i:i <span style="color:#f92672">+</span> <span style="color:#ae81ff">7</span>]) 
+</span></span><span style="display:flex;"><span>       
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># passing temp_data in BinarytoDecimal() function </span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># to get decimal value of corresponding temp_data </span>
+</span></span><span style="display:flex;"><span>    decimal_data <span style="color:#f92672">=</span> BinaryToDecimal(temp_data) 
+</span></span><span style="display:flex;"><span>       
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Deccoding the decimal value returned by  </span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># BinarytoDecimal() function, using chr()  </span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># function which return the string corresponding  </span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># character for given ASCII value, and store it  </span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># in str_data </span>
+</span></span><span style="display:flex;"><span>    str_data <span style="color:#f92672">=</span> str_data <span style="color:#f92672">+</span> chr(decimal_data)  
+</span></span><span style="display:flex;"><span>   
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># printing the result </span>
+</span></span><span style="display:flex;"><span>print(<span style="color:#e6db74">&#34;The Binary value after string conversion is:&#34;</span>,  
+</span></span><span style="display:flex;"><span>       str_data) 
+</span></span></code></pre></div><p>Output:</p>
 <pre><code>The binary value is: 10001111100101110010111010111110011
 The Binary value after string conversion is:  Geeks
 </code></pre>
@@ -605,11 +610,27 @@ The Binary value after string conversion is:  Geeks
 <pre><code>import pathlib
 pathlib.Path(__file__).parent.absolute()
 </code></pre>
-<p>For the current working directory:</p>
+<p>For the current working directory (cmd running from):</p>
 <pre><code>import pathlib
 pathlib.Path().absolute()
 </code></pre>
+<p>or:</p>
+<pre><code>import os
+os.getcwd()
+</code></pre>
 <p><a href="https://stackoverflow.com/questions/3430372/how-do-i-get-the-full-path-of-the-current-files-directory">https://stackoverflow.com/questions/3430372/how-do-i-get-the-full-path-of-the-current-files-directory</a></p>
+<h5 id="generating-an-md5-checksum-of-a-file">Generating an MD5 checksum of a file</h5>
+<p>Python 3.8+:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Python" data-lang="Python"><span style="display:flex;"><span><span style="color:#f92672">import</span> hashlib
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">with</span> open(<span style="color:#e6db74">&#34;your_filename.txt&#34;</span>, <span style="color:#e6db74">&#34;rb&#34;</span>) <span style="color:#66d9ef">as</span> f:
+</span></span><span style="display:flex;"><span>    file_hash <span style="color:#f92672">=</span> hashlib<span style="color:#f92672">.</span>md5()
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">while</span> chunk <span style="color:#f92672">:=</span> f<span style="color:#f92672">.</span>read(<span style="color:#ae81ff">8192</span>):
+</span></span><span style="display:flex;"><span>        file_hash<span style="color:#f92672">.</span>update(chunk)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>print(file_hash<span style="color:#f92672">.</span>digest())
+</span></span><span style="display:flex;"><span>print(file_hash<span style="color:#f92672">.</span>hexdigest())  <span style="color:#75715e"># to get a printable str instead of bytes</span>
+</span></span></code></pre></div><p>Origin:<br>
+<a href="https://stackoverflow.com/a/59056796/1645289">https://stackoverflow.com/a/59056796/1645289</a></p>
 <hr>
 <p><code>There is always some madness in love. But there is also always some reason in madness. ― Friedrich Nietzsche</code></p>
               
