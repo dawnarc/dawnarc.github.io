@@ -408,6 +408,23 @@ UE4做了优化，当你使用<code>FTransform::TransformXXX()</code>时，如�
 <li>
 <p>开发模式下开启宏定义<code>LOOKING_FOR_PERF_ISSUES</code>，用来打印引擎内部的潜在性能问题。比如，一帧内spawn的actor数量超过一定数量时，这对客户端来说是一个潜在的性能问题，<code>LOOKING_FOR_PERF_ISSUES</code>开启后，最自动打印出这些信息。</p>
 </li>
+<li>
+<p>修改：Engine/Source/Programs/UnrealBuildTool/System/LocalExecutor.cs</p>
+<pre><code> double ProcessorCountMultiplier = 1.0;
+</code></pre>
+<p>改为：</p>
+<pre><code> double ProcessorCountMultiplier = 2.0;
+</code></pre>
+<p>另外将</p>
+<pre><code> ActionProcess.PriorityClass = ProcessPriorityClass.BelowNormal;
+</code></pre>
+<p>改为：</p>
+<pre><code> ActionProcess.PriorityClass = ProcessPriorityClass.AboveNormal;
+</code></pre>
+<p>缺点是编译时机器巨卡。<br>
+参考：
+<a href="https://nerivec.github.io/old-ue4-wiki/pages/boost-compile-times.html">https://nerivec.github.io/old-ue4-wiki/pages/boost-compile-times.html</a></p>
+</li>
 </ol>
 <h5 id="代码算法优化仅限ue4-api相关">代码算法优化（仅限UE4 API相关）</h5>
 <ol>
