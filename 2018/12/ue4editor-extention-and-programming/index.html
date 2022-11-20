@@ -58,8 +58,8 @@
 
 
 
-  <meta property="og:image" content="https://dawnarc.com/thumbnail/thumbnail-japen-013.jpg">
-  <meta property="twitter:image" content="https://dawnarc.com/thumbnail/thumbnail-japen-013.jpg">
+  <meta property="og:image" content="https://dawnarc.com/thumbnail/beijing/thumbnail-beijing-013.jpg">
+  <meta property="twitter:image" content="https://dawnarc.com/thumbnail/beijing/thumbnail-beijing-013.jpg">
 
 
 
@@ -441,7 +441,16 @@ DirectionComp-&gt;SetupAttachment(BoxComp);
 newActor-&gt;RerunConstructionScripts();
 </code></pre>
 <p><a href="https://answers.unrealengine.com/questions/518445/actors-spawned-in-editor-do-not-run-their-construc.html">https://answers.unrealengine.com/questions/518445/actors-spawned-in-editor-do-not-run-their-construc.html</a></p>
-<h5 id="how-to-creat-editor-widget-using-c">How to creat editor widget using C++</h5>
+<h5 id="how-to-limit-the-lenght-of-array-in-actor-blueprint-editor">How to limit the lenght of array in Actor Blueprint editor.</h5>
+<p>Add <code>EditFixedSize</code> in the property:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Config&#34;</span>, EditFixedSize)
+</span></span><span style="display:flex;"><span>TArray<span style="color:#f92672">&lt;</span>int32<span style="color:#f92672">&gt;</span> IdList;
+</span></span></code></pre></div><p>Then initilize array in constructor.</p>
+<pre tabindex="0"><code>AMyActor::AMyActor()
+{
+    IdList.Init(0, 5);
+}
+</code></pre><h5 id="how-to-creat-editor-widget-using-c">How to creat editor widget using C++</h5>
 <p>UE4 – C++ Editor Utility Widgets (4.22)<br>
 <a href="https://isaratech.com/ue4-c-editor-utility-widgets-4-22/">https://isaratech.com/ue4-c-editor-utility-widgets-4-22/</a></p>
 <p>Issue:<br>
@@ -468,36 +477,58 @@ Origin:</p>
 </code></pre>
 <p>Then delete all intermediate files and re-generate project files.</p>
 <h5 id="how-to-open-the-windows-file-explorer-open-directory-dialog-to-select-the-file">How to open the Windows file explorer (open directory dialog) to select the file</h5>
-<pre><code>void UMyUserWidget::OnTestBtnClicked()
-{
-    TSharedPtr&lt;SWindow&gt; ParentWindow = FSlateApplication::Get().FindWidgetWindow(TakeWidget());
-    void* ParentWindowHandle = (ParentWindow.IsValid() &amp;&amp; ParentWindow-&gt;GetNativeWindow().IsValid()) ? ParentWindow-&gt;GetNativeWindow()-&gt;GetOSWindowHandle() : nullptr;
-    IDesktopPlatform* DesktopPlatform = FDesktopPlatformModule::Get();
-    if (DesktopPlatform)
-    {
-        const FString ContentDireAbsolute = FPaths::ConvertRelativePathToFull(FPaths::ProjectConfigDir());
-        FString OutDire;
-        DesktopPlatform-&gt;OpenDirectoryDialog(ParentWindowHandle, TEXT(&quot;Choose Folder&quot;), ContentDireAbsolute, OutDire);
-        GEngine-&gt;AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, OutDire);
-    }
-}
-</code></pre>
-<p>Select files dialog:</p>
-<pre><code>/*
- * Opens a file dialog for the specified data. Leave FileTypes empty to be able to select any files.
- * Filetypes must be in the format of: &lt;File type Description&gt;|*.&lt;actual extension&gt;
- * You can combine multiple extensions by placing &quot;;&quot; between them
- * For example: Text Files|*.txt|Excel files|*.csv|Image Files|*.png;*.jpg;*.bmp will display 3 lines for 3 different type of files.
- */
-
-TArray&lt;FString&gt; OutFileNames;
-
-//Opening the file picker!
-uint32 SelectionFlag = 0; //A value of 0 represents single file selection while a value of 1 represents multiple file selection
-DesktopPlatform-&gt;OpenFileDialog(ParentWindowHandle, DialogTitle, DefaultPath, FString(&quot;&quot;), FileTypes, SelectionFlag, OutFileNames);
-</code></pre>
-<p>Reference<br>
+<p>Example:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> UMyUserWidget<span style="color:#f92672">::</span>OnTestBtnClicked()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    TSharedPtr<span style="color:#f92672">&lt;</span>SWindow<span style="color:#f92672">&gt;</span> ParentWindow <span style="color:#f92672">=</span> FSlateApplication<span style="color:#f92672">::</span>Get().FindWidgetWindow(TakeWidget());
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">void</span><span style="color:#f92672">*</span> ParentWindowHandle <span style="color:#f92672">=</span> (ParentWindow.IsValid() <span style="color:#f92672">&amp;&amp;</span> ParentWindow<span style="color:#f92672">-&gt;</span>GetNativeWindow().IsValid()) <span style="color:#f92672">?</span> ParentWindow<span style="color:#f92672">-&gt;</span>GetNativeWindow()<span style="color:#f92672">-&gt;</span>GetOSWindowHandle() <span style="color:#f92672">:</span> <span style="color:#66d9ef">nullptr</span>;
+</span></span><span style="display:flex;"><span>    IDesktopPlatform<span style="color:#f92672">*</span> DesktopPlatform <span style="color:#f92672">=</span> FDesktopPlatformModule<span style="color:#f92672">::</span>Get();
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (DesktopPlatform)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">const</span> FString ContentDireAbsolute <span style="color:#f92672">=</span> FPaths<span style="color:#f92672">::</span>ConvertRelativePathToFull(FPaths<span style="color:#f92672">::</span>ProjectConfigDir());
+</span></span><span style="display:flex;"><span>        FString OutDire;
+</span></span><span style="display:flex;"><span>        DesktopPlatform<span style="color:#f92672">-&gt;</span>OpenDirectoryDialog(ParentWindowHandle, TEXT(<span style="color:#e6db74">&#34;Choose Folder&#34;</span>), ContentDireAbsolute, OutDire);
+</span></span><span style="display:flex;"><span>        GEngine<span style="color:#f92672">-&gt;</span>AddOnScreenDebugMessage(<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">10.f</span>, FColor<span style="color:#f92672">::</span>Cyan, OutDire);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Select files dialog:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">/*
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * Opens a file dialog for the specified data. Leave FileTypes empty to be able to select any files.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * Filetypes must be in the format of: &lt;File type Description&gt;|*.&lt;actual extension&gt;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * You can combine multiple extensions by placing &#34;;&#34; between them
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * For example: Text Files|*.txt|Excel files|*.csv|Image Files|*.png;*.jpg;*.bmp will display 3 lines for 3 different type of files.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> */</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>TArray<span style="color:#f92672">&lt;</span>FString<span style="color:#f92672">&gt;</span> OutFileNames;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//Opening the file picker!
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>uint32 SelectionFlag <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; <span style="color:#75715e">//A value of 0 represents single file selection while a value of 1 represents multiple file selection
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>DesktopPlatform<span style="color:#f92672">-&gt;</span>OpenFileDialog(ParentWindowHandle, DialogTitle, DefaultPath, FString(<span style="color:#e6db74">&#34;&#34;</span>), FileTypes, SelectionFlag, OutFileNames);
+</span></span></code></pre></div><p>Reference<br>
 <a href="https://www.orfeasel.com/creating-a-file-picker/">https://www.orfeasel.com/creating-a-file-picker/</a></p>
+<h5 id="how-to-add-customized-tips-bar-in-editor">How to add customized tips bar in editor</h5>
+<p>Quoted from <code>Engine\Source\Runtime\Engine\Private\ShaderCompiler\ShaderCompiler.cpp</code></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>FText StatusUpdate;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> ( MaterialName <span style="color:#f92672">!=</span> NULL )
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        FFormatNamedArguments Args;
+</span></span><span style="display:flex;"><span>        Args.Add( TEXT(<span style="color:#e6db74">&#34;MaterialName&#34;</span>), FText<span style="color:#f92672">::</span>FromString( MaterialName ) );
+</span></span><span style="display:flex;"><span>        StatusUpdate <span style="color:#f92672">=</span> FText<span style="color:#f92672">::</span>Format( NSLOCTEXT(<span style="color:#e6db74">&#34;ShaderCompilingManager&#34;</span>, <span style="color:#e6db74">&#34;CompilingShadersForMaterialStatus&#34;</span>, <span style="color:#e6db74">&#34;Compiling shaders: {MaterialName}...&#34;</span>), Args );
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">else</span>
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        StatusUpdate <span style="color:#f92672">=</span> NSLOCTEXT(<span style="color:#e6db74">&#34;ShaderCompilingManager&#34;</span>, <span style="color:#e6db74">&#34;CompilingShadersStatus&#34;</span>, <span style="color:#e6db74">&#34;Compiling shaders...&#34;</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    FScopedSlowTask <span style="color:#a6e22e">SlowTask</span>(<span style="color:#ae81ff">1</span>, StatusUpdate, GIsEditor <span style="color:#f92672">&amp;&amp;</span> <span style="color:#f92672">!</span>IsRunningCommandlet());
+</span></span><span style="display:flex;"><span>    SlowTask.EnterProgressFrame(<span style="color:#ae81ff">1</span>);
+</span></span></code></pre></div><h5 id="how-to-add-customized-progress-bar-in-editor">How to add customized progress bar in editor</h5>
+<p>Begin:</p>
+<pre tabindex="0"><code>FText Description = NSLOCTEXT(&#34;UnrealEd&#34;, &#34;PerformingCSGOperation&#34;, &#34;Performing CSG operation&#34;);
+GWarn-&gt;BeginSlowTask( Description, true );
+</code></pre><p>End:</p>
+<pre tabindex="0"><code>GWarn-&gt;EndSlowTask();
+</code></pre><p>References: <a href="https://github.com/sideeffects/HoudiniEngineForUnreal/blob/93c8516c5d3e980e2ae780b66b66e1b8428f0ed0/Source/HoudiniEngine/Private/HCsgUtils.cpp#L955">UHCsgUtils::ComposeBrushCSG in HoudiniEngine</a></p>
 <h3 id="testing--optimization">Testing &amp; Optimization</h3>
 <h5 id="testing-automation">Testing Automation</h5>
 <p>Automation System Overview, Overview of the automation system used for unit testing, feature testing, and content stress testing.<br>

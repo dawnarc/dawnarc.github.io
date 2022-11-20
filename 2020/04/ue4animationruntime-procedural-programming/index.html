@@ -58,8 +58,8 @@
 
 
 
-  <meta property="og:image" content="https://dawnarc.com/thumbnail/thumbnail-japen-009.jpg">
-  <meta property="twitter:image" content="https://dawnarc.com/thumbnail/thumbnail-japen-009.jpg">
+  <meta property="og:image" content="https://dawnarc.com/thumbnail/beijing/thumbnail-beijing-009.jpg">
+  <meta property="twitter:image" content="https://dawnarc.com/thumbnail/beijing/thumbnail-beijing-009.jpg">
 
 
 
@@ -379,46 +379,44 @@
 </code></pre>
 <h5 id="how-to-extract-transform-of-bones-from-animation-sequence">How to extract transform of bones from animation sequence</h5>
 <p>.Build.cs</p>
-<pre><code>PublicDependencyModuleNames.AddRange(new string[] { &quot;AnimationModifiers&quot; });
-</code></pre>
-<p>cpp source</p>
-<pre><code>void AMyCharacter::Tick(float DeltaTime)
-{
-    Super::Tick(DeltaTime);
-    
-    if (USkeletalMeshComponent* SkMeshComp = GetMesh())
-    {
-        TArray&lt;FName&gt; OutBoneNames;
-        SkMeshComp-&gt;GetBoneNames(OutBoneNames);
-
-        if (UAnimSequence* AnimSeq = LoadObject&lt;UAnimSequence&gt;(nullptr, TEXT(&quot;AnimSequence'/Game/Mannequin/Animations/ThirdPersonWalk.ThirdPersonWalk'&quot;)))
-        {
-            const float FrameCost = 1.f / 30;
-
-            AnimTime += FrameCost;
-            
-            if(AnimTime &lt; AnimSeq-&gt;SequenceLength)
-            {
-                TArray&lt;FTransform&gt; OutPoses;
-                UAnimationBlueprintLibrary::GetBonePosesForTime(AnimSeq, OutBoneNames, AnimTime, true, OutPoses);
-
-                int TestIndex = 54;
-
-                FName BoneName = OutBoneNames[TestIndex];
-
-                FTransform Trans = OutPoses[TestIndex];
-                FVector Translation = Trans.GetTranslation();
-                FRotator Rotation = Trans.Rotator();
-                FVector Scale = Trans.GetScale3D();
-
-                FString Text = FString::Printf(TEXT(&quot;Bone: %s Time: %f Loc: %s Rot: %s&quot;), *BoneName.ToString(), AnimTime, *Translation.ToString(), *Rotation.ToString());
-                GEngine-&gt;AddOnScreenDebugMessage(0, 3.f, FColor::Yellow, Text, false);
-            }
-        }
-    }
-}
-</code></pre>
-<h5 id="how-to-get-user-data-sotred-with-animation-asset">How to get user data sotred with animation asset</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C#" data-lang="C#"><span style="display:flex;"><span>PublicDependencyModuleNames.AddRange(<span style="color:#66d9ef">new</span> <span style="color:#66d9ef">string</span>[] { <span style="color:#e6db74">&#34;AnimationModifiers&#34;</span> });
+</span></span></code></pre></div><p>cpp source</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> AMyCharacter<span style="color:#f92672">::</span>Tick(<span style="color:#66d9ef">float</span> DeltaTime)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    Super<span style="color:#f92672">::</span>Tick(DeltaTime);
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (USkeletalMeshComponent<span style="color:#f92672">*</span> SkMeshComp <span style="color:#f92672">=</span> GetMesh())
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        TArray<span style="color:#f92672">&lt;</span>FName<span style="color:#f92672">&gt;</span> OutBoneNames;
+</span></span><span style="display:flex;"><span>        SkMeshComp<span style="color:#f92672">-&gt;</span>GetBoneNames(OutBoneNames);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (UAnimSequence<span style="color:#f92672">*</span> AnimSeq <span style="color:#f92672">=</span> LoadObject<span style="color:#f92672">&lt;</span>UAnimSequence<span style="color:#f92672">&gt;</span>(<span style="color:#66d9ef">nullptr</span>, TEXT(<span style="color:#e6db74">&#34;AnimSequence&#39;/Game/Mannequin/Animations/ThirdPersonWalk.ThirdPersonWalk&#39;&#34;</span>)))
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">const</span> <span style="color:#66d9ef">float</span> FrameCost <span style="color:#f92672">=</span> <span style="color:#ae81ff">1.f</span> <span style="color:#f92672">/</span> <span style="color:#ae81ff">30</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            AnimTime <span style="color:#f92672">+=</span> FrameCost;
+</span></span><span style="display:flex;"><span>            
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span>(AnimTime <span style="color:#f92672">&lt;</span> AnimSeq<span style="color:#f92672">-&gt;</span>SequenceLength)
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                TArray<span style="color:#f92672">&lt;</span>FTransform<span style="color:#f92672">&gt;</span> OutPoses;
+</span></span><span style="display:flex;"><span>                UAnimationBlueprintLibrary<span style="color:#f92672">::</span>GetBonePosesForTime(AnimSeq, OutBoneNames, AnimTime, true, OutPoses);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">int</span> TestIndex <span style="color:#f92672">=</span> <span style="color:#ae81ff">54</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>                FName BoneName <span style="color:#f92672">=</span> OutBoneNames[TestIndex];
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>                FTransform Trans <span style="color:#f92672">=</span> OutPoses[TestIndex];
+</span></span><span style="display:flex;"><span>                FVector Translation <span style="color:#f92672">=</span> Trans.GetTranslation();
+</span></span><span style="display:flex;"><span>                FRotator Rotation <span style="color:#f92672">=</span> Trans.Rotator();
+</span></span><span style="display:flex;"><span>                FVector Scale <span style="color:#f92672">=</span> Trans.GetScale3D();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>                FString Text <span style="color:#f92672">=</span> FString<span style="color:#f92672">::</span>Printf(TEXT(<span style="color:#e6db74">&#34;Bone: %s Time: %f Loc: %s Rot: %s&#34;</span>), <span style="color:#f92672">*</span>BoneName.ToString(), AnimTime, <span style="color:#f92672">*</span>Translation.ToString(), <span style="color:#f92672">*</span>Rotation.ToString());
+</span></span><span style="display:flex;"><span>                GEngine<span style="color:#f92672">-&gt;</span>AddOnScreenDebugMessage(<span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">3.f</span>, FColor<span style="color:#f92672">::</span>Yellow, Text, false);
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h5 id="how-to-get-user-data-sotred-with-animation-asset">How to get user data sotred with animation asset</h5>
 <p>Engine\Source\Runtime\Engine\Classes\Engine\SkeletalMesh.h</p>
 <pre><code>UPROPERTY(EditAnywhere, AdvancedDisplay, Instanced, Category=SkeletalMesh)
 TArray&lt;UAssetUserData*&gt; AssetUserData;
@@ -603,6 +601,11 @@ SkelMeshComponent-&gt;RefreshBoneTransforms();
 <p>Using Control Rig in Unreal Engine<br>
 <a href="https://www.youtube.com/watch?v=y2WzNvJZk0E">https://www.youtube.com/watch?v=y2WzNvJZk0E</a></p>
 <p><a href="https://dev.epicgames.com/community/learning/courses/5vL/unreal-engine-creating-and-modifying-control-rig/vyWZ/unreal-engine-introduction-to-creating-and-modifying-control-rig">Introduction To Creating And Modifying Control Rig</a></p>
+<h5 id="runtime-retargeting">Runtime Retargeting</h5>
+<p>Runtime Animation Retargeting<br>
+<a href="https://docs.metahuman.unrealengine.com/en-US/retargeting-animations-to-a-metahuman-at-runtime/">https://docs.metahuman.unrealengine.com/en-US/retargeting-animations-to-a-metahuman-at-runtime/</a></p>
+<p>UE5 Runtime Retargeting Tutorial<br>
+<a href="https://www.youtube.com/watch?v=xbFOF8TY_D4">https://www.youtube.com/watch?v=xbFOF8TY_D4</a></p>
 <h3 id="examples">Examples</h3>
 <h5 id="examples---mocap">Examples - Mocap</h5>
 <p>This plugin enables live-streaming of character animation from the Shadow motion capture system directly into UE4.<br>
