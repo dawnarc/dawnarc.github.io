@@ -13,18 +13,18 @@
 <meta name="generator" content="Hugo 0.102.3 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Wang Aiguo">
 <meta name="keywords" content="UE4, component, editor">
-<meta name="description" content="keywords: Construct component using native properties that value be set in editor">
+<meta name="description" content="keywords: Unreal Editor Programming, Create components in Blueprint Editor, C&#43;&#43; property changed, property modification">
 
 
-<meta property="og:description" content="keywords: Construct component using native properties that value be set in editor">
+<meta property="og:description" content="keywords: Unreal Editor Programming, Create components in Blueprint Editor, C&#43;&#43; property changed, property modification">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[UE4]Construct component using native properties that value be set in editor">
 <meta name="twitter:title" content="[UE4]Construct component using native properties that value be set in editor">
 <meta property="og:url" content="https://dawnarc.com/2018/01/ue4construct-component-using-native-properties-that-value-be-set-in-editor/">
 <meta property="twitter:url" content="https://dawnarc.com/2018/01/ue4construct-component-using-native-properties-that-value-be-set-in-editor/">
 <meta property="og:site_name" content="玄冬Wong">
-<meta property="og:description" content="keywords: Construct component using native properties that value be set in editor">
-<meta name="twitter:description" content="keywords: Construct component using native properties that value be set in editor">
+<meta property="og:description" content="keywords: Unreal Editor Programming, Create components in Blueprint Editor, C&#43;&#43; property changed, property modification">
+<meta name="twitter:description" content="keywords: Unreal Editor Programming, Create components in Blueprint Editor, C&#43;&#43; property changed, property modification">
 <meta property="og:locale" content="en-us">
 
   
@@ -363,7 +363,7 @@
                 <script>
                      (adsbygoogle = window.adsbygoogle || []).push({});
                 </script>
-              <p>keywords: Construct component using native properties that value be set in editor</p>
+              <p>keywords: Unreal Editor Programming, Create components in Blueprint Editor, C++ property changed, property modification</p>
 <h5 id="method-1st">Method 1st</h5>
 <p>Construct component using C++ property that value edit in blueprint.</p>
 <p>Header：</p>
@@ -422,40 +422,134 @@ Add <code>Super::PostEditChangeProperty()</code>.</p>
 </span></span><span style="display:flex;"><span>    UArrowComponent<span style="color:#f92672">*</span> TestComponent;
 </span></span></code></pre></div><p>cpp:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> AMyActor<span style="color:#f92672">::</span>PostEditChangeProperty(FPropertyChangedEvent<span style="color:#f92672">&amp;</span> PropertyChangedEvent)
-</span></span><span style="display:flex;"><span>    {
-</span></span><span style="display:flex;"><span>        Super<span style="color:#f92672">::</span>PostEditChangeProperty(PropertyChangedEvent);
-</span></span><span style="display:flex;"><span>        
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">const</span> FString PropertyName <span style="color:#f92672">=</span> PropertyChangedEvent.Property<span style="color:#f92672">-&gt;</span>GetName();
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span>(PropertyName <span style="color:#f92672">==</span> TEXT(<span style="color:#e6db74">&#34;RelativeLoc&#34;</span>))
-</span></span><span style="display:flex;"><span>        {
-</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (TestComponent)
-</span></span><span style="display:flex;"><span>            {
-</span></span><span style="display:flex;"><span>                TestComponent<span style="color:#f92672">-&gt;</span>SetRelativeLocation(RelativeLoc);
-</span></span><span style="display:flex;"><span>            }
-</span></span><span style="display:flex;"><span>        }
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">else</span> <span style="color:#a6e22e">if</span>(PropertyName <span style="color:#f92672">==</span> TEXT(<span style="color:#e6db74">&#34;RelativeRot&#34;</span>))
-</span></span><span style="display:flex;"><span>        {
-</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (TestComponent)
-</span></span><span style="display:flex;"><span>            {
-</span></span><span style="display:flex;"><span>                TestComponent<span style="color:#f92672">-&gt;</span>SetRelativeRotation(RelativeRot);
-</span></span><span style="display:flex;"><span>            }
-</span></span><span style="display:flex;"><span>        }
-</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    Super<span style="color:#f92672">::</span>PostEditChangeProperty(PropertyChangedEvent);
 </span></span><span style="display:flex;"><span>    
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">void</span> AMyActor<span style="color:#f92672">::</span>PostLoad()
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> FString PropertyName <span style="color:#f92672">=</span> PropertyChangedEvent.Property<span style="color:#f92672">-&gt;</span>GetName();
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span>(PropertyName <span style="color:#f92672">==</span> TEXT(<span style="color:#e6db74">&#34;RelativeLoc&#34;</span>))
 </span></span><span style="display:flex;"><span>    {
-</span></span><span style="display:flex;"><span>        Super<span style="color:#f92672">::</span>PostLoad();
-</span></span><span style="display:flex;"><span>        
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (TestComponent)
 </span></span><span style="display:flex;"><span>        {
 </span></span><span style="display:flex;"><span>            TestComponent<span style="color:#f92672">-&gt;</span>SetRelativeLocation(RelativeLoc);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">else</span> <span style="color:#a6e22e">if</span>(PropertyName <span style="color:#f92672">==</span> TEXT(<span style="color:#e6db74">&#34;RelativeRot&#34;</span>))
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (TestComponent)
+</span></span><span style="display:flex;"><span>        {
 </span></span><span style="display:flex;"><span>            TestComponent<span style="color:#f92672">-&gt;</span>SetRelativeRotation(RelativeRot);
 </span></span><span style="display:flex;"><span>        }
 </span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> AMyActor<span style="color:#f92672">::</span>PostRegisterAllComponents()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    Super<span style="color:#f92672">::</span>PostRegisterAllComponents();
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (TestComponent)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        TestComponent<span style="color:#f92672">-&gt;</span>SetRelativeLocation(RelativeLoc);
+</span></span><span style="display:flex;"><span>        TestComponent<span style="color:#f92672">-&gt;</span>SetRelativeRotation(RelativeRot);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><div class="alert warning ">
-  <p>If not override PostLoad, modification of properties would not take effect when start Editor at first time.</p>
+  <p>If not override <code>PostRegisterAllComponents()</code>, modification of properties would not take effect when start Editor at first time.</p>
 </div>
-<hr>
+<div class="alert danger ">
+  <p>In earlier version <code>PostLoad()</code> must be overridden if want to create component when edtior started, but now it doesn&rsquo;t work.</p>
+</div>
+<h5 id="how-to-create-components-in-blueprint-editor-and-level-editor">How to create components in Blueprint Editor and Level Editor</h5>
+<figure><img src="https://dawnarc.com/img/2018/20180104-[UE4]Construct%20component%20using%20native%20properties%20that%20value%20be%20set%20in%20editor/[UE4]Construct%20component%20using%20native%20properties%20that%20value%20be%20set%20in%20editor%20-%2001.gif"/>
+</figure>
+
+<p>Header:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>UCLASS()
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">TESTPROJ_API</span> AMyActor : <span style="color:#66d9ef">public</span> AActor
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    GENERATED_BODY()
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">protected</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Config&#34;</span>)
+</span></span><span style="display:flex;"><span>    TArray<span style="color:#f92672">&lt;</span>UStaticMeshComponent<span style="color:#f92672">*&gt;</span> Components;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">virtual</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">PostRegisterAllComponents</span>() <span style="color:#66d9ef">override</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#if WITH_EDITOR
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">virtual</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">PostEditChangeProperty</span>(FPropertyChangedEvent<span style="color:#f92672">&amp;</span> PropertyChangedEvent) <span style="color:#66d9ef">override</span>;
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#endif
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">RebuildComponents</span>();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    UPROPERTY(EditAnywhere, Category <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Config&#34;</span>)
+</span></span><span style="display:flex;"><span>    UStaticMesh<span style="color:#f92672">*</span> TestAsset;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    UPROPERTY(EditAnywhere, Category <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Config&#34;</span>, meta<span style="color:#f92672">=</span>(ClampMin <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;1&#34;</span>, ClampMax <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;10&#34;</span>, UIMin <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;1&#34;</span>, UIMax <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;10&#34;</span>))
+</span></span><span style="display:flex;"><span>    int32 Counts <span style="color:#f92672">=</span> <span style="color:#ae81ff">3</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    UPROPERTY(EditAnywhere, Category <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Config&#34;</span>, meta<span style="color:#f92672">=</span>(ClampMin <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;0.0&#34;</span>, ClampMax <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;10000.0&#34;</span>, UIMin <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;0.0&#34;</span>, UIMax <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;10000.0&#34;</span>))
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">float</span> Padding <span style="color:#f92672">=</span> <span style="color:#ae81ff">200.f</span>;
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p>CPP:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> AMyActor<span style="color:#f92672">::</span>PostRegisterAllComponents()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    Super<span style="color:#f92672">::</span>PostRegisterAllComponents();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    RebuildComponents();
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#if WITH_EDITOR
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">void</span> AMyActor<span style="color:#f92672">::</span>PostEditChangeProperty(FPropertyChangedEvent<span style="color:#f92672">&amp;</span> PropertyChangedEvent)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    Super<span style="color:#f92672">::</span>PostEditChangeProperty(PropertyChangedEvent);
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> FString Name <span style="color:#f92672">=</span> PropertyChangedEvent.Property<span style="color:#f92672">-&gt;</span>GetName();
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span>(Name <span style="color:#f92672">==</span> TEXT(<span style="color:#e6db74">&#34;Counts&#34;</span>) <span style="color:#f92672">||</span> Name <span style="color:#f92672">==</span> TEXT(<span style="color:#e6db74">&#34;TestAsset&#34;</span>) <span style="color:#f92672">||</span> Name <span style="color:#f92672">==</span> TEXT(<span style="color:#e6db74">&#34;Padding&#34;</span>) )
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        RebuildComponents();
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#endif
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> AMyActor<span style="color:#f92672">::</span>RebuildComponents()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//must cache location before destory component, otherwise GetActorLocation() return (0, 0, 0) when paly game,
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">//because the RootComponent has been destroyed.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">const</span> FVector ActorLoc <span style="color:#f92672">=</span> GetActorLocation();
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span>(UStaticMeshComponent<span style="color:#f92672">*</span> Component : Components)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span>(Component)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            Component<span style="color:#f92672">-&gt;</span>DestroyComponent();
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    Components.Reset(Counts);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">bool</span> bRootComponentSet <span style="color:#f92672">=</span> false;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span>(int32 i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span> ; i <span style="color:#f92672">&lt;</span> Counts; i<span style="color:#f92672">++</span>)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        UStaticMeshComponent<span style="color:#f92672">*</span> Component <span style="color:#f92672">=</span> NewObject<span style="color:#f92672">&lt;</span>UStaticMeshComponent<span style="color:#f92672">&gt;</span>(<span style="color:#66d9ef">this</span>);
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span>(GetWorld())
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            Component<span style="color:#f92672">-&gt;</span>RegisterComponent();
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span>(<span style="color:#f92672">!</span>bRootComponentSet)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            bRootComponentSet <span style="color:#f92672">=</span> true;
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">this</span><span style="color:#f92672">-&gt;</span>SetRootComponent(Component);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">else</span>
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            Component<span style="color:#f92672">-&gt;</span>AttachToComponent(GetRootComponent(), FAttachmentTransformRules<span style="color:#f92672">::</span>SnapToTargetIncludingScale);    
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        Component<span style="color:#f92672">-&gt;</span>SetStaticMesh(TestAsset);
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">const</span> FVector Loc <span style="color:#f92672">=</span>  ActorLoc <span style="color:#f92672">+</span> FVector(<span style="color:#ae81ff">0.f</span>, <span style="color:#ae81ff">0.f</span>, i <span style="color:#f92672">*</span> Padding);
+</span></span><span style="display:flex;"><span>        Component<span style="color:#f92672">-&gt;</span>SetWorldLocation(Loc);
+</span></span><span style="display:flex;"><span>        Components.Add(Component);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><hr>
 <p><code>失望并不可怕，可怕的是一次次失望过后，平静的安慰自己，心存侥幸试着继续相信。</code></p>
               
             </div>

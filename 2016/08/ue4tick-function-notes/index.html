@@ -365,15 +365,18 @@
                 </script>
               <p>Keywords: UE4, Tick Function Notes</p>
 <h5 id="enable--disable-tick">Enable &amp; Disable Tick</h5>
-<p>In constructor:</p>
-<pre><code>// Activate ticking in order to update the cursor every frame.
-PrimaryActorTick.bCanEverTick = true;
-PrimaryActorTick.bStartWithTickEnabled = true;
-</code></pre>
-<p>Run-time:</p>
-<pre><code>SetActorTickEnabled(true);
-</code></pre>
-<h5 id="registercomponent-must-be-executed-before-attachtocomponent">RegisterComponent() must be executed before AttachToComponent()</h5>
+<p>Trigger Tick at game beginning.<br>
+Constructor:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">// Activate ticking in order to update the cursor every frame.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>PrimaryActorTick.bCanEverTick <span style="color:#f92672">=</span> true;
+</span></span><span style="display:flex;"><span>PrimaryActorTick.bStartWithTickEnabled <span style="color:#f92672">=</span> true;
+</span></span></code></pre></div><p>Trigger Tick at runtime.<br>
+Constructor:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>PrimaryActorTick.bCanEverTick <span style="color:#f92672">=</span> true;
+</span></span><span style="display:flex;"><span>PrimaryActorTick.bStartWithTickEnabled <span style="color:#f92672">=</span> false;
+</span></span></code></pre></div><p>Trigger:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>SetActorTickEnabled(true);
+</span></span></code></pre></div><h5 id="registercomponent-must-be-executed-before-attachtocomponent">RegisterComponent() must be executed before AttachToComponent()</h5>
 <p>If a Component created by <code>NewObject&lt;&gt;()</code> at run-time, <code>RegisterComponent()</code> must be executed before <code>AttachToComponent()</code>, otherwise <code>TickComponent()</code> would not be triggered on attaching finished.</p>
 <div class="alert info ">
   <p><code>ResisterComponent()</code> only need to execute when using <code>NewObject</code> to create Component, Component created by <code>SpawnActor()</code> or <code>ConstructorHelpers</code> doesn&rsquo;t need to execute it.</p>
@@ -382,15 +385,13 @@ PrimaryActorTick.bStartWithTickEnabled = true;
 <p><code>BeginPlay()</code> and <code>Tick()</code> would be triggered if an Actor created by <code>NewObject&lt;&gt;()</code> before it&rsquo;s added to scene(GameWorld), even <code>PrimaryActorTick.bCanEverTick = true;</code> was executed.</p>
 <h5 id="how-to-set-callback-function-of-next-tick">How to set callback function of next tick</h5>
 <p>In GameThread:</p>
-<pre><code>GetWorld()-&gt;GetTimerManager().SetTimerForNextTick(FTimerDelegate::CreateUObject(this, &amp;AMyCharacter::TestCallback));
-</code></pre>
-<p>If want to add callback function for Non-GameThread:</p>
-<pre><code>FTicker::GetCoreTicker().AddTicker(FTickerDelegate::CreateLambda([arg1, arg2](float dts) {
-        //...
-        return true;
-    }));
-</code></pre>
-<p>You can set parameter <code>Delay</code> (default value is 0 which means &ldquo;next frame&rdquo;) if want to delay a certain time.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>GetWorld()<span style="color:#f92672">-&gt;</span>GetTimerManager().SetTimerForNextTick(FTimerDelegate<span style="color:#f92672">::</span>CreateUObject(<span style="color:#66d9ef">this</span>, <span style="color:#f92672">&amp;</span>AMyCharacter<span style="color:#f92672">::</span>TestCallback));
+</span></span></code></pre></div><p>If want to add callback function for Non-GameThread:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>FTicker<span style="color:#f92672">::</span>GetCoreTicker().AddTicker(FTickerDelegate<span style="color:#f92672">::</span>CreateLambda([arg1, arg2](<span style="color:#66d9ef">float</span> dts) {
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//...
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">return</span> true;
+</span></span><span style="display:flex;"><span>    }));
+</span></span></code></pre></div><p>You can set parameter <code>Delay</code> (default value is 0 which means &ldquo;next frame&rdquo;) if want to delay a certain time.</p>
 <h5 id="how-to-enable-tick-function-in-editor">How to enable Tick function in Editor</h5>
 <p><code>Tick()</code> will only be executed at game run-time by default, if you want to execute <code>Tick()</code> in Editor, do that in the following way:</p>
 <p>For Actor:<br>
