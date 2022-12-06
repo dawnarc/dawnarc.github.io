@@ -898,7 +898,7 @@ Dedicated Servers, Jitter, Matchmaking<br>
 </code></pre>
 </li>
 <li>
-<p><span class="highlight-text red">如果一个Actor没有SetRootComponent，即使开启同步，也不会同步到客户端。</span><br>
+<p><span class="highlight-text red">如果一个Actor没有SetRootComponent，且运行是Spawn，即使开启同步，也不会同步到客户端。</span><br>
 如果Actor不需要任何Component，建议在给其创建一个空白Component作为RootComponent。</p>
 <pre><code>AMyActor::AMyActor()
 {
@@ -911,6 +911,8 @@ Dedicated Servers, Jitter, Matchmaking<br>
     }
 }
 </code></pre>
+<p>但如果是关卡中提前摆好的Actor，它的RPC函数还是能够被正常调用。<br>
+建议为没有Component的Actor创建一个RootComponent，否则<code>AActor::IsNetRelevantFor()</code>始终返回false，会影响到Replication的距离裁剪，导致性能下降。</p>
 </li>
 <li>
 <p>如果一个Actor开启了同步，但又期望Actor的Component只在DedicatedServer中创建，这种需求无法实现，因为Actor开启同步后，如果只在Server端创建Component，此时Component会被自动置空。</p>

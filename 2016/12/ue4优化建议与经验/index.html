@@ -384,9 +384,7 @@
 <h5 id="代码编译优化">代码编译优化</h5>
 <ol>
 <li>
-<p>C++ 比 蓝图快100到1000倍<br>
-[Test] Blueprint vs C++ Performance vs Nativized BP<br>
-<a href="https://www.reddit.com/r/unrealengine/comments/6qtxy3/test_blueprint_vs_c_performance_vs_nativized_bp/">https://www.reddit.com/r/unrealengine/comments/6qtxy3/test_blueprint_vs_c_performance_vs_nativized_bp/</a><br>
+<p>C++比蓝图快100到1000倍： <a href="https://www.reddit.com/r/unrealengine/comments/6qtxy3/test_blueprint_vs_c_performance_vs_nativized_bp/">[Test] Blueprint vs C++ Performance vs Nativized BP</a>.<br>
 感谢知乎网友<code>金木研</code>指正：以上结果是在编辑器模式下的测试结果（没有native蓝图），如果打包并将蓝图转换为native code，那么蓝图和C++的性能差距不超过两倍。<br>
 大概在4.18（具体版本号忘了）之前，蓝图转native code的算法不够优化，比如一个加法操作，会被翻译成一个单独函数，这样导致执行堆栈特别长，后来Epic对蓝图转native的算法在不断改进，目前的版本已足够优化。</p>
 </li>
@@ -568,7 +566,7 @@ Dynamic Shadow Distance 表示在多少距离内使用动态阴影，超过这�
 <p>场景中的材质种类要提前规划好，拼场景时只在规划好的材质中选择。如果同屏的材质种类较多，会增加draw call。特别是场景美术用网上素材东拼西凑，很容易导致材质种类数量急剧上涨。</p>
 </li>
 <li>
-<p>一般针对材质的优化方式是，抓帧查看shader instruction count，但这种毕竟需要手工操作，时间、人力成本大。引擎提供了工具函数<code>FMaterialStatistics Stats = UMaterialEditingLibrary::GetStatistics(_YourMaterialInterfaceObject_);</code>，自己写个插件，批量导出所有材质的最贵指令数量，并支持排序，一劳永逸。</p>
+<p>一般针对材质的优化方式是，抓帧查看shader instruction count。引擎提供了工具函数<code>FMaterialStatistics Stats = UMaterialEditingLibrary::GetStatistics(_YourMaterialInterfaceObject_);</code>，自己写个插件，批量导出所有材质的最贵指令数量，并支持排序，一劳永逸。</p>
 </li>
 </ol>
 <p>Performance Guidelines for Artists and Designers<br>
@@ -650,6 +648,9 @@ Animation Fast Path Optimization<br>
 <li>
 <p>将Skeletal Mesh的动画烘焙成贴图：<a href="https://github.com/Rexocrates/Vertex_Anim_Toolset">Vertex Anim Toolset</a>。UE5中官方已集成类似插件，叫做：AnimToTexture。</p>
 </li>
+<li>
+<p>动画切换尽量少用Animation Trees（动画蓝图State Machine下的蜘蛛网, 位于AnimGraph中），复杂的AT会极大增加CPU开销（Unity的Blend Tree也同理）。切换动画尽可能用状态机，且使用带有闪电小icon的节点。</p>
+</li>
 </ol>
 <h5 id="ui优化">UI优化</h5>
 <ol>
@@ -659,6 +660,12 @@ Animation Fast Path Optimization<br>
 </li>
 <li>
 <p>不能使用UMG来修改鼠标光标，因为UMG来制作响应速度较高的显示逻辑时，会有肉眼可见的明显延迟（由此可见UMG的性能消耗有多高），可以使用Hardware Cursors来代替UMG制作光标。</p>
+</li>
+<li>
+<p>使用<a href="https://benui.ca/unreal/ui-retainerbox/">Retainer Box</a>对控件合批渲染。</p>
+</li>
+<li>
+<p>使用<a href="https://www.fairygui.com/">FairyGUI</a>代替UMG。</p>
 </li>
 </ol>
 <p>Epic Games工程师分享：如何在移动平台上做UE4的UI优化？<br>
@@ -707,6 +714,9 @@ Project Settings -&gt; Engine -&gt; Animation -&gt; 勾选 Strip Animation Data 
 <li>
 <p>4.20提供了针对Dedicated Server优化的新特性：Replication Graph，可以初略地理解为针对网络通信的LOD。没有这个特性之前，服务端调用Multicast函数，几公里外的玩家也会收到Multicast，而实际上这种远距离玩家可能不需要即时更新数据，而是出现在当前client附近位置时(Cull Distance范围内)时再手动<code>ForceNetUpdate()</code>。有了Replication Graph之后，这种手动优化方式可以交给引擎自己管理。</p>
 </li>
+<li>
+<p>4.25提供了PushModel，通过手动同步对象属性，来降低replication模块每帧遍历actor以及属性比对的耗时。<a href="https://forums.unrealengine.com/t/push-model-networking/510684/13">Push Model Networking</a></p>
+</li>
 </ol>
 <h5 id="参考资料">参考资料</h5>
 <p>Performance and Profiling<br>
@@ -742,6 +752,8 @@ Project Settings -&gt; Engine -&gt; Animation -&gt; 勾选 Strip Animation Data 
 <a href="https://zhuanlan.zhihu.com/p/388070138">https://zhuanlan.zhihu.com/p/388070138</a></p>
 <p>Debugging and Optimizing Memory<br>
 <a href="https://www.unrealengine.com/en-US/blog/debugging-and-optimizing-memory">https://www.unrealengine.com/en-US/blog/debugging-and-optimizing-memory</a></p>
+<p>Expert&rsquo;s guide to unreal engine performance<br>
+<a href="https://dev.epicgames.com/community/learning/tutorials/3o6/expert-s-guide-to-unreal-engine-performance">https://dev.epicgames.com/community/learning/tutorials/3o6/expert-s-guide-to-unreal-engine-performance</a></p>
 <hr>
 <p><code>嗜欲深者天机浅 ---《庄子·大宗师》</code></p>
               
