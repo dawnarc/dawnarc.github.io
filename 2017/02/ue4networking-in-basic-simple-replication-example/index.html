@@ -883,14 +883,20 @@ Dedicated Servers, Jitter, Matchmaking<br>
 <li>
 <p>如何让<code>Replicated</code>属性同步到所有客户端？<br>
 默认情况下，<code>UPROPERTY(Replicated)</code>标识的属性只会同步给自己的Owner，可以理解为：只同步给Actor所属的客户端，其他客户端连上来，获取不到这个属性。<br>
-如何让<code>Replicated</code>属性同步给所有客户端？执行：<code>bOnlyRelevantToOwner = false;</code>。默认为true，表示只同步给自己的Owner。
+如何让<code>Replicated</code>属性同步给所有客户端？执行：<code>bOnlyRelevantToOwner = false;</code>。默认为true，表示只同步给自己的Owner。</p>
+</li>
+</ol>
 <div class="alert warning ">
   <p>官方文档说在运行时期间修改<code>bOnlyRelevantToOwner</code>对其他客户端无效，需要其他客户端重连才会生效。官方文档不一定准确，待验证。。</p>
 </div>
 <div class="alert success ">
   <p><code>bOnlyRelevantToOwner</code>的另一个用途：服务端启动时（比如：GameMode的BeginPlay函数中）创建的对象，即使<code>bReplicates = true;</code>，客户端连上来之后，这些对象不会同步到客户端，如何让客户端登陆成功后自动获取到服务端中已经存在的对象？答案：将这些服务端对象的<code>bOnlyRelevantToOwner</code>设置为false。</p>
-</div></p>
-</li>
+</div>
+<div class="alert info ">
+  <p><code>bAlwaysRelevant</code>与<code>bOnlyRelevantToOwner</code>关系：<br>
+当<code>bOnlyRelevantToOwner = false;</code>时，Replication的距离裁剪仍然会执行，但<code>bAlwaysRelevant = true;</code>时，则Actor将全场景同步，所以需要严格限制<code>bAlwaysRelevant = true;</code>的Actor数量。</p>
+</div>
+<ol start="13">
 <li>
 <p><code>Replicated</code>属性如何选择性的同步给指定客户端？<br>
 使用<code>DOREPLIFETIME_CONDITION</code>修饰同步属性，比如<code>COND_SkipOwner</code>就表示同步给除Owner以外的所有客户端。</p>
@@ -912,7 +918,7 @@ Dedicated Servers, Jitter, Matchmaking<br>
 }
 </code></pre>
 <p>但如果是关卡中提前摆好的Actor，它的RPC函数还是能够被正常调用。<br>
-建议为没有Component的Actor创建一个RootComponent，否则<code>AActor::IsNetRelevantFor()</code>始终返回false，会影响到Replication的距离裁剪，导致性能下降。</p>
+建议为没有Component的Actor创建一个RootComponent，否则<code>AActor::IsNetRelevantFor()</code>始终返回false，会跳过Replication的距离裁剪，增加同步开销。</p>
 </li>
 <li>
 <p>如果一个Actor开启了同步，但又期望Actor的Component只在DedicatedServer中创建，这种需求无法实现，因为Actor开启同步后，如果只在Server端创建Component，此时Component会被自动置空。</p>

@@ -372,34 +372,33 @@
 </div>
 <h5 id="whether-if-tsharedptr-works-for-uobject-or-not">Whether if TSharedPtr works for UObject or not</h5>
 <p>As the comments of <code>TSharedPtr</code> say, it only works for <code>raw pointers</code>:</p>
-<pre><code>/** Proxy structure for implicitly converting raw pointers to shared/weak pointers */
-// NOTE: The following is an Unreal extension to standard shared_ptr behavior
-template&lt; class ObjectType &gt;
-struct FRawPtrProxy
-{
-    /** The object pointer */
-    ObjectType* Object;
-
-    /** Reference controller used to destroy the object */
-    FReferenceControllerBase* ReferenceController;
-
-    /** Construct implicitly from an object */
-    FORCEINLINE FRawPtrProxy( ObjectType* InObject )
-        : Object             ( InObject )
-        , ReferenceController( NewDefaultReferenceController( InObject ) )
-    {
-    }
-
-    /** Construct implicitly from an object and a custom deleter */
-    template&lt; class Deleter &gt;
-    FORCEINLINE FRawPtrProxy( ObjectType* InObject, Deleter&amp;&amp; InDeleter )
-        : Object             ( InObject )
-        , ReferenceController( NewCustomReferenceController( InObject, Forward&lt; Deleter &gt;( InDeleter ) ) )
-    {
-    }
-};
-</code></pre>
-<p>In theory, Unreal GC system is to <code>UObject</code> what <code>std::shared_ptr&lt;&gt;</code> is to raw pointer, so <code>TSharedPtr</code> doesn&rsquo;t need to work for <code>UObject</code>.<br>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">/** Proxy structure for implicitly converting raw pointers to shared/weak pointers */</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// NOTE: The following is an Unreal extension to standard shared_ptr behavior
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">template</span><span style="color:#f92672">&lt;</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ObjectType</span> <span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">FRawPtrProxy</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/** The object pointer */</span>
+</span></span><span style="display:flex;"><span>    ObjectType<span style="color:#f92672">*</span> Object;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/** Reference controller used to destroy the object */</span>
+</span></span><span style="display:flex;"><span>    FReferenceControllerBase<span style="color:#f92672">*</span> ReferenceController;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/** Construct implicitly from an object */</span>
+</span></span><span style="display:flex;"><span>    FORCEINLINE <span style="color:#a6e22e">FRawPtrProxy</span>( ObjectType<span style="color:#f92672">*</span> InObject )
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">:</span> Object             ( InObject )
+</span></span><span style="display:flex;"><span>        , ReferenceController( NewDefaultReferenceController( InObject ) )
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/** Construct implicitly from an object and a custom deleter */</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">template</span><span style="color:#f92672">&lt;</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Deleter</span> <span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>    FORCEINLINE FRawPtrProxy( ObjectType<span style="color:#f92672">*</span> InObject, Deleter<span style="color:#f92672">&amp;&amp;</span> InDeleter )
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">:</span> Object             ( InObject )
+</span></span><span style="display:flex;"><span>        , ReferenceController( NewCustomReferenceController( InObject, Forward<span style="color:#f92672">&lt;</span> Deleter <span style="color:#f92672">&gt;</span>( InDeleter ) ) )
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p>In theory, Unreal GC system is to <code>UObject</code> what <code>std::shared_ptr&lt;&gt;</code> is to raw pointer, so <code>TSharedPtr</code> doesn&rsquo;t need to work for <code>UObject</code>.<br>
 But, there&rsquo;s no limitation for counting <code>UObject</code> in the source code of <code>SharedPointerInternals.h</code> in engine.<br>
 If a <code>UObject</code> was passed as parameter into <code>TSharedPtr</code>:</p>
 <pre><code>void ATestPlayerController::TestFun()
@@ -409,17 +408,16 @@ If a <code>UObject</code> was passed as parameter into <code>TSharedPtr</code>:<
 }
 </code></pre>
 <p>Application would crash after jumping out of function <code>TestFun</code>:</p>
-<pre><code>Assertion failed: GetFName() == NAME_None [File:D:/Build/++UE4/Sync/Engine/Source/Runtime/CoreUObject/Private/UObject/UObjectBase.cpp] [Line: 136]
+<pre tabindex="0"><code class="language-Log" data-lang="Log">Assertion failed: GetFName() == NAME_None [File:D:/Build/++UE4/Sync/Engine/Source/Runtime/CoreUObject/Private/UObject/UObjectBase.cpp] [Line: 136]
 
 UE4Editor_Core!AssertFailedImplV() [d:\build\++ue4\sync\engine\source\runtime\core\private\misc\assertionmacros.cpp:105]
 UE4Editor_Core!FDebug::CheckVerifyFailedImpl() [d:\build\++ue4\sync\engine\source\runtime\core\private\misc\assertionmacros.cpp:455]
 UE4Editor_CoreUObject!UObjectBase::~UObjectBase() [d:\build\++ue4\sync\engine\source\runtime\coreuobject\private\uobject\uobjectbase.cpp:136]
-UE4Editor_Engine!AActor::`vector deleting destructor'()
+UE4Editor_Engine!AActor::`vector deleting destructor&#39;()
 UE4Editor_TestTD4_Win64_DebugGame!SharedPointerInternals::TReferenceControllerWithDeleter&lt;AActor,SharedPointerInternals::DefaultDeleter&lt;AActor&gt; &gt;::DestroyObject() [D:\Program_Files\Epic Games\UE_4.24\Engine\Source\Runtime\Core\Public\Templates\SharedPointerInternals.h:116]
 UE4Editor_TestTD4_Win64_DebugGame!TSharedPtr&lt;AActor,0&gt;::~TSharedPtr&lt;AActor,0&gt;()
 UE4Editor_TestTD4_Win64_DebugGame!ATestPlayerController::TestFun() [D:\workspace\unreal_dev\TestTD4\Source\TestTD4\TestTD4PlayerController.cpp:124]
-</code></pre>
-<div class="alert danger ">
+</code></pre><div class="alert danger ">
   <p>As shown above: If <code>TSharedPtr</code> reference to <code>UObject</code>, it works at compiling, initialization of <code>TSharedPtr</code> also works at run-time, but it crashed on destruction.</p>
 </div>
 <h5 id="how-to-add-raw-pointers-into-gc-of-unreal">How to add raw pointers into GC of Unreal</h5>
@@ -452,23 +450,22 @@ bool IsValid = MyWeakActor.Get() != nullptr;    //false
 </div>
 <h5 id="remove-in-array">Remove in Array</h5>
 <p>Examples:</p>
-<pre><code>APawn* TestPawn = GetWorld()-&gt;SpawnActor&lt;APawn&gt;(MyPawnClass, FVector(100.f, 100.f, 0.f), FRotator::ZeroRotator);
-APawn* MyPawn = GetWorld()-&gt;SpawnActor&lt;APawn&gt;(MyPawnClass, FVector(200.f, 200.f, 0.f), FRotator::ZeroRotator);
-
-TestArray.Add(TWeakObjectPtr&lt;APawn&gt;(TestPawn));
-TestArray.Add(TWeakObjectPtr&lt;APawn&gt;(MyPawn));
-
-int Num = TestArray.Num();    // 2
-
-TWeakObjectPtr&lt;APawn&gt; WeakPtr1(TestPawn);
-TestArray.Remove(WeakPtr1);
-int Num = TestArray.Num();    // 1
-
-TWeakObjectPtr&lt;APawn&gt; WeakPtr2(TestPawn);
-TestArray.Remove(WeakPtr2);
-int Num2 = TestArray.Num();    // 1
-</code></pre>
-<h3 id="tweakptr">TWeakPtr</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>APawn<span style="color:#f92672">*</span> TestPawn <span style="color:#f92672">=</span> GetWorld()<span style="color:#f92672">-&gt;</span>SpawnActor<span style="color:#f92672">&lt;</span>APawn<span style="color:#f92672">&gt;</span>(MyPawnClass, FVector(<span style="color:#ae81ff">100.f</span>, <span style="color:#ae81ff">100.f</span>, <span style="color:#ae81ff">0.f</span>), FRotator<span style="color:#f92672">::</span>ZeroRotator);
+</span></span><span style="display:flex;"><span>APawn<span style="color:#f92672">*</span> MyPawn <span style="color:#f92672">=</span> GetWorld()<span style="color:#f92672">-&gt;</span>SpawnActor<span style="color:#f92672">&lt;</span>APawn<span style="color:#f92672">&gt;</span>(MyPawnClass, FVector(<span style="color:#ae81ff">200.f</span>, <span style="color:#ae81ff">200.f</span>, <span style="color:#ae81ff">0.f</span>), FRotator<span style="color:#f92672">::</span>ZeroRotator);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>TestArray.Add(TWeakObjectPtr<span style="color:#f92672">&lt;</span>APawn<span style="color:#f92672">&gt;</span>(TestPawn));
+</span></span><span style="display:flex;"><span>TestArray.Add(TWeakObjectPtr<span style="color:#f92672">&lt;</span>APawn<span style="color:#f92672">&gt;</span>(MyPawn));
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">int</span> Num <span style="color:#f92672">=</span> TestArray.Num();    <span style="color:#75715e">// 2
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>TWeakObjectPtr<span style="color:#f92672">&lt;</span>APawn<span style="color:#f92672">&gt;</span> WeakPtr1(TestPawn);
+</span></span><span style="display:flex;"><span>TestArray.Remove(WeakPtr1);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">int</span> Num <span style="color:#f92672">=</span> TestArray.Num();    <span style="color:#75715e">// 1
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>TWeakObjectPtr<span style="color:#f92672">&lt;</span>APawn<span style="color:#f92672">&gt;</span> WeakPtr2(TestPawn);
+</span></span><span style="display:flex;"><span>TestArray.Remove(WeakPtr2);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">int</span> Num2 <span style="color:#f92672">=</span> TestArray.Num();    <span style="color:#75715e">// 1
+</span></span></span></code></pre></div><h3 id="tweakptr">TWeakPtr</h3>
 <h5 id="difference-between-tweakptr-and-tweakobjectptr">Difference between TWeakPtr and TWeakObjectPtr</h5>
 <div class="alert danger ">
   <p>TWeakObjectPtr works for weak pointers of UObjects, TWeakPtr works for pointers to everything else.<br>
@@ -488,39 +485,32 @@ Since UObjects are garbage collected and shared pointers are reference counted, 
 </div>
 <h5 id="example--basic">Example : Basic</h5>
 <p>Define:</p>
-<pre><code>TUniquePtr&lt;FMeshTriOctree&gt; MTOctree;
-</code></pre>
-<p>Instantiate:</p>
-<pre><code>MTOctree = MakeUnique&lt;FMeshTriOctree&gt;(
-    Bounds.GetCenter(),
-    Bounds.GetExtent().GetMax()
-);
-</code></pre>
-<h5 id="example--tuniqueptr--tqueue">Example : TUniquePtr &amp; TQueue</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>TUniquePtr<span style="color:#f92672">&lt;</span>FMeshTriOctree<span style="color:#f92672">&gt;</span> MTOctree;
+</span></span></code></pre></div><p>Instantiate:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>MTOctree <span style="color:#f92672">=</span> MakeUnique<span style="color:#f92672">&lt;</span>FMeshTriOctree<span style="color:#f92672">&gt;</span>(
+</span></span><span style="display:flex;"><span>        Bounds.GetCenter(),
+</span></span><span style="display:flex;"><span>        Bounds.GetExtent().GetMax()
+</span></span><span style="display:flex;"><span>    );
+</span></span></code></pre></div><h5 id="example--tuniqueptr--tqueue">Example : TUniquePtr &amp; TQueue</h5>
 <p>Add element:</p>
-<pre><code>class FTestStruct 
-{
-    public:
-
-};
-
-TQueue&lt;TUniquePtr&lt;FTestStruct&gt;&gt; TestQueue;
-TUniquePtr&lt;FTestStruct&gt; Ptr = MakeUnique&lt;FTestStruct&gt;();
-TestQueue.Enqueue(MoveTemp(Ptr));
-</code></pre>
-<p>If forget to invoke <code>MoveTemp</code>, e.g.:</p>
-<pre><code>TQueue&lt;TUniquePtr&lt;FTestStruct&gt;&gt; TestQueue;
-TUniquePtr&lt;FTestStruct&gt; Ptr = MakeUnique&lt;FTestStruct&gt;();
-TestQueue.Enqueue(Ptr);
-</code></pre>
-<p>You would get error:</p>
-<pre><code>D:\Program Files\Epic Games\UE_4.22\Engine\Source\Runtime\Core\Public\Containers/Queue.h(252): error C2248: 'TUniquePtr&lt;FTestStruct,TDefaultDelete&lt;T&gt;&gt;::TUniquePtr': cannot access private member declared in class 'TUniquePtr&lt;FTestStruct,TDefaultDelete&lt;T&gt;&gt;'
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">FTestStruct</span> 
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>TQueue<span style="color:#f92672">&lt;</span>TUniquePtr<span style="color:#f92672">&lt;</span>FTestStruct<span style="color:#f92672">&gt;&gt;</span> TestQueue;
+</span></span><span style="display:flex;"><span>TUniquePtr<span style="color:#f92672">&lt;</span>FTestStruct<span style="color:#f92672">&gt;</span> Ptr <span style="color:#f92672">=</span> MakeUnique<span style="color:#f92672">&lt;</span>FTestStruct<span style="color:#f92672">&gt;</span>();
+</span></span><span style="display:flex;"><span>TestQueue.Enqueue(MoveTemp(Ptr));
+</span></span></code></pre></div><p>If forget to invoke <code>MoveTemp</code>, e.g.:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>TQueue<span style="color:#f92672">&lt;</span>TUniquePtr<span style="color:#f92672">&lt;</span>FTestStruct<span style="color:#f92672">&gt;&gt;</span> TestQueue;
+</span></span><span style="display:flex;"><span>TUniquePtr<span style="color:#f92672">&lt;</span>FTestStruct<span style="color:#f92672">&gt;</span> Ptr <span style="color:#f92672">=</span> MakeUnique<span style="color:#f92672">&lt;</span>FTestStruct<span style="color:#f92672">&gt;</span>();
+</span></span><span style="display:flex;"><span>TestQueue.Enqueue(Ptr);
+</span></span></code></pre></div><p>You would get error:</p>
+<pre tabindex="0"><code class="language-Log" data-lang="Log">D:\UE_4.22\Engine\Source\Runtime\Core\Public\Containers/Queue.h(252): error C2248: &#39;TUniquePtr&lt;FTestStruct,TDefaultDelete&lt;T&gt;&gt;::TUniquePtr&#39;: cannot access private member declared in class &#39;TUniquePtr&lt;FTestStruct,TDefaultDelete&lt;T&gt;&gt;&#39;
 2&gt;          with
 2&gt;          [
 2&gt;              T=FTestStruct
 2&gt;          ]
-</code></pre>
-<p>Remove element:<br>
+</code></pre><p>Remove element:<br>
 1st way:</p>
 <pre><code>TUniquePtr&lt;FTestStruct&gt; Ptr = MoveTemp(TestQueue.Peek());
 TestQueue.pop();
@@ -548,40 +538,38 @@ TestArray.RemoveAt(TestArray.Num() - 1);
 </div>
 <p>Example:<br>
 Engine\Source\Runtime\Online\WebSockets\Private\Lws\LwsWebSocket.h</p>
-<pre><code>struct FLwsReceiveBufferText
-{
-    /**
-     * Constructor
-     * @param InText The packet contents
-     */
-    FLwsReceiveBufferText(FString&amp;&amp; InText) : Text(MoveTemp(InText))
-    {
-    }
-
-    /** Text packet received */
-    const FString Text;
-};
-
-typedef TUniquePtr&lt;FLwsReceiveBufferText&gt; FLwsReceiveBufferTextPtr;
-</code></pre>
-<p>Otherwise you will get a compilication error upon using your class as a template parameter (e.g. <code>TQueue&lt;UniquePtr&lt;FTestStruct&gt;&gt;</code>):</p>
-<pre><code>D:\Program Files\Epic Games\UE_4.22\Engine\Source\Runtime\Core\Public\Containers/Queue.h(252): error C2248: 'TUniquePtr&lt;FTestStruct,TDefaultDelete&lt;T&gt;&gt;::TUniquePtr': cannot access private member declared in class 'TUniquePtr&lt;FTestStruct,TDefaultDelete&lt;T&gt;&gt;'
-2&gt;          with
-2&gt;          [
-2&gt;              T=FTestStruct
-2&gt;          ]
-2&gt;  D:\Program Files\Epic Games\UE_4.22\Engine\Source\Runtime\Core\Public\Templates/UniquePtr.h(305): note: see declaration of 'TUniquePtr&lt;FTestStruct,TDefaultDelete&lt;T&gt;&gt;::TUniquePtr'
-2&gt;          with
-2&gt;          [
-2&gt;              T=FTestStruct
-2&gt;          ]
-2&gt;  D:\workspace\unreal_dev\TestProj\Source\Public\TestClass.h(73): note: see declaration of 'TUniquePtr&lt;FTestStruct,TDefaultDelete&lt;T&gt;&gt;'
-2&gt;          with
-2&gt;          [
-2&gt;              T=FTestStruct
-2&gt;          ]
-</code></pre>
-<h3 id="reference">Reference</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">FLwsReceiveBufferText</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * Constructor
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * @param InText The packet contents
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     */</span>
+</span></span><span style="display:flex;"><span>    FLwsReceiveBufferText(FString<span style="color:#f92672">&amp;&amp;</span> InText) <span style="color:#f92672">:</span> Text(MoveTemp(InText))
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/** Text packet received */</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> FString Text;
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">typedef</span> TUniquePtr<span style="color:#f92672">&lt;</span>FLwsReceiveBufferText<span style="color:#f92672">&gt;</span> FLwsReceiveBufferTextPtr;
+</span></span></code></pre></div><p>Otherwise you will get a compilication error upon using your class as a template parameter (e.g. <code>TQueue&lt;UniquePtr&lt;FTestStruct&gt;&gt;</code>):</p>
+<pre tabindex="0"><code class="language-Log" data-lang="Log">D:\UE_4.22\Engine\Source\Runtime\Core\Public\Containers/Queue.h(252): error C2248: &#39;TUniquePtr&lt;FTestStruct,TDefaultDelete&lt;T&gt;&gt;::TUniquePtr&#39;: cannot access private member declared in class &#39;TUniquePtr&lt;FTestStruct,TDefaultDelete&lt;T&gt;&gt;&#39;
+    2&gt;          with
+    2&gt;          [
+    2&gt;              T=FTestStruct
+    2&gt;          ]
+    2&gt;  D:\UE_4.22\Engine\Source\Runtime\Core\Public\Templates/UniquePtr.h(305): note: see declaration of &#39;TUniquePtr&lt;FTestStruct,TDefaultDelete&lt;T&gt;&gt;::TUniquePtr&#39;
+    2&gt;          with
+    2&gt;          [
+    2&gt;              T=FTestStruct
+    2&gt;          ]
+    2&gt;  D:\workspace\unreal_dev\TestProj\Source\Public\TestClass.h(73): note: see declaration of &#39;TUniquePtr&lt;FTestStruct,TDefaultDelete&lt;T&gt;&gt;&#39;
+    2&gt;          with
+    2&gt;          [
+    2&gt;              T=FTestStruct
+    2&gt;          ]
+</code></pre><h3 id="reference">Reference</h3>
 <p>unreal-unique-pointer<br>
 <a href="https://baemincheon.github.io/2020/03/14/unreal-unique-pointer/">https://baemincheon.github.io/2020/03/14/unreal-unique-pointer/</a></p>
 <p>UE4 TSharedPtr和UObject的垃圾回收<br>

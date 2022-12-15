@@ -373,6 +373,31 @@
 </figure>
 </li>
 </ol>
+<h3 id="issues">Issues</h3>
+<h5 id="do-not-include-the-vertex-attribute-uv2">Do not include the vertex attribute &ldquo;uv2&rdquo;</h5>
+<p><code>Vertex Animation Textures</code> node rendering error:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Text" data-lang="Text"><span style="display:flex;"><span>Do not include the vertex attribute &#34;uv2&#34;, &#34;uv3&#34;, or &#34;uv4&#34; for Rigid-Body Dynamics (Rigid) mode. They will be overwritten.
+</span></span></code></pre></div><p>Solution:<br>
+Delete others UV shell, keep only one UV shell.
+<figure><img src="https://dawnarc.com/img/2022/20220415-[Houdini]UV%20Notes/[Houdini]UV%20Notes%20-%2002.gif"/>
+</figure>
+
+You&rsquo;d better adjust model with only one UV channel by merging vertex instead of combining mesh in Maya, otherwise vertex animation would not work properly.</p>
+<p>If don&rsquo;t want to delete uv in Houdini, you need to delete others UV channel (e.g. LightMap) in Maya.
+<figure><img src="https://dawnarc.com/img/2022/20220415-[Houdini]UV%20Notes/[Houdini]UV%20Notes%20-%2003.gif"/>
+</figure>
+</p>
+<h5 id="no-angular-velocity-attribute-w-is-found-on-the-input-geometry">No angular velocity attribute &ldquo;w&rdquo; is found on the input geometry</h5>
+<p>Vertex Animation Textures baking error:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Text" data-lang="Text"><span style="display:flex;"><span>Error: Rotation Interpolation is set to &#34;Accurate Multi-RPF Slerp with Angular Velocity&#34; but no angular velocity attribute &#34;w&#34; is found on the input geometry. Make sure &#34;w&#34; is included in the simulation output attributes and that &#34;w&#34; is transferred to points.
+</span></span><span style="display:flex;"><span>Rigid-Body Dynamics (Rigid) mode expects the point attributes &#34;pivot&#34; and &#34;orient&#34; on packed points but at least one of them is not found on the input geometry.. 
+</span></span></code></pre></div><p>It&rsquo;s an issue of version 19.5.<br>
+Solution:<br>
+Make sure that <code>UV layout</code> was placed after <code>UV Flatten</code>:
+<figure><img src="https://dawnarc.com/img/2022/20220415-[Houdini]UV%20Notes/[Houdini]UV%20Notes%20-%2004.png"/>
+</figure>
+</p>
+<p>and make sure there&rsquo;s only one UV set (UV channel) in your primitive.</p>
 <h3 id="tutorials">Tutorials</h3>
 <h5 id="youtube-tutorials">Youtube Tutorials</h5>
 <p>Houdini Tutorial: Closed Sweep Spline and keep UVs<br>
