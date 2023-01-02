@@ -7,6 +7,7 @@ rm -rf 2019
 rm -rf 2020
 rm -rf 2021
 rm -rf 2022
+rm -rf 2023
 rm -rf archives
 rm -rf categories
 rm -rf css
