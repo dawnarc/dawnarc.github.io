@@ -368,10 +368,10 @@
 <h5 id="零散记录">零散记录</h5>
 <ol>
 <li>
-<p>GPUProfile来统计性能消耗的时候，在editor模式下不是很准，因为编辑器的消耗也算进去了，如果要用，最好以Game模式来查看。</p>
+<p>GPUProfile统计性能消耗时，Editor模式下不是很准，因为编辑器的消耗也算在内，最好以Game模式来统计。</p>
 </li>
 <li>
-<p>UE4不支持640X480的分辨率，如果在这个分辨率下运行程序，会导致程序崩溃（4.4版本，不知最新版本是否仍有此问题）。</p>
+<p>UE4不支持640X480的分辨率，该分辨率下运行会导致程序崩溃（4.4版本，不知最新版本是否仍有此问题）。</p>
 </li>
 <li>
 <p>如果角色身上有很多Component需要Attach，尽量在使用时Attach，不要一加载就全部attach，否则当场景中角色很多时，会有严重性能问题。<br>
@@ -393,18 +393,18 @@
 UE4做了优化，当你使用<code>FTransform::TransformXXX()</code>时，如果当前硬件支持（intel 2008年之后的CPU、AMD 2011年之后的CPU），就走硬件指令，如果不支持，则走<code>FQuat::RotateVector</code>。</p>
 </li>
 <li>
-<p>VS2019针对C++代码编译速度、以及CPU<code>AVX/AVX2</code>指令集下的矢量计算进行了更深入的优化，并且微软Xbox ATG团队使用UE4的demo工程<strong>Infiltrator</strong>对优化后的效果进行了基准测试：</p>
+<p>VS2019针对C++代码编译速度、以及CPU<code>AVX/AVX2</code>指令集下的矢量计算进行了更深入的优化，并且微软Xbox ATG团队使用UE4的demo工程<a href="https://www.unrealengine.com/marketplace/en-US/product/infiltrator-demo">Infiltrator</a>对优化后的效果进行了基准测试：</p>
 <ul>
-<li>编译速度方面：完整编译速度，VS2019(16.2)是VS2017(15.9)的3.5倍，增量编译速度，VS2019(16.2)是VS2017(15.9)的1.6倍；</li>
-<li>代码优化方面：以游戏帧率作为测试标准，VS 16.2相对16.0提升了2%到3%，而16.0相对15.9最大可以提升2.8%，也就是说使用VS2019编译代码，相比VS2017，可以让游戏运行时帧率提升5%左右。</li>
+<li>编译速度：完整编译速度，VS2019(16.2)是VS2017(15.9)的3.5倍，增量编译速度，VS2019(16.2)是VS2017(15.9)的1.6倍；</li>
+<li>计算优化：以游戏帧率作为测试标准，VS 16.2相对16.0提升了2%到3%，而16.0相对15.9最大可以提升2.8%，也就是说使用VS2019编译代码，相比VS2017，可以让游戏运行时帧率提升5%左右。</li>
 </ul>
 <p>更多详情见微软C++团队博客：<a href="https://devblogs.microsoft.com/cppblog">C++ Team Blog</a>。</p>
 </li>
 <li>
-<p>如何断点调试UE4中的内联函数：我们知道加了<code>FORCEINLINE</code>的函数无法断点调试，但是<code>FORCEINLINE_DEBUGGABLE</code>可以，这样保证函数既能在debug模式下调试，又能在shipping打包时让函数内联。</p>
+<p>如何断点调试UE4中的内联函数：我们知道加了<code>FORCEINLINE</code>的函数无法断点调试，但<code>FORCEINLINE_DEBUGGABLE</code>可以，这样保证函数既能在debug模式下调试，又能在shipping版让函数内联。</p>
 </li>
 <li>
-<p>开发模式下开启宏定义<code>LOOKING_FOR_PERF_ISSUES</code>，用来打印引擎内部的潜在性能问题。比如，一帧内spawn的actor数量超过一定数量时，这对客户端来说是一个潜在的性能问题，<code>LOOKING_FOR_PERF_ISSUES</code>开启后，最自动打印出这些信息。</p>
+<p>开发模式下开启宏定义<code>LOOKING_FOR_PERF_ISSUES</code>，用来打印引擎内部的潜在性能问题。比如，一帧内spawn的actor数量超过一定数量时，这对客户端来说是一个潜在的性能问题，<code>LOOKING_FOR_PERF_ISSUES</code>开启后，会自动打印这些信息。</p>
 </li>
 <li>
 <p>修改：Engine/Source/Programs/UnrealBuildTool/System/LocalExecutor.cs</p>
@@ -439,7 +439,8 @@ UE4做了优化，当你使用<code>FTransform::TransformXXX()</code>时，如�
  //当添加第33个元素时，则新内存空间在堆内存。（无限套娃）
  TArray&lt;Shape*, TInlineAllocator&lt;16, TInlineAllocator&lt;32&gt;&gt;&gt; MyShapeArray;
 </code></pre>
-<p>参考：<a href="https://www.unrealengine.com/en-US/blog/optimizing-tarray-usage-for-performance">Optimizing TArray Usage for Performance</a></p>
+<p>参考：<a href="https://www.unrealengine.com/en-US/blog/optimizing-tarray-usage-for-performance">Optimizing TArray Usage for Performance</a><br>
+个人认为是否指定内存分配器，性能影响不大，因为UE4默认开启了内存池，即使TArray内部容量扩展，并没有重新开闭物理内存，甚至比栈内存更快。</p>
 </li>
 <li>
 <p>如果TArray元素class没有移动构造函数（move constructor）时，使用<code>Emplace()</code>代替<code>Add()</code>，避免值传递时复制内存；如果元素class自带move constructor（<code>MyStruct(MyStruct&amp;&amp; src)</code>），此时<code>Add(MoveTemp(MyStruct01))</code>等价于<code>Emplace(Arg01, Arg02)</code>。</p>
@@ -498,7 +499,7 @@ Unity早期文档：灯光 Light<br>
 <p>在建构光照贴图时，若场景中没有给予Lightmass Importance Volume，会对整个场景做间接光照的采样，产生Indirect Lighting Cache，这对大型游戏场景是相当的浪费，像是游戏角色到不了的中、远景不需要产生Indirect Lighting Cache，这时候就可以在场景中置入Lightmass Importance Volume，指定特定区域内才会产生Indirect Lighting Cache，节省不少建构光照的时间。</p>
 </li>
 <li>
-<p>点光源和聚光灯尽量不要开启<code>Cast Volumetric Shadow</code>；默认只有平行光开启了此选项。开启后的性能消耗为不开启的性能消耗三倍。不开启表示阴影计算方式使用<code>Shadow Mapping</code>，开启表示使用<code>Shadow Volume</code>，前者的阴影计算没有后者精准，但是计算量小。</p>
+<p>点光源和聚光灯尽量不要开启<code>Cast Volumetric Shadow</code>；默认只有平行光开启了此选项。开启后的性能消耗为不开启的性能消耗三倍。不开启表示阴影计算方式使用<code>Shadow Mapping</code>，开启表示使用<code>Shadow Volume</code>，前者计算没有后者精准，但开销小。</p>
 </li>
 <li>
 <p>如果开启体积雾，建议将灯光改成静态光，这样在Build Lighting时会生成预计算的体积雾相关数据，这样可以显著提升体积雾性能。体积雾性能消耗巨大。</p>
@@ -532,7 +533,7 @@ DFAO相关的两个优化选项：</p>
 <p>如果使用了非静态的Directional Light（Stationary 或者 Movable），场景中有大量单位时，一定要开启<code>Dynamic Shadow Distance</code>（默认为0，表示关闭）。<br>
 测试用例： 500 个 Actor 同屏，摄像机高度4000，Stationary类型的 Directional Light 的属性<code>Dynamic Shadow Distance StationaryLight</code>的值要大于摄像机到Actor的直线距离（注意：是到每个Actor的直线距离，所以值尽量要设置的大一些，比如5000），否则帧率从200 fps 下降到 100 fps。<br>
 <code>Dynamic Shadow Distance</code>开启后能提升性能的原因：<br>
-Dynamic Shadow Distance 表示在多少距离内使用动态阴影，超过这个距离之外Fade成静态阴影，而Fade成静态阴影后就可以提升性能。</p>
+Dynamic Shadow Distance 表示在多少距离内使用动态阴影，超过这个距离则Fade成静态阴影，以提升性能。</p>
 </li>
 <li>
 <p>逻辑控制Cast Shadow<br>
@@ -574,8 +575,6 @@ Dynamic Shadow Distance 表示在多少距离内使用动态阴影，超过这�
 <p>一般针对材质的优化方式是，抓帧查看shader instruction count。引擎提供了工具函数<code>FMaterialStatistics Stats = UMaterialEditingLibrary::GetStatistics(_YourMaterialInterfaceObject_);</code>，自己写个插件，批量导出所有材质的最贵指令数量，并支持排序，一劳永逸。</p>
 </li>
 </ol>
-<p>Performance Guidelines for Artists and Designers<br>
-<a href="https://docs.unrealengine.com/latest/INT/Engine/Performance/Guidelines/">https://docs.unrealengine.com/latest/INT/Engine/Performance/Guidelines/</a></p>
 <h5 id="geometry优化">Geometry优化</h5>
 <ol>
 <li>
@@ -604,7 +603,8 @@ Dynamic Shadow Distance 表示在多少距离内使用动态阴影，超过这�
 <h5 id="物理与碰撞优化">物理与碰撞优化</h5>
 <ol>
 <li>
-<p>BoxComponent的 Generate Overlap Events 设置为false。如果不需要Overlap事件，那么就将该属性设置设置为false，默认为true。当BoxCompont达到一定量级时，开启Generate Overlap Events的性能消耗是关闭情况下的两倍。</p>
+<p>BoxComponent的<code>Generate Overlap Events</code>设置为false。如果不需要Overlap事件，那么就将该属性设置设置为false，默认为true。当BoxCompont达到一定量级时，开启<code>Generate Overlap Events</code>的性能消耗是关闭情况下的两倍。<br>
+特别是可移动的物体，若开启了Overlap检测，则只要其发生位移，引擎每帧都会执行物理检测。</p>
 </li>
 <li>
 <p>如果不需要物理，将 <code>Simulate Physics</code> 设置为false。</p>
@@ -613,7 +613,7 @@ Dynamic Shadow Distance 表示在多少距离内使用动态阴影，超过这�
 <p>如果不需要Hit事件，将 <code>Simulation Generates Hit Events</code> 设置为false。</p>
 </li>
 <li>
-<p>如果场景中物体类型（WorldStatic、WorldDynamic、Pawn等）很多，且每种数量也很多，则Collision 的 Object Response 通道设置的越少越好，把可以设置为 Ignore 的通道都设置为 Ignore 。如果场景中的物体类型比较单一，即使这种类型的物体在场景中有数百个，Object Response 即使都设置为Block 或者 Overlap，对性能也没有影响。</p>
+<p>如果场景中物体类型（WorldStatic、WorldDynamic、Pawn等）很多，且每种数量也很多，则Collision 的 Object Response 通道设置的越少越好，把可以设置为 Ignore 的通道都设置为 Ignore 。</p>
 </li>
 <li>
 <p>如果是大型RTS游戏，场景有海量单位时（比如星际2中大规模的虫族小狗），能不用UE4的 Collision 就不要用 Collision，否则帧数狂泻。<br>
@@ -704,7 +704,7 @@ Project Settings -&gt; Engine -&gt; Animation -&gt; 勾选 Strip Animation Data 
 <li>
 <p>Server模式下禁用角色物理模拟<br>
 <code>FBodyInstance-&gt;bSimulatePhysics</code> 设置为false。默认为false。<br>
-<code>SkeletalMeshComponent::bEnablePhysicsOnDedicatedServer</code> 设置为 false ， 默认为 true 。但这样会导致物理验算以客户端为准，有被外挂hack的风险。bEnablePhysicsOnDedicatedServer 在 run-time 修改不生效。</p>
+<code>SkeletalMeshComponent::bEnablePhysicsOnDedicatedServer</code> 设置为false (默认为true) ，但这样容易被外挂篡改。<code>bEnablePhysicsOnDedicatedServer</code>在run-time修改不生效。</p>
 </li>
 <li>
 <p>Server模式下禁用 Collision<br>
@@ -759,6 +759,8 @@ Project Settings -&gt; Engine -&gt; Animation -&gt; 勾选 Strip Animation Data 
 <a href="https://www.unrealengine.com/en-US/blog/debugging-and-optimizing-memory">https://www.unrealengine.com/en-US/blog/debugging-and-optimizing-memory</a></p>
 <p>Expert&rsquo;s guide to unreal engine performance<br>
 <a href="https://dev.epicgames.com/community/learning/tutorials/3o6/expert-s-guide-to-unreal-engine-performance">https://dev.epicgames.com/community/learning/tutorials/3o6/expert-s-guide-to-unreal-engine-performance</a></p>
+<p>Testing and Optimizing Your Content<br>
+<a href="https://docs.unrealengine.com/5.1/en-US/testing-and-optimizing-your-content/">https://docs.unrealengine.com/5.1/en-US/testing-and-optimizing-your-content/</a></p>
 <hr>
 <p><code>嗜欲深者天机浅 ---《庄子·大宗师》</code></p>
               
@@ -839,7 +841,7 @@ Project Settings -&gt; Engine -&gt; Animation -&gt; 勾选 Strip Animation Data 
         </article>
         <footer id="footer" class="main-content-wrap">
   <span class="copyrights">
-    &copy; 2022 Wang Aiguo. All Rights Reserved. Powered by <A href="https://gohugo.io/"> Hugo</A> | Theme <A href="https://github.com/kakawait/hugo-tranquilpeak-theme/">Tranquilpeak</A>.
+    &copy; 2023 Wang Aiguo. All Rights Reserved. Powered by <A href="https://gohugo.io/"> Hugo</A> | Theme <A href="https://github.com/kakawait/hugo-tranquilpeak-theme/">Tranquilpeak</A>.
   </span>
 </footer>
 
