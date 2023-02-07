@@ -404,10 +404,10 @@ UE4做了优化，当你使用<code>FTransform::TransformXXX()</code>时，如�
 <p>如何断点调试UE4中的内联函数：我们知道加了<code>FORCEINLINE</code>的函数无法断点调试，但<code>FORCEINLINE_DEBUGGABLE</code>可以，这样保证函数既能在debug模式下调试，又能在shipping版让函数内联。</p>
 </li>
 <li>
-<p>开发模式下开启宏定义<code>LOOKING_FOR_PERF_ISSUES</code>，用来打印引擎内部的潜在性能问题。比如，一帧内spawn的actor数量超过一定数量时，这对客户端来说是一个潜在的性能问题，<code>LOOKING_FOR_PERF_ISSUES</code>开启后，会自动打印这些信息。</p>
+<p>开发模式下开启宏定义<code>LOOKING_FOR_PERF_ISSUES</code>，用来打印引擎内的潜在性能问题，比如：一帧内spawn的actor数量超过阀值；资产加载等待时长超过阀值。</p>
 </li>
 <li>
-<p>修改：Engine/Source/Programs/UnrealBuildTool/System/LocalExecutor.cs</p>
+<p>加快编译速度，修改：Engine/Source/Programs/UnrealBuildTool/System/LocalExecutor.cs</p>
 <pre><code> double ProcessorCountMultiplier = 1.0;
 </code></pre>
 <p>改为：</p>
@@ -721,6 +721,21 @@ Project Settings -&gt; Engine -&gt; Animation -&gt; 勾选 Strip Animation Data 
 </li>
 <li>
 <p>4.25提供了PushModel，通过手动同步对象属性，来降低replication模块每帧遍历actor以及属性比对的耗时。<a href="https://forums.unrealengine.com/t/push-model-networking/510684/13">Push Model Networking</a></p>
+</li>
+</ol>
+<h5 id="内存优化memory-issues">内存优化(Memory Issues)</h5>
+<ol>
+<li>
+<p>过多的贴图加载：</p>
+<ul>
+<li>没有设置为streaming（勾选了<code>Never Streaming</code>）；</li>
+<li>没有生成mipmap（设置了<code>NoMipmaps</code>）；</li>
+<li>材质中过多的纹理采样；</li>
+<li>gameplay加载贴图不合理；</li>
+</ul>
+</li>
+<li>
+<p>过多的蓝图属性资源硬引用；</p>
 </li>
 </ol>
 <h5 id="参考资料">参考资料</h5>
