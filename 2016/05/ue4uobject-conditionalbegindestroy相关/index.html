@@ -436,6 +436,20 @@ ntdll
 <h5 id="conditionalbegindestroy-和-destroy区别">ConditionalBeginDestroy 和 Destroy区别</h5>
 <p>ConditionalBeginDestroy 和 Destroy两者都是销毁对象，区别是：前者是在delay一定时间后执行销毁，Destroy是在当前帧结束时执行销毁。</p>
 <p>如果逻辑上每帧都有很多 Actor需要销毁，那么可以先把这些Actor隐藏，让对象失去引用（如果对象是被<code>URPOPERTY</code>属性保持的，那就让其所属的对象失去引用，比如：<code>RemoveFromRoot()</code>），不必手动执行 Destroy，让引擎批量执行GC。</p>
+<h5 id="conditionalbegindestroy-与-markpendingkill">ConditionalBeginDestroy 与 MarkPendingKill()</h5>
+<p>MarkPendingKill()事项：</p>
+<ul>
+<li><code>MarkPendingKill()</code>执行之后，下次GC一定会被销毁，在GC之前可以访问对象属性；</li>
+<li><code>MarkPendingKill()</code>执行后，并且被GC掉，再次访问对象属性会导致崩溃；</li>
+</ul>
+<p>ConditionalBeginDestroy事项：</p>
+<ul>
+<li><code>ConditionalBeginDestroy()</code>执行后，若该对象仍被其他地方引用，即使执行GC，也不会被销毁，此时还可访问其属性；</li>
+<li>当对象失去所有引用后，此时执不执行<code>ConditionalBeginDestroy()</code>，下次GC都会被销毁，GC后访问其属性会崩溃；</li>
+</ul>
+<div class="alert danger ">
+  <p>上层应用中，<code>ConditionalBeginDestroy()</code>和<code>MarkPendingKill()</code>都是不可取的方式，正确方式是使用WeakPtr包装对象，当对象销毁后，WeakPtr的<code>IsVaild()</code>返回false，<code>Get()</code>会返回<code>nullptr</code>。</p>
+</div>
               
             </div>
           </div>
