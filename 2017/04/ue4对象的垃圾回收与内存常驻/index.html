@@ -455,7 +455,8 @@ Handle-&gt;ReleaseHandle();
 <p>要解决这种问题，貌似只能用<code>AddToRoot()</code>和<code>RemoveFromRoot()</code>。</p>
 </li>
 <li>
-<p><code>UObject::ConditionalBeginDestroy()</code>是异步销毁对象内存；<code>AActor::Destroy()</code>是同步销毁对象内存且是在当前帧结束时立即执行。这里说的销毁不是用指针<code>delete</code>内存，而是从内存池中抹掉数据。</p>
+<p>UE早期版本，<code>UObject::ConditionalBeginDestroy()</code>可以异步销毁对象内存，但是目前版本并不能保证销毁：如果actor仍然被其他地方引用，<code>ConditionalBeginDestroy()</code>执行后，下次GC并不能将其销毁。参考：<a href="https://dawnarc.com/2016/05/ue4uobject-conditionalbegindestroy%E7%9B%B8%E5%85%B3/#conditionalbegindestroy-and-markpendingkill">ConditionalBeginDestroy与MarkPendingKill</a><br>
+<code>AActor::Destroy()</code>是同步销毁对象内存且是在当前帧结束时立即执行。这里说的销毁不是用指针<code>delete</code>内存，而是从内存池中抹掉数据。</p>
 </li>
 </ol>
 <h5 id="参考资料">参考资料</h5>
