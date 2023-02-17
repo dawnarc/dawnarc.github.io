@@ -455,7 +455,7 @@ Handle-&gt;ReleaseHandle();
 <p>要解决这种问题，貌似只能用<code>AddToRoot()</code>和<code>RemoveFromRoot()</code>。</p>
 </li>
 <li>
-<p>UE早期版本，<code>UObject::ConditionalBeginDestroy()</code>可以异步销毁对象内存，但是目前版本并不能保证销毁：如果actor仍然被其他地方引用，<code>ConditionalBeginDestroy()</code>执行后，下次GC并不能将其销毁。参考：<a href="https://dawnarc.com/2016/05/ue4uobject-conditionalbegindestroy%E7%9B%B8%E5%85%B3/#conditionalbegindestroy-and-markpendingkill">ConditionalBeginDestroy与MarkPendingKill</a><br>
+<p>很多初学者会用<code>UObject::ConditionalBeginDestroy()</code>销毁对象，不知是早期资料少被别人带偏，还是远古版本确实可以，至少目前版本并不能销毁对象：如果actor仍然被其他地方引用，<code>ConditionalBeginDestroy()</code>执行后，下次GC并不能将其销毁。参考：<a href="https://dawnarc.com/2016/05/ue4uobject-conditionalbegindestroy%E7%9B%B8%E5%85%B3/#conditionalbegindestroy-and-markpendingkill">ConditionalBeginDestroy与MarkPendingKill</a><br>
 <code>AActor::Destroy()</code>是同步销毁对象内存且是在当前帧结束时立即执行。这里说的销毁不是用指针<code>delete</code>内存，而是从内存池中抹掉数据。</p>
 </li>
 </ol>
@@ -564,7 +564,7 @@ virtual void Destroyed() override; //用于释放成员，调用Destroy();会立
 <pre><code>  void UActorComponent::DestroyComponent(bool bPromoteChildren/*= false*/)
 </code></pre>
 <p>蓝图销毁，需要设置一个UActorComponent的属性</p>
-<pre><code>      bAllowAnyoneToDestroyMe = true;
+<pre><code>  bAllowAnyoneToDestroyMe = true;
 </code></pre>
 <p>因为提供给蓝图的接口需要判断这个字段，默认是false</p>
 <pre><code>  UFUNCTION(BlueprintCallable, Category=&quot;Components&quot;, meta=(Keywords = &quot;Delete&quot;, HidePin=&quot;Object&quot;, DefaultToSelf=&quot;Object&quot;, DisplayName = &quot;DestroyComponent&quot;))
