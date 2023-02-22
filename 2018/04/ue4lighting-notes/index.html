@@ -365,6 +365,62 @@
               <p>keywords：UE4, Lighting, 灯光, 光源距离裁剪</p>
 <p>以下问题都是基于4.18，不排除后续新版本变动。</p>
 <h3 id="fragments-notes">Fragments Notes</h3>
+<h5 id="static-vs-stationary-vs-moveable">Static vs Stationary vs Moveable</h5>
+<p>In brief:</p>
+<ul>
+<li>The main difference is that movable lights don’t produce GI!!</li>
+<li>Static lights can’t change at all in gameplay.</li>
+<li>Sationary can have small changes (like color)… Static lights are “free” (they are pre calculated maps), movable is the most &ldquo;expensive&rdquo;.</li>
+</ul>
+<p><strong>Static lights</strong><br>
+Pros:</p>
+<ul>
+<li>practically no limits; you can place as many as you want, they will not affect game performance- they will only affect light baking times, which is acceptable since that’s done during development</li>
+<li>best lights to use for highest performance and frame rate of your game (so if you want 60 FPS online multiplayer, static lights are your friend)</li>
+<li>very little to manage (i.e. no limit on cone angles overlapping, no stress about having too many of them casting shadows within player line of sight, etc.)</li>
+<li>don’t need to worry about technical caveats, so a junior artist or lighter can go to town without a senior or lead having to worry about coming in a ripping the entire level’s light rig apart because there’s 1,000 dynamic lights in a hallway</li>
+</ul>
+<p>Cons:</p>
+<ul>
+<li>highest performance means lowest art quality; these are the worst quality lights you can use- BUT if you manage lightmap texel density well and have well laid out lightmap UV’s on static meshes, if CAN look really good)</li>
+<li>baked shadow maps, so you don’t get the nice dynamic shadows from stationary or dynamic lights</li>
+<li>since these are baked lights, you can’t change anything about them at run time (i.e. can’t change color, intensity, shadows, anything…)</li>
+<li>this isn’t really a con to me, but I see a lot of people bring this up on the forums all the time: when working in UE4 editor, placing static lights doesn’t preview accurately to artists, so after you place them with the editor preview lighting and bake, you get completely different visual results. This isn’t a bug, but a limitation of the pipeline. Since static lights have to be prerendered before you can see what they look like in-game, the only way to get an accurate preview is to build your lighting all the time and see the results (while rendering at preview mode of course so it renders as fast as possible). However, as you place more and more static lights, your preview build times will slightly increase more and more. Once you’re really experienced at lighting in production with static lights (regardless of engine), you already know in your head how the lighting will most likely look when building your light rigs. Again, this is usually only a major con for new lighting artists or less experienced lighters.</li>
+</ul>
+<p><strong>Stationary Lights</strong><br>
+Pros:</p>
+<ul>
+<li>they look great because they cast dynamic shadow maps in the scene</li>
+<li>they can be fitted with material functions and IES light profiles. these are special effects that can add a lot of artistic depth and realism to your scene</li>
+<li>since they are dynamic, you can change their visual parameters at run time (i.e. you can change their color and intensity)</li>
+<li>since they’re not solely dynamic, they can cast indirect illumination i.e. global illumination just like a static light, giving them the best of both worlds</li>
+<li>cheaper to render than dully dynamic lights, making them better to use for performance</li>
+</ul>
+<p>Cons:</p>
+<ul>
+<li>can’t be moved at runtime like fully dynamic lights; you can’t move or rotate them!</li>
+<li>hard limits; i.e. you can’t have more than 4 stationary lights overlap and touch the same mesh, if you do then the engine will automatically take the offending lights and convert them to fully dynamic lights- killing your performance!</li>
+<li>lot more expensive to render than static lights</li>
+<li>require more technical knowledge to use than static lights (inexperienced lighters may blow out a level’s performance by accident)</li>
+</ul>
+<p><strong>Dynamic lights</strong><br>
+Pros:</p>
+<ul>
+<li>fully dynamic lighting; meaning you can do anything at run time- move, rotate, change color, intensity, radius, etc. This makes them perfect for using as a player’s flashlight in a horror game, etc.</li>
+<li>dynamic shadows</li>
+<li>can use material functions, etc.</li>
+<li>the preview you see in the editor is one to one with what the final lighting looks like, no need to bake and get different results like with static lights</li>
+<li>not limited to 4 overlapping lights; place as many as you like if you’re planning on playing this on an IBM quantum super computer running 10x GTX 1080’s.</li>
+</ul>
+<p>Cons:</p>
+<ul>
+<li>most expensive lights to render in UE4; these will hurt performance and frame rate the most</li>
+<li>again, easy for a junior lighter to accidentally kill performance by placing too many of these</li>
+<li>no indirect lighting contribution, so you won’t get global illumination from these lights</li>
+</ul>
+<p>Reference:<br>
+<a href="https://forums.unrealengine.com/t/difference-between-static-stationary-and-moveable-skyights/115391">Difference between Static, Stationary, and Moveable skyights</a><br>
+<a href="https://forums.unrealengine.com/t/static-or-stationary/2637/7">Static or Stationary</a></p>
 <h5 id="lightmap">LightMap</h5>
 <p>&ldquo;Baked Lighting&rdquo; and &ldquo;Lightmaps&rdquo; (Maya &amp; Unreal Engine) (<span class="highlight-text green">Recommended</span>)<br>
 <a href="https://www.youtube.com/watch?v=-sJsR0y7R8U">https://www.youtube.com/watch?v=-sJsR0y7R8U</a></p>
@@ -454,6 +510,12 @@ Project Settings &gt; Engine &gt; Rendering -&gt; Lighting -&gt; Check <code>Scr
 <a href="https://www.youtube.com/watch?v=AQ2jIgqLHPA">https://www.youtube.com/watch?v=AQ2jIgqLHPA</a></p>
 <p>Reflections (Part 2) Planar Reflections &amp; SSR | Tips &amp; Tricks | Unreal Engine<br>
 <a href="https://www.youtube.com/watch?v=1Sx9qINRoIY">https://www.youtube.com/watch?v=1Sx9qINRoIY</a></p>
+<h5 id="light-map-compression">Light Map Compression</h5>
+<p>How to disable lightmaps compression:<br>
+Settings -&gt; World Settings -&gt; Lightmass -&gt; Uncheck <code>Compress Lightmaps</code>.
+<figure><img src="https://dawnarc.com/img/2018/20180427-[UE4]Lighting%20Notes/[UE4]Lighting%20Notes%20-%2001.gif"/>
+</figure>
+</p>
 <h3 id="fragments-notes-lighting-on-mobile">Fragments Notes: Lighting on Mobile</h3>
 <h5 id="attentions-on-mobile">Attentions on Mobile</h5>
 <p>1, <code>Static</code> and <code>Stationary</code> Spotlight support on Mobile, but <code>Movable</code> Spotlight not support on Mobile before v4.22;</p>
@@ -527,8 +589,12 @@ Create a Level and enable <code>Movable</code> Sky Light at first, then copy mes
 <a href="https://qiita.com/EGJ-Nori_Shinoyama/items/ced1c91e2fd9de2c2ad4">https://qiita.com/EGJ-Nori_Shinoyama/items/ced1c91e2fd9de2c2ad4</a></p>
 <p>[UE4] Create a lightmap for moving objects with Static Lighting<br>
 <a href="https://qiita.com/EGJ-Nori_Shinoyama/items/b9577608b4ac5a789c3e">https://qiita.com/EGJ-Nori_Shinoyama/items/b9577608b4ac5a789c3e</a></p>
+<p>Lighting Companion: Lightmass World Settings In UE4 (<span class="highlight-text green">Recommended</span>)<br>
+<a href="https://www.techarthub.com/lighting-companion-lightmass-world-settings-in-ue4/">https://www.techarthub.com/lighting-companion-lightmass-world-settings-in-ue4/</a></p>
 <h3 id="tutorials">Tutorials</h3>
 <h5 id="fragments-tutorials">Fragments Tutorials</h5>
+<p>Unreal 4: Lighting (<span class="highlight-text green">Recommended</span>)<br>
+<a href="https://i3dtutorials.gumroad.com/l/YjLxM">https://i3dtutorials.gumroad.com/l/YjLxM</a></p>
 <p>Tutorial | UE4 Lighting Overview<br>
 <a href="https://www.youtube.com/watch?v=kFaEf8V8XYY">https://www.youtube.com/watch?v=kFaEf8V8XYY</a></p>
 <p>Studying Lighting in Games<br>
@@ -547,6 +613,8 @@ Create a Level and enable <code>Movable</code> Sky Light at first, then copy mes
 <a href="https://www.youtube.com/watch?v=5t2nB75AdRA">https://www.youtube.com/watch?v=5t2nB75AdRA</a></p>
 <p>80 Level Ratings: 10 Excellent Tutorials on Lighting in Unreal<br>
 <a href="https://80.lv/articles/80-level-ratings-10-excellent-tutorials-on-lighting-in-unreal/">https://80.lv/articles/80-level-ratings-10-excellent-tutorials-on-lighting-in-unreal/</a></p>
+<p>Bake Lighting FASTER with GPU Lightmass - Unreal Engine 4.26<br>
+<a href="https://www.youtube.com/watch?v=hq1WFFF6iD0">https://www.youtube.com/watch?v=hq1WFFF6iD0</a></p>
 <h5 id="fog--volumetric-tutorials">Fog &amp; Volumetric Tutorials</h5>
 <p>UE4 Lighting and Fog tutorial | ArtStation Challenge EP.006<br>
 <a href="https://www.youtube.com/watch?v=jsN0LBgrj14">https://www.youtube.com/watch?v=jsN0LBgrj14</a></p>
