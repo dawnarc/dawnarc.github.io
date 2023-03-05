@@ -378,19 +378,49 @@
 </span></span></code></pre></div><div class="alert danger ">
   <p>GEngine-&gt;Browse这种方式第一次打开场景时正常，如果第二次切换场景（比如从别的场景再切回原场景），则会导致程序崩溃。建议用：UGameplayStatics::OpenLevel(GetWorld(), TEXT(&quot;/Game/Map/TestMap&quot;)); 这种方式来回切场景不会出现崩溃问题。</p>
 </div>
-<h5 id="check-if-its-server-or-client-without-worldcontext">Check if it&rsquo;s server or client without WorldContext</h5>
+<h5 id="level-event">Level Event</h5>
+<p>Level changed (switch level) event:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">//只有Standalone和Client中触发，Server不触发。
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>FCoreUObjectDelegates<span style="color:#f92672">::</span>PreLoadMap.AddUObject(<span style="color:#66d9ef">this</span>, <span style="color:#f92672">&amp;</span>UMySubsystem<span style="color:#f92672">::</span>OnPreLoadMap);
+</span></span><span style="display:flex;"><span>FCoreUObjectDelegates<span style="color:#f92672">::</span>PostLoadMapWithWorld.AddUObject(<span style="color:#66d9ef">this</span>, <span style="color:#f92672">&amp;</span>UMySubsystem<span style="color:#f92672">::</span>OnPostLoadMap);
+</span></span></code></pre></div><p>Level destroyed (e.g. exit game) event:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>GetWorld()<span style="color:#f92672">-&gt;</span>GetLevel(<span style="color:#ae81ff">0</span>)<span style="color:#f92672">-&gt;</span>OnCleanupLevel.AddUObject(<span style="color:#66d9ef">this</span>, <span style="color:#f92672">&amp;</span>UMySubsystem<span style="color:#f92672">::</span>OnCleanupLevel);
+</span></span></code></pre></div><p>Actor spawned event:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>FOnActorSpawned<span style="color:#f92672">::</span>FDelegate Delegate;
+</span></span><span style="display:flex;"><span>Delegate.BindUObject(<span style="color:#66d9ef">this</span>, <span style="color:#f92672">&amp;</span>AMyActor<span style="color:#f92672">::</span>OnActorAdded);
+</span></span><span style="display:flex;"><span>GetWorld()<span style="color:#f92672">-&gt;</span>AddOnActorSpawnedHandler(Delegate);
+</span></span></code></pre></div><p>or</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>GEngine<span style="color:#f92672">-&gt;</span>OnLevelActorAdded().AddUObject(<span style="color:#66d9ef">this</span>, <span style="color:#f92672">&amp;</span>AMyActor<span style="color:#f92672">::</span>OnActorSpawned);
+</span></span><span style="display:flex;"><span>GEngine<span style="color:#f92672">-&gt;</span>OnLevelActorDeleted().AddUObject(<span style="color:#66d9ef">this</span>, <span style="color:#f92672">&amp;</span>AMyActor<span style="color:#f92672">::</span>OnActorDeleted);
+</span></span><span style="display:flex;"><span>GEngine<span style="color:#f92672">-&gt;</span>OnLevelActorListChanged().AddUObject(<span style="color:#66d9ef">this</span>, <span style="color:#f92672">&amp;</span>AMyActor<span style="color:#f92672">::</span>OnLevelActorListChanged);
+</span></span></code></pre></div><h5 id="how-to-get-uworld">How to get UWorld</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">if</span>(UWorld<span style="color:#f92672">*</span> World <span style="color:#f92672">=</span> GEngine<span style="color:#f92672">-&gt;</span>GetCurrentPlayWorld(<span style="color:#66d9ef">nullptr</span>))
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    ULevel<span style="color:#f92672">*</span> Level <span style="color:#f92672">=</span> World<span style="color:#f92672">-&gt;</span>GetLevel(<span style="color:#ae81ff">0</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h5 id="check-if-its-server-or-client-without-worldcontext">Check if it&rsquo;s server or client without WorldContext</h5>
 <p>Quoted from CoreMisc.h</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">bool</span> <span style="color:#a6e22e">IsRunningDedicatedServer</span>();
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">bool</span> <span style="color:#a6e22e">IsRunningGame</span>();
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>boo <span style="color:#a6e22e">IsRunningClientOnly</span>();
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">bool</span> <span style="color:#a6e22e">IsRunningClientOnly</span>();
 </span></span></code></pre></div><h5 id="subsystem-unreal-stylized-singleton">Subsystem (Unreal Stylized Singleton)</h5>
-<p>Quoted from GameInstance.h:</p>
+<p>How to get customized Subsystem?<br>
+Quoted from GameInstance.h:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">template</span> <span style="color:#f92672">&lt;</span><span style="color:#66d9ef">typename</span> TSubsystemClass<span style="color:#f92672">&gt;</span>
 </span></span><span style="display:flex;"><span>TSubsystemClass<span style="color:#f92672">*</span> GetSubsystem() <span style="color:#66d9ef">const</span>
 </span></span><span style="display:flex;"><span>{
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> SubsystemCollection.GetSubsystem<span style="color:#f92672">&lt;</span>TSubsystemClass<span style="color:#f92672">&gt;</span>(TSubsystemClass<span style="color:#f92672">::</span>StaticClass());
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Or:<br>
+header:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">static</span> UMySubsystem<span style="color:#f92672">*</span> Get(<span style="color:#66d9ef">const</span> UObject<span style="color:#f92672">*</span> WorldContext);
+</span></span></code></pre></div><p>cpp:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>UMySubsystem<span style="color:#f92672">*</span> UMySubsystem<span style="color:#f92672">::</span>Get(<span style="color:#66d9ef">const</span> UObject<span style="color:#f92672">*</span> WorldContext)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> UGameInstance<span style="color:#f92672">::</span>GetSubsystem<span style="color:#f92672">&lt;</span>UMySubsystem<span style="color:#f92672">&gt;</span>(UGameplayStatics<span style="color:#f92672">::</span>GetGameInstance(WorldContext));
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>How to disable initialization of <code>GameInstanceSubsystem</code> on dedicated server?<br>
 Quoted from:<br>

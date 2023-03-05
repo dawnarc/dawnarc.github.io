@@ -363,9 +363,9 @@
                      (adsbygoogle = window.adsbygoogle || []).push({});
                 </script>
               <p>keywords：UE4, Replication, Relicate, Reliable, RPC, RTS Movement, Dedicated Server, 专用服务器</p>
-<p><div class="alert success ">
+<div class="alert success ">
   <p>实例的完整工程下载地址见文章底部。</p>
-</div>IsNetRelevantFor</p>
+</div>
 <h3 id="属性同步">属性同步</h3>
 <h5 id="属性同步基本用法">属性同步基本用法</h5>
 <p>步骤：<br>
@@ -936,6 +936,9 @@ Dedicated Servers, Jitter, Matchmaking<br>
 </li>
 <li>
 <p>射击游戏中，如果子弹是服务端生成，并同步到客户端，并且子弹是真实弹道（不是射线检测），并且在子弹的Hit事件中Destroy自己，那么当子弹速度过快时，且发射口离障碍物很近时，子弹还没来得及同步到客户端，子弹在服务端就已经消掉掉了，从而导致Hit事件只会在服务端触发，不会在客户端触发。而当发射口离障碍物有一定距离时（距离取决与子弹速度），客户端和服务端的Hit会同时触发。</p>
+</li>
+<li>
+<p>销毁Actor时，如果<code>bool AActor::Destroy(bool bNetForce = false, bool bShouldModifyLevel = true );</code>的<code>bNetForce</code>参数需要设置为true才能销毁（这种情形用在强制销毁客户端的actor），则说明<span class="highlight-text red">DS有内存泄漏问题</span>。因为<code>bNetForce</code>只是将客户端的actor销毁，服务端的actor内存还没释放。</p>
 </li>
 </ol>
 <h3 id="示例工程下载地址">示例工程下载地址</h3>

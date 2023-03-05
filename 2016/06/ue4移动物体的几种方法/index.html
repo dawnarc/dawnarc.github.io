@@ -12,79 +12,19 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="generator" content="Hugo 0.102.3 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Wang Aiguo">
-<meta name="keywords" content="">
-<meta name="description" content="keywords: UE4、Movement
-1，Actor-&gt;SetActorLocation
-Actor-&gt;SetActorLocation()2，AActor::AddActorWorldOffset(), AActor::AddActorLocalOffset()
-AddActorWorldOffset与AddActorLocalOffset区别：如果期望Actor沿着某个世界坐标系方向移动，那么使用AddActorWorldOffset并且参数为世界坐标系的DeltaLocation；如果期望Actor沿着当前Actor局部坐标系方向移动，那么使用AddActorLocalOffset并且参数为相对当前Actor的DeltaLocation Offset（比如想做螺旋轨迹但又不想计算其世界空间坐标，那么就用LocalOffset）。
-如果使用AddActorWorldOffset或者AddActorLocalOffset移动Character，那么MovementMode必须设置为fly，否则当DeltaLocation较小时，角色会始终往下掉（即使禁用物理模拟），UCharacterMovementComponent::SetMovementMode(EMovementMode::MOVE_Flying);。或者Unpossess Controller。
-3，Velocity
-ACharacter-&gt;GetCharacterMovement()-&gt;Velocity &#43;= FVector(5.f, 5.f, 0.f);4，将一个Controller（PlayerController或者AIController）possess到一个Actor上，然后调用：
-Controller-&gt;MoveTo();5，将一个Controller（PlayerController或者AIController）possess到一个Actor上，然后调用
-GetWorld()-&gt;GetNavigationSystem()-&gt;SimpleMoveToLocation(Controller, DestLocation);注意：如果使用Controller-&gt;MoveTo或者使用NavigationSystem的Move函数，前提条件是你使用了Navigation组件并build了地形，否则无效。
-6，APawn-&gt;AddMovementInput
-APawn-&gt;AddMovementInput(FVector WorldDirection, float ScaleValue = 1.0f, bool bForce = false);其中WorldDirection是方向，ScaleValue是速率倍速，bForce表示是否忽略Controller中的IgnoreMoveInput属性值，强制移动。
-7，UCharacterMovementComponent::AddImpulse
-void UCharacterMovementComponent::AddImpulse( FVector Impulse, bool bVelocityChange )AddImpulse 一般用来做投掷、爆炸、击飞等物理效果。添加的是一个瞬间的力，之后就不需要每帧做处理了。 注意：AddImpulse 作用对象一般都是 StaticMeshComponent ，而不能是 CollisionComponent，否则无效。且 StaticMeshComponent 要开启物理：SetSimulatePhysics(true) ，否则也无效。
-8，UCharacterMovementComponent::AddForce
-void UCharacterMovementComponent::AddForce( FVector Force )如果想让物体保持移动，需要每帧都执行AddForce()函数，也就说如果加速度是实时变化的，那么就可以用AddForce。 两者的区别：
-AddForce accounts for delta time and should be used for applying force over more than one frame, AddImpulse does not account for delta time and should be used for single &#39;pushes&#39;, like from an explosion or being thrown by a player.">
+<meta name="keywords" content="UE4, API, Gameplay">
+<meta name="description" content="keywords: UE4, Movement, 移动物体的几种方法">
 
 
-<meta property="og:description" content="keywords: UE4、Movement
-1，Actor-&gt;SetActorLocation
-Actor-&gt;SetActorLocation()2，AActor::AddActorWorldOffset(), AActor::AddActorLocalOffset()
-AddActorWorldOffset与AddActorLocalOffset区别：如果期望Actor沿着某个世界坐标系方向移动，那么使用AddActorWorldOffset并且参数为世界坐标系的DeltaLocation；如果期望Actor沿着当前Actor局部坐标系方向移动，那么使用AddActorLocalOffset并且参数为相对当前Actor的DeltaLocation Offset（比如想做螺旋轨迹但又不想计算其世界空间坐标，那么就用LocalOffset）。
-如果使用AddActorWorldOffset或者AddActorLocalOffset移动Character，那么MovementMode必须设置为fly，否则当DeltaLocation较小时，角色会始终往下掉（即使禁用物理模拟），UCharacterMovementComponent::SetMovementMode(EMovementMode::MOVE_Flying);。或者Unpossess Controller。
-3，Velocity
-ACharacter-&gt;GetCharacterMovement()-&gt;Velocity &#43;= FVector(5.f, 5.f, 0.f);4，将一个Controller（PlayerController或者AIController）possess到一个Actor上，然后调用：
-Controller-&gt;MoveTo();5，将一个Controller（PlayerController或者AIController）possess到一个Actor上，然后调用
-GetWorld()-&gt;GetNavigationSystem()-&gt;SimpleMoveToLocation(Controller, DestLocation);注意：如果使用Controller-&gt;MoveTo或者使用NavigationSystem的Move函数，前提条件是你使用了Navigation组件并build了地形，否则无效。
-6，APawn-&gt;AddMovementInput
-APawn-&gt;AddMovementInput(FVector WorldDirection, float ScaleValue = 1.0f, bool bForce = false);其中WorldDirection是方向，ScaleValue是速率倍速，bForce表示是否忽略Controller中的IgnoreMoveInput属性值，强制移动。
-7，UCharacterMovementComponent::AddImpulse
-void UCharacterMovementComponent::AddImpulse( FVector Impulse, bool bVelocityChange )AddImpulse 一般用来做投掷、爆炸、击飞等物理效果。添加的是一个瞬间的力，之后就不需要每帧做处理了。 注意：AddImpulse 作用对象一般都是 StaticMeshComponent ，而不能是 CollisionComponent，否则无效。且 StaticMeshComponent 要开启物理：SetSimulatePhysics(true) ，否则也无效。
-8，UCharacterMovementComponent::AddForce
-void UCharacterMovementComponent::AddForce( FVector Force )如果想让物体保持移动，需要每帧都执行AddForce()函数，也就说如果加速度是实时变化的，那么就可以用AddForce。 两者的区别：
-AddForce accounts for delta time and should be used for applying force over more than one frame, AddImpulse does not account for delta time and should be used for single &#39;pushes&#39;, like from an explosion or being thrown by a player.">
+<meta property="og:description" content="keywords: UE4, Movement, 移动物体的几种方法">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[UE4]移动物体的几种方法">
 <meta name="twitter:title" content="[UE4]移动物体的几种方法">
 <meta property="og:url" content="https://dawnarc.com/2016/06/ue4%E7%A7%BB%E5%8A%A8%E7%89%A9%E4%BD%93%E7%9A%84%E5%87%A0%E7%A7%8D%E6%96%B9%E6%B3%95/">
 <meta property="twitter:url" content="https://dawnarc.com/2016/06/ue4%E7%A7%BB%E5%8A%A8%E7%89%A9%E4%BD%93%E7%9A%84%E5%87%A0%E7%A7%8D%E6%96%B9%E6%B3%95/">
 <meta property="og:site_name" content="玄冬Wong">
-<meta property="og:description" content="keywords: UE4、Movement
-1，Actor-&gt;SetActorLocation
-Actor-&gt;SetActorLocation()2，AActor::AddActorWorldOffset(), AActor::AddActorLocalOffset()
-AddActorWorldOffset与AddActorLocalOffset区别：如果期望Actor沿着某个世界坐标系方向移动，那么使用AddActorWorldOffset并且参数为世界坐标系的DeltaLocation；如果期望Actor沿着当前Actor局部坐标系方向移动，那么使用AddActorLocalOffset并且参数为相对当前Actor的DeltaLocation Offset（比如想做螺旋轨迹但又不想计算其世界空间坐标，那么就用LocalOffset）。
-如果使用AddActorWorldOffset或者AddActorLocalOffset移动Character，那么MovementMode必须设置为fly，否则当DeltaLocation较小时，角色会始终往下掉（即使禁用物理模拟），UCharacterMovementComponent::SetMovementMode(EMovementMode::MOVE_Flying);。或者Unpossess Controller。
-3，Velocity
-ACharacter-&gt;GetCharacterMovement()-&gt;Velocity &#43;= FVector(5.f, 5.f, 0.f);4，将一个Controller（PlayerController或者AIController）possess到一个Actor上，然后调用：
-Controller-&gt;MoveTo();5，将一个Controller（PlayerController或者AIController）possess到一个Actor上，然后调用
-GetWorld()-&gt;GetNavigationSystem()-&gt;SimpleMoveToLocation(Controller, DestLocation);注意：如果使用Controller-&gt;MoveTo或者使用NavigationSystem的Move函数，前提条件是你使用了Navigation组件并build了地形，否则无效。
-6，APawn-&gt;AddMovementInput
-APawn-&gt;AddMovementInput(FVector WorldDirection, float ScaleValue = 1.0f, bool bForce = false);其中WorldDirection是方向，ScaleValue是速率倍速，bForce表示是否忽略Controller中的IgnoreMoveInput属性值，强制移动。
-7，UCharacterMovementComponent::AddImpulse
-void UCharacterMovementComponent::AddImpulse( FVector Impulse, bool bVelocityChange )AddImpulse 一般用来做投掷、爆炸、击飞等物理效果。添加的是一个瞬间的力，之后就不需要每帧做处理了。 注意：AddImpulse 作用对象一般都是 StaticMeshComponent ，而不能是 CollisionComponent，否则无效。且 StaticMeshComponent 要开启物理：SetSimulatePhysics(true) ，否则也无效。
-8，UCharacterMovementComponent::AddForce
-void UCharacterMovementComponent::AddForce( FVector Force )如果想让物体保持移动，需要每帧都执行AddForce()函数，也就说如果加速度是实时变化的，那么就可以用AddForce。 两者的区别：
-AddForce accounts for delta time and should be used for applying force over more than one frame, AddImpulse does not account for delta time and should be used for single &#39;pushes&#39;, like from an explosion or being thrown by a player.">
-<meta name="twitter:description" content="keywords: UE4、Movement
-1，Actor-&gt;SetActorLocation
-Actor-&gt;SetActorLocation()2，AActor::AddActorWorldOffset(), AActor::AddActorLocalOffset()
-AddActorWorldOffset与AddActorLocalOffset区别：如果期望Actor沿着某个世界坐标系方向移动，那么使用AddActorWorldOffset并且参数为世界坐标系的DeltaLocation；如果期望Actor沿着当前Actor局部坐标系方向移动，那么使用AddActorLocalOffset并且参数为相对当前Actor的DeltaLocation Offset（比如想做螺旋轨迹但又不想计算其世界空间坐标，那么就用LocalOffset）。
-如果使用AddActorWorldOffset或者AddActorLocalOffset移动Character，那么MovementMode必须设置为fly，否则当DeltaLocation较小时，角色会始终往下掉（即使禁用物理模拟），UCharacterMovementComponent::SetMovementMode(EMovementMode::MOVE_Flying);。或者Unpossess Controller。
-3，Velocity
-ACharacter-&gt;GetCharacterMovement()-&gt;Velocity &#43;= FVector(5.f, 5.f, 0.f);4，将一个Controller（PlayerController或者AIController）possess到一个Actor上，然后调用：
-Controller-&gt;MoveTo();5，将一个Controller（PlayerController或者AIController）possess到一个Actor上，然后调用
-GetWorld()-&gt;GetNavigationSystem()-&gt;SimpleMoveToLocation(Controller, DestLocation);注意：如果使用Controller-&gt;MoveTo或者使用NavigationSystem的Move函数，前提条件是你使用了Navigation组件并build了地形，否则无效。
-6，APawn-&gt;AddMovementInput
-APawn-&gt;AddMovementInput(FVector WorldDirection, float ScaleValue = 1.0f, bool bForce = false);其中WorldDirection是方向，ScaleValue是速率倍速，bForce表示是否忽略Controller中的IgnoreMoveInput属性值，强制移动。
-7，UCharacterMovementComponent::AddImpulse
-void UCharacterMovementComponent::AddImpulse( FVector Impulse, bool bVelocityChange )AddImpulse 一般用来做投掷、爆炸、击飞等物理效果。添加的是一个瞬间的力，之后就不需要每帧做处理了。 注意：AddImpulse 作用对象一般都是 StaticMeshComponent ，而不能是 CollisionComponent，否则无效。且 StaticMeshComponent 要开启物理：SetSimulatePhysics(true) ，否则也无效。
-8，UCharacterMovementComponent::AddForce
-void UCharacterMovementComponent::AddForce( FVector Force )如果想让物体保持移动，需要每帧都执行AddForce()函数，也就说如果加速度是实时变化的，那么就可以用AddForce。 两者的区别：
-AddForce accounts for delta time and should be used for applying force over more than one frame, AddImpulse does not account for delta time and should be used for single &#39;pushes&#39;, like from an explosion or being thrown by a player.">
+<meta property="og:description" content="keywords: UE4, Movement, 移动物体的几种方法">
+<meta name="twitter:description" content="keywords: UE4, Movement, 移动物体的几种方法">
 <meta property="og:locale" content="en-us">
 
   
@@ -103,8 +43,6 @@ AddForce accounts for delta time and should be used for applying force over more
     
       <meta property="article:tag" content="UE4">
     
-      <meta property="article:tag" content="API">
-    
   
 
 
@@ -119,6 +57,9 @@ AddForce accounts for delta time and should be used for applying force over more
 
 
 
+
+  <meta property="og:image" content="https://dawnarc.com/thumbnail/beijing/thumbnail-beijing-009.jpg">
+  <meta property="twitter:image" content="https://dawnarc.com/thumbnail/beijing/thumbnail-beijing-009.jpg">
 
 
 
@@ -421,10 +362,20 @@ AddForce accounts for delta time and should be used for applying force over more
                 <script>
                      (adsbygoogle = window.adsbygoogle || []).push({});
                 </script>
-              <p>keywords: UE4、Movement</p>
-<p>1，Actor-&gt;SetActorLocation</p>
-<pre><code>Actor-&gt;SetActorLocation()
-</code></pre>
+              <p>keywords: UE4, Movement, 移动物体的几种方法</p>
+<p>1，<code>Actor-&gt;SetActorLocation()</code></p>
+<p>若<code>SetActorLocation()</code>不生效，可能原因有两种：</p>
+<ul>
+<li>RootComponent的Mobility不是<code>Movable</code>；
+<figure><img src="https://dawnarc.com/img/2016/20160617-[UE4]%e7%a7%bb%e5%8a%a8%e7%89%a9%e4%bd%93%e7%9a%84%e5%87%a0%e7%a7%8d%e6%96%b9%e6%b3%95/[UE4]%e7%a7%bb%e5%8a%a8%e7%89%a9%e4%bd%93%e7%9a%84%e5%87%a0%e7%a7%8d%e6%96%b9%e6%b3%95%20-%2001.png"/>
+</figure>
+</li>
+<li>没有RootComponent；如果是纯蓝图actor，拖拽某个component作为root component：
+<figure><img src="https://dawnarc.com/img/2016/20160617-[UE4]%e7%a7%bb%e5%8a%a8%e7%89%a9%e4%bd%93%e7%9a%84%e5%87%a0%e7%a7%8d%e6%96%b9%e6%b3%95/[UE4]%e7%a7%bb%e5%8a%a8%e7%89%a9%e4%bd%93%e7%9a%84%e5%87%a0%e7%a7%8d%e6%96%b9%e6%b3%95%20-%2002.gif"/>
+</figure>
+
+如果是自定义C++ actor，在构造函数中通过<code>SetRootComponent()</code>设置RootComponent。</li>
+</ul>
 <p>2，AActor::AddActorWorldOffset(), AActor::AddActorLocalOffset()</p>
 <div class="alert warning ">
   <p>AddActorWorldOffset与AddActorLocalOffset区别：如果期望Actor沿着某个世界坐标系方向移动，那么使用AddActorWorldOffset并且参数为世界坐标系的DeltaLocation；如果期望Actor沿着当前Actor局部坐标系方向移动，那么使用AddActorLocalOffset并且参数为相对当前Actor的DeltaLocation Offset（比如想做螺旋轨迹但又不想计算其世界空间坐标，那么就用LocalOffset）。</p>
@@ -451,7 +402,7 @@ AddForce accounts for delta time and should be used for applying force over more
 <p>7，UCharacterMovementComponent::AddImpulse</p>
 <pre><code>void UCharacterMovementComponent::AddImpulse( FVector Impulse, bool bVelocityChange )
 </code></pre>
-<p>AddImpulse 一般用来做投掷、爆炸、击飞等物理效果。添加的是一个瞬间的力，之后就不需要每帧做处理了。
+<p>AddImpulse 一般用来做投掷、爆炸、击飞等冲量物理。添加的是一个瞬间的力，之后就不需要每帧做处理了。
 <div class="alert danger ">
   <p>注意：AddImpulse 作用对象一般都是 StaticMeshComponent ，而不能是 CollisionComponent，否则无效。且 StaticMeshComponent 要开启物理：SetSimulatePhysics(true) ，否则也无效。</p>
 </div></p>
@@ -471,7 +422,6 @@ UKismetSystemLibrary::MoveComponentTo(TopDownCameraComponent, Location, Rotation
 <p>一般用来移动Actor身上的Component，例如CameraComponent等。支持平滑移动，可以设置移动到目标Location、Rotation过程的时长。</p>
 <hr>
 <p><code>我所有的自负都来自我的自卑，所有的英雄气概都来自于我内心的软弱，所有的振振有词都因为心中满是怀疑。我假装无情，其实是痛恨自己的深情。我以为人生的意义在于四处游荡流亡，其实只是掩饰至今没有找到愿意驻足的地方。——伊塔洛·卡尔维诺《看不见的城市》</code></p>
-
               
             </div>
           </div>
@@ -484,8 +434,6 @@ UKismetSystemLibrary::MoveComponentTo(TopDownCameraComponent, Location, Rotation
                     <span class="text-color-light text-small">TAGGED IN</span><br/>
                     
   <a class="tag tag--primary tag--small" href="https://dawnarc.com/tags/ue4/">UE4</a>
-
-  <a class="tag tag--primary tag--small" href="https://dawnarc.com/tags/api/">API</a>
 
                   </div>
                 
