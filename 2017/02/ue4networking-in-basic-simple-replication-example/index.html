@@ -513,9 +513,6 @@ UE4Editor-Engine.dll!AController::Possess(APawn * InPawn) Line 293    C++
 <p>将<code>bReplicates</code>设置为true：<code>Actor-&gt;SetReplicates(true);</code></p>
 </li>
 <li>
-<p>将<code>AutonomousProxy</code>设置为true：<code>Actor-&gt;SetAutonomousProxy(true);</code>。</p>
-</li>
-<li>
 <p>设置自己的owner（SetOwner()）为拥有服务端连接的<code>Actor</code>，这个Actor可以是：服务端的PlayerController，或者已经被该PlayerController执行过Possess过的Character，或者<span class="highlight-text green">执行过SetOwner且Owner为拥有服务端连接</span>的Actor。</p>
 <pre><code>  TestActor = GetWorld()-&gt;SpawnActor&lt;ATestActor&gt;(ATestActor::StaticClass());
   TestActor-&gt;SetReplicates(true);
@@ -534,7 +531,7 @@ UE4Editor-Engine.dll!AController::Possess(APawn * InPawn) Line 293    C++
 上文中的Possess堆栈，<code>APawn::PossessedBy(AController* NewController)</code>内部已经帮你执行了<code>Actor-&gt;SetAutonomousProxy(true)</code>和<code>Actor-&gt;SetReplicates(true);</code>。</li>
 </ul>
 <div class="alert info ">
-  <p>想要了解UE4是如何判断对象是否拥有<code>服务端连接</code>的底层原理，可调试函数<code>AActor::IsNetRelevantFor()</code>，或者参考我的文章：<a href="https://dawnarc.com/2019/06/ue4networking-in-advanced-engine-source-analysis-high-level-cases">[UE4]Networking in Advanced - Engine Source Analysis &amp; High-Level Cases</a></p>
+  <p>想要了解UE4是如何判断对象是否拥有<code>服务端连接</code>的底层原理，可调试函数<a href="https://dawnarc.com/2019/06/ue4networking-in-advanced-engine-source-analysis-high-level-cases/#how-does-engine-check-if-actor-is-relevant-to-connection">AActor::IsNetRelevantFor()</a></p>
 </div>
 <h5 id="netmode-和-role-关系概述">NetMode 和 Role 关系概述</h5>
 <ul>
@@ -938,7 +935,7 @@ Dedicated Servers, Jitter, Matchmaking<br>
 <p>射击游戏中，如果子弹是服务端生成，并同步到客户端，并且子弹是真实弹道（不是射线检测），并且在子弹的Hit事件中Destroy自己，那么当子弹速度过快时，且发射口离障碍物很近时，子弹还没来得及同步到客户端，子弹在服务端就已经消掉掉了，从而导致Hit事件只会在服务端触发，不会在客户端触发。而当发射口离障碍物有一定距离时（距离取决与子弹速度），客户端和服务端的Hit会同时触发。</p>
 </li>
 <li>
-<p>销毁Actor时，如果<code>bool AActor::Destroy(bool bNetForce = false, bool bShouldModifyLevel = true );</code>的<code>bNetForce</code>参数需要设置为true才能销毁（这种情形用在强制销毁客户端的actor），则说明<span class="highlight-text red">DS有内存泄漏问题</span>。因为<code>bNetForce</code>只是将客户端的actor销毁，服务端的actor内存还没释放。</p>
+<p>销毁Actor时，如果<code>bool AActor::</code>Destroy(true);<code>(bool bNetForce = false, bool bShouldModifyLevel = true 销毁客户端actor，但是对应的服务端actor一定要有对应的</code>Destroy()<code>。);</code>的<code>bNetForce</code>参数需要设置为true才能销毁（这种情形用在强制销毁客户端的actor），则说明<span class="highlight-text red">DS有内存泄漏问题</span>。因为<code>bNetForce</code>只是将客户端的actor销毁，服务端的actor内存还没释放。为了客户端表现，可以提前<code>Destroy(true);</code>销毁客户端actor，但对应的服务端actor一定也要有<code>Destroy();</code>。</p>
 </li>
 </ol>
 <h3 id="示例工程下载地址">示例工程下载地址</h3>

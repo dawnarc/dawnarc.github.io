@@ -13,62 +13,46 @@
 <meta name="generator" content="Hugo 0.102.3 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Wang Aiguo">
 <meta name="keywords" content="">
-<meta name="description" content="常用设置 设置编译输出路径 在CMakeList.txt中如下设置后，无论是编译可执行文件还是编译静态库，都会输出到指定目录下，而不再是默认的当前目录。
+<meta name="description" content="常用设置 配置与构建(CMD) 3.15版本（2019年6月）之前，配置与构建比较麻烦，以windows为例，命令有以下三种方式：
+第1种：nmake cmake -G &#34;NMake Makefiles&#34; -DCMAKE_BUILD_TYPE=Release path/to/source/dir nmake 第2种：VS版本加msbuild，以VS2015 x64为例： cmake -G &#34;Visual Studio 14 Win64&#34; path/to/source/dir msbuild Project.sln 第3种：architecture参数(x64或win32)加msbuild： cmake -A x64 path/to/source/dir msbuild Project.sln 3.15版本开始，构建命令无需区分平台（老版本想要无视平台需安装ninja），且默认x64：
+cmake path/to/source/dir cmake --build . --target install --config Release 参考：How to use CMake to install
+https://stackoverflow.com/a/48428846/1645289
+设置编译输出路径 在CMakeList.txt中如下设置后，无论是编译可执行文件还是编译静态库，都会输出到指定目录下，而不再是默认的当前目录。
 #静态库输出目录(lib, a)set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY &quot;lib/&quot;)#编译时动态库输出目录(dll &#43; lib)set(CMAKE_LIBRARY_OUTPUT_DIRECTORY &quot;lib/&quot;)#动态库输出目录(dll, so)set(CMAKE_RUNTIME_OUTPUT_DIRECTORY &quot;lib/&quot;)#可执行文件输出目录set(EXECUTABLE_OUTPUT_PATH &quot;bin/&quot;)参考：
 is CMake ignoring CMAKE_LIBRARY_OUTPUT_DIRECTORY?
-https://stackoverflow.com/a/38450844/1645289
-How do I make CMake output into a &lsquo;bin&rsquo; dir? https://stackoverflow.com/a/6595001/1645289
-cmake 常用设定及函数
-https://blog.csdn.net/LaineGates/article/details/79190398
-获取指定目录下的所有源文件 获取./src目录下的所有hpp和cpp文件（只获取./src当前目录文件，不递归查询./src下的子目录）：
-file(GLOB CPP_FILES ./src/*.hpp ./src/*.cpp)add_library(mylib STATIC ${CPP_FILES})获取./src/player/目录和./src/monster/目录下的所有cpp文件（同时递归这两个目录下的所有子目录）：
-file(GLOB_RECURSE CPP_FILES./src/player/*.cpp./src/monster/*.cpp)参考：How to use cmake GLOB_RECURSE for only some subdirectories
-https://stackoverflow.com/a/27994855/1645289
-打印log if (NOT CMAKE_VERSION VERSION_GREATER &quot;3.0&quot;)message(FATAL_ERROR &quot;cmake version 3.">
+https://stackoverflow.com/a/38450844/1645289">
 
 
-<meta property="og:description" content="常用设置 设置编译输出路径 在CMakeList.txt中如下设置后，无论是编译可执行文件还是编译静态库，都会输出到指定目录下，而不再是默认的当前目录。
+<meta property="og:description" content="常用设置 配置与构建(CMD) 3.15版本（2019年6月）之前，配置与构建比较麻烦，以windows为例，命令有以下三种方式：
+第1种：nmake cmake -G &#34;NMake Makefiles&#34; -DCMAKE_BUILD_TYPE=Release path/to/source/dir nmake 第2种：VS版本加msbuild，以VS2015 x64为例： cmake -G &#34;Visual Studio 14 Win64&#34; path/to/source/dir msbuild Project.sln 第3种：architecture参数(x64或win32)加msbuild： cmake -A x64 path/to/source/dir msbuild Project.sln 3.15版本开始，构建命令无需区分平台（老版本想要无视平台需安装ninja），且默认x64：
+cmake path/to/source/dir cmake --build . --target install --config Release 参考：How to use CMake to install
+https://stackoverflow.com/a/48428846/1645289
+设置编译输出路径 在CMakeList.txt中如下设置后，无论是编译可执行文件还是编译静态库，都会输出到指定目录下，而不再是默认的当前目录。
 #静态库输出目录(lib, a)set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY &quot;lib/&quot;)#编译时动态库输出目录(dll &#43; lib)set(CMAKE_LIBRARY_OUTPUT_DIRECTORY &quot;lib/&quot;)#动态库输出目录(dll, so)set(CMAKE_RUNTIME_OUTPUT_DIRECTORY &quot;lib/&quot;)#可执行文件输出目录set(EXECUTABLE_OUTPUT_PATH &quot;bin/&quot;)参考：
 is CMake ignoring CMAKE_LIBRARY_OUTPUT_DIRECTORY?
-https://stackoverflow.com/a/38450844/1645289
-How do I make CMake output into a &lsquo;bin&rsquo; dir? https://stackoverflow.com/a/6595001/1645289
-cmake 常用设定及函数
-https://blog.csdn.net/LaineGates/article/details/79190398
-获取指定目录下的所有源文件 获取./src目录下的所有hpp和cpp文件（只获取./src当前目录文件，不递归查询./src下的子目录）：
-file(GLOB CPP_FILES ./src/*.hpp ./src/*.cpp)add_library(mylib STATIC ${CPP_FILES})获取./src/player/目录和./src/monster/目录下的所有cpp文件（同时递归这两个目录下的所有子目录）：
-file(GLOB_RECURSE CPP_FILES./src/player/*.cpp./src/monster/*.cpp)参考：How to use cmake GLOB_RECURSE for only some subdirectories
-https://stackoverflow.com/a/27994855/1645289
-打印log if (NOT CMAKE_VERSION VERSION_GREATER &quot;3.0&quot;)message(FATAL_ERROR &quot;cmake version 3.">
+https://stackoverflow.com/a/38450844/1645289">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[Build]cmake常用配置项">
 <meta name="twitter:title" content="[Build]cmake常用配置项">
 <meta property="og:url" content="https://dawnarc.com/2018/04/buildcmake%E5%B8%B8%E7%94%A8%E9%85%8D%E7%BD%AE%E9%A1%B9/">
 <meta property="twitter:url" content="https://dawnarc.com/2018/04/buildcmake%E5%B8%B8%E7%94%A8%E9%85%8D%E7%BD%AE%E9%A1%B9/">
 <meta property="og:site_name" content="玄冬Wong">
-<meta property="og:description" content="常用设置 设置编译输出路径 在CMakeList.txt中如下设置后，无论是编译可执行文件还是编译静态库，都会输出到指定目录下，而不再是默认的当前目录。
+<meta property="og:description" content="常用设置 配置与构建(CMD) 3.15版本（2019年6月）之前，配置与构建比较麻烦，以windows为例，命令有以下三种方式：
+第1种：nmake cmake -G &#34;NMake Makefiles&#34; -DCMAKE_BUILD_TYPE=Release path/to/source/dir nmake 第2种：VS版本加msbuild，以VS2015 x64为例： cmake -G &#34;Visual Studio 14 Win64&#34; path/to/source/dir msbuild Project.sln 第3种：architecture参数(x64或win32)加msbuild： cmake -A x64 path/to/source/dir msbuild Project.sln 3.15版本开始，构建命令无需区分平台（老版本想要无视平台需安装ninja），且默认x64：
+cmake path/to/source/dir cmake --build . --target install --config Release 参考：How to use CMake to install
+https://stackoverflow.com/a/48428846/1645289
+设置编译输出路径 在CMakeList.txt中如下设置后，无论是编译可执行文件还是编译静态库，都会输出到指定目录下，而不再是默认的当前目录。
 #静态库输出目录(lib, a)set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY &quot;lib/&quot;)#编译时动态库输出目录(dll &#43; lib)set(CMAKE_LIBRARY_OUTPUT_DIRECTORY &quot;lib/&quot;)#动态库输出目录(dll, so)set(CMAKE_RUNTIME_OUTPUT_DIRECTORY &quot;lib/&quot;)#可执行文件输出目录set(EXECUTABLE_OUTPUT_PATH &quot;bin/&quot;)参考：
 is CMake ignoring CMAKE_LIBRARY_OUTPUT_DIRECTORY?
-https://stackoverflow.com/a/38450844/1645289
-How do I make CMake output into a &lsquo;bin&rsquo; dir? https://stackoverflow.com/a/6595001/1645289
-cmake 常用设定及函数
-https://blog.csdn.net/LaineGates/article/details/79190398
-获取指定目录下的所有源文件 获取./src目录下的所有hpp和cpp文件（只获取./src当前目录文件，不递归查询./src下的子目录）：
-file(GLOB CPP_FILES ./src/*.hpp ./src/*.cpp)add_library(mylib STATIC ${CPP_FILES})获取./src/player/目录和./src/monster/目录下的所有cpp文件（同时递归这两个目录下的所有子目录）：
-file(GLOB_RECURSE CPP_FILES./src/player/*.cpp./src/monster/*.cpp)参考：How to use cmake GLOB_RECURSE for only some subdirectories
-https://stackoverflow.com/a/27994855/1645289
-打印log if (NOT CMAKE_VERSION VERSION_GREATER &quot;3.0&quot;)message(FATAL_ERROR &quot;cmake version 3.">
-<meta name="twitter:description" content="常用设置 设置编译输出路径 在CMakeList.txt中如下设置后，无论是编译可执行文件还是编译静态库，都会输出到指定目录下，而不再是默认的当前目录。
+https://stackoverflow.com/a/38450844/1645289">
+<meta name="twitter:description" content="常用设置 配置与构建(CMD) 3.15版本（2019年6月）之前，配置与构建比较麻烦，以windows为例，命令有以下三种方式：
+第1种：nmake cmake -G &#34;NMake Makefiles&#34; -DCMAKE_BUILD_TYPE=Release path/to/source/dir nmake 第2种：VS版本加msbuild，以VS2015 x64为例： cmake -G &#34;Visual Studio 14 Win64&#34; path/to/source/dir msbuild Project.sln 第3种：architecture参数(x64或win32)加msbuild： cmake -A x64 path/to/source/dir msbuild Project.sln 3.15版本开始，构建命令无需区分平台（老版本想要无视平台需安装ninja），且默认x64：
+cmake path/to/source/dir cmake --build . --target install --config Release 参考：How to use CMake to install
+https://stackoverflow.com/a/48428846/1645289
+设置编译输出路径 在CMakeList.txt中如下设置后，无论是编译可执行文件还是编译静态库，都会输出到指定目录下，而不再是默认的当前目录。
 #静态库输出目录(lib, a)set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY &quot;lib/&quot;)#编译时动态库输出目录(dll &#43; lib)set(CMAKE_LIBRARY_OUTPUT_DIRECTORY &quot;lib/&quot;)#动态库输出目录(dll, so)set(CMAKE_RUNTIME_OUTPUT_DIRECTORY &quot;lib/&quot;)#可执行文件输出目录set(EXECUTABLE_OUTPUT_PATH &quot;bin/&quot;)参考：
 is CMake ignoring CMAKE_LIBRARY_OUTPUT_DIRECTORY?
-https://stackoverflow.com/a/38450844/1645289
-How do I make CMake output into a &lsquo;bin&rsquo; dir? https://stackoverflow.com/a/6595001/1645289
-cmake 常用设定及函数
-https://blog.csdn.net/LaineGates/article/details/79190398
-获取指定目录下的所有源文件 获取./src目录下的所有hpp和cpp文件（只获取./src当前目录文件，不递归查询./src下的子目录）：
-file(GLOB CPP_FILES ./src/*.hpp ./src/*.cpp)add_library(mylib STATIC ${CPP_FILES})获取./src/player/目录和./src/monster/目录下的所有cpp文件（同时递归这两个目录下的所有子目录）：
-file(GLOB_RECURSE CPP_FILES./src/player/*.cpp./src/monster/*.cpp)参考：How to use cmake GLOB_RECURSE for only some subdirectories
-https://stackoverflow.com/a/27994855/1645289
-打印log if (NOT CMAKE_VERSION VERSION_GREATER &quot;3.0&quot;)message(FATAL_ERROR &quot;cmake version 3.">
+https://stackoverflow.com/a/38450844/1645289">
 <meta property="og:locale" content="en-us">
 
   
@@ -404,6 +388,27 @@ https://stackoverflow.com/a/27994855/1645289
                      (adsbygoogle = window.adsbygoogle || []).push({});
                 </script>
               <h3 id="常用设置">常用设置</h3>
+<h5 id="配置与构建cmd">配置与构建(CMD)</h5>
+<p>3.15版本（2019年6月）之前，配置与构建比较麻烦，以windows为例，命令有以下三种方式：</p>
+<ul>
+<li>第1种：nmake
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>cmake -G <span style="color:#e6db74">&#34;NMake Makefiles&#34;</span> -DCMAKE_BUILD_TYPE<span style="color:#f92672">=</span>Release path/to/source/dir
+</span></span><span style="display:flex;"><span>nmake
+</span></span></code></pre></div></li>
+<li>第2种：VS版本加msbuild，以VS2015 x64为例：
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>cmake -G <span style="color:#e6db74">&#34;Visual Studio 14 Win64&#34;</span> path/to/source/dir
+</span></span><span style="display:flex;"><span>msbuild Project.sln
+</span></span></code></pre></div></li>
+<li>第3种：architecture参数(x64或win32)加msbuild：
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>cmake -A x64 path/to/source/dir
+</span></span><span style="display:flex;"><span>msbuild Project.sln
+</span></span></code></pre></div></li>
+</ul>
+<p>3.15版本开始，构建命令无需区分平台（老版本想要无视平台需安装ninja），且默认x64：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>cmake path/to/source/dir
+</span></span><span style="display:flex;"><span>cmake --build . --target install --config Release
+</span></span></code></pre></div><p>参考：How to use CMake to install<br>
+<a href="https://stackoverflow.com/a/48428846/1645289">https://stackoverflow.com/a/48428846/1645289</a></p>
 <h5 id="设置编译输出路径">设置编译输出路径</h5>
 <p>在CMakeList.txt中如下设置后，无论是编译可执行文件还是编译静态库，都会输出到指定目录下，而不再是默认的当前目录。</p>
 <pre><code>#静态库输出目录(lib, a)
