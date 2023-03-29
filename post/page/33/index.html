@@ -303,6 +303,78 @@
             
   
     
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2017/09/ue4%E5%88%9B%E5%BB%BA%E8%87%AA%E5%AE%9A%E4%B9%89aicontroller%E7%9A%84%E6%96%B9%E6%B3%95c-/">
+          [UE4]创建自定义AIController的方法(C&#43;&#43;)
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2017-09-13T20:09:02&#43;08:00">
+        
+  
+  
+  
+  
+    Wednesday, 20:09, Sep 13, 2017
+  
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        之前写过如何用C++创建自定义PlayerController方式：
+FActorSpawnParameters SpawnInfo;SpawnInfo.Instigator = Instigator; SpawnInfo.ObjectFlags |= RF_Transient; // We never want to save player controllers into a mapSpawnInfo.bDeferConstruction = true;AMyPlayerController* NewPC = GetWorld()-&gt;SpawnActor&lt;AMyPlayerController&gt;(AMyPlayerController::StaticClass(), SpawnLocation, SpawnRotation, SpawnInfo);如果用同样的方式，在服务端创建AIController，会有问题，执行：
+EPathFollowingRequestResult::Type AAIController::MoveToLocation(const FVector&amp; Dest, ...);返回值是Success，但是没有任何效果。
+原因：
+自己设置FActorSpawnParameters相关参数，对PlayerController可行，但是对AIController，相关参数设置不一样，导致AIController在服务端失效。
+解决办法：
+两种方式
+方式一：AIControllerClass指定 1，先为Character指定AI Controller Class，且禁用AutoPossessPlayer。这段代码可以放在构造函数中，保证在Possess之前设置好。以下3个属性也可以在角色蓝图中指定。
+AutoPossessPlayer = EAutoReceiveInput::Type::Disabled;AutoPossessAI = EAutoPossessAI::PlacedInWorld;AIControllerClass = AMyAIController::StaticClass();2，Character被Spawn出来后，再执行：
+void APawn::SpawnDefaultController();如果AutoPossessAI设置为Disable，则接着执行一下Possess：
+void AController::Possess(APawn* InPawn);方式一：SpawnActor时使用默认FActorSpawnParameters。 AMyAIController* PC = GetWorld()-&gt;SpawnActor&lt;AMyAIController&gt;(AMyAIController::StaticClass(), SpawnLoc, SpawnRot);不要自己设置FActorSpawnParameters，因为AIController和PlayerController表现不一样。
+人生一世,草生一春,来如风雨,去似微尘。----《增广贤文》
+      
+      <p>
+        <a href="https://dawnarc.com/2017/09/ue4%E5%88%9B%E5%BB%BA%E8%87%AA%E5%AE%9A%E4%B9%89aicontroller%E7%9A%84%E6%96%B9%E6%B3%95c-/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
   
 
 
@@ -1221,69 +1293,6 @@ abc的3个字符可以组合的情况为： a b c ab bc ac abc
 </article>
 
           
-            
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2017/09/mayapolygon%E5%BB%BA%E6%A8%A1%E7%9A%84%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C%E4%B8%8E%E5%91%BD%E4%BB%A4/">
-          [Maya]Polygon建模的常用操作与命令
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2017-09-02T18:00:40&#43;08:00">
-        
-  
-  
-  
-  
-    Saturday, 18:00, Sep 2, 2017
-  
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/maya">Maya</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        Maya版本为2018
-Bevel Edge倒角 倒角的大小有参数Fraction控制，默认是0.5（边线的二分之一处），如果改成0.1（边线的十分之一处）则倒角会变小 也可以把Offset as Fraction关掉，通过Offset来设置倒角的大小，效果一样。 Insert Edge Loop插入环形边线 两种方式，一种是在Object Mode模式下，Shift + 鼠标右键 -》 Insert Edge Loop Tool，一种是点击菜单Mesh Tools-》 Insert Edge Loop。 然后在按住鼠标左键在需要插入的位置上拖动。 Edge Ring and Split 插入中线 先选中要插入中线的边 再按住Ctrl键+鼠标右键，选择Edge Ring Utilities， 再选择To Edge Ring and Split。 效果 Extrude Face挤压面 先选中面 然后按住shift+鼠标右键，选择Extrude Face 然后拖动坐标轴 默认是挤压出的面是黏在一起的，如果想让选中的面分开挤压，再按住Ctrl+Shift+鼠标右键，选择Toggle Keep Faces Together。 效果： 如果想合并，再执行一次Toggle Keep Faces Together。
-To Edge Ring and Collapse 收边 先选中要收的边，然后按住Ctrl键 + 鼠标右键，选择Edge Ring Utilities -》 To Edge Ring and Collapse。 然后选中的边和旁边的两条边会合并并等分分成两条边 春归何处？寂寞无行路。若有人知春去处，唤取归来同住。---黄庭坚《清平乐》
-      
-      <p>
-        <a href="https://dawnarc.com/2017/09/mayapolygon%E5%BB%BA%E6%A8%A1%E7%9A%84%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C%E4%B8%8E%E5%91%BD%E4%BB%A4/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-</article>
-
-          
           
   <div class="pagination-bar">
     <ul class="pagination">
@@ -1305,7 +1314,7 @@ To Edge Ring and Collapse 收边 先选中要收的边，然后按住Ctrl键 + �
           </li>
         
       
-      <li class="pagination-number">page 33 of 47</li>
+      <li class="pagination-number">page 33 of 48</li>
     </ul>
   </div>
 

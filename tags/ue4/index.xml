@@ -1166,25 +1166,7 @@ How to get LevelScriptActor which an Actor stayed if (ULevel* Level = MyActor-&a
       <pubDate>Mon, 02 Apr 2018 14:55:02 +0800</pubDate>
       
       <guid>https://dawnarc.com/2018/04/ue4indirect-lighting-cache-lightmass-importance-volume/</guid>
-      <description>keywords: Indirect Lighting Cache, Lightmass Importance Volume, 间接光照缓存
-原文：https://home.gamer.com.tw/creationDetail.php?sn=3315244
-某台湾网站上看到的文章，比起youtube上讲Indirect Lighting的视频要直观易懂。
-Indirect Lighting Cache(间接光照缓存) 官方文档
-http://api.unrealengine.com/INT/Engine/Rendering/LightingAndShadows/IndirectLightingCache/index.html
-Indirect Lighting Cache是类似于Unity的LightProbe，间接光照就是当光线直射到一个物体上后，光线反弹后所得到的颜色，反弹后的光线还会再去影响到周边的物体，如同白色的桌面上摆着红色的物体，物体周围会有些微的红色。
-而Indirect Lighting Cache还有一种功能就是提供动态物件能获得间接光的资讯，例如像是当角色靠近一面红色墙壁时，会有些微的红光反映在角色身上。
-在UE4里面建构光照后会自动产生Indirect Lighting Cache，可以从编辑画面的Show &amp;gt; Visualize &amp;gt; volume light sample显示当前Indirect Lighting Cache的情形。
-显示间接光照缓存
-没有间接光照缓存的情况，角色不会受到静态灯光的颜色影响
-有间接光照缓存时，角色即会受到静态灯光影响
-可以从上图看到场景中那些小正方形就是间接光照缓存的颜色，周围的物件会受到靠近的间接光照颜色影响。
-Lightmass Importance Volume(重要光照范围) 官方文档
-http://api.unrealengine.com/INT/Engine/Rendering/LightingAndShadows/Lightmass/Basics/index.html
-在建构光照贴图时，若场景中没有给予Lightmass Importance Volume，会对整个场景做间接光照的采样，产生Indirect Lighting Cache，这对大型游戏场景是相当的浪费，像是游戏角色到不了的中、远景不需要产生Indirect Lighting Cache，这时候就可以在场景中置入Lightmass Importance Volume，指定特定区域内才会产生Indirect Lighting Cache，节省不少建构光照的时间。
-Modes视窗中的Volumes页签找到Lightmass Importance Volume
-拖曳至场景后，调整Scale直到包覆特定区域即可
-建构光照后会在Lightmass Importance Volume区域内看到产生的间接光照缓存
-Lightmass Character Indirect Detail Volumes(角色细节间接光范围 ) 在上述的Lightmass Importance Volume所建构出来的间接光会发现大多都只有在模型上才有，无法再浮空的地方产生间接光缓存 (像是靠近天花板的地方)，主要原因是Lightmass Importance Volume是提供使用者快速建构重要范围，没有办法处理到细节的部份，因此在这种情况下会产生这种问题:</description>
+      <description>&lt;p&gt;keywords: Indirect Lighting Cache, Lightmass Importance Volume, 间接光照缓存&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -1596,16 +1578,7 @@ The infomation showing in console command stat all are recorded in State.h.
       <pubDate>Fri, 26 Jan 2018 00:42:40 +0800</pubDate>
       
       <guid>https://dawnarc.com/2018/01/ue4%E8%B5%84%E6%BA%90%E5%BC%82%E6%AD%A5%E5%8A%A0%E8%BD%BDassets-asynchronous-loading%E4%B8%8E%E5%86%85%E5%AD%98%E9%87%8A%E6%94%BEfree-memory/</guid>
-      <description>为什么需要异步加载资源，因为当一次性加载的资源较多或者单个资源较大时，普通的LoadObject()方式会阻塞引擎的主线程。
-假设测试工程叫TestTD4，自定义Character叫ATestTD4Character（头文件为TestTD4Character.h）
-假设在Content/Assets/目录下放了三个动画文件（AnimSequence）。
-异步加载 通过DefaultGame.ini配置文件生成FSoftObjectPath DefaultGame.ini
-[/Script/TestTD4.TestTD4Character]+TestAssets=/Game/Assets/ThirdPerson_Jump.ThirdPerson_Jump+TestAssets=/Game/Assets/ThirdPersonRun.ThirdPersonRun+TestAssets=/Game/Assets/ThirdPersonWalk.ThirdPersonWalkTestTD4Character.h
-UPROPERTY(Config)TArray&amp;lt;FSoftObjectPath&amp;gt; TestAssets;这个属性的意思是：加Config标签表示从DefaultGame.ini读取，TestAssets就是DefaultGame.ini中配置的属性名，当游戏启动时，这个数组会被自动填充3个元素，即资源的路径。
-注：4.18版本中FStringAssetReference、TAssetPtr两个变量被重命名为：FSoftObjectPath、TSoftObjectPtr.
-TestTD4Character.cpp
-void ATestTD4Character::BeginPlay(){Super::BeginPlay();for (FSoftObjectPath&amp;amp; Asset : TestAssets){GEngine-&amp;gt;AddOnScreenDebugMessage(-1, 3, FColor::Cyan, Asset.ToString());}FStreamableManager&amp;amp; AssetLoader = UAssetManager::GetStreamableManager();AssetLoader.RequestAsyncLoad(TestAssets, FStreamableDelegate::CreateUObject(this, &amp;amp;ATestTD4Character::AnimAssetsDeferred));}void ATestTD4Character::AnimAssetsDeferred(){for (FSoftObjectPath SoftObj : TestAssets){TAssetPtr&amp;lt;UAnimSequence&amp;gt; AnimAsset(SoftObj);UAnimSequence* AnimObj = AnimAsset.Get();if (AnimObj){GEngine-&amp;gt;AddOnScreenDebugMessage(-1, 3, FColor::Red, AnimObj-&amp;gt;GetName());}}}打印结果：
-ThirdPersonWalkThirdPersonRunThirdPerson_Jump/Game/Assets/ThirdPersonWalk.ThirdPersonWalk/Game/Assets/ThirdPersonRun.</description>
+      <description>&lt;p&gt;keywords: UE4, Loading Assets Asynchronously, Memory Persistence&lt;/p&gt;</description>
     </item>
     
     <item>

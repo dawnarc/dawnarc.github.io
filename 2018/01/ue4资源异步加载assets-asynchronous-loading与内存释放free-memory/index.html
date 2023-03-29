@@ -13,54 +13,18 @@
 <meta name="generator" content="Hugo 0.102.3 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Wang Aiguo">
 <meta name="keywords" content="UE4, Asset Asynchronous Loading">
-<meta name="description" content="为什么需要异步加载资源，因为当一次性加载的资源较多或者单个资源较大时，普通的LoadObject()方式会阻塞引擎的主线程。
-假设测试工程叫TestTD4，自定义Character叫ATestTD4Character（头文件为TestTD4Character.h）
-假设在Content/Assets/目录下放了三个动画文件（AnimSequence）。
-异步加载 通过DefaultGame.ini配置文件生成FSoftObjectPath DefaultGame.ini
-[/Script/TestTD4.TestTD4Character]&#43;TestAssets=/Game/Assets/ThirdPerson_Jump.ThirdPerson_Jump&#43;TestAssets=/Game/Assets/ThirdPersonRun.ThirdPersonRun&#43;TestAssets=/Game/Assets/ThirdPersonWalk.ThirdPersonWalkTestTD4Character.h
-UPROPERTY(Config)TArray&lt;FSoftObjectPath&gt; TestAssets;这个属性的意思是：加Config标签表示从DefaultGame.ini读取，TestAssets就是DefaultGame.ini中配置的属性名，当游戏启动时，这个数组会被自动填充3个元素，即资源的路径。
-注：4.18版本中FStringAssetReference、TAssetPtr两个变量被重命名为：FSoftObjectPath、TSoftObjectPtr.
-TestTD4Character.cpp
-void ATestTD4Character::BeginPlay(){Super::BeginPlay();for (FSoftObjectPath&amp; Asset : TestAssets){GEngine-&gt;AddOnScreenDebugMessage(-1, 3, FColor::Cyan, Asset.ToString());}FStreamableManager&amp; AssetLoader = UAssetManager::GetStreamableManager();AssetLoader.RequestAsyncLoad(TestAssets, FStreamableDelegate::CreateUObject(this, &amp;ATestTD4Character::AnimAssetsDeferred));}void ATestTD4Character::AnimAssetsDeferred(){for (FSoftObjectPath SoftObj : TestAssets){TAssetPtr&lt;UAnimSequence&gt; AnimAsset(SoftObj);UAnimSequence* AnimObj = AnimAsset.Get();if (AnimObj){GEngine-&gt;AddOnScreenDebugMessage(-1, 3, FColor::Red, AnimObj-&gt;GetName());}}}打印结果：
-ThirdPersonWalkThirdPersonRunThirdPerson_Jump/Game/Assets/ThirdPersonWalk.ThirdPersonWalk/Game/Assets/ThirdPersonRun.">
+<meta name="description" content="keywords: UE4, Loading Assets Asynchronously, Memory Persistence">
 
 
-<meta property="og:description" content="为什么需要异步加载资源，因为当一次性加载的资源较多或者单个资源较大时，普通的LoadObject()方式会阻塞引擎的主线程。
-假设测试工程叫TestTD4，自定义Character叫ATestTD4Character（头文件为TestTD4Character.h）
-假设在Content/Assets/目录下放了三个动画文件（AnimSequence）。
-异步加载 通过DefaultGame.ini配置文件生成FSoftObjectPath DefaultGame.ini
-[/Script/TestTD4.TestTD4Character]&#43;TestAssets=/Game/Assets/ThirdPerson_Jump.ThirdPerson_Jump&#43;TestAssets=/Game/Assets/ThirdPersonRun.ThirdPersonRun&#43;TestAssets=/Game/Assets/ThirdPersonWalk.ThirdPersonWalkTestTD4Character.h
-UPROPERTY(Config)TArray&lt;FSoftObjectPath&gt; TestAssets;这个属性的意思是：加Config标签表示从DefaultGame.ini读取，TestAssets就是DefaultGame.ini中配置的属性名，当游戏启动时，这个数组会被自动填充3个元素，即资源的路径。
-注：4.18版本中FStringAssetReference、TAssetPtr两个变量被重命名为：FSoftObjectPath、TSoftObjectPtr.
-TestTD4Character.cpp
-void ATestTD4Character::BeginPlay(){Super::BeginPlay();for (FSoftObjectPath&amp; Asset : TestAssets){GEngine-&gt;AddOnScreenDebugMessage(-1, 3, FColor::Cyan, Asset.ToString());}FStreamableManager&amp; AssetLoader = UAssetManager::GetStreamableManager();AssetLoader.RequestAsyncLoad(TestAssets, FStreamableDelegate::CreateUObject(this, &amp;ATestTD4Character::AnimAssetsDeferred));}void ATestTD4Character::AnimAssetsDeferred(){for (FSoftObjectPath SoftObj : TestAssets){TAssetPtr&lt;UAnimSequence&gt; AnimAsset(SoftObj);UAnimSequence* AnimObj = AnimAsset.Get();if (AnimObj){GEngine-&gt;AddOnScreenDebugMessage(-1, 3, FColor::Red, AnimObj-&gt;GetName());}}}打印结果：
-ThirdPersonWalkThirdPersonRunThirdPerson_Jump/Game/Assets/ThirdPersonWalk.ThirdPersonWalk/Game/Assets/ThirdPersonRun.">
+<meta property="og:description" content="keywords: UE4, Loading Assets Asynchronously, Memory Persistence">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[UE4]资源异步加载(Assets Asynchronous Loading)与内存释放(Free Memory)">
 <meta name="twitter:title" content="[UE4]资源异步加载(Assets Asynchronous Loading)与内存释放(Free Memory)">
 <meta property="og:url" content="https://dawnarc.com/2018/01/ue4%E8%B5%84%E6%BA%90%E5%BC%82%E6%AD%A5%E5%8A%A0%E8%BD%BDassets-asynchronous-loading%E4%B8%8E%E5%86%85%E5%AD%98%E9%87%8A%E6%94%BEfree-memory/">
 <meta property="twitter:url" content="https://dawnarc.com/2018/01/ue4%E8%B5%84%E6%BA%90%E5%BC%82%E6%AD%A5%E5%8A%A0%E8%BD%BDassets-asynchronous-loading%E4%B8%8E%E5%86%85%E5%AD%98%E9%87%8A%E6%94%BEfree-memory/">
 <meta property="og:site_name" content="玄冬Wong">
-<meta property="og:description" content="为什么需要异步加载资源，因为当一次性加载的资源较多或者单个资源较大时，普通的LoadObject()方式会阻塞引擎的主线程。
-假设测试工程叫TestTD4，自定义Character叫ATestTD4Character（头文件为TestTD4Character.h）
-假设在Content/Assets/目录下放了三个动画文件（AnimSequence）。
-异步加载 通过DefaultGame.ini配置文件生成FSoftObjectPath DefaultGame.ini
-[/Script/TestTD4.TestTD4Character]&#43;TestAssets=/Game/Assets/ThirdPerson_Jump.ThirdPerson_Jump&#43;TestAssets=/Game/Assets/ThirdPersonRun.ThirdPersonRun&#43;TestAssets=/Game/Assets/ThirdPersonWalk.ThirdPersonWalkTestTD4Character.h
-UPROPERTY(Config)TArray&lt;FSoftObjectPath&gt; TestAssets;这个属性的意思是：加Config标签表示从DefaultGame.ini读取，TestAssets就是DefaultGame.ini中配置的属性名，当游戏启动时，这个数组会被自动填充3个元素，即资源的路径。
-注：4.18版本中FStringAssetReference、TAssetPtr两个变量被重命名为：FSoftObjectPath、TSoftObjectPtr.
-TestTD4Character.cpp
-void ATestTD4Character::BeginPlay(){Super::BeginPlay();for (FSoftObjectPath&amp; Asset : TestAssets){GEngine-&gt;AddOnScreenDebugMessage(-1, 3, FColor::Cyan, Asset.ToString());}FStreamableManager&amp; AssetLoader = UAssetManager::GetStreamableManager();AssetLoader.RequestAsyncLoad(TestAssets, FStreamableDelegate::CreateUObject(this, &amp;ATestTD4Character::AnimAssetsDeferred));}void ATestTD4Character::AnimAssetsDeferred(){for (FSoftObjectPath SoftObj : TestAssets){TAssetPtr&lt;UAnimSequence&gt; AnimAsset(SoftObj);UAnimSequence* AnimObj = AnimAsset.Get();if (AnimObj){GEngine-&gt;AddOnScreenDebugMessage(-1, 3, FColor::Red, AnimObj-&gt;GetName());}}}打印结果：
-ThirdPersonWalkThirdPersonRunThirdPerson_Jump/Game/Assets/ThirdPersonWalk.ThirdPersonWalk/Game/Assets/ThirdPersonRun.">
-<meta name="twitter:description" content="为什么需要异步加载资源，因为当一次性加载的资源较多或者单个资源较大时，普通的LoadObject()方式会阻塞引擎的主线程。
-假设测试工程叫TestTD4，自定义Character叫ATestTD4Character（头文件为TestTD4Character.h）
-假设在Content/Assets/目录下放了三个动画文件（AnimSequence）。
-异步加载 通过DefaultGame.ini配置文件生成FSoftObjectPath DefaultGame.ini
-[/Script/TestTD4.TestTD4Character]&#43;TestAssets=/Game/Assets/ThirdPerson_Jump.ThirdPerson_Jump&#43;TestAssets=/Game/Assets/ThirdPersonRun.ThirdPersonRun&#43;TestAssets=/Game/Assets/ThirdPersonWalk.ThirdPersonWalkTestTD4Character.h
-UPROPERTY(Config)TArray&lt;FSoftObjectPath&gt; TestAssets;这个属性的意思是：加Config标签表示从DefaultGame.ini读取，TestAssets就是DefaultGame.ini中配置的属性名，当游戏启动时，这个数组会被自动填充3个元素，即资源的路径。
-注：4.18版本中FStringAssetReference、TAssetPtr两个变量被重命名为：FSoftObjectPath、TSoftObjectPtr.
-TestTD4Character.cpp
-void ATestTD4Character::BeginPlay(){Super::BeginPlay();for (FSoftObjectPath&amp; Asset : TestAssets){GEngine-&gt;AddOnScreenDebugMessage(-1, 3, FColor::Cyan, Asset.ToString());}FStreamableManager&amp; AssetLoader = UAssetManager::GetStreamableManager();AssetLoader.RequestAsyncLoad(TestAssets, FStreamableDelegate::CreateUObject(this, &amp;ATestTD4Character::AnimAssetsDeferred));}void ATestTD4Character::AnimAssetsDeferred(){for (FSoftObjectPath SoftObj : TestAssets){TAssetPtr&lt;UAnimSequence&gt; AnimAsset(SoftObj);UAnimSequence* AnimObj = AnimAsset.Get();if (AnimObj){GEngine-&gt;AddOnScreenDebugMessage(-1, 3, FColor::Red, AnimObj-&gt;GetName());}}}打印结果：
-ThirdPersonWalkThirdPersonRunThirdPerson_Jump/Game/Assets/ThirdPersonWalk.ThirdPersonWalk/Game/Assets/ThirdPersonRun.">
+<meta property="og:description" content="keywords: UE4, Loading Assets Asynchronously, Memory Persistence">
+<meta name="twitter:description" content="keywords: UE4, Loading Assets Asynchronously, Memory Persistence">
 <meta property="og:locale" content="en-us">
 
   
@@ -93,6 +57,9 @@ ThirdPersonWalkThirdPersonRunThirdPerson_Jump/Game/Assets/ThirdPersonWalk.Thi
 
 
 
+
+  <meta property="og:image" content="https://dawnarc.com/thumbnail/beijing/thumbnail-beijing-003.jpg">
+  <meta property="twitter:image" content="https://dawnarc.com/thumbnail/beijing/thumbnail-beijing-003.jpg">
 
 
 
@@ -395,7 +362,8 @@ ThirdPersonWalkThirdPersonRunThirdPerson_Jump/Game/Assets/ThirdPersonWalk.Thi
                 <script>
                      (adsbygoogle = window.adsbygoogle || []).push({});
                 </script>
-              <p>为什么需要异步加载资源，因为当一次性加载的资源较多或者单个资源较大时，普通的LoadObject()方式会阻塞引擎的主线程。</p>
+              <p>keywords: UE4, Loading Assets Asynchronously, Memory Persistence</p>
+<p>为什么需要异步加载资源，因为当一次性加载的资源较多或者单个资源较大时，普通的LoadObject()方式会阻塞引擎的主线程。</p>
 <p>假设测试工程叫TestTD4，自定义Character叫ATestTD4Character（头文件为TestTD4Character.h）</p>
 <p>假设在Content/Assets/目录下放了三个动画文件（AnimSequence）。</p>
 <h3 id="异步加载">异步加载</h3>
@@ -635,7 +603,6 @@ TSoftObjectPtr&lt;UParticleSystem&gt; Asset(FSoftObjectPath(TCHAR_TO_ANSI(*Path)
 <a href="https://www.youtube.com/watch?v=h3A8qVb2VFk">https://www.youtube.com/watch?v=h3A8qVb2VFk</a></p>
 <hr>
 <p><code>如果热爱与希望，背道而驰，那我选择热爱。 ----井上雄彦</code></p>
-
               
             </div>
           </div>

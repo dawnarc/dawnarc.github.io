@@ -364,10 +364,10 @@
                 </script>
               <p>Keywords: UE4, Editor Extention and Programming</p>
 <h3 id="documents">Documents</h3>
+<h5 id="documents---fragments">Documents - Fragments</h5>
 <p>UE4 - Easy example of How to create menus in the editor<br>
 <a href="http://www.danielmayor.com/ue4-simple-menus">http://www.danielmayor.com/ue4-simple-menus</a></p>
-<p>UE4 Level Editor<br>
-<a href="https://books.google.com.sg/books?id=zZ7cDgAAQBAJ&amp;pg=PA272&amp;lpg=PA272&amp;dq=UE4+leveleditor+C%2B%2B&amp;source=bl&amp;ots=ZsX7ZCR6bV&amp;sig=6_J7xzxTDosX5dOuLwpiaKrOSHU&amp;hl=zh-CN&amp;sa=X&amp;ved=2ahUKEwji8aiT8orfAhWFTn0KHU0JB7wQ6AEwBXoECAUQAQ#v=onepage&amp;q=UE4%20leveleditor%20C%2B%2B&amp;f=false">https://books.google.com.sg/books?id=zZ7cDgAAQBAJ&amp;pg=PA272&amp;lpg=PA272&amp;dq=UE4+leveleditor+C%2B%2B&amp;source=bl&amp;ots=ZsX7ZCR6bV&amp;sig=6_J7xzxTDosX5dOuLwpiaKrOSHU&amp;hl=zh-CN&amp;sa=X&amp;ved=2ahUKEwji8aiT8orfAhWFTn0KHU0JB7wQ6AEwBXoECAUQAQ#v=onepage&amp;q=UE4%20leveleditor%20C%2B%2B&amp;f=false</a></p>
+<p><a href="https://books.google.com.sg/books?id=zZ7cDgAAQBAJ&amp;pg=PA272&amp;lpg=PA272&amp;dq=UE4+leveleditor+C%2B%2B&amp;source=bl&amp;ots=ZsX7ZCR6bV&amp;sig=6_J7xzxTDosX5dOuLwpiaKrOSHU&amp;hl=zh-CN&amp;sa=X&amp;ved=2ahUKEwji8aiT8orfAhWFTn0KHU0JB7wQ6AEwBXoECAUQAQ#v=onepage&amp;q=UE4%20leveleditor%20C%2B%2B&amp;f=false">UE4 Level Editor</a></p>
 <p>Creating an Editor Module<br>
 <a href="https://wiki.unrealengine.com/Creating_an_Editor_Module">https://wiki.unrealengine.com/Creating_an_Editor_Module</a></p>
 <p>Customizing the editor&rsquo;s toolbar buttons menu via custom plugin<br>
@@ -467,7 +467,7 @@ Origin:</p>
 <p>New:</p>
 <pre><code>&quot;Modules&quot;: [
     {
-        &quot;Name&quot;: &quot;CppEditorWidget&quot;,
+        &quot;Name&quot;: &quot;MyExtender&quot;,
         &quot;Type&quot;: &quot;Editor&quot;,
         &quot;LoadingPhase&quot;: &quot;PostEngineInit&quot;
     }
@@ -527,7 +527,30 @@ GWarn-&gt;BeginSlowTask( Description, true );
 </code></pre><p>End:</p>
 <pre tabindex="0"><code>GWarn-&gt;EndSlowTask();
 </code></pre><p>References: <a href="https://github.com/sideeffects/HoudiniEngineForUnreal/blob/93c8516c5d3e980e2ae780b66b66e1b8428f0ed0/Source/HoudiniEngine/Private/HCsgUtils.cpp#L955">UHCsgUtils::ComposeBrushCSG in HoudiniEngine</a></p>
-<h3 id="testing--optimization">Testing &amp; Optimization</h3>
+<h5 id="how-to-load-asset-data-in-a-batch">How to load asset data in a batch.</h5>
+<p>1st way: AssetRegistryModule</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">static</span> <span style="color:#66d9ef">const</span> FName <span style="color:#a6e22e">AssetRegistryName</span>(TEXT(<span style="color:#e6db74">&#34;AssetRegistry&#34;</span>));
+</span></span><span style="display:flex;"><span>FAssetRegistryModule<span style="color:#f92672">&amp;</span> AssetRegistryModule <span style="color:#f92672">=</span> FModuleManager<span style="color:#f92672">::</span>LoadModuleChecked<span style="color:#f92672">&lt;</span>FAssetRegistryModule<span style="color:#f92672">&gt;</span>(AssetRegistryName);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>IAssetRegistry<span style="color:#f92672">&amp;</span> AssetRegistry <span style="color:#f92672">=</span> AssetRegistryModule.Get();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>AssetRegistry.GetAssetsByClass(UMaterial<span style="color:#f92672">::</span>StaticClass()<span style="color:#f92672">-&gt;</span>GetFName(), AssetDataArray, true);
+</span></span><span style="display:flex;"><span>AssetRegistry.GetAssetsByClass(UMaterialInstance<span style="color:#f92672">::</span>StaticClass()<span style="color:#f92672">-&gt;</span>GetFName(), AssetDataArray, true);
+</span></span></code></pre></div><p>Example: <a href="https://github.com/EpicGames/UnrealEngine/blob/5ca9da84c694c6eee288c30a547fcaa1a40aed9b/Engine/Plugins/Editor/MaterialAnalyzer/Source/Private/SMaterialAnalyzer.cpp#L559">SMaterialAnalyzer::BuildBasicMaterialTree()</a></p>
+<p>2nd way: ObjectLibrary</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#66d9ef">auto</span> ObjectLibrary <span style="color:#f92672">=</span> UObjectLibrary<span style="color:#f92672">::</span>CreateLibrary(UMaterialInterface<span style="color:#f92672">::</span>StaticClass(), false, true);
+</span></span><span style="display:flex;"><span>ObjectLibrary<span style="color:#f92672">-&gt;</span>LoadAssetDataFromPath(TEXT(<span style="color:#e6db74">&#34;/Game/TestAssets&#34;</span>));
+</span></span><span style="display:flex;"><span>TArray<span style="color:#f92672">&lt;</span>FAssetData<span style="color:#f92672">&gt;</span> AssetDatas;
+</span></span><span style="display:flex;"><span>ObjectLibrary<span style="color:#f92672">-&gt;</span>GetAssetDataList(AssetDatas);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span>(<span style="color:#66d9ef">auto</span><span style="color:#f92672">&amp;</span> Data : AssetDatas)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    UObject<span style="color:#f92672">*</span> Obj <span style="color:#f92672">=</span> Data.GetAsset();
+</span></span><span style="display:flex;"><span>    UClass<span style="color:#f92672">*</span> AssetClass <span style="color:#f92672">=</span> Data.GetClass();
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span>(<span style="color:#66d9ef">const</span> UMaterialInterface<span style="color:#f92672">*</span> Material <span style="color:#f92672">=</span> Cast<span style="color:#f92672">&lt;</span>UMaterialInterface<span style="color:#f92672">&gt;</span>(Obj))
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="testing--optimization">Testing &amp; Optimization</h3>
 <h5 id="testing-automation">Testing Automation</h5>
 <p>Automation System Overview, Overview of the automation system used for unit testing, feature testing, and content stress testing.<br>
 <a href="https://docs.unrealengine.com/4.27/en-US/TestingAndOptimization/Automation/">https://docs.unrealengine.com/4.27/en-US/TestingAndOptimization/Automation/</a></p>

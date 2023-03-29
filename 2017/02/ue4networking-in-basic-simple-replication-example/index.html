@@ -935,7 +935,7 @@ Dedicated Servers, Jitter, Matchmaking<br>
 <p>射击游戏中，如果子弹是服务端生成，并同步到客户端，并且子弹是真实弹道（不是射线检测），并且在子弹的Hit事件中Destroy自己，那么当子弹速度过快时，且发射口离障碍物很近时，子弹还没来得及同步到客户端，子弹在服务端就已经消掉掉了，从而导致Hit事件只会在服务端触发，不会在客户端触发。而当发射口离障碍物有一定距离时（距离取决与子弹速度），客户端和服务端的Hit会同时触发。</p>
 </li>
 <li>
-<p>销毁Actor时，如果<code>bool AActor::</code>Destroy(true);<code>(bool bNetForce = false, bool bShouldModifyLevel = true 销毁客户端actor，但是对应的服务端actor一定要有对应的</code>Destroy()<code>。);</code>的<code>bNetForce</code>参数需要设置为true才能销毁（这种情形用在强制销毁客户端的actor），则说明<span class="highlight-text red">DS有内存泄漏问题</span>。因为<code>bNetForce</code>只是将客户端的actor销毁，服务端的actor内存还没释放。为了客户端表现，可以提前<code>Destroy(true);</code>销毁客户端actor，但对应的服务端actor一定也要有<code>Destroy();</code>。</p>
+<p>销毁Actor时（接口：<code>bool AActor::Destroy(bool bNetForce = false, bool bShouldModifyLevel = true)</code>），如果需要将<code>bNetForce</code>设置为true才能销毁（这种情形用在强制销毁客户端的actor），则说明<span class="highlight-text red">DS有内存泄漏问题</span>。因为<code>bNetForce</code>只是将客户端的actor销毁，服务端的actor内存还没释放。为了客户端表现，可以提前<code>Destroy(true);</code>销毁客户端actor，但对应的服务端actor一定也要有<code>Destroy();</code>。</p>
 </li>
 </ol>
 <h3 id="示例工程下载地址">示例工程下载地址</h3>
