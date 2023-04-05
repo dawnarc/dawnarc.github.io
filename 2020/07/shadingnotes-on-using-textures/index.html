@@ -365,56 +365,34 @@
               <p>keywords: Graphics, Shading, Texture Downsampling (Downscaling) Notes</p>
 <h3 id="texture-parameters-gltexparameteri">Texture Parameters (glTexParameteri)</h3>
 <h5 id="opengl">OpenGL</h5>
-<p>Example 1:<br>
-<a href="https://github.com/OpenGLFrame/Opengl/blob/d9daaba95d0b821dccf666664255fa2997270ecf/5_Blending/OpenGLFrame/Example.cpp">https://github.com/OpenGLFrame/Opengl/blob/d9daaba95d0b821dccf666664255fa2997270ecf/5_Blending/OpenGLFrame/Example.cpp</a></p>
-<pre><code>//moon贴图
-if(!Texture.LoadBitmap(&quot;image_moon.bmp&quot;))              /**&lt; 载入位图文件 */
-{
-    MessageBox(NULL,&quot;装载位图文件03失败！&quot;,&quot;错误&quot;,MB_OK);  /**&lt; 如果载入失败则弹出对话框 */
-    return false;
-}
-glGenTextures(1, &amp;Texture.ID);        /**&lt; 生成一个纹理对象名称 */
-glBindTexture(GL_TEXTURE_2D, Texture.ID); /**&lt; 创建纹理对象 */
-/** 控制滤波 */
-glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_REPEAT);
-glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_REPEAT);
-/** 创建纹理 */
-gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGB, Texture.imageWidth,
-    Texture.imageHeight, GL_RGB, GL_UNSIGNED_BYTE,
-    Texture.image);
-</code></pre>
-<p>Example 2:<br>
-<a href="https://github.com/kevin2431/LearnOpenGL_NDK_Version/blob/341f1a815c453b558f8701372b2f8ff2646697c9/app/src/main/cpp/texture.cpp">https://github.com/kevin2431/LearnOpenGL_NDK_Version/blob/341f1a815c453b558f8701372b2f8ff2646697c9/app/src/main/cpp/texture.cpp</a></p>
-<pre><code>// 加载和创建纹理
-glGenTextures(1, &amp;texture1);
-glBindTexture(GL_TEXTURE_2D, texture1);
-
-// 设定纹理wrapper参数
-glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-// 纹理过滤
-glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-// 加载image 创造纹理 生成mipmaps
-int width, height, nrChannels;
-std::string filename1 = &quot;/data/data/com.example.airhockey_cpp/wall.jpg&quot;;
-
-stbi_set_flip_vertically_on_load(true);     // 翻转图像
-unsigned char *data = stbi_load(filename1.c_str(), &amp;width, &amp;height, &amp;nrChannels, 0);
-
-if(data){
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-    glGenerateMipmap(GL_TEXTURE_2D);
-}else {
-    LOGE(&quot;Failed to load texture1\n&quot;);
-}
-stbi_image_free(data);
-</code></pre>
-<h3 id="texture-downsampling-downscaling">Texture Downsampling (Downscaling)</h3>
+<p><a href="https://github.com/JoeyDeVries/LearnOpenGL/blob/bc41d2c0192220fb146c5eabf05f3d8317851200/src/1.getting_started/4.5.textures_exercise3/textures_exercise3.cpp#L121">textures_exercise4.cpp from LearnOpenGL</a></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C" data-lang="C"><span style="display:flex;"><span><span style="color:#75715e">// load and create a texture 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// -------------------------
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">int</span> texture2;
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// texture 2
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// ---------
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>glGenTextures(<span style="color:#ae81ff">1</span>, <span style="color:#f92672">&amp;</span>texture2);
+</span></span><span style="display:flex;"><span>glBindTexture(GL_TEXTURE_2D, texture2);
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// set the texture wrapping parameters
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+</span></span><span style="display:flex;"><span>glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// set texture filtering parameters
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST); <span style="color:#75715e">// set texture filtering to nearest neighbor to clearly see the texels/pixels
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// load image, create texture and generate mipmaps
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>data <span style="color:#f92672">=</span> stbi_load(FileSystem<span style="color:#f92672">::</span>getPath(<span style="color:#e6db74">&#34;resources/textures/awesomeface.png&#34;</span>).c_str(), <span style="color:#f92672">&amp;</span>width, <span style="color:#f92672">&amp;</span>height, <span style="color:#f92672">&amp;</span>nrChannels, <span style="color:#ae81ff">0</span>);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> (data)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// note that the awesomeface.png has transparency and thus an alpha channel, so make sure to tell OpenGL the data type is of GL_RGBA
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    glTexImage2D(GL_TEXTURE_2D, <span style="color:#ae81ff">0</span>, GL_RGB, width, height, <span style="color:#ae81ff">0</span>, GL_RGBA, GL_UNSIGNED_BYTE, data);
+</span></span><span style="display:flex;"><span>    glGenerateMipmap(GL_TEXTURE_2D);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">else</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    std<span style="color:#f92672">::</span>cout <span style="color:#f92672">&lt;&lt;</span> <span style="color:#e6db74">&#34;Failed to load texture&#34;</span> <span style="color:#f92672">&lt;&lt;</span> std<span style="color:#f92672">::</span>endl;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>stbi_image_free(data);
+</span></span></code></pre></div><h3 id="texture-downsampling-downscaling">Texture Downsampling (Downscaling)</h3>
 <h5 id="opengl-1">OpenGL</h5>
 <p>What is texture downsampling (downscaling) using OpenGL?<br>
 <a href="https://stackoverflow.com/a/30290468/1645289">https://stackoverflow.com/a/30290468/1645289</a></p>

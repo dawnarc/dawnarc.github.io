@@ -13,18 +13,18 @@
 <meta name="generator" content="Hugo 0.102.3 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Wang Aiguo">
 <meta name="keywords" content="cmake, 配置">
-<meta name="description" content="keywords: cmake常用配置项">
+<meta name="description" content="keywords: cmake常用配置项, 配置与构建, cmd, command">
 
 
-<meta property="og:description" content="keywords: cmake常用配置项">
+<meta property="og:description" content="keywords: cmake常用配置项, 配置与构建, cmd, command">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[Build]cmake常用配置项">
 <meta name="twitter:title" content="[Build]cmake常用配置项">
 <meta property="og:url" content="https://dawnarc.com/2018/04/buildcmake%E5%B8%B8%E7%94%A8%E9%85%8D%E7%BD%AE%E9%A1%B9/">
 <meta property="twitter:url" content="https://dawnarc.com/2018/04/buildcmake%E5%B8%B8%E7%94%A8%E9%85%8D%E7%BD%AE%E9%A1%B9/">
 <meta property="og:site_name" content="玄冬Wong">
-<meta property="og:description" content="keywords: cmake常用配置项">
-<meta name="twitter:description" content="keywords: cmake常用配置项">
+<meta property="og:description" content="keywords: cmake常用配置项, 配置与构建, cmd, command">
+<meta name="twitter:description" content="keywords: cmake常用配置项, 配置与构建, cmd, command">
 <meta property="og:locale" content="en-us">
 
   
@@ -362,9 +362,22 @@
                 <script>
                      (adsbygoogle = window.adsbygoogle || []).push({});
                 </script>
-              <p>keywords: cmake常用配置项</p>
+              <p>keywords: cmake常用配置项, 配置与构建, cmd, command</p>
 <h3 id="常用设置">常用设置</h3>
-<h5 id="配置与构建cmd">配置与构建(CMD)</h5>
+<h5 id="specify-build-directory">Specify build directory</h5>
+<p>3.13版本（2018年11月）之前，用于build的文件夹需要手动创建：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>mkdir build
+</span></span><span style="display:flex;"><span>cd build
+</span></span><span style="display:flex;"><span>cmake ..
+</span></span><span style="display:flex;"><span>cmake --build .
+</span></span></code></pre></div><p>3.13版本开始，cmake可以自动创建build文件夹，并cd进去：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>cmake -S . -B build
+</span></span><span style="display:flex;"><span>cmake --build build
+</span></span></code></pre></div><p><code>-S .</code>表示source directory，也就是CMakeLists.txt所在目录，3.13之前叫<code>-H</code>。<br>
+也可以省去，例如：<code>cmake .</code>。</p>
+<p>参考：<br>
+<a href="https://stackoverflow.com/a/24435795/1645289">https://stackoverflow.com/a/24435795/1645289</a></p>
+<h5 id="config--build-command">Config &amp; build command</h5>
 <p>有四种build命令：</p>
 <ul>
 <li>不指定-G参数（默认方式）：
@@ -378,17 +391,17 @@
 <li>nmake
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>cmake -G <span style="color:#e6db74">&#34;NMake Makefiles&#34;</span> -DCMAKE_BUILD_TYPE<span style="color:#f92672">=</span>Release path/to/source/dir
 </span></span><span style="display:flex;"><span>nmake
-</span></span></code></pre></div>nmake编译速度比msbuild快，且能以命令行显示编译进度（百分比）。</li>
+</span></span></code></pre></div>nmake编译速度比msbuild快，且能以命令行显示编译进度（百分比），合适CI中构建，而msbuild适合IDE中debug。</li>
 <li>第三方工具<a href="https://github.com/ninja-build/ninja">ninja</a> (<span class="highlight-text green">推荐方式</span>)
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>cmake -G Ninja -DCMAKE_BUILD_TYPE<span style="color:#f92672">=</span>Release path/to/source/dir
 </span></span><span style="display:flex;"><span>cmake --build .
-</span></span></code></pre></div>Windows平台上，ninja调用的也是nmake。但<code>-G &quot;NMake Makefiles&quot;</code>无法跨平台，<code>-G Ninja</code>不受平台限制。</li>
+</span></span></code></pre></div>Windows平台上，ninja调用的也是nmake。<code>-G &quot;NMake Makefiles&quot;</code>无法跨平台，而<code>-G Ninja</code>不受平台限制。</li>
 </ul>
 <div class="alert warning ">
-  <p>3.23版本（2022年4月）貌似有bug，Windows下若不指定<code>-G</code>参数，build时不会输出编译日志。</p>
+  <p>3.23版本（2022年4月）貌似有bug：Windows下若不指定<code>-G</code>参数，build时不会输出编译日志。</p>
 </div>
 <h5 id="设置编译输出路径">设置编译输出路径</h5>
-<p>在CMakeList.txt中如下设置后，无论是编译可执行文件还是编译静态库，都会输出到指定目录下，而不再是默认的当前目录。</p>
+<p>在CMakeLists.txt中如下设置后，无论是编译可执行文件还是编译静态库，都会输出到指定目录下，而不再是默认的当前目录。</p>
 <pre><code>#静态库输出目录(lib, a)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY &quot;lib/&quot;)
 
@@ -444,8 +457,9 @@ link_directories(./lib)
 add_executable(myapp myapp.cpp)
 target_link_libraries(myapp mylib)  
 </code></pre>
-<p>如果引用的很多个第三方库，那么类似上面的内容会写很多，且如果自己的多个项目都引用了某个第三方库，那么我每个项目的<code>CMakeList.txt</code>都得写一遍，重复劳动很多。那么有没办法为每个第三方库只定义一次它的头文件和库文件信息，然后在自己的工程中只指定名称即可？（类似编译Java的Maven仓库）答案是当然可以，<code>find_package</code>帮你解决。</p>
-<p><code>find_package</code>定义在自己工程的CmakeList.txt中：</p>
+<p>如果引用的很多个第三方库，那么类似上面的内容会写很多（实际项目的第三方库结构比上述更复杂），且当多个项目都引用了同一个第三方库，那么我每个项目的<code>CMakeLists.txt</code>都得写一遍，重复劳动很多。<br>
+那么有没办法为每个第三方库只定义一次它的头文件和库文件信息，然后在自己的工程中只指定名称即可？（类似编译Java的Maven仓库）答案是当然可以，<code>find_package</code>帮你解决。</p>
+<p><code>find_package</code>定义在自己工程的CMakeLists.txt中：</p>
 <pre><code>find_package( XXX CONFIG REQUIRED )
 </code></pre>
 <p>然后cmake就会在默认的Modules(即<code>CMAKE_MODULE_PATH</code>指定的目录)目录中搜索这个XXX第三方库。<br>
@@ -454,19 +468,27 @@ target_link_libraries(myapp mylib)
 <li>Module模式<br>
 搜索CMAKE_MODULE_PATH指定路径下的FindXXX.cmake文件，通过该文件从而找到XXX库的头文件和lib文件位置。FindXXX.cmake中需要定义<code>XXX_INCLUDE_DIRS</code>和<code>XXX_LIBRARIES</code>。</li>
 <li>Config模式<br>
-搜索XXX_DIR指定路径下的XXXConfig.cmake文件（XXX_DIR定义在自己工程的CMakeList.txt或者cmake-gui的环境变量中），通过该文件从而找到XXX库的头文件和lib文件位置。XXXConfig.cmake中需要定义<code>XXX_INCLUDE_DIRS</code>和<code>XXX_LIBRARIES</code></li>
+搜索XXX_DIR指定路径下的XXXConfig.cmake文件（XXX_DIR定义在自己工程的CMakeLists.txt或者cmake-gui的环境变量中），通过该文件从而找到XXX库的头文件和lib文件位置。XXXConfig.cmake中需要定义<code>XXX_INCLUDE_DIRS</code>和<code>XXX_LIBRARIES</code></li>
 </ul>
-<p>Module模式示例：<br>
-先新建FindXXX.cmake，参考：<a href="https://github.com/JoeyDeVries/LearnOpenGL/blob/master/cmake/modules/FindGLFW3.cmake">FindGLFW3.cmake</a>；<br>
-然后将FindXXX.cmake所在路径加入<code>CMAKE_MODULE_PATH</code>，最后通过<code>find_package(GLFW3 REQUIRED)</code>引用，参考：<a href="https://github.com/JoeyDeVries/LearnOpenGL/blob/1257b69ebc878d1a2e18f5fae604582a7d34f03d/CMakeLists.txt#L25">CMakeLists.txt</a>；</p>
+<p>Module模式示例：</p>
+<ul>
+<li>先新建FindXXX.cmake，参考：<a href="https://github.com/dawnarc/Mesh-Voxelization-OpenGL-Geometry-Shader/blob/master/cmake/modules/FindGLFW3.cmake">FindGLFW3.cmake</a>；</li>
+<li>然后将FindXXX.cmake所在路径加入<code>CMAKE_MODULE_PATH</code>，参考：<a href="https://github.com/dawnarc/Mesh-Voxelization-OpenGL-Geometry-Shader/blob/42144fd48df65fc65141ec5c369b6bc100cf7bb2/CMakeLists.txt#L4">CMAKE_MODULE_PATH</a>；</li>
+<li>然后通过<code>find_package()</code>查找include和lib，参考：<a href="https://github.com/dawnarc/Mesh-Voxelization-OpenGL-Geometry-Shader/blob/42144fd48df65fc65141ec5c369b6bc100cf7bb2/CMakeLists.txt#L7">find_package()</a>；</li>
+<li>最后将lib文件路径引入到<code>target_link_libraries()</code>，参考：<a href="https://github.com/dawnarc/Mesh-Voxelization-OpenGL-Geometry-Shader/blob/42144fd48df65fc65141ec5c369b6bc100cf7bb2/CMakeLists.txt#L42">target_link_libraries()</a>
+<div class="alert warning ">
+  <p>旧版本（cmake 3.1）中通过<code>find_package()</code>引用lib时，target_link_libraries中只需写lib的名称即可，例如<code>target_link_libraries(main glfw3)</code>，但新版本已废弃此写法，需要完整的引用名，例如<code>target_link_libraries(main ${GLFW3_LIBRARY})</code>，其中<code>GLFW3_LIBRARY</code>定义在<a href="https://github.com/dawnarc/Mesh-Voxelization-OpenGL-Geometry-Shader/blob/42144fd48df65fc65141ec5c369b6bc100cf7bb2/cmake/modules/FindGLFW3.cmake#L44">FindGLFW3.cmake</a>。<br>
+废弃旧写法有助于阅读CMakeLists.txt，因为当<code>glfw3</code>定义在FindGLFW3.cmake文件中时，其他用户很难理解<code>glfw3</code>是在哪里定义的，尤其是一些小众的第三方lib。</p>
+</div></li>
+</ul>
 <p>Config模式示例：<br>
-先在自己工程的CMakeList.txt中添加</p>
+先在自己工程的CMakeLists.txt中添加</p>
 <pre><code>set(XXX_DIR D:/sdk/XXX-0.9.9.0/bin)
 find_package( XXX CONFIG REQUIRED )
 </code></pre>
 <p>其中<code>CONFIG</code>表示使用Config模式搜索，默认是Module模式；然后D:/sdk/XXX-0.9.9.0/cmake目录下必须存在XXXConfig.cmake文件，否则当执行cmake时会提示找不到XXXConfig.cmake。</p>
 <div class="alert danger ">
-  <p>XXXConfig.cmake和XXXTargets.cmake都不是手动编写的，而是CMake自动生成的！！</p>
+  <p>XXXConfig.cmake和XXXTargets.cmake都非手写，而是由CMake自动生成！</p>
 </div>
 <p>生成Config.cmake的参考代码：<br>
 <a href="https://github.com/g-truc/glm/blob/0d973b40a49e550b1ea7df22a8573bc5fff84f24/CMakeLists.txt#L175">https://github.com/g-truc/glm/blob/0d973b40a49e550b1ea7df22a8573bc5fff84f24/CMakeLists.txt#L175</a></p>
@@ -483,7 +505,7 @@ find_package( XXX CONFIG REQUIRED )
 </span></span><span style="display:flex;"><span>cmake --install . --config Release
 </span></span></code></pre></div><p>参考：How to use CMake to install<br>
 <a href="https://stackoverflow.com/a/48428846/1645289">https://stackoverflow.com/a/48428846/1645289</a></p>
-<p>要执行install命令，前提是CMakeList.txt中配置了<code>install()</code>命令，示例（引用自<a href="https://github.com/Perlmint/glew-cmake/blob/062db23216d5efae380c19a0edb28f9442d2b997/CMakeLists.txt#L253">glew-cmake</a>）：</p>
+<p>要执行install命令，前提是CMakeLists.txt中配置了<code>install()</code>命令，示例（引用自<a href="https://github.com/Perlmint/glew-cmake/blob/062db23216d5efae380c19a0edb28f9442d2b997/CMakeLists.txt#L253">glew-cmake</a>）：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Shell" data-lang="Shell"><span style="display:flex;"><span>install<span style="color:#f92672">(</span>TARGETS <span style="color:#e6db74">${</span>GLEW_TARGETS<span style="color:#e6db74">}</span> EXPORT glew-cmake
 </span></span><span style="display:flex;"><span>       ARCHIVE DESTINATION <span style="color:#e6db74">${</span>INSTALL_LIBDIR<span style="color:#e6db74">}</span>
 </span></span><span style="display:flex;"><span>       LIBRARY DESTINATION <span style="color:#e6db74">${</span>INSTALL_LIBDIR<span style="color:#e6db74">}</span><span style="color:#f92672">)</span>
@@ -491,11 +513,10 @@ find_package( XXX CONFIG REQUIRED )
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>file<span style="color:#f92672">(</span>GLOB PUBLIC_HEADERS <span style="color:#e6db74">&#34;include/GL/*.h&#34;</span><span style="color:#f92672">)</span>
 </span></span><span style="display:flex;"><span>install<span style="color:#f92672">(</span>FILES <span style="color:#e6db74">${</span>PUBLIC_HEADERS<span style="color:#e6db74">}</span> DESTINATION include/GL/<span style="color:#f92672">)</span>
-</span></span></code></pre></div><p>编写install配置的好处是：你写的代码库，别人编译并且install之后，可以通过<code>find_package</code>方式来引用你的头文件和lib，让CMakeList.txt更简洁。</p>
+</span></span></code></pre></div><p>编写install配置的好处是：别人拿你写的代码编译lib时，只使用<code>find_package</code>来引用你的头文件和lib即可，让CMakeLists.txt更简洁，也省去了手动拷贝lib和header的工作。</p>
 <h5 id="使用通配符批量指定头文件或源文件-include-source-files-batch-using-wildcard">使用通配符批量指定头文件或源文件 (include source files batch using wildcard)</h5>
 <p>GLOB:</p>
 <pre><code>FILE(GLOB cpp_files ../src/*.cc)
-
 add_executable(helloworld ${cpp_files})
 </code></pre>
 <div class="alert success ">
@@ -536,6 +557,19 @@ INCLUDE(&quot;meaningfulFilename.cmake&quot;)
 </code></pre><p>Add subdirectory in relative path:</p>
 <pre tabindex="0"><code>add_subdirectory(./../Lua build_lua)
 </code></pre><p><code>build_lua</code> is a directory under <code>./../Lua/</code></p>
+<h5 id="how-to-check-specified-platform">How to check specified platform</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>WIN32<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>    set<span style="color:#f92672">(</span>LIBS glfw3 opengl32 assimp freetype irrKlang<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>elseif<span style="color:#f92672">(</span>UNIX AND NOT APPLE<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>    set<span style="color:#f92672">(</span>LIBS <span style="color:#e6db74">${</span>GLFW3_LIBRARY<span style="color:#e6db74">}</span> X11 Xrandr Xinerama Xi Xxf86vm Xcursor GL dl pthread freetype <span style="color:#e6db74">${</span>ASSIMP_LIBRARY<span style="color:#e6db74">}</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>elseif<span style="color:#f92672">(</span>APPLE<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>    SET<span style="color:#f92672">(</span>APPLE_LIBS <span style="color:#e6db74">${</span>COCOA_LIBRARY<span style="color:#e6db74">}</span> <span style="color:#e6db74">${</span>IOKit_LIBRARY<span style="color:#e6db74">}</span> <span style="color:#e6db74">${</span>OpenGL_LIBRARY<span style="color:#e6db74">}</span> <span style="color:#e6db74">${</span>CoreVideo_LIBRARY<span style="color:#e6db74">}</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>    SET<span style="color:#f92672">(</span>APPLE_LIBS <span style="color:#e6db74">${</span>APPLE_LIBS<span style="color:#e6db74">}</span> <span style="color:#e6db74">${</span>GLFW3_LIBRARY<span style="color:#e6db74">}</span> <span style="color:#e6db74">${</span>ASSIMP_LIBRARY<span style="color:#e6db74">}</span> <span style="color:#e6db74">${</span>FREETYPE_LIBRARIES<span style="color:#e6db74">}</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>    set<span style="color:#f92672">(</span>LIBS <span style="color:#e6db74">${</span>LIBS<span style="color:#e6db74">}</span> <span style="color:#e6db74">${</span>APPLE_LIBS<span style="color:#e6db74">}</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">else</span><span style="color:#f92672">()</span>
+</span></span><span style="display:flex;"><span>    set<span style="color:#f92672">(</span>LIBS <span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>endif<span style="color:#f92672">(</span>WIN32<span style="color:#f92672">)</span>
+</span></span></code></pre></div><p>Example: <a href="https://github.com/JoeyDeVries/LearnOpenGL/blob/master/CMakeLists.txt">LearnOpenGL</a></p>
 <h3 id="visual-studio">Visual Studio</h3>
 <h5 id="set-startup-project">Set startup project</h5>
 <pre><code>set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT MyExeTarget)

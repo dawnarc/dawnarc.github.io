@@ -738,14 +738,19 @@ Project Settings -&gt; Engine -&gt; Animation -&gt; 勾选 Strip Animation Data 
 <p><a href="https://youtu.be/KL3rSV-IJ20?t=2639">The Coalition Studio</a>给出了他们的技术标准：Gear4的texture pool是1500MB，Gear5的texture pool为1150MB，两者都是基于UE4开发。结论：XBox One平台为例，若贴图内存占用超过1.5GB则有性能问题。</p>
 </li>
 <li>
-<p>过多的蓝图属性资源硬引用。建议使用软引用。</p>
+<p>过多的蓝图属性资源硬引用。建议使用软引用。（软引用又涉及到<a href="https://dawnarc.com/2018/01/ue4%E8%B5%84%E6%BA%90%E5%BC%82%E6%AD%A5%E5%8A%A0%E8%BD%BDassets-asynchronous-loading%E4%B8%8E%E5%86%85%E5%AD%98%E9%87%8A%E6%94%BEfree-memory/">异步加载</a>，异步加载又涉及到内存管理和事件管理，是一个庞大话题，这里不赘述）</p>
 </li>
 <li>
 <p>Shadow map（非动态光照）内存占用：</p>
 <ul>
-<li>场景内静态物体的数量越多，则shadow map的尺寸越大，内存占用也越大；</li>
+<li>场景内静态物体的数量越多，则shadow map res越大，内存占用也越大；</li>
 <li>阴影质量(Shadows quality)越高，则light map res越大，内存占用也越大；</li>
 </ul>
+</li>
+<li>
+<p>过多的shader置换（<a href="https://therealmjp.github.io/posts/shader-permutations-part1/">Shader Permutation</a>，Unity中叫Shader Variants）会导致显存暴涨。<br>
+材质蓝图（shader graph）中使用了过多的static switch（假设有10个），且基于该material创建了数量众多的material instance（假设1024），那么当instance中的static switch随机组合（true和false），极端情况下可以生成1024个permutation（实际情况更糟，因为引擎内部还为不同lighting phase生成不同的permutation），permutation数量增长则PSO数量也随之增长，而PSO吃VRAM，最终导致显存暴涨。<br>
+这还没完：PSO数量增加则需要更多的draw和dispatch指令（由引擎将PSO绑定到command buffer并派发），进而增加CPU开销。</p>
 </li>
 </ol>
 <h5 id="参考资料">参考资料</h5>
@@ -788,7 +793,7 @@ Project Settings -&gt; Engine -&gt; Animation -&gt; 勾选 Strip Animation Data 
 <a href="https://dev.epicgames.com/community/learning/tutorials/3o6/expert-s-guide-to-unreal-engine-performance">https://dev.epicgames.com/community/learning/tutorials/3o6/expert-s-guide-to-unreal-engine-performance</a></p>
 <p>Testing and Optimizing Your Content<br>
 <a href="https://docs.unrealengine.com/5.1/en-US/testing-and-optimizing-your-content/">https://docs.unrealengine.com/5.1/en-US/testing-and-optimizing-your-content/</a></p>
-<p>UE5: Optimizing Memory Usage of Textures &amp; Meshes (<span class="highlight-text green">Recommended</span>) <br>
+<p>UE5: Optimizing Memory Usage of Textures &amp; Meshes (<span class="highlight-text green">Recommended</span>)<br>
 <a href="https://www.youtube.com/watch?v=PQtrB-c6zhc">https://www.youtube.com/watch?v=PQtrB-c6zhc</a></p>
 <p>Performance recommendations for Unreal<br>
 <a href="https://learn.microsoft.com/en-us/windows/mixed-reality/develop/unreal/performance-recommendations-for-unreal">https://learn.microsoft.com/en-us/windows/mixed-reality/develop/unreal/performance-recommendations-for-unreal</a></p>
@@ -796,6 +801,9 @@ Project Settings -&gt; Engine -&gt; Animation -&gt; 勾选 Strip Animation Data 
 <a href="https://learn.microsoft.com/en-us/windows/mixed-reality/develop/unreal/unreal-materials">https://learn.microsoft.com/en-us/windows/mixed-reality/develop/unreal/unreal-materials</a></p>
 <p>Optimization Deep Dive: Unreal Engine 4 on Intel<br>
 <a href="https://www.slideshare.net/IntelSoftware/optimization-deep-dive-unreal-engine-4-on-intel">https://www.slideshare.net/IntelSoftware/optimization-deep-dive-unreal-engine-4-on-intel</a></p>
+<p>Unreal Engine Game Optimization on a Budget (<span class="highlight-text green">Recommended</span>)<br>
+<a href="https://www.tomlooman.com/unrealengine-optimization-talk/">https://www.tomlooman.com/unrealengine-optimization-talk/</a>
+<a href="https://www.youtube.com/watch?v=G51QWcitCII">https://www.youtube.com/watch?v=G51QWcitCII</a></p>
 <hr>
 <p><code>嗜欲深者天机浅 ---《庄子·大宗师》</code></p>
               
