@@ -738,7 +738,7 @@ Project Settings -&gt; Engine -&gt; Animation -&gt; 勾选 Strip Animation Data 
 <p><a href="https://youtu.be/KL3rSV-IJ20?t=2639">The Coalition Studio</a>给出了他们的技术标准：Gear4的texture pool是1500MB，Gear5的texture pool为1150MB，两者都是基于UE4开发。结论：XBox One平台为例，若贴图内存占用超过1.5GB则有性能问题。</p>
 </li>
 <li>
-<p>过多的蓝图属性资源硬引用。建议使用软引用。（软引用又涉及到<a href="https://dawnarc.com/2018/01/ue4%E8%B5%84%E6%BA%90%E5%BC%82%E6%AD%A5%E5%8A%A0%E8%BD%BDassets-asynchronous-loading%E4%B8%8E%E5%86%85%E5%AD%98%E9%87%8A%E6%94%BEfree-memory/">异步加载</a>，异步加载又涉及到内存管理和事件管理，是一个庞大话题，这里不赘述）</p>
+<p>蓝图中过多的资源硬引用（<a href="https://raharuu.github.io/unreal/hard-references-reasons-avoid/">Hard References</a>）。推荐一个硬引用检测插件：<a href="https://github.com/heyomidk/HardReferenceFinder"> HardReferenceFinder</a>。避免硬引用将涉及到<a href="https://dawnarc.com/2018/01/ue4%E8%B5%84%E6%BA%90%E5%BC%82%E6%AD%A5%E5%8A%A0%E8%BD%BDassets-asynchronous-loading%E4%B8%8E%E5%86%85%E5%AD%98%E9%87%8A%E6%94%BEfree-memory/">异步加载</a>，异步加载又涉及到内存管理和事件管理，是一个庞大话题，这里不赘述。</p>
 </li>
 <li>
 <p>Shadow map（非动态光照）内存占用：</p>
@@ -748,7 +748,7 @@ Project Settings -&gt; Engine -&gt; Animation -&gt; 勾选 Strip Animation Data 
 </ul>
 </li>
 <li>
-<p>过多的shader置换（<a href="https://therealmjp.github.io/posts/shader-permutations-part1/">Shader Permutation</a>，Unity中叫Shader Variants）会导致显存暴涨。<br>
+<p>过多的shader置换（<a href="https://therealmjp.github.io/posts/shader-permutations-part1/">Shader Permutation</a>，Unity中叫<a href="https://docs.unity3d.com/Manual/shader-variants.html">Shader Variants</a>，有的自研引擎叫做Uber Shader）会导致显存暴涨。<br>
 材质蓝图（shader graph）中使用了过多的static switch（假设有10个），且基于该material创建了数量众多的material instance（假设1024），那么当instance中的static switch随机组合（true和false），极端情况下可以生成1024个permutation（实际情况更糟，因为引擎内部还为不同lighting phase生成不同的permutation），permutation数量增长则PSO数量也随之增长，而PSO吃VRAM，最终导致显存暴涨。<br>
 这还没完：PSO数量增加则需要更多的draw和dispatch指令（由引擎将PSO绑定到command buffer并派发），进而增加CPU开销。</p>
 </li>

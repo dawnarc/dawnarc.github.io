@@ -366,14 +366,16 @@
 <h3 id="ue_log-related">UE_LOG Related</h3>
 <h5 id="shipping-版本开启log">Shipping 版本开启log</h5>
 <p>添加以下到 Target.cs 的构造函数中（Editor.Target.cs不需要添加）：</p>
-<pre><code>bUseLoggingInShipping = true;
-</code></pre>
-<p>最终log文件生成位置在：</p>
-<pre><code>C:\Users\&lt;WindowsUsername&gt;\AppData\Local\&lt;ProjectName&gt;\Saved\Logs
-</code></pre>
-<div class="alert danger ">
-  <p>bUseLoggingInShipping = true; 只对源码编译的引擎版本有效，Launcher版本无效。Launcher版本无法在Shipping模式下开启log。</p>
-</div>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C#" data-lang="C#"><span style="display:flex;"><span>BuildEnvironment = TargetBuildEnvironment.Unique;
+</span></span><span style="display:flex;"><span>bUseLoggingInShipping = <span style="color:#66d9ef">true</span>;
+</span></span></code></pre></div><p>log文件生成位置</p>
+<ul>
+<li>客户端log：<code>%localappdata%\&lt;ProjectName&gt;\Saved\Logs</code>；</li>
+<li>服务端log：<code>WindowsServer\&lt;ProjectName&gt;\Saved\Logs</code>；
+<div class="alert warning ">
+  <p><code>bUseLoggingInShipping = true;</code>只对源码编译的引擎版本有效，Launcher版本无效。Launcher版本无法在Shipping模式下开启log。</p>
+</div></li>
+</ul>
 <h5 id="visualstudio中查看ue4-log">VisualStudio中查看UE4 log</h5>
 <span class="highlight-text primary">
 如果要查看VS命令行的UE4相关log，需要Debug模式（VS的Debug，即F5，不是UE4的DebugGame）
@@ -423,7 +425,7 @@ Origin:</p>
 </code></pre>
 <h3 id="trace--insight">Trace &amp; Insight</h3>
 <h5 id="how-to-record-tracing-data-for-insights">How to record tracing data for Insights</h5>
-<p>Example:</p>
+<p>cpp code:</p>
 <pre><code>void UCharacterMovementComponent::TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction)
 {
     SCOPED_NAMED_EVENT(UCharacterMovementComponent_TickComponent, FColor::Yellow);
@@ -433,7 +435,9 @@ Origin:</p>
     ...
 }
 </code></pre>
-<p>How to profile remoted Insights?<br>
+<p>Then start <code>Engine\Binaries\Win64\Engine\Binaries\Win64\UnrealInsights.exe</code>, then start application using CMD appending arguments:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>MyGame.exe -trace<span style="color:#f92672">=</span>cpu,gpu,counters -statnamedevents
+</span></span></code></pre></div><p>How to profile remoted Insights?<br>
 command:</p>
 <pre><code>TestServer.exe -tracehost=`your ip`
 </code></pre>

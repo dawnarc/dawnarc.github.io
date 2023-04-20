@@ -14,19 +14,19 @@
 <meta name="author" content="Wang Aiguo">
 <meta name="keywords" content="UE4, Plugin">
 <meta name="description" content="Usage Plugin在构造函数中加载的问题 在GameMode构造函数中加载（LoadObject或者ConstructorHelpers::FObjectFinder）蓝图，该蓝图使用了plugin（这里我使用了一个叫Swipe的插件），如果在构造函数中加载，则会报错：
-/Game/Demo/Female/Blueprints/FemaleCharBP : Can&#39;t find file for asset. /Script/SwipeFailed to load /Script/Swipe.SwipeComponent Referenced by K2Node_ComponentBoundEvent_2Failed to load /Script/Swipe.SwipeComponent Referenced by K2Node_ComponentBoundEvent_3Failed to load /Script/Swipe.SwipeComponent Referenced by SCS_Node_1另外一种解决办法：给C&#43;&#43;的GameMode套一个蓝图，然后在该蓝图中设置DefaultPawnClass、PlayerControllerClass等GameMode属性，此时即使这些PawnClass或者PlayerControllerClass蓝图使用了plugin，也不会报错。
+/Game/Demo/Female/Blueprints/FemaleCharBP : Can&#39;t find file for asset. /Script/Swipe Failed to load /Script/Swipe.SwipeComponent Referenced by K2Node_ComponentBoundEvent_2 Failed to load /Script/Swipe.SwipeComponent Referenced by K2Node_ComponentBoundEvent_3 Failed to load /Script/Swipe.SwipeComponent Referenced by SCS_Node_1 另外一种解决办法：给C&#43;&#43;的GameMode套一个蓝图，然后在该蓝图中设置DefaultPawnClass、PlayerControllerClass等GameMode属性，此时即使这些PawnClass或者PlayerControllerClass蓝图使用了plugin，也不会报错。
 添加第三方Plugin（2018-08-10更新） 工程.uproject 需要添加两处地方：
 1，在 Modules 中添加 plugin 名字字符串；
 2，在 Plugins 添加 plugin 信息：包括 Name 和 Enabled；
-{&quot;FileVersion&quot;: 3,&quot;EngineAssociation&quot;: &quot;4.20&quot;,&quot;Category&quot;: &quot;&quot;,&quot;Description&quot;: &quot;&quot;,&quot;Modules&quot;: [{&quot;Name&quot;: &quot;MyProj&quot;,&quot;Type&quot;: &quot;Runtime&quot;,&quot;LoadingPhase&quot;: &quot;Default&quot;,&quot;AdditionalDependencies&quot;: [&quot;UMG&quot;,&quot;Engine&quot;,&quot;CoreUObject&quot;,&quot;AIModule&quot;,&quot;ApexDestruction&quot;,&quot;MyPlugin&quot;]}],&quot;Plugins&quot;: [{&quot;Name&quot;: &quot;ApexDestruction&quot;,&quot;Enabled&quot;: true},{&quot;Name&quot;: &quot;MyPlugin&quot;,&quot;Enabled&quot;: true}]}往 Plugin 中添加 C&#43;&#43; 代码（2018-08-13更新） 貌似没有好的办法，只能手动添加 C&#43;&#43; 类文件">
+{&#34;FileVersion&#34;: 3,&#34;EngineAssociation&#34;: &#34;4.20&#34;,&#34;Category&#34;: &#34;&#34;,&#34;Description&#34;: &#34;&#34;,&#34;Modules&#34;: [{&#34;Name&#34;: &#34;MyProj&#34;,&#34;Type&#34;: &#34;Runtime&#34;,&#34;LoadingPhase&#34;: &#34;Default&#34;,&#34;AdditionalDependencies&#34;: [&#34;UMG&#34;,&#34;Engine&#34;,&#34;CoreUObject&#34;,&#34;AIModule&#34;,&#34;ApexDestruction&#34;,&#34;MyPlugin&#34;]}],&#34;Plugins&#34;: [{&#34;Name&#34;: &#34;ApexDestruction&#34;,&#34;Enabled&#34;: true},{&#34;Name&#34;: &#34;MyPlugin&#34;,&#34;Enabled&#34;: true}]} 往Plugin中添加 C&#43;&#43; 代码（2018-08-13更新） 貌似没有好的办法，只能手动添加 C&#43;&#43; 类文件">
 
 
 <meta property="og:description" content="Usage Plugin在构造函数中加载的问题 在GameMode构造函数中加载（LoadObject或者ConstructorHelpers::FObjectFinder）蓝图，该蓝图使用了plugin（这里我使用了一个叫Swipe的插件），如果在构造函数中加载，则会报错：
-/Game/Demo/Female/Blueprints/FemaleCharBP : Can&#39;t find file for asset. /Script/SwipeFailed to load /Script/Swipe.SwipeComponent Referenced by K2Node_ComponentBoundEvent_2Failed to load /Script/Swipe.SwipeComponent Referenced by K2Node_ComponentBoundEvent_3Failed to load /Script/Swipe.SwipeComponent Referenced by SCS_Node_1另外一种解决办法：给C&#43;&#43;的GameMode套一个蓝图，然后在该蓝图中设置DefaultPawnClass、PlayerControllerClass等GameMode属性，此时即使这些PawnClass或者PlayerControllerClass蓝图使用了plugin，也不会报错。
+/Game/Demo/Female/Blueprints/FemaleCharBP : Can&#39;t find file for asset. /Script/Swipe Failed to load /Script/Swipe.SwipeComponent Referenced by K2Node_ComponentBoundEvent_2 Failed to load /Script/Swipe.SwipeComponent Referenced by K2Node_ComponentBoundEvent_3 Failed to load /Script/Swipe.SwipeComponent Referenced by SCS_Node_1 另外一种解决办法：给C&#43;&#43;的GameMode套一个蓝图，然后在该蓝图中设置DefaultPawnClass、PlayerControllerClass等GameMode属性，此时即使这些PawnClass或者PlayerControllerClass蓝图使用了plugin，也不会报错。
 添加第三方Plugin（2018-08-10更新） 工程.uproject 需要添加两处地方：
 1，在 Modules 中添加 plugin 名字字符串；
 2，在 Plugins 添加 plugin 信息：包括 Name 和 Enabled；
-{&quot;FileVersion&quot;: 3,&quot;EngineAssociation&quot;: &quot;4.20&quot;,&quot;Category&quot;: &quot;&quot;,&quot;Description&quot;: &quot;&quot;,&quot;Modules&quot;: [{&quot;Name&quot;: &quot;MyProj&quot;,&quot;Type&quot;: &quot;Runtime&quot;,&quot;LoadingPhase&quot;: &quot;Default&quot;,&quot;AdditionalDependencies&quot;: [&quot;UMG&quot;,&quot;Engine&quot;,&quot;CoreUObject&quot;,&quot;AIModule&quot;,&quot;ApexDestruction&quot;,&quot;MyPlugin&quot;]}],&quot;Plugins&quot;: [{&quot;Name&quot;: &quot;ApexDestruction&quot;,&quot;Enabled&quot;: true},{&quot;Name&quot;: &quot;MyPlugin&quot;,&quot;Enabled&quot;: true}]}往 Plugin 中添加 C&#43;&#43; 代码（2018-08-13更新） 貌似没有好的办法，只能手动添加 C&#43;&#43; 类文件">
+{&#34;FileVersion&#34;: 3,&#34;EngineAssociation&#34;: &#34;4.20&#34;,&#34;Category&#34;: &#34;&#34;,&#34;Description&#34;: &#34;&#34;,&#34;Modules&#34;: [{&#34;Name&#34;: &#34;MyProj&#34;,&#34;Type&#34;: &#34;Runtime&#34;,&#34;LoadingPhase&#34;: &#34;Default&#34;,&#34;AdditionalDependencies&#34;: [&#34;UMG&#34;,&#34;Engine&#34;,&#34;CoreUObject&#34;,&#34;AIModule&#34;,&#34;ApexDestruction&#34;,&#34;MyPlugin&#34;]}],&#34;Plugins&#34;: [{&#34;Name&#34;: &#34;ApexDestruction&#34;,&#34;Enabled&#34;: true},{&#34;Name&#34;: &#34;MyPlugin&#34;,&#34;Enabled&#34;: true}]} 往Plugin中添加 C&#43;&#43; 代码（2018-08-13更新） 貌似没有好的办法，只能手动添加 C&#43;&#43; 类文件">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[UE4]Plugin Related">
 <meta name="twitter:title" content="[UE4]Plugin Related">
@@ -34,17 +34,17 @@
 <meta property="twitter:url" content="https://dawnarc.com/2017/12/ue4plugin-related/">
 <meta property="og:site_name" content="玄冬Wong">
 <meta property="og:description" content="Usage Plugin在构造函数中加载的问题 在GameMode构造函数中加载（LoadObject或者ConstructorHelpers::FObjectFinder）蓝图，该蓝图使用了plugin（这里我使用了一个叫Swipe的插件），如果在构造函数中加载，则会报错：
-/Game/Demo/Female/Blueprints/FemaleCharBP : Can&#39;t find file for asset. /Script/SwipeFailed to load /Script/Swipe.SwipeComponent Referenced by K2Node_ComponentBoundEvent_2Failed to load /Script/Swipe.SwipeComponent Referenced by K2Node_ComponentBoundEvent_3Failed to load /Script/Swipe.SwipeComponent Referenced by SCS_Node_1另外一种解决办法：给C&#43;&#43;的GameMode套一个蓝图，然后在该蓝图中设置DefaultPawnClass、PlayerControllerClass等GameMode属性，此时即使这些PawnClass或者PlayerControllerClass蓝图使用了plugin，也不会报错。
+/Game/Demo/Female/Blueprints/FemaleCharBP : Can&#39;t find file for asset. /Script/Swipe Failed to load /Script/Swipe.SwipeComponent Referenced by K2Node_ComponentBoundEvent_2 Failed to load /Script/Swipe.SwipeComponent Referenced by K2Node_ComponentBoundEvent_3 Failed to load /Script/Swipe.SwipeComponent Referenced by SCS_Node_1 另外一种解决办法：给C&#43;&#43;的GameMode套一个蓝图，然后在该蓝图中设置DefaultPawnClass、PlayerControllerClass等GameMode属性，此时即使这些PawnClass或者PlayerControllerClass蓝图使用了plugin，也不会报错。
 添加第三方Plugin（2018-08-10更新） 工程.uproject 需要添加两处地方：
 1，在 Modules 中添加 plugin 名字字符串；
 2，在 Plugins 添加 plugin 信息：包括 Name 和 Enabled；
-{&quot;FileVersion&quot;: 3,&quot;EngineAssociation&quot;: &quot;4.20&quot;,&quot;Category&quot;: &quot;&quot;,&quot;Description&quot;: &quot;&quot;,&quot;Modules&quot;: [{&quot;Name&quot;: &quot;MyProj&quot;,&quot;Type&quot;: &quot;Runtime&quot;,&quot;LoadingPhase&quot;: &quot;Default&quot;,&quot;AdditionalDependencies&quot;: [&quot;UMG&quot;,&quot;Engine&quot;,&quot;CoreUObject&quot;,&quot;AIModule&quot;,&quot;ApexDestruction&quot;,&quot;MyPlugin&quot;]}],&quot;Plugins&quot;: [{&quot;Name&quot;: &quot;ApexDestruction&quot;,&quot;Enabled&quot;: true},{&quot;Name&quot;: &quot;MyPlugin&quot;,&quot;Enabled&quot;: true}]}往 Plugin 中添加 C&#43;&#43; 代码（2018-08-13更新） 貌似没有好的办法，只能手动添加 C&#43;&#43; 类文件">
+{&#34;FileVersion&#34;: 3,&#34;EngineAssociation&#34;: &#34;4.20&#34;,&#34;Category&#34;: &#34;&#34;,&#34;Description&#34;: &#34;&#34;,&#34;Modules&#34;: [{&#34;Name&#34;: &#34;MyProj&#34;,&#34;Type&#34;: &#34;Runtime&#34;,&#34;LoadingPhase&#34;: &#34;Default&#34;,&#34;AdditionalDependencies&#34;: [&#34;UMG&#34;,&#34;Engine&#34;,&#34;CoreUObject&#34;,&#34;AIModule&#34;,&#34;ApexDestruction&#34;,&#34;MyPlugin&#34;]}],&#34;Plugins&#34;: [{&#34;Name&#34;: &#34;ApexDestruction&#34;,&#34;Enabled&#34;: true},{&#34;Name&#34;: &#34;MyPlugin&#34;,&#34;Enabled&#34;: true}]} 往Plugin中添加 C&#43;&#43; 代码（2018-08-13更新） 貌似没有好的办法，只能手动添加 C&#43;&#43; 类文件">
 <meta name="twitter:description" content="Usage Plugin在构造函数中加载的问题 在GameMode构造函数中加载（LoadObject或者ConstructorHelpers::FObjectFinder）蓝图，该蓝图使用了plugin（这里我使用了一个叫Swipe的插件），如果在构造函数中加载，则会报错：
-/Game/Demo/Female/Blueprints/FemaleCharBP : Can&#39;t find file for asset. /Script/SwipeFailed to load /Script/Swipe.SwipeComponent Referenced by K2Node_ComponentBoundEvent_2Failed to load /Script/Swipe.SwipeComponent Referenced by K2Node_ComponentBoundEvent_3Failed to load /Script/Swipe.SwipeComponent Referenced by SCS_Node_1另外一种解决办法：给C&#43;&#43;的GameMode套一个蓝图，然后在该蓝图中设置DefaultPawnClass、PlayerControllerClass等GameMode属性，此时即使这些PawnClass或者PlayerControllerClass蓝图使用了plugin，也不会报错。
+/Game/Demo/Female/Blueprints/FemaleCharBP : Can&#39;t find file for asset. /Script/Swipe Failed to load /Script/Swipe.SwipeComponent Referenced by K2Node_ComponentBoundEvent_2 Failed to load /Script/Swipe.SwipeComponent Referenced by K2Node_ComponentBoundEvent_3 Failed to load /Script/Swipe.SwipeComponent Referenced by SCS_Node_1 另外一种解决办法：给C&#43;&#43;的GameMode套一个蓝图，然后在该蓝图中设置DefaultPawnClass、PlayerControllerClass等GameMode属性，此时即使这些PawnClass或者PlayerControllerClass蓝图使用了plugin，也不会报错。
 添加第三方Plugin（2018-08-10更新） 工程.uproject 需要添加两处地方：
 1，在 Modules 中添加 plugin 名字字符串；
 2，在 Plugins 添加 plugin 信息：包括 Name 和 Enabled；
-{&quot;FileVersion&quot;: 3,&quot;EngineAssociation&quot;: &quot;4.20&quot;,&quot;Category&quot;: &quot;&quot;,&quot;Description&quot;: &quot;&quot;,&quot;Modules&quot;: [{&quot;Name&quot;: &quot;MyProj&quot;,&quot;Type&quot;: &quot;Runtime&quot;,&quot;LoadingPhase&quot;: &quot;Default&quot;,&quot;AdditionalDependencies&quot;: [&quot;UMG&quot;,&quot;Engine&quot;,&quot;CoreUObject&quot;,&quot;AIModule&quot;,&quot;ApexDestruction&quot;,&quot;MyPlugin&quot;]}],&quot;Plugins&quot;: [{&quot;Name&quot;: &quot;ApexDestruction&quot;,&quot;Enabled&quot;: true},{&quot;Name&quot;: &quot;MyPlugin&quot;,&quot;Enabled&quot;: true}]}往 Plugin 中添加 C&#43;&#43; 代码（2018-08-13更新） 貌似没有好的办法，只能手动添加 C&#43;&#43; 类文件">
+{&#34;FileVersion&#34;: 3,&#34;EngineAssociation&#34;: &#34;4.20&#34;,&#34;Category&#34;: &#34;&#34;,&#34;Description&#34;: &#34;&#34;,&#34;Modules&#34;: [{&#34;Name&#34;: &#34;MyProj&#34;,&#34;Type&#34;: &#34;Runtime&#34;,&#34;LoadingPhase&#34;: &#34;Default&#34;,&#34;AdditionalDependencies&#34;: [&#34;UMG&#34;,&#34;Engine&#34;,&#34;CoreUObject&#34;,&#34;AIModule&#34;,&#34;ApexDestruction&#34;,&#34;MyPlugin&#34;]}],&#34;Plugins&#34;: [{&#34;Name&#34;: &#34;ApexDestruction&#34;,&#34;Enabled&#34;: true},{&#34;Name&#34;: &#34;MyPlugin&#34;,&#34;Enabled&#34;: true}]} 往Plugin中添加 C&#43;&#43; 代码（2018-08-13更新） 貌似没有好的办法，只能手动添加 C&#43;&#43; 类文件">
 <meta property="og:locale" content="en-us">
 
   
@@ -382,49 +382,47 @@
               <h3 id="usage">Usage</h3>
 <h5 id="plugin在构造函数中加载的问题">Plugin在构造函数中加载的问题</h5>
 <p>在GameMode构造函数中加载（LoadObject或者ConstructorHelpers::FObjectFinder）蓝图，该蓝图使用了plugin（这里我使用了一个叫Swipe的插件），如果在构造函数中加载，则会报错：</p>
-<pre><code>/Game/Demo/Female/Blueprints/FemaleCharBP : Can't find file for asset. /Script/Swipe
-Failed to load /Script/Swipe.SwipeComponent Referenced by K2Node_ComponentBoundEvent_2
-Failed to load /Script/Swipe.SwipeComponent Referenced by K2Node_ComponentBoundEvent_3
-Failed to load /Script/Swipe.SwipeComponent Referenced by SCS_Node_1
-</code></pre>
-<p>另外一种解决办法：给C++的GameMode套一个蓝图，然后在该蓝图中设置DefaultPawnClass、PlayerControllerClass等GameMode属性，此时即使这些PawnClass或者PlayerControllerClass蓝图使用了plugin，也不会报错。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Text" data-lang="Text"><span style="display:flex;"><span>/Game/Demo/Female/Blueprints/FemaleCharBP : Can&#39;t find file for asset. /Script/Swipe
+</span></span><span style="display:flex;"><span>Failed to load /Script/Swipe.SwipeComponent Referenced by K2Node_ComponentBoundEvent_2
+</span></span><span style="display:flex;"><span>Failed to load /Script/Swipe.SwipeComponent Referenced by K2Node_ComponentBoundEvent_3
+</span></span><span style="display:flex;"><span>Failed to load /Script/Swipe.SwipeComponent Referenced by SCS_Node_1
+</span></span></code></pre></div><p>另外一种解决办法：给C++的GameMode套一个蓝图，然后在该蓝图中设置DefaultPawnClass、PlayerControllerClass等GameMode属性，此时即使这些PawnClass或者PlayerControllerClass蓝图使用了plugin，也不会报错。</p>
 <h5 id="添加第三方plugin2018-08-10更新">添加第三方Plugin（2018-08-10更新）</h5>
 <p>工程.uproject 需要添加两处地方：<br>
 1，在 Modules 中添加 plugin 名字字符串；<br>
 2，在 Plugins 添加 plugin 信息：包括 Name 和 Enabled；</p>
-<pre><code>{
-  &quot;FileVersion&quot;: 3,
-  &quot;EngineAssociation&quot;: &quot;4.20&quot;,
-  &quot;Category&quot;: &quot;&quot;,
-  &quot;Description&quot;: &quot;&quot;,
-  &quot;Modules&quot;: [
+<pre tabindex="0"><code>{
+  &#34;FileVersion&#34;: 3,
+  &#34;EngineAssociation&#34;: &#34;4.20&#34;,
+  &#34;Category&#34;: &#34;&#34;,
+  &#34;Description&#34;: &#34;&#34;,
+  &#34;Modules&#34;: [
     {
-      &quot;Name&quot;: &quot;MyProj&quot;,
-      &quot;Type&quot;: &quot;Runtime&quot;,
-      &quot;LoadingPhase&quot;: &quot;Default&quot;,
-      &quot;AdditionalDependencies&quot;: [
-        &quot;UMG&quot;,
-        &quot;Engine&quot;,
-        &quot;CoreUObject&quot;,
-        &quot;AIModule&quot;,
-        &quot;ApexDestruction&quot;,
-        &quot;MyPlugin&quot;
+      &#34;Name&#34;: &#34;MyProj&#34;,
+      &#34;Type&#34;: &#34;Runtime&#34;,
+      &#34;LoadingPhase&#34;: &#34;Default&#34;,
+      &#34;AdditionalDependencies&#34;: [
+        &#34;UMG&#34;,
+        &#34;Engine&#34;,
+        &#34;CoreUObject&#34;,
+        &#34;AIModule&#34;,
+        &#34;ApexDestruction&#34;,
+        &#34;MyPlugin&#34;
       ]
     }
   ],
-  &quot;Plugins&quot;: [
+  &#34;Plugins&#34;: [
     {
-      &quot;Name&quot;: &quot;ApexDestruction&quot;,
-      &quot;Enabled&quot;: true
+      &#34;Name&#34;: &#34;ApexDestruction&#34;,
+      &#34;Enabled&#34;: true
     },
     {
-      &quot;Name&quot;: &quot;MyPlugin&quot;,
-      &quot;Enabled&quot;: true
+      &#34;Name&#34;: &#34;MyPlugin&#34;,
+      &#34;Enabled&#34;: true
     }
   ]
 }
-</code></pre>
-<h5 id="往-plugin-中添加-c-代码2018-08-13更新">往 Plugin 中添加 C++ 代码（2018-08-13更新）</h5>
+</code></pre><h5 id="往plugin中添加-c-代码2018-08-13更新">往Plugin中添加 C++ 代码（2018-08-13更新）</h5>
 <p>貌似没有好的办法，只能手动添加 C++ 类文件</p>
 <p>论坛上说的这种方式不可行（至少4.20版本试过不可行）：</p>
 <ol>
@@ -440,40 +438,38 @@ Failed to load /Script/Swipe.SwipeComponent Referenced by SCS_Node_1
 <p>Settings -&gt; Plugins -&gt; New Plugin -&gt; Third Party Library</p>
 <p><code>Build.cs</code> Path:<br>
 TestTD\Plugins\Plugin2\Source\ThirdParty\Plugin2Library\Plugin2Library.Build.cs</p>
-<pre><code>using System.IO;
-using UnrealBuildTool;
-
-public class Plugin2Library : ModuleRules
-{
-    public Plugin2Library(ReadOnlyTargetRules Target) : base(Target)
-    {
-        Type = ModuleType.External;
-
-        if (Target.Platform == UnrealTargetPlatform.Win64)
-        {
-            // Add the import library
-            PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, &quot;x64&quot;, &quot;Release&quot;, &quot;ExampleLibrary.lib&quot;));
-
-            // Delay-load the DLL, so we can load it from the right place first
-            PublicDelayLoadDLLs.Add(&quot;ExampleLibrary.dll&quot;);
-
-            // Ensure that the DLL is staged along with the executable
-            RuntimeDependencies.Add(&quot;$(PluginDir)/Binaries/ThirdParty/Plugin2Library/Win64/ExampleLibrary.dll&quot;);
-        }
-        else if (Target.Platform == UnrealTargetPlatform.Mac)
-        {
-            PublicDelayLoadDLLs.Add(Path.Combine(ModuleDirectory, &quot;Mac&quot;, &quot;Release&quot;, &quot;libExampleLibrary.dylib&quot;));
-            RuntimeDependencies.Add(&quot;$(PluginDir)/Source/ThirdParty/Plugin2Library/Mac/Release/libExampleLibrary.dylib&quot;);
-        }
-    }
-}
-</code></pre>
-<h3 id="building">Building</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">using</span> System.IO;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">using</span> UnrealBuildTool;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Plugin2Library</span> <span style="color:#f92672">:</span> ModuleRules
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#a6e22e">Plugin2Library</span>(ReadOnlyTargetRules Target) <span style="color:#f92672">:</span> base(Target)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        Type <span style="color:#f92672">=</span> ModuleType.External;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (Target.Platform <span style="color:#f92672">==</span> UnrealTargetPlatform.Win64)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">// Add the import library
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, <span style="color:#e6db74">&#34;x64&#34;</span>, <span style="color:#e6db74">&#34;Release&#34;</span>, <span style="color:#e6db74">&#34;ExampleLibrary.lib&#34;</span>));
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">// Delay-load the DLL, so we can load it from the right place first
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            PublicDelayLoadDLLs.Add(<span style="color:#e6db74">&#34;ExampleLibrary.dll&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">// Ensure that the DLL is staged along with the executable
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            RuntimeDependencies.Add(<span style="color:#e6db74">&#34;$(PluginDir)/Binaries/ThirdParty/Plugin2Library/Win64/ExampleLibrary.dll&#34;</span>);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> (Target.Platform <span style="color:#f92672">==</span> UnrealTargetPlatform.Mac)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            PublicDelayLoadDLLs.Add(Path.Combine(ModuleDirectory, <span style="color:#e6db74">&#34;Mac&#34;</span>, <span style="color:#e6db74">&#34;Release&#34;</span>, <span style="color:#e6db74">&#34;libExampleLibrary.dylib&#34;</span>));
+</span></span><span style="display:flex;"><span>            RuntimeDependencies.Add(<span style="color:#e6db74">&#34;$(PluginDir)/Source/ThirdParty/Plugin2Library/Mac/Release/libExampleLibrary.dylib&#34;</span>);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="building">Building</h3>
 <h5 id="plugin-package-command">Plugin Package Command</h5>
 <p>This command equals the operation of <code>Package</code> button under <code>Plugins</code> panel:</p>
-<pre><code>F:\Epic Games\UE_4.24\Engine\Binaries\DotNET\UnrealBuildTool.exe UE4Editor Win64 Development -Project=E:\Build\P2\HostProject\HostProject.uproject -plugin=E:\Build\P2\HostProject\Plugins\P2\P2.uplugin -iwyu -noubtmakefiles -manifest=E:\Build\P2\HostProject\Saved\Manifest-UE4Editor-Win64-Development.xml -nohotreload -log=&quot;C:\Users\Neil\AppData\Roaming\Unreal Engine\AutomationTool\Logs\F+Epic+Games+UE_4.24\UBT-UE4Editor-Win64-Development.txt&quot;
-</code></pre>
-<h5 id="plugin-building-command">Plugin Building Command</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Text" data-lang="Text"><span style="display:flex;"><span>F:\Epic Games\UE_4.24\Engine\Binaries\DotNET\UnrealBuildTool.exe UE4Editor Win64 Development -Project=E:\Build\P2\HostProject\HostProject.uproject -plugin=E:\Build\P2\HostProject\Plugins\P2\P2.uplugin -iwyu -noubtmakefiles -manifest=E:\Build\P2\HostProject\Saved\Manifest-UE4Editor-Win64-Development.xml -nohotreload -log=&#34;C:\Users\Neil\AppData\Roaming\Unreal Engine\AutomationTool\Logs\F+Epic+Games+UE_4.24\UBT-UE4Editor-Win64-Development.txt&#34;
+</span></span></code></pre></div><h5 id="plugin-building-command">Plugin Building Command</h5>
 <p>The first step is to build the plugin for distribution in the normal manner. This can be done using the UnrealBuildTool with the following command:</p>
 <pre><code>UE4Dir\Engine\Build\BatchFiles\RunUAT.bat BuildPlugin -Rocket -Plugin=Plugin.uplugin -TargetPlatforms=Win64 -Package=OutputDir
 </code></pre>
@@ -491,6 +487,23 @@ public class Plugin2Library : ModuleRules
 </span></span><span style="display:flex;"><span>    },
 </span></span></code></pre></div><p>Reference:<br>
 <a href="https://github.com/Tencent/UnLua/blob/master/Plugins/UnLua/UnLua.uplugin">https://github.com/Tencent/UnLua/blob/master/Plugins/UnLua/UnLua.uplugin</a></p>
+<h5 id="how-to-disable-plugin-for-decicated-server">How to disable plugin for decicated server</h5>
+<p>Use <code>DisablePlugins</code> in [Project]Server.Target.cs:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C#" data-lang="C#"><span style="display:flex;"><span><span style="color:#66d9ef">using</span> UnrealBuildTool;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">using</span> System.Collections.Generic;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyProjTargetServer</span> : TargetRules
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> MyProjTargetServer(TargetInfo Target) : <span style="color:#66d9ef">base</span>(Target)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        Type = TargetType.Server;
+</span></span><span style="display:flex;"><span>        DefaultBuildSettings = BuildSettingsVersion.V2;
+</span></span><span style="display:flex;"><span>        ExtraModuleNames.Add(<span style="color:#e6db74">&#34;MyProj&#34;</span>);
+</span></span><span style="display:flex;"><span>        DisablePlugins.Add(<span style="color:#e6db74">&#34;NetDBEditor&#34;</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Reference:<br>
+<a href="https://forums.unrealengine.com/t/dedicated-server-build-how-to-correctly-include-marketplace-plugins/472793">https://forums.unrealengine.com/t/dedicated-server-build-how-to-correctly-include-marketplace-plugins/472793</a></p>
 <h5 id="build-project-whitout-plugin-source-pre-build">Build Project whitout plugin source (Pre-build)</h5>
 <p><strong>Issue 1: ERROR: Missing precompiled manifest for &lsquo;TestPlugin&rsquo;</strong></p>
 <p>If you plan to build project with plugin source removed (use binaries only), you should package your plugin at first:<br>

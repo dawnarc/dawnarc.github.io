@@ -6,7 +6,16 @@
     <description>Recent content in UE4 on 玄冬Wong</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 17 Sep 2022 11:14:02 +0800</lastBuildDate><atom:link href="https://dawnarc.com/tags/ue4/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 14 Apr 2023 15:50:02 +0800</lastBuildDate><atom:link href="https://dawnarc.com/tags/ue4/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>[UE4]Scalability Notes</title>
+      <link>https://dawnarc.com/2023/04/ue4scalability-notes/</link>
+      <pubDate>Fri, 14 Apr 2023 15:50:02 +0800</pubDate>
+      
+      <guid>https://dawnarc.com/2023/04/ue4scalability-notes/</guid>
+      <description>&lt;p&gt;keywords: UE4, Scalability, Graphics Quality&lt;/p&gt;</description>
+    </item>
+    
     <item>
       <title>[UE4]Movie Render Queue Notes</title>
       <link>https://dawnarc.com/2022/09/ue4movie-render-queue-notes/</link>
@@ -1587,21 +1596,7 @@ The infomation showing in console command stat all are recorded in State.h.
       <pubDate>Sun, 14 Jan 2018 16:10:02 +0800</pubDate>
       
       <guid>https://dawnarc.com/2018/01/ue4%E7%A7%BB%E5%8A%A8%E7%AB%AFjoystick%E5%92%8Cumg-button%E5%86%B2%E7%AA%81%E7%9A%84%E9%97%AE%E9%A2%98/</guid>
-      <description>Issues 问题1：UMG widget 遮挡 joystick，导致joystick只显示无法使用的问题。
-原因：UMG的Canvas Panel组件的Visibility属性被修改了。
-解决办法：打开UMG蓝图，设置Canvas Panel的Visibility为：Self Hit Test Invisible。
-问题2：joystick摇杆和UMG button在移动端冲突的问题：按住摇杆时，UMG button按了不起作用。
-原因：UMG button的Is Focusable属性设置为了true。
-解决办法：UMG button的Is Focusable属性设置为false。
-问题3：按住摇杆不放，UMG button点击事件中，摇杆的InputValue被引擎值为0，Button Release后InputValue才恢复为原有值。
-原因：同上。
-解决办法：同上。
-问题4：Widget的Visibility属性默认为Self Hit Test Invisible，这样，每当有新的Widget AddToViewport时，当前Widget会被自动隐藏。但是默认的Visibility无法响应Widget之外的鼠标或touch事件（比如一个UButton，如果按住UButton不放，然后鼠标或者手指拖拽到UButton之外，那么当松开鼠标或手指时，该button的Release事件无法响应），但是Visibility属性如果设置成Visible，那么就可以响应，但是当新的Widget添加Viewport时，当前Widget不会自动隐藏。
-参考：Virtual Joystick conflicts UMG Buttons
-https://answers.unrealengine.com/questions/211064/virtual-joystick-conflicts-umg-buttons.html
-以上问题在4.18到4.21版本中验证过，不保证后续新版本仍存在。
-ESlateVisibility \Engine\Source\Runtime\UMG\Public\Components\SlateWrapperTypes.h
-/** Is an entity visible? */UENUM(BlueprintType)enum class ESlateVisibility : uint8{/** Default widget visibility - visible and can interact with the cursor */Visible,/** Not visible and takes up no space in the layout; can never be clicked on because it takes up no space.</description>
+      <description>&lt;p&gt;keyword: UE4, Mobile, Joystick, UMG Button, OnClick, OnTouch, OnRelease&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -1874,11 +1869,11 @@ https://docs.unrealengine.com/latest/INT/Engine/Content/Types/StaticMeshes/HowTo
       
       <guid>https://dawnarc.com/2017/12/ue4plugin-related/</guid>
       <description>Usage Plugin在构造函数中加载的问题 在GameMode构造函数中加载（LoadObject或者ConstructorHelpers::FObjectFinder）蓝图，该蓝图使用了plugin（这里我使用了一个叫Swipe的插件），如果在构造函数中加载，则会报错：
-/Game/Demo/Female/Blueprints/FemaleCharBP : Can&#39;t find file for asset. /Script/SwipeFailed to load /Script/Swipe.SwipeComponent Referenced by K2Node_ComponentBoundEvent_2Failed to load /Script/Swipe.SwipeComponent Referenced by K2Node_ComponentBoundEvent_3Failed to load /Script/Swipe.SwipeComponent Referenced by SCS_Node_1另外一种解决办法：给C++的GameMode套一个蓝图，然后在该蓝图中设置DefaultPawnClass、PlayerControllerClass等GameMode属性，此时即使这些PawnClass或者PlayerControllerClass蓝图使用了plugin，也不会报错。
+/Game/Demo/Female/Blueprints/FemaleCharBP : Can&amp;#39;t find file for asset. /Script/Swipe Failed to load /Script/Swipe.SwipeComponent Referenced by K2Node_ComponentBoundEvent_2 Failed to load /Script/Swipe.SwipeComponent Referenced by K2Node_ComponentBoundEvent_3 Failed to load /Script/Swipe.SwipeComponent Referenced by SCS_Node_1 另外一种解决办法：给C++的GameMode套一个蓝图，然后在该蓝图中设置DefaultPawnClass、PlayerControllerClass等GameMode属性，此时即使这些PawnClass或者PlayerControllerClass蓝图使用了plugin，也不会报错。
 添加第三方Plugin（2018-08-10更新） 工程.uproject 需要添加两处地方：
 1，在 Modules 中添加 plugin 名字字符串；
 2，在 Plugins 添加 plugin 信息：包括 Name 和 Enabled；
-{&amp;quot;FileVersion&amp;quot;: 3,&amp;quot;EngineAssociation&amp;quot;: &amp;quot;4.20&amp;quot;,&amp;quot;Category&amp;quot;: &amp;quot;&amp;quot;,&amp;quot;Description&amp;quot;: &amp;quot;&amp;quot;,&amp;quot;Modules&amp;quot;: [{&amp;quot;Name&amp;quot;: &amp;quot;MyProj&amp;quot;,&amp;quot;Type&amp;quot;: &amp;quot;Runtime&amp;quot;,&amp;quot;LoadingPhase&amp;quot;: &amp;quot;Default&amp;quot;,&amp;quot;AdditionalDependencies&amp;quot;: [&amp;quot;UMG&amp;quot;,&amp;quot;Engine&amp;quot;,&amp;quot;CoreUObject&amp;quot;,&amp;quot;AIModule&amp;quot;,&amp;quot;ApexDestruction&amp;quot;,&amp;quot;MyPlugin&amp;quot;]}],&amp;quot;Plugins&amp;quot;: [{&amp;quot;Name&amp;quot;: &amp;quot;ApexDestruction&amp;quot;,&amp;quot;Enabled&amp;quot;: true},{&amp;quot;Name&amp;quot;: &amp;quot;MyPlugin&amp;quot;,&amp;quot;Enabled&amp;quot;: true}]}往 Plugin 中添加 C++ 代码（2018-08-13更新） 貌似没有好的办法，只能手动添加 C++ 类文件</description>
+{&amp;#34;FileVersion&amp;#34;: 3,&amp;#34;EngineAssociation&amp;#34;: &amp;#34;4.20&amp;#34;,&amp;#34;Category&amp;#34;: &amp;#34;&amp;#34;,&amp;#34;Description&amp;#34;: &amp;#34;&amp;#34;,&amp;#34;Modules&amp;#34;: [{&amp;#34;Name&amp;#34;: &amp;#34;MyProj&amp;#34;,&amp;#34;Type&amp;#34;: &amp;#34;Runtime&amp;#34;,&amp;#34;LoadingPhase&amp;#34;: &amp;#34;Default&amp;#34;,&amp;#34;AdditionalDependencies&amp;#34;: [&amp;#34;UMG&amp;#34;,&amp;#34;Engine&amp;#34;,&amp;#34;CoreUObject&amp;#34;,&amp;#34;AIModule&amp;#34;,&amp;#34;ApexDestruction&amp;#34;,&amp;#34;MyPlugin&amp;#34;]}],&amp;#34;Plugins&amp;#34;: [{&amp;#34;Name&amp;#34;: &amp;#34;ApexDestruction&amp;#34;,&amp;#34;Enabled&amp;#34;: true},{&amp;#34;Name&amp;#34;: &amp;#34;MyPlugin&amp;#34;,&amp;#34;Enabled&amp;#34;: true}]} 往Plugin中添加 C++ 代码（2018-08-13更新） 貌似没有好的办法，只能手动添加 C++ 类文件</description>
     </item>
     
     <item>

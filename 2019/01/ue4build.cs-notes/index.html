@@ -365,150 +365,146 @@
               <p>Keywords: UE4, Build.cs</p>
 <h5 id="how-to-get-the-current-project-directory">How to get the current project directory</h5>
 <p>New way</p>
-<pre><code>using System.IO;
-using UnrealBuildTool;  
-
-public class MyProject : ModuleRules  
-{
-    private string ProjectRoot
-    {
-        get { return Path.GetFullPath(Path.Combine(ModuleDirectory, &quot;../../&quot;)); }
-    }
-
-    private string ThirdPartyPath
-    { 
-        get { return Path.GetFullPath(Path.Combine(ModuleDirectory, ProjectRoot, &quot;ThirdParty&quot;)); }
-    }
-
-    public MyProject(ReadOnlyTargetRules Target) : base(Target)
-    {  
-    }  
-}
-</code></pre>
-<p>Reference:<br>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C#" data-lang="C#"><span style="display:flex;"><span><span style="color:#66d9ef">using</span> System.IO;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">using</span> UnrealBuildTool;  
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyProject</span> : ModuleRules  
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">string</span> ProjectRoot
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">get</span> { <span style="color:#66d9ef">return</span> Path.GetFullPath(Path.Combine(ModuleDirectory, <span style="color:#e6db74">&#34;../../&#34;</span>)); }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">string</span> ThirdPartyPath
+</span></span><span style="display:flex;"><span>    { 
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">get</span> { <span style="color:#66d9ef">return</span> Path.GetFullPath(Path.Combine(ModuleDirectory, ProjectRoot, <span style="color:#e6db74">&#34;ThirdParty&#34;</span>)); }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> MyProject(ReadOnlyTargetRules Target) : <span style="color:#66d9ef">base</span>(Target)
+</span></span><span style="display:flex;"><span>    {  
+</span></span><span style="display:flex;"><span>    }  
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Reference:<br>
 <a href="https://answers.unrealengine.com/questions/237166/how-can-i-get-the-current-project-path-within-the.html">https://answers.unrealengine.com/questions/237166/how-can-i-get-the-current-project-path-within-the.html</a></p>
 <p>Old way (Removed in 4.21)</p>
-<pre><code>using System.IO;  
-using UnrealBuildTool;  
-
-public class MyProject : ModuleRules  
-{  
-    RulesAssembly r;  
-
-    private string ModulePath  
-    {  
-        get { return Path.GetDirectoryName( r.GetModuleFileName(this.GetType().Name).CanonicalName); }  
-    }  
-
-    private string ThirdPartyPath  
-    {  
-        get { return Path.GetFullPath(Path.Combine(ModulePath, &quot;../../ThirdParty/&quot;)); }  
-    }  
-
-    public MyProject(TargetInfo Target)  
-    {  
-        FileReference CheckProjectFile;  
-        UProjectInfo.TryGetProjectForTarget(&quot;MyProject&quot;, out CheckProjectFile);  
-        r = RulesCompiler.CreateProjectRulesAssembly(CheckProjectFile);  
-    }
-}
-</code></pre>
-<h5 id="how-to-include-third-party-libraries">How to include third party libraries</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C#" data-lang="C#"><span style="display:flex;"><span><span style="color:#66d9ef">using</span> System.IO;  
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">using</span> UnrealBuildTool;  
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyProject</span> : ModuleRules  
+</span></span><span style="display:flex;"><span>{  
+</span></span><span style="display:flex;"><span>    RulesAssembly r;  
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">string</span> ModulePath  
+</span></span><span style="display:flex;"><span>    {  
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">get</span> { <span style="color:#66d9ef">return</span> Path.GetDirectoryName( r.GetModuleFileName(<span style="color:#66d9ef">this</span>.GetType().Name).CanonicalName); }  
+</span></span><span style="display:flex;"><span>    }  
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">string</span> ThirdPartyPath  
+</span></span><span style="display:flex;"><span>    {  
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">get</span> { <span style="color:#66d9ef">return</span> Path.GetFullPath(Path.Combine(ModulePath, <span style="color:#e6db74">&#34;../../ThirdParty/&#34;</span>)); }  
+</span></span><span style="display:flex;"><span>    }  
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> MyProject(TargetInfo Target)  
+</span></span><span style="display:flex;"><span>    {  
+</span></span><span style="display:flex;"><span>        FileReference CheckProjectFile;  
+</span></span><span style="display:flex;"><span>        UProjectInfo.TryGetProjectForTarget(<span style="color:#e6db74">&#34;MyProject&#34;</span>, <span style="color:#66d9ef">out</span> CheckProjectFile);  
+</span></span><span style="display:flex;"><span>        r = RulesCompiler.CreateProjectRulesAssembly(CheckProjectFile);  
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h5 id="how-to-include-third-party-libraries">How to include third party libraries</h5>
 <p>Example:</p>
-<pre><code>using UnrealBuildTool;
-using System.IO;
-
-public class TestTD : ModuleRules
-{
-    private string ProjectRoot
-    {
-        get { return Path.GetFullPath(Path.Combine(ModuleDirectory, &quot;../../&quot;)); }
-    }
-
-    private string ThirdPartyPath
-    { 
-        get { return Path.GetFullPath(Path.Combine(ModuleDirectory, ProjectRoot, &quot;ThirdParty&quot;)); }
-    }
-
-    public TestTD(ReadOnlyTargetRules Target) : base(Target)
-    {
-        PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
-
-        PublicDependencyModuleNames.AddRange(new string[] { &quot;Core&quot;, &quot;CoreUObject&quot;, &quot;Engine&quot;, &quot;InputCore&quot;, &quot;HeadMountedDisplay&quot;, &quot;NavigationSystem&quot;, &quot;AIModule&quot; });
-
-        LoadOpenCV(Target);
-    }
-
-    public bool LoadOpenCV(ReadOnlyTargetRules Target)
-    {    
-        // Start OpenCV linking here!
-        bool isLibrarySupported = false;
-
-        //Library path
-        string PlatformString = null;
-        string libSuffix = null;
-        switch (Target.Platform)
-        {
-            case UnrealTargetPlatform.Win64:
-            {
-                PlatformString = &quot;Win64&quot;;
-                libSuffix = &quot;.lib&quot;;
-                break;
-            }
-            case UnrealTargetPlatform.Android:
-            {
-                PlatformString = &quot;Android&quot;;
-                libSuffix = &quot;.a&quot;;
-                break;
-            }
-        }
-
-        bool isdebug = Target.Configuration == UnrealTargetConfiguration.Debug;
-        string DebugLibNameFlag = &quot;&quot;;
-        if(isdebug)
-        {
-            DebugLibNameFlag = &quot;d&quot;;
-        }
-
-        if (null != PlatformString)
-        {
-            //LibrariesPath value for Windows in Debug: D:\MyProj\ThirdParty\OpenCV\Libraries\Win64\opencv_world348d.lib
-            string LibrariesPath = Path.Combine(ThirdPartyPath, &quot;OpenCV&quot;, &quot;Libraries&quot;, PlatformString, &quot;opencv_world348&quot; + DebugLibNameFlag + libSuffix);
-            PublicAdditionalLibraries.Add(LibrariesPath);
-
-            System.Console.WriteLine(&quot;++++++++++++ Set OpenCV Libraries: &quot; + LibrariesPath + &quot;\r&quot;);
-        }
-
-        //Include path
-        string IncludePath = Path.Combine(ThirdPartyPath, &quot;OpenCV&quot;, &quot;Includes&quot;);
-        PublicIncludePaths.Add(IncludePath);
-
-        System.Console.WriteLine(&quot;++++++++++++ Set OpenCV Includes: &quot; + IncludePath + &quot;\r&quot;);
-
-        PublicDefinitions.Add(string.Format(&quot;WITH_OPENCV_BINDING={0}&quot;, isLibrarySupported ? 1 : 0));
-
-        return isLibrarySupported;
-    }
-}
-</code></pre>
-<p>If want to include a number of libraries, you can do like this:</p>
-<pre><code>// Add static library search path 
-PublicLibraryPaths.Add(LibPath);
-
-PublicAdditionalLibraries.Add(&quot;opencv_calib3d340.lib&quot;);
-PublicAdditionalLibraries.Add(&quot;opencv_core340.lib&quot;);
-PublicAdditionalLibraries.Add(&quot;opencv_cudaarithm340.lib&quot;);
-PublicAdditionalLibraries.Add(&quot;opencv_cudabgsegm340.lib&quot;);
-
-// Add shared library search path
-PublicRuntimeLibraryPaths.Add(DllPath);
-
-PublicDelayLoadDLLs.Add(&quot;opencv_calib3d340.dll&quot;);
-PublicDelayLoadDLLs.Add(&quot;opencv_core340.dll&quot;);
-PublicDelayLoadDLLs.Add(&quot;opencv_cudaarithm340.dll&quot;);
-PublicDelayLoadDLLs.Add(&quot;opencv_cudabgsegm340.dll&quot;);
-</code></pre>
-<p>Reference:<br>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C#" data-lang="C#"><span style="display:flex;"><span><span style="color:#66d9ef">using</span> UnrealBuildTool;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">using</span> System.IO;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">TestTD</span> : ModuleRules
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">string</span> ProjectRoot
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">get</span> { <span style="color:#66d9ef">return</span> Path.GetFullPath(Path.Combine(ModuleDirectory, <span style="color:#e6db74">&#34;../../&#34;</span>)); }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">string</span> ThirdPartyPath
+</span></span><span style="display:flex;"><span>    { 
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">get</span> { <span style="color:#66d9ef">return</span> Path.GetFullPath(Path.Combine(ModuleDirectory, ProjectRoot, <span style="color:#e6db74">&#34;ThirdParty&#34;</span>)); }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> TestTD(ReadOnlyTargetRules Target) : <span style="color:#66d9ef">base</span>(Target)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        PublicDependencyModuleNames.AddRange(<span style="color:#66d9ef">new</span> <span style="color:#66d9ef">string</span>[] { <span style="color:#e6db74">&#34;Core&#34;</span>, <span style="color:#e6db74">&#34;CoreUObject&#34;</span>, <span style="color:#e6db74">&#34;Engine&#34;</span>, <span style="color:#e6db74">&#34;InputCore&#34;</span>, <span style="color:#e6db74">&#34;HeadMountedDisplay&#34;</span>, <span style="color:#e6db74">&#34;NavigationSystem&#34;</span>, <span style="color:#e6db74">&#34;AIModule&#34;</span> });
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        LoadOpenCV(Target);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">bool</span> LoadOpenCV(ReadOnlyTargetRules Target)
+</span></span><span style="display:flex;"><span>    {    
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// Start OpenCV linking here!</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">bool</span> isLibrarySupported = <span style="color:#66d9ef">false</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//Library path</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">string</span> PlatformString = <span style="color:#66d9ef">null</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">string</span> libSuffix = <span style="color:#66d9ef">null</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">switch</span> (Target.Platform)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">case</span> UnrealTargetPlatform.Win64:
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                PlatformString = <span style="color:#e6db74">&#34;Win64&#34;</span>;
+</span></span><span style="display:flex;"><span>                libSuffix = <span style="color:#e6db74">&#34;.lib&#34;</span>;
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">break</span>;
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">case</span> UnrealTargetPlatform.Android:
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                PlatformString = <span style="color:#e6db74">&#34;Android&#34;</span>;
+</span></span><span style="display:flex;"><span>                libSuffix = <span style="color:#e6db74">&#34;.a&#34;</span>;
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">break</span>;
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">bool</span> isdebug = Target.Configuration == UnrealTargetConfiguration.Debug;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">string</span> DebugLibNameFlag = <span style="color:#e6db74">&#34;&#34;</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span>(isdebug)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            DebugLibNameFlag = <span style="color:#e6db74">&#34;d&#34;</span>;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (<span style="color:#66d9ef">null</span> != PlatformString)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">//LibrariesPath value for Windows in Debug: D:\MyProj\ThirdParty\OpenCV\Libraries\Win64\opencv_world348d.lib</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">string</span> LibrariesPath = Path.Combine(ThirdPartyPath, <span style="color:#e6db74">&#34;OpenCV&#34;</span>, <span style="color:#e6db74">&#34;Libraries&#34;</span>, PlatformString, <span style="color:#e6db74">&#34;opencv_world348&#34;</span> + DebugLibNameFlag + libSuffix);
+</span></span><span style="display:flex;"><span>            PublicAdditionalLibraries.Add(LibrariesPath);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            System.Console.WriteLine(<span style="color:#e6db74">&#34;++++++++++++ Set OpenCV Libraries: &#34;</span> + LibrariesPath + <span style="color:#e6db74">&#34;\r&#34;</span>);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//Include path</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">string</span> IncludePath = Path.Combine(ThirdPartyPath, <span style="color:#e6db74">&#34;OpenCV&#34;</span>, <span style="color:#e6db74">&#34;Includes&#34;</span>);
+</span></span><span style="display:flex;"><span>        PublicIncludePaths.Add(IncludePath);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        System.Console.WriteLine(<span style="color:#e6db74">&#34;++++++++++++ Set OpenCV Includes: &#34;</span> + IncludePath + <span style="color:#e6db74">&#34;\r&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        PublicDefinitions.Add(<span style="color:#66d9ef">string</span>.Format(<span style="color:#e6db74">&#34;WITH_OPENCV_BINDING={0}&#34;</span>, isLibrarySupported ? <span style="color:#ae81ff">1</span> : <span style="color:#ae81ff">0</span>));
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> isLibrarySupported;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>If want to include a number of libraries, you can do like this:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C#" data-lang="C#"><span style="display:flex;"><span><span style="color:#75715e">// Add static library search path </span>
+</span></span><span style="display:flex;"><span>PublicLibraryPaths.Add(LibPath);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>PublicAdditionalLibraries.Add(<span style="color:#e6db74">&#34;opencv_calib3d340.lib&#34;</span>);
+</span></span><span style="display:flex;"><span>PublicAdditionalLibraries.Add(<span style="color:#e6db74">&#34;opencv_core340.lib&#34;</span>);
+</span></span><span style="display:flex;"><span>PublicAdditionalLibraries.Add(<span style="color:#e6db74">&#34;opencv_cudaarithm340.lib&#34;</span>);
+</span></span><span style="display:flex;"><span>PublicAdditionalLibraries.Add(<span style="color:#e6db74">&#34;opencv_cudabgsegm340.lib&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Add shared library search path</span>
+</span></span><span style="display:flex;"><span>PublicRuntimeLibraryPaths.Add(DllPath);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>PublicDelayLoadDLLs.Add(<span style="color:#e6db74">&#34;opencv_calib3d340.dll&#34;</span>);
+</span></span><span style="display:flex;"><span>PublicDelayLoadDLLs.Add(<span style="color:#e6db74">&#34;opencv_core340.dll&#34;</span>);
+</span></span><span style="display:flex;"><span>PublicDelayLoadDLLs.Add(<span style="color:#e6db74">&#34;opencv_cudaarithm340.dll&#34;</span>);
+</span></span><span style="display:flex;"><span>PublicDelayLoadDLLs.Add(<span style="color:#e6db74">&#34;opencv_cudabgsegm340.dll&#34;</span>);
+</span></span></code></pre></div><p>Reference:<br>
 [UE4]UnrealBuildTool APIs in common<br>
 <a href="https://dawnarc.com/2019/07/ue4unrealbuildtool-apis-in-common/">https://dawnarc.com/2019/07/ue4unrealbuildtool-apis-in-common/</a></p>
 <div class="alert warning ">
@@ -516,11 +512,10 @@ PublicDelayLoadDLLs.Add(&quot;opencv_cudabgsegm340.dll&quot;);
 </div>
 <h5 id="how-to-disable-compilication-warning-upon-third-party-headers-included">How to disable compilication warning upon third party headers included</h5>
 <p>Example:</p>
-<pre><code>THIRD_PARTY_INCLUDES_START
-#include &quot;libwebsockets.h&quot;
-THIRD_PARTY_INCLUDES_END
-</code></pre>
-<h5 id="how-to-shadow-macros-on-windows-that-are-the-same-name-as-unreal">How to shadow macros on Windows that are the same name as Unreal?</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>THIRD_PARTY_INCLUDES_START
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;libwebsockets.h&#34;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>THIRD_PARTY_INCLUDES_END
+</span></span></code></pre></div><h5 id="how-to-shadow-macros-on-windows-that-are-the-same-name-as-unreal">How to shadow macros on Windows that are the same name as Unreal?</h5>
 <p>Example:</p>
 <pre><code>#include &quot;Windows/AllowWindowsPlatformTypes.h&quot;
 #include &lt;windows.h&gt;
@@ -682,7 +677,18 @@ else
 
 if (Target.bBuildEditor)
 </code></pre>
-<hr>
+<h5 id="how-to-copy-files-dll-on-building">How to copy files (dll) on building</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C#" data-lang="C#"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> (!Directory.Exists(binariesDir))
+</span></span><span style="display:flex;"><span>    Directory.CreateDirectory(binariesDir);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> (!File.Exists(Path.Combine(binariesDir, filename)))
+</span></span><span style="display:flex;"><span>    File.Copy(Filepath, Path.Combine(binariesDir, filename), <span style="color:#66d9ef">true</span>);
+</span></span></code></pre></div><p>Reference:<br>
+<a href="https://forums.unrealengine.com/t/how-to-modify-build-file-to-copy-dlls-to-binaries/353587/2">https://forums.unrealengine.com/t/how-to-modify-build-file-to-copy-dlls-to-binaries/353587/2</a></p>
+<h5 id="how-to-get-project-directory-in-targetcs">How to get project directory in Target.cs.</h5>
+<p>MyGame.Target.cs:</p>
+<pre tabindex="0"><code>string ProjDir = ProjectFile.FullName.Replace(&#34;MyGame.uproject&#34;, &#34;&#34;);
+</code></pre><hr>
 <p><code>我年轻时，听一位教授讲：“人生都只有一个想法，终其一生不过是不断丰富它。”我当时觉得：“一辈子只围绕一个念头转？这未免也太反动了！”五十岁时，我明白他是对的：我这一辈子都在追随一个想法，问题是我从来都不知道是哪个。──翁贝托·埃科《密涅瓦火柴盒》</code></p>
               
             </div>

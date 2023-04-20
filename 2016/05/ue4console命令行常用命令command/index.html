@@ -630,158 +630,19 @@ Project Settings -&gt; Engine -&gt; General Settings -&gt; Framerate -&gt; Unche
 </div>
 <h5 id="运行时期间用c执行console命名">运行时期间用C++执行console命名</h5>
 <pre><code>UKismetSystemLibrary::ExecuteConsoleCommand(UObject* WorldContextObject, 
-    const FString&amp; Command, class APlayerController* SpecificPlayer = NULL )
+    const FString&amp; Command, class APlayerController* SpecificPlayer = nullptr );
 </code></pre>
-<h5 id="运行时期间修改画质级别">运行时期间修改画质级别</h5>
-<p>Unreal Engine 4 Save and Load Graphics Settings using Blueprints Tutorial<br>
-<a href="https://www.youtube.com/watch?v=5AXA2CrPwTo">https://www.youtube.com/watch?v=5AXA2CrPwTo</a></p>
-<p>Change Graphics Settings In-Game - Unreal Engine 4 Tutorial<br>
-<a href="https://www.youtube.com/watch?v=T90vqA9x5so">https://www.youtube.com/watch?v=T90vqA9x5so</a></p>
-<p>Command:</p>
-<pre><code>r.PostProcessAAQuality 0
-sg.PostProcessQuality 0
-sg.ShadowQuality 0
-sg.TextureQuality 0
-sg.EffectsQuality 0
-r.DetailMode 0
-foliage.DensityScale 0.25
-grass.DensityScale 0.25
-</code></pre>
-<p>Scalability Reference<br>
-<a href="https://docs.unrealengine.com/en-us/Engine/Performance/Scalability/ScalabilityReference">https://docs.unrealengine.com/en-us/Engine/Performance/Scalability/ScalabilityReference</a></p>
-<div class="alert success ">
-  <p>蓝图<code>Execute Console Command</code>节点（C++接口：<code>UKismetSystemLibrary::ExecuteConsoleCommand()</code>）在 Shipping 模式下仍然有效。</p>
-</div>
-<p>移动端修改画质级别（安卓为例）：</p>
-<pre><code>\Engine\Config\Android\AndroidScalability.ini
-</code></pre>
-<p>不同设备的默认配置（\Engine\Config\BaseDeviceProfiles.ini），以高端安卓机为例：</p>
-<pre><code>[Android_High DeviceProfile]
-DeviceType=Android
-BaseProfileName=Android
-+CVars=sg.ViewDistanceQuality=2
-+CVars=sg.AntiAliasingQuality=2
-+CVars=sg.ShadowQuality=2
-+CVars=sg.PostProcessQuality=2
-+CVars=sg.TextureQuality=2
-+CVars=sg.EffectsQuality=2
-+CVars=sg.FoliageQuality=2
-+CVars=r.MobileContentScaleFactor=1.0
-</code></pre>
-<p>程序启动时自动设置画质级别的位置：<br>
-Engine\Source\Runtime\Engine\Private\DeviceProfiles\DeviceProfileManager.cpp</p>
-<pre><code>/**
- * Startup and select the active device profile
- * Then Init the CVars from this profile and it's Device profile parent tree.
- */
-static void InitializeCVarsForActiveDeviceProfile(bool bPushSettings=false, bool bForceDeviceProfilePriority = false);
-</code></pre>
-<p>手动检测硬件配置详情并自动设置画质级别：<br>
-console命令</p>
-<pre><code>//此命令同时会将硬件性能信息打印到文本log
-scalability auto
-</code></pre>
-<p>C++ API</p>
-<pre><code>if(UGameUserSettings* GameUserSettings = UGameUserSettings::GetGameUserSettings())
-{
-    GameUserSettings-&gt;RunHardwareBenchmark();
-    GameUserSettings-&gt;ApplyHardwareBenchmarkResults();
-}
-</code></pre>
-<p>获取硬件（CPU、GPU）跑分：</p>
-<pre><code>const Scalability::FQualityLevels State = Scalability::BenchmarkQualityLevels();
-const float CPUIndex = State.CPUBenchmarkResults;
-const float GPUIndex = State.GPUBenchmarkResults;
-</code></pre>
-<p>返回值对应Engine\Config\BaseScalability.ini中的配置：</p>
-<pre><code>[ScalabilitySettings]
-; PerfIndexThresholds define the thresholds that determine what the autodetected quality should be for each group.
-; When you auto detect performance, both a CPUIndex and GPUIndex are calculated on the machine.
-; Use the console command &quot;scalability auto&quot; to print these values for a machine.
-; The type of perfindex used to determine the quality for a group is either the GPU, CPU or Min.
-; GPU means the quality is based on the speed of the graphics card. CPU means the quality is based on the processor, and Min means the group quality is based on the slower of either the CPU or GPU.
-; Each group has a type followed by three numbers.
-; The first number is the perfindex threshold that changes quality from 0 to 1. The second is the threshold from 1 to 2, the third is the threshold from 2 to 3.
-PerfIndexThresholds_ResolutionQuality=&quot;GPU 18 42 115&quot;
-PerfIndexThresholds_ViewDistanceQuality=&quot;Min 18 42 105&quot;
-PerfIndexThresholds_AntiAliasingQuality=&quot;GPU 18 42 115&quot;
-PerfIndexThresholds_ShadowQuality=&quot;Min 18 42 105&quot;
-PerfIndexThresholds_PostProcessQuality=&quot;GPU 18 42 115&quot;
-PerfIndexThresholds_TextureQuality=&quot;GPU 18 42 115&quot;
-PerfIndexThresholds_EffectsQuality=&quot;Min 18 42 105&quot;
-PerfIndexThresholds_FoliageQuality=&quot;GPU 18 42 115&quot;
-PerfIndexThresholds_ShadingQuality=&quot;GPU 18 42 115&quot;
-
-; This is the screen percentage for the resolution quality, corresponding to 25% pixels, 50% pixels, 75% pixels, and 100% pixels
-PerfIndexValues_ResolutionQuality=&quot;50 71 87 100 100&quot;
-</code></pre>
-<p>输出的文本信息：</p>
-<pre><code>Cmd: scalability auto
-LogSynthBenchmark: Display: FSynthBenchmark (V0.95):  requested WorkScale=10.00
-LogSynthBenchmark: Display: ===============
-LogSynthBenchmark: Display: Main Processor:
-LogSynthBenchmark: Display:          ... 0.049066 s/Run 'RayIntersect'
-LogSynthBenchmark: Display:          ... 0.030856 s/Run 'Fractal'
-LogSynthBenchmark: Display: 
-LogSynthBenchmark: Display:   CompiledTarget_x_Bits: 64
-LogSynthBenchmark: Display:   UE_BUILD_SHIPPING: 0
-LogSynthBenchmark: Display:   UE_BUILD_TEST: 0
-LogSynthBenchmark: Display:   UE_BUILD_DEBUG: 0
-LogSynthBenchmark: Display:   TotalPhysicalGBRam: 32
-LogSynthBenchmark: Display:   NumberOfCores (physical): 8
-LogSynthBenchmark: Display:   NumberOfCores (logical): 8
-LogSynthBenchmark: Display:   CPU Perf Index 0: 52.2 (weight 1.00)
-LogSynthBenchmark: Display:   CPU Perf Index 1: 92.7 (weight 1.50)
-LogSynthBenchmark: Display:  
-LogSynthBenchmark: Display: Graphics:
-LogSynthBenchmark: Display:   Adapter Name: 'Radeon RX 470 Series'
-LogSynthBenchmark: Display:   (On Optimus the name might be wrong, memory should be ok)
-LogSynthBenchmark: Display:   Vendor Id: 0x1002
-LogSynthBenchmark: Display:   Device Id: 0x67DF
-LogSynthBenchmark: Display:   Device Revision: 0xFF
-LogSynthBenchmark: Display:   GPU Memory: 4076/0/16351 MB
-LogSynthBenchmark: Display:   GPU first test: 0.05s
-LogSynthBenchmark: Display:          ... 7.508 s/GigaPix, Confidence=89% 'ALUHeavyNoise' (likely to be very inaccurate)
-LogSynthBenchmark: Display:          ... 5.685 s/GigaPix, Confidence=89% 'TexHeavy' (likely to be very inaccurate)
-LogSynthBenchmark: Display:          ... 5.209 s/GigaPix, Confidence=89% 'DepTexHeavy' (likely to be very inaccurate)
-LogSynthBenchmark: Display:          ... 15.020 s/GigaPix, Confidence=40% 'FillOnly' (likely to be very inaccurate)
-LogSynthBenchmark: Display:          ... 0.629 s/GigaPix, Confidence=100% 'Bandwidth' (likely to be very inaccurate)
-LogSynthBenchmark: Display:          ... 2.354 s/GigaVert, Confidence=51% 'VertThroughPut1' (likely to be very inaccurate)
-LogSynthBenchmark: Display:          ... 4.441 s/GigaVert, Confidence=100% 'VertThroughPut2' (likely to be very inaccurate)
-LogSynthBenchmark: Display:   GPU second test: 0.29s
-LogSynthBenchmark: Display:          ... 11.496 s/GigaPix, Confidence=70% 'ALUHeavyNoise' (likely to be inaccurate)
-LogSynthBenchmark: Display:          ... 8.107 s/GigaPix, Confidence=89% 'TexHeavy' (likely to be inaccurate)
-LogSynthBenchmark: Display:          ... 7.910 s/GigaPix, Confidence=100% 'DepTexHeavy' (likely to be inaccurate)
-LogSynthBenchmark: Display:          ... 32.663 s/GigaPix, Confidence=100% 'FillOnly' (likely to be inaccurate)
-LogSynthBenchmark: Display:          ... 0.672 s/GigaPix, Confidence=100% 'Bandwidth' (likely to be inaccurate)
-LogSynthBenchmark: Display:          ... 2.340 s/GigaVert, Confidence=100% 'VertThroughPut1' (likely to be inaccurate)
-LogSynthBenchmark: Display:          ... 4.447 s/GigaVert, Confidence=100% 'VertThroughPut2' (likely to be inaccurate)
-LogSynthBenchmark: Display:   GPU Final Results:
-LogSynthBenchmark: Display:          ... 11.496 s/GigaPix, Confidence=70% 'ALUHeavyNoise'
-LogSynthBenchmark: Display:          ... 8.107 s/GigaPix, Confidence=89% 'TexHeavy'
-LogSynthBenchmark: Display:          ... 7.910 s/GigaPix, Confidence=100% 'DepTexHeavy'
-LogSynthBenchmark: Display:          ... 32.663 s/GigaPix, Confidence=100% 'FillOnly'
-LogSynthBenchmark: Display:          ... 0.672 s/GigaPix, Confidence=100% 'Bandwidth'
-LogSynthBenchmark: Display:          ... 2.340 s/GigaVert, Confidence=100% 'VertThroughPut1'
-LogSynthBenchmark: Display:          ... 4.447 s/GigaVert, Confidence=100% 'VertThroughPut2'
-LogSynthBenchmark: Display: 
-LogSynthBenchmark: Display:   GPU Perf Index 0: 249.9 (weight 1.00)
-LogSynthBenchmark: Display:   GPU Perf Index 1: 108.9 (weight 0.10)
-LogSynthBenchmark: Display:   GPU Perf Index 2: 205.6 (weight 0.10)
-LogSynthBenchmark: Display:   GPU Perf Index 3: 128.3 (weight 3.00)
-LogSynthBenchmark: Display:   GPU Perf Index 4: 62.7 (weight 1.00)
-LogSynthBenchmark: Display:   GPU Perf Index 5: 152.2 (weight 0.00)
-LogSynthBenchmark: Display:   GPU Perf Index 6: 251.7 (weight 0.00)
-LogSynthBenchmark: Display:   GPUIndex: 140.2
-LogSynthBenchmark: Display:   CPUIndex: 76.5
-LogSynthBenchmark: Display: 
-LogSynthBenchmark: Display:          ... Total Time: 2.228119 sec
-</code></pre>
-<p>Auto-detect Optimal Graphics Settings for Unreal<br>
-<a href="https://www.tomlooman.com/auto-detect-graphics-settings-ue4/">https://www.tomlooman.com/auto-detect-graphics-settings-ue4/</a></p>
-<div class="alert warning ">
-  <p><code>GameUserSettings-&gt;RunHardwareBenchmark();</code>和<code>Scalability::BenchmarkQualityLevels();</code>只在主机和PC上有效。移动端忽高忽低不准确，可能受温度影响较大。</p>
-</div>
+<h5 id="scalability">Scalability</h5>
+<p>Modify graphics quality at run-time:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Text" data-lang="Text"><span style="display:flex;"><span>r.PostProcessAAQuality 3
+</span></span><span style="display:flex;"><span>sg.PostProcessQuality 3
+</span></span><span style="display:flex;"><span>sg.ShadowQuality 3
+</span></span><span style="display:flex;"><span>sg.TextureQuality 3
+</span></span><span style="display:flex;"><span>sg.EffectsQuality 3
+</span></span><span style="display:flex;"><span>r.DetailMode 3
+</span></span><span style="display:flex;"><span>foliage.DensityScale 1.0
+</span></span><span style="display:flex;"><span>grass.DensityScale 1.0
+</span></span></code></pre></div><p>For more detail see: <a href="https://dawnarc.com/2023/04/ue4scalability-notes/">Unreal Scalability</a></p>
 <h5 id="贴图相关命令">贴图相关命令</h5>
 <p>设置贴图的尺寸级别（精度），<span class="highlight-text red">前提是贴图已经生成了LOD（即mipmap） </span></p>
 <pre><code>r.mipmaplodbias 0
