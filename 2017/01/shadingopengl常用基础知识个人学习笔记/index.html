@@ -12,31 +12,19 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="generator" content="Hugo 0.102.3 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Wang Aiguo">
-<meta name="keywords" content="">
-<meta name="description" content="文章内容大部分参考自《OpenGL 4 Shading Language Cookbook, Second Edition》书中的代码：
-https://github.com/daw42/glslcookbook
-术语解释： GLEW (OpenGL Extension Wrangler). GLM (OpenGL Mathematics) GLFW is an Open Source, multi-platform library for OpenGL, OpenGL ES and Vulkan development on the desktop. It provides a simple API for creating windows, contexts and surfaces, receiving input and events. Shader类型 vertex shader fragment shader geometry shader tess_control shader tess_evaluation shader compute shader OpenGL版本查询与设置 查询版本（使用glad的API）：
-GLint major, minor;glGetIntegerv(GL_MAJOR_VERSION, &amp;major);glGetIntegerv(GL_MINOR_VERSION, &amp;minor);选择版本（使用glfw的API）：">
+<meta name="keywords" content="Shading, UV, Graphics">
+<meta name="description" content="keywords: OpenGL, cookbook, basic knowledge">
 
 
-<meta property="og:description" content="文章内容大部分参考自《OpenGL 4 Shading Language Cookbook, Second Edition》书中的代码：
-https://github.com/daw42/glslcookbook
-术语解释： GLEW (OpenGL Extension Wrangler). GLM (OpenGL Mathematics) GLFW is an Open Source, multi-platform library for OpenGL, OpenGL ES and Vulkan development on the desktop. It provides a simple API for creating windows, contexts and surfaces, receiving input and events. Shader类型 vertex shader fragment shader geometry shader tess_control shader tess_evaluation shader compute shader OpenGL版本查询与设置 查询版本（使用glad的API）：
-GLint major, minor;glGetIntegerv(GL_MAJOR_VERSION, &amp;major);glGetIntegerv(GL_MINOR_VERSION, &amp;minor);选择版本（使用glfw的API）：">
+<meta property="og:description" content="keywords: OpenGL, cookbook, basic knowledge">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[Shading]OpenGL常用基础知识(个人学习笔记)">
 <meta name="twitter:title" content="[Shading]OpenGL常用基础知识(个人学习笔记)">
 <meta property="og:url" content="https://dawnarc.com/2017/01/shadingopengl%E5%B8%B8%E7%94%A8%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E4%B8%AA%E4%BA%BA%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">
 <meta property="twitter:url" content="https://dawnarc.com/2017/01/shadingopengl%E5%B8%B8%E7%94%A8%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E4%B8%AA%E4%BA%BA%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">
 <meta property="og:site_name" content="玄冬Wong">
-<meta property="og:description" content="文章内容大部分参考自《OpenGL 4 Shading Language Cookbook, Second Edition》书中的代码：
-https://github.com/daw42/glslcookbook
-术语解释： GLEW (OpenGL Extension Wrangler). GLM (OpenGL Mathematics) GLFW is an Open Source, multi-platform library for OpenGL, OpenGL ES and Vulkan development on the desktop. It provides a simple API for creating windows, contexts and surfaces, receiving input and events. Shader类型 vertex shader fragment shader geometry shader tess_control shader tess_evaluation shader compute shader OpenGL版本查询与设置 查询版本（使用glad的API）：
-GLint major, minor;glGetIntegerv(GL_MAJOR_VERSION, &amp;major);glGetIntegerv(GL_MINOR_VERSION, &amp;minor);选择版本（使用glfw的API）：">
-<meta name="twitter:description" content="文章内容大部分参考自《OpenGL 4 Shading Language Cookbook, Second Edition》书中的代码：
-https://github.com/daw42/glslcookbook
-术语解释： GLEW (OpenGL Extension Wrangler). GLM (OpenGL Mathematics) GLFW is an Open Source, multi-platform library for OpenGL, OpenGL ES and Vulkan development on the desktop. It provides a simple API for creating windows, contexts and surfaces, receiving input and events. Shader类型 vertex shader fragment shader geometry shader tess_control shader tess_evaluation shader compute shader OpenGL版本查询与设置 查询版本（使用glad的API）：
-GLint major, minor;glGetIntegerv(GL_MAJOR_VERSION, &amp;major);glGetIntegerv(GL_MINOR_VERSION, &amp;minor);选择版本（使用glfw的API）：">
+<meta property="og:description" content="keywords: OpenGL, cookbook, basic knowledge">
+<meta name="twitter:description" content="keywords: OpenGL, cookbook, basic knowledge">
 <meta property="og:locale" content="en-us">
 
   
@@ -71,6 +59,9 @@ GLint major, minor;glGetIntegerv(GL_MAJOR_VERSION, &amp;major);glGetIntegerv(G
 
 
 
+
+  <meta property="og:image" content="https://dawnarc.com/thumbnail/beijing/thumbnail-beijing-018.jpg">
+  <meta property="twitter:image" content="https://dawnarc.com/thumbnail/beijing/thumbnail-beijing-018.jpg">
 
 
 
@@ -373,7 +364,8 @@ GLint major, minor;glGetIntegerv(GL_MAJOR_VERSION, &amp;major);glGetIntegerv(G
                 <script>
                      (adsbygoogle = window.adsbygoogle || []).push({});
                 </script>
-              <p>文章内容大部分参考自《OpenGL 4 Shading Language Cookbook, Second Edition》书中的代码：<br>
+              <p>keywords: OpenGL, cookbook, basic knowledge</p>
+<p>文章内容大部分参考自《OpenGL 4 Shading Language Cookbook, Second Edition》书中的代码：<br>
 <a href="https://github.com/daw42/glslcookbook">https://github.com/daw42/glslcookbook</a></p>
 <h5 id="术语解释">术语解释：</h5>
 <ul>
@@ -392,69 +384,65 @@ GLint major, minor;glGetIntegerv(GL_MAJOR_VERSION, &amp;major);glGetIntegerv(G
 </ul>
 <h5 id="opengl版本查询与设置">OpenGL版本查询与设置</h5>
 <p>查询版本（使用glad的API）：</p>
-<pre><code>GLint major, minor;
-glGetIntegerv(GL_MAJOR_VERSION, &amp;major);
-glGetIntegerv(GL_MINOR_VERSION, &amp;minor);
-</code></pre>
-<p>选择版本（使用glfw的API）：</p>
-<pre><code>//OpenGL版本设置为4.6
-glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
-</code></pre>
-<p>注意：设置版本号不得高于查询出来的版本号。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C" data-lang="C"><span style="display:flex;"><span>GLint major, minor;
+</span></span><span style="display:flex;"><span>glGetIntegerv(GL_MAJOR_VERSION, <span style="color:#f92672">&amp;</span>major);
+</span></span><span style="display:flex;"><span>glGetIntegerv(GL_MINOR_VERSION, <span style="color:#f92672">&amp;</span>minor);
+</span></span></code></pre></div><p>选择版本（使用glfw的API）：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C" data-lang="C"><span style="display:flex;"><span><span style="color:#75715e">//OpenGL版本设置为4.6
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, <span style="color:#ae81ff">4</span>);
+</span></span><span style="display:flex;"><span>glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, <span style="color:#ae81ff">6</span>);
+</span></span></code></pre></div><p>注意：设置版本号不得高于查询出来的版本号。</p>
 <h5 id="批量填充populate数据">批量填充(populate)数据</h5>
 <p>OpenGL 4.0之前，比如要填充vertex数据，必须要逐个vertex设置。4.0之后，可以一次性填充一组vertex。<br>
 以填充position和color的vertex shader为例：</p>
-<pre><code>/////////////////// Create the VBO ////////////////////
-float positionData[] = {
-    -0.8f, -0.8f, 0.0f,
-    0.8f, -0.8f, 0.0f,
-    0.0f,  0.8f, 0.0f };
-float colorData[] = {
-    1.0f, 0.0f, 0.0f,
-    0.0f, 1.0f, 0.0f,
-    0.0f, 0.0f, 1.0f };
-
-// Create and populate the buffer objects
-GLuint vboHandles[2];
-glGenBuffers(2, vboHandles);
-GLuint positionBufferHandle = vboHandles[0];
-GLuint colorBufferHandle = vboHandles[1];
-
-glBindBuffer(GL_ARRAY_BUFFER, positionBufferHandle);
-glBufferData(GL_ARRAY_BUFFER, 9 * sizeof(float), positionData, GL_STATIC_DRAW);
-
-glBindBuffer(GL_ARRAY_BUFFER, colorBufferHandle);
-glBufferData(GL_ARRAY_BUFFER, 9 * sizeof(float), colorData, GL_STATIC_DRAW);
-
-// Create and set-up the vertex array object
-glGenVertexArrays(1, &amp;vaoHandle);
-glBindVertexArray(vaoHandle);
-
-glEnableVertexAttribArray(0);  // Vertex position
-glEnableVertexAttribArray(1);  // Vertex color
-
-//break current vertex array object binding.
-glBindBuffer(GL_ARRAY_BUFFER, positionBufferHandle);
-glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (GLubyte *)NULL);
-
-glBindBuffer(GL_ARRAY_BUFFER, colorBufferHandle);
-glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (GLubyte *)NULL);
-glBindVertexArray(0);
-</code></pre>
-<h5 id="多个program切换">多个Program切换</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C" data-lang="C"><span style="display:flex;"><span><span style="color:#75715e">/////////////////// Create the VBO ////////////////////
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">float</span> positionData[] <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">-</span><span style="color:#ae81ff">0.8f</span>, <span style="color:#f92672">-</span><span style="color:#ae81ff">0.8f</span>, <span style="color:#ae81ff">0.0f</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#ae81ff">0.8f</span>, <span style="color:#f92672">-</span><span style="color:#ae81ff">0.8f</span>, <span style="color:#ae81ff">0.0f</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#ae81ff">0.0f</span>,  <span style="color:#ae81ff">0.8f</span>, <span style="color:#ae81ff">0.0f</span> };
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">float</span> colorData[] <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#ae81ff">1.0f</span>, <span style="color:#ae81ff">0.0f</span>, <span style="color:#ae81ff">0.0f</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#ae81ff">0.0f</span>, <span style="color:#ae81ff">1.0f</span>, <span style="color:#ae81ff">0.0f</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#ae81ff">0.0f</span>, <span style="color:#ae81ff">0.0f</span>, <span style="color:#ae81ff">1.0f</span> };
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Create and populate the buffer objects
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>GLuint vboHandles[<span style="color:#ae81ff">2</span>];
+</span></span><span style="display:flex;"><span>glGenBuffers(<span style="color:#ae81ff">2</span>, vboHandles);
+</span></span><span style="display:flex;"><span>GLuint positionBufferHandle <span style="color:#f92672">=</span> vboHandles[<span style="color:#ae81ff">0</span>];
+</span></span><span style="display:flex;"><span>GLuint colorBufferHandle <span style="color:#f92672">=</span> vboHandles[<span style="color:#ae81ff">1</span>];
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>glBindBuffer(GL_ARRAY_BUFFER, positionBufferHandle);
+</span></span><span style="display:flex;"><span>glBufferData(GL_ARRAY_BUFFER, <span style="color:#ae81ff">9</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">sizeof</span>(<span style="color:#66d9ef">float</span>), positionData, GL_STATIC_DRAW);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>glBindBuffer(GL_ARRAY_BUFFER, colorBufferHandle);
+</span></span><span style="display:flex;"><span>glBufferData(GL_ARRAY_BUFFER, <span style="color:#ae81ff">9</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">sizeof</span>(<span style="color:#66d9ef">float</span>), colorData, GL_STATIC_DRAW);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Create and set-up the vertex array object
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>glGenVertexArrays(<span style="color:#ae81ff">1</span>, <span style="color:#f92672">&amp;</span>vaoHandle);
+</span></span><span style="display:flex;"><span>glBindVertexArray(vaoHandle);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>glEnableVertexAttribArray(<span style="color:#ae81ff">0</span>);  <span style="color:#75715e">// Vertex position
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>glEnableVertexAttribArray(<span style="color:#ae81ff">1</span>);  <span style="color:#75715e">// Vertex color
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//break current vertex array object binding.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>glBindBuffer(GL_ARRAY_BUFFER, positionBufferHandle);
+</span></span><span style="display:flex;"><span>glVertexAttribPointer(<span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">3</span>, GL_FLOAT, GL_FALSE, <span style="color:#ae81ff">0</span>, (GLubyte <span style="color:#f92672">*</span>)NULL);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>glBindBuffer(GL_ARRAY_BUFFER, colorBufferHandle);
+</span></span><span style="display:flex;"><span>glVertexAttribPointer(<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">3</span>, GL_FLOAT, GL_FALSE, <span style="color:#ae81ff">0</span>, (GLubyte <span style="color:#f92672">*</span>)NULL);
+</span></span><span style="display:flex;"><span>glBindVertexArray(<span style="color:#ae81ff">0</span>);
+</span></span></code></pre></div><h5 id="多个program切换">多个Program切换</h5>
 <p>可以在一个OpenGL程序中创建多个Program对象（<code>glCreateProgram</code>创建），然后通过<code>glUseProgram</code>且切换使用需要的Program对象。</p>
 <h5 id="删除program对象">删除Program对象</h5>
 <p>如果一个Program对象不再使用，可以使用<code>glDeleteProgram</code>删除；如果这个Program正在使用，使用<code>glDeleteProgram</code>不会直接删除，而是给一个删除标记，等到下次OpenGL内部检测时才会删除。<br>
 删除一个Program对象后，会自动Detach之前Attach上去的所有ShaderObject（<code>glCreateShader</code>创建），但是不会删除这些ShaderObject，除非调用<code>glDeleteShader</code>。</p>
 <h5 id="动态获取-vertex-input-attributes">动态获取 vertex input attributes</h5>
 <p>一般情况下，vertex输入属性是在shader代码中定义好的：</p>
-<pre><code>#version 410
-
-layout (location=0) in vec3 VertexPosition;
-layout (location=1) in vec3 VertexColor;
-</code></pre>
-<p>或者是在Program对象link之前（<code>glLinkProgram</code>），通过<code>glBindAttribLocation</code>来绑定索引：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-glsl" data-lang="glsl"><span style="display:flex;"><span><span style="color:#75715e">#version 410</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>layout (location<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>) <span style="color:#66d9ef">in</span> <span style="color:#66d9ef">vec3</span> VertexPosition;
+</span></span><span style="display:flex;"><span>layout (location<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>) <span style="color:#66d9ef">in</span> <span style="color:#66d9ef">vec3</span> VertexColor;
+</span></span></code></pre></div><p>或者是在Program对象link之前（<code>glLinkProgram</code>），通过<code>glBindAttribLocation</code>来绑定索引：</p>
 <pre><code>//programHandle是已经创建好的Program对象
 glBindAttribLocation(programHandle, 0, &quot;VertexPosition&quot;);
 glBindAttribLocation(programHandle, 1, &quot;VertexColor&quot;);
@@ -659,14 +647,13 @@ glBufferData( GL_UNIFORM_BUFFER, blockSize, blockBuffer, GL_DYNAMIC_DRAW );
 <pre><code>glBindBufferBase(GL_UNIFORM_BUFFER, 0, uboHandle);
 </code></pre>
 <p>对应的uniform定义</p>
-<pre><code>layout (binding = 0) uniform BlobSettings {
-    vec4 InnerColor;
-    vec4 OuterColor;
-    float RadiusInner;
-    float RadiusOuter;
-};
-</code></pre>
-<h5 id="glbindbuffer与glbindbufferbase的区别">glBindBuffer与glBindBufferBase的区别</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-glsl" data-lang="glsl"><span style="display:flex;"><span>layout (binding <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>) <span style="color:#66d9ef">uniform</span> BlobSettings {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">vec4</span> InnerColor;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">vec4</span> OuterColor;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">float</span> RadiusInner;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">float</span> RadiusOuter;
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><h5 id="glbindbuffer与glbindbufferbase的区别">glBindBuffer与glBindBufferBase的区别</h5>
 <div class="alert info ">
   <p>简述之：<code>glBindBuffer</code> 绑定的指针索引，是用来对 Buffer 填充或修改数据而使用的，但是这个索引无法作为输入参数传递给 shader ，如果要把这个索引传递给 shader ，那么必须使用glBindBufferBase。</p>
 </div>
@@ -681,21 +668,27 @@ You might be wondering why we use glBindBuffer and glBindBufferBase with GL_UNIF
 <li>column_major</li>
 </ul>
 <p>例如：</p>
-<pre><code>layout( std140 ) uniform BlobSettings {
-};
-</code></pre>
-<p>多个修饰符可以组合使用：</p>
-<pre><code>layout( row_major, shared ) uniform BlobSettings {
-};
-</code></pre>
-<h5 id="fragment-shader到vertex-shader之间的工作流程page-58">fragment shader到vertex shader之间的工作流程（page 58）</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-glsl" data-lang="glsl"><span style="display:flex;"><span>layout( std140 ) <span style="color:#66d9ef">uniform</span> BlobSettings {
+</span></span><span style="display:flex;"><span>    };
+</span></span></code></pre></div><p>多个修饰符可以组合使用：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-glsl" data-lang="glsl"><span style="display:flex;"><span>layout( row_major, shared ) <span style="color:#66d9ef">uniform</span> BlobSettings {
+</span></span><span style="display:flex;"><span>    };
+</span></span></code></pre></div><h5 id="fragment-shader到vertex-shader之间的工作流程page-58">fragment shader到vertex shader之间的工作流程（page 58）</h5>
 <figure><img src="https://dawnarc.com/img/20170113-[Shading]OpenGL%e5%b8%b8%e7%94%a8%e5%9f%ba%e7%a1%80%e7%9f%a5%e8%af%86%28%e4%b8%aa%e4%ba%ba%e5%ad%a6%e4%b9%a0%e7%ac%94%e8%ae%b0%29/[Shading]OpenGL%e5%b8%b8%e7%94%a8%e5%9f%ba%e7%a1%80%e7%9f%a5%e8%af%86%28%e4%b8%aa%e4%ba%ba%e5%ad%a6%e4%b9%a0%e7%ac%94%e8%ae%b0%29-01.png"/>
 </figure>
 
 <p>Between the vertex and fragment shader, the vertices are assembled into primitives, clipping takes place, and the viewport transformation is applied (among other operations). The rasterization process then takes place and the polygon is filled (if necessary). The fragment shader is executed once for each fragment (pixel) of the polygon being rendered (typically in parallel). Data provided from the vertex shader is (by default) interpolated in a perspective correct manner, and provided to the fragment shader via shader input variables. The fragment shader determines the appropriate color for the pixel and sends it to the frame buffer using output variables. The depth information is handled automatically.</p>
-<hr>
+<h5 id="opengl耗时较高的函数">OpenGL耗时较高的函数</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C" data-lang="C"><span style="display:flex;"><span>glBufferData()
+</span></span><span style="display:flex;"><span>glBufferSubData()
+</span></span><span style="display:flex;"><span>glCompressedTexImage2D() <span style="color:#f92672">/</span> glCompressedTexImage3D()
+</span></span><span style="display:flex;"><span>glCompressedTexSubImage2D() <span style="color:#f92672">/</span> glCompressedTexSubImage3D()
+</span></span><span style="display:flex;"><span>glTexImage2D() <span style="color:#f92672">/</span> glTexImage3D()
+</span></span><span style="display:flex;"><span>glTexSubImage2D() <span style="color:#f92672">/</span> glTexSubImage3D()
+</span></span><span style="display:flex;"><span>glcompileshader() <span style="color:#f92672">/</span> glshadersource()
+</span></span><span style="display:flex;"><span>gllinkprogram()
+</span></span></code></pre></div><hr>
 <p><code>莫道不消魂？帘卷西风，人比黄花瘦。---李清照《醉花阴》</code></p>
-
               
             </div>
           </div>

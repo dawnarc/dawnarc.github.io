@@ -313,6 +313,150 @@
     
     <div class="postShorten-header">
       <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2017/09/openglwindows%E4%B8%8Aopengl%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">
+          [OpenGL]Windows上OpenGL开发环境搭建
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2017-09-05T16:38:28&#43;08:00">
+        
+  
+  
+  
+  
+    Tuesday, 16:38, Sep 5, 2017
+  
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/opengl">OpenGL</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        网上资料很多都是基于Cygwin来搭建的环境，这里介绍一种非Cygwin搭建Windows上的OpenGL开发环境。
+1，OpenGL Loader Generator下载安装
+OpenGL Loader是一个标准规范，定义了如何在运行时期间加载OpenGL相关函数的指针。 这是windows上开发OpenGL程序才需要的lib，因为从1.1版本开始，windows不在对OpenGL 后续版本的 ABI(application binary interface)提供支持（可能是微软的DX出来后与OGL商业竞争吧），所以开发者无法直接获取OGL新版本的相关函数，不过有好心人写了工具，在运行时期间获取OGL的新版函数，这里介绍两个开源库：
+glad
+https://github.com/Dav1dde/glad
+glloadgen
+https://bitbucket.org/alfonse/glloadgen/wiki/Home
+我是用的是glad，这个开源库的开发者还提供了在线生成工具，可以不用下载安装Load Generator，直接在线生成指定版本的OpenGL Loader： http://glad.dav1d.de/
+2，编译OpenGL Loader的静态库
+通过glad生成的代码，编译一个lib， 以便后面的的示例工程调用。因为这些代码开发者不用做修改，只是调用，所以最好编译成lib，而不要直接加到自己的项目代码中。
+3，下载GLM（OpenGL Mathematics）
+这是OpenGL的数学库
+https://github.com/g-truc/glm/releases
+4，下载GLFW
+这是一个提供了OpenGL, OpenGL ES和Vulkan相关接口的跨平台的开源库，有这个库你就可以访问他们的最新API。 https://github.com/glfw/glfw/releases
+5，新建一个C++工程并设置OpenGL相关的头文件和静态库
+指定头文件的目录 指定静态库的目录 在代码需要包含的头文件以及lib：
+#include &lt;KHR/khrplatform.h&gt;#include &lt;glad/glad.h&gt;#include &lt;GLFW/glfw3.h&gt;#pragma comment(lib, &quot;opengl32.lib&quot;)#pragma comment(lib, &quot;glad.lib&quot;)#pragma comment(lib, &quot;glfw3.lib&quot;)新建的测试工程叫GLTest，目录结构如下： 新加了两个分别叫include和lib的目录，用于存放第三方库的头文件和库文件 完整的测试的代码：
+#pragma once #include &lt;iostream&gt; #include &lt;windows.h&gt; #include &lt;fstream&gt; #include &lt;sstream&gt; #include &lt;string&gt; #include &lt;KHR/khrplatform.h&gt; #include &lt;glad/glad.h&gt; #include &lt;GLFW/glfw3.
+      
+      <p>
+        <a href="https://dawnarc.com/2017/09/openglwindows%E4%B8%8Aopengl%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
+        <a class="link-unstyled" href="https://dawnarc.com/2017/09/algorithms%E7%AE%97%E6%B3%95%E9%A2%98%E5%A4%9A%E4%B8%AA%E5%AD%97%E6%AF%8D%E4%BB%BB%E6%84%8F%E7%BB%84%E5%90%88%E5%A4%9A%E4%B8%AA%E6%96%B0%E5%AD%97%E7%AC%A6%E4%B8%B2/">
+          [Algorithms]算法题：多个字母任意组合多个新字符串
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2017-09-03T20:22:28&#43;08:00">
+        
+  
+  
+  
+  
+    Sunday, 20:22, Sep 3, 2017
+  
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/algorithms">Algorithms</a>
+    
+  
+
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt" itemprop="articleBody">
+      
+        题目：
+比如一串字符，string s = &ldquo;abcd&rdquo;，假设里面的每个字符都不重复，求出这些字符任意组合后，形成的所有的新字符串。忽略掉顺序，比如ac和ca是同一种。 例子：
+abc的3个字符可以组合的情况为： a b c ab bc ac abc
+代码：
+#include &lt;iostream&gt;#include &lt;string&gt;#include &lt;vector&gt;int main(int argc, char* argv[]){std::string s(&quot;abcd&quot;);std::vector&lt;std::string&gt; vec;for (size_t i = 0; i &lt; s.length(); i++){std::string s1(1, s.at(i));vec.push_back(s1);for (size_t j = i + 1; j &lt; s.length(); j++){for (size_t k = 0; k &lt; s.length() - j; k++){std::string s2 = s.
+      
+      <p>
+        <a href="https://dawnarc.com/2017/09/algorithms%E7%AE%97%E6%B3%95%E9%A2%98%E5%A4%9A%E4%B8%AA%E5%AD%97%E6%AF%8D%E4%BB%BB%E6%84%8F%E7%BB%84%E5%90%88%E5%A4%9A%E4%B8%AA%E6%96%B0%E5%AD%97%E7%AC%A6%E4%B8%B2/" class="postShorten-excerpt_link link">Continue reading</a>
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+          
+            
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title" itemprop="headline">
         <a class="link-unstyled" href="https://dawnarc.com/2017/09/algorithms%E7%AE%97%E6%B3%95%E9%A2%98%E5%AD%97%E7%AC%A6%E4%B8%B2%E8%BD%AC%E6%8D%A2%E4%B8%BA%E6%95%B4%E6%95%B0%E5%B9%B6%E6%8E%92%E5%BA%8F/">
           [Algorithms]算法题：字符串转换为整数并排序
         </a>
@@ -930,16 +1074,12 @@ https://answers.unrealengine.com/questions/688112/ue417-will-not-compile-with-ne
             
   
     
-      
-        
-      
-    
   
 
 
   
 
-<article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="https://schema.org/BlogPosting">
+<article class="postShorten postShorten--thumbnailimg-left" itemscope itemType="https://schema.org/BlogPosting">
   <div class="postShorten-wrap">
     
     <div class="postShorten-header">
@@ -976,8 +1116,7 @@ https://answers.unrealengine.com/questions/688112/ue417-will-not-compile-with-ne
     </div>
     <div class="postShorten-excerpt" itemprop="articleBody">
       
-        方式一：Insert 默认坐标轴中间在模型底部的正中间位置， 如果想改变坐标轴原点位置，先把物体挪开，然后再按下insert键 此时就可以移动坐标轴 确定好新的坐标世界坐标原点后，再按一次insert键，即可完成修改。 技巧：如果移动过程中，希望坐标轴能一个网格一个网格的移动，而不是随意距离拖动，点击Snap to Grids（快捷键：按住X键不放）。 方式二：Reset Transformation 先将物体移动后，先执行：Modify -》 Freeze Transformations，再执行：Modify -》 Reset Transformations。 执行后坐标轴原点就会自动变为初始时的位置。 方式三：快捷键D 与Insert键一样，但是相对Insert键按起来更方便，因为Insert键离字母键区域较远。
-坐标轴相对物体居中 庭院深深深几许？杨柳堆烟，帘幕无重数。---欧阳修《蝶恋花》
+        <p>keywords: Maya, modify pivot center, change axis center</p>
       
       <p>
         <a href="https://dawnarc.com/2017/08/maya%E4%BF%AE%E6%94%B9%E5%9D%90%E6%A0%87%E8%BD%B4%E5%8E%9F%E7%82%B9/" class="postShorten-excerpt_link link">Continue reading</a>
@@ -985,6 +1124,12 @@ https://answers.unrealengine.com/questions/688112/ue417-will-not-compile-with-ne
       </p>
     </div>
   </div>
+  
+    <a href="https://dawnarc.com/2017/08/maya%E4%BF%AE%E6%94%B9%E5%9D%90%E6%A0%87%E8%BD%B4%E5%8E%9F%E7%82%B9/">
+      <div class="postShorten-thumbnailimg">
+        <img alt="" itemprop="image" src="https://dawnarc.com/thumbnail/beijing/thumbnail-beijing-004.jpg"/>
+      </div>
+    </a>
   
 </article>
 
@@ -1109,132 +1254,6 @@ https://answers.unrealengine.com/questions/688112/ue417-will-not-compile-with-ne
       </p>
     </div>
   </div>
-  
-</article>
-
-          
-            
-  
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-left" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2017/08/maya%E5%9F%BA%E7%A1%80%E6%93%8D%E4%BD%9C%E4%B9%8B%E9%80%89%E6%8B%A9%E7%A7%BB%E5%8A%A8%E6%97%8B%E8%BD%AC%E4%BC%B8%E7%BC%A9/">
-          [Maya]基础操作之：选择、移动、旋转、伸缩
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2017-08-28T16:44:40&#43;08:00">
-        
-  
-  
-  
-  
-    Monday, 16:44, Aug 28, 2017
-  
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/maya">Maya</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        <p>Keywords：Maya、选择, 移动, 旋转, 伸缩, Select, Move, Rotate, Scale, Lasso</p>
-      
-      <p>
-        <a href="https://dawnarc.com/2017/08/maya%E5%9F%BA%E7%A1%80%E6%93%8D%E4%BD%9C%E4%B9%8B%E9%80%89%E6%8B%A9%E7%A7%BB%E5%8A%A8%E6%97%8B%E8%BD%AC%E4%BC%B8%E7%BC%A9/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-    <a href="https://dawnarc.com/2017/08/maya%E5%9F%BA%E7%A1%80%E6%93%8D%E4%BD%9C%E4%B9%8B%E9%80%89%E6%8B%A9%E7%A7%BB%E5%8A%A8%E6%97%8B%E8%BD%AC%E4%BC%B8%E7%BC%A9/">
-      <div class="postShorten-thumbnailimg">
-        <img alt="" itemprop="image" src="https://dawnarc.com/thumbnail/beijing/thumbnail-beijing-017.jpg"/>
-      </div>
-    </a>
-  
-</article>
-
-          
-            
-  
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-left" itemscope itemType="https://schema.org/BlogPosting">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title" itemprop="headline">
-        <a class="link-unstyled" href="https://dawnarc.com/2017/08/maya%E5%B8%B8%E7%94%A8%E5%BF%AB%E6%8D%B7%E9%94%AE%E5%92%8C%E5%9F%BA%E7%A1%80%E6%93%8D%E4%BD%9C/">
-          [Maya]常用快捷键和基础操作
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time itemprop="datePublished" datetime="2017-08-28T16:27:40&#43;08:00">
-        
-  
-  
-  
-  
-    Monday, 16:27, Aug 28, 2017
-  
-
-      </time>
-    
-    
-  
-  
-    <span>in</span>
-    
-      <a class="category-link" href="https://dawnarc.com/categories/maya">Maya</a>
-    
-  
-
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt" itemprop="articleBody">
-      
-        <p>Keywords: Maya常用快捷键和基础操作</p>
-      
-      <p>
-        <a href="https://dawnarc.com/2017/08/maya%E5%B8%B8%E7%94%A8%E5%BF%AB%E6%8D%B7%E9%94%AE%E5%92%8C%E5%9F%BA%E7%A1%80%E6%93%8D%E4%BD%9C/" class="postShorten-excerpt_link link">Continue reading</a>
-        
-      </p>
-    </div>
-  </div>
-  
-    <a href="https://dawnarc.com/2017/08/maya%E5%B8%B8%E7%94%A8%E5%BF%AB%E6%8D%B7%E9%94%AE%E5%92%8C%E5%9F%BA%E7%A1%80%E6%93%8D%E4%BD%9C/">
-      <div class="postShorten-thumbnailimg">
-        <img alt="" itemprop="image" src="https://dawnarc.com/thumbnail/beijing/thumbnail-beijing-016.jpg"/>
-      </div>
-    </a>
   
 </article>
 

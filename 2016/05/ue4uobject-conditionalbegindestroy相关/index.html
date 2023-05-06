@@ -413,7 +413,7 @@ LoadObject&lt;UObject&gt;(Obj, Path);
 <code>SpawnActor</code>生成出的 Actor，且 <code>AActor::bReplicates = true;</code> ，销毁时，不要用<code>ConditionalBeginDestroy()</code>，而要用<code>Destroy()</code> + WeakPtr。<br>
 Standalone 模式貌似没这种限制。</p>
 <p>崩溃日志：</p>
-<pre><code>Assertion failed: Index &gt;= 0 [File:D:\Build\++UE4+Release-4.16+Compile\Sync\Engine\Source\Runtime\CoreUObject\Public\UObject/UObjectArray.h] [Line: 455] 
+<pre tabindex="0"><code class="language-Log" data-lang="Log">Assertion failed: Index &gt;= 0 [File:D:\Build\++UE4+Release-4.16+Compile\Sync\Engine\Source\Runtime\CoreUObject\Public\UObject/UObjectArray.h] [Line: 455] 
 
 UE4Editor_Core!FDebug::AssertFailed() [d:\build\++ue4+release-4.16+compile\sync\engine\source\runtime\core\private\misc\assertionmacros.cpp:349]
 UE4Editor_Engine!UNetDriver::ServerReplicateActors_BuildConsiderList() [d:\build\++ue4+release-4.16+compile\sync\engine\source\runtime\engine\private\networkdriver.cpp:2600]
@@ -431,8 +431,7 @@ UE4Editor!WinMain() [d:\build\++ue4+release-4.16+compile\sync\engine\source\runt
 UE4Editor!__scrt_common_main_seh() [f:\dd\vctools\crt\vcstartup\src\startup\exe_common.inl:253]
 kernel32
 ntdll
-</code></pre>
-<h5 id="conditionalbegindestroy-和-destroy区别">ConditionalBeginDestroy 和 Destroy区别</h5>
+</code></pre><h5 id="conditionalbegindestroy-和-destroy区别">ConditionalBeginDestroy 和 Destroy区别</h5>
 <p>ConditionalBeginDestroy 和 Destroy两者都是销毁对象，区别是：前者是在delay一定时间后执行销毁，Destroy是在当前帧结束时执行销毁。</p>
 <p>如果逻辑上每帧都有很多 Actor需要销毁，那么可以先把这些Actor隐藏，让对象失去引用（如果对象是被<code>URPOPERTY</code>属性保持的，那就让其所属的对象失去引用，比如：<code>RemoveFromRoot()</code>），不必手动执行 Destroy，让引擎批量执行GC。</p>
 <h5 id="conditionalbegindestroy-and-markpendingkill">ConditionalBeginDestroy and MarkPendingKill</h5>
@@ -447,7 +446,8 @@ ntdll
 <li>当对象失去所有引用后，此时执不执行<code>ConditionalBeginDestroy()</code>，下次GC都会被销毁，GC后访问其属性会崩溃；</li>
 </ul>
 <div class="alert danger ">
-  <p>上层应用中，<code>ConditionalBeginDestroy()</code>和<code>MarkPendingKill()</code>都是不可取的方式，正确方式是使用WeakPtr包装对象，当对象销毁后，WeakPtr的<code>IsVaild()</code>返回false，<code>Get()</code>会返回<code>nullptr</code>。 <a href="https://dawnarc.com/2018/07/ue4-tsharedptr-tweakobjectptr-and-tuniqueptr/#tweakobjectptr">UE WeakPtr用法</a></p>
+  <p>上层应用中，不要使用<code>ConditionalBeginDestroy()</code>和<code>MarkPendingKill()</code>！<br>
+正确方式是使用<a href="https://dawnarc.com/2018/07/ue4-tsharedptr-tweakobjectptr-and-tuniqueptr/#tweakobjectptr">WeakPtr</a>包装对象，当对象销毁后，<code>WeakPtr.IsVaild()</code>返回<code>false</code>，<code>WeakPtr.Get()</code>返回<code>nullptr</code>。</p>
 </div>
               
             </div>

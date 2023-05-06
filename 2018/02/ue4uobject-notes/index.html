@@ -13,18 +13,18 @@
 <meta name="generator" content="Hugo 0.102.3 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Wang Aiguo">
 <meta name="keywords" content="UE4, UObject, Construct, Construction, Instantiating,  UObject-derived">
-<meta name="description" content="Keywords: UE4, UObject, Construct, Construction, Instantiating, UObject-derived">
+<meta name="description" content="Keywords: UE4, UObject, Construct, Construction, Instantiating, UObject-derived, Config, DefaultGame.ini">
 
 
-<meta property="og:description" content="Keywords: UE4, UObject, Construct, Construction, Instantiating, UObject-derived">
+<meta property="og:description" content="Keywords: UE4, UObject, Construct, Construction, Instantiating, UObject-derived, Config, DefaultGame.ini">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[UE4]UObject Notes">
 <meta name="twitter:title" content="[UE4]UObject Notes">
 <meta property="og:url" content="https://dawnarc.com/2018/02/ue4uobject-notes/">
 <meta property="twitter:url" content="https://dawnarc.com/2018/02/ue4uobject-notes/">
 <meta property="og:site_name" content="玄冬Wong">
-<meta property="og:description" content="Keywords: UE4, UObject, Construct, Construction, Instantiating, UObject-derived">
-<meta name="twitter:description" content="Keywords: UE4, UObject, Construct, Construction, Instantiating, UObject-derived">
+<meta property="og:description" content="Keywords: UE4, UObject, Construct, Construction, Instantiating, UObject-derived, Config, DefaultGame.ini">
+<meta name="twitter:description" content="Keywords: UE4, UObject, Construct, Construction, Instantiating, UObject-derived, Config, DefaultGame.ini">
 <meta property="og:locale" content="en-us">
 
   
@@ -362,7 +362,7 @@
                 <script>
                      (adsbygoogle = window.adsbygoogle || []).push({});
                 </script>
-              <p>Keywords: UE4, UObject, Construct, Construction, Instantiating, UObject-derived</p>
+              <p>Keywords: UE4, UObject, Construct, Construction, Instantiating, UObject-derived, Config, DefaultGame.ini</p>
 <h5 id="newobject-using-a-blueprint-class">NewObject using a Blueprint class</h5>
 <p>1st way:<br>
 header:</p>
@@ -449,7 +449,55 @@ class ENGINE_API UMyObject : public UObject
 </ul>
 <p>UE4中Config的使用<br>
 <a href="https://blog.ch-wind.com/ue4-config-usage/">https://blog.ch-wind.com/ue4-config-usage/</a></p>
-<hr>
+<h5 id="how-to-add-gui-for-custom-ini-file-in-project-settings">How to add GUI for custom ini file in Project Settings</h5>
+<p>Credits to: <a href="https://github.com/Tencent/UnLua/blob/bb6213568d03a6bc41b3622cf8a6c0daad114c9f/Plugins/UnLua/Source/UnLua/Private/UnLuaModule.cpp#L258">UnLuaModule.cpp</a></p>
+<p>1, Add C++ class for ini config:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>UCLASS(Config <span style="color:#f92672">=</span> UnLua, DefaultConfig, Meta <span style="color:#f92672">=</span> (DisplayName <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;UnLua&#34;</span>))
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">UNLUA_API</span> UUnLuaSettings : <span style="color:#66d9ef">public</span> UObject
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    GENERATED_BODY()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    UUnLuaSettings(<span style="color:#66d9ef">const</span> FObjectInitializer<span style="color:#f92672">&amp;</span> ObjectInitializer);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/** Entry module name of lua env. Leave it empty to skip execution on startup. */</span>
+</span></span><span style="display:flex;"><span>    UPROPERTY(Config, EditAnywhere, Category<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Runtime&#34;</span>)
+</span></span><span style="display:flex;"><span>    FString StartupModuleName <span style="color:#f92672">=</span> TEXT(<span style="color:#e6db74">&#34;&#34;</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>2, Use <code>FModuleManager::RegisterSettings()</code> to register custom ini settings in Project Settings on startup module:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> FMyPluginModule<span style="color:#f92672">::</span>StartupModule()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    RegisterSettings();
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> FMyPluginModule<span style="color:#f92672">::</span>ShutdownModule()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    UnregisterSettings();
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> FMyPluginModule<span style="color:#f92672">::</span>RegisterSettings()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#if WITH_EDITOR
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    ISettingsModule<span style="color:#f92672">*</span> SettingsModule <span style="color:#f92672">=</span> FModuleManager<span style="color:#f92672">::</span>GetModulePtr<span style="color:#f92672">&lt;</span>ISettingsModule<span style="color:#f92672">&gt;</span>(<span style="color:#e6db74">&#34;Settings&#34;</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span>SettingsModule)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> <span style="color:#66d9ef">auto</span> Section <span style="color:#f92672">=</span> SettingsModule<span style="color:#f92672">-&gt;</span>RegisterSettings(<span style="color:#e6db74">&#34;Project&#34;</span>, <span style="color:#e6db74">&#34;Plugins&#34;</span>, <span style="color:#e6db74">&#34;UnLua&#34;</span>,
+</span></span><span style="display:flex;"><span>        LOCTEXT(<span style="color:#e6db74">&#34;UnLuaEditorSettingsName&#34;</span>, <span style="color:#e6db74">&#34;UnLua&#34;</span>), LOCTEXT(<span style="color:#e6db74">&#34;UnLuaEditorSettingsDescription&#34;</span>, <span style="color:#e6db74">&#34;UnLua Runtime Settings&#34;</span>),
+</span></span><span style="display:flex;"><span>        GetMutableDefault<span style="color:#f92672">&lt;</span>UUnLuaSettings<span style="color:#f92672">&gt;</span>());
+</span></span><span style="display:flex;"><span>    Section<span style="color:#f92672">-&gt;</span>OnModified().BindRaw(<span style="color:#66d9ef">this</span>, <span style="color:#f92672">&amp;</span>FMyPluginModule<span style="color:#f92672">::</span>OnSettingsModified);
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#endif
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> FMyPluginModule<span style="color:#f92672">::</span>UnregisterSettings()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#if WITH_EDITOR
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    ISettingsModule<span style="color:#f92672">*</span> SettingsModule <span style="color:#f92672">=</span> FModuleManager<span style="color:#f92672">::</span>GetModulePtr<span style="color:#f92672">&lt;</span>ISettingsModule<span style="color:#f92672">&gt;</span>(<span style="color:#e6db74">&#34;Settings&#34;</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (SettingsModule)
+</span></span><span style="display:flex;"><span>        SettingsModule<span style="color:#f92672">-&gt;</span>UnregisterSettings(<span style="color:#e6db74">&#34;Project&#34;</span>, <span style="color:#e6db74">&#34;Plugins&#34;</span>, <span style="color:#e6db74">&#34;UnLua&#34;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#endif
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><hr>
 <p><code>生如夏花之绚烂，死如秋叶之静美。----泰戈尔《生如夏花》</code></p>
               
             </div>

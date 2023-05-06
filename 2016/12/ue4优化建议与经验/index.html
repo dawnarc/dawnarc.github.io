@@ -12,19 +12,19 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="generator" content="Hugo 0.102.3 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Wang Aiguo">
-<meta name="keywords" content="UE4性能优化, UE4, Performance, Optimization">
-<meta name="description" content="keywords：UE4性能优化、Performance Optimization">
+<meta name="keywords" content="UE4, 性能优化, Performance, Optimization">
+<meta name="description" content="keywords：UE4性能优化、Unreal Engine Performance Optimization">
 
 
-<meta property="og:description" content="keywords：UE4性能优化、Performance Optimization">
+<meta property="og:description" content="keywords：UE4性能优化、Unreal Engine Performance Optimization">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[UE4]优化建议与经验">
 <meta name="twitter:title" content="[UE4]优化建议与经验">
 <meta property="og:url" content="https://dawnarc.com/2016/12/ue4%E4%BC%98%E5%8C%96%E5%BB%BA%E8%AE%AE%E4%B8%8E%E7%BB%8F%E9%AA%8C/">
 <meta property="twitter:url" content="https://dawnarc.com/2016/12/ue4%E4%BC%98%E5%8C%96%E5%BB%BA%E8%AE%AE%E4%B8%8E%E7%BB%8F%E9%AA%8C/">
 <meta property="og:site_name" content="玄冬Wong">
-<meta property="og:description" content="keywords：UE4性能优化、Performance Optimization">
-<meta name="twitter:description" content="keywords：UE4性能优化、Performance Optimization">
+<meta property="og:description" content="keywords：UE4性能优化、Unreal Engine Performance Optimization">
+<meta name="twitter:description" content="keywords：UE4性能优化、Unreal Engine Performance Optimization">
 <meta property="og:locale" content="en-us">
 
   
@@ -61,6 +61,9 @@
 
 
 
+
+  <meta property="og:image" content="https://dawnarc.com/thumbnail/beijing/thumbnail-beijing-024.jpg">
+  <meta property="twitter:image" content="https://dawnarc.com/thumbnail/beijing/thumbnail-beijing-024.jpg">
 
 
 
@@ -363,7 +366,7 @@
                 <script>
                      (adsbygoogle = window.adsbygoogle || []).push({});
                 </script>
-              <p>keywords：UE4性能优化、Performance Optimization</p>
+              <p>keywords：UE4性能优化、Unreal Engine Performance Optimization</p>
 <h5 id="零散记录">零散记录</h5>
 <ol>
 <li>
@@ -752,6 +755,13 @@ Project Settings -&gt; Engine -&gt; Animation -&gt; 勾选 Strip Animation Data 
 材质蓝图（shader graph）中使用了过多的static switch（假设有10个），且基于该material创建了数量众多的material instance（假设1024），那么当instance中的static switch随机组合（true和false），极端情况下可以生成1024个permutation（实际情况更糟，因为引擎内部还为不同lighting phase生成不同的permutation），permutation数量增长则PSO数量也随之增长，而PSO吃VRAM，最终导致显存暴涨。<br>
 这还没完：PSO数量增加则需要更多的draw和dispatch指令（由引擎将PSO绑定到command buffer并派发），进而增加CPU开销。</p>
 </li>
+<li>
+<p>PC和console设备使用<a href="https://asawicki.info/news_1755_untangling_direct3d_12_memory_heap_types_and_pools">共享显存(Shared GPU Memory)</a>。Vulkan上叫<code>VK_MEMORY_PROPERTY_HOST_CACHED_BIT</code>，D3D12上叫<code>D3D12_HEAP_TYPE_CUSTOM</code> (NUMA平台上<code>MemoryPoolPreference</code>类型为<code>D3D12_MEMORY_POOL_L0</code>，而UE4只使用了<code>D3D12_MEMORY_POOL_L1</code>类型，即VRAM)，不过这两种内存方式需要自己修改RHI，UE官方没有实现。</p>
+</li>
+</ol>
+<h5 id="rhi-vulkan--d3d12">RHI (Vulkan &amp; D3D12)</h5>
+<ol>
+<li>如果Dispatch数量较高（Gears 5平均每帧50左右），则GPU计算开销会显著增加。对于计算量较大的特效，建议使用Async Compute，D3D12的官方example：<a href="https://github.com/GPUOpen-LibrariesAndSDKs/nBodyD3D12/tree/master/Samples/D3D12nBodyGravity">N-body Gravity System</a></li>
 </ol>
 <h5 id="参考资料">参考资料</h5>
 <p>Performance and Profiling<br>
