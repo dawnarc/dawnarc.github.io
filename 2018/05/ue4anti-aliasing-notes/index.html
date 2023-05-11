@@ -374,30 +374,27 @@
   <p><code>Post-process Anti-aliasing</code> was removed from Post Process Volume.</p>
 </div>
 <h5 id="how-to-modify-parameters-of-temporal-aa-at-run-time">How to modify parameters of Temporal AA at run-time</h5>
-<pre><code>r.TemporalAACurrentFrameWeight 0.2
-r.TemporalAASamples 4
-r.Tonemapper.Sharpen 0.8 // Somewhere between 0.5 and 1.0 seems like a sweet spot.
-</code></pre>
-<p>Reference:<br>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>r.TemporalAACurrentFrameWeight 0.2
+</span></span><span style="display:flex;"><span>r.TemporalAASamples <span style="color:#ae81ff">4</span>
+</span></span><span style="display:flex;"><span>r.Tonemapper.Sharpen 0.8 // Somewhere between 0.5 and 1.0 seems like a sweet spot.
+</span></span></code></pre></div><p>Reference:<br>
 <a href="https://forums.unrealengine.com/development-discussion/rendering/106829-sharp-temporal-aa/page2?134157-Sharp-Temporal-AA=&amp;viewfull=1">https://forums.unrealengine.com/development-discussion/rendering/106829-sharp-temporal-aa/page2?134157-Sharp-Temporal-AA=&amp;viewfull=1</a></p>
 <h5 id="switch-aa-method-using-console-command">Switch AA method using console command</h5>
-<pre><code>//0 = none, 1 = FXAA, 2 = TemporalAA, 3 = MSAA
-r.DefaultFeature.AntiAliasing 2
-</code></pre>
-<p>Changing AA Type via Console Command<br>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>//0 <span style="color:#f92672">=</span> none, 1 <span style="color:#f92672">=</span> FXAA, 2 <span style="color:#f92672">=</span> TemporalAA, 3 <span style="color:#f92672">=</span> MSAA
+</span></span><span style="display:flex;"><span>r.DefaultFeature.AntiAliasing <span style="color:#ae81ff">2</span>
+</span></span></code></pre></div><p>Changing AA Type via Console Command<br>
 <a href="https://answers.unrealengine.com/questions/212041/view.html">https://answers.unrealengine.com/questions/212041/view.html</a></p>
 <h5 id="how-to-enable-temporal-aa-on-mobile-devices">How to enable Temporal AA on mobile devices</h5>
 <p>Using command:</p>
-<pre><code>r.MobileMSAA 1
-r.DefaultFeature.AntiAliasing 2
-</code></pre>
-<div class="alert info ">
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>r.MobileMSAA <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>r.DefaultFeature.AntiAliasing <span style="color:#ae81ff">2</span>
+</span></span></code></pre></div><div class="alert info ">
   <p><code>r.MobileMSAA 1</code> means to disable MSAA, more details see the engine source <code>SceneRenderTargets.cpp</code>.</p>
 </div>
 <p>Or enable by project settings:<br>
 Project Settings -&gt; Engine -&gt; Rendering -&gt; Default Settings -&gt; Set <code>Anti-Aliasing Method</code> as <code>TemporalAA</code>.<br>
 Project Settings -&gt; Engine -&gt; Rendering -&gt; Mobile -&gt; Set <code>Mobile MSAA</code> as <code>NO MSAA</code>, and ensure that there&rsquo;s no <code>r.MobileMSAA=0</code> in DefaultEngine.ini.</p>
-<p>Attentions:
+<p>Precautions:
 <div class="alert danger ">
   <p><ul>
 <li>There&rsquo;s a bug in version 4.19 that <code>Temporal AA</code> can&rsquo;t be enabled on mobile device. it works fine in version 4.18.</li>
@@ -409,30 +406,29 @@ Project Settings -&gt; Engine -&gt; Rendering -&gt; Mobile -&gt; Set <code>Mobil
 </div></p>
 <h5 id="msaa-sample-count">MSAA Sample Count</h5>
 <p>Engine\Source\Runtime\Renderer\Private\PostProcess\SceneRenderTargets.cpp</p>
-<pre><code>static TAutoConsoleVariable&lt;int32&gt; CVarMSAACount(
-    TEXT(&quot;r.MSAACount&quot;),
-    4,
-    TEXT(&quot;Number of MSAA samples to use with the forward renderer.  Only used when MSAA is enabled in the rendering project settings.\n&quot;)
-    TEXT(&quot;0: MSAA disabled (Temporal AA enabled)\n&quot;)
-    TEXT(&quot;1: MSAA disabled\n&quot;)
-    TEXT(&quot;2: Use 2x MSAA\n&quot;)
-    TEXT(&quot;4: Use 4x MSAA&quot;)
-    TEXT(&quot;8: Use 8x MSAA&quot;),
-    ECVF_RenderThreadSafe | ECVF_Scalability
-    );
-
-static TAutoConsoleVariable&lt;int32&gt; CVarMobileMSAA(
-    TEXT(&quot;r.MobileMSAA&quot;),
-    1,
-    TEXT(&quot;Use MSAA instead of Temporal AA on mobile:\n&quot;)
-    TEXT(&quot;1: Use Temporal AA (MSAA disabled)\n&quot;)
-    TEXT(&quot;2: Use 2x MSAA (Temporal AA disabled)\n&quot;)
-    TEXT(&quot;4: Use 4x MSAA (Temporal AA disabled)\n&quot;)
-    TEXT(&quot;8: Use 8x MSAA (Temporal AA disabled)&quot;),
-    ECVF_RenderThreadSafe | ECVF_Scalability
-    );
-</code></pre>
-<hr>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">static</span> TAutoConsoleVariable<span style="color:#f92672">&lt;</span>int32<span style="color:#f92672">&gt;</span> CVarMSAACount(
+</span></span><span style="display:flex;"><span>    TEXT(<span style="color:#e6db74">&#34;r.MSAACount&#34;</span>),
+</span></span><span style="display:flex;"><span>    <span style="color:#ae81ff">4</span>,
+</span></span><span style="display:flex;"><span>    TEXT(<span style="color:#e6db74">&#34;Number of MSAA samples to use with the forward renderer.  Only used when MSAA is enabled in the rendering project settings.</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>    TEXT(<span style="color:#e6db74">&#34;0: MSAA disabled (Temporal AA enabled)</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>    TEXT(<span style="color:#e6db74">&#34;1: MSAA disabled</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>    TEXT(<span style="color:#e6db74">&#34;2: Use 2x MSAA</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>    TEXT(<span style="color:#e6db74">&#34;4: Use 4x MSAA&#34;</span>)
+</span></span><span style="display:flex;"><span>    TEXT(<span style="color:#e6db74">&#34;8: Use 8x MSAA&#34;</span>),
+</span></span><span style="display:flex;"><span>    ECVF_RenderThreadSafe <span style="color:#f92672">|</span> ECVF_Scalability
+</span></span><span style="display:flex;"><span>    );
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">static</span> TAutoConsoleVariable<span style="color:#f92672">&lt;</span>int32<span style="color:#f92672">&gt;</span> CVarMobileMSAA(
+</span></span><span style="display:flex;"><span>    TEXT(<span style="color:#e6db74">&#34;r.MobileMSAA&#34;</span>),
+</span></span><span style="display:flex;"><span>    <span style="color:#ae81ff">1</span>,
+</span></span><span style="display:flex;"><span>    TEXT(<span style="color:#e6db74">&#34;Use MSAA instead of Temporal AA on mobile:</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>    TEXT(<span style="color:#e6db74">&#34;1: Use Temporal AA (MSAA disabled)</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>    TEXT(<span style="color:#e6db74">&#34;2: Use 2x MSAA (Temporal AA disabled)</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>    TEXT(<span style="color:#e6db74">&#34;4: Use 4x MSAA (Temporal AA disabled)</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>    TEXT(<span style="color:#e6db74">&#34;8: Use 8x MSAA (Temporal AA disabled)&#34;</span>),
+</span></span><span style="display:flex;"><span>    ECVF_RenderThreadSafe <span style="color:#f92672">|</span> ECVF_Scalability
+</span></span><span style="display:flex;"><span>    );
+</span></span></code></pre></div><hr>
 <p><code>我希望有个如你一般的人</code><br>
 <code>如山间清爽的风</code><br>
 <code>如古城温暖的光</code><br>

@@ -504,8 +504,11 @@ Unity早期文档：灯光 Light<br>
 <p>点光源和聚光灯尽量不要开启<code>Cast Volumetric Shadow</code>；默认只有平行光开启了此选项。开启后的性能消耗为不开启的性能消耗三倍。不开启表示阴影计算方式使用<code>Shadow Mapping</code>，开启表示使用<code>Shadow Volume</code>，前者计算没有后者精准，但开销小。</p>
 </li>
 <li>
-<p>如果开启体积雾，建议将灯光改成静态光，这样在Build Lighting时会生成预计算的体积雾相关数据，这样可以显著提升体积雾性能。体积雾性能消耗巨大。</p>
-</li>
+<p>如果开启体积雾，建议将灯光改成静态光，这样在Build Lighting时会生成预计算的体积雾相关数据，这样可以显著提升体积雾性能。另外，修改以下命令行参数，在效果和性能之间做取舍：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>r.VolumetricFog.GridPixelSize
+</span></span><span style="display:flex;"><span>r.VolumetricFog.DepthDistributionScale
+</span></span><span style="display:flex;"><span>r.VolumetricFog.GridSizeZ
+</span></span></code></pre></div></li>
 <li>
 <p>如果场景没有静态光 Static Light（全是动态光 Movable Light 或者固定光 Stationary Light），则要禁用 Static Lighting，以节省 Static Lighting 相关的开销（比如 LightMaps和ShadowMaps的相关计算）。禁用方式：Project Settings -&gt; Engine -&gt; Rendering -&gt; Lighting -&gt; disable <code>Allow Static Lighting</code>。<div class="alert success ">
   <p>当全动态灯光为性能瓶颈时，禁用Static Lighting可以提升性能。测试用例：我的某个游戏场景，Lighting是瓶颈之一，<code>r.ScreenPercentage</code> 修改为400进行压力测试，关闭 Static Lighting 后帧率提升了20帧。因为没有静态光，禁用后光影效果亦无任何损失。</p>
@@ -577,7 +580,10 @@ Dynamic Shadow Distance 表示在多少距离内使用动态阴影，超过这�
 <p>场景中的材质种类要提前规划好，拼场景时只在规划好的材质中选择。如果同屏的材质种类较多，会增加draw call。特别是场景美术用网上素材东拼西凑，很容易导致材质种类数量急剧上涨。</p>
 </li>
 <li>
-<p>一般针对材质的优化方式是，抓帧查看shader instruction count。引擎提供了工具函数<code>FMaterialStatistics Stats = UMaterialEditingLibrary::GetStatistics(_YourMaterialInterfaceObject_);</code>，自己写个插件，批量导出所有材质的最贵指令数量，并支持排序，一劳永逸。</p>
+<p>一般针对材质的优化方式是，抓帧查看shader instruction count。引擎提供了工具函数<code>FMaterialStatistics Stats = UMaterialEditingLibrary::GetStatistics(_YourMaterialInterfaceObject_);</code>，自己写个插件，批量导出所有材质的最贵指令数量，并支持排序。</p>
+</li>
+<li>
+<p>当半透或透明材质的物体较多时，则要严格检查Overdraw。透明材质本身已经非常耗，如果再因为overdraw导致部分像素被重复绘制多次，则开销会暴涨，参考：<a href="https://developer.arm.com/documentation/102676/0100/Transparency-considerations">Transparency considerations</a>。</p>
 </li>
 </ol>
 <h5 id="geometry优化">Geometry优化</h5>
@@ -761,7 +767,12 @@ Project Settings -&gt; Engine -&gt; Animation -&gt; 勾选 Strip Animation Data 
 </ol>
 <h5 id="rhi-vulkan--d3d12">RHI (Vulkan &amp; D3D12)</h5>
 <ol>
-<li>如果Dispatch数量较高（Gears 5平均每帧50左右），则GPU计算开销会显著增加。对于计算量较大的特效，建议使用Async Compute，D3D12的官方example：<a href="https://github.com/GPUOpen-LibrariesAndSDKs/nBodyD3D12/tree/master/Samples/D3D12nBodyGravity">N-body Gravity System</a></li>
+<li>
+<p>如果dispatch数量较高（Gears 5平均每帧50左右），则GPU计算开销会显著增加。对于计算量较大的特效，建议使用Async Compute，D3D12的官方example：<a href="https://github.com/GPUOpen-LibrariesAndSDKs/nBodyD3D12/tree/master/Samples/D3D12nBodyGravity">N-body Gravity System</a></p>
+</li>
+<li>
+<p>因为UE的deferred shading是multipass，材质的每种buffer（albedo, normal, material properties, ambient occlusion, worldspace reflection等等一共有16种buffer）都对应一个pass，当材质过于复杂（比如玻璃、透明特效等透明材质），则dispatch暴涨，shaded GS primitives更甚，呈指数级增长。</p>
+</li>
 </ol>
 <h5 id="参考资料">参考资料</h5>
 <p>Performance and Profiling<br>

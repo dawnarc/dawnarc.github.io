@@ -463,7 +463,38 @@ Default value 0 means the maximum size for the format on each platform.</p>
 ) const
 </code></pre>
 <p><a href="https://answers.unrealengine.com/questions/470467/get-list-of-textures-from-a-material.html?sort=oldest">https://answers.unrealengine.com/questions/470467/get-list-of-textures-from-a-material.html?sort=oldest</a></p>
-<h5 id="reference">Reference</h5>
+<h5 id="how-to-list-all-the-textures-loaded-in-current-level">How to list all the textures loaded in current level</h5>
+<p>Quoted from <a href="https://github.com/nakdeyes/UnrealImGuiTools/blob/26b8dcb5961825e1c65f70e0fa43107b418b1fb9/ImGuiTools/Source/ImGuiTools/Private/Tools/ImGuiMemoryDebugger.cpp#L728">ImGuiMemoryDebugger.cpp</a>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">// Find out how many primitive components reference a texture.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>TMap<span style="color:#f92672">&lt;</span>UTexture2D<span style="color:#f92672">*</span>, int32<span style="color:#f92672">&gt;</span> TextureToUsageMap;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> (TObjectIterator<span style="color:#f92672">&lt;</span>UPrimitiveComponent<span style="color:#f92672">&gt;</span> It; It; <span style="color:#f92672">++</span>It)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    UPrimitiveComponent<span style="color:#f92672">*</span> PrimitiveComponent <span style="color:#f92672">=</span> <span style="color:#f92672">*</span>It;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Use the existing texture streaming functionality to gather referenced textures. Worth noting
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">// that GetStreamingTextureInfo doesn&#39;t check whether a texture is actually streamable or not
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">// and is also implemented for skeletal meshes and such.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#75715e">#if ENGINE_MAJOR_VERSION == 4
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    ImGuiDebugToolsUtils<span style="color:#f92672">::</span>FStreamingTextureLevelContext LevelContext(EMaterialQualityLevel<span style="color:#f92672">::</span>Num, PrimitiveComponent);
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#elif ENGINE_MAJOR_VERSION == 5
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    FStreamingTextureLevelContext <span style="color:#a6e22e">LevelContext</span>(EMaterialQualityLevel<span style="color:#f92672">::</span>Num, PrimitiveComponent);
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#endif
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    TArray<span style="color:#f92672">&lt;</span>FStreamingRenderAssetPrimitiveInfo<span style="color:#f92672">&gt;</span> StreamingTextures;
+</span></span><span style="display:flex;"><span>    PrimitiveComponent<span style="color:#f92672">-&gt;</span>GetStreamingRenderAssetInfo((FStreamingTextureLevelContext<span style="color:#f92672">&amp;</span>)LevelContext, StreamingTextures);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//// Increase usage count for all referenced textures
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">for</span> (int32 TextureIndex <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; TextureIndex <span style="color:#f92672">&lt;</span> StreamingTextures.Num(); TextureIndex<span style="color:#f92672">++</span>)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        UTexture2D<span style="color:#f92672">*</span> Texture <span style="color:#f92672">=</span> Cast<span style="color:#f92672">&lt;</span>UTexture2D<span style="color:#f92672">&gt;</span>(StreamingTextures[TextureIndex].RenderAsset);
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (Texture)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">// Initializes UsageCount to 0 if texture is not found.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            int32 UsageCount <span style="color:#f92672">=</span> TextureToUsageMap.FindRef(Texture);
+</span></span><span style="display:flex;"><span>            TextureToUsageMap.Add(Texture, UsageCount <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h5 id="reference">Reference</h5>
 <p>Texture Streaming<br>
 <a href="https://docs.unrealengine.com/en-us/Engine/Content/Types/Textures/Streaming">https://docs.unrealengine.com/en-us/Engine/Content/Types/Textures/Streaming</a></p>
 <p>Texture Streaming Configuration<br>
