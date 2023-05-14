@@ -771,7 +771,10 @@ Project Settings -&gt; Engine -&gt; Animation -&gt; 勾选 Strip Animation Data 
 <p>如果dispatch数量较高（Gears 5平均每帧50左右），则GPU计算开销会显著增加。对于计算量较大的特效，建议使用Async Compute，D3D12的官方example：<a href="https://github.com/GPUOpen-LibrariesAndSDKs/nBodyD3D12/tree/master/Samples/D3D12nBodyGravity">N-body Gravity System</a></p>
 </li>
 <li>
-<p>由于UE的deferred shading是multipass，而material的每种buffer（albedo, normal, material properties, ambient occlusion, worldspace reflection等等一共有16种buffer）都对应一个pass，所以若材质过于复杂（比如玻璃、透明特效等），则dispatch大幅增长，而dispatch是GPU的算力大户。</p>
+<p>由于UE的deferred shading是multipass，而material的每种buffer（albedo, normal, material properties, ambient occlusion, worldspace reflection等等一共有16种buffer）都对应一个pass，所以若材质过于复杂（比如玻璃、透明特效等），则dispatch大幅增长，而UE4的rendering没有实现Async Compute所以没法降低dispatch，而dispatch是GPU的开销大户。</p>
+</li>
+<li>
+<p>Shaded GS primitives的正常数量应该10k以内（Gears 5平均在3k左右），如果范围异常（比如十万以上），则说明阴影有问题：点光源或射灯数量过多、阴影质量过高（<code>r.ShadowQuality=5</code>）。另外cast volumetric shadow（DirectionalLight、SkyLight之外其他光源）也会导致GS primitives, vertex, pixel数量急剧增长甚至翻倍。</p>
 </li>
 </ol>
 <h5 id="参考资料">参考资料</h5>
