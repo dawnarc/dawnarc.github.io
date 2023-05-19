@@ -683,6 +683,9 @@ Animation Fast Path Optimization<br>
 <li>
 <p>使用<a href="https://www.fairygui.com/">FairyGUI</a>代替UMG。</p>
 </li>
+<li>
+<p>使用<a href="https://www.noesisengine.com/">NoesisGUI</a>代替UMG。</p>
+</li>
 </ol>
 <p>Epic Games工程师分享：如何在移动平台上做UE4的UI优化？<br>
 <a href="http://youxiputao.com/articles/11743">http://youxiputao.com/articles/11743</a></p>
@@ -725,13 +728,13 @@ Project Settings -&gt; Engine -&gt; Animation -&gt; 勾选 Strip Animation Data 
 <p>Server模式下Detach角色身上所有的装饰性组件。</p>
 </li>
 <li>
-<p>AnimInstance的<code>Root Motion Mode</code>不要修改为<code>Root Motion from Everyting</code>，尽量使用默认值<code>Root Motion from Montage Only</code>，以减少服务器的动画同步计算量。</p>
+<p>AnimInstance的<code>Root Motion Mode</code>不要修改为<code>Root Motion from Everything</code>，尽量使用默认值<code>Root Motion from Montage Only</code>，以减少服务器的动画同步计算量。</p>
 </li>
 <li>
 <p>4.20提供了针对Dedicated Server优化的新特性：Replication Graph，可以初略地理解为针对网络通信的LOD。没有这个特性之前，服务端调用Multicast函数，几公里外的玩家也会收到Multicast，而实际上这种远距离玩家可能不需要即时更新数据，而是出现在当前client附近位置时(Cull Distance范围内)时再手动<code>ForceNetUpdate()</code>。有了Replication Graph之后，这种手动优化方式可以交给引擎自己管理。</p>
 </li>
 <li>
-<p>4.25提供了PushModel，通过手动同步对象属性，来降低replication模块每帧遍历actor以及属性比对的耗时。<a href="https://forums.unrealengine.com/t/push-model-networking/510684/13">Push Model Networking</a></p>
+<p>4.25提供了PushModel，通过手动同步对象属性，来降低replication模块每帧遍历actor以及属性比对的耗时。<a href="https://vorixo.github.io/devtricks/network-managers/">Push Model Networking</a></p>
 </li>
 </ol>
 <h5 id="内存优化memory-issues">内存优化(Memory Issues)</h5>
@@ -774,10 +777,10 @@ Project Settings -&gt; Engine -&gt; Animation -&gt; 勾选 Strip Animation Data 
 <p>由于UE的deferred shading是multipass，而material的每种buffer（albedo, normal, material properties, ambient occlusion, worldspace reflection等等一共有16种buffer）都对应一个pass，所以若材质过于复杂（比如玻璃、透明特效等），则dispatch大幅增长，而UE4的rendering没有实现Async Compute所以没法降低dispatch，而dispatch是GPU的开销大户。</p>
 </li>
 <li>
-<p>Shaded GS primitives的正常数量应该10k以内（Gears 5平均在3k左右），如果范围异常（比如十万以上），则说明阴影有问题：点光源或射灯数量过多、阴影质量过高（<code>r.ShadowQuality=5</code>）。另外cast volumetric shadow（DirectionalLight、SkyLight之外其他光源）也会导致GS primitives, vertex, pixel数量急剧增长甚至翻倍。</p>
+<p>Shaded GS primitives数量正常在10k以内（Gears 5平均在3k左右），如果范围异常（比如十万以上），则说明阴影有问题：点光源或射灯数量过多、阴影质量过高（<code>r.ShadowQuality=5</code>）。另外cast volumetric shadow（DirectionalLight、SkyLight之外其他光源）也会导致GS primitives, vertex, pixel数量急剧增长甚至翻倍。</p>
 </li>
 <li>
-<p>CopyTextureRegion高低不影响性能，从几个到几百都是正常范围，一般刚进入新场景时CopyTextureRegion数量较高，此时应该在mip切片（个人推测）。</p>
+<p>CopyTextureRegion次数不影响性能，从几个到几百都是正常范围，一般刚进入新场景时CopyTextureRegion数量较高，此时正在mip slicing（个人推测）。</p>
 </li>
 </ol>
 <h5 id="参考资料">参考资料</h5>
