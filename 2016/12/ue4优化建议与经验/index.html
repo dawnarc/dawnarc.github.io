@@ -367,22 +367,11 @@
                      (adsbygoogle = window.adsbygoogle || []).push({});
                 </script>
               <p>keywords：UE4性能优化、Unreal Engine Performance Optimization</p>
-<h5 id="零散记录">零散记录</h5>
-<ol>
-<li>
-<p>GPUProfile统计性能消耗时，Editor模式下不是很准，因为编辑器的消耗也算在内，最好以Game模式来统计。</p>
-</li>
-<li>
-<p>UE4不支持640X480的分辨率，该分辨率下运行会导致程序崩溃（4.4版本，不知最新版本是否仍有此问题）。</p>
-</li>
-<li>
-<p>如果角色身上有很多Component需要Attach，尽量在使用时Attach，不要一加载就全部attach，否则当场景中角色很多时，会有严重性能问题。<br>
-比如：场景中有几百个角色，但不是每个角色都需要摄像机和弹簧臂，那么在构造函数中就不要创建摄像机和弹簧臂组件。</p>
-</li>
-<li>
-<p>面数对UE4来说不敏感，即使在移动端。ipad 4上，50万的三角面，也能够以30fps帧率稳定运行，移动端主要对贴图大小、材质复杂度较为敏感。</p>
-</li>
-</ol>
+<p>说明：</p>
+<ul>
+<li>GPUProfile统计性能消耗时，Editor模式下不是很准，因为编辑器的消耗也算在内，最好用Game模式或者打包版本来统计。</li>
+<li>UE4不支持640X480的分辨率，该分辨率下运行会导致程序崩溃（4.4版本，不知最新版本是否仍有此问题）。</li>
+</ul>
 <h5 id="代码编译优化">代码编译优化</h5>
 <ol>
 <li>
@@ -630,6 +619,9 @@ Dynamic Shadow Distance 表示在多少距离内使用动态阴影，超过这�
 <p>如果是大型RTS游戏，场景有海量单位时（比如星际2中大规模的虫族小狗），能不用UE4的 Collision 就不要用 Collision，否则帧数狂泻。<br>
 建议自己实现一个简易的自定义Collision，比如球形Collision，然后计算该 Collision 与单位之间的直线距离，来判断是否是否发生了碰撞，并且降低检测间隔，比如 0.1秒一次。用此种方式，如果单位数量较多时，还需要自己写一个类似<code>Distance Filed</code>的八叉树来缓存单位列表，以降低计算单位间距时遍历单位列表的循环次数。</p>
 </li>
+<li>
+<p>可移动Actor中尽量减少component数量，尤其是带有碰撞的component，因为这些component的碰撞信息每帧都会刷新，CPU开销会大幅增加。</p>
+</li>
 </ol>
 <h5 id="动画优化">动画优化</h5>
 <ol>
@@ -771,7 +763,7 @@ Project Settings -&gt; Engine -&gt; Animation -&gt; 勾选 Strip Animation Data 
 <h5 id="rhi-vulkan--d3d12">RHI (Vulkan &amp; D3D12)</h5>
 <ol>
 <li>
-<p>如果dispatch数量较高（Gears 5平均每帧50左右），则GPU计算开销会显著增加。对于计算量较大的特效，建议使用Async Compute，D3D12的官方example：<a href="https://github.com/GPUOpen-LibrariesAndSDKs/nBodyD3D12/tree/master/Samples/D3D12nBodyGravity">N-body Gravity System</a></p>
+<p>如果dispatch数量较高（Gears 5平均每帧50左右），则GPU计算开销会显著增加。对于计算量较大的特效，建议使用Async Compute，D3D12的官方example：<a href="https://github.com/GPUOpen-LibrariesAndSDKs/nBodyD3D12/tree/master/Samples/D3D12nBodyGravity">N-body Gravity System</a>。因为历史原因，UE4无法实现async compute（因为需要推翻整个rendering代码重写）。UE5甩掉了包袱已彻底实现：async compute开销一直保持在20%左右（<a href="https://www.unrealengine.com/marketplace/en-US/product/city-sample">Matrix Awakens</a>测试结果），而UE4官方版本只有1%。</p>
 </li>
 <li>
 <p>由于UE的deferred shading是multipass，而material的每种buffer（albedo, normal, material properties, ambient occlusion, worldspace reflection等等一共有16种buffer）都对应一个pass，所以若材质过于复杂（比如玻璃、透明特效等），则dispatch大幅增长，而UE4的rendering没有实现Async Compute所以没法降低dispatch，而dispatch是GPU的开销大户。</p>
