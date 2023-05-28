@@ -558,18 +558,18 @@ INCLUDE(&quot;meaningfulFilename.cmake&quot;)
 <pre tabindex="0"><code>add_subdirectory(./../Lua build_lua)
 </code></pre><p><code>build_lua</code> is a directory under <code>./../Lua/</code></p>
 <h5 id="how-to-check-specified-platform">How to check specified platform</h5>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>WIN32<span style="color:#f92672">)</span>
-</span></span><span style="display:flex;"><span>    set<span style="color:#f92672">(</span>LIBS glfw3 opengl32 assimp freetype irrKlang<span style="color:#f92672">)</span>
-</span></span><span style="display:flex;"><span>elseif<span style="color:#f92672">(</span>UNIX AND NOT APPLE<span style="color:#f92672">)</span>
-</span></span><span style="display:flex;"><span>    set<span style="color:#f92672">(</span>LIBS <span style="color:#e6db74">${</span>GLFW3_LIBRARY<span style="color:#e6db74">}</span> X11 Xrandr Xinerama Xi Xxf86vm Xcursor GL dl pthread freetype <span style="color:#e6db74">${</span>ASSIMP_LIBRARY<span style="color:#e6db74">}</span><span style="color:#f92672">)</span>
-</span></span><span style="display:flex;"><span>elseif<span style="color:#f92672">(</span>APPLE<span style="color:#f92672">)</span>
-</span></span><span style="display:flex;"><span>    SET<span style="color:#f92672">(</span>APPLE_LIBS <span style="color:#e6db74">${</span>COCOA_LIBRARY<span style="color:#e6db74">}</span> <span style="color:#e6db74">${</span>IOKit_LIBRARY<span style="color:#e6db74">}</span> <span style="color:#e6db74">${</span>OpenGL_LIBRARY<span style="color:#e6db74">}</span> <span style="color:#e6db74">${</span>CoreVideo_LIBRARY<span style="color:#e6db74">}</span><span style="color:#f92672">)</span>
-</span></span><span style="display:flex;"><span>    SET<span style="color:#f92672">(</span>APPLE_LIBS <span style="color:#e6db74">${</span>APPLE_LIBS<span style="color:#e6db74">}</span> <span style="color:#e6db74">${</span>GLFW3_LIBRARY<span style="color:#e6db74">}</span> <span style="color:#e6db74">${</span>ASSIMP_LIBRARY<span style="color:#e6db74">}</span> <span style="color:#e6db74">${</span>FREETYPE_LIBRARIES<span style="color:#e6db74">}</span><span style="color:#f92672">)</span>
-</span></span><span style="display:flex;"><span>    set<span style="color:#f92672">(</span>LIBS <span style="color:#e6db74">${</span>LIBS<span style="color:#e6db74">}</span> <span style="color:#e6db74">${</span>APPLE_LIBS<span style="color:#e6db74">}</span><span style="color:#f92672">)</span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">else</span><span style="color:#f92672">()</span>
-</span></span><span style="display:flex;"><span>    set<span style="color:#f92672">(</span>LIBS <span style="color:#f92672">)</span>
-</span></span><span style="display:flex;"><span>endif<span style="color:#f92672">(</span>WIN32<span style="color:#f92672">)</span>
-</span></span></code></pre></div><p>Example: <a href="https://github.com/JoeyDeVries/LearnOpenGL/blob/master/CMakeLists.txt">LearnOpenGL</a></p>
+<pre tabindex="0"><code>if(WIN32)
+    set(LIBS glfw3 opengl32 assimp freetype irrKlang)
+elseif(UNIX AND NOT APPLE)
+    set(LIBS ${GLFW3_LIBRARY} X11 Xrandr Xinerama Xi Xxf86vm Xcursor GL dl pthread freetype ${ASSIMP_LIBRARY})
+elseif(APPLE)
+    SET(APPLE_LIBS ${COCOA_LIBRARY} ${IOKit_LIBRARY} ${OpenGL_LIBRARY} ${CoreVideo_LIBRARY})
+    SET(APPLE_LIBS ${APPLE_LIBS} ${GLFW3_LIBRARY} ${ASSIMP_LIBRARY} ${FREETYPE_LIBRARIES})
+    set(LIBS ${LIBS} ${APPLE_LIBS})
+else()
+    set(LIBS )
+endif(WIN32)
+</code></pre><p>Example: <a href="https://github.com/JoeyDeVries/LearnOpenGL/blob/master/CMakeLists.txt">LearnOpenGL</a></p>
 <h3 id="visual-studio">Visual Studio</h3>
 <h5 id="set-startup-project">Set startup project</h5>
 <pre><code>set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT MyExeTarget)
@@ -577,11 +577,15 @@ INCLUDE(&quot;meaningfulFilename.cmake&quot;)
 <p>Origin:<br>
 <a href="https://stackoverflow.com/a/59789571/1645289">https://stackoverflow.com/a/59789571/1645289</a></p>
 <h5 id="compile-with-mt-or-md">Compile with <code>/MT</code> or <code>/MD</code></h5>
-<p>How to set <code>Runtime Library</code> for Visual Studio:</p>
-<pre><code>set(CMAKE_CXX_FLAGS_RELEASE &quot;${CMAKE_CXX_FLAGS_RELEASE} /MT&quot;)
-set(CMAKE_CXX_FLAGS_DEBUG &quot;${CMAKE_CXX_FLAGS_DEBUG} /MTd&quot;)
-</code></pre>
-<p>Origin:<br>
+<p>How to set <code>Runtime Library</code> for Visual Studio:<br>
+MT</p>
+<pre tabindex="0"><code>set(CMAKE_CXX_FLAGS_RELEASE &#34;${CMAKE_CXX_FLAGS_RELEASE} /MT&#34;)
+set(CMAKE_CXX_FLAGS_DEBUG &#34;${CMAKE_CXX_FLAGS_DEBUG} /MTd&#34;)
+</code></pre><p>MD</p>
+<pre tabindex="0"><code># suppress warning - LNK4098: defaultlib &#39;MSVCRT&#39; conflicts with use of other libs
+set(CMAKE_CXX_FLAGS_RELEASE &#34;${CMAKE_CXX_FLAGS_RELEASE} /MD&#34;)
+set(CMAKE_CXX_FLAGS_DEBUG &#34;${CMAKE_CXX_FLAGS_DEBUG} /MDd&#34;)
+</code></pre><p>Origin:<br>
 Compile with /MT instead of /MD using CMake<br>
 <a href="https://stackoverflow.com/a/14172871/1645289">https://stackoverflow.com/a/14172871/1645289</a></p>
 <h3 id="compiler">Compiler</h3>
@@ -589,6 +593,26 @@ Compile with /MT instead of /MD using CMake<br>
 <pre><code>#enable C++17 features
 target_compile_features(${MY_PROJECT_NAME} PRIVATE cxx_std_17)
 </code></pre>
+<h5 id="add_compile_definitions">add_compile_definitions</h5>
+<p><code>add_compile_definitions</code> is a new feature added in version 3.12, example:</p>
+<pre tabindex="0"><code>add_compile_definitions(GLEW_STATIC)
+</code></pre><p>It will be translated as preprocessor macros: <code>#define GLEW_STATIC</code>.</p>
+<p>example 2:</p>
+<pre tabindex="0"><code>add_compile_definitions(WORK_DIR=&#34;${CMAKE_CURRENT_SOURCE_DIR}&#34;)
+</code></pre><p>Then you can use the define: <code>std::string dir = std::string(WORK_DIR) + &quot;/src/glsl/&quot;;</code></p>
+<h5 id="target_compile_definitions">target_compile_definitions</h5>
+<p>Similar with <code>add_compile_definitions</code>, but for specified target only:</p>
+<pre tabindex="0"><code>target_compile_definitions(MyApp PRIVATE
+    ADD_DEBUG_PRINTS=1
+    ABCDE
+)
+</code></pre><h5 id="target_compile_options">target_compile_options</h5>
+<p>Choose the appropriate compiler flags based on the compiler used. Furthermore you save yourself the <code>-D</code>:</p>
+<pre tabindex="0"><code>if (CMAKE_CXX_COMPILER_ID STREQUAL &#34;GNU&#34;)
+    target_compile_options(MyTarget PRIVATE -Wall)
+endif()
+</code></pre><p>Origin:<br>
+<a href="https://stackoverflow.com/a/71861489/1645289">https://stackoverflow.com/a/71861489/1645289</a></p>
 <h3 id="cmake-examples">CMake Examples</h3>
 <h5 id="comprehensive">Comprehensive</h5>
 <p>Command line C++ barcode reader for Windows, Linux, and macOS.<br>
