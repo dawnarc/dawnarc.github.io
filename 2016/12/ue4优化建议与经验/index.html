@@ -734,8 +734,8 @@ Project Settings -&gt; Engine -&gt; Animation -&gt; 勾选 Strip Animation Data 
 <li>
 <p>过多的贴图加载：</p>
 <ul>
-<li>没有设置为streaming（勾选了<code>Never Streaming</code>）；</li>
-<li>没有生成mipmap（设置了<code>NoMipmaps</code>）；</li>
+<li>没有设置为streaming（勾选了<code>Never Streaming</code>，默认没有勾选）；</li>
+<li>没有生成mipmap（设置了<code>NoMipmaps</code>。默认会生成mipmap）；</li>
 <li>材质中过多的纹理采样（比如，为了一个材质处理各种特效，挂了N张纹理）；</li>
 <li>gameplay加载贴图不合理（比如，PVP场景加载了PVE场景的UI）；</li>
 </ul>
@@ -749,12 +749,16 @@ Project Settings -&gt; Engine -&gt; Animation -&gt; 勾选 Strip Animation Data 
 <ul>
 <li>场景内静态物体的数量越多，则shadow map res越大，内存占用也越大；</li>
 <li>阴影质量(Shadows quality)越高，则light map res越大，内存占用也越大；</li>
+<li>RHI memory(显存)中受阴影质量影响的数据类型包括：<code>Render target memory Cube</code>, <code>Render target memory 2D</code>, <code>Render target memory 3D</code>；</li>
 </ul>
 </li>
 <li>
 <p>过多的shader置换（<a href="https://therealmjp.github.io/posts/shader-permutations-part1/">Shader Permutation</a>，Unity中叫<a href="https://docs.unity3d.com/Manual/shader-variants.html">Shader Variants</a>，有的自研引擎叫做Uber Shader）会导致显存暴涨。<br>
 材质蓝图（shader graph）中使用了过多的static switch（假设有10个），且基于该material创建了数量众多的material instance（假设1024），那么当instance中的static switch随机组合（true和false），极端情况下可以生成1024个permutation（实际情况更糟，因为引擎内部还为不同lighting phase生成不同的permutation），permutation数量增长则PSO数量也随之增长，而PSO吃VRAM，最终导致显存暴涨。<br>
 这还没完：PSO数量增加则需要更多的draw和dispatch指令（由引擎将PSO绑定到command buffer并派发），进而增加CPU开销。</p>
+</li>
+<li>
+<p>手动释放Render target：<code>UKismetRenderingLibrary::ReleaseRenderTarget2D(UTextureRenderTarget2D* TextureRenderTarget)</code>。靠垃圾自动回收RT有较高的延迟，当显存吃紧时，应及时释放RT。</p>
 </li>
 <li>
 <p>PC和console设备使用<a href="https://asawicki.info/news_1755_untangling_direct3d_12_memory_heap_types_and_pools">共享显存(Shared GPU Memory)</a>。Vulkan上叫<code>VK_MEMORY_PROPERTY_HOST_CACHED_BIT</code>，D3D12上叫<code>D3D12_HEAP_TYPE_CUSTOM</code> (NUMA平台上<code>MemoryPoolPreference</code>类型为<code>D3D12_MEMORY_POOL_L0</code>，而UE4只使用了<code>D3D12_MEMORY_POOL_L1</code>类型，即VRAM)，不过这两种内存方式需要自己修改RHI，UE官方没有实现。</p>
