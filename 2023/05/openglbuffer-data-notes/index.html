@@ -365,7 +365,7 @@
               <p>keywords: OpenGL, buffer data, glBufferData, memory type</p>
 <h5 id="memory-type">Memory Type</h5>
 <ul>
-<li>system memory: RAM</li>
+<li>system memory: CPU-side memory, usually called RAM.</li>
 <li>video memory: memory on video card (Mainstream is PCI Express), usually called VRAM.</li>
 <li>AGP memory: Accelerated Graphics Port, the opposite of PCI Express, obsoleted connector on PC.</li>
 <li>shared memory:
@@ -419,7 +419,54 @@ The good thing about <code>glMapBuffer</code> is that you dont need to copy the 
 <p>If show us the code which you are using the <code>glMapBuffer</code> and how big is the data, then we can judge easier. Anyway, in the end measurements can show you which one is better.</p>
 <p>Documents:<br>
 <a href="https://www.khronos.org/opengl/wiki/Synchronization">Implicit synchronization - khronos.org</a></p>
-<hr>
+<h5 id="gl_array_buffer-vs-gl_element_array_buffer">GL_ARRAY_BUFFER vs. GL_ELEMENT_ARRAY_BUFFER</h5>
+<p>This has mostly historic reasons. Back when there were no VBOs, the pointers specified with <code>glVertexPointer</code> and similar were not &ldquo;associated&rdquo; with a OpenGL object of any kind. When VBOs got introduced this behavior carried over into the semantics of VBOs, which required a different buffer target for indices and attributes.</p>
+<p>With the introduction of generic vertex attributes such an association functionality has been added.</p>
+<p>Today it&rsquo;s mostly of a hint to the OpenGL implementation to know, in which way the data is going to be addressed, to optimize the data flow accordingly. But it also functions well as a mental reminder to the programmer, what&rsquo;s currently dealt with.</p>
+<p>Origin:<br>
+<a href="https://stackoverflow.com/a/15095302/1645289">https://stackoverflow.com/a/15095302/1645289</a></p>
+<h5 id="how-to-upload-vao-to-gpu-memory">How to upload VAO to GPU memory</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C" data-lang="C"><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> {
+</span></span><span style="display:flex;"><span>    Eigen<span style="color:#f92672">::</span>Matrix<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">float</span>, <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>, <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span><span style="color:#f92672">&gt;</span> V;		<span style="color:#75715e">//vertex buffer
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    Eigen<span style="color:#f92672">::</span>Matrix<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">uint32_t</span>, <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>, <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span><span style="color:#f92672">&gt;</span> F;	<span style="color:#75715e">//triangle index buffer
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>} mesh;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> {
+</span></span><span style="display:flex;"><span>    GLuint program;
+</span></span><span style="display:flex;"><span>    GLuint id_vao;
+</span></span><span style="display:flex;"><span>    GLuint id_vbo_position;
+</span></span><span style="display:flex;"><span>    GLuint id_ebo;
+</span></span><span style="display:flex;"><span>} vao;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">init_vao</span>()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">/* interpolate the vertex (attributes and indices) into &#39;mesh&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">	using geometry library such as Assimp or glTF. 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">	*/</span>
+</span></span><span style="display:flex;"><span>	load_mesh(<span style="color:#e6db74">&#34;C:/monkey.obj&#34;</span>, mesh)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">//vao
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	GLuint shaders[<span style="color:#ae81ff">3</span>] <span style="color:#f92672">=</span> { vs, gs, fs };
+</span></span><span style="display:flex;"><span>	create_program(vao_voxelization.program, shaders, <span style="color:#ae81ff">3</span>);
+</span></span><span style="display:flex;"><span>	glUseProgram(vao_voxelization.program);
+</span></span><span style="display:flex;"><span>	glGenVertexArrays(<span style="color:#ae81ff">1</span>, <span style="color:#f92672">&amp;</span>vao_voxelization.id_vao);
+</span></span><span style="display:flex;"><span>	glBindVertexArray(vao_voxelization.id_vao);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">//position (buffer object)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	glGenBuffers(<span style="color:#ae81ff">1</span>, <span style="color:#f92672">&amp;</span>vao_voxelization.id_vbo_position);
+</span></span><span style="display:flex;"><span>	glBindBuffer(GL_ARRAY_BUFFER, vao_voxelization.id_vbo_position);
+</span></span><span style="display:flex;"><span>	glBufferData(GL_ARRAY_BUFFER, mesh.F.cols() <span style="color:#f92672">*</span> <span style="color:#ae81ff">3</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">sizeof</span>(GLfloat), mesh.V.data(), GL_STATIC_DRAW);
+</span></span><span style="display:flex;"><span>	glVertexAttribPointer(<span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">3</span>, GL_FLOAT, GL_FALSE, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0</span>);
+</span></span><span style="display:flex;"><span>	glEnableVertexAttribArray(<span style="color:#ae81ff">0</span>);
+</span></span><span style="display:flex;"><span>	glBindBuffer(GL_ARRAY_BUFFER, <span style="color:#ae81ff">0</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">//elements (buffer object)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	glGenBuffers(<span style="color:#ae81ff">1</span>, <span style="color:#f92672">&amp;</span>vao_voxelization.id_ebo);
+</span></span><span style="display:flex;"><span>	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vao_voxelization.id_ebo);
+</span></span><span style="display:flex;"><span>	glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh.F.cols() <span style="color:#f92672">*</span> <span style="color:#ae81ff">3</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">sizeof</span>(GLuint), mesh.F.data(), GL_STATIC_DRAW);
+</span></span><span style="display:flex;"><span>	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, <span style="color:#ae81ff">0</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><hr>
 <p><code>He who thinks too much about every step he takes will always stay on one leg. -Chinese Proverbs</code></p>
               
             </div>
