@@ -371,8 +371,9 @@
 <li>shared memory:
 <ul>
 <li>on integrated GPUs, shared memory is just the system memory;</li>
-<li>take D3D12 as an example, a &ldquo;custom&rdquo; heap is the shared memory;</li>
 <li>take OpenGL for example, call <code>glBufferStorage</code> with <code>GL_CLIENT_STORAGE_BIT</code> to allocate CPU-side memory.</li>
+<li>take D3D12 as an example, <code>D3D12_HEAP_TYPE_CUSTOM</code> heap is the shared memory (on NUMA platform set <code>MemoryPoolPreference</code>as <code>D3D12_MEMORY_POOL_L0</code>);</li>
+<li>for Vulkan, call <code>VmaAllocationCreateInfo()</code> with <code>VK_MEMORY_PROPERTY_HOST_CACHED_BIT</code> which is set to <code>VmaAllocationCreateInfo::preferredFlags</code>.</li>
 </ul>
 </li>
 </ul>
@@ -425,7 +426,8 @@ The good thing about <code>glMapBuffer</code> is that you dont need to copy the 
 <p>Today it&rsquo;s mostly of a hint to the OpenGL implementation to know, in which way the data is going to be addressed, to optimize the data flow accordingly. But it also functions well as a mental reminder to the programmer, what&rsquo;s currently dealt with.</p>
 <p>Origin:<br>
 <a href="https://stackoverflow.com/a/15095302/1645289">https://stackoverflow.com/a/15095302/1645289</a></p>
-<h5 id="how-to-upload-vao-to-gpu-memory">How to upload VAO to GPU memory</h5>
+<h5 id="how-to-upload-vertices-which-addressed-by-vao-to-gpu-memory">How to upload vertices which addressed by VAO to GPU memory</h5>
+<p>Quoted from <a href="https://github.com/skanti/Mesh-Voxelization-OpenGL-Geometry-Shader">Mesh-Voxelization</a>:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C" data-lang="C"><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> {
 </span></span><span style="display:flex;"><span>    Eigen<span style="color:#f92672">::</span>Matrix<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">float</span>, <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>, <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span><span style="color:#f92672">&gt;</span> V;		<span style="color:#75715e">//vertex buffer
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    Eigen<span style="color:#f92672">::</span>Matrix<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">uint32_t</span>, <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>, <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span><span style="color:#f92672">&gt;</span> F;	<span style="color:#75715e">//triangle index buffer
@@ -466,7 +468,25 @@ The good thing about <code>glMapBuffer</code> is that you dont need to copy the 
 </span></span><span style="display:flex;"><span>	glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh.F.cols() <span style="color:#f92672">*</span> <span style="color:#ae81ff">3</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">sizeof</span>(GLuint), mesh.F.data(), GL_STATIC_DRAW);
 </span></span><span style="display:flex;"><span>	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, <span style="color:#ae81ff">0</span>);
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><hr>
+</span></span></code></pre></div><h5 id="glactivetexture-vs-glbindtexture">glActiveTexture vs. glBindTexture</h5>
+<p>Imagine the GPU like some paint processing plant.</p>
+<p>There are a number of tanks, which delivers dye to some painting machine. In the painting machine the dye is then applied to the object. Those tanks are the texture units</p>
+<p>Those tanks can be equipped with different kinds of dye. Each kind of dye requires some other kind of solvent. The &ldquo;solvent&rdquo; is the texture target. For convenience each tank is connected to some solvent supply, and but only one kind of solvent can be used at a time in each tank. So there&rsquo;s a valve/switch <code>TEXTURE_CUBE_MAP</code>, <code>TEXTURE_3D</code>, <code>TEXTURE_2D</code>, <code>TEXTURE_1D</code>. You can fill all the dye types into the tank at the same time, but since only one kind of solvent goes in, it will &ldquo;dilute&rdquo; only the kind of dye matching. So you can have each kind of texture being bound, but the binding with the &ldquo;most important&rdquo; solvent will actually go into the tank and mix with the kind of dye it belongs to.</p>
+<p>And then there&rsquo;s the dye itself, which comes from a warehouse and is filled into the tank by &ldquo;binding&rdquo; it. That&rsquo;s your texture.</p>
+<p>Origin: Differences and relationship between glActiveTexture and glBindTexture<br>
+<a href="https://stackoverflow.com/a/8868942/1645289">https://stackoverflow.com/a/8868942/1645289</a></p>
+<h5 id="glbindimagetexture-vs-glbindtexture">glBindImageTexture vs. glBindTexture</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C" data-lang="C"><span style="display:flex;"><span>layout(binding <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>) uniform sampler2D img_input;
+</span></span></code></pre></div><p>That declares a <a href="https://www.opengl.org/wiki/Sampler_%28GLSL%29">sampler</a>, which gets its data from a texture object. The binding of 0 (you can set that in the shader in GLSL 4.20) says that the 2D texture bound to texture image unit 0 (via <code>glActiveTexture(GL_TEXTURE0); glBindTexture(GL_TEXTURE_2D, ...);)</code> is the texture that will be used for this sampler.</p>
+<p>Samplers use the entire texture, including all mipmap levels and array layers. Most texture sampling functions use normalized texture coordinates ([0, 1] map to the size of the texture). Most texture sampling functions also respect <a href="https://www.opengl.org/wiki/Sampler_Object#Sampling_parameters">filtering properties and other sampling parameters</a>.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C" data-lang="C"><span style="display:flex;"><span>layout (binding <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>, rgba32f) uniform image2D img_input;
+</span></span></code></pre></div><p>This declares an image, which represents a single image from a texture. Textures can have <a href="https://www.opengl.org/wiki/Texture#Theory">multiple images</a>: mipmap levels, <a href="https://www.opengl.org/wiki/Array_Texture">array layers</a>, etc. When you use <code>glBindImageTexture</code>, you are binding a single image from a texture.</p>
+<p>Images and samplers are completely separate. They have their own set of binding indices; it&rsquo;s perfectly valid to bind a texture to <code>GL_TEXTURE0</code> and an image from a different texture to image binding 0. Using texture functions for the associated sampler will read from what is bound to <code>GL_TEXTURE0</code>, while image functions on the associated image variable will read from the image bound to image binding 0.</p>
+<p>Image access ignores all sampling parameters. <a href="https://www.opengl.org/wiki/Image_Load_Store#Image_operations">Image accessing functions</a> always use integer texel coordinates.</p>
+<p>Samplers can only read data from textures; image variables can read and/or write data, as well as perform atomic operations on them. Of course, writing data from shaders requires special care, specifically when <a href="https://www.opengl.org/wiki/Memory_Model#Incoherent_memory_access">someone goes to read that data</a>.</p>
+<p>Origin: What is the difference between glBindImageTexture() and glBindTexture()?<br>
+<a href="https://stackoverflow.com/a/37140611/1645289">https://stackoverflow.com/a/37140611/1645289</a></p>
+<hr>
 <p><code>He who thinks too much about every step he takes will always stay on one leg. -Chinese Proverbs</code></p>
               
             </div>

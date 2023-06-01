@@ -550,6 +550,49 @@ GWarn-&gt;BeginSlowTask( Description, true );
 </span></span><span style="display:flex;"><span>    {
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h5 id="how-to-draw-debug-line-in-animation-editors-viewport">How to draw debug line in Animation Editor&rsquo;s viewport.</h5>
+<p>Example from <a href="https://github.com/pafuhana1213/KawaiiPhysics/blob/602d4781ba1b23f1a44344bd59d1d31f1f649564/Plugins/KawaiiPhysics/Source/KawaiiPhysicsEd/Private/KawaiiPhysicsEditMode.cpp#L81">FKawaiiPhysicsEditMode::Render()</a>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> FKawaiiPhysicsEditMode<span style="color:#f92672">::</span>Render(<span style="color:#66d9ef">const</span> FSceneView<span style="color:#f92672">*</span> View, FViewport<span style="color:#f92672">*</span> Viewport, FPrimitiveDrawInterface<span style="color:#f92672">*</span> PDI)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> USkeletalMeshComponent<span style="color:#f92672">*</span> SkelMeshComp <span style="color:#f92672">=</span> GetAnimPreviewScene().GetPreviewMeshComponent();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#if ENGINE_MAJOR_VERSION == 5 &amp;&amp; ENGINE_MINOR_VERSION &gt;= 1
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> (SkelMeshComp <span style="color:#f92672">&amp;&amp;</span> SkelMeshComp<span style="color:#f92672">-&gt;</span>GetSkeletalMeshAsset() <span style="color:#f92672">&amp;&amp;</span> SkelMeshComp<span style="color:#f92672">-&gt;</span>GetSkeletalMeshAsset()<span style="color:#f92672">-&gt;</span>GetSkeleton())
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#else
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> (SkelMeshComp <span style="color:#f92672">&amp;&amp;</span> SkelMeshComp<span style="color:#f92672">-&gt;</span>SkeletalMesh <span style="color:#f92672">&amp;&amp;</span> SkelMeshComp<span style="color:#f92672">-&gt;</span>SkeletalMesh<span style="color:#f92672">-&gt;</span>GetSkeleton())
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#endif
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    {
+</span></span><span style="display:flex;"><span>        RenderSphericalLimits(PDI);
+</span></span><span style="display:flex;"><span>        RenderCapsuleLimit(PDI);
+</span></span><span style="display:flex;"><span>        RenderPlanerLimit(PDI);
+</span></span><span style="display:flex;"><span>        PDI<span style="color:#f92672">-&gt;</span>SetHitProxy(<span style="color:#66d9ef">nullptr</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (IsValidSelectCollision())
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            FCollisionLimitBase<span style="color:#f92672">*</span> Collision <span style="color:#f92672">=</span> GetSelectCollisionLimitRuntime();
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (Collision)
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                FTransform BoneTransform <span style="color:#f92672">=</span> FTransform<span style="color:#f92672">::</span>Identity;
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">if</span> (Collision<span style="color:#f92672">-&gt;</span>DrivingBone.BoneIndex <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">0</span>)
+</span></span><span style="display:flex;"><span>                {
+</span></span><span style="display:flex;"><span>                    BoneTransform <span style="color:#f92672">=</span> RuntimeNode<span style="color:#f92672">-&gt;</span>ForwardedPose.GetComponentSpaceTransform(
+</span></span><span style="display:flex;"><span>                        Collision<span style="color:#f92672">-&gt;</span>DrivingBone.GetCompactPoseIndex(RuntimeNode<span style="color:#f92672">-&gt;</span>ForwardedPose.GetPose().GetBoneContainer()));
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>                PDI<span style="color:#f92672">-&gt;</span>DrawPoint(BoneTransform.GetLocation(), FLinearColor<span style="color:#f92672">::</span>White, <span style="color:#ae81ff">10.0f</span>, SDPG_Foreground);
+</span></span><span style="display:flex;"><span>                DrawDashedLine(PDI, Collision<span style="color:#f92672">-&gt;</span>Location, BoneTransform.GetLocation(),
+</span></span><span style="display:flex;"><span>                    FLinearColor<span style="color:#f92672">::</span>White, <span style="color:#ae81ff">1</span>, SDPG_Foreground);
+</span></span><span style="display:flex;"><span>                DrawCoordinateSystem(PDI, BoneTransform.GetLocation(), Collision<span style="color:#f92672">-&gt;</span>Rotation.Rotator(), <span style="color:#ae81ff">20</span>, SDPG_World <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#if ENGINE_MAJOR_VERSION == 5
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    FAnimNodeEditMode<span style="color:#f92672">::</span>Render(View, Viewport, PDI);
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#else
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    FKawaiiPhysicsEditModeBase<span style="color:#f92672">::</span>Render(View, Viewport, PDI);
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#endif
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
 </span></span></code></pre></div><h3 id="testing--optimization">Testing &amp; Optimization</h3>
 <h5 id="testing-automation">Testing Automation</h5>
 <p>Automation System Overview, Overview of the automation system used for unit testing, feature testing, and content stress testing.<br>

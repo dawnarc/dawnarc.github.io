@@ -732,6 +732,9 @@ Project Settings -&gt; Engine -&gt; Animation -&gt; 勾选 Strip Animation Data 
 <h5 id="内存优化memory-issues">内存优化(Memory Issues)</h5>
 <ol>
 <li>
+<p>开发中测试用的map放到专用的文件夹下，并且通过<code>DirectoriesToNeverCook</code>（DefaultGame.ini）将其隔离，不参与打包。打包时引擎会默认扫描所有map，当启动游戏时，引擎又会加载这些map中引用的资产，导致一些不需要的资产被加载到系统内存中（即使这些临时map没有被加载），并且会导致打包时cook时长和内存占用急剧增长。</p>
+</li>
+<li>
 <p>过多的贴图加载：</p>
 <ul>
 <li>没有设置为streaming（勾选了<code>Never Streaming</code>，默认没有勾选）；</li>
@@ -761,7 +764,11 @@ Project Settings -&gt; Engine -&gt; Animation -&gt; 勾选 Strip Animation Data 
 <p>手动释放Render target：<code>UKismetRenderingLibrary::ReleaseRenderTarget2D(UTextureRenderTarget2D* TextureRenderTarget)</code>。靠垃圾自动回收RT有较高的延迟，当显存吃紧时，应及时释放RT。</p>
 </li>
 <li>
-<p>PC和console设备使用<a href="https://asawicki.info/news_1755_untangling_direct3d_12_memory_heap_types_and_pools">共享显存(Shared GPU Memory)</a>。Vulkan上叫<code>VK_MEMORY_PROPERTY_HOST_CACHED_BIT</code>，D3D12上叫<code>D3D12_HEAP_TYPE_CUSTOM</code> (NUMA平台上<code>MemoryPoolPreference</code>类型为<code>D3D12_MEMORY_POOL_L0</code>，而UE4只使用了<code>D3D12_MEMORY_POOL_L1</code>类型，即VRAM)，不过这两种内存方式需要自己修改RHI，UE官方没有实现。</p>
+<p>PC和console设备使用<a href="https://asawicki.info/news_1755_untangling_direct3d_12_memory_heap_types_and_pools">共享显存(Shared GPU Memory)</a>，UE4官方没有实现，需要自己修改RHI：</p>
+<ul>
+<li>Vulkan上叫<code>VK_MEMORY_PROPERTY_HOST_CACHED_BIT</code>（调用<code>VmaAllocationCreateInfo()</code>时在<code>VmaAllocationCreateInfo::preferredFlags</code>中指定）；</li>
+<li>D3D12上叫<code>D3D12_HEAP_TYPE_CUSTOM</code> (NUMA平台上<code>MemoryPoolPreference</code>类型为<code>D3D12_MEMORY_POOL_L0</code>，<code>D3D12_MEMORY_POOL_L1</code>为VRAM）；</li>
+</ul>
 </li>
 </ol>
 <h5 id="rhi-vulkan--d3d12">RHI (Vulkan &amp; D3D12)</h5>
