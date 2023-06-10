@@ -370,24 +370,20 @@
 <a href="http://www.nirsoft.net/utils/dll_export_viewer.html">http://www.nirsoft.net/utils/dll_export_viewer.html</a></p>
 <p><strong>CLI</strong></p>
 <p>Open a visual command console (Visual Studio Command Prompt)</p>
-<pre><code>dumpbin /ARCHIVEMEMBERS openssl.x86.lib /OUT:dump.log
-</code></pre>
-<p>or</p>
-<pre><code>lib /LIST openssl.x86.lib
-</code></pre>
-<p>or <span class="highlight-text green">just open it with 7-zip</span> :) its an AR archive.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cmd" data-lang="cmd"><span style="display:flex;"><span>dumpbin /ARCHIVEMEMBERS openssl.x86.lib /OUT:dump.log
+</span></span></code></pre></div><p>or</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cmd" data-lang="cmd"><span style="display:flex;"><span>lib /LIST openssl.x86.lib
+</span></span></code></pre></div><p>or <span class="highlight-text green">just open it with 7-zip</span> :) its an AR archive.</p>
 <p>Reference: How to See the Contents of Windows library (*.lib)<br>
 <a href="https://stackoverflow.com/a/26689684/1645289">https://stackoverflow.com/a/26689684/1645289</a></p>
 <h5 id="linux">Linux</h5>
 <p><strong>CLI</strong></p>
 <p>Command:</p>
-<pre><code>nm -C libschnoeck.a | less
-</code></pre>
-<p>Or:</p>
-<pre><code>//This will list all of the files in the archive.
-ar -t mylib.a  
-</code></pre>
-<p>Reference:<br>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>nm -C libschnoeck.a | less
+</span></span></code></pre></div><p>Or:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e">#This will list all of the files in the archive.</span>
+</span></span><span style="display:flex;"><span>ar -t mylib.a
+</span></span></code></pre></div><p>Reference:<br>
 Contents of a static library<br>
 <a href="https://stackoverflow.com/questions/3757108/contents-of-a-static-library/21320738">https://stackoverflow.com/questions/3757108/contents-of-a-static-library/21320738</a></p>
 <p>Extract object (*.o) files from an iPhone static library<br>
@@ -395,81 +391,71 @@ Contents of a static library<br>
 <h3 id="extract-all-obj-files-symbols-from-a-static-library">Extract all obj files (symbols) from a static library</h3>
 <h5 id="windows-1">Windows</h5>
 <p>This is the batch file that I ended up using with usage <code>extract.bat mylib.lib</code> or <code>extract.bat *.lib</code> even.</p>
-<pre><code>@ECHO OFF
-call &quot;C:\Program_Filesx86\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat&quot;
-
-SETLOCAL EnableDelayedExpansion
-
-:Loop
-IF &quot;%1&quot;==&quot;&quot; GOTO Continue
-
-FOR %%F in (%1) DO (
-
-    SET LIBFILE=%%F
-    SHIFT
-
-    @ECHO !LIBFILE!
-
-    FOR /F %%O IN ('lib.exe /LIST !LIBFILE! /NOLOGO') DO (
-        @SET OBJFILE=%%O
-        @ECHO !OBJFILE!
-        
-        SET OBJPATH=%%~dO%%~pO
-        SET OBJNAME=%%~nO
-
-        IF NOT EXIST &quot;!OBJPATH!&quot; md !OBJPATH!
-
-        IF EXIST &quot;!OBJFILE!&quot; ECHO !OBJFILE! exists, skipping...
-        IF NOT EXIST &quot;!OBJFILE!&quot; lib.exe /NOLOGO !LIBFILE! &quot;/EXTRACT:!OBJFILE!&quot; &quot;/OUT:!OBJFILE!&quot;
-    )
-)
-GOTO Loop
-:Continue
-</code></pre>
-<p>Reference:<br>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cmd" data-lang="cmd"><span style="display:flex;"><span>@<span style="color:#66d9ef">ECHO</span> OFF
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">call</span> <span style="color:#e6db74">&#34;C:\Program_Filesx86\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">SETLOCAL</span> EnableDelayedExpansion
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>:Loop
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">IF</span> <span style="color:#e6db74">&#34;</span>%1<span style="color:#e6db74">&#34;</span><span style="color:#f92672">==</span><span style="color:#e6db74">&#34;&#34;</span> <span style="color:#66d9ef">GOTO</span> Continue
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">FOR</span> <span style="color:#ae81ff">%%</span>F <span style="color:#66d9ef">in</span> (%1) <span style="color:#66d9ef">DO</span> (
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">SET</span> LIBFILE=<span style="color:#ae81ff">%%</span>F
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">SHIFT</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    @<span style="color:#66d9ef">ECHO</span> !LIBFILE!
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">FOR</span> <span style="color:#66d9ef">/F</span> <span style="color:#ae81ff">%%</span>O <span style="color:#66d9ef">IN</span> (<span style="color:#e6db74">&#39;lib.exe /LIST !LIBFILE! /NOLOGO&#39;</span>) <span style="color:#66d9ef">DO</span> (
+</span></span><span style="display:flex;"><span>        @<span style="color:#66d9ef">SET</span> OBJFILE=<span style="color:#ae81ff">%%</span>O
+</span></span><span style="display:flex;"><span>        @<span style="color:#66d9ef">ECHO</span> !OBJFILE!
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">SET</span> OBJPATH=<span style="color:#ae81ff">%%</span>~dO<span style="color:#ae81ff">%%</span>~pO
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">SET</span> OBJNAME=<span style="color:#ae81ff">%%</span>~nO
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">IF</span> <span style="color:#66d9ef">NOT</span> <span style="color:#66d9ef">EXIST</span> <span style="color:#e6db74">&#34;</span>!OBJPATH!<span style="color:#e6db74">&#34;</span> <span style="color:#66d9ef">md</span> !OBJPATH!
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">IF</span> <span style="color:#66d9ef">EXIST</span> <span style="color:#e6db74">&#34;</span>!OBJFILE!<span style="color:#e6db74">&#34;</span> <span style="color:#66d9ef">ECHO</span> !OBJFILE! exists, skipping...
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">IF</span> <span style="color:#66d9ef">NOT</span> <span style="color:#66d9ef">EXIST</span> <span style="color:#e6db74">&#34;</span>!OBJFILE!<span style="color:#e6db74">&#34;</span> lib.exe /NOLOGO !LIBFILE! <span style="color:#e6db74">&#34;/EXTRACT:!OBJFILE!&#34;</span> <span style="color:#e6db74">&#34;/OUT:!OBJFILE!&#34;</span>
+</span></span><span style="display:flex;"><span>    )
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">GOTO</span> Loop
+</span></span><span style="display:flex;"><span>:Continue
+</span></span></code></pre></div><p>Reference:<br>
 <a href="https://stackoverflow.com/a/62896582">https://stackoverflow.com/a/62896582</a></p>
 <h5 id="linux-1">Linux</h5>
-<pre><code>$ mkdir object
-$ cp libarith.a object/
-$ cd object
-$ ar x libarith.a
-$ ls *.o
-addition.o
-multiplication.o
-</code></pre>
-<p>Or:</p>
-<pre><code>//This will extract the object give myobj.o from the library mylib.a
-ar -xv mylib.a myobj.o 
-</code></pre>
-<p>UNIX ar Examples: How To Create, View, Extract, Modify C Archive Files (*.a)<br>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>$ mkdir object
+</span></span><span style="display:flex;"><span>$ cp libarith.a object/
+</span></span><span style="display:flex;"><span>$ cd object
+</span></span><span style="display:flex;"><span>$ ar x libarith.a
+</span></span><span style="display:flex;"><span>$ ls *.o
+</span></span><span style="display:flex;"><span>addition.o
+</span></span><span style="display:flex;"><span>multiplication.o
+</span></span></code></pre></div><p>Or:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e">#This will extract the object give myobj.o from the library mylib.a</span>
+</span></span><span style="display:flex;"><span>ar -xv mylib.a myobj.o 
+</span></span></code></pre></div><p>UNIX ar Examples: How To Create, View, Extract, Modify C Archive Files (*.a)<br>
 <a href="https://www.thegeekstuff.com/2010/08/ar-command-examples/">https://www.thegeekstuff.com/2010/08/ar-command-examples/</a></p>
 <h3 id="create--combine--build-a-new-static-library-from-obj-files-symbols">Create / Combine / Build a new static library from obj files (symbols)</h3>
 <h5 id="windows-2">Windows</h5>
 <p>Create static library:</p>
-<pre><code>LIB.EXE /OUT:MYLIB.LIB FILE1.OBJ FILE2.OBJ
-</code></pre>
-<p>Create dynamic library:</p>
-<pre><code>LINK.EXE /DLL /OUT:MYLIB.DLL FILE3.OBJ FILE4.OBJ
-</code></pre>
-<p>Create library from all objects:</p>
-<pre><code>lib /out:libbgi.lib *.obj
-</code></pre>
-<p>Link from source file:</p>
-<pre><code>cl /LD foo.c bar.c baz.c /FeMyImage.dll
-</code></pre>
-<p>Or:</p>
-<pre><code>cl /LD foo.c bar.c baz.c /link /out:MyImage.dll
-</code></pre>
-<p>Reference:<br>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cmd" data-lang="cmd"><span style="display:flex;"><span>LIB.EXE /OUT:MYLIB.LIB FILE1.OBJ FILE2.OBJ
+</span></span></code></pre></div><p>Create dynamic library:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cmd" data-lang="cmd"><span style="display:flex;"><span>LINK.EXE /DLL /OUT:MYLIB.DLL FILE3.OBJ FILE4.OBJ
+</span></span></code></pre></div><p>Create library from all objects:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cmd" data-lang="cmd"><span style="display:flex;"><span>lib /out:libbgi.lib *.obj
+</span></span></code></pre></div><p>Link from source file:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cmd" data-lang="cmd"><span style="display:flex;"><span>cl /LD foo.c bar.c baz.c /FeMyImage.dll
+</span></span></code></pre></div><p>Or:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cmd" data-lang="cmd"><span style="display:flex;"><span>cl /LD foo.c bar.c baz.c /link /out:MyImage.dll
+</span></span></code></pre></div><p>Reference:<br>
 <a href="https://stackoverflow.com/a/2727294/1645289">https://stackoverflow.com/a/2727294/1645289</a></p>
 <p><a href="https://stackoverflow.com/a/31830252/1645289">https://stackoverflow.com/a/31830252/1645289</a></p>
 <h5 id="linux-2">Linux</h5>
-<pre><code>ar -r libsmall.a obj1.o obj2.o obj3.o
-</code></pre>
-<p>Or:</p>
-<pre><code>ar -rcs libexample.a *.o
-</code></pre>
-<p>Link the library with the switch:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>ar -r libsmall.a obj1.o obj2.o obj3.o
+</span></span></code></pre></div><p>or:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>ar -rcs libexample.a *.o
+</span></span></code></pre></div><p>Link the library with the switch:</p>
 <pre><code>-lexample
 </code></pre>
 <p>Reference:<br>
@@ -477,9 +463,8 @@ ar -xv mylib.a myobj.o
 <p><a href="https://stackoverflow.com/a/33981949">https://stackoverflow.com/a/33981949</a></p>
 <h3 id="linking-static-libraries-to-other-static-libraries">Linking static libraries to other static libraries</h3>
 <h5 id="windows-3">Windows</h5>
-<pre><code>lib.exe /OUT:compositelib.lib  lib1.lib lib2.lib
-</code></pre>
-<p><a href="https://stackoverflow.com/a/2157735/1645289">https://stackoverflow.com/a/2157735/1645289</a></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cmd" data-lang="cmd"><span style="display:flex;"><span>lib.exe /OUT:compositelib.lib  lib1.lib lib2.lib
+</span></span></code></pre></div><p><a href="https://stackoverflow.com/a/2157735/1645289">https://stackoverflow.com/a/2157735/1645289</a></p>
 <hr>
 <p><code>你不知道的，就伤害不到你。──罗伯特·佩恩·沃伦（Robert Penn Warren）《国王的人马》（All The King's Men）</code></p>
               

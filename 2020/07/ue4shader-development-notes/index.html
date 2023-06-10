@@ -363,123 +363,121 @@
                      (adsbygoogle = window.adsbygoogle || []).push({});
                 </script>
               <p>Keywords: UE4, Shader Development, Material Optimization</p>
-<h3 id="environment-setup">Environment Setup</h3>
-<h5 id="steps">Steps</h5>
-<ol>
-<li>
-<p>Set <code>LoadingPhase</code> as <code>PostConfigInit</code>, default is <code>Default</code>.<br>
+<h3 id="common-case">Common Case</h3>
+<h5 id="environment-setup">Environment Setup</h5>
+<p>1, Set <code>LoadingPhase</code> as <code>PostConfigInit</code>, default is <code>Default</code>.<br>
 e.g. TestProj.uproject:</p>
-<pre><code> {
-     &quot;FileVersion&quot;: 3,
-     &quot;EngineAssociation&quot;: &quot;4.25&quot;,
-     &quot;Category&quot;: &quot;&quot;,
-     &quot;Description&quot;: &quot;&quot;,
-     &quot;Modules&quot;: [
-         {
-             &quot;Name&quot;: &quot;TestProj&quot;,
-             &quot;Type&quot;: &quot;Runtime&quot;,
-             &quot;LoadingPhase&quot;: &quot;PostConfigInit&quot;
-         }
-     ]
- }
+<pre><code>{
+    &quot;FileVersion&quot;: 3,
+    &quot;EngineAssociation&quot;: &quot;4.25&quot;,
+    &quot;Category&quot;: &quot;&quot;,
+    &quot;Description&quot;: &quot;&quot;,
+    &quot;Modules&quot;: [
+        {
+            &quot;Name&quot;: &quot;TestProj&quot;,
+            &quot;Type&quot;: &quot;Runtime&quot;,
+            &quot;LoadingPhase&quot;: &quot;PostConfigInit&quot;
+        }
+    ]
+}
 </code></pre>
 <p>Otherwise there&rsquo;s error on building:</p>
-<pre><code> Shader type was loaded after engine init, use ELoadingPhase::PostConfigInit on your module to cause it to load earlier.
+<pre><code>Shader type was loaded after engine init, use ELoadingPhase::PostConfigInit on your module to cause it to load earlier.
 </code></pre>
-</li>
-</ol>
 <figure><img src="https://dawnarc.com/img/2020/20200712-[UE4]Shader%20Development%20Notes/[UE4]Shader%20Development%20Notes%20-%2001.gif"/>
 </figure>
 
-<ol start="2">
-<li>
-<p>Turn on <code>r.ShaderDevelopmentMode</code> in <code>\Engine\Config\ConsoleVariables.ini</code>.<br>
+<p>2, Turn on <code>r.ShaderDevelopmentMode</code> in <code>\Engine\Config\ConsoleVariables.ini</code>.<br>
 ConsoleVariables.ini:</p>
-<pre><code> [Startup]
- ; Uncomment to get detailed logs on shader compiles and the opportunity to retry on errors
- r.ShaderDevelopmentMode=1
+<pre tabindex="0"><code>[Startup]
+; Uncomment to get detailed logs on shader compiles and the opportunity to retry on errors
+r.ShaderDevelopmentMode=1
+</code></pre><p>Otherwise there&rsquo;s error on building:</p>
+<pre><code>Failed to compile global shader XXXX. Enable `r.ShaderDevelopmentMode` in ConsoleVariables.ini for retries.
 </code></pre>
-<p>Otherwise there&rsquo;s error on building:</p>
-<pre><code> Failed to compile global shader XXXX. Enable `r.ShaderDevelopmentMode` in ConsoleVariables.ini for retries.
-</code></pre>
-</li>
-</ol>
 <figure><img src="https://dawnarc.com/img/2020/20200712-[UE4]Shader%20Development%20Notes/[UE4]Shader%20Development%20Notes%20-%2002.gif"/>
 </figure>
 
-<ol start="3">
-<li>
-<p>Add <code>RenderCore</code>, <code>Renderer</code> in your <code>.Build.cs</code>. Maybe <code>RHI</code> is also need to be added.</p>
-<pre><code> PublicDependencyModuleNames.AddRange(new string[] { &quot;RenderCore&quot;, &quot;Renderer&quot;, &quot;RHI&quot; });
+<p>3, Add <code>RenderCore</code>, <code>Renderer</code> in your <code>.Build.cs</code>. Maybe <code>RHI</code> is also need to be added.</p>
+<pre><code>PublicDependencyModuleNames.AddRange(new string[] { &quot;RenderCore&quot;, &quot;Renderer&quot;, &quot;RHI&quot; });
 </code></pre>
-</li>
-<li>
-<p>Now you can setup your shader source in your game source, and these shader would be compiled on editor starting.<br>
+<p>4, Now you can setup your shader source in your game source, and these shader would be compiled on editor starting.<br>
 MyActor.cpp (quoted from <code>Engine\Source\Runtime\Renderer\Private\PostProcess\PostProcessVisualizeBuffer.cpp</code>):</p>
-<pre><code> namespace
- {
-     class FVisualizeBufferPS : public FGlobalShader
-     {
-     public:
-         DECLARE_GLOBAL_SHADER(FVisualizeBufferPS);
-         SHADER_USE_PARAMETER_STRUCT(FVisualizeBufferPS, FGlobalShader);
-
-         BEGIN_SHADER_PARAMETER_STRUCT(FParameters, )
-             SHADER_PARAMETER_STRUCT(FScreenPassTextureViewportParameters, Output)
-             SHADER_PARAMETER_RDG_TEXTURE(Texture2D, InputTexture)
-             SHADER_PARAMETER_SAMPLER(SamplerState, InputSampler)
-             SHADER_PARAMETER(FLinearColor, SelectionColor)
-             RENDER_TARGET_BINDING_SLOTS()
-         END_SHADER_PARAMETER_STRUCT()
-
-         static bool ShouldCompilePermutation(const FGlobalShaderPermutationParameters&amp; Parameters)
-         {
-             return IsFeatureLevelSupported(Parameters.Platform, ERHIFeatureLevel::ES3_1);
-         }
-     };
-
-     IMPLEMENT_GLOBAL_SHADER(FVisualizeBufferPS, &quot;/Engine/Private/PostProcessVisualizeBuffer.usf&quot;, &quot;MainPS&quot;, SF_Pixel);
-
-     FScreenPassTexture AddVisualizeBufferPass(FRDGBuilder&amp; GraphBuilder, const FViewInfo&amp; View, const FVisualizeBufferInputs&amp; Inputs)
-     {
-         ...
-         FVisualizeBufferPS::FParameters* PassParameters = GraphBuilder.AllocParameters&lt;FVisualizeBufferPS::FParameters&gt;();
-         PassParameters-&gt;Output = GetScreenPassTextureViewportParameters(OutputViewport);
-         PassParameters-&gt;RenderTargets[0] = Output.GetRenderTargetBinding();
-         PassParameters-&gt;InputTexture = Tile.Input.Texture;
-         PassParameters-&gt;InputSampler = BilinearClampSampler;
-         PassParameters-&gt;SelectionColor = SelectionColor;
-
-         TShaderMapRef&lt;FVisualizeBufferPS&gt; PixelShader(View.ShaderMap);
-         ...
-     }
-
-     void Test_RenderThread(FRHICommandListImmediate&amp; RHICmdList)
-     {
-         ...
-         TShaderMapRef&lt;FDownsamplePS&gt; PixelShader(ShaderMap, PermutationVector);
-         ...
-     }
- }
-
- AMyActor::TestFun()
- {
-     ENQUEUE_RENDER_COMMAND(FDownsampleTestCommand)(
-     [](FRHICommandListImmediate&amp; RHICmdList)
-     {
-         Test_RenderThread(RHICmdList);
-     });
- }
-</code></pre>
-</li>
-<li>
-<p>If want to specify the Shader Type (Global, Material, MeshMaterial, Niagara etc.), use <code>IMPLEMENT_SHADER_TYPE</code> instead of <code>IMPLEMENT_GLOBAL_SHADER</code>, see the example of <code>PostProcessMaterial.cpp</code> in engine.<br>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">namespace</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">FVisualizeBufferPS</span> <span style="color:#f92672">:</span> <span style="color:#66d9ef">public</span> FGlobalShader
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>        DECLARE_GLOBAL_SHADER(FVisualizeBufferPS);
+</span></span><span style="display:flex;"><span>        SHADER_USE_PARAMETER_STRUCT(FVisualizeBufferPS, FGlobalShader);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        BEGIN_SHADER_PARAMETER_STRUCT(FParameters, )
+</span></span><span style="display:flex;"><span>            SHADER_PARAMETER_STRUCT(FScreenPassTextureViewportParameters, Output)
+</span></span><span style="display:flex;"><span>            SHADER_PARAMETER_RDG_TEXTURE(Texture2D, InputTexture)
+</span></span><span style="display:flex;"><span>            SHADER_PARAMETER_SAMPLER(SamplerState, InputSampler)
+</span></span><span style="display:flex;"><span>            SHADER_PARAMETER(FLinearColor, SelectionColor)
+</span></span><span style="display:flex;"><span>            RENDER_TARGET_BINDING_SLOTS()
+</span></span><span style="display:flex;"><span>        END_SHADER_PARAMETER_STRUCT()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">bool</span> ShouldCompilePermutation(<span style="color:#66d9ef">const</span> FGlobalShaderPermutationParameters<span style="color:#f92672">&amp;</span> Parameters)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">IsFeatureLevelSupported</span>(Parameters.Platform, ERHIFeatureLevel<span style="color:#f92672">::</span>ES3_1);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    };
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    IMPLEMENT_GLOBAL_SHADER(FVisualizeBufferPS, <span style="color:#e6db74">&#34;/Engine/Private/PostProcessVisualizeBuffer.usf&#34;</span>, <span style="color:#e6db74">&#34;MainPS&#34;</span>, SF_Pixel);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    FScreenPassTexture <span style="color:#a6e22e">AddVisualizeBufferPass</span>(FRDGBuilder<span style="color:#f92672">&amp;</span> GraphBuilder, <span style="color:#66d9ef">const</span> FViewInfo<span style="color:#f92672">&amp;</span> View, <span style="color:#66d9ef">const</span> FVisualizeBufferInputs<span style="color:#f92672">&amp;</span> Inputs)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        ...
+</span></span><span style="display:flex;"><span>        FVisualizeBufferPS<span style="color:#f92672">::</span>FParameters<span style="color:#f92672">*</span> PassParameters <span style="color:#f92672">=</span> GraphBuilder.AllocParameters<span style="color:#f92672">&lt;</span>FVisualizeBufferPS<span style="color:#f92672">::</span>FParameters<span style="color:#f92672">&gt;</span>();
+</span></span><span style="display:flex;"><span>        PassParameters<span style="color:#f92672">-&gt;</span>Output <span style="color:#f92672">=</span> GetScreenPassTextureViewportParameters(OutputViewport);
+</span></span><span style="display:flex;"><span>        PassParameters<span style="color:#f92672">-&gt;</span>RenderTargets[<span style="color:#ae81ff">0</span>] <span style="color:#f92672">=</span> Output.GetRenderTargetBinding();
+</span></span><span style="display:flex;"><span>        PassParameters<span style="color:#f92672">-&gt;</span>InputTexture <span style="color:#f92672">=</span> Tile.Input.Texture;
+</span></span><span style="display:flex;"><span>        PassParameters<span style="color:#f92672">-&gt;</span>InputSampler <span style="color:#f92672">=</span> BilinearClampSampler;
+</span></span><span style="display:flex;"><span>        PassParameters<span style="color:#f92672">-&gt;</span>SelectionColor <span style="color:#f92672">=</span> SelectionColor;
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        TShaderMapRef<span style="color:#f92672">&lt;</span>FVisualizeBufferPS<span style="color:#f92672">&gt;</span> PixelShader(View.ShaderMap);
+</span></span><span style="display:flex;"><span>        ...
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">Test_RenderThread</span>(FRHICommandListImmediate<span style="color:#f92672">&amp;</span> RHICmdList)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        ...
+</span></span><span style="display:flex;"><span>        TShaderMapRef<span style="color:#f92672">&lt;</span>FDownsamplePS<span style="color:#f92672">&gt;</span> PixelShader(ShaderMap, PermutationVector);
+</span></span><span style="display:flex;"><span>        ...
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>AMyActor<span style="color:#f92672">::</span>TestFun()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    ENQUEUE_RENDER_COMMAND(FDownsampleTestCommand)(
+</span></span><span style="display:flex;"><span>    [](FRHICommandListImmediate<span style="color:#f92672">&amp;</span> RHICmdList)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        Test_RenderThread(RHICmdList);
+</span></span><span style="display:flex;"><span>    });
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>5, If want to specify the Shader Type (Global, Material, MeshMaterial, Niagara etc.), use <code>IMPLEMENT_SHADER_TYPE</code> instead of <code>IMPLEMENT_GLOBAL_SHADER</code>, see the example of <code>PostProcessMaterial.cpp</code> in engine.<br>
 quoted from <code>Engine\Source\Runtime\Renderer\Private\PostProcess\PostProcessMaterial.cpp</code>:</p>
-<pre><code> IMPLEMENT_SHADER_TYPE(,FPostProcessMaterialVS, TEXT(&quot;/Engine/Private/PostProcessMaterialShaders.usf&quot;), TEXT(&quot;MainVS&quot;), SF_Vertex);
- IMPLEMENT_SHADER_TYPE(,FPostProcessMaterialPS, TEXT(&quot;/Engine/Private/PostProcessMaterialShaders.usf&quot;), TEXT(&quot;MainPS&quot;), SF_Pixel);
-</code></pre>
-</li>
-</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>IMPLEMENT_SHADER_TYPE(,FPostProcessMaterialVS, TEXT(<span style="color:#e6db74">&#34;/Engine/Private/PostProcessMaterialShaders.usf&#34;</span>), TEXT(<span style="color:#e6db74">&#34;MainVS&#34;</span>), SF_Vertex);
+</span></span><span style="display:flex;"><span>IMPLEMENT_SHADER_TYPE(,FPostProcessMaterialPS, TEXT(<span style="color:#e6db74">&#34;/Engine/Private/PostProcessMaterialShaders.usf&#34;</span>), TEXT(<span style="color:#e6db74">&#34;MainPS&#34;</span>), SF_Pixel);
+</span></span></code></pre></div><h5 id="how-to-dump-shader-statistics-of-all-materials">How to dump shader statistics of all materials</h5>
+<p>UE5 solution:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#e6db74">&#34;D:\UE_5.2\Engine\Binaries\Win64\UnrealEditor-Cmd.exe&#34;</span> <span style="color:#e6db74">&#34;D:\TestProj\TestProj.uproject&#34;</span> -run<span style="color:#f92672">=</span>DumpMaterialShaderTypes  -targetplatform<span style="color:#f92672">=</span>Windows
+</span></span></code></pre></div><p>Then results output to <code>[MyProj]\Saved\MaterialStats\</code>.
+<div class="alert warning ">
+  <p><code>DumpMaterialShaderTypes</code> only works for UE5.</p>
+</div></p>
+<p>UE4 solution:<br>
+Turn on follows switch in <code>Engine\Config\ConsoleVariables.ini</code> and restart editor (if want to build package from editor):</p>
+<pre tabindex="0"><code>r.DumpShaderDebugInfo=1
+r.DumpShaderDebugShortNames=1
+</code></pre><p>Then execute cook command:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>D:<span style="color:#ae81ff">\\</span>UE4<span style="color:#ae81ff">\\</span>Engine<span style="color:#ae81ff">\\</span>Binaries<span style="color:#ae81ff">\\</span>Win64<span style="color:#ae81ff">\\</span>UE4Editor-Cmd.exe D:<span style="color:#ae81ff">\\</span>TestTP<span style="color:#ae81ff">\\</span>TestTP.uproject -run<span style="color:#f92672">=</span>Cook -TargetPlatform<span style="color:#f92672">=</span>WindowsNoEditor -fileopenlog -ddc<span style="color:#f92672">=</span>DerivedDataBackendGraph -unversioned -abslog<span style="color:#f92672">=</span>D:<span style="color:#ae81ff">\\</span>UE4<span style="color:#ae81ff">\\</span>Engine<span style="color:#ae81ff">\\</span>Programs<span style="color:#ae81ff">\\</span>AutomationTool<span style="color:#ae81ff">\\</span>Saved<span style="color:#ae81ff">\\</span>Cook-2023.06.09-17.05.16.txt -stdout -CrashForUAT -unattended -NoLogTimes -UTF8Output
+</span></span></code></pre></div><p><div class="alert success ">
+  <p>This cook command also will be executed automatically while building <code>Development</code> package.</p>
+</div>
+Then statistics data output to directory: <code>[MyProj]/Saved/MaterialStats/*.csv</code>.</p>
 <h3 id="references">References</h3>
 <h5 id="official-documents">Official Documents</h5>
 <p><a href="https://docs.unrealengine.com/4.27/en-US/ProgrammingAndScripting/Rendering/ShaderDevelopment/">Shader Development</a><br>

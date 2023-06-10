@@ -396,7 +396,31 @@ UE4Editor-Engine.dll!UWorld::Tick(ELevelTick TickType, float DeltaSeconds) Line 
 UE4Editor-UnrealEd.dll!UEditorEngine::Tick(float DeltaSeconds, bool bIdleMode) Line 1481    
 UE4Editor-UnrealEd.dll!UUnrealEdEngine::Tick(float DeltaSeconds, bool bIdleMode) Line 401    
 UE4Editor.exe!FEngineLoop::Tick() Line 3320    
-[Inline Frame] UE4Editor.exe!EngineTick() Line 62    
+[Inline Frame] UE4Editor.exe!EngineTick() Line 62
+</code></pre>
+<p>Callstack from <code>LoadSynchronous</code> to <code>FAsyncLoadEventQueue::AddAsyncEvent</code>:</p>
+<pre><code>FAsyncLoadEventQueue::AddAsyncEvent(int32 UserPriority, int32 PackageSerialNumber, int32 EventSystemPriority, TFunction&lt;void(FAsyncLoadEventArgs&amp; Args)&gt;&amp;&amp; Payload) Line CoreUObject\Private\Serialization\AsyncLoadingThread.h(88)
+FAsyncLoadingThread::QueueEvent_CreateLinker(FAsyncPackage * Package, int EventSystemPriority) Line CoreUObject\Private\Serialization\AsyncLoading.cpp(1360)
+FAsyncLoadingThread::InsertPackage(FAsyncPackage * Package, bool bReinsert, FAsyncLoadingThread::EAsyncPackageInsertMode InsertMode) Line CoreUObject\Private\Serialization\AsyncLoading.cpp(4046)
+FAsyncPackage::LoadImports_Event() Line CoreUObject\Private\Serialization\AsyncLoading.cpp(1843)
+FAsyncPackage::Event_StartImportPackages() Line CoreUObject\Private\Serialization\AsyncLoading.cpp(1616)
+FAsyncLoadingThread::QueueEvent_StartImportPackages::__l2::&lt;lambda&gt;(FAsyncLoadEventArgs &amp; Args) Line CoreUObject\Private\Serialization\AsyncLoading.cpp(1606)
+UE4Function_Private::TFunctionRefCaller&lt;void &lt;lambda&gt;(FAsyncLoadEventArgs &amp;),void __cdecl(FAsyncLoadEventArgs &amp;)&gt;::Call(void * Obj, FAsyncLoadEventArgs &amp; &lt;Params_0&gt;) Line Core\Public\Templates\Function.h(549)
+UE4Function_Private::TFunctionRefBase&lt;UE4Function_Private::TFunctionStorage&lt;0&gt;,void __cdecl(FAsyncLoadEventArgs &amp;)&gt;::operator()(FAsyncLoadEventArgs &amp; &lt;Params_0&gt;) Line Core\Public\Templates\Function.h(677)
+FAsyncLoadEventQueue::PopAndExecute(FAsyncLoadEventArgs &amp; Args) Line CoreUObject\Private\Serialization\AsyncLoadingThread.h(109)
+FAsyncLoadingThread::ProcessAsyncLoading(int &amp; OutPackagesProcessed, bool bUseTimeLimit, bool bUseFullTimeLimit, float TimeLimit, FFlushTree * FlushTree) Line CoreUObject\Private\Serialization\AsyncLoading.cpp(4150)
+FAsyncLoadingThread::TickAsyncThread(bool bUseTimeLimit, bool bUseFullTimeLimit, float TimeLimit, bool &amp; bDidSomething, FFlushTree * FlushTree) Line CoreUObject\Private\Serialization\AsyncLoading.cpp(4936)
+FAsyncLoadingThread::TickAsyncLoading(bool bUseTimeLimit, bool bUseFullTimeLimit, float TimeLimit, FFlushTree * FlushTree) Line CoreUObject\Private\Serialization\AsyncLoading.cpp(4636)
+FAsyncLoadingThread::FlushLoading(int PackageID) Line CoreUObject\Private\Serialization\AsyncLoading.cpp(7102)
+FlushAsyncLoading(int PackageID) Line CoreUObject\Private\Serialization\AsyncPackageLoader.cpp(643)
+LoadPackageInternal(UPackage * InOuter, const wchar_t * InLongPackageNameOrFilename, unsigned int LoadFlags, FLinkerLoad * ImportLinker, FArchive * InReaderOverride, const FLinkerInstancingContext * InstancingContext) Line CoreUObject\Private\UObject\UObjectGlobals.cpp(1169)
+LoadPackage(UPackage * InOuter, const wchar_t * InLongPackageName, unsigned int LoadFlags, FArchive * InReaderOverride, const FLinkerInstancingContext * InstancingContext) Line CoreUObject\Private\UObject\UObjectGlobals.cpp(1491)
+ResolveName(UObject * &amp; InPackage, FString &amp; InOutName, bool Create, bool Throw, unsigned int LoadFlags, const FLinkerInstancingContext * InstancingContext) Line CoreUObject\Private\UObject\UObjectGlobals.cpp(791)
+StaticLoadObjectInternal(UClass * ObjectClass, UObject * InOuter, const wchar_t * InName, const wchar_t * Filename, unsigned int LoadFlags, UPackageMap * Sandbox, bool bAllowObjectReconciliation, const FLinkerInstancingContext * InstancingContext) Line CoreUObject\Private\UObject\UObjectGlobals.cpp(865)
+StaticLoadObject(UClass * ObjectClass, UObject * InOuter, const wchar_t * InName, const wchar_t * Filename, unsigned int LoadFlags, UPackageMap * Sandbox, bool bAllowObjectReconciliation, const FLinkerInstancingContext * InstancingContext) Line CoreUObject\Private\UObject\UObjectGlobals.cpp(950)
+FSoftObjectPath::TryLoad(FUObjectSerializeContext * InLoadContext) Line CoreUObject\Private\UObject\SoftObjectPath.cpp(443)
+FSoftObjectPtr::LoadSynchronous() Line CoreUObject\Public\UObject\SoftObjectPtr.h(57)
+TSoftObjectPtr&lt;UObject&gt;::LoadSynchronous() Line CoreUObject\Public\UObject\SoftObjectPtr.h(302)
 </code></pre>
 <p>Interface of AsynLoading process：<code>Engine\Source\Runtime\CoreUObject\Private\Serialization\AsyncLoading.cpp</code></p>
 <pre><code>int32 LoadPackageAsync(const FString&amp; InName, const FGuid* InGuid /*= nullptr*/, const TCHAR* InPackageToLoadFrom /*= nullptr*/, FLoadPackageAsyncDelegate InCompletionDelegate /*= FLoadPackageAsyncDelegate()*/, EPackageFlags InPackageFlags /*= PKG_None*/, int32 InPIEInstanceID /*= INDEX_NONE*/, int32 InPackagePriority /*= 0*/)
