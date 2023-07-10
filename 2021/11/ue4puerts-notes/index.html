@@ -380,60 +380,59 @@
 </ul>
 <h5 id="extension-how-to-addbind-other-unreal-api-in-uedts">Extension: how to add(bind) other Unreal API in ue.d.ts</h5>
 <p>Add <code>UUserWidget::GetWidgetFromName()</code> in ue.d.ts:</p>
-<pre><code>#include &quot;CoreMinimal.h&quot;
-#include &quot;Binding.hpp&quot;
-#include &quot;UEDataBinding.hpp&quot;
-#include &quot;Blueprint/UserWidget.h&quot;
-
-UsingUClass(UObject);
-UsingUClass(UClass);
-#if !defined(ENGINE_INDEPENDENT_JSENV)
-UsingUClass(UWorld);    // for return type
-UsingUClass(USceneComponent);
-UsingUClass(UActorComponent);
-UsingUClass(UUserWidget);
-UsingUClass(UWidget);
-#endif
-
-struct AutoRegisterForUE
-{
-    AutoRegisterForUE()
-    {
-        puerts::DefineClass&lt;UObject&gt;()
-#if ENGINE_MAJOR_VERSION &gt;= 4 &amp;&amp; ENGINE_MINOR_VERSION &gt;= 23
-            .Method(&quot;CreateDefaultSubobject&quot;,
-                SelectFunction(UObject * (UObject::*) (FName, UClass*, UClass*, bool, bool), &amp;UObject::CreateDefaultSubobject))
-#else
-            .Method(&quot;CreateDefaultSubobject&quot;, SelectFunction(UObject * (UObject::*) (FName, UClass*, UClass*, bool, bool, bool),
-                                                  &amp;UObject::CreateDefaultSubobject))
-#endif
-            .Method(&quot;GetName&quot;, SelectFunction(FString(UObjectBaseUtility::*)() const, &amp;UObjectBaseUtility::GetName))
-            .Method(&quot;GetOuter&quot;, MakeFunction(&amp;UObject::GetOuter))
-            .Method(&quot;GetClass&quot;, MakeFunction(&amp;UObject::GetClass))
-#if !defined(ENGINE_INDEPENDENT_JSENV)
-            .Method(&quot;GetWorld&quot;, MakeFunction(&amp;UObject::GetWorld))
-#endif
-            .Register();
-
-#if !defined(ENGINE_INDEPENDENT_JSENV)
-        puerts::DefineClass&lt;USceneComponent&gt;()
-            .Method(&quot;SetupAttachment&quot;, MakeFunction(&amp;USceneComponent::SetupAttachment))
-            .Register();
-
-        puerts::DefineClass&lt;UActorComponent&gt;()
-            .Method(&quot;RegisterComponent&quot;, MakeFunction(&amp;UActorComponent::RegisterComponent))
-            .Register();
-        
-        puerts::DefineClass&lt;UUserWidget&gt;()
-            .Method(&quot;GetWidgetFromName&quot;, SelectFunction(UWidget* (UUserWidget::*) (const FName&amp;) const, &amp;UUserWidget::GetWidgetFromName))
-            .Register();
-#endif
-    }
-};
-
-AutoRegisterForUE _AutoRegisterForUE__;
-</code></pre>
-<h5 id="binding">Binding</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;CoreMinimal.h&#34;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;Binding.hpp&#34;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;UEDataBinding.hpp&#34;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;Blueprint/UserWidget.h&#34;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>UsingUClass(UObject);
+</span></span><span style="display:flex;"><span>UsingUClass(UClass);
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#if !defined(ENGINE_INDEPENDENT_JSENV)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>UsingUClass(UWorld);    <span style="color:#75715e">// for return type
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>UsingUClass(USceneComponent);
+</span></span><span style="display:flex;"><span>UsingUClass(UActorComponent);
+</span></span><span style="display:flex;"><span>UsingUClass(UUserWidget);
+</span></span><span style="display:flex;"><span>UsingUClass(UWidget);
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#endif
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">AutoRegisterForUE</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    AutoRegisterForUE()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        puerts<span style="color:#f92672">::</span>DefineClass<span style="color:#f92672">&lt;</span>UObject<span style="color:#f92672">&gt;</span>()
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#if ENGINE_MAJOR_VERSION &gt;= 4 &amp;&amp; ENGINE_MINOR_VERSION &gt;= 23
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            .Method(<span style="color:#e6db74">&#34;CreateDefaultSubobject&#34;</span>,
+</span></span><span style="display:flex;"><span>                SelectFunction(UObject <span style="color:#f92672">*</span> (UObject<span style="color:#f92672">::*</span>) (FName, UClass<span style="color:#f92672">*</span>, UClass<span style="color:#f92672">*</span>, <span style="color:#66d9ef">bool</span>, <span style="color:#66d9ef">bool</span>), <span style="color:#f92672">&amp;</span>UObject<span style="color:#f92672">::</span>CreateDefaultSubobject))
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#else
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            .Method(<span style="color:#e6db74">&#34;CreateDefaultSubobject&#34;</span>, SelectFunction(UObject <span style="color:#f92672">*</span> (UObject<span style="color:#f92672">::*</span>) (FName, UClass<span style="color:#f92672">*</span>, UClass<span style="color:#f92672">*</span>, <span style="color:#66d9ef">bool</span>, <span style="color:#66d9ef">bool</span>, <span style="color:#66d9ef">bool</span>),
+</span></span><span style="display:flex;"><span>                                                  <span style="color:#f92672">&amp;</span>UObject<span style="color:#f92672">::</span>CreateDefaultSubobject))
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#endif
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            .Method(<span style="color:#e6db74">&#34;GetName&#34;</span>, SelectFunction(FString(UObjectBaseUtility<span style="color:#f92672">::*</span>)() <span style="color:#66d9ef">const</span>, <span style="color:#f92672">&amp;</span>UObjectBaseUtility<span style="color:#f92672">::</span>GetName))
+</span></span><span style="display:flex;"><span>            .Method(<span style="color:#e6db74">&#34;GetOuter&#34;</span>, MakeFunction(<span style="color:#f92672">&amp;</span>UObject<span style="color:#f92672">::</span>GetOuter))
+</span></span><span style="display:flex;"><span>            .Method(<span style="color:#e6db74">&#34;GetClass&#34;</span>, MakeFunction(<span style="color:#f92672">&amp;</span>UObject<span style="color:#f92672">::</span>GetClass))
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#if !defined(ENGINE_INDEPENDENT_JSENV)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            .Method(<span style="color:#e6db74">&#34;GetWorld&#34;</span>, MakeFunction(<span style="color:#f92672">&amp;</span>UObject<span style="color:#f92672">::</span>GetWorld))
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#endif
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            .Register();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#if !defined(ENGINE_INDEPENDENT_JSENV)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        puerts<span style="color:#f92672">::</span>DefineClass<span style="color:#f92672">&lt;</span>USceneComponent<span style="color:#f92672">&gt;</span>()
+</span></span><span style="display:flex;"><span>            .Method(<span style="color:#e6db74">&#34;SetupAttachment&#34;</span>, MakeFunction(<span style="color:#f92672">&amp;</span>USceneComponent<span style="color:#f92672">::</span>SetupAttachment))
+</span></span><span style="display:flex;"><span>            .Register();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        puerts<span style="color:#f92672">::</span>DefineClass<span style="color:#f92672">&lt;</span>UActorComponent<span style="color:#f92672">&gt;</span>()
+</span></span><span style="display:flex;"><span>            .Method(<span style="color:#e6db74">&#34;RegisterComponent&#34;</span>, MakeFunction(<span style="color:#f92672">&amp;</span>UActorComponent<span style="color:#f92672">::</span>RegisterComponent))
+</span></span><span style="display:flex;"><span>            .Register();
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        puerts<span style="color:#f92672">::</span>DefineClass<span style="color:#f92672">&lt;</span>UUserWidget<span style="color:#f92672">&gt;</span>()
+</span></span><span style="display:flex;"><span>            .Method(<span style="color:#e6db74">&#34;GetWidgetFromName&#34;</span>, SelectFunction(UWidget<span style="color:#f92672">*</span> (UUserWidget<span style="color:#f92672">::*</span>) (<span style="color:#66d9ef">const</span> FName<span style="color:#f92672">&amp;</span>) <span style="color:#66d9ef">const</span>, <span style="color:#f92672">&amp;</span>UUserWidget<span style="color:#f92672">::</span>GetWidgetFromName))
+</span></span><span style="display:flex;"><span>            .Register();
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#endif
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    }
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>AutoRegisterForUE _AutoRegisterForUE__;
+</span></span></code></pre></div><h5 id="binding">Binding</h5>
 <p>Dynamic delegate VS Call function directly<br>
 <a href="https://github.com/Tencent/puerts/issues/749">https://github.com/Tencent/puerts/issues/749</a></p>
 <h3 id="issues">Issues</h3>
@@ -445,30 +444,27 @@ AutoRegisterForUE _AutoRegisterForUE__;
 Load object in <code>ReceiveBeginPlay</code> instead of loading object in Constructor.</p>
 <h5 id="tarrayget-returns-value-type">TArray.Get returns value type</h5>
 <p>C++</p>
-<pre><code>USTRUCT(BlueprintType)
-struct FMyStruct
-{
-    GENERATED_USTRUCT_BODY()
-
-    UPROPERTY()
-    FString ID;
-}
-</code></pre>
-<p>TypeScript:</p>
-<pre><code>public List: UE.TArray&lt;UE.FMyStruct&gt;;
-
-Constructor()
-{
-    this.List = UE.NewArray(UE.FMyStruct);
-    this.List.Add(new UE.FMyStruct);
-}
-</code></pre>
-<p>example:</p>
-<pre><code>let Data = List.Get(0);
-Data.ID = &quot;foo&quot;;
-</code></pre>
-<div class="alert danger ">
-  <p><code>Data</code> is a copy of <code>List.Get(0)</code> (value type), not a reference type, so <code>Data.ID = &quot;foo&quot;;</code> would not effect the data which was inside the <code>List</code>. Use <code>GetRef()</code> instead of <code>Get()</code> if want the reference.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>USTRUCT(BlueprintType)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">FMyStruct</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    GENERATED_USTRUCT_BODY()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    UPROPERTY()
+</span></span><span style="display:flex;"><span>    FString ID;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>TypeScript:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-typescript" data-lang="typescript"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#a6e22e">List</span>: <span style="color:#66d9ef">UE.TArray</span>&lt;<span style="color:#f92672">UE.FMyStruct</span>&gt;;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">Constructor</span>()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">List</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">UE</span>.<span style="color:#a6e22e">NewArray</span>(<span style="color:#a6e22e">UE</span>.<span style="color:#a6e22e">FMyStruct</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">List</span>.<span style="color:#a6e22e">Add</span>(<span style="color:#66d9ef">new</span> <span style="color:#a6e22e">UE</span>.<span style="color:#a6e22e">FMyStruct</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>example:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-typescript" data-lang="typescript"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">Data</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">List</span>.<span style="color:#a6e22e">Get</span>(<span style="color:#ae81ff">0</span>);
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">Data</span>.<span style="color:#a6e22e">ID</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;foo&#34;</span>;
+</span></span></code></pre></div><div class="alert danger ">
+  <p><code>Data</code> is a copy of <code>List.Get(0)</code> (value type), not a reference type, so <code>Data.ID = &quot;foo&quot;;</code> can&rsquo;t interpolate the value which was inside the <code>List</code>. Use <code>GetRef()</code> instead of <code>Get()</code> if want the reference.</p>
 </div>
 <p>Reference:<br>
 <a href="https://github.com/Tencent/puerts/issues/703">https://github.com/Tencent/puerts/issues/703</a></p>
@@ -489,7 +485,7 @@ Or generate <code>ue.d.ts</code>, then restart editor, then regenerate <code>ue.
 </div></p>
 <h5 id="crash-internalfixstalelefttrimmedhandlesvisitorvisitrootpointers">Crash: internal::FixStaleLeftTrimmedHandlesVisitor::VisitRootPointers()</h5>
 <p>Crash callstack:</p>
-<pre tabindex="0"><code class="language-Log" data-lang="Log">PuertsTestError: === Critical error: ===
+<pre tabindex="0"><code>PuertsTestError: === Critical error: ===
 PuertsTestError: 
 PuertsTestError: Fatal error!
 PuertsTestError: 
