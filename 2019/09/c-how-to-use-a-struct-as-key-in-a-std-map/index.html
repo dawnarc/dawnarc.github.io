@@ -363,78 +363,77 @@
                      (adsbygoogle = window.adsbygoogle || []).push({});
                 </script>
               <p>keywords: C++, std map, struct as key</p>
+<h3 id="c-98">C++ 98</h3>
 <h5 id="stdmap">std::map</h5>
 <p>override operator <code>operator==</code> and <code>operator&lt;</code>.</p>
 <p>Exmaple:</p>
-<pre><code>struct coord { 
-    int x, y; 
-
-    bool operator==(const coord &amp;o) const {
-        return x == o.x &amp;&amp; y == o.y;
-    }
-
-    bool operator&lt;(const coord &amp;o)  const {
-        return x &lt; o.x || (x == o.x &amp;&amp; y &lt; o.y);
-    }
-};
-</code></pre>
-<p>Usage:</p>
-<pre><code>map&lt;coord, int&gt; m;
-pair&lt;coord, int&gt; p((coord{0,0}),123);
-m.insert(p);
-</code></pre>
-<p>Origin:<br>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">coord</span> { 
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> x, y; 
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">bool</span> <span style="color:#66d9ef">operator</span><span style="color:#f92672">==</span>(<span style="color:#66d9ef">const</span> coord <span style="color:#f92672">&amp;</span>o) <span style="color:#66d9ef">const</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> x <span style="color:#f92672">==</span> o.x <span style="color:#f92672">&amp;&amp;</span> y <span style="color:#f92672">==</span> o.y;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">bool</span> <span style="color:#66d9ef">operator</span><span style="color:#f92672">&lt;</span>(<span style="color:#66d9ef">const</span> coord <span style="color:#f92672">&amp;</span>o)  <span style="color:#66d9ef">const</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> x <span style="color:#f92672">&lt;</span> o.x <span style="color:#f92672">||</span> (x <span style="color:#f92672">==</span> o.x <span style="color:#f92672">&amp;&amp;</span> y <span style="color:#f92672">&lt;</span> o.y);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p>Usage:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>map<span style="color:#f92672">&lt;</span>coord, <span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;</span> m;
+</span></span><span style="display:flex;"><span>pair<span style="color:#f92672">&lt;</span>coord, <span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;</span> p((coord{<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">0</span>}),<span style="color:#ae81ff">123</span>);
+</span></span><span style="display:flex;"><span>m.insert(p);
+</span></span></code></pre></div><p>Origin:<br>
 How can I use a struct as key in a std::map?<br>
 <a href="https://stackoverflow.com/questions/7204283/how-can-i-use-a-struct-as-key-in-a-stdmap">https://stackoverflow.com/questions/7204283/how-can-i-use-a-struct-as-key-in-a-stdmap</a></p>
 <h5 id="stdunordered_map">std:unordered_map</h5>
 <p>Exmaple:</p>
-<pre><code>struct Key
-{
-  std::string first;
-  std::string second;
-  int         third;
-
-  bool operator==(const Key &amp;other) const
-  { return (first == other.first
-            &amp;&amp; second == other.second
-            &amp;&amp; third == other.third);
-  }
-};
-
-namespace std {
-
-template &lt;&gt;
-struct hash&lt;Key&gt;
-{
-    std::size_t operator()(const Key&amp; k) const
-    {
-        using std::size_t;
-        using std::hash;
-        using std::string;
-
-        // Compute individual hash values for first,
-        // second and third and combine them using XOR
-        // and bit shifting:
-
-        return ((hash&lt;string&gt;()(k.first)
-        ^ (hash&lt;string&gt;()(k.second) &lt;&lt; 1)) &gt;&gt; 1)
-        ^ (hash&lt;int&gt;()(k.third) &lt;&lt; 1);
-        }
-    };
-}
-
-int main()
-{
-  std::unordered_map&lt;Key,std::string&gt; m6 = {
-    { {&quot;John&quot;, &quot;Doe&quot;, 12}, &quot;example&quot;},
-    { {&quot;Mary&quot;, &quot;Sue&quot;, 21}, &quot;another&quot;}
-  };
-}
-</code></pre>
-<p>Origin:<br>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Key</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>  std<span style="color:#f92672">::</span>string first;
+</span></span><span style="display:flex;"><span>  std<span style="color:#f92672">::</span>string second;
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">int</span>         third;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">bool</span> <span style="color:#66d9ef">operator</span><span style="color:#f92672">==</span>(<span style="color:#66d9ef">const</span> Key <span style="color:#f92672">&amp;</span>other) <span style="color:#66d9ef">const</span>
+</span></span><span style="display:flex;"><span>  { <span style="color:#66d9ef">return</span> (first <span style="color:#f92672">==</span> other.first
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&amp;&amp;</span> second <span style="color:#f92672">==</span> other.second
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&amp;&amp;</span> third <span style="color:#f92672">==</span> other.third);
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">namespace</span> std {
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">template</span> <span style="color:#f92672">&lt;&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">hash</span><span style="color:#f92672">&lt;</span>Key<span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    std<span style="color:#f92672">::</span>size_t <span style="color:#66d9ef">operator</span>()(<span style="color:#66d9ef">const</span> Key<span style="color:#f92672">&amp;</span> k) <span style="color:#66d9ef">const</span>
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">using</span> std<span style="color:#f92672">::</span>size_t;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">using</span> std<span style="color:#f92672">::</span>hash;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">using</span> std<span style="color:#f92672">::</span>string;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// Compute individual hash values for first,
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#75715e">// second and third and combine them using XOR
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#75715e">// and bit shifting:
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> ((hash<span style="color:#f92672">&lt;</span>string<span style="color:#f92672">&gt;</span>()(k.first)
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">^</span> (hash<span style="color:#f92672">&lt;</span>string<span style="color:#f92672">&gt;</span>()(k.second) <span style="color:#f92672">&lt;&lt;</span> <span style="color:#ae81ff">1</span>)) <span style="color:#f92672">&gt;&gt;</span> <span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">^</span> (hash<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;</span>()(k.third) <span style="color:#f92672">&lt;&lt;</span> <span style="color:#ae81ff">1</span>);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    };
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">main</span>()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>  std<span style="color:#f92672">::</span>unordered_map<span style="color:#f92672">&lt;</span>Key,std<span style="color:#f92672">::</span>string<span style="color:#f92672">&gt;</span> m6 <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>    { {<span style="color:#e6db74">&#34;John&#34;</span>, <span style="color:#e6db74">&#34;Doe&#34;</span>, <span style="color:#ae81ff">12</span>}, <span style="color:#e6db74">&#34;example&#34;</span>},
+</span></span><span style="display:flex;"><span>    { {<span style="color:#e6db74">&#34;Mary&#34;</span>, <span style="color:#e6db74">&#34;Sue&#34;</span>, <span style="color:#ae81ff">21</span>}, <span style="color:#e6db74">&#34;another&#34;</span>}
+</span></span><span style="display:flex;"><span>  };
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Origin:<br>
 C++ unordered_map using a custom class type as the key<br>
 <a href="https://stackoverflow.com/questions/17016175/c-unordered-map-using-a-custom-class-type-as-the-key">https://stackoverflow.com/questions/17016175/c-unordered-map-using-a-custom-class-type-as-the-key</a></p>
-<h5 id="c-20">C++ 20</h5>
+<h3 id="c-20">C++ 20</h3>
+<h5 id="default-comparisons">Default comparisons</h5>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;iostream&gt;</span><span style="color:#75715e">
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;map&gt;</span><span style="color:#75715e">
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
@@ -464,6 +463,8 @@ C++ unordered_map using a custom class type as the key<br>
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>Origin: How can I use std::maps with user-defined types as key?<br>
 <a href="https://stackoverflow.com/a/70319881/1645289">https://stackoverflow.com/a/70319881/1645289</a></p>
+<p>Default comparisons (since C++20)<br>
+<a href="https://en.cppreference.com/w/cpp/language/default_comparisons">https://en.cppreference.com/w/cpp/language/default_comparisons</a></p>
 <hr>
 <p><code>It is not true that people stop pursuing dreams because they grow old, they grow old because they stop pursuing dreams. ― Gabriel García Márquez</code></p>
               

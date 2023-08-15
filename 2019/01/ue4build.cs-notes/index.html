@@ -533,37 +533,36 @@
 </code></pre>
 <h5 id="macros-on-building-mode">Macros on building mode</h5>
 <p>Engine\Source\Runtime\Core\Public\Misc\Build.h</p>
-<pre><code>/*--------------------------------------------------------------------------------
-Build configuration coming from UBT, do not modify
---------------------------------------------------------------------------------*/
-
-// Set any configuration not defined by UBT to zero
-#ifndef UE_BUILD_DEBUG
-    #define UE_BUILD_DEBUG                0
-#endif
-#ifndef UE_BUILD_DEVELOPMENT
-    #define UE_BUILD_DEVELOPMENT        0
-#endif
-#ifndef UE_BUILD_TEST
-    #define UE_BUILD_TEST                0
-#endif
-#ifndef UE_BUILD_SHIPPING
-    #define UE_BUILD_SHIPPING            0
-#endif
-#ifndef UE_GAME
-    #define UE_GAME                        0
-#endif
-#ifndef UE_EDITOR
-    #define UE_EDITOR                    0
-#endif
-#ifndef UE_BUILD_SHIPPING_WITH_EDITOR
-    #define UE_BUILD_SHIPPING_WITH_EDITOR 0
-#endif
-#ifndef UE_BUILD_DOCS
-    #define UE_BUILD_DOCS                0
-#endif
-</code></pre>
-<h5 id="how-to-add-macro-in-buildcs">How to add macro in build.cs</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">/*--------------------------------------------------------------------------------
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">Build configuration coming from UBT, do not modify
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">--------------------------------------------------------------------------------*/</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Set any configuration not defined by UBT to zero
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#75715e">#ifndef UE_BUILD_DEBUG
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">#define UE_BUILD_DEBUG                0
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#endif
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#ifndef UE_BUILD_DEVELOPMENT
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">#define UE_BUILD_DEVELOPMENT        0
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#endif
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#ifndef UE_BUILD_TEST
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">#define UE_BUILD_TEST                0
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#endif
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#ifndef UE_BUILD_SHIPPING
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">#define UE_BUILD_SHIPPING            0
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#endif
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#ifndef UE_GAME
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">#define UE_GAME                        0
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#endif
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#ifndef UE_EDITOR
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">#define UE_EDITOR                    0
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#endif
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#ifndef UE_BUILD_SHIPPING_WITH_EDITOR
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">#define UE_BUILD_SHIPPING_WITH_EDITOR 0
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#endif
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#ifndef UE_BUILD_DOCS
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">#define UE_BUILD_DOCS                0
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#endif
+</span></span></span></code></pre></div><h5 id="how-to-add-macro-in-buildcs">How to add macro in build.cs</h5>
 <p>1st way<br>
 Build.cs:</p>
 <pre><code>PublicDefinitions.Add(&quot;TEST&quot;);
@@ -605,65 +604,13 @@ Build.cs:</p>
 }
 </code></pre>
 <h5 id="how-to-disable-function-inline-and-code-optimization-for-whole-project">How to disable function inline and code optimization for whole project</h5>
-<p>Add:</p>
-<pre><code>if (Target.Configuration != UnrealTargetConfiguration.Shipping)
-{
-    CompileEnvironment.bUseInlining = false;
-    CompileEnvironment.bOptimizeCode = false;
-}
-</code></pre>
-<p>in Engine\Source\Programs\UnrealBuildTool\Platform\Windows\VCToolChain.cs</p>
-<p>Origin:</p>
-<pre><code>// Maintain the old std::aligned_storage behavior from VS from v15.8 onwards, in case of prebuilt third party libraries are reliant on it
-AddDefinition(Arguments, &quot;_DISABLE_EXTENDED_ALIGNED_STORAGE&quot;);
-
-// Fix Incredibuild errors with helpers using heterogeneous character sets
-if (Target.WindowsPlatform.Compiler &gt;= WindowsCompiler.VisualStudio2015_DEPRECATED)
-{
-    Arguments.Add(&quot;/source-charset:utf-8&quot;);
-    Arguments.Add(&quot;/execution-charset:utf-8&quot;);
-}
-
-// Do not allow inline method expansion if E&amp;C support is enabled or inline expansion has been disabled
-if (!CompileEnvironment.bSupportEditAndContinue &amp;&amp; CompileEnvironment.bUseInlining)
-{
-    Arguments.Add(&quot;/Ob2&quot;);
-}
-else
-{
-    // Specifically disable inline expansion to override /O1,/O2/ or /Ox if set
-    Arguments.Add(&quot;/Ob0&quot;);
-}
-</code></pre>
-<p>New:</p>
-<pre><code>// Maintain the old std::aligned_storage behavior from VS from v15.8 onwards, in case of prebuilt third party libraries are reliant on it
-AddDefinition(Arguments, &quot;_DISABLE_EXTENDED_ALIGNED_STORAGE&quot;);
-
-// Fix Incredibuild errors with helpers using heterogeneous character sets
-if (Target.WindowsPlatform.Compiler &gt;= WindowsCompiler.VisualStudio2015_DEPRECATED)
-{
-    Arguments.Add(&quot;/source-charset:utf-8&quot;);
-    Arguments.Add(&quot;/execution-charset:utf-8&quot;);
-}
-
-if (Target.Configuration != UnrealTargetConfiguration.Shipping)
-{
-    CompileEnvironment.bUseInlining = false;
-    CompileEnvironment.bOptimizeCode = false;
-}
-
-// Do not allow inline method expansion if E&amp;C support is enabled or inline expansion has been disabled
-if (!CompileEnvironment.bSupportEditAndContinue &amp;&amp; CompileEnvironment.bUseInlining)
-{
-    Arguments.Add(&quot;/Ob2&quot;);
-}
-else
-{
-    // Specifically disable inline expansion to override /O1,/O2/ or /Ox if set
-    Arguments.Add(&quot;/Ob0&quot;);
-}
-</code></pre>
-<h5 id="check-if-target-type-is-editor-or-client-or-server">Check if target type is editor, or client, or server</h5>
+<p>Add follows in function <code>AppendCLArguments_Global</code> in VCToolChain.cs (Engine\Source\Programs\UnrealBuildTool\Platform\Windows\VCToolChain.cs):</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C#" data-lang="C#"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> (Target.Configuration != UnrealTargetConfiguration.Shipping)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    CompileEnvironment.bUseInlining = <span style="color:#66d9ef">false</span>;
+</span></span><span style="display:flex;"><span>    CompileEnvironment.bOptimizeCode = <span style="color:#66d9ef">false</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h5 id="check-if-target-type-is-editor-or-client-or-server">Check if target type is editor, or client, or server</h5>
 <pre><code>if (Target.Type != TargetType.Server)
 {
     PrivateDependencyModuleNames.AddRange(new string[]
