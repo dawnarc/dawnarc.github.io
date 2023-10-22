@@ -552,6 +552,24 @@ GWarn-&gt;BeginSlowTask( Description, true );
 </span></span><span style="display:flex;"><span>    {
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p><div class="alert info ">
+  <p><code>UObjectLibrary::GetAssetDataList()</code> is the wrapper of <code>AssetRegistry::GetAssetDataList()</code>.</p>
+</div>
+<div class="alert warning ">
+  <p>You can&rsquo;t get UserWidget blueprints if using <code>AssetRegistry::GetAssetsByClass()</code>,<br>
+because the function <code>UUserWidget::IsAsset()</code> which overrided from UObject return <code>false</code>. Instead of calling <code>AssetRegistry::GetAssetsByPath()</code>.</p>
+</div></p>
+<p>Example: get UserWidget blueprints</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>FAssetRegistryModule<span style="color:#f92672">&amp;</span> AssetRegistryModule <span style="color:#f92672">=</span> FModuleManager<span style="color:#f92672">::</span>LoadModuleChecked<span style="color:#f92672">&lt;</span>FAssetRegistryModule<span style="color:#f92672">&gt;</span>(TEXT(<span style="color:#e6db74">&#34;AssetRegistry&#34;</span>));
+</span></span><span style="display:flex;"><span>IAssetRegistry<span style="color:#f92672">&amp;</span> AssetRegistry <span style="color:#f92672">=</span> AssetRegistryModule.Get();
+</span></span><span style="display:flex;"><span>TArray<span style="color:#f92672">&lt;</span>FAssetData<span style="color:#f92672">&gt;</span> AssetData;
+</span></span><span style="display:flex;"><span>AssetRegistry.GetAssetsByPath(TEXT(<span style="color:#e6db74">&#34;/Game/TestContents&#34;</span>), AssetData, true, true);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> (FAssetData<span style="color:#f92672">&amp;</span> Data : AssetData)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (UWidgetBlueprint<span style="color:#f92672">*</span> Widget <span style="color:#f92672">=</span> Cast<span style="color:#f92672">&lt;</span>UWidgetBlueprint<span style="color:#f92672">&gt;</span>(Data.GetAsset()))
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h5 id="how-to-draw-debug-line-in-animation-editors-viewport">How to draw debug line in Animation Editor&rsquo;s viewport.</h5>
 <p>Example from <a href="https://github.com/pafuhana1213/KawaiiPhysics/blob/602d4781ba1b23f1a44344bd59d1d31f1f649564/Plugins/KawaiiPhysics/Source/KawaiiPhysicsEd/Private/KawaiiPhysicsEditMode.cpp#L81">FKawaiiPhysicsEditMode::Render()</a>:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> FKawaiiPhysicsEditMode<span style="color:#f92672">::</span>Render(<span style="color:#66d9ef">const</span> FSceneView<span style="color:#f92672">*</span> View, FViewport<span style="color:#f92672">*</span> Viewport, FPrimitiveDrawInterface<span style="color:#f92672">*</span> PDI)
@@ -603,7 +621,233 @@ GWarn-&gt;BeginSlowTask( Description, true );
 </span></span><span style="display:flex;"><span>    UPARAM(ref) FDogInfo<span style="color:#f92672">&amp;</span> SearchParams);
 </span></span></code></pre></div><p>Unreal&rsquo;s UPARAM parameter<br>
 <a href="https://benui.ca/unreal/uparam/">https://benui.ca/unreal/uparam/</a></p>
-<h3 id="testing--optimization">Testing &amp; Optimization</h3>
+<h5 id="how-to-get-a-uclass-pointer-by-string-class-path-name">How to get a UClass pointer by string (class path name)</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> UClass<span style="color:#f92672">*</span> Class_Button <span style="color:#f92672">=</span> FEditorClassUtils<span style="color:#f92672">::</span>GetClassFromString(TEXT(<span style="color:#e6db74">&#34;/Script/UMG.Button&#34;</span>));
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span>(ChildWidget<span style="color:#f92672">-&gt;</span>IsA(Class_Button))
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h5 id="blueprint-maintaining">Blueprint Maintaining</h5>
+<p>Origin: <a href="https://www.youtube.com/watch?v=eEy2v95pDWw">How to create Blueprint assets using C++?</a></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;MyBlueprintLibrary.h&#34;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;AssetRegistry/AssetRegistryModule.h&#34;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#if WITH_EDITOR
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;KismetCompilerModule.h&#34;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;Kismet2/KismetEditorUtilities.h&#34;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#endif
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;Engine/SimpleConstructionScript.h&#34;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;Engine/SCS_Node.h&#34;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;Kismet2/BlueprintEditorUtils.h&#34;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>DEFINE_LOG_CATEGORY_STATIC(LogMyBlueprintLibrary, Log, All);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * Create Blueprint asset file in editor.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * arguments example: 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * @BlueprintPath: /Game/TestBP
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * @ParentClass: AActor::StaticClass()
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * /
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">UBlueprint* UMyBlueprintLibrary::CreateBlueprint(const FString&amp; BlueprintPath, TSubclassOf&lt;UObject&gt; ParentClass)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">{
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    // make sure the asset is a new file, doesn&#39;t exists with that path.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    if (StaticLoadObject(UObject::StaticClass(), nullptr, *BlueprintPath))
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    {
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">        UE_LOG(LogMyBlueprintLibrary, Error, TEXT(&#34;Create Blueprint Failed - [%s] alreay exists!&#34;), *BlueprintPath);
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">        return nullptr;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    // make sure the parent class is valid
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    if (!FKismetEditorUtilities::CanCreateBlueprintOfClass(ParentClass))
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    {
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">        UE_LOG(LogMyBlueprintLibrary, Error, TEXT(&#34;Create Blueprint Failed - parent class is invalid! %s&#34;), *BlueprintPath);
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">        return nullptr;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    // create asset package
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    UPackage* Package = CreatePackage(*BlueprintPath);
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    if (!Package)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    {
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">        UE_LOG(LogMyBlueprintLibrary, Error, TEXT(&#34;Create Blueprint Failed - create package failed! %s&#34;), *BlueprintPath);
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">        return nullptr;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    // find the blueprint classes to create
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    UClass* BpClass = nullptr;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    UClass* BpGenClass = nullptr;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    FModuleManager::LoadModuleChecked&lt;IKismetCompilerInterface&gt;(&#34;KismetCompiler&#34;).GetBlueprintTypesForClass(ParentClass, BpClass, BpGenClass);
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    // create asset
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    UBlueprint* Blueprint = FKismetEditorUtilities::CreateBlueprint(ParentClass, Package, *FPaths::GetBaseFilename(BlueprintPath), BPTYPE_Normal, BpClass, BpGenClass);
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    // register asset
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    FAssetRegistryModule::AssetCreated(Blueprint);
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    Blueprint-&gt;MarkPackageDirty();
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    //Blueprint-&gt;PostLoad();
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    return Blueprint;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">}
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">bool UMyBlueprintLibrary::CompileBlueprint(const FString&amp; BlueprintPath, FString&amp; OutMessage)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">{
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    // load blueprint asset
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    UBlueprint* Blueprint = Cast&lt;UBlueprint&gt;(StaticLoadObject(UBlueprint::StaticClass(), nullptr, *BlueprintPath));
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    if (!Blueprint)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    {
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">        UE_LOG(LogMyBlueprintLibrary, Error, TEXT(&#34;Compile Blueprint Failed - Path doesn&#39;t lead to a valid Blueprint. %s&#34;), *BlueprintPath);
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">        return false;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    // compile blueprint
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    FCompilerResultsLog Result;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    FKismetEditorUtilities::CompileBlueprint(Blueprint, EBlueprintCompileOptions::SkipSave, &amp;Result);
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    // format the result
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    FString Logs = Result.Messages.Num() &gt; Result.NumWarnings + Result.NumErrors ? &#34;\n--- Logs ---&#34; : &#34;&#34;;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    FString Warnings = Result.NumWarnings &gt; 0 ? &#34;\n--- Warnings ---&#34; : &#34;&#34;;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    FString Errors = Result.NumErrors &gt; 0 ? &#34;\n--- Errors ---&#34; : &#34;&#34;;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    for (TSharedRef&lt;FTokenizedMessage&gt; Message : Result.Messages)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    {
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">        switch (Message.Get().GetSeverity())
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">        {
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">        case EMessageSeverity::Type::Info:
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">            Logs += &#34;\n&#34; + Message.Get().ToText().ToString();
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">            break;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">        case EMessageSeverity::Type::Warning:
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">        case EMessageSeverity::Type::PerformanceWarning:
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">            Warnings += &#34;\n&#34; + Message.Get().ToText().ToString();
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">            break;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">        case EMessageSeverity::Type::Error:
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">            Errors += &#34;\n&#34; + Message.Get().ToText().ToString();
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">            break;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">        }
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    OutMessage = Logs + Warnings + Errors;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    return Result.NumErrors == 0;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">}
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">USCS_Node* UMyBlueprintLibrary::AddComponentToBlueprint(const FString&amp; BlueprintPath, USceneComponent* ComponentTemplate, const FString&amp; ParentNodeName)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">{
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    // load blueprint asset
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    UBlueprint* Blueprint = Cast&lt;UBlueprint&gt;(StaticLoadObject(UBlueprint::StaticClass(), nullptr, *BlueprintPath));
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    if (!Blueprint)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    {
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">        UE_LOG(LogMyBlueprintLibrary, Error, TEXT(&#34;Add Node to Blueprint Failed - Path doesn&#39;t lead to a valid Blueprint. %s&#34;), *BlueprintPath);
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">        return nullptr;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    // create new node in blueprint asset
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    USCS_Node* NewNode = Blueprint-&gt;SimpleConstructionScript-&gt;CreateNode(ComponentTemplate-&gt;GetClass(), *ComponentTemplate-&gt;GetName());
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    //Parent node
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    if (USCS_Node* ParentNode = Blueprint-&gt;SimpleConstructionScript-&gt;FindSCSNode(*ParentNodeName))
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    {
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">        ParentNode-&gt;AddChildNode(NewNode);
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    else
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    {
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">        TArray&lt;USCS_Node*&gt; AllNodes = Blueprint-&gt;SimpleConstructionScript-&gt;GetAllNodes();
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">        // if there are no nodes in the blueprint or if the root node is still the default node
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">        if (AllNodes.Num() == 0 || AllNodes[0] == Blueprint-&gt;SimpleConstructionScript-&gt;GetDefaultSceneRootNode())
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">        {
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">            // use this component as root node
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">            Blueprint-&gt;SimpleConstructionScript-&gt;AddNode(NewNode);
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">        }
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">        else
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">        {
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">            // use the first node as parent (root node)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">            AllNodes[0]-&gt;AddChildNode(NewNode);
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">        }
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    // copy component&#39;s settings onto node
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    UEditorEngine::CopyPropertiesForUnrelatedObjects(ComponentTemplate, NewNode-&gt;ComponentTemplate);
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    // notify the engine we modified the blueprint components
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    FBlueprintEditorUtils::MarkBlueprintAsStructurallyModified(Blueprint);
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    return NewNode;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">}
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">USCS_Node* UMyBlueprintLibrary::AddStaticMeshComponentToBlueprint(const FString&amp; BlueprintPath)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">{
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    UStaticMeshComponent* Component = NewObject&lt;UStaticMeshComponent&gt;(GetTransientPackage(), &#34;My_Static_Mesh_Component_Name&#34;, RF_Transient);
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    Component-&gt;SetRelativeLocation(FVector(0.f, 0.f, 0.f));
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    Component-&gt;SetRelativeRotation(FRotator(0.f, 0.f, 0.f));
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    Component-&gt;SetRelativeScale3D(FVector(1.f, 1.f, 1.f));
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    Component-&gt;SetMobility(EComponentMobility::Type::Static);
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    USCS_Node* NewNode = AddComponentToBlueprint(BlueprintPath, Component, &#34;None&#34;);
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    return NewNode;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">}
+</span></span></span></code></pre></div><h3 id="export-assets">Export Assets</h3>
+<h5 id="how-to-export-mesh-asset-to-fbx-file">How to export mesh asset to FBX file</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>UStaticMesh<span style="color:#f92672">*</span> Mesh <span style="color:#f92672">=</span> LoadObject<span style="color:#f92672">&lt;</span>UStaticMesh<span style="color:#f92672">&gt;</span>(<span style="color:#66d9ef">nullptr</span>, TEXT(<span style="color:#e6db74">&#34;StaticMesh&#39;/Game/Meshes/Cube.Cube&#39;&#34;</span>));
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>UFbxExportOption<span style="color:#f92672">*</span> Option <span style="color:#f92672">=</span> NewObject<span style="color:#f92672">&lt;</span>UFbxExportOption<span style="color:#f92672">&gt;</span>();
+</span></span><span style="display:flex;"><span>Option<span style="color:#f92672">-&gt;</span>Collision <span style="color:#f92672">=</span> false;
+</span></span><span style="display:flex;"><span>Option<span style="color:#f92672">-&gt;</span>LevelOfDetail <span style="color:#f92672">=</span> false;
+</span></span><span style="display:flex;"><span>Option<span style="color:#f92672">-&gt;</span>bASCII <span style="color:#f92672">=</span> false;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>UAssetExportTask<span style="color:#f92672">*</span> Task <span style="color:#f92672">=</span> NewObject<span style="color:#f92672">&lt;</span>UAssetExportTask<span style="color:#f92672">&gt;</span>();
+</span></span><span style="display:flex;"><span>Task<span style="color:#f92672">-&gt;</span>bAutomated <span style="color:#f92672">=</span> true;
+</span></span><span style="display:flex;"><span>Task<span style="color:#f92672">-&gt;</span>Filename <span style="color:#f92672">=</span> TEXT(<span style="color:#e6db74">&#34;E:/cube.fbx&#34;</span>);
+</span></span><span style="display:flex;"><span>Task<span style="color:#f92672">-&gt;</span>Object <span style="color:#f92672">=</span> Mesh;
+</span></span><span style="display:flex;"><span>Task<span style="color:#f92672">-&gt;</span>Options <span style="color:#f92672">=</span> Cast<span style="color:#f92672">&lt;</span>UObject<span style="color:#f92672">&gt;</span>(Option);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">bool</span> Res <span style="color:#f92672">=</span> UExporterFBX<span style="color:#f92672">::</span>RunAssetExportTask(Task);
+</span></span></code></pre></div><h5 id="how-to-import-mesh-asset-from-fbx-file">How to import mesh asset from FBX file</h5>
+<p>Origin:<br>
+<a href="https://zhuanlan.zhihu.com/p/495322681">https://zhuanlan.zhihu.com/p/495322681</a></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>FString FilePath <span style="color:#f92672">=</span> TEXT(<span style="color:#e6db74">&#34;E:/cube.fbx&#34;</span>);
+</span></span><span style="display:flex;"><span>UFbxFactory<span style="color:#f92672">*</span> FbxFactory <span style="color:#f92672">=</span> NewObject<span style="color:#f92672">&lt;</span>UFbxFactory<span style="color:#f92672">&gt;</span>();
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span>(<span style="color:#f92672">!</span>FbxFactory<span style="color:#f92672">-&gt;</span>FactoryCanImport(FilePath))
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    UE_LOG(LogTemp, Warning, TEXT(<span style="color:#e6db74">&#34;%s CAN NOT BE IMPORTED!&#34;</span>), <span style="color:#f92672">*</span>FilePath);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>UAssetImportTask<span style="color:#f92672">*</span> ImportTask <span style="color:#f92672">=</span> NewObject<span style="color:#f92672">&lt;</span>UAssetImportTask<span style="color:#f92672">&gt;</span>();
+</span></span><span style="display:flex;"><span>ImportTask<span style="color:#f92672">-&gt;</span>bAutomated <span style="color:#f92672">=</span> true;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>FbxFactory<span style="color:#f92672">-&gt;</span>AssetImportTask <span style="color:#f92672">=</span> ImportTask;
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// do not detect import type on import:
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// detection will change ImportUI-&gt;MeshTypeToImport settings
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// incorrect detection(always occur) will result in import error
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>FbxFactory<span style="color:#f92672">-&gt;</span>SetDetectImportTypeOnImport(false);
+</span></span><span style="display:flex;"><span>FbxFactory<span style="color:#f92672">-&gt;</span>ImportUI<span style="color:#f92672">-&gt;</span>MeshTypeToImport <span style="color:#f92672">=</span> FBXIT_SkeletalMesh;
+</span></span><span style="display:flex;"><span>FbxFactory<span style="color:#f92672">-&gt;</span>ImportUI<span style="color:#f92672">-&gt;</span>bImportMaterials <span style="color:#f92672">=</span> false;
+</span></span><span style="display:flex;"><span>FbxFactory<span style="color:#f92672">-&gt;</span>ImportUI<span style="color:#f92672">-&gt;</span>SkeletalMeshImportData<span style="color:#f92672">-&gt;</span>bImportMorphTargets <span style="color:#f92672">=</span> true;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// get BaseFileName without extension 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> FString BaseFileName <span style="color:#f92672">=</span> FPaths<span style="color:#f92672">::</span>GetBaseFilename(FilePath);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> FString PackageName <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;/Game/TestAssets/&#34;</span> <span style="color:#f92672">+</span> BaseFileName;
+</span></span><span style="display:flex;"><span>UPackage<span style="color:#f92672">*</span> Package <span style="color:#f92672">=</span> FindPackage(<span style="color:#66d9ef">nullptr</span>, <span style="color:#f92672">*</span>PackageName);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span>(<span style="color:#f92672">!</span>Package <span style="color:#f92672">&amp;&amp;</span> FEditorFileUtils<span style="color:#f92672">::</span>IsMapPackageAsset(PackageName))
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    ensure(false);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span>(<span style="color:#f92672">!</span>FPackageName<span style="color:#f92672">::</span>DoesPackageExist(PackageName))
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    Package <span style="color:#f92672">=</span> CreatePackage(<span style="color:#f92672">*</span>PackageName);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span>(Package)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        Package<span style="color:#f92672">-&gt;</span>FullyLoad();
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">else</span>
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        UE_LOG(LogTemp,Warning,TEXT(<span style="color:#e6db74">&#34;Create Package: %s  Failed!&#34;</span>),<span style="color:#f92672">*</span>PackageName);
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> ;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">bool</span> OutCanceled <span style="color:#f92672">=</span> false;
+</span></span><span style="display:flex;"><span>FbxFactory<span style="color:#f92672">-&gt;</span>ImportObject(FbxFactory<span style="color:#f92672">-&gt;</span>ResolveSupportedClass(),Package, FName(<span style="color:#f92672">*</span>BaseFileName),
+</span></span><span style="display:flex;"><span>EObjectFlags<span style="color:#f92672">::</span>RF_Transactional <span style="color:#f92672">|</span> EObjectFlags<span style="color:#f92672">::</span>RF_Public <span style="color:#f92672">|</span> EObjectFlags<span style="color:#f92672">::</span>RF_Standalone,
+</span></span><span style="display:flex;"><span>    FilePath, <span style="color:#66d9ef">nullptr</span>, OutCanceled);
+</span></span></code></pre></div><h3 id="testing--optimization">Testing &amp; Optimization</h3>
 <h5 id="testing-automation">Testing Automation</h5>
 <p>Automation System Overview, Overview of the automation system used for unit testing, feature testing, and content stress testing.<br>
 <a href="https://docs.unrealengine.com/4.27/en-US/TestingAndOptimization/Automation/">https://docs.unrealengine.com/4.27/en-US/TestingAndOptimization/Automation/</a></p>

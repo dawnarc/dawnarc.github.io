@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4843403245883139"
+     crossorigin="anonymous"></script>
+
+<script async custom-element="amp-auto-ads"
+        src="https://cdn.ampproject.org/v0/amp-auto-ads-0.1.js">
+</script>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.102.3 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="author" content="Wang Aiguo">
+<meta name="keywords" content="UE4, Json">
+<meta name="description" content="keywords: UE4, Json, C&#43;&#43;, Convert json to ustruct, Convert struct to json">
+
+
+<meta property="og:description" content="keywords: UE4, Json, C&#43;&#43;, Convert json to ustruct, Convert struct to json">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[UE4]Read &amp; Write Json Using C&#43;&#43;">
+<meta name="twitter:title" content="[UE4]Read &amp; Write Json Using C&#43;&#43;">
+<meta property="og:url" content="https://dawnarc.com/2023/10/ue4read-write-json-using-c-/">
+<meta property="twitter:url" content="https://dawnarc.com/2023/10/ue4read-write-json-using-c-/">
+<meta property="og:site_name" content="玄冬Wong">
+<meta property="og:description" content="keywords: UE4, Json, C&#43;&#43;, Convert json to ustruct, Convert struct to json">
+<meta name="twitter:description" content="keywords: UE4, Json, C&#43;&#43;, Convert json to ustruct, Convert struct to json">
+<meta property="og:locale" content="en-us">
+
+  
+    <meta property="article:published_time" content="2023-10-09T18:22:02">
+  
+  
+    <meta property="article:modified_time" content="2023-10-09T18:22:02">
+  
+  
+  
+    
+      <meta property="article:section" content="UnrealEngine4">
+    
+  
+  
+    
+      <meta property="article:tag" content="UE4">
+    
+  
+
+
+<meta name="twitter:card" content="summary">
+
+  <meta name="twitter:site" content="@dawn_arc">
+
+
+  <meta name="twitter:creator" content="@dawn_arc">
+
+
+
+
+
+
+  <meta property="og:image" content="https://dawnarc.com/thumbnail/cover-beijing.jpg">
+  <meta property="twitter:image" content="https://dawnarc.com/thumbnail/cover-beijing.jpg">
+
+
+
+
+
+  <meta property="og:image" content="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=640">
+  <meta property="twitter:image" content="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=640">
+
+
+    <title>[UE4]Read &amp; Write Json Using C&#43;&#43;</title>
+
+    <link rel="icon" href="https://dawnarc.com/favicon.png">
+    
+
+    
+
+    <link rel="canonical" href="https://dawnarc.com/2023/10/ue4read-write-json-using-c-/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/jquery.fancybox.min.css" integrity="sha256-vuXZ9LGmmwtjqFX1F+EKin1ThZMub58gKULUyf0qECk=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/helpers/jquery.fancybox-thumbs.min.css" integrity="sha256-SEa4XYAHihTcEP1f5gARTB2K26Uk8PsndQYHQC1f4jU=" crossorigin="anonymous" />
+    
+    
+    <link rel="stylesheet" href="https://dawnarc.com/css/style-twzjdbqhmnnacqs0pwwdzcdbt8yhv8giawvjqjmyfoqnvazl0dalmnhdkvp7.min.css" />
+    
+    
+      
+        <link rel="stylesheet" href="https://dawnarc.com/cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/styles/paraiso-light.min.css">
+      
+    
+
+    
+    
+    
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-4P9RSN4PXQ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-4P9RSN4PXQ');
+</script>
+  
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="4">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="https://dawnarc.com/">玄冬Wong</a>
+  </div>
+  
+    
+      <a class="header-right-picture "
+         href="https://dawnarc.com/#about">
+    
+    
+    
+      
+        <img class="header-picture" src="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=90" alt="Author&#39;s picture" />
+      
+    
+    </a>
+    
+</header>
+
+      <nav id="sidebar" data-behavior="4">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="https://dawnarc.com/#about">
+          <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=110" alt="Author&#39;s picture" />
+        </a>
+        <h4 class="sidebar-profile-name">Wang Aiguo</h4>
+        
+          <h5 class="sidebar-profile-bio">白金翰大堂经理</h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/categories">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+      
+      <span class="sidebar-button-desc">Categories</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/tags">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+      
+      <span class="sidebar-button-desc">Tags</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/archives">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+      
+      <span class="sidebar-button-desc">Archives</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/#about">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+      
+      <span class="sidebar-button-desc">About</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+      
+      <span class="sidebar-button-desc">Home</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/index.xml">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://stackoverflow.com/users/1645289/protoss" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-stack-overflow"></i>
+      
+      <span class="sidebar-button-desc">Stack Overflow</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://www.facebook.com/koanland" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-facebook"></i>
+      
+      <span class="sidebar-button-desc">Facebook</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/dawnarc" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://www.instagram.com/dawn_arc/" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-instagram"></i>
+      
+      <span class="sidebar-button-desc">Instagram</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://www.linkedin.com/in/dawnarc/" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-linkedin"></i>
+      
+      <span class="sidebar-button-desc">Linkedin</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://www.pinterest.com/wangaiguo/" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-pinterest"></i>
+      
+      <span class="sidebar-button-desc">Pinterest</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://steamcommunity.com/id/dawnarc" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-steam"></i>
+      
+      <span class="sidebar-button-desc">Steam</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://twitter.com/dawn_arc" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-twitter"></i>
+      
+      <span class="sidebar-button-desc">Twitter</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://weibo.com/koanland" target="_blank" rel="noopener">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-weibo"></i>
+      
+      <span class="sidebar-button-desc">Weibo</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+
+    </ul>
+  </div>
+</nav>
+
+      
+
+      <div id="main" data-behavior="4"
+        class="
+               hasCoverMetaIn
+               ">
+        <article class="post" itemscope itemType="http://schema.org/BlogPosting">
+          
+          
+            <div class="post-header main-content-wrap text-left">
+  
+    <h1 class="post-title" itemprop="headline">
+      [UE4]Read &amp; Write Json Using C&#43;&#43;
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time itemprop="datePublished" datetime="2023-10-09T18:22:02&#43;08:00">
+        
+  
+  
+  
+  
+    Monday, 18:22, Oct 9, 2023
+  
+
+      </time>
+    
+    
+  
+  
+    <span>in</span>
+    
+      <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
+    
+  
+
+  </div>
+
+</div>
+          
+          <div class="post-content markdown" itemprop="articleBody">
+			<amp-auto-ads type="adsense"
+					data-ad-client="ca-pub-4843403245883139">
+			</amp-auto-ads>
+            <div class="main-content-wrap">
+                <ins class="adsbygoogle"
+                     style="display:block;height:120px"
+                     data-ad-client="ca-pub-4843403245883139"
+                     data-ad-slot="2321022024"
+                     data-ad-format="fluid"
+                     data-full-width-responsive="true"></ins>
+                <script>
+                     (adsbygoogle = window.adsbygoogle || []).push({});
+                </script>
+              <p>keywords: UE4, Json, C++, Convert json to ustruct, Convert struct to json</p>
+<p>Build.cs</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C#" data-lang="C#"><span style="display:flex;"><span><span style="color:#66d9ef">using</span> UnrealBuildTool;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">TestPrj</span> : ModuleRules
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">public</span> TestPrj(ReadOnlyTargetRules Target) : <span style="color:#66d9ef">base</span>(Target)
+</span></span><span style="display:flex;"><span>	{
+</span></span><span style="display:flex;"><span>		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		PublicDependencyModuleNames.AddRange(<span style="color:#66d9ef">new</span> <span style="color:#66d9ef">string</span>[] { <span style="color:#e6db74">&#34;Core&#34;</span>, <span style="color:#e6db74">&#34;CoreUObject&#34;</span>, <span style="color:#e6db74">&#34;Engine&#34;</span>, <span style="color:#e6db74">&#34;InputCore&#34;</span>, <span style="color:#e6db74">&#34;Json&#34;</span>, <span style="color:#e6db74">&#34;JsonUtilities&#34;</span> });
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (Target.bBuildEditor)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            PrivateDependencyModuleNames.AddRange(<span style="color:#66d9ef">new</span> <span style="color:#66d9ef">string</span>[] { <span style="color:#e6db74">&#34;UnrealEd&#34;</span> });
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>JsonTestActor.h</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">#pragma once
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;CoreMinimal.h&#34;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;GameFramework/Actor.h&#34;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;JsonTestActor.generated.h&#34;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>USTRUCT()
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">FJsonActorInfo</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    GENERATED_USTRUCT_BODY()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    UPROPERTY()
+</span></span><span style="display:flex;"><span>        FTransform Transform;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    UPROPERTY()
+</span></span><span style="display:flex;"><span>        TArray<span style="color:#f92672">&lt;</span>UStaticMesh<span style="color:#f92672">*&gt;</span> MeshList;
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>USTRUCT()
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">FJsonActorList</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    GENERATED_USTRUCT_BODY()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    UPROPERTY()
+</span></span><span style="display:flex;"><span>        TArray<span style="color:#f92672">&lt;</span>FJsonActorInfo<span style="color:#f92672">&gt;</span> Actors;
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>UCLASS()
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">TESTPRJ_API</span> AJsonTestActor : <span style="color:#66d9ef">public</span> AActor
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>	GENERATED_BODY()
+</span></span><span style="display:flex;"><span>	
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>	
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">// Sets default values for this actor&#39;s properties
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	AJsonTestActor();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    UFUNCTION(Blueprintcallable)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">void</span> WriteJson();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    UFUNCTION(Blueprintcallable)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">void</span> ReadJson();
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p>JsonTestActor.cpp</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;JsonTestActor.h&#34;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;Editor/EditorEngine.h&#34;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;LevelEditorViewport.h&#34;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;EngineUtils.h&#34;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;Components/InstancedStaticMeshComponent.h&#34;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;JsonObjectConverter.h&#34;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;Misc/FileHelper.h&#34;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Sets default values
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>AJsonTestActor<span style="color:#f92672">::</span>AJsonTestActor()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> AJsonTestActor<span style="color:#f92672">::</span>WriteJson()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#if WITH_EDITOR
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    FJsonActorList ActorList;
+</span></span><span style="display:flex;"><span>    ActorList.Actors.Empty();
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (UWorld<span style="color:#f92672">*</span> World <span style="color:#f92672">=</span> GEditor<span style="color:#f92672">-&gt;</span>GetLevelViewportClients()[<span style="color:#ae81ff">0</span>]<span style="color:#f92672">-&gt;</span>GetWorld())
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> (TActorIterator<span style="color:#f92672">&lt;</span>AActor<span style="color:#f92672">&gt;</span> Itr(World); Itr; <span style="color:#f92672">++</span>Itr)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">bool</span> Appended <span style="color:#f92672">=</span> false;
+</span></span><span style="display:flex;"><span>            AActor<span style="color:#f92672">*</span> Actor <span style="color:#f92672">=</span> (<span style="color:#f92672">*</span>Itr);
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">const</span> TSet<span style="color:#f92672">&lt;</span>UActorComponent<span style="color:#f92672">*&gt;&amp;</span> Components <span style="color:#f92672">=</span> Actor<span style="color:#f92672">-&gt;</span>GetComponents();
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">for</span> (UActorComponent<span style="color:#f92672">*</span> Component : Components)
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">if</span> (UStaticMeshComponent<span style="color:#f92672">*</span> InstancedStaticMeshComponent <span style="color:#f92672">=</span> Cast<span style="color:#f92672">&lt;</span>UStaticMeshComponent<span style="color:#f92672">&gt;</span>(Component))
+</span></span><span style="display:flex;"><span>                {
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span>Appended)
+</span></span><span style="display:flex;"><span>                    {
+</span></span><span style="display:flex;"><span>                        Appended <span style="color:#f92672">=</span> true;
+</span></span><span style="display:flex;"><span>                        ActorList.Actors.Add(FJsonActorInfo());
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>                        ActorList.Actors.Last().Transform <span style="color:#f92672">=</span> Actor<span style="color:#f92672">-&gt;</span>GetTransform();
+</span></span><span style="display:flex;"><span>                        ActorList.Actors.Last().MeshList.Add(InstancedStaticMeshComponent<span style="color:#f92672">-&gt;</span>GetStaticMesh());
+</span></span><span style="display:flex;"><span>                    }
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">else</span>
+</span></span><span style="display:flex;"><span>                    {
+</span></span><span style="display:flex;"><span>                        ActorList.Actors.Last().MeshList.Add(InstancedStaticMeshComponent<span style="color:#f92672">-&gt;</span>GetStaticMesh());
+</span></span><span style="display:flex;"><span>                    }
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        TSharedPtr<span style="color:#f92672">&lt;</span>FJsonObject<span style="color:#f92672">&gt;</span> JsonObject <span style="color:#f92672">=</span> FJsonObjectConverter<span style="color:#f92672">::</span>UStructToJsonObject<span style="color:#f92672">&lt;</span>FJsonActorList<span style="color:#f92672">&gt;</span>(ActorList);
+</span></span><span style="display:flex;"><span>        FString JsonStr <span style="color:#f92672">=</span> TEXT(<span style="color:#e6db74">&#34;&#34;</span>);
+</span></span><span style="display:flex;"><span>        TSharedRef<span style="color:#f92672">&lt;</span>TJsonWriter<span style="color:#f92672">&lt;&gt;&gt;</span> Writer <span style="color:#f92672">=</span> TJsonWriterFactory<span style="color:#f92672">&lt;&gt;::</span>Create(<span style="color:#f92672">&amp;</span>JsonStr);
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (FJsonSerializer<span style="color:#f92672">::</span>Serialize(JsonObject.ToSharedRef(), Writer) <span style="color:#f92672">&amp;&amp;</span> JsonObject.IsValid())
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            IPlatformFile<span style="color:#f92672">&amp;</span> PlatformFile <span style="color:#f92672">=</span> FPlatformFileManager<span style="color:#f92672">::</span>Get().GetPlatformFile();
+</span></span><span style="display:flex;"><span>            FString SavePath <span style="color:#f92672">=</span> FPaths<span style="color:#f92672">::</span>ProjectSavedDir() <span style="color:#f92672">+</span> TEXT(<span style="color:#e6db74">&#34;/JsonTest/&#34;</span>);
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span>PlatformFile.DirectoryExists(<span style="color:#f92672">*</span>SavePath))
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                PlatformFile.CreateDirectory(<span style="color:#f92672">*</span>SavePath);
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">const</span> FString <span style="color:#a6e22e">JsonFileName</span>(TEXT(<span style="color:#e6db74">&#34;mesh_actors.json&#34;</span>));
+</span></span><span style="display:flex;"><span>            FString JsonFullPath <span style="color:#f92672">=</span> SavePath <span style="color:#f92672">+</span> JsonFileName;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            FFileHelper<span style="color:#f92672">::</span>SaveStringToFile(JsonStr, <span style="color:#f92672">*</span>JsonFullPath);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#endif
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> AJsonTestActor<span style="color:#f92672">::</span>ReadJson()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#if WITH_EDITOR
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">const</span> FString <span style="color:#a6e22e">JsonFileName</span>(TEXT(<span style="color:#e6db74">&#34;mesh_actors.json&#34;</span>));
+</span></span><span style="display:flex;"><span>    FString SavePath <span style="color:#f92672">=</span> FPaths<span style="color:#f92672">::</span>ProjectSavedDir() <span style="color:#f92672">+</span> TEXT(<span style="color:#e6db74">&#34;/JsonTest/&#34;</span>);
+</span></span><span style="display:flex;"><span>    FString JsonFullPath <span style="color:#f92672">=</span> SavePath <span style="color:#f92672">+</span> JsonFileName;
+</span></span><span style="display:flex;"><span>    IPlatformFile<span style="color:#f92672">&amp;</span> PlatformFile <span style="color:#f92672">=</span> FPlatformFileManager<span style="color:#f92672">::</span>Get().GetPlatformFile();
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span>PlatformFile.FileExists(<span style="color:#f92672">*</span>JsonFullPath))
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        UE_LOG(LogTemp, Error, TEXT(<span style="color:#e6db74">&#34;File [%s] doesn&#39;t exist&#34;</span>), <span style="color:#f92672">*</span>JsonFullPath);
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    FString JsonStr;
+</span></span><span style="display:flex;"><span>    FFileHelper<span style="color:#f92672">::</span>LoadFileToString(JsonStr, <span style="color:#f92672">*</span>JsonFullPath);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    TSharedRef<span style="color:#f92672">&lt;</span>TJsonReader<span style="color:#f92672">&lt;</span>TCHAR<span style="color:#f92672">&gt;&gt;</span> JsonReader <span style="color:#f92672">=</span> TJsonReaderFactory<span style="color:#f92672">&lt;</span>TCHAR<span style="color:#f92672">&gt;::</span>Create(JsonStr);
+</span></span><span style="display:flex;"><span>    TSharedPtr<span style="color:#f92672">&lt;</span>FJsonObject<span style="color:#f92672">&gt;</span> JsonObject <span style="color:#f92672">=</span> MakeShareable(<span style="color:#66d9ef">new</span> FJsonObject);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (FJsonSerializer<span style="color:#f92672">::</span>Deserialize(JsonReader, JsonObject) <span style="color:#f92672">&amp;&amp;</span> JsonObject.IsValid())
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        FJsonActorList ActorList;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (FJsonObjectConverter<span style="color:#f92672">::</span>JsonObjectToUStruct<span style="color:#f92672">&lt;</span>FJsonActorList<span style="color:#f92672">&gt;</span>(JsonObject.ToSharedRef(), <span style="color:#f92672">&amp;</span>ActorList))
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">const</span> FJsonActorInfo<span style="color:#f92672">&amp;</span> ActorInfo : ActorList.Actors)
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">const</span> UStaticMesh<span style="color:#f92672">*</span> Mesh : ActorInfo.MeshList)
+</span></span><span style="display:flex;"><span>                {
+</span></span><span style="display:flex;"><span>                    UE_LOG(LogTemp, Display, TEXT(<span style="color:#e6db74">&#34;mesh path: %s&#34;</span>), <span style="color:#f92672">*</span>Mesh<span style="color:#f92672">-&gt;</span>GetPathName());
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#endif
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span></code></pre></div><p>Json output:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Json" data-lang="Json"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>	<span style="color:#f92672">&#34;actors&#34;</span>: [
+</span></span><span style="display:flex;"><span>		{
+</span></span><span style="display:flex;"><span>			<span style="color:#f92672">&#34;transform&#34;</span>:
+</span></span><span style="display:flex;"><span>			{
+</span></span><span style="display:flex;"><span>				<span style="color:#f92672">&#34;rotation&#34;</span>:
+</span></span><span style="display:flex;"><span>				{
+</span></span><span style="display:flex;"><span>					<span style="color:#f92672">&#34;x&#34;</span>: <span style="color:#ae81ff">0</span>,
+</span></span><span style="display:flex;"><span>					<span style="color:#f92672">&#34;y&#34;</span>: <span style="color:#ae81ff">0</span>,
+</span></span><span style="display:flex;"><span>					<span style="color:#f92672">&#34;z&#34;</span>: <span style="color:#ae81ff">0</span>,
+</span></span><span style="display:flex;"><span>					<span style="color:#f92672">&#34;w&#34;</span>: <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>				},
+</span></span><span style="display:flex;"><span>				<span style="color:#f92672">&#34;translation&#34;</span>:
+</span></span><span style="display:flex;"><span>				{
+</span></span><span style="display:flex;"><span>					<span style="color:#f92672">&#34;x&#34;</span>: <span style="color:#ae81ff">0</span>,
+</span></span><span style="display:flex;"><span>					<span style="color:#f92672">&#34;y&#34;</span>: <span style="color:#ae81ff">0</span>,
+</span></span><span style="display:flex;"><span>					<span style="color:#f92672">&#34;z&#34;</span>: <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>				},
+</span></span><span style="display:flex;"><span>				<span style="color:#f92672">&#34;scale3D&#34;</span>:
+</span></span><span style="display:flex;"><span>				{
+</span></span><span style="display:flex;"><span>					<span style="color:#f92672">&#34;x&#34;</span>: <span style="color:#ae81ff">1</span>,
+</span></span><span style="display:flex;"><span>					<span style="color:#f92672">&#34;y&#34;</span>: <span style="color:#ae81ff">1</span>,
+</span></span><span style="display:flex;"><span>					<span style="color:#f92672">&#34;z&#34;</span>: <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>				}
+</span></span><span style="display:flex;"><span>			},
+</span></span><span style="display:flex;"><span>			<span style="color:#f92672">&#34;meshList&#34;</span>: [
+</span></span><span style="display:flex;"><span>				<span style="color:#e6db74">&#34;StaticMesh&#39;/Engine/EngineSky/SM_SkySphere.SM_SkySphere&#39;&#34;</span>
+</span></span><span style="display:flex;"><span>			]
+</span></span><span style="display:flex;"><span>		},
+</span></span><span style="display:flex;"><span>		{
+</span></span><span style="display:flex;"><span>			<span style="color:#f92672">&#34;transform&#34;</span>:
+</span></span><span style="display:flex;"><span>			{
+</span></span><span style="display:flex;"><span>				<span style="color:#f92672">&#34;rotation&#34;</span>:
+</span></span><span style="display:flex;"><span>				{
+</span></span><span style="display:flex;"><span>					<span style="color:#f92672">&#34;x&#34;</span>: <span style="color:#ae81ff">0</span>,
+</span></span><span style="display:flex;"><span>					<span style="color:#f92672">&#34;y&#34;</span>: <span style="color:#ae81ff">-1.3470648809743579e-05</span>,
+</span></span><span style="display:flex;"><span>					<span style="color:#f92672">&#34;z&#34;</span>: <span style="color:#ae81ff">0</span>,
+</span></span><span style="display:flex;"><span>					<span style="color:#f92672">&#34;w&#34;</span>: <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>				},
+</span></span><span style="display:flex;"><span>				<span style="color:#f92672">&#34;translation&#34;</span>:
+</span></span><span style="display:flex;"><span>				{
+</span></span><span style="display:flex;"><span>					<span style="color:#f92672">&#34;x&#34;</span>: <span style="color:#ae81ff">-399.75146484375</span>,
+</span></span><span style="display:flex;"><span>					<span style="color:#f92672">&#34;y&#34;</span>: <span style="color:#ae81ff">0</span>,
+</span></span><span style="display:flex;"><span>					<span style="color:#f92672">&#34;z&#34;</span>: <span style="color:#ae81ff">130.27708435058594</span>
+</span></span><span style="display:flex;"><span>				},
+</span></span><span style="display:flex;"><span>				<span style="color:#f92672">&#34;scale3D&#34;</span>:
+</span></span><span style="display:flex;"><span>				{
+</span></span><span style="display:flex;"><span>					<span style="color:#f92672">&#34;x&#34;</span>: <span style="color:#ae81ff">0.75</span>,
+</span></span><span style="display:flex;"><span>					<span style="color:#f92672">&#34;y&#34;</span>: <span style="color:#ae81ff">0.75</span>,
+</span></span><span style="display:flex;"><span>					<span style="color:#f92672">&#34;z&#34;</span>: <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>				}
+</span></span><span style="display:flex;"><span>			},
+</span></span><span style="display:flex;"><span>			<span style="color:#f92672">&#34;meshList&#34;</span>: [
+</span></span><span style="display:flex;"><span>				<span style="color:#e6db74">&#34;StaticMesh&#39;/Game/Geometry/Meshes/TemplateFloor.TemplateFloor&#39;&#34;</span>
+</span></span><span style="display:flex;"><span>			]
+</span></span><span style="display:flex;"><span>		}
+</span></span><span style="display:flex;"><span>	]
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><hr>
+<p><code>Enjoy yourself. It’s later than you think. -Chinese Proverbs</code></p>
+              
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+                
+                
+                  <div class="post-footer-tags">
+                    <span class="text-color-light text-small">TAGGED IN</span><br/>
+                    
+  <a class="tag tag--primary tag--small" href="https://dawnarc.com/tags/ue4/">UE4</a>
+
+                  </div>
+                
+              
+            
+            <div class="post-actions-wrap">
+  
+      <nav >
+        <ul class="post-actions post-action-nav">
+          
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--disabled">
+              
+                  <i class="fa fa-angle-left"></i>
+                  <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+                </a>
+            </li>
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2023/09/ue5pcg-notes/" data-tooltip="[UE5]PCG Notes">
+              
+                  <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+                  <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+          
+        </ul>
+      </nav>
+    <ul class="post-actions post-action-share" >
+      
+        <li class="post-action hide-lg hide-md hide-sm">
+          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
+            <i class="fa fa-share-alt"></i>
+          </a>
+        </li>
+        
+      
+      
+      <li class="post-action">
+        
+          <a class="post-action-btn btn btn--default" href="#">
+        
+          <i class="fa fa-list"></i>
+        </a>
+      </li>
+    </ul>
+  
+</div>
+
+            <script src="https://utteranc.es/client.js"
+  repo="dawnarc/dawnarc.github.io"
+  issue-term="pathname"
+  label="Comment"
+  theme="github-light"
+  crossorigin="anonymous"
+  async>
+</script>
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2023 Wang Aiguo. All Rights Reserved. Powered by <A href="https://gohugo.io/"> Hugo</A> | Theme <A href="https://github.com/kakawait/hugo-tranquilpeak-theme/">Tranquilpeak</A>.
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+        <div class="post-actions-wrap">
+  
+      <nav >
+        <ul class="post-actions post-action-nav">
+          
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--disabled">
+              
+                  <i class="fa fa-angle-left"></i>
+                  <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+                </a>
+            </li>
+            <li class="post-action">
+              
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2023/09/ue5pcg-notes/" data-tooltip="[UE5]PCG Notes">
+              
+                  <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+                  <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+          
+        </ul>
+      </nav>
+    <ul class="post-actions post-action-share" >
+      
+        <li class="post-action hide-lg hide-md hide-sm">
+          <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions">
+            <i class="fa fa-share-alt"></i>
+          </a>
+        </li>
+        
+      
+      
+      <li class="post-action">
+        
+          <a class="post-action-btn btn btn--default" href="#">
+        
+          <i class="fa fa-list"></i>
+        </a>
+      </li>
+    </ul>
+  
+</div>
+
+      </div>
+      <div id="share-options-bar" class="share-options-bar" data-behavior="4">
+  <i id="btn-close-shareoptions" class="fa fa-close"></i>
+  <ul class="share-options">
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-remove"></i>
+    </div>
+    
+      <img id="about-card-picture" src="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=110" alt="Author&#39;s picture" />
+    
+    <h4 id="about-card-name">Wang Aiguo</h4>
+    
+      <div id="about-card-bio">白金翰大堂经理</div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        Developer
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker"></i>
+        <br/>
+        Yichang, Hubei
+      </div>
+    
+  </div>
+</div>
+
+    
+
+    
+  
+    
+      
+      <div id="cover" style="background-image:url('https://dawnarc.com/images/cover-v1.2.0.jpg');"></div>
+    
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+
+	<link rel="stylesheet"
+      href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/styles/school-book.min.css">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/highlight.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.7/js/jquery.fancybox.min.js" integrity="sha256-GEAnjcTqVP+vBp3SSc8bEDQqvWAZMiHyUSIorrWwH50=" crossorigin="anonymous"></script>
+
+
+<script src="https://dawnarc.com/js/script-pcw6v3xilnxydl1vddzazdverrnn9ctynvnxgwho987mfyqkuylcb1nlt.min.js"></script>
+
+
+<script lang="javascript">
+window.onload = updateMinWidth;
+window.onresize = updateMinWidth;
+document.getElementById("sidebar").addEventListener("transitionend", updateMinWidth);
+function updateMinWidth() {
+  var sidebar = document.getElementById("sidebar");
+  var main = document.getElementById("main");
+  main.style.minWidth = "";
+  var w1 = getComputedStyle(main).getPropertyValue("min-width");
+  var w2 = getComputedStyle(sidebar).getPropertyValue("width");
+  var w3 = getComputedStyle(sidebar).getPropertyValue("left");
+  main.style.minWidth = `calc(${w1} - ${w2} - ${w3})`;
+}
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', (event) => {
+  document.querySelectorAll('pre code').forEach((el) => {
+    hljs.highlightElement(el);
+  });
+});
+</script>
+
+
+  
+    
+  
+
+
+
+
+
+
+    
+  </body>
+</html>
+
