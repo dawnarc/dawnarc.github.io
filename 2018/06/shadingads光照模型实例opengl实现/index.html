@@ -13,46 +13,18 @@
 <meta name="generator" content="Hugo 0.102.3 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Wang Aiguo">
 <meta name="keywords" content="Shading, OpenGL, ADS">
-<meta name="description" content="keywords：ambient diffuse specular、Phong Shading、Phong reflection model
-公式概述 ADS光照模型又称为“冯氏反射模型”(Phong reflection model)，为什么叫冯氏：
-裴祥风（Bùi Tường Phong音译, 1942年—1975年），美国电脑CG研究学者，于越南出生。他于1973年在尤他大学取得哲学博士学位，并发明了Phong反射模型及Phong著色法，并广为CG界采用。1975死于白血病。
-ADS光照模型公式缩写：
-LightIntensity = Ambient &#43; Diffuse &#43; Specular;参数说明：
-Ambient 环境光 Diffuse 漫反射 Specular 全反射光 / 镜面光 三个参数渲染效果示例： 三个参数拆解如下：
-Ambient = La * Ka;Diffuse = Ld * Kd * max( dot(s, n), 0.0 );Specular = Ls * Ks * pow( max( dot(r, v), 0.0 ), f );参数说明：
-La 环境光强度(Ambient light intensity) Ka 材质环境光反射率 / 材质环境光反射系数(Ambient reflectivity) Ld 漫射光强度 / 散射光强度(Diffuse light intensity) Kd 材质漫反射率 / 材质漫反射系数(Diffuse reflectivity) s 顶点 / 曲面点 到光源方向的单位向量(Direction from the surface point to the light source) n 顶点 / 曲面点 的法线单位向量(Normal vector at the surface point) Ls 镜面光强度 / 全反射光强度(Specular light intensity) Ks 材质镜面反射率 / 材质镜面反射系数(Specular reflectivity) r 完全反射向量( the vector of perfect reflection) v 顶点 / 曲面点 到摄像机方向的向量( the vector towards the viewer) f 镜面高光(specular highlights)，值范围在1到200之间，值越小，镜面亮点越大 光源出射强度 / 出射光强度(Intensity of the outgoing light ) I 的完整计算公式如下：">
+<meta name="description" content="keywords: [Shading]ADS光照模型实例(OpenGL实现)">
 
 
-<meta property="og:description" content="keywords：ambient diffuse specular、Phong Shading、Phong reflection model
-公式概述 ADS光照模型又称为“冯氏反射模型”(Phong reflection model)，为什么叫冯氏：
-裴祥风（Bùi Tường Phong音译, 1942年—1975年），美国电脑CG研究学者，于越南出生。他于1973年在尤他大学取得哲学博士学位，并发明了Phong反射模型及Phong著色法，并广为CG界采用。1975死于白血病。
-ADS光照模型公式缩写：
-LightIntensity = Ambient &#43; Diffuse &#43; Specular;参数说明：
-Ambient 环境光 Diffuse 漫反射 Specular 全反射光 / 镜面光 三个参数渲染效果示例： 三个参数拆解如下：
-Ambient = La * Ka;Diffuse = Ld * Kd * max( dot(s, n), 0.0 );Specular = Ls * Ks * pow( max( dot(r, v), 0.0 ), f );参数说明：
-La 环境光强度(Ambient light intensity) Ka 材质环境光反射率 / 材质环境光反射系数(Ambient reflectivity) Ld 漫射光强度 / 散射光强度(Diffuse light intensity) Kd 材质漫反射率 / 材质漫反射系数(Diffuse reflectivity) s 顶点 / 曲面点 到光源方向的单位向量(Direction from the surface point to the light source) n 顶点 / 曲面点 的法线单位向量(Normal vector at the surface point) Ls 镜面光强度 / 全反射光强度(Specular light intensity) Ks 材质镜面反射率 / 材质镜面反射系数(Specular reflectivity) r 完全反射向量( the vector of perfect reflection) v 顶点 / 曲面点 到摄像机方向的向量( the vector towards the viewer) f 镜面高光(specular highlights)，值范围在1到200之间，值越小，镜面亮点越大 光源出射强度 / 出射光强度(Intensity of the outgoing light ) I 的完整计算公式如下：">
+<meta property="og:description" content="keywords: [Shading]ADS光照模型实例(OpenGL实现)">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[Shading]ADS光照模型实例(OpenGL实现)">
 <meta name="twitter:title" content="[Shading]ADS光照模型实例(OpenGL实现)">
 <meta property="og:url" content="https://dawnarc.com/2018/06/shadingads%E5%85%89%E7%85%A7%E6%A8%A1%E5%9E%8B%E5%AE%9E%E4%BE%8Bopengl%E5%AE%9E%E7%8E%B0/">
 <meta property="twitter:url" content="https://dawnarc.com/2018/06/shadingads%E5%85%89%E7%85%A7%E6%A8%A1%E5%9E%8B%E5%AE%9E%E4%BE%8Bopengl%E5%AE%9E%E7%8E%B0/">
 <meta property="og:site_name" content="玄冬Wong">
-<meta property="og:description" content="keywords：ambient diffuse specular、Phong Shading、Phong reflection model
-公式概述 ADS光照模型又称为“冯氏反射模型”(Phong reflection model)，为什么叫冯氏：
-裴祥风（Bùi Tường Phong音译, 1942年—1975年），美国电脑CG研究学者，于越南出生。他于1973年在尤他大学取得哲学博士学位，并发明了Phong反射模型及Phong著色法，并广为CG界采用。1975死于白血病。
-ADS光照模型公式缩写：
-LightIntensity = Ambient &#43; Diffuse &#43; Specular;参数说明：
-Ambient 环境光 Diffuse 漫反射 Specular 全反射光 / 镜面光 三个参数渲染效果示例： 三个参数拆解如下：
-Ambient = La * Ka;Diffuse = Ld * Kd * max( dot(s, n), 0.0 );Specular = Ls * Ks * pow( max( dot(r, v), 0.0 ), f );参数说明：
-La 环境光强度(Ambient light intensity) Ka 材质环境光反射率 / 材质环境光反射系数(Ambient reflectivity) Ld 漫射光强度 / 散射光强度(Diffuse light intensity) Kd 材质漫反射率 / 材质漫反射系数(Diffuse reflectivity) s 顶点 / 曲面点 到光源方向的单位向量(Direction from the surface point to the light source) n 顶点 / 曲面点 的法线单位向量(Normal vector at the surface point) Ls 镜面光强度 / 全反射光强度(Specular light intensity) Ks 材质镜面反射率 / 材质镜面反射系数(Specular reflectivity) r 完全反射向量( the vector of perfect reflection) v 顶点 / 曲面点 到摄像机方向的向量( the vector towards the viewer) f 镜面高光(specular highlights)，值范围在1到200之间，值越小，镜面亮点越大 光源出射强度 / 出射光强度(Intensity of the outgoing light ) I 的完整计算公式如下：">
-<meta name="twitter:description" content="keywords：ambient diffuse specular、Phong Shading、Phong reflection model
-公式概述 ADS光照模型又称为“冯氏反射模型”(Phong reflection model)，为什么叫冯氏：
-裴祥风（Bùi Tường Phong音译, 1942年—1975年），美国电脑CG研究学者，于越南出生。他于1973年在尤他大学取得哲学博士学位，并发明了Phong反射模型及Phong著色法，并广为CG界采用。1975死于白血病。
-ADS光照模型公式缩写：
-LightIntensity = Ambient &#43; Diffuse &#43; Specular;参数说明：
-Ambient 环境光 Diffuse 漫反射 Specular 全反射光 / 镜面光 三个参数渲染效果示例： 三个参数拆解如下：
-Ambient = La * Ka;Diffuse = Ld * Kd * max( dot(s, n), 0.0 );Specular = Ls * Ks * pow( max( dot(r, v), 0.0 ), f );参数说明：
-La 环境光强度(Ambient light intensity) Ka 材质环境光反射率 / 材质环境光反射系数(Ambient reflectivity) Ld 漫射光强度 / 散射光强度(Diffuse light intensity) Kd 材质漫反射率 / 材质漫反射系数(Diffuse reflectivity) s 顶点 / 曲面点 到光源方向的单位向量(Direction from the surface point to the light source) n 顶点 / 曲面点 的法线单位向量(Normal vector at the surface point) Ls 镜面光强度 / 全反射光强度(Specular light intensity) Ks 材质镜面反射率 / 材质镜面反射系数(Specular reflectivity) r 完全反射向量( the vector of perfect reflection) v 顶点 / 曲面点 到摄像机方向的向量( the vector towards the viewer) f 镜面高光(specular highlights)，值范围在1到200之间，值越小，镜面亮点越大 光源出射强度 / 出射光强度(Intensity of the outgoing light ) I 的完整计算公式如下：">
+<meta property="og:description" content="keywords: [Shading]ADS光照模型实例(OpenGL实现)">
+<meta name="twitter:description" content="keywords: [Shading]ADS光照模型实例(OpenGL实现)">
 <meta property="og:locale" content="en-us">
 
   
@@ -87,6 +59,9 @@ La 环境光强度(Ambient light intensity) Ka 材质环境光反射率 / 材质
 
 
 
+
+  <meta property="og:image" content="https://dawnarc.com/thumbnail/beijing/thumbnail-beijing-006.jpg">
+  <meta property="twitter:image" content="https://dawnarc.com/thumbnail/beijing/thumbnail-beijing-006.jpg">
 
 
 
@@ -389,7 +364,8 @@ La 环境光强度(Ambient light intensity) Ka 材质环境光反射率 / 材质
                 <script>
                      (adsbygoogle = window.adsbygoogle || []).push({});
                 </script>
-              <p>keywords：ambient diffuse specular、Phong Shading、Phong reflection model</p>
+              <p>keywords: [Shading]ADS光照模型实例(OpenGL实现)</p>
+<p>keywords：ambient diffuse specular、Phong Shading、Phong reflection model</p>
 <h4 id="公式概述">公式概述</h4>
 <p>ADS光照模型又称为“冯氏反射模型”(Phong reflection model)，为什么叫冯氏：</p>
 <div class="alert info ">
@@ -550,7 +526,6 @@ void main() {
 <a href="https://www.amazon.com/OpenGL-4-0-Shading-Language-Cookbook/dp/1849514763">OpenGL 4.0 Shading Language Cookbook</a></p>
 <hr>
 <p><code>在各种事物的常理中，爱情是无法改变和阻挡的，因为就本性而言，爱只会自行消亡，任何计谋都难以使它逆转。---意大利·薄伽丘《十日谈》</code></p>
-
               
             </div>
           </div>

@@ -13,26 +13,18 @@
 <meta name="generator" content="Hugo 0.102.3 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Wang Aiguo">
 <meta name="keywords" content="UE4, Actor Lifecycle, Garbage Collection">
-<meta name="description" content="EndPlay、BeginDestroy、Destroy 的调用时机 如果要获取 Actor 销毁时的准确时间点，建议重写 Destroy() 函数，而不是EndPlay()、BeginDestroy()。 官方文档上说 EndPlay 会在执行Destroy的时候触发，但实际上并不会（至少4.20版本中测试过不会），而是当 Actor 所在场景销毁时（比如退出编辑器）才会调用。 BeginDestroy()、IsReadyForFinishDestroy()、FinishDestroy() 是在执行垃圾回收时才会触发的函数，而不是对象被 Destroy 后立即执行的函数。 Difference between BeginPlay and StartPlay of GameModeBase BeginPlay() inherit in Actor, and StartPlay() inherit in GameModeBase. GameModeBase::BeginPlay() triggered before GameModeBase::StartPlay(). 官方文档
-https://docs.unrealengine.com/en-us/Programming/UnrealArchitecture/Actors/ActorLifecycle
-乐观主义是一种别致的自我欺骗。">
+<meta name="description" content="keywords: [UE4]Actor Lifecycle">
 
 
-<meta property="og:description" content="EndPlay、BeginDestroy、Destroy 的调用时机 如果要获取 Actor 销毁时的准确时间点，建议重写 Destroy() 函数，而不是EndPlay()、BeginDestroy()。 官方文档上说 EndPlay 会在执行Destroy的时候触发，但实际上并不会（至少4.20版本中测试过不会），而是当 Actor 所在场景销毁时（比如退出编辑器）才会调用。 BeginDestroy()、IsReadyForFinishDestroy()、FinishDestroy() 是在执行垃圾回收时才会触发的函数，而不是对象被 Destroy 后立即执行的函数。 Difference between BeginPlay and StartPlay of GameModeBase BeginPlay() inherit in Actor, and StartPlay() inherit in GameModeBase. GameModeBase::BeginPlay() triggered before GameModeBase::StartPlay(). 官方文档
-https://docs.unrealengine.com/en-us/Programming/UnrealArchitecture/Actors/ActorLifecycle
-乐观主义是一种别致的自我欺骗。">
+<meta property="og:description" content="keywords: [UE4]Actor Lifecycle">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[UE4]Actor Lifecycle">
 <meta name="twitter:title" content="[UE4]Actor Lifecycle">
 <meta property="og:url" content="https://dawnarc.com/2018/08/ue4actor-lifecycle/">
 <meta property="twitter:url" content="https://dawnarc.com/2018/08/ue4actor-lifecycle/">
 <meta property="og:site_name" content="玄冬Wong">
-<meta property="og:description" content="EndPlay、BeginDestroy、Destroy 的调用时机 如果要获取 Actor 销毁时的准确时间点，建议重写 Destroy() 函数，而不是EndPlay()、BeginDestroy()。 官方文档上说 EndPlay 会在执行Destroy的时候触发，但实际上并不会（至少4.20版本中测试过不会），而是当 Actor 所在场景销毁时（比如退出编辑器）才会调用。 BeginDestroy()、IsReadyForFinishDestroy()、FinishDestroy() 是在执行垃圾回收时才会触发的函数，而不是对象被 Destroy 后立即执行的函数。 Difference between BeginPlay and StartPlay of GameModeBase BeginPlay() inherit in Actor, and StartPlay() inherit in GameModeBase. GameModeBase::BeginPlay() triggered before GameModeBase::StartPlay(). 官方文档
-https://docs.unrealengine.com/en-us/Programming/UnrealArchitecture/Actors/ActorLifecycle
-乐观主义是一种别致的自我欺骗。">
-<meta name="twitter:description" content="EndPlay、BeginDestroy、Destroy 的调用时机 如果要获取 Actor 销毁时的准确时间点，建议重写 Destroy() 函数，而不是EndPlay()、BeginDestroy()。 官方文档上说 EndPlay 会在执行Destroy的时候触发，但实际上并不会（至少4.20版本中测试过不会），而是当 Actor 所在场景销毁时（比如退出编辑器）才会调用。 BeginDestroy()、IsReadyForFinishDestroy()、FinishDestroy() 是在执行垃圾回收时才会触发的函数，而不是对象被 Destroy 后立即执行的函数。 Difference between BeginPlay and StartPlay of GameModeBase BeginPlay() inherit in Actor, and StartPlay() inherit in GameModeBase. GameModeBase::BeginPlay() triggered before GameModeBase::StartPlay(). 官方文档
-https://docs.unrealengine.com/en-us/Programming/UnrealArchitecture/Actors/ActorLifecycle
-乐观主义是一种别致的自我欺骗。">
+<meta property="og:description" content="keywords: [UE4]Actor Lifecycle">
+<meta name="twitter:description" content="keywords: [UE4]Actor Lifecycle">
 <meta property="og:locale" content="en-us">
 
   
@@ -65,6 +57,9 @@ https://docs.unrealengine.com/en-us/Programming/UnrealArchitecture/Actors/ActorL
 
 
 
+
+  <meta property="og:image" content="https://dawnarc.com/thumbnail/beijing/thumbnail-beijing-015.jpg">
+  <meta property="twitter:image" content="https://dawnarc.com/thumbnail/beijing/thumbnail-beijing-015.jpg">
 
 
 
@@ -367,7 +362,8 @@ https://docs.unrealengine.com/en-us/Programming/UnrealArchitecture/Actors/ActorL
                 <script>
                      (adsbygoogle = window.adsbygoogle || []).push({});
                 </script>
-              <h5 id="endplaybegindestroydestroy-的调用时机">EndPlay、BeginDestroy、Destroy 的调用时机</h5>
+              <p>keywords: [UE4]Actor Lifecycle</p>
+<h5 id="endplaybegindestroydestroy-的调用时机">EndPlay、BeginDestroy、Destroy 的调用时机</h5>
 <ul>
 <li>如果要获取 Actor 销毁时的准确时间点，建议重写 Destroy() 函数，而不是EndPlay()、BeginDestroy()。</li>
 <li>官方文档上说 EndPlay 会在执行Destroy的时候触发，但实际上并不会（至少4.20版本中测试过不会），而是当 Actor 所在场景销毁时（比如退出编辑器）才会调用。</li>
@@ -382,7 +378,6 @@ https://docs.unrealengine.com/en-us/Programming/UnrealArchitecture/Actors/ActorL
 <a href="https://docs.unrealengine.com/en-us/Programming/UnrealArchitecture/Actors/ActorLifecycle">https://docs.unrealengine.com/en-us/Programming/UnrealArchitecture/Actors/ActorLifecycle</a></p>
 <hr>
 <p><code>乐观主义是一种别致的自我欺骗。</code></p>
-
               
             </div>
           </div>

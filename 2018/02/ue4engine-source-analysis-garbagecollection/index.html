@@ -13,26 +13,18 @@
 <meta name="generator" content="Hugo 0.102.3 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Wang Aiguo">
 <meta name="keywords" content="">
-<meta name="description" content="Source Path:
-Engine\Source\Runtime\CoreUObject\Private\UObject\GarbageCollection.cppCallstack of GC in MainThread which was the thread of processing AActor::Tick()：
-UObject::ConditionalFinishDestroy() Obj.cpp:1006IncrementalDestroyGarbage(bool,float) GarbageCollection.cpp:1494IncrementalPurgeGarbage(bool,float) GarbageCollection.cpp:1421CollectGarbageInternal(EObjectFlags,bool) GarbageCollection.cpp:1969TryCollectGarbage(EObjectFlags,bool) GarbageCollection.cpp:2088UEngine::PerformGarbageCollectionAndCleanupActors() UnrealEngine.cpp:1409UEngine::ConditionalCollectGarbage() UnrealEngine.cpp:1383UWorld::Tick(ELevelTick,float) LevelTick.cpp:1755UEditorEngine::Tick(float,bool) EditorEngine.cpp:1514UUnrealEdEngine::Tick(float,bool) UnrealEdEngine.cpp:411FEngineLoop::Tick() LaunchEngineLoop.cpp:4844GuardedMain(const wchar_t *) Launch.cpp:171WinMain(HINSTANCE__ *,HINSTANCE__ *,char *,int) LaunchWindows.cpp:257__scrt_common_main_seh() 0x00007ff64fa5146aBaseThreadInitThunk 0x00007ffd732e7c24RtlUserThreadStart 0x00007ffd748ecea1人才的本领叫做技术，天才的创意叫做艺术。">
+<meta name="description" content="keywords: [UE4]Engine Source Analysis - GarbageCollection">
 
 
-<meta property="og:description" content="Source Path:
-Engine\Source\Runtime\CoreUObject\Private\UObject\GarbageCollection.cppCallstack of GC in MainThread which was the thread of processing AActor::Tick()：
-UObject::ConditionalFinishDestroy() Obj.cpp:1006IncrementalDestroyGarbage(bool,float) GarbageCollection.cpp:1494IncrementalPurgeGarbage(bool,float) GarbageCollection.cpp:1421CollectGarbageInternal(EObjectFlags,bool) GarbageCollection.cpp:1969TryCollectGarbage(EObjectFlags,bool) GarbageCollection.cpp:2088UEngine::PerformGarbageCollectionAndCleanupActors() UnrealEngine.cpp:1409UEngine::ConditionalCollectGarbage() UnrealEngine.cpp:1383UWorld::Tick(ELevelTick,float) LevelTick.cpp:1755UEditorEngine::Tick(float,bool) EditorEngine.cpp:1514UUnrealEdEngine::Tick(float,bool) UnrealEdEngine.cpp:411FEngineLoop::Tick() LaunchEngineLoop.cpp:4844GuardedMain(const wchar_t *) Launch.cpp:171WinMain(HINSTANCE__ *,HINSTANCE__ *,char *,int) LaunchWindows.cpp:257__scrt_common_main_seh() 0x00007ff64fa5146aBaseThreadInitThunk 0x00007ffd732e7c24RtlUserThreadStart 0x00007ffd748ecea1人才的本领叫做技术，天才的创意叫做艺术。">
+<meta property="og:description" content="keywords: [UE4]Engine Source Analysis - GarbageCollection">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[UE4]Engine Source Analysis - GarbageCollection">
 <meta name="twitter:title" content="[UE4]Engine Source Analysis - GarbageCollection">
 <meta property="og:url" content="https://dawnarc.com/2018/02/ue4engine-source-analysis-garbagecollection/">
 <meta property="twitter:url" content="https://dawnarc.com/2018/02/ue4engine-source-analysis-garbagecollection/">
 <meta property="og:site_name" content="玄冬Wong">
-<meta property="og:description" content="Source Path:
-Engine\Source\Runtime\CoreUObject\Private\UObject\GarbageCollection.cppCallstack of GC in MainThread which was the thread of processing AActor::Tick()：
-UObject::ConditionalFinishDestroy() Obj.cpp:1006IncrementalDestroyGarbage(bool,float) GarbageCollection.cpp:1494IncrementalPurgeGarbage(bool,float) GarbageCollection.cpp:1421CollectGarbageInternal(EObjectFlags,bool) GarbageCollection.cpp:1969TryCollectGarbage(EObjectFlags,bool) GarbageCollection.cpp:2088UEngine::PerformGarbageCollectionAndCleanupActors() UnrealEngine.cpp:1409UEngine::ConditionalCollectGarbage() UnrealEngine.cpp:1383UWorld::Tick(ELevelTick,float) LevelTick.cpp:1755UEditorEngine::Tick(float,bool) EditorEngine.cpp:1514UUnrealEdEngine::Tick(float,bool) UnrealEdEngine.cpp:411FEngineLoop::Tick() LaunchEngineLoop.cpp:4844GuardedMain(const wchar_t *) Launch.cpp:171WinMain(HINSTANCE__ *,HINSTANCE__ *,char *,int) LaunchWindows.cpp:257__scrt_common_main_seh() 0x00007ff64fa5146aBaseThreadInitThunk 0x00007ffd732e7c24RtlUserThreadStart 0x00007ffd748ecea1人才的本领叫做技术，天才的创意叫做艺术。">
-<meta name="twitter:description" content="Source Path:
-Engine\Source\Runtime\CoreUObject\Private\UObject\GarbageCollection.cppCallstack of GC in MainThread which was the thread of processing AActor::Tick()：
-UObject::ConditionalFinishDestroy() Obj.cpp:1006IncrementalDestroyGarbage(bool,float) GarbageCollection.cpp:1494IncrementalPurgeGarbage(bool,float) GarbageCollection.cpp:1421CollectGarbageInternal(EObjectFlags,bool) GarbageCollection.cpp:1969TryCollectGarbage(EObjectFlags,bool) GarbageCollection.cpp:2088UEngine::PerformGarbageCollectionAndCleanupActors() UnrealEngine.cpp:1409UEngine::ConditionalCollectGarbage() UnrealEngine.cpp:1383UWorld::Tick(ELevelTick,float) LevelTick.cpp:1755UEditorEngine::Tick(float,bool) EditorEngine.cpp:1514UUnrealEdEngine::Tick(float,bool) UnrealEdEngine.cpp:411FEngineLoop::Tick() LaunchEngineLoop.cpp:4844GuardedMain(const wchar_t *) Launch.cpp:171WinMain(HINSTANCE__ *,HINSTANCE__ *,char *,int) LaunchWindows.cpp:257__scrt_common_main_seh() 0x00007ff64fa5146aBaseThreadInitThunk 0x00007ffd732e7c24RtlUserThreadStart 0x00007ffd748ecea1人才的本领叫做技术，天才的创意叫做艺术。">
+<meta property="og:description" content="keywords: [UE4]Engine Source Analysis - GarbageCollection">
+<meta name="twitter:description" content="keywords: [UE4]Engine Source Analysis - GarbageCollection">
 <meta property="og:locale" content="en-us">
 
   
@@ -67,6 +59,9 @@ UObject::ConditionalFinishDestroy() Obj.cpp:1006IncrementalDestroyGarbage(bool,
 
 
 
+
+  <meta property="og:image" content="https://dawnarc.com/thumbnail/beijing/thumbnail-beijing-017.jpg">
+  <meta property="twitter:image" content="https://dawnarc.com/thumbnail/beijing/thumbnail-beijing-017.jpg">
 
 
 
@@ -369,7 +364,8 @@ UObject::ConditionalFinishDestroy() Obj.cpp:1006IncrementalDestroyGarbage(bool,
                 <script>
                      (adsbygoogle = window.adsbygoogle || []).push({});
                 </script>
-              <p>Source Path:</p>
+              <p>keywords: [UE4]Engine Source Analysis - GarbageCollection</p>
+<p>Source Path:</p>
 <pre><code>Engine\Source\Runtime\CoreUObject\Private\UObject\GarbageCollection.cpp
 </code></pre>
 <p>Callstack of GC in <code>MainThread</code> which was the thread of processing <code>AActor::Tick()</code>：</p>
@@ -392,7 +388,6 @@ RtlUserThreadStart 0x00007ffd748ecea1
 </code></pre>
 <hr>
 <p><code>人才的本领叫做技术，天才的创意叫做艺术。</code></p>
-
               
             </div>
           </div>

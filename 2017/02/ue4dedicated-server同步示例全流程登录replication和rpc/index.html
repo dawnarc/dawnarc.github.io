@@ -13,62 +13,18 @@
 <meta name="generator" content="Hugo 0.102.3 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Wang Aiguo">
 <meta name="keywords" content="">
-<meta name="description" content="原文已转移位置，此文章留给收藏了旧地址的用户做跳转。
-因这篇文章的内容越写越多，越来越杂，所以准备分成多篇文章，持续更新中。
-[UE4]Networking in Basic - Simple Replication Example
-https://dawnarc.com/2017/02/ue4networking-in-basic-simple-replication-example/
-[UE4]Networking in Baisc - Travelling in Multiplayer
-https://dawnarc.com//2017/06/ue4networking-in-baisc-travelling-in-multiplayer/
-[UE4]Networking in Baisc - Sessions
-https://dawnarc.com/2019/07/ue4networking-in-baisc-sessions/
-[UE4]Networking in Advanced - Engine Source Analysis &amp; High-Level Cases
-https://dawnarc.com/2019/06/ue4networking-in-advanced-engine-source-analysis-high-level-cases
-[UE4]Networking in Advanced - Replication Graph
-https://dawnarc.com/2019/09/ue4networking-in-advanced-replication-graph/">
+<meta name="description" content="keywords: [UE4]Dedicated Server同步示例全流程(登录、Replication和RPC)">
 
 
-<meta property="og:description" content="原文已转移位置，此文章留给收藏了旧地址的用户做跳转。
-因这篇文章的内容越写越多，越来越杂，所以准备分成多篇文章，持续更新中。
-[UE4]Networking in Basic - Simple Replication Example
-https://dawnarc.com/2017/02/ue4networking-in-basic-simple-replication-example/
-[UE4]Networking in Baisc - Travelling in Multiplayer
-https://dawnarc.com//2017/06/ue4networking-in-baisc-travelling-in-multiplayer/
-[UE4]Networking in Baisc - Sessions
-https://dawnarc.com/2019/07/ue4networking-in-baisc-sessions/
-[UE4]Networking in Advanced - Engine Source Analysis &amp; High-Level Cases
-https://dawnarc.com/2019/06/ue4networking-in-advanced-engine-source-analysis-high-level-cases
-[UE4]Networking in Advanced - Replication Graph
-https://dawnarc.com/2019/09/ue4networking-in-advanced-replication-graph/">
+<meta property="og:description" content="keywords: [UE4]Dedicated Server同步示例全流程(登录、Replication和RPC)">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[UE4]Dedicated Server同步示例全流程(登录、Replication和RPC)">
 <meta name="twitter:title" content="[UE4]Dedicated Server同步示例全流程(登录、Replication和RPC)">
 <meta property="og:url" content="https://dawnarc.com/2017/02/ue4dedicated-server%E5%90%8C%E6%AD%A5%E7%A4%BA%E4%BE%8B%E5%85%A8%E6%B5%81%E7%A8%8B%E7%99%BB%E5%BD%95replication%E5%92%8Crpc/">
 <meta property="twitter:url" content="https://dawnarc.com/2017/02/ue4dedicated-server%E5%90%8C%E6%AD%A5%E7%A4%BA%E4%BE%8B%E5%85%A8%E6%B5%81%E7%A8%8B%E7%99%BB%E5%BD%95replication%E5%92%8Crpc/">
 <meta property="og:site_name" content="玄冬Wong">
-<meta property="og:description" content="原文已转移位置，此文章留给收藏了旧地址的用户做跳转。
-因这篇文章的内容越写越多，越来越杂，所以准备分成多篇文章，持续更新中。
-[UE4]Networking in Basic - Simple Replication Example
-https://dawnarc.com/2017/02/ue4networking-in-basic-simple-replication-example/
-[UE4]Networking in Baisc - Travelling in Multiplayer
-https://dawnarc.com//2017/06/ue4networking-in-baisc-travelling-in-multiplayer/
-[UE4]Networking in Baisc - Sessions
-https://dawnarc.com/2019/07/ue4networking-in-baisc-sessions/
-[UE4]Networking in Advanced - Engine Source Analysis &amp; High-Level Cases
-https://dawnarc.com/2019/06/ue4networking-in-advanced-engine-source-analysis-high-level-cases
-[UE4]Networking in Advanced - Replication Graph
-https://dawnarc.com/2019/09/ue4networking-in-advanced-replication-graph/">
-<meta name="twitter:description" content="原文已转移位置，此文章留给收藏了旧地址的用户做跳转。
-因这篇文章的内容越写越多，越来越杂，所以准备分成多篇文章，持续更新中。
-[UE4]Networking in Basic - Simple Replication Example
-https://dawnarc.com/2017/02/ue4networking-in-basic-simple-replication-example/
-[UE4]Networking in Baisc - Travelling in Multiplayer
-https://dawnarc.com//2017/06/ue4networking-in-baisc-travelling-in-multiplayer/
-[UE4]Networking in Baisc - Sessions
-https://dawnarc.com/2019/07/ue4networking-in-baisc-sessions/
-[UE4]Networking in Advanced - Engine Source Analysis &amp; High-Level Cases
-https://dawnarc.com/2019/06/ue4networking-in-advanced-engine-source-analysis-high-level-cases
-[UE4]Networking in Advanced - Replication Graph
-https://dawnarc.com/2019/09/ue4networking-in-advanced-replication-graph/">
+<meta property="og:description" content="keywords: [UE4]Dedicated Server同步示例全流程(登录、Replication和RPC)">
+<meta name="twitter:description" content="keywords: [UE4]Dedicated Server同步示例全流程(登录、Replication和RPC)">
 <meta property="og:locale" content="en-us">
 
   
@@ -101,6 +57,9 @@ https://dawnarc.com/2019/09/ue4networking-in-advanced-replication-graph/">
 
 
 
+
+  <meta property="og:image" content="https://dawnarc.com/thumbnail/beijing/thumbnail-beijing-007.jpg">
+  <meta property="twitter:image" content="https://dawnarc.com/thumbnail/beijing/thumbnail-beijing-007.jpg">
 
 
 
@@ -403,7 +362,8 @@ https://dawnarc.com/2019/09/ue4networking-in-advanced-replication-graph/">
                 <script>
                      (adsbygoogle = window.adsbygoogle || []).push({});
                 </script>
-              <hr>
+              <p>keywords: [UE4]Dedicated Server同步示例全流程(登录、Replication和RPC)</p>
+<hr>
 <p>原文已转移位置，此文章留给收藏了旧地址的用户做跳转。</p>
 <p>因这篇文章的内容越写越多，越来越杂，所以准备分成多篇文章，持续更新中。</p>
 <p>[UE4]Networking in Basic - Simple Replication Example<br>
@@ -416,7 +376,6 @@ https://dawnarc.com/2019/09/ue4networking-in-advanced-replication-graph/">
 <a href="https://dawnarc.com/2019/06/ue4networking-in-advanced-engine-source-analysis-high-level-cases">https://dawnarc.com/2019/06/ue4networking-in-advanced-engine-source-analysis-high-level-cases</a></p>
 <p>[UE4]Networking in Advanced - Replication Graph<br>
 <a href="https://dawnarc.com/2019/09/ue4networking-in-advanced-replication-graph/">https://dawnarc.com/2019/09/ue4networking-in-advanced-replication-graph/</a></p>
-
               
             </div>
           </div>

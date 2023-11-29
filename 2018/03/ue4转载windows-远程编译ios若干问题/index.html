@@ -13,46 +13,18 @@
 <meta name="generator" content="Hugo 0.102.3 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Wang Aiguo">
 <meta name="keywords" content="UE4, iOS building">
-<meta name="description" content="原文
-http://wangjie.rocks/2017/11/30/ue4-ios-build-on-windows/
-问题一 ssh_exchange_identification: Connection closed by remote hostrsync: connection unexpectedly closed (0 bytes received so far) [sender]rsync error: error in rsync protocol data stream (code 12) at /home/lapo/packaging/rsync-3.0.4-1/src/rsync-3.0.4/io.c(632) [sender=3.0.4]解决方法
-首先保证远程机器 OSX 上的 ssh 并发数配置足够，使用命令查看
-grep MaxStartups /etc/ssh/sshd_config一般输出如下格式 10/20/30 意思是连接达到10之后以20%的概率拒绝新连接直到30为止，可以根据需求调大第一个值并重启
-其次保证 RemoteToolChainPrivate.key 文件存在于 C:\Users\用户名\AppData\Roaming\Unreal Engine\UnrealBuildTool\SSHKeys\远程机器地址\mac 文件夹下，没有的话需要在 Edit -&gt; Project Settings&hellip; -&gt; Platforms -&gt; iOS -&gt; Build 中进行配置，配置好远程 OSX 机器的地址，用户名，然后点击 Generate SSH Key 生成
-问题二 编译失败，出现如下错误
-clang: error: argument unused during compilation: &#39;-fno-objc-exceptions&#39; [-Werror,-Wunused-command-line-argument]解决方法">
+<meta name="description" content="keywords: [UE4]转载：Windows 远程编译iOS若干问题">
 
 
-<meta property="og:description" content="原文
-http://wangjie.rocks/2017/11/30/ue4-ios-build-on-windows/
-问题一 ssh_exchange_identification: Connection closed by remote hostrsync: connection unexpectedly closed (0 bytes received so far) [sender]rsync error: error in rsync protocol data stream (code 12) at /home/lapo/packaging/rsync-3.0.4-1/src/rsync-3.0.4/io.c(632) [sender=3.0.4]解决方法
-首先保证远程机器 OSX 上的 ssh 并发数配置足够，使用命令查看
-grep MaxStartups /etc/ssh/sshd_config一般输出如下格式 10/20/30 意思是连接达到10之后以20%的概率拒绝新连接直到30为止，可以根据需求调大第一个值并重启
-其次保证 RemoteToolChainPrivate.key 文件存在于 C:\Users\用户名\AppData\Roaming\Unreal Engine\UnrealBuildTool\SSHKeys\远程机器地址\mac 文件夹下，没有的话需要在 Edit -&gt; Project Settings&hellip; -&gt; Platforms -&gt; iOS -&gt; Build 中进行配置，配置好远程 OSX 机器的地址，用户名，然后点击 Generate SSH Key 生成
-问题二 编译失败，出现如下错误
-clang: error: argument unused during compilation: &#39;-fno-objc-exceptions&#39; [-Werror,-Wunused-command-line-argument]解决方法">
+<meta property="og:description" content="keywords: [UE4]转载：Windows 远程编译iOS若干问题">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[UE4]转载：Windows 远程编译iOS若干问题">
 <meta name="twitter:title" content="[UE4]转载：Windows 远程编译iOS若干问题">
 <meta property="og:url" content="https://dawnarc.com/2018/03/ue4%E8%BD%AC%E8%BD%BDwindows-%E8%BF%9C%E7%A8%8B%E7%BC%96%E8%AF%91ios%E8%8B%A5%E5%B9%B2%E9%97%AE%E9%A2%98/">
 <meta property="twitter:url" content="https://dawnarc.com/2018/03/ue4%E8%BD%AC%E8%BD%BDwindows-%E8%BF%9C%E7%A8%8B%E7%BC%96%E8%AF%91ios%E8%8B%A5%E5%B9%B2%E9%97%AE%E9%A2%98/">
 <meta property="og:site_name" content="玄冬Wong">
-<meta property="og:description" content="原文
-http://wangjie.rocks/2017/11/30/ue4-ios-build-on-windows/
-问题一 ssh_exchange_identification: Connection closed by remote hostrsync: connection unexpectedly closed (0 bytes received so far) [sender]rsync error: error in rsync protocol data stream (code 12) at /home/lapo/packaging/rsync-3.0.4-1/src/rsync-3.0.4/io.c(632) [sender=3.0.4]解决方法
-首先保证远程机器 OSX 上的 ssh 并发数配置足够，使用命令查看
-grep MaxStartups /etc/ssh/sshd_config一般输出如下格式 10/20/30 意思是连接达到10之后以20%的概率拒绝新连接直到30为止，可以根据需求调大第一个值并重启
-其次保证 RemoteToolChainPrivate.key 文件存在于 C:\Users\用户名\AppData\Roaming\Unreal Engine\UnrealBuildTool\SSHKeys\远程机器地址\mac 文件夹下，没有的话需要在 Edit -&gt; Project Settings&hellip; -&gt; Platforms -&gt; iOS -&gt; Build 中进行配置，配置好远程 OSX 机器的地址，用户名，然后点击 Generate SSH Key 生成
-问题二 编译失败，出现如下错误
-clang: error: argument unused during compilation: &#39;-fno-objc-exceptions&#39; [-Werror,-Wunused-command-line-argument]解决方法">
-<meta name="twitter:description" content="原文
-http://wangjie.rocks/2017/11/30/ue4-ios-build-on-windows/
-问题一 ssh_exchange_identification: Connection closed by remote hostrsync: connection unexpectedly closed (0 bytes received so far) [sender]rsync error: error in rsync protocol data stream (code 12) at /home/lapo/packaging/rsync-3.0.4-1/src/rsync-3.0.4/io.c(632) [sender=3.0.4]解决方法
-首先保证远程机器 OSX 上的 ssh 并发数配置足够，使用命令查看
-grep MaxStartups /etc/ssh/sshd_config一般输出如下格式 10/20/30 意思是连接达到10之后以20%的概率拒绝新连接直到30为止，可以根据需求调大第一个值并重启
-其次保证 RemoteToolChainPrivate.key 文件存在于 C:\Users\用户名\AppData\Roaming\Unreal Engine\UnrealBuildTool\SSHKeys\远程机器地址\mac 文件夹下，没有的话需要在 Edit -&gt; Project Settings&hellip; -&gt; Platforms -&gt; iOS -&gt; Build 中进行配置，配置好远程 OSX 机器的地址，用户名，然后点击 Generate SSH Key 生成
-问题二 编译失败，出现如下错误
-clang: error: argument unused during compilation: &#39;-fno-objc-exceptions&#39; [-Werror,-Wunused-command-line-argument]解决方法">
+<meta property="og:description" content="keywords: [UE4]转载：Windows 远程编译iOS若干问题">
+<meta name="twitter:description" content="keywords: [UE4]转载：Windows 远程编译iOS若干问题">
 <meta property="og:locale" content="en-us">
 
   
@@ -85,6 +57,9 @@ clang: error: argument unused during compilation: &#39;-fno-objc-exceptions&#39;
 
 
 
+
+  <meta property="og:image" content="https://dawnarc.com/thumbnail/beijing/thumbnail-beijing-020.jpg">
+  <meta property="twitter:image" content="https://dawnarc.com/thumbnail/beijing/thumbnail-beijing-020.jpg">
 
 
 
@@ -387,7 +362,8 @@ clang: error: argument unused during compilation: &#39;-fno-objc-exceptions&#39;
                 <script>
                      (adsbygoogle = window.adsbygoogle || []).push({});
                 </script>
-              <p>原文<br>
+              <p>keywords: [UE4]转载：Windows 远程编译iOS若干问题</p>
+<p>原文<br>
 <a href="http://wangjie.rocks/2017/11/30/ue4-ios-build-on-windows/">http://wangjie.rocks/2017/11/30/ue4-ios-build-on-windows/</a></p>
 <h5 id="问题一">问题一</h5>
 <pre><code>ssh_exchange_identification: Connection closed by remote hostrsync: connection unexpectedly closed (0 bytes received so far) [sender]rsync error: error in rsync protocol data stream (code 12) at /home/lapo/packaging/rsync-3.0.4-1/src/rsync-3.0.4/io.c(632) [sender=3.0.4]
@@ -433,7 +409,6 @@ doesn&rsquo;t match the entitlements file&rsquo;s value for the get-task-allow e
 <a href="https://www.jianshu.com/p/24e55f608004">https://www.jianshu.com/p/24e55f608004</a></p>
 <hr>
 <p><code>天行健，君子以自强不息；地势坤，君子以厚德载物。----《易经》</code></p>
-
               
             </div>
           </div>

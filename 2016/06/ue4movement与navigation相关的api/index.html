@@ -13,58 +13,18 @@
 <meta name="generator" content="Hugo 0.102.3 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Wang Aiguo">
 <meta name="keywords" content="">
-<meta name="description" content="如何修改角色的最大移动速度 if (UCharacterMovementComponent* Movement = MyCharacter-&gt;GetCharacterMovement()){Movement-&gt;MaxWalkSpeed *= 0.5;}如何修改角色的当前移动速度 Tick() 中执行：
-GetCharacterMovement()-&gt;Velocity = FVector(0.f, 500.f, 0.f);如何停止正在移动的Pawn AController::StopMovement()修改重力加速度(Gravity) 编辑器中设置全局重力加速度
-Project Settings -》 Engine -》 Physics -》 Default Physics Settings -》 Default Gravity Z。
-运行时runtime期间设置全局重力加速度：
-AWorldSettings* MyWorldSetting=GetWorldSettings();MyWorldSetting-&gt;bGlobalGravitySet=true;MyWorldSetting-&gt;GlobalGravityZ = 900.f;设置单个角色的重力加速度（倍率）
-MyCharacter-&gt;GetCharacterMovement()-&gt;GravityScale = 100.f飞行模式中的加速减速问题 CharacterMovement默认有一个加速效果（属性值为MaxAcceleration，默认为2048，表示加速率），如果MovementMode设置为Walking模式，当调用Controller-&gt;StopMovement()来立即停止移动； 但是Flying Mode时，即使不再执行AddMovementInput()，Actor仍然会继续滑行一段距离，如果希望此时立即停止不滑行，需要将减速速率（默认为0）设置为加速速率的大小：
-GetCharacterMovement()-&gt;BrakingDecelerationFlying = GetCharacterMovement()-&gt;MaxAcceleration;设置MovementMode时的注意事项 如果一个Actor被Spawn出来之后，其MovementMode默认状态是Walking，如果此时Spawn的位置在空中，在没有Controller对其Possess的情况下，其静止在空中，当Possess之后，MovementMode会自动变为Falling，如果想让其继续停留在空中(比如飞行类的角色)，此时再手动将其MovementMode设置为Flying。绝对不能在possess之前设置，否则设置状态会被引擎修改掉。
-Controller.StopMovement()和MovementComponent.StopMovementImmediately()的区别 前者只执行：
-PathFollowingComp-&gt;AbortMove(*this, FPathFollowingResultFlags::MovementStop);后者先执行：
-Velocity = FVector::ZeroVector;接着再执行：
-PathFollowingComp-&gt;AbortMove(*this, FPathFollowingResultFlags::MovementStop);NavigationSystem寻路相关的API 检测某个坐标点是否在navmesh内，即可以作为寻路的坐标点。 UNavigationSystem::TestPathSync 实例用法：">
+<meta name="description" content="keywords: [UE4]Movement与Navigation相关的API">
 
 
-<meta property="og:description" content="如何修改角色的最大移动速度 if (UCharacterMovementComponent* Movement = MyCharacter-&gt;GetCharacterMovement()){Movement-&gt;MaxWalkSpeed *= 0.5;}如何修改角色的当前移动速度 Tick() 中执行：
-GetCharacterMovement()-&gt;Velocity = FVector(0.f, 500.f, 0.f);如何停止正在移动的Pawn AController::StopMovement()修改重力加速度(Gravity) 编辑器中设置全局重力加速度
-Project Settings -》 Engine -》 Physics -》 Default Physics Settings -》 Default Gravity Z。
-运行时runtime期间设置全局重力加速度：
-AWorldSettings* MyWorldSetting=GetWorldSettings();MyWorldSetting-&gt;bGlobalGravitySet=true;MyWorldSetting-&gt;GlobalGravityZ = 900.f;设置单个角色的重力加速度（倍率）
-MyCharacter-&gt;GetCharacterMovement()-&gt;GravityScale = 100.f飞行模式中的加速减速问题 CharacterMovement默认有一个加速效果（属性值为MaxAcceleration，默认为2048，表示加速率），如果MovementMode设置为Walking模式，当调用Controller-&gt;StopMovement()来立即停止移动； 但是Flying Mode时，即使不再执行AddMovementInput()，Actor仍然会继续滑行一段距离，如果希望此时立即停止不滑行，需要将减速速率（默认为0）设置为加速速率的大小：
-GetCharacterMovement()-&gt;BrakingDecelerationFlying = GetCharacterMovement()-&gt;MaxAcceleration;设置MovementMode时的注意事项 如果一个Actor被Spawn出来之后，其MovementMode默认状态是Walking，如果此时Spawn的位置在空中，在没有Controller对其Possess的情况下，其静止在空中，当Possess之后，MovementMode会自动变为Falling，如果想让其继续停留在空中(比如飞行类的角色)，此时再手动将其MovementMode设置为Flying。绝对不能在possess之前设置，否则设置状态会被引擎修改掉。
-Controller.StopMovement()和MovementComponent.StopMovementImmediately()的区别 前者只执行：
-PathFollowingComp-&gt;AbortMove(*this, FPathFollowingResultFlags::MovementStop);后者先执行：
-Velocity = FVector::ZeroVector;接着再执行：
-PathFollowingComp-&gt;AbortMove(*this, FPathFollowingResultFlags::MovementStop);NavigationSystem寻路相关的API 检测某个坐标点是否在navmesh内，即可以作为寻路的坐标点。 UNavigationSystem::TestPathSync 实例用法：">
+<meta property="og:description" content="keywords: [UE4]Movement与Navigation相关的API">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[UE4]Movement与Navigation相关的API">
 <meta name="twitter:title" content="[UE4]Movement与Navigation相关的API">
 <meta property="og:url" content="https://dawnarc.com/2016/06/ue4movement%E4%B8%8Enavigation%E7%9B%B8%E5%85%B3%E7%9A%84api/">
 <meta property="twitter:url" content="https://dawnarc.com/2016/06/ue4movement%E4%B8%8Enavigation%E7%9B%B8%E5%85%B3%E7%9A%84api/">
 <meta property="og:site_name" content="玄冬Wong">
-<meta property="og:description" content="如何修改角色的最大移动速度 if (UCharacterMovementComponent* Movement = MyCharacter-&gt;GetCharacterMovement()){Movement-&gt;MaxWalkSpeed *= 0.5;}如何修改角色的当前移动速度 Tick() 中执行：
-GetCharacterMovement()-&gt;Velocity = FVector(0.f, 500.f, 0.f);如何停止正在移动的Pawn AController::StopMovement()修改重力加速度(Gravity) 编辑器中设置全局重力加速度
-Project Settings -》 Engine -》 Physics -》 Default Physics Settings -》 Default Gravity Z。
-运行时runtime期间设置全局重力加速度：
-AWorldSettings* MyWorldSetting=GetWorldSettings();MyWorldSetting-&gt;bGlobalGravitySet=true;MyWorldSetting-&gt;GlobalGravityZ = 900.f;设置单个角色的重力加速度（倍率）
-MyCharacter-&gt;GetCharacterMovement()-&gt;GravityScale = 100.f飞行模式中的加速减速问题 CharacterMovement默认有一个加速效果（属性值为MaxAcceleration，默认为2048，表示加速率），如果MovementMode设置为Walking模式，当调用Controller-&gt;StopMovement()来立即停止移动； 但是Flying Mode时，即使不再执行AddMovementInput()，Actor仍然会继续滑行一段距离，如果希望此时立即停止不滑行，需要将减速速率（默认为0）设置为加速速率的大小：
-GetCharacterMovement()-&gt;BrakingDecelerationFlying = GetCharacterMovement()-&gt;MaxAcceleration;设置MovementMode时的注意事项 如果一个Actor被Spawn出来之后，其MovementMode默认状态是Walking，如果此时Spawn的位置在空中，在没有Controller对其Possess的情况下，其静止在空中，当Possess之后，MovementMode会自动变为Falling，如果想让其继续停留在空中(比如飞行类的角色)，此时再手动将其MovementMode设置为Flying。绝对不能在possess之前设置，否则设置状态会被引擎修改掉。
-Controller.StopMovement()和MovementComponent.StopMovementImmediately()的区别 前者只执行：
-PathFollowingComp-&gt;AbortMove(*this, FPathFollowingResultFlags::MovementStop);后者先执行：
-Velocity = FVector::ZeroVector;接着再执行：
-PathFollowingComp-&gt;AbortMove(*this, FPathFollowingResultFlags::MovementStop);NavigationSystem寻路相关的API 检测某个坐标点是否在navmesh内，即可以作为寻路的坐标点。 UNavigationSystem::TestPathSync 实例用法：">
-<meta name="twitter:description" content="如何修改角色的最大移动速度 if (UCharacterMovementComponent* Movement = MyCharacter-&gt;GetCharacterMovement()){Movement-&gt;MaxWalkSpeed *= 0.5;}如何修改角色的当前移动速度 Tick() 中执行：
-GetCharacterMovement()-&gt;Velocity = FVector(0.f, 500.f, 0.f);如何停止正在移动的Pawn AController::StopMovement()修改重力加速度(Gravity) 编辑器中设置全局重力加速度
-Project Settings -》 Engine -》 Physics -》 Default Physics Settings -》 Default Gravity Z。
-运行时runtime期间设置全局重力加速度：
-AWorldSettings* MyWorldSetting=GetWorldSettings();MyWorldSetting-&gt;bGlobalGravitySet=true;MyWorldSetting-&gt;GlobalGravityZ = 900.f;设置单个角色的重力加速度（倍率）
-MyCharacter-&gt;GetCharacterMovement()-&gt;GravityScale = 100.f飞行模式中的加速减速问题 CharacterMovement默认有一个加速效果（属性值为MaxAcceleration，默认为2048，表示加速率），如果MovementMode设置为Walking模式，当调用Controller-&gt;StopMovement()来立即停止移动； 但是Flying Mode时，即使不再执行AddMovementInput()，Actor仍然会继续滑行一段距离，如果希望此时立即停止不滑行，需要将减速速率（默认为0）设置为加速速率的大小：
-GetCharacterMovement()-&gt;BrakingDecelerationFlying = GetCharacterMovement()-&gt;MaxAcceleration;设置MovementMode时的注意事项 如果一个Actor被Spawn出来之后，其MovementMode默认状态是Walking，如果此时Spawn的位置在空中，在没有Controller对其Possess的情况下，其静止在空中，当Possess之后，MovementMode会自动变为Falling，如果想让其继续停留在空中(比如飞行类的角色)，此时再手动将其MovementMode设置为Flying。绝对不能在possess之前设置，否则设置状态会被引擎修改掉。
-Controller.StopMovement()和MovementComponent.StopMovementImmediately()的区别 前者只执行：
-PathFollowingComp-&gt;AbortMove(*this, FPathFollowingResultFlags::MovementStop);后者先执行：
-Velocity = FVector::ZeroVector;接着再执行：
-PathFollowingComp-&gt;AbortMove(*this, FPathFollowingResultFlags::MovementStop);NavigationSystem寻路相关的API 检测某个坐标点是否在navmesh内，即可以作为寻路的坐标点。 UNavigationSystem::TestPathSync 实例用法：">
+<meta property="og:description" content="keywords: [UE4]Movement与Navigation相关的API">
+<meta name="twitter:description" content="keywords: [UE4]Movement与Navigation相关的API">
 <meta property="og:locale" content="en-us">
 
   
@@ -99,6 +59,9 @@ PathFollowingComp-&gt;AbortMove(*this, FPathFollowingResultFlags::MovementStop);
 
 
 
+
+  <meta property="og:image" content="https://dawnarc.com/thumbnail/beijing/thumbnail-beijing-002.jpg">
+  <meta property="twitter:image" content="https://dawnarc.com/thumbnail/beijing/thumbnail-beijing-002.jpg">
 
 
 
@@ -401,7 +364,8 @@ PathFollowingComp-&gt;AbortMove(*this, FPathFollowingResultFlags::MovementStop);
                 <script>
                      (adsbygoogle = window.adsbygoogle || []).push({});
                 </script>
-              <h5 id="如何修改角色的最大移动速度">如何修改角色的最大移动速度</h5>
+              <p>keywords: [UE4]Movement与Navigation相关的API</p>
+<h5 id="如何修改角色的最大移动速度">如何修改角色的最大移动速度</h5>
 <pre><code>if (UCharacterMovementComponent* Movement = MyCharacter-&gt;GetCharacterMovement())
 {
     Movement-&gt;MaxWalkSpeed *= 0.5;
@@ -554,7 +518,6 @@ Add <code>NavigationSystem</code> into DependencyModule. e.g.:</p>
 </code></pre>
 <hr>
 <p><code>曾虑多情损梵行，入山又恐别倾城，世间安得双全法，不负如来不负卿。----仓央嘉措</code></p>
-
               
             </div>
           </div>

@@ -13,54 +13,18 @@
 <meta name="generator" content="Hugo 0.102.3 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Wang Aiguo">
 <meta name="keywords" content="">
-<meta name="description" content="原文：http://blog.csdn.net/xiaozhi0999/article/details/51393704
-ue4中，客户端登陆流程如下，调用UEngine::Browse方法，在这个方法中，判断如果是客户端，则创建UPendingNetGame实例，代码如下：
-WorldContext.PendingNetGame = NewObject&lt;UPendingNetGame&gt;(); WorldContext.PendingNetGame-&gt;Initialize(URL); WorldContext.PendingNetGame-&gt;InitNetDriver(); 而在InitNetDriver函数中，会向服务器发送 NMT_Hello 协议，我们转到NMT_Hello 的定义，如下：
-DEFINE_CONTROL_CHANNEL_MESSAGE_TWOPARAM(Hello, 0, uint8, uint32); // initial client connection message 参数1：大端还是小端
-参数2：客户端版本号
-客户端处理协议的地方是如下两个函数：
-void UPendingNetGame::NotifyControlMessage(UNetConnection* Connection, uint8 MessageType, class FInBunch&amp; Bunch) void UWorld::NotifyControlMessage(UNetConnection* Connection, uint8 MessageType, class FInBunch&amp; Bunch) 服务器处理协议的地方是下面这个函数：
-void UWorld::NotifyControlMessage(UNetConnection* Connection, uint8 MessageType, class FInBunch&amp; Bunch) 在服务器的协议处理函数，我们可以看到NMT_Hello协议的处理过程，先调用Receive接收消息，然后判断版本号是否一致，不一致发送NMT_Upgrade消息，一致则发送NMT_Challenge消息
-DEFINE_CONTROL_CHANNEL_MESSAGE_ONEPARAM(Challenge, 3, FString); // server sends client challenge string to verify integrity 客户端收到NMT_Challenge消息后，向服务器发送NMT_Login消息，NMT_Login消息携带三个参数，如下：
-DEFINE_CONTROL_CHANNEL_MESSAGE_THREEPARAM(Login, 5, FString, FString, FUniqueNetIdRepl); // client requests to be admitted to the game 参数1：客户端响应">
+<meta name="description" content="keywords: [UE4]转载：UEngine Browse()执行流程">
 
 
-<meta property="og:description" content="原文：http://blog.csdn.net/xiaozhi0999/article/details/51393704
-ue4中，客户端登陆流程如下，调用UEngine::Browse方法，在这个方法中，判断如果是客户端，则创建UPendingNetGame实例，代码如下：
-WorldContext.PendingNetGame = NewObject&lt;UPendingNetGame&gt;(); WorldContext.PendingNetGame-&gt;Initialize(URL); WorldContext.PendingNetGame-&gt;InitNetDriver(); 而在InitNetDriver函数中，会向服务器发送 NMT_Hello 协议，我们转到NMT_Hello 的定义，如下：
-DEFINE_CONTROL_CHANNEL_MESSAGE_TWOPARAM(Hello, 0, uint8, uint32); // initial client connection message 参数1：大端还是小端
-参数2：客户端版本号
-客户端处理协议的地方是如下两个函数：
-void UPendingNetGame::NotifyControlMessage(UNetConnection* Connection, uint8 MessageType, class FInBunch&amp; Bunch) void UWorld::NotifyControlMessage(UNetConnection* Connection, uint8 MessageType, class FInBunch&amp; Bunch) 服务器处理协议的地方是下面这个函数：
-void UWorld::NotifyControlMessage(UNetConnection* Connection, uint8 MessageType, class FInBunch&amp; Bunch) 在服务器的协议处理函数，我们可以看到NMT_Hello协议的处理过程，先调用Receive接收消息，然后判断版本号是否一致，不一致发送NMT_Upgrade消息，一致则发送NMT_Challenge消息
-DEFINE_CONTROL_CHANNEL_MESSAGE_ONEPARAM(Challenge, 3, FString); // server sends client challenge string to verify integrity 客户端收到NMT_Challenge消息后，向服务器发送NMT_Login消息，NMT_Login消息携带三个参数，如下：
-DEFINE_CONTROL_CHANNEL_MESSAGE_THREEPARAM(Login, 5, FString, FString, FUniqueNetIdRepl); // client requests to be admitted to the game 参数1：客户端响应">
+<meta property="og:description" content="keywords: [UE4]转载：UEngine Browse()执行流程">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[UE4]转载：UEngine Browse()执行流程">
 <meta name="twitter:title" content="[UE4]转载：UEngine Browse()执行流程">
 <meta property="og:url" content="https://dawnarc.com/2017/06/ue4%E8%BD%AC%E8%BD%BDuengine-browse%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B/">
 <meta property="twitter:url" content="https://dawnarc.com/2017/06/ue4%E8%BD%AC%E8%BD%BDuengine-browse%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B/">
 <meta property="og:site_name" content="玄冬Wong">
-<meta property="og:description" content="原文：http://blog.csdn.net/xiaozhi0999/article/details/51393704
-ue4中，客户端登陆流程如下，调用UEngine::Browse方法，在这个方法中，判断如果是客户端，则创建UPendingNetGame实例，代码如下：
-WorldContext.PendingNetGame = NewObject&lt;UPendingNetGame&gt;(); WorldContext.PendingNetGame-&gt;Initialize(URL); WorldContext.PendingNetGame-&gt;InitNetDriver(); 而在InitNetDriver函数中，会向服务器发送 NMT_Hello 协议，我们转到NMT_Hello 的定义，如下：
-DEFINE_CONTROL_CHANNEL_MESSAGE_TWOPARAM(Hello, 0, uint8, uint32); // initial client connection message 参数1：大端还是小端
-参数2：客户端版本号
-客户端处理协议的地方是如下两个函数：
-void UPendingNetGame::NotifyControlMessage(UNetConnection* Connection, uint8 MessageType, class FInBunch&amp; Bunch) void UWorld::NotifyControlMessage(UNetConnection* Connection, uint8 MessageType, class FInBunch&amp; Bunch) 服务器处理协议的地方是下面这个函数：
-void UWorld::NotifyControlMessage(UNetConnection* Connection, uint8 MessageType, class FInBunch&amp; Bunch) 在服务器的协议处理函数，我们可以看到NMT_Hello协议的处理过程，先调用Receive接收消息，然后判断版本号是否一致，不一致发送NMT_Upgrade消息，一致则发送NMT_Challenge消息
-DEFINE_CONTROL_CHANNEL_MESSAGE_ONEPARAM(Challenge, 3, FString); // server sends client challenge string to verify integrity 客户端收到NMT_Challenge消息后，向服务器发送NMT_Login消息，NMT_Login消息携带三个参数，如下：
-DEFINE_CONTROL_CHANNEL_MESSAGE_THREEPARAM(Login, 5, FString, FString, FUniqueNetIdRepl); // client requests to be admitted to the game 参数1：客户端响应">
-<meta name="twitter:description" content="原文：http://blog.csdn.net/xiaozhi0999/article/details/51393704
-ue4中，客户端登陆流程如下，调用UEngine::Browse方法，在这个方法中，判断如果是客户端，则创建UPendingNetGame实例，代码如下：
-WorldContext.PendingNetGame = NewObject&lt;UPendingNetGame&gt;(); WorldContext.PendingNetGame-&gt;Initialize(URL); WorldContext.PendingNetGame-&gt;InitNetDriver(); 而在InitNetDriver函数中，会向服务器发送 NMT_Hello 协议，我们转到NMT_Hello 的定义，如下：
-DEFINE_CONTROL_CHANNEL_MESSAGE_TWOPARAM(Hello, 0, uint8, uint32); // initial client connection message 参数1：大端还是小端
-参数2：客户端版本号
-客户端处理协议的地方是如下两个函数：
-void UPendingNetGame::NotifyControlMessage(UNetConnection* Connection, uint8 MessageType, class FInBunch&amp; Bunch) void UWorld::NotifyControlMessage(UNetConnection* Connection, uint8 MessageType, class FInBunch&amp; Bunch) 服务器处理协议的地方是下面这个函数：
-void UWorld::NotifyControlMessage(UNetConnection* Connection, uint8 MessageType, class FInBunch&amp; Bunch) 在服务器的协议处理函数，我们可以看到NMT_Hello协议的处理过程，先调用Receive接收消息，然后判断版本号是否一致，不一致发送NMT_Upgrade消息，一致则发送NMT_Challenge消息
-DEFINE_CONTROL_CHANNEL_MESSAGE_ONEPARAM(Challenge, 3, FString); // server sends client challenge string to verify integrity 客户端收到NMT_Challenge消息后，向服务器发送NMT_Login消息，NMT_Login消息携带三个参数，如下：
-DEFINE_CONTROL_CHANNEL_MESSAGE_THREEPARAM(Login, 5, FString, FString, FUniqueNetIdRepl); // client requests to be admitted to the game 参数1：客户端响应">
+<meta property="og:description" content="keywords: [UE4]转载：UEngine Browse()执行流程">
+<meta name="twitter:description" content="keywords: [UE4]转载：UEngine Browse()执行流程">
 <meta property="og:locale" content="en-us">
 
   
@@ -93,6 +57,9 @@ DEFINE_CONTROL_CHANNEL_MESSAGE_THREEPARAM(Login, 5, FString, FString, FUniqueNet
 
 
 
+
+  <meta property="og:image" content="https://dawnarc.com/thumbnail/beijing/thumbnail-beijing-001.jpg">
+  <meta property="twitter:image" content="https://dawnarc.com/thumbnail/beijing/thumbnail-beijing-001.jpg">
 
 
 
@@ -395,7 +362,8 @@ DEFINE_CONTROL_CHANNEL_MESSAGE_THREEPARAM(Login, 5, FString, FString, FUniqueNet
                 <script>
                      (adsbygoogle = window.adsbygoogle || []).push({});
                 </script>
-              <p>原文：http://blog.csdn.net/xiaozhi0999/article/details/51393704</p>
+              <p>keywords: [UE4]转载：UEngine Browse()执行流程</p>
+<p>原文：http://blog.csdn.net/xiaozhi0999/article/details/51393704</p>
 <p>ue4中，客户端登陆流程如下，调用UEngine::Browse方法，在这个方法中，判断如果是客户端，则创建UPendingNetGame实例，代码如下：</p>
 <pre><code>WorldContext.PendingNetGame = NewObject&lt;UPendingNetGame&gt;();  
 WorldContext.PendingNetGame-&gt;Initialize(URL);  
@@ -453,7 +421,6 @@ void UWorld::NotifyControlMessage(UNetConnection* Connection, uint8 MessageType,
 </code></pre>
 <hr>
 <p><code>快乐属于那些选择了孤独的人，因为你是从那儿来的，而且你还要回到那儿去。——《托马斯福音》（GospelofThomas）</code></p>
-
               
             </div>
           </div>

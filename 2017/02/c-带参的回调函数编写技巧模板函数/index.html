@@ -13,34 +13,18 @@
 <meta name="generator" content="Hugo 0.102.3 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Wang Aiguo">
 <meta name="keywords" content="">
-<meta name="description" content="比如要设置一连串的回调函数来响应键盘的0到9数字键，注册回调函数时无法把数字0到9作为函数参数一起注册，那么有没其他办法？答案肯定是有！具体方式如下：
-1，先定义好需要回调的函数，假如：
-void TestCallback(int index);2，再定义一个模板函数将上面的函数封装：
-template&lt;int index&gt;void TestCallback(){TestCallback(index);}3，最后在注册回调时，将数字作为模板类型来注册：
-CallbackMaster-&gt;Bind(&amp;MyClass::TestCallback&lt;9&gt;);不积跬步，无以至千里；不积小流，无以成江海。骐骥一跃，不能十步；驽马十驾，功在不舍。锲而舍之，朽木不折；锲而不舍，金石可镂。——《荀子》">
+<meta name="description" content="keywords: [C&#43;&#43;]带参的回调函数编写技巧(模板函数)">
 
 
-<meta property="og:description" content="比如要设置一连串的回调函数来响应键盘的0到9数字键，注册回调函数时无法把数字0到9作为函数参数一起注册，那么有没其他办法？答案肯定是有！具体方式如下：
-1，先定义好需要回调的函数，假如：
-void TestCallback(int index);2，再定义一个模板函数将上面的函数封装：
-template&lt;int index&gt;void TestCallback(){TestCallback(index);}3，最后在注册回调时，将数字作为模板类型来注册：
-CallbackMaster-&gt;Bind(&amp;MyClass::TestCallback&lt;9&gt;);不积跬步，无以至千里；不积小流，无以成江海。骐骥一跃，不能十步；驽马十驾，功在不舍。锲而舍之，朽木不折；锲而不舍，金石可镂。——《荀子》">
+<meta property="og:description" content="keywords: [C&#43;&#43;]带参的回调函数编写技巧(模板函数)">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[C&#43;&#43;]带参的回调函数编写技巧(模板函数)">
 <meta name="twitter:title" content="[C&#43;&#43;]带参的回调函数编写技巧(模板函数)">
 <meta property="og:url" content="https://dawnarc.com/2017/02/c-%E5%B8%A6%E5%8F%82%E7%9A%84%E5%9B%9E%E8%B0%83%E5%87%BD%E6%95%B0%E7%BC%96%E5%86%99%E6%8A%80%E5%B7%A7%E6%A8%A1%E6%9D%BF%E5%87%BD%E6%95%B0/">
 <meta property="twitter:url" content="https://dawnarc.com/2017/02/c-%E5%B8%A6%E5%8F%82%E7%9A%84%E5%9B%9E%E8%B0%83%E5%87%BD%E6%95%B0%E7%BC%96%E5%86%99%E6%8A%80%E5%B7%A7%E6%A8%A1%E6%9D%BF%E5%87%BD%E6%95%B0/">
 <meta property="og:site_name" content="玄冬Wong">
-<meta property="og:description" content="比如要设置一连串的回调函数来响应键盘的0到9数字键，注册回调函数时无法把数字0到9作为函数参数一起注册，那么有没其他办法？答案肯定是有！具体方式如下：
-1，先定义好需要回调的函数，假如：
-void TestCallback(int index);2，再定义一个模板函数将上面的函数封装：
-template&lt;int index&gt;void TestCallback(){TestCallback(index);}3，最后在注册回调时，将数字作为模板类型来注册：
-CallbackMaster-&gt;Bind(&amp;MyClass::TestCallback&lt;9&gt;);不积跬步，无以至千里；不积小流，无以成江海。骐骥一跃，不能十步；驽马十驾，功在不舍。锲而舍之，朽木不折；锲而不舍，金石可镂。——《荀子》">
-<meta name="twitter:description" content="比如要设置一连串的回调函数来响应键盘的0到9数字键，注册回调函数时无法把数字0到9作为函数参数一起注册，那么有没其他办法？答案肯定是有！具体方式如下：
-1，先定义好需要回调的函数，假如：
-void TestCallback(int index);2，再定义一个模板函数将上面的函数封装：
-template&lt;int index&gt;void TestCallback(){TestCallback(index);}3，最后在注册回调时，将数字作为模板类型来注册：
-CallbackMaster-&gt;Bind(&amp;MyClass::TestCallback&lt;9&gt;);不积跬步，无以至千里；不积小流，无以成江海。骐骥一跃，不能十步；驽马十驾，功在不舍。锲而舍之，朽木不折；锲而不舍，金石可镂。——《荀子》">
+<meta property="og:description" content="keywords: [C&#43;&#43;]带参的回调函数编写技巧(模板函数)">
+<meta name="twitter:description" content="keywords: [C&#43;&#43;]带参的回调函数编写技巧(模板函数)">
 <meta property="og:locale" content="en-us">
 
   
@@ -73,6 +57,9 @@ CallbackMaster-&gt;Bind(&amp;MyClass::TestCallback&lt;9&gt;);不积跬步，无
 
 
 
+
+  <meta property="og:image" content="https://dawnarc.com/thumbnail/beijing/thumbnail-beijing-008.jpg">
+  <meta property="twitter:image" content="https://dawnarc.com/thumbnail/beijing/thumbnail-beijing-008.jpg">
 
 
 
@@ -375,7 +362,8 @@ CallbackMaster-&gt;Bind(&amp;MyClass::TestCallback&lt;9&gt;);不积跬步，无
                 <script>
                      (adsbygoogle = window.adsbygoogle || []).push({});
                 </script>
-              <p>比如要设置一连串的回调函数来响应键盘的0到9数字键，注册回调函数时无法把数字0到9作为函数参数一起注册，那么有没其他办法？答案肯定是有！具体方式如下：</p>
+              <p>keywords: [C++]带参的回调函数编写技巧(模板函数)</p>
+<p>比如要设置一连串的回调函数来响应键盘的0到9数字键，注册回调函数时无法把数字0到9作为函数参数一起注册，那么有没其他办法？答案肯定是有！具体方式如下：</p>
 <p>1，先定义好需要回调的函数，假如：</p>
 <pre><code>void TestCallback(int index);
 </code></pre>
@@ -391,7 +379,6 @@ void TestCallback()
 </code></pre>
 <hr>
 <p><code>不积跬步，无以至千里；不积小流，无以成江海。骐骥一跃，不能十步；驽马十驾，功在不舍。锲而舍之，朽木不折；锲而不舍，金石可镂。——《荀子》</code></p>
-
               
             </div>
           </div>

@@ -13,62 +13,18 @@
 <meta name="generator" content="Hugo 0.102.3 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Wang Aiguo">
 <meta name="keywords" content="">
-<meta name="description" content="相关参考：
-https://www.jianshu.com/p/e78b28081a44
-https://stackoverflow.com/questions/9237348/what-does-fetch-head-in-git-mean
-https://ruby-china.org/topics/4768
-git clone git clone支持多种协议，除了HTTP(s)以外，还支持SSH、Git、本地文件协议等，通常来说，Git协议下载速度最快，SSH协议用于需要用户认证的场合。在clone完成之后，Git 会自动为你将此远程仓库命名为origin（origin只相当于一个别名，运行git remote –v或者查看.git/config可以看到origin的含义），并下载其中所有的数据，建立一个指向它的master 分支的指针，我们用(远程仓库名)/(分支名) 这样的形式表示远程分支，所以origin/master指向的是一个remote branch（从那个branch我们clone数据到本地），但你无法在本地更改其数据。同时，Git 会建立一个属于你自己的本地master 分支，它指向的是你刚刚从remote server传到你本地的副本。随着你不断的改动文件，git add, git commit，master的指向会自动移动，你也可以通过merge（fast forward）来移动master的指向。
-git clone &#43; 远程仓库项目网址克隆远程仓库项目到本地仓库，也就是俗称的拉代码，本地仓库生成的项目与远程仓库的项目结构一致。git clone &#43; 远程仓库项目网址 &#43; 本地仓库项目目录：克隆远程仓库项目到本地仓库，本地仓库生成的项目放在第二个参数【本地仓库项目目录】中
-git fetch 真正理解 git fetch, git pull，要讲清楚git fetch，git pull,必须要附加讲清楚git remote，git merge 、远程repo， branch 、 commit-id 以及 FETCH_HEAD。
-git remote
-首先， git是一个分布式的结构，这意味着本地和远程是一个相对的名称。
-本地的repo仓库要与远程的repo配合完成版本对应必须要有 git remote子命令，通过git remote add来添加当前本地长度的远程repo， 有了这个动作本地的repo就知道了当遇到git push 的时候应该往哪里提交代码。
-git branch
-其次，git天生就是为了多版本分支管理而创造的，因此分支一说，不得不提， 分支就相当于是为了单独记录软件的某一个发布版本而存在的，既然git是分布式的，便有了本地分支和远程分支一说，git branch 可以查看本地分支， git branch -r 可以用来查看远程分支。 本地分支和远程分支在git push 的时候可以随意指定，交错对应，只要不出现版本从图即可。">
+<meta name="description" content="keywords: [git]远程操作：fetch、push、stash">
 
 
-<meta property="og:description" content="相关参考：
-https://www.jianshu.com/p/e78b28081a44
-https://stackoverflow.com/questions/9237348/what-does-fetch-head-in-git-mean
-https://ruby-china.org/topics/4768
-git clone git clone支持多种协议，除了HTTP(s)以外，还支持SSH、Git、本地文件协议等，通常来说，Git协议下载速度最快，SSH协议用于需要用户认证的场合。在clone完成之后，Git 会自动为你将此远程仓库命名为origin（origin只相当于一个别名，运行git remote –v或者查看.git/config可以看到origin的含义），并下载其中所有的数据，建立一个指向它的master 分支的指针，我们用(远程仓库名)/(分支名) 这样的形式表示远程分支，所以origin/master指向的是一个remote branch（从那个branch我们clone数据到本地），但你无法在本地更改其数据。同时，Git 会建立一个属于你自己的本地master 分支，它指向的是你刚刚从remote server传到你本地的副本。随着你不断的改动文件，git add, git commit，master的指向会自动移动，你也可以通过merge（fast forward）来移动master的指向。
-git clone &#43; 远程仓库项目网址克隆远程仓库项目到本地仓库，也就是俗称的拉代码，本地仓库生成的项目与远程仓库的项目结构一致。git clone &#43; 远程仓库项目网址 &#43; 本地仓库项目目录：克隆远程仓库项目到本地仓库，本地仓库生成的项目放在第二个参数【本地仓库项目目录】中
-git fetch 真正理解 git fetch, git pull，要讲清楚git fetch，git pull,必须要附加讲清楚git remote，git merge 、远程repo， branch 、 commit-id 以及 FETCH_HEAD。
-git remote
-首先， git是一个分布式的结构，这意味着本地和远程是一个相对的名称。
-本地的repo仓库要与远程的repo配合完成版本对应必须要有 git remote子命令，通过git remote add来添加当前本地长度的远程repo， 有了这个动作本地的repo就知道了当遇到git push 的时候应该往哪里提交代码。
-git branch
-其次，git天生就是为了多版本分支管理而创造的，因此分支一说，不得不提， 分支就相当于是为了单独记录软件的某一个发布版本而存在的，既然git是分布式的，便有了本地分支和远程分支一说，git branch 可以查看本地分支， git branch -r 可以用来查看远程分支。 本地分支和远程分支在git push 的时候可以随意指定，交错对应，只要不出现版本从图即可。">
+<meta property="og:description" content="keywords: [git]远程操作：fetch、push、stash">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[git]远程操作：fetch、push、stash">
 <meta name="twitter:title" content="[git]远程操作：fetch、push、stash">
 <meta property="og:url" content="https://dawnarc.com/2018/06/git%E8%BF%9C%E7%A8%8B%E6%93%8D%E4%BD%9Cfetchpushstash/">
 <meta property="twitter:url" content="https://dawnarc.com/2018/06/git%E8%BF%9C%E7%A8%8B%E6%93%8D%E4%BD%9Cfetchpushstash/">
 <meta property="og:site_name" content="玄冬Wong">
-<meta property="og:description" content="相关参考：
-https://www.jianshu.com/p/e78b28081a44
-https://stackoverflow.com/questions/9237348/what-does-fetch-head-in-git-mean
-https://ruby-china.org/topics/4768
-git clone git clone支持多种协议，除了HTTP(s)以外，还支持SSH、Git、本地文件协议等，通常来说，Git协议下载速度最快，SSH协议用于需要用户认证的场合。在clone完成之后，Git 会自动为你将此远程仓库命名为origin（origin只相当于一个别名，运行git remote –v或者查看.git/config可以看到origin的含义），并下载其中所有的数据，建立一个指向它的master 分支的指针，我们用(远程仓库名)/(分支名) 这样的形式表示远程分支，所以origin/master指向的是一个remote branch（从那个branch我们clone数据到本地），但你无法在本地更改其数据。同时，Git 会建立一个属于你自己的本地master 分支，它指向的是你刚刚从remote server传到你本地的副本。随着你不断的改动文件，git add, git commit，master的指向会自动移动，你也可以通过merge（fast forward）来移动master的指向。
-git clone &#43; 远程仓库项目网址克隆远程仓库项目到本地仓库，也就是俗称的拉代码，本地仓库生成的项目与远程仓库的项目结构一致。git clone &#43; 远程仓库项目网址 &#43; 本地仓库项目目录：克隆远程仓库项目到本地仓库，本地仓库生成的项目放在第二个参数【本地仓库项目目录】中
-git fetch 真正理解 git fetch, git pull，要讲清楚git fetch，git pull,必须要附加讲清楚git remote，git merge 、远程repo， branch 、 commit-id 以及 FETCH_HEAD。
-git remote
-首先， git是一个分布式的结构，这意味着本地和远程是一个相对的名称。
-本地的repo仓库要与远程的repo配合完成版本对应必须要有 git remote子命令，通过git remote add来添加当前本地长度的远程repo， 有了这个动作本地的repo就知道了当遇到git push 的时候应该往哪里提交代码。
-git branch
-其次，git天生就是为了多版本分支管理而创造的，因此分支一说，不得不提， 分支就相当于是为了单独记录软件的某一个发布版本而存在的，既然git是分布式的，便有了本地分支和远程分支一说，git branch 可以查看本地分支， git branch -r 可以用来查看远程分支。 本地分支和远程分支在git push 的时候可以随意指定，交错对应，只要不出现版本从图即可。">
-<meta name="twitter:description" content="相关参考：
-https://www.jianshu.com/p/e78b28081a44
-https://stackoverflow.com/questions/9237348/what-does-fetch-head-in-git-mean
-https://ruby-china.org/topics/4768
-git clone git clone支持多种协议，除了HTTP(s)以外，还支持SSH、Git、本地文件协议等，通常来说，Git协议下载速度最快，SSH协议用于需要用户认证的场合。在clone完成之后，Git 会自动为你将此远程仓库命名为origin（origin只相当于一个别名，运行git remote –v或者查看.git/config可以看到origin的含义），并下载其中所有的数据，建立一个指向它的master 分支的指针，我们用(远程仓库名)/(分支名) 这样的形式表示远程分支，所以origin/master指向的是一个remote branch（从那个branch我们clone数据到本地），但你无法在本地更改其数据。同时，Git 会建立一个属于你自己的本地master 分支，它指向的是你刚刚从remote server传到你本地的副本。随着你不断的改动文件，git add, git commit，master的指向会自动移动，你也可以通过merge（fast forward）来移动master的指向。
-git clone &#43; 远程仓库项目网址克隆远程仓库项目到本地仓库，也就是俗称的拉代码，本地仓库生成的项目与远程仓库的项目结构一致。git clone &#43; 远程仓库项目网址 &#43; 本地仓库项目目录：克隆远程仓库项目到本地仓库，本地仓库生成的项目放在第二个参数【本地仓库项目目录】中
-git fetch 真正理解 git fetch, git pull，要讲清楚git fetch，git pull,必须要附加讲清楚git remote，git merge 、远程repo， branch 、 commit-id 以及 FETCH_HEAD。
-git remote
-首先， git是一个分布式的结构，这意味着本地和远程是一个相对的名称。
-本地的repo仓库要与远程的repo配合完成版本对应必须要有 git remote子命令，通过git remote add来添加当前本地长度的远程repo， 有了这个动作本地的repo就知道了当遇到git push 的时候应该往哪里提交代码。
-git branch
-其次，git天生就是为了多版本分支管理而创造的，因此分支一说，不得不提， 分支就相当于是为了单独记录软件的某一个发布版本而存在的，既然git是分布式的，便有了本地分支和远程分支一说，git branch 可以查看本地分支， git branch -r 可以用来查看远程分支。 本地分支和远程分支在git push 的时候可以随意指定，交错对应，只要不出现版本从图即可。">
+<meta property="og:description" content="keywords: [git]远程操作：fetch、push、stash">
+<meta name="twitter:description" content="keywords: [git]远程操作：fetch、push、stash">
 <meta property="og:locale" content="en-us">
 
   
@@ -101,6 +57,9 @@ git branch
 
 
 
+
+  <meta property="og:image" content="https://dawnarc.com/thumbnail/beijing/thumbnail-beijing-009.jpg">
+  <meta property="twitter:image" content="https://dawnarc.com/thumbnail/beijing/thumbnail-beijing-009.jpg">
 
 
 
@@ -403,7 +362,8 @@ git branch
                 <script>
                      (adsbygoogle = window.adsbygoogle || []).push({});
                 </script>
-              <p>相关参考：<br>
+              <p>keywords: [git]远程操作：fetch、push、stash</p>
+<p>相关参考：<br>
 <a href="https://www.jianshu.com/p/e78b28081a44">https://www.jianshu.com/p/e78b28081a44</a><br>
 <a href="https://stackoverflow.com/questions/9237348/what-does-fetch-head-in-git-mean">https://stackoverflow.com/questions/9237348/what-does-fetch-head-in-git-mean</a><br>
 <a href="https://ruby-china.org/topics/4768">https://ruby-china.org/topics/4768</a></p>
@@ -496,7 +456,6 @@ git branch
 <p>删除所有存储的进度。</p>
 <hr>
 <p><code>世上只有一种英雄主义，就是在认清生活真相之后依然热爱生活。---罗曼•罗兰《巨人三传》</code></p>
-
               
             </div>
           </div>

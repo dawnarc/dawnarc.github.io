@@ -13,110 +13,18 @@
 <meta name="generator" content="Hugo 0.102.3 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Wang Aiguo">
 <meta name="keywords" content="">
-<meta name="description" content="我的老博客UE4文章（一百八十多篇，未迁移，和此博客的UE4文章不重叠）
-https://blog.csdn.net/wag2765/article/category/8482832
-【2015-12-06】
-如何添加自己的C&#43;&#43;代码
-如果是添加Character C&#43;&#43;代码，是在UE4 Editor中添加的，但是如果想添加一些与UE4引擎无关的c&#43;&#43;代码，比如网络通讯的，或者一些工具类，必须也在UE4 Editor中添加（至少我现在用的4.10版本是这样），如果在VS中直接添加，会出现一些奇怪的编译错误。UE4 Editor中添加自定义C&#43;&#43;代码方式如下： File -&gt; New C&#43;&#43; Class -&gt; 选择None，然后即可创建自己C&#43;&#43;代码
-UE4还写莫名其妙的bug，这些bug可能是与引擎升级有关，可参考解决办法：重新建个空的工程，然后把你现在项目的资源文件重新加进去，然后在编译和构建。
-我的windows10上遇到的奇怪问题有：
-(1)，项目自定义的GameMode没生效，进游戏是默认的自由摄像机控制器。这个问题我没有重新建工程，而是把level删掉重新建了一次。
-(2)，打包安卓Android部署时，提示错误：DistributionSigning settings are not all set. Check the DistributionSetting
-【2016-05-15】
-如果项目中使用了LoadClass，那么蓝图相关的class构造函数中不要执行和实例化对象相关的操作，因为当执行LoadClass时也会把对应class的构造函数执行一遍（即使我们没有手动执行spawn或者create等函数，原因是LoadClass执行了LoadObject，而LoadObject内部又会执行ConstructorHelpers::FObjectFinder()，所以会触发class的构造函数，比如自己新建了一个UserWidget class，这个class的默认构造函数会在LoadClass时被执行一次），建议将初始化操作放在Initialize、BeginPlay等函数中。
-【2016-05-17】
-内存溢出导致的问题：在用FString拼接字符串的时候，抛了一个异常，但是相同的代码在另一个地方是正常的，两个地方都是非GameThread，崩掉的位置发在调用FString::FromInt()。后来用itoa代替就正常了。很可能是逻辑代码有内存溢出的bug。
-【2016-06-02】
-如果同一属性在蓝图编辑器中和C&#43;&#43;中的值不同，那么蓝图中的属性值会shadow掉C&#43;&#43;构造函数中的值。如果想让C&#43;&#43;的值shadow蓝图的值，那么可以在C&#43;&#43;的BeginPlay等非构造函数的初始化函数中设置属性（这里假设没有在蓝图逻辑脚本中对属性设置）。 新建蓝图时，蓝图的属性会遵循C&#43;&#43;父类中的构造函数中的属性设置。
-【2016-09-23】
-UE4中的C&#43;&#43;类继承规则：只能直接继承自两种类，一种是非UObject类，一种是继承过UInterface的UObject类。如果一个类是UObject且其父类没有一个是UInterface，则无法编译通过。
-如果同一批美术材质，在两个不同工程下的渲染效果不一样，比如同一个粒子特效，实际效果在两个工程中有差异，则可能是工程的设置项问题。解决办法：将两个工程中的Config/DefaultEngine.ini中的[/Script/Engine.RendererSettings]配置参数，设置统一即可。
-【2017-02-06】
-用宏控制debug相关代码的开启和关闭
-#if UE_BUILD_SHIPPING//debug code...#endifUE4数据同步相关的引擎源码
-Runtime\Engine\Private\ActorReplication.cppRuntime\Engine\Private\ Replication.cppRuntime\Engine\Public\Net \DataReplication.cppEngine\Plugins\Messaging\TcpMessaging\Source\TcpMessaging\Private\TcpMessagingModule.cppSpawnActor和NewObject创建出来的对象如何获取父对象
-SpawnActor()有个参数：FActorSpawnParameters，这个参数中有很多属性，设置相关属性后，可以更方便的来控制这个被spawn出来的Actor，比如Owner属性：
-FActorSpawnParameters Param;Param.Owner = MyActor1; AActor MyActor2 = GetWorld()-&gt;SpawnActor&lt;MyActor&gt;(MyClass, Param);//此时的Owner就是MyActor1MyActor Owner= MyActor2-&gt;GetOwner();NewObject直接通过构造函数参数指定：">
+<meta name="description" content="keywords: [UE4]注意事项与笔记">
 
 
-<meta property="og:description" content="我的老博客UE4文章（一百八十多篇，未迁移，和此博客的UE4文章不重叠）
-https://blog.csdn.net/wag2765/article/category/8482832
-【2015-12-06】
-如何添加自己的C&#43;&#43;代码
-如果是添加Character C&#43;&#43;代码，是在UE4 Editor中添加的，但是如果想添加一些与UE4引擎无关的c&#43;&#43;代码，比如网络通讯的，或者一些工具类，必须也在UE4 Editor中添加（至少我现在用的4.10版本是这样），如果在VS中直接添加，会出现一些奇怪的编译错误。UE4 Editor中添加自定义C&#43;&#43;代码方式如下： File -&gt; New C&#43;&#43; Class -&gt; 选择None，然后即可创建自己C&#43;&#43;代码
-UE4还写莫名其妙的bug，这些bug可能是与引擎升级有关，可参考解决办法：重新建个空的工程，然后把你现在项目的资源文件重新加进去，然后在编译和构建。
-我的windows10上遇到的奇怪问题有：
-(1)，项目自定义的GameMode没生效，进游戏是默认的自由摄像机控制器。这个问题我没有重新建工程，而是把level删掉重新建了一次。
-(2)，打包安卓Android部署时，提示错误：DistributionSigning settings are not all set. Check the DistributionSetting
-【2016-05-15】
-如果项目中使用了LoadClass，那么蓝图相关的class构造函数中不要执行和实例化对象相关的操作，因为当执行LoadClass时也会把对应class的构造函数执行一遍（即使我们没有手动执行spawn或者create等函数，原因是LoadClass执行了LoadObject，而LoadObject内部又会执行ConstructorHelpers::FObjectFinder()，所以会触发class的构造函数，比如自己新建了一个UserWidget class，这个class的默认构造函数会在LoadClass时被执行一次），建议将初始化操作放在Initialize、BeginPlay等函数中。
-【2016-05-17】
-内存溢出导致的问题：在用FString拼接字符串的时候，抛了一个异常，但是相同的代码在另一个地方是正常的，两个地方都是非GameThread，崩掉的位置发在调用FString::FromInt()。后来用itoa代替就正常了。很可能是逻辑代码有内存溢出的bug。
-【2016-06-02】
-如果同一属性在蓝图编辑器中和C&#43;&#43;中的值不同，那么蓝图中的属性值会shadow掉C&#43;&#43;构造函数中的值。如果想让C&#43;&#43;的值shadow蓝图的值，那么可以在C&#43;&#43;的BeginPlay等非构造函数的初始化函数中设置属性（这里假设没有在蓝图逻辑脚本中对属性设置）。 新建蓝图时，蓝图的属性会遵循C&#43;&#43;父类中的构造函数中的属性设置。
-【2016-09-23】
-UE4中的C&#43;&#43;类继承规则：只能直接继承自两种类，一种是非UObject类，一种是继承过UInterface的UObject类。如果一个类是UObject且其父类没有一个是UInterface，则无法编译通过。
-如果同一批美术材质，在两个不同工程下的渲染效果不一样，比如同一个粒子特效，实际效果在两个工程中有差异，则可能是工程的设置项问题。解决办法：将两个工程中的Config/DefaultEngine.ini中的[/Script/Engine.RendererSettings]配置参数，设置统一即可。
-【2017-02-06】
-用宏控制debug相关代码的开启和关闭
-#if UE_BUILD_SHIPPING//debug code...#endifUE4数据同步相关的引擎源码
-Runtime\Engine\Private\ActorReplication.cppRuntime\Engine\Private\ Replication.cppRuntime\Engine\Public\Net \DataReplication.cppEngine\Plugins\Messaging\TcpMessaging\Source\TcpMessaging\Private\TcpMessagingModule.cppSpawnActor和NewObject创建出来的对象如何获取父对象
-SpawnActor()有个参数：FActorSpawnParameters，这个参数中有很多属性，设置相关属性后，可以更方便的来控制这个被spawn出来的Actor，比如Owner属性：
-FActorSpawnParameters Param;Param.Owner = MyActor1; AActor MyActor2 = GetWorld()-&gt;SpawnActor&lt;MyActor&gt;(MyClass, Param);//此时的Owner就是MyActor1MyActor Owner= MyActor2-&gt;GetOwner();NewObject直接通过构造函数参数指定：">
+<meta property="og:description" content="keywords: [UE4]注意事项与笔记">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[UE4]注意事项与笔记">
 <meta name="twitter:title" content="[UE4]注意事项与笔记">
 <meta property="og:url" content="https://dawnarc.com/2015/12/ue4%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9%E4%B8%8E%E7%AC%94%E8%AE%B0/">
 <meta property="twitter:url" content="https://dawnarc.com/2015/12/ue4%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9%E4%B8%8E%E7%AC%94%E8%AE%B0/">
 <meta property="og:site_name" content="玄冬Wong">
-<meta property="og:description" content="我的老博客UE4文章（一百八十多篇，未迁移，和此博客的UE4文章不重叠）
-https://blog.csdn.net/wag2765/article/category/8482832
-【2015-12-06】
-如何添加自己的C&#43;&#43;代码
-如果是添加Character C&#43;&#43;代码，是在UE4 Editor中添加的，但是如果想添加一些与UE4引擎无关的c&#43;&#43;代码，比如网络通讯的，或者一些工具类，必须也在UE4 Editor中添加（至少我现在用的4.10版本是这样），如果在VS中直接添加，会出现一些奇怪的编译错误。UE4 Editor中添加自定义C&#43;&#43;代码方式如下： File -&gt; New C&#43;&#43; Class -&gt; 选择None，然后即可创建自己C&#43;&#43;代码
-UE4还写莫名其妙的bug，这些bug可能是与引擎升级有关，可参考解决办法：重新建个空的工程，然后把你现在项目的资源文件重新加进去，然后在编译和构建。
-我的windows10上遇到的奇怪问题有：
-(1)，项目自定义的GameMode没生效，进游戏是默认的自由摄像机控制器。这个问题我没有重新建工程，而是把level删掉重新建了一次。
-(2)，打包安卓Android部署时，提示错误：DistributionSigning settings are not all set. Check the DistributionSetting
-【2016-05-15】
-如果项目中使用了LoadClass，那么蓝图相关的class构造函数中不要执行和实例化对象相关的操作，因为当执行LoadClass时也会把对应class的构造函数执行一遍（即使我们没有手动执行spawn或者create等函数，原因是LoadClass执行了LoadObject，而LoadObject内部又会执行ConstructorHelpers::FObjectFinder()，所以会触发class的构造函数，比如自己新建了一个UserWidget class，这个class的默认构造函数会在LoadClass时被执行一次），建议将初始化操作放在Initialize、BeginPlay等函数中。
-【2016-05-17】
-内存溢出导致的问题：在用FString拼接字符串的时候，抛了一个异常，但是相同的代码在另一个地方是正常的，两个地方都是非GameThread，崩掉的位置发在调用FString::FromInt()。后来用itoa代替就正常了。很可能是逻辑代码有内存溢出的bug。
-【2016-06-02】
-如果同一属性在蓝图编辑器中和C&#43;&#43;中的值不同，那么蓝图中的属性值会shadow掉C&#43;&#43;构造函数中的值。如果想让C&#43;&#43;的值shadow蓝图的值，那么可以在C&#43;&#43;的BeginPlay等非构造函数的初始化函数中设置属性（这里假设没有在蓝图逻辑脚本中对属性设置）。 新建蓝图时，蓝图的属性会遵循C&#43;&#43;父类中的构造函数中的属性设置。
-【2016-09-23】
-UE4中的C&#43;&#43;类继承规则：只能直接继承自两种类，一种是非UObject类，一种是继承过UInterface的UObject类。如果一个类是UObject且其父类没有一个是UInterface，则无法编译通过。
-如果同一批美术材质，在两个不同工程下的渲染效果不一样，比如同一个粒子特效，实际效果在两个工程中有差异，则可能是工程的设置项问题。解决办法：将两个工程中的Config/DefaultEngine.ini中的[/Script/Engine.RendererSettings]配置参数，设置统一即可。
-【2017-02-06】
-用宏控制debug相关代码的开启和关闭
-#if UE_BUILD_SHIPPING//debug code...#endifUE4数据同步相关的引擎源码
-Runtime\Engine\Private\ActorReplication.cppRuntime\Engine\Private\ Replication.cppRuntime\Engine\Public\Net \DataReplication.cppEngine\Plugins\Messaging\TcpMessaging\Source\TcpMessaging\Private\TcpMessagingModule.cppSpawnActor和NewObject创建出来的对象如何获取父对象
-SpawnActor()有个参数：FActorSpawnParameters，这个参数中有很多属性，设置相关属性后，可以更方便的来控制这个被spawn出来的Actor，比如Owner属性：
-FActorSpawnParameters Param;Param.Owner = MyActor1; AActor MyActor2 = GetWorld()-&gt;SpawnActor&lt;MyActor&gt;(MyClass, Param);//此时的Owner就是MyActor1MyActor Owner= MyActor2-&gt;GetOwner();NewObject直接通过构造函数参数指定：">
-<meta name="twitter:description" content="我的老博客UE4文章（一百八十多篇，未迁移，和此博客的UE4文章不重叠）
-https://blog.csdn.net/wag2765/article/category/8482832
-【2015-12-06】
-如何添加自己的C&#43;&#43;代码
-如果是添加Character C&#43;&#43;代码，是在UE4 Editor中添加的，但是如果想添加一些与UE4引擎无关的c&#43;&#43;代码，比如网络通讯的，或者一些工具类，必须也在UE4 Editor中添加（至少我现在用的4.10版本是这样），如果在VS中直接添加，会出现一些奇怪的编译错误。UE4 Editor中添加自定义C&#43;&#43;代码方式如下： File -&gt; New C&#43;&#43; Class -&gt; 选择None，然后即可创建自己C&#43;&#43;代码
-UE4还写莫名其妙的bug，这些bug可能是与引擎升级有关，可参考解决办法：重新建个空的工程，然后把你现在项目的资源文件重新加进去，然后在编译和构建。
-我的windows10上遇到的奇怪问题有：
-(1)，项目自定义的GameMode没生效，进游戏是默认的自由摄像机控制器。这个问题我没有重新建工程，而是把level删掉重新建了一次。
-(2)，打包安卓Android部署时，提示错误：DistributionSigning settings are not all set. Check the DistributionSetting
-【2016-05-15】
-如果项目中使用了LoadClass，那么蓝图相关的class构造函数中不要执行和实例化对象相关的操作，因为当执行LoadClass时也会把对应class的构造函数执行一遍（即使我们没有手动执行spawn或者create等函数，原因是LoadClass执行了LoadObject，而LoadObject内部又会执行ConstructorHelpers::FObjectFinder()，所以会触发class的构造函数，比如自己新建了一个UserWidget class，这个class的默认构造函数会在LoadClass时被执行一次），建议将初始化操作放在Initialize、BeginPlay等函数中。
-【2016-05-17】
-内存溢出导致的问题：在用FString拼接字符串的时候，抛了一个异常，但是相同的代码在另一个地方是正常的，两个地方都是非GameThread，崩掉的位置发在调用FString::FromInt()。后来用itoa代替就正常了。很可能是逻辑代码有内存溢出的bug。
-【2016-06-02】
-如果同一属性在蓝图编辑器中和C&#43;&#43;中的值不同，那么蓝图中的属性值会shadow掉C&#43;&#43;构造函数中的值。如果想让C&#43;&#43;的值shadow蓝图的值，那么可以在C&#43;&#43;的BeginPlay等非构造函数的初始化函数中设置属性（这里假设没有在蓝图逻辑脚本中对属性设置）。 新建蓝图时，蓝图的属性会遵循C&#43;&#43;父类中的构造函数中的属性设置。
-【2016-09-23】
-UE4中的C&#43;&#43;类继承规则：只能直接继承自两种类，一种是非UObject类，一种是继承过UInterface的UObject类。如果一个类是UObject且其父类没有一个是UInterface，则无法编译通过。
-如果同一批美术材质，在两个不同工程下的渲染效果不一样，比如同一个粒子特效，实际效果在两个工程中有差异，则可能是工程的设置项问题。解决办法：将两个工程中的Config/DefaultEngine.ini中的[/Script/Engine.RendererSettings]配置参数，设置统一即可。
-【2017-02-06】
-用宏控制debug相关代码的开启和关闭
-#if UE_BUILD_SHIPPING//debug code...#endifUE4数据同步相关的引擎源码
-Runtime\Engine\Private\ActorReplication.cppRuntime\Engine\Private\ Replication.cppRuntime\Engine\Public\Net \DataReplication.cppEngine\Plugins\Messaging\TcpMessaging\Source\TcpMessaging\Private\TcpMessagingModule.cppSpawnActor和NewObject创建出来的对象如何获取父对象
-SpawnActor()有个参数：FActorSpawnParameters，这个参数中有很多属性，设置相关属性后，可以更方便的来控制这个被spawn出来的Actor，比如Owner属性：
-FActorSpawnParameters Param;Param.Owner = MyActor1; AActor MyActor2 = GetWorld()-&gt;SpawnActor&lt;MyActor&gt;(MyClass, Param);//此时的Owner就是MyActor1MyActor Owner= MyActor2-&gt;GetOwner();NewObject直接通过构造函数参数指定：">
+<meta property="og:description" content="keywords: [UE4]注意事项与笔记">
+<meta name="twitter:description" content="keywords: [UE4]注意事项与笔记">
 <meta property="og:locale" content="en-us">
 
   
@@ -149,6 +57,9 @@ FActorSpawnParameters Param;Param.Owner = MyActor1; AActor MyActor2 = GetWorld(
 
 
 
+
+  <meta property="og:image" content="https://dawnarc.com/thumbnail/beijing/thumbnail-beijing-023.jpg">
+  <meta property="twitter:image" content="https://dawnarc.com/thumbnail/beijing/thumbnail-beijing-023.jpg">
 
 
 
@@ -451,7 +362,8 @@ FActorSpawnParameters Param;Param.Owner = MyActor1; AActor MyActor2 = GetWorld(
                 <script>
                      (adsbygoogle = window.adsbygoogle || []).push({});
                 </script>
-              <p>我的老博客UE4文章（一百八十多篇，未迁移，和此博客的UE4文章不重叠）<br>
+              <p>keywords: [UE4]注意事项与笔记</p>
+<p>我的老博客UE4文章（一百八十多篇，未迁移，和此博客的UE4文章不重叠）<br>
 <a href="https://blog.csdn.net/wag2765/article/category/8482832">https://blog.csdn.net/wag2765/article/category/8482832</a></p>
 <p>【2015-12-06】<br>
 如何添加自己的C++代码<br>
@@ -753,32 +665,10 @@ Answer: BillboardComponent</p>
 UMG TextBlock alignment(justification)<br>
 1，TextBlock size auto adapt the content length: Detail Panel -&gt; Slot -&gt; Uncheck<code>Size To Content</code><br>
 2，Alter TextBlock&rsquo;s content alignment to center: Detail Panel -&gt; Appearance -&gt; Justification -&gt; Align Text Center.</p>
-<p>【2018-12-26T18:37】<br>
-How to alter keyboard shortcut of <code>Stop</code>(in PIE) to other key, default is Esc.<br>
-Edit -&gt; Editor Preferences -&gt; Keyboard Shortcuts -&gt; Play World -&gt; Stop -&gt; Ctrl + Q</p>
-<p>【2019-01-03T21:29】<br>
-If a Character play a Montage which isn&rsquo;t same Skeleton, client may crash.</p>
-<pre><code>MyCharacter-&gt;PlayAnimMontage(MyMtg, 1.f, FName(&quot;Sec01&quot;));
-</code></pre>
 <p>【2019-01-14T21:49】<br>
 How to distinguish special Actor from a group of Actors?<br>
 Actor Has Tag in Unreal Engine 4<br>
 <a href="https://www.youtube.com/watch?v=_SjhBlj4Mu8">https://www.youtube.com/watch?v=_SjhBlj4Mu8</a></p>
-<p>【2019-01-21T23:04】<br>
-How to get PlayerStart Point int Level?</p>
-<pre><code>AActor* AGameModeBase::ChoosePlayerStart(AController* Player);
-
-AActor* AGameModeBase::FindPlayerStart(AController* Player, const FString&amp; IncomingName = TEXT(&quot;&quot;));
-</code></pre>
-<p>【2019-03-28T22:25】<br>
-How to get current Level Name using C++:</p>
-<p>Actor-&gt;GetLevel()-&gt;GetOuter()-&gt;GetName();</p>
-<p><a href="https://answers.unrealengine.com/questions/565218/how-do-i-get-the-name-of-the-streaming-level-that.html">https://answers.unrealengine.com/questions/565218/how-do-i-get-the-name-of-the-streaming-level-that.html</a></p>
-<p>【2019-03-29T14:58】<br>
-UProperty min &amp; max values ?</p>
-<pre><code>UPROPERTY(EditAnywhere, Category = &quot;Camera&quot;, meta = (ClampMin = &quot;-89.0&quot;, ClampMax = &quot;0.0&quot;, UIMin = &quot;-89.0&quot;, UIMax = &quot;0.0&quot;))
-float CameraMinPitch;
-</code></pre>
 <p>【2019-04-23T14:58】<br>
 Use <code>IsA</code> before <code>Cast</code>, because <code>Cast</code> would cause crash if the parent class of source and target are different.</p>
 <pre><code>if (GetOwner() &amp;&amp; Owner-&gt;IsA(AMyCharacter::StaticClass()))
@@ -795,21 +685,11 @@ Use <code>IsA</code> before <code>Cast</code>, because <code>Cast</code> would c
 
 }
 </code></pre>
-<p>【2021-12-05T20:40】<br>
-Blueprint runtime error:</p>
-<pre><code>Accessed none trying to read property material.
-</code></pre>
-<p>Solution:<br>
-Add <code>IsValid</code> node to check property.</p>
-<p>Origin:<br>
-What Does &ldquo;Accessed None Trying To Read Property&rdquo; Error Mean And How To Fix It - Unreal Engine<br>
-<a href="https://www.youtube.com/watch?v=x5yx7XqZrrA">https://www.youtube.com/watch?v=x5yx7XqZrrA</a></p>
 <p>【2022-06-21T14:45】<br>
 Unreal macro example:<br>
 Engine\Plugins\Experimental\ControlRig\Source\ControlRig\Private\Units\Math\RigUnit_MathTransform.cpp</p>
 <hr>
 <p><code>凡心所向，素履以往。生如逆旅，一苇以航。----木心</code></p>
-
               
             </div>
           </div>

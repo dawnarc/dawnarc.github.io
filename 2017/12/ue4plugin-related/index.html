@@ -13,38 +13,18 @@
 <meta name="generator" content="Hugo 0.102.3 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Wang Aiguo">
 <meta name="keywords" content="UE4, Plugin">
-<meta name="description" content="Usage Plugin在构造函数中加载的问题 在GameMode构造函数中加载（LoadObject或者ConstructorHelpers::FObjectFinder）蓝图，该蓝图使用了plugin（这里我使用了一个叫Swipe的插件），如果在构造函数中加载，则会报错：
-/Game/Demo/Female/Blueprints/FemaleCharBP : Can&#39;t find file for asset. /Script/Swipe Failed to load /Script/Swipe.SwipeComponent Referenced by K2Node_ComponentBoundEvent_2 Failed to load /Script/Swipe.SwipeComponent Referenced by K2Node_ComponentBoundEvent_3 Failed to load /Script/Swipe.SwipeComponent Referenced by SCS_Node_1 另外一种解决办法：给C&#43;&#43;的GameMode套一个蓝图，然后在该蓝图中设置DefaultPawnClass、PlayerControllerClass等GameMode属性，此时即使这些PawnClass或者PlayerControllerClass蓝图使用了plugin，也不会报错。
-添加第三方Plugin（2018-08-10更新） 工程.uproject 需要添加两处地方：
-1，在 Modules 中添加 plugin 名字字符串；
-2，在 Plugins 添加 plugin 信息：包括 Name 和 Enabled；
-{&#34;FileVersion&#34;: 3,&#34;EngineAssociation&#34;: &#34;4.20&#34;,&#34;Category&#34;: &#34;&#34;,&#34;Description&#34;: &#34;&#34;,&#34;Modules&#34;: [{&#34;Name&#34;: &#34;MyProj&#34;,&#34;Type&#34;: &#34;Runtime&#34;,&#34;LoadingPhase&#34;: &#34;Default&#34;,&#34;AdditionalDependencies&#34;: [&#34;UMG&#34;,&#34;Engine&#34;,&#34;CoreUObject&#34;,&#34;AIModule&#34;,&#34;ApexDestruction&#34;,&#34;MyPlugin&#34;]}],&#34;Plugins&#34;: [{&#34;Name&#34;: &#34;ApexDestruction&#34;,&#34;Enabled&#34;: true},{&#34;Name&#34;: &#34;MyPlugin&#34;,&#34;Enabled&#34;: true}]} 往Plugin中添加 C&#43;&#43; 代码（2018-08-13更新） 貌似没有好的办法，只能手动添加 C&#43;&#43; 类文件">
+<meta name="description" content="keywords: [UE4]Plugin Related">
 
 
-<meta property="og:description" content="Usage Plugin在构造函数中加载的问题 在GameMode构造函数中加载（LoadObject或者ConstructorHelpers::FObjectFinder）蓝图，该蓝图使用了plugin（这里我使用了一个叫Swipe的插件），如果在构造函数中加载，则会报错：
-/Game/Demo/Female/Blueprints/FemaleCharBP : Can&#39;t find file for asset. /Script/Swipe Failed to load /Script/Swipe.SwipeComponent Referenced by K2Node_ComponentBoundEvent_2 Failed to load /Script/Swipe.SwipeComponent Referenced by K2Node_ComponentBoundEvent_3 Failed to load /Script/Swipe.SwipeComponent Referenced by SCS_Node_1 另外一种解决办法：给C&#43;&#43;的GameMode套一个蓝图，然后在该蓝图中设置DefaultPawnClass、PlayerControllerClass等GameMode属性，此时即使这些PawnClass或者PlayerControllerClass蓝图使用了plugin，也不会报错。
-添加第三方Plugin（2018-08-10更新） 工程.uproject 需要添加两处地方：
-1，在 Modules 中添加 plugin 名字字符串；
-2，在 Plugins 添加 plugin 信息：包括 Name 和 Enabled；
-{&#34;FileVersion&#34;: 3,&#34;EngineAssociation&#34;: &#34;4.20&#34;,&#34;Category&#34;: &#34;&#34;,&#34;Description&#34;: &#34;&#34;,&#34;Modules&#34;: [{&#34;Name&#34;: &#34;MyProj&#34;,&#34;Type&#34;: &#34;Runtime&#34;,&#34;LoadingPhase&#34;: &#34;Default&#34;,&#34;AdditionalDependencies&#34;: [&#34;UMG&#34;,&#34;Engine&#34;,&#34;CoreUObject&#34;,&#34;AIModule&#34;,&#34;ApexDestruction&#34;,&#34;MyPlugin&#34;]}],&#34;Plugins&#34;: [{&#34;Name&#34;: &#34;ApexDestruction&#34;,&#34;Enabled&#34;: true},{&#34;Name&#34;: &#34;MyPlugin&#34;,&#34;Enabled&#34;: true}]} 往Plugin中添加 C&#43;&#43; 代码（2018-08-13更新） 貌似没有好的办法，只能手动添加 C&#43;&#43; 类文件">
+<meta property="og:description" content="keywords: [UE4]Plugin Related">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[UE4]Plugin Related">
 <meta name="twitter:title" content="[UE4]Plugin Related">
 <meta property="og:url" content="https://dawnarc.com/2017/12/ue4plugin-related/">
 <meta property="twitter:url" content="https://dawnarc.com/2017/12/ue4plugin-related/">
 <meta property="og:site_name" content="玄冬Wong">
-<meta property="og:description" content="Usage Plugin在构造函数中加载的问题 在GameMode构造函数中加载（LoadObject或者ConstructorHelpers::FObjectFinder）蓝图，该蓝图使用了plugin（这里我使用了一个叫Swipe的插件），如果在构造函数中加载，则会报错：
-/Game/Demo/Female/Blueprints/FemaleCharBP : Can&#39;t find file for asset. /Script/Swipe Failed to load /Script/Swipe.SwipeComponent Referenced by K2Node_ComponentBoundEvent_2 Failed to load /Script/Swipe.SwipeComponent Referenced by K2Node_ComponentBoundEvent_3 Failed to load /Script/Swipe.SwipeComponent Referenced by SCS_Node_1 另外一种解决办法：给C&#43;&#43;的GameMode套一个蓝图，然后在该蓝图中设置DefaultPawnClass、PlayerControllerClass等GameMode属性，此时即使这些PawnClass或者PlayerControllerClass蓝图使用了plugin，也不会报错。
-添加第三方Plugin（2018-08-10更新） 工程.uproject 需要添加两处地方：
-1，在 Modules 中添加 plugin 名字字符串；
-2，在 Plugins 添加 plugin 信息：包括 Name 和 Enabled；
-{&#34;FileVersion&#34;: 3,&#34;EngineAssociation&#34;: &#34;4.20&#34;,&#34;Category&#34;: &#34;&#34;,&#34;Description&#34;: &#34;&#34;,&#34;Modules&#34;: [{&#34;Name&#34;: &#34;MyProj&#34;,&#34;Type&#34;: &#34;Runtime&#34;,&#34;LoadingPhase&#34;: &#34;Default&#34;,&#34;AdditionalDependencies&#34;: [&#34;UMG&#34;,&#34;Engine&#34;,&#34;CoreUObject&#34;,&#34;AIModule&#34;,&#34;ApexDestruction&#34;,&#34;MyPlugin&#34;]}],&#34;Plugins&#34;: [{&#34;Name&#34;: &#34;ApexDestruction&#34;,&#34;Enabled&#34;: true},{&#34;Name&#34;: &#34;MyPlugin&#34;,&#34;Enabled&#34;: true}]} 往Plugin中添加 C&#43;&#43; 代码（2018-08-13更新） 貌似没有好的办法，只能手动添加 C&#43;&#43; 类文件">
-<meta name="twitter:description" content="Usage Plugin在构造函数中加载的问题 在GameMode构造函数中加载（LoadObject或者ConstructorHelpers::FObjectFinder）蓝图，该蓝图使用了plugin（这里我使用了一个叫Swipe的插件），如果在构造函数中加载，则会报错：
-/Game/Demo/Female/Blueprints/FemaleCharBP : Can&#39;t find file for asset. /Script/Swipe Failed to load /Script/Swipe.SwipeComponent Referenced by K2Node_ComponentBoundEvent_2 Failed to load /Script/Swipe.SwipeComponent Referenced by K2Node_ComponentBoundEvent_3 Failed to load /Script/Swipe.SwipeComponent Referenced by SCS_Node_1 另外一种解决办法：给C&#43;&#43;的GameMode套一个蓝图，然后在该蓝图中设置DefaultPawnClass、PlayerControllerClass等GameMode属性，此时即使这些PawnClass或者PlayerControllerClass蓝图使用了plugin，也不会报错。
-添加第三方Plugin（2018-08-10更新） 工程.uproject 需要添加两处地方：
-1，在 Modules 中添加 plugin 名字字符串；
-2，在 Plugins 添加 plugin 信息：包括 Name 和 Enabled；
-{&#34;FileVersion&#34;: 3,&#34;EngineAssociation&#34;: &#34;4.20&#34;,&#34;Category&#34;: &#34;&#34;,&#34;Description&#34;: &#34;&#34;,&#34;Modules&#34;: [{&#34;Name&#34;: &#34;MyProj&#34;,&#34;Type&#34;: &#34;Runtime&#34;,&#34;LoadingPhase&#34;: &#34;Default&#34;,&#34;AdditionalDependencies&#34;: [&#34;UMG&#34;,&#34;Engine&#34;,&#34;CoreUObject&#34;,&#34;AIModule&#34;,&#34;ApexDestruction&#34;,&#34;MyPlugin&#34;]}],&#34;Plugins&#34;: [{&#34;Name&#34;: &#34;ApexDestruction&#34;,&#34;Enabled&#34;: true},{&#34;Name&#34;: &#34;MyPlugin&#34;,&#34;Enabled&#34;: true}]} 往Plugin中添加 C&#43;&#43; 代码（2018-08-13更新） 貌似没有好的办法，只能手动添加 C&#43;&#43; 类文件">
+<meta property="og:description" content="keywords: [UE4]Plugin Related">
+<meta name="twitter:description" content="keywords: [UE4]Plugin Related">
 <meta property="og:locale" content="en-us">
 
   
@@ -77,6 +57,9 @@
 
 
 
+
+  <meta property="og:image" content="https://dawnarc.com/thumbnail/beijing/thumbnail-beijing-024.jpg">
+  <meta property="twitter:image" content="https://dawnarc.com/thumbnail/beijing/thumbnail-beijing-024.jpg">
 
 
 
@@ -379,7 +362,8 @@
                 <script>
                      (adsbygoogle = window.adsbygoogle || []).push({});
                 </script>
-              <h3 id="usage">Usage</h3>
+              <p>keywords: [UE4]Plugin Related</p>
+<h3 id="usage">Usage</h3>
 <h5 id="plugin在构造函数中加载的问题">Plugin在构造函数中加载的问题</h5>
 <p>在GameMode构造函数中加载（LoadObject或者ConstructorHelpers::FObjectFinder）蓝图，该蓝图使用了plugin（这里我使用了一个叫Swipe的插件），如果在构造函数中加载，则会报错：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Text" data-lang="Text"><span style="display:flex;"><span>/Game/Demo/Female/Blueprints/FemaleCharBP : Can&#39;t find file for asset. /Script/Swipe
@@ -775,7 +759,6 @@ Remove directory <code>Engine/Intermediate/</code> and rebuild engine from sourc
 <a href="https://wiki.unrealengine.com/How_To_Package_Plugins_For_UE4_Marketplace">https://wiki.unrealengine.com/How_To_Package_Plugins_For_UE4_Marketplace</a></p>
 <hr>
 <p><code>醉里挑灯看剑，梦回吹角连营。----辛弃疾《破阵子·为陈同甫赋壮词以寄之》</code></p>
-
               
             </div>
           </div>

@@ -13,34 +13,18 @@
 <meta name="generator" content="Hugo 0.102.3 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Wang Aiguo">
 <meta name="keywords" content="UE4, DecalComponent">
-<meta name="description" content="keywords：DecalComponent、贴花、C&#43;&#43;
-使用的贴花材质是UE4模版工程TopDown中的贴花材质：M_Cursor_Decal。
-if (!FootRingComponent){FootRingComponent = NewObject&lt;UDecalComponent&gt;(MyCharacter-&gt;GetRootComponent());if (FootRingComponent){FootRingComponent-&gt;RegisterComponent();FootRingComponent-&gt;AttachToComponent(MyCharacter-&gt;GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);UMaterial* Material = LoadObject&lt;UMaterial&gt;(NULL, TEXT(&quot;Material&#39;/Game/Materials/Decal/M_Cursor_Decal.M_Cursor_Decal&#39;&quot;));if (Material){FootRingComponent-&gt;SetDecalMaterial(Material);FootRingComponent-&gt;DecalSize = FVector(16.f, 128.f, 128.f);FootRingComponent-&gt;SetRelativeRotation(FRotator(-90.f, 0.f, 0.f));FootRingComponent-&gt;SetRelativeLocation(FVector(0.f, 0.f, -90.f));}}}RelativeRotation一定要设置为FRotator(-90.f, 0.f, 0.f)或者FRotator(90.f, 90.f, 90.f)，否则贴花的无法正常显示；前者表示正向显示，后者表示反向显示。DecalSize的X表示贴花作用高度：比如一面墙高500，X设置为200，那么贴花在墙面上的显示高度只到200高度；Y、Z表示长和宽。
-贴花影响物体过滤 默认所有PrimitiveComponent都接受贴花，也可以让指定物体不显示贴花：
-void UPrimitiveComponent::SetReceivesDecals(bool bNewReceivesDecals);我只是个戏子，在别人的故事里，流着自己的泪。----席慕蓉《戏子》">
+<meta name="description" content="keywords: [UE4]C&#43;&#43;创建DecalComponent并附加到角色、吸附地面">
 
 
-<meta property="og:description" content="keywords：DecalComponent、贴花、C&#43;&#43;
-使用的贴花材质是UE4模版工程TopDown中的贴花材质：M_Cursor_Decal。
-if (!FootRingComponent){FootRingComponent = NewObject&lt;UDecalComponent&gt;(MyCharacter-&gt;GetRootComponent());if (FootRingComponent){FootRingComponent-&gt;RegisterComponent();FootRingComponent-&gt;AttachToComponent(MyCharacter-&gt;GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);UMaterial* Material = LoadObject&lt;UMaterial&gt;(NULL, TEXT(&quot;Material&#39;/Game/Materials/Decal/M_Cursor_Decal.M_Cursor_Decal&#39;&quot;));if (Material){FootRingComponent-&gt;SetDecalMaterial(Material);FootRingComponent-&gt;DecalSize = FVector(16.f, 128.f, 128.f);FootRingComponent-&gt;SetRelativeRotation(FRotator(-90.f, 0.f, 0.f));FootRingComponent-&gt;SetRelativeLocation(FVector(0.f, 0.f, -90.f));}}}RelativeRotation一定要设置为FRotator(-90.f, 0.f, 0.f)或者FRotator(90.f, 90.f, 90.f)，否则贴花的无法正常显示；前者表示正向显示，后者表示反向显示。DecalSize的X表示贴花作用高度：比如一面墙高500，X设置为200，那么贴花在墙面上的显示高度只到200高度；Y、Z表示长和宽。
-贴花影响物体过滤 默认所有PrimitiveComponent都接受贴花，也可以让指定物体不显示贴花：
-void UPrimitiveComponent::SetReceivesDecals(bool bNewReceivesDecals);我只是个戏子，在别人的故事里，流着自己的泪。----席慕蓉《戏子》">
+<meta property="og:description" content="keywords: [UE4]C&#43;&#43;创建DecalComponent并附加到角色、吸附地面">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[UE4]C&#43;&#43;创建DecalComponent并附加到角色、吸附地面">
 <meta name="twitter:title" content="[UE4]C&#43;&#43;创建DecalComponent并附加到角色、吸附地面">
 <meta property="og:url" content="https://dawnarc.com/2018/01/ue4c-%E5%88%9B%E5%BB%BAdecalcomponent%E5%B9%B6%E9%99%84%E5%8A%A0%E5%88%B0%E8%A7%92%E8%89%B2%E5%90%B8%E9%99%84%E5%9C%B0%E9%9D%A2/">
 <meta property="twitter:url" content="https://dawnarc.com/2018/01/ue4c-%E5%88%9B%E5%BB%BAdecalcomponent%E5%B9%B6%E9%99%84%E5%8A%A0%E5%88%B0%E8%A7%92%E8%89%B2%E5%90%B8%E9%99%84%E5%9C%B0%E9%9D%A2/">
 <meta property="og:site_name" content="玄冬Wong">
-<meta property="og:description" content="keywords：DecalComponent、贴花、C&#43;&#43;
-使用的贴花材质是UE4模版工程TopDown中的贴花材质：M_Cursor_Decal。
-if (!FootRingComponent){FootRingComponent = NewObject&lt;UDecalComponent&gt;(MyCharacter-&gt;GetRootComponent());if (FootRingComponent){FootRingComponent-&gt;RegisterComponent();FootRingComponent-&gt;AttachToComponent(MyCharacter-&gt;GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);UMaterial* Material = LoadObject&lt;UMaterial&gt;(NULL, TEXT(&quot;Material&#39;/Game/Materials/Decal/M_Cursor_Decal.M_Cursor_Decal&#39;&quot;));if (Material){FootRingComponent-&gt;SetDecalMaterial(Material);FootRingComponent-&gt;DecalSize = FVector(16.f, 128.f, 128.f);FootRingComponent-&gt;SetRelativeRotation(FRotator(-90.f, 0.f, 0.f));FootRingComponent-&gt;SetRelativeLocation(FVector(0.f, 0.f, -90.f));}}}RelativeRotation一定要设置为FRotator(-90.f, 0.f, 0.f)或者FRotator(90.f, 90.f, 90.f)，否则贴花的无法正常显示；前者表示正向显示，后者表示反向显示。DecalSize的X表示贴花作用高度：比如一面墙高500，X设置为200，那么贴花在墙面上的显示高度只到200高度；Y、Z表示长和宽。
-贴花影响物体过滤 默认所有PrimitiveComponent都接受贴花，也可以让指定物体不显示贴花：
-void UPrimitiveComponent::SetReceivesDecals(bool bNewReceivesDecals);我只是个戏子，在别人的故事里，流着自己的泪。----席慕蓉《戏子》">
-<meta name="twitter:description" content="keywords：DecalComponent、贴花、C&#43;&#43;
-使用的贴花材质是UE4模版工程TopDown中的贴花材质：M_Cursor_Decal。
-if (!FootRingComponent){FootRingComponent = NewObject&lt;UDecalComponent&gt;(MyCharacter-&gt;GetRootComponent());if (FootRingComponent){FootRingComponent-&gt;RegisterComponent();FootRingComponent-&gt;AttachToComponent(MyCharacter-&gt;GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);UMaterial* Material = LoadObject&lt;UMaterial&gt;(NULL, TEXT(&quot;Material&#39;/Game/Materials/Decal/M_Cursor_Decal.M_Cursor_Decal&#39;&quot;));if (Material){FootRingComponent-&gt;SetDecalMaterial(Material);FootRingComponent-&gt;DecalSize = FVector(16.f, 128.f, 128.f);FootRingComponent-&gt;SetRelativeRotation(FRotator(-90.f, 0.f, 0.f));FootRingComponent-&gt;SetRelativeLocation(FVector(0.f, 0.f, -90.f));}}}RelativeRotation一定要设置为FRotator(-90.f, 0.f, 0.f)或者FRotator(90.f, 90.f, 90.f)，否则贴花的无法正常显示；前者表示正向显示，后者表示反向显示。DecalSize的X表示贴花作用高度：比如一面墙高500，X设置为200，那么贴花在墙面上的显示高度只到200高度；Y、Z表示长和宽。
-贴花影响物体过滤 默认所有PrimitiveComponent都接受贴花，也可以让指定物体不显示贴花：
-void UPrimitiveComponent::SetReceivesDecals(bool bNewReceivesDecals);我只是个戏子，在别人的故事里，流着自己的泪。----席慕蓉《戏子》">
+<meta property="og:description" content="keywords: [UE4]C&#43;&#43;创建DecalComponent并附加到角色、吸附地面">
+<meta name="twitter:description" content="keywords: [UE4]C&#43;&#43;创建DecalComponent并附加到角色、吸附地面">
 <meta property="og:locale" content="en-us">
 
   
@@ -73,6 +57,9 @@ void UPrimitiveComponent::SetReceivesDecals(bool bNewReceivesDecals);我只是�
 
 
 
+
+  <meta property="og:image" content="https://dawnarc.com/thumbnail/beijing/thumbnail-beijing-019.jpg">
+  <meta property="twitter:image" content="https://dawnarc.com/thumbnail/beijing/thumbnail-beijing-019.jpg">
 
 
 
@@ -375,7 +362,8 @@ void UPrimitiveComponent::SetReceivesDecals(bool bNewReceivesDecals);我只是�
                 <script>
                      (adsbygoogle = window.adsbygoogle || []).push({});
                 </script>
-              <p>keywords：DecalComponent、贴花、C++</p>
+              <p>keywords: [UE4]C++创建DecalComponent并附加到角色、吸附地面</p>
+<p>keywords：DecalComponent、贴花、C++</p>
 <p>使用的贴花材质是UE4模版工程TopDown中的贴花材质：M_Cursor_Decal。</p>
 <pre><code>if (!FootRingComponent)
 {
@@ -405,7 +393,6 @@ void UPrimitiveComponent::SetReceivesDecals(bool bNewReceivesDecals);我只是�
 </code></pre>
 <hr>
 <p><code>我只是个戏子，在别人的故事里，流着自己的泪。----席慕蓉《戏子》</code></p>
-
               
             </div>
           </div>
