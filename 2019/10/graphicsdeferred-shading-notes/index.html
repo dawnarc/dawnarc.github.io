@@ -369,12 +369,16 @@
 <h5 id="tutorials">Tutorials</h5>
 <p>Deferred Shading<br>
 <a href="https://learnopengl.com/Advanced-Lighting/Deferred-Shading">https://learnopengl.com/Advanced-Lighting/Deferred-Shading</a></p>
+<p><code>Deferred rendering is performed in two phases. The first phase involves going through the scene's geometry and rendering its positions or depths, normals, and materials into a framebuffer known as the geometry buffer or G-buffer. With the exception of some transformations, this is mostly a read-only phase so its performance cost is minimal. After this phase, you're only dealing with 2D textures in the shape of the screen.</code><br>
+<code>The second and last phase is where you perform your lighting calculations using the output of the first phase. This is when you calculate the ambient, diffuse, and specular colors. Shadow and normal mapping are performed in this phase as well.</code><br>
+Deferred Rendering<br>
+<a href="https://github.com/lettier/3d-game-shaders-for-beginners/blob/master/sections/deferred-rendering.md">https://github.com/lettier/3d-game-shaders-for-beginners/blob/master/sections/deferred-rendering.md</a></p>
 <h5 id="blogs">Blogs</h5>
 <p>Forward Rendering vs. Deferred Rendering<br>
 <a href="https://gamedevelopment.tutsplus.com/articles/forward-rendering-vs-deferred-rendering--gamedev-12342">https://gamedevelopment.tutsplus.com/articles/forward-rendering-vs-deferred-rendering--gamedev-12342</a></p>
 <p>实时渲染中常用的几种Rendering Path<br>
 <a href="https://www.cnblogs.com/polobymulberry/p/5126892.html">https://www.cnblogs.com/polobymulberry/p/5126892.html</a><br>
-<a href="https://files-cdn.cnblogs.com/files/polobymulberry/%E5%AE%9E%E6%97%B6%E6%B8%B2%E6%9F%93%E4%B8%AD%E5%B8%B8%E7%94%A8%E7%9A%84%E5%87%A0%E7%A7%8DRendering_Path.pdf">https://files-cdn.cnblogs.com/files/polobymulberry/%E5%AE%9E%E6%97%B6%E6%B8%B2%E6%9F%93%E4%B8%AD%E5%B8%B8%E7%94%A8%E7%9A%84%E5%87%A0%E7%A7%8DRendering_Path.pdf</a></p>
+<a href="https://files-cdn.cnblogs.com/files/polobymulberry/%E5%AE%9E%E6%97%B6%E6%B8%B2%E6%9F%93%E4%B8%AD%E5%B8%B8%E7%94%A8%E7%9A%84%E5%87%A0%E7%A7%8DRendering_Path.pdf">PDF download</a></p>
 <h5 id="research-papaers">Research Papaers</h5>
 <p>Deferred Shading Tutorial<br>
 <a href="https://www.gamedevs.org/uploads/deferred-shading-tutorial.pdf">https://www.gamedevs.org/uploads/deferred-shading-tutorial.pdf</a></p>
@@ -383,6 +387,33 @@
 <h5 id="applications">Applications</h5>
 <p>Deferred Lighting<br>
 <a href="https://developer.apple.com/documentation/metal/deferred_lighting">https://developer.apple.com/documentation/metal/deferred_lighting</a></p>
+<h3 id="common-notes">Common Notes</h3>
+<h5 id="how-does-deferred-shading-process-transparent-objects">How does deferred shading process transparent objects</h5>
+<p>The final solution is to use multiple passes of a deferred renderer. In each pass we rerun the entire deferred renderer for a transparent object and then at the end we collapse the layers back down into a single layer, blending the colours appropriately for each pixel.<br>
+Origin:<br>
+<a href="https://martindevans.me/game-development/2015/10/09/Deferred-Transparency/">https://martindevans.me/game-development/2015/10/09/Deferred-Transparency/</a></p>
+<p>You do the complete deferred shading first (including illumination pass). Then you use the final color buffer and the depth buffer and render the transparent geometry on top of that.<br>
+Origin:<br>
+<a href="https://stackoverflow.com/questions/52140035/opengl-deferred-shading-transparency">https://stackoverflow.com/questions/52140035/opengl-deferred-shading-transparency</a></p>
+<p><strong>Deferred shading with Front Rendering</strong><br>
+The front render is used to process transparent objects and fits well into the deferred shading pipeline. It renders all opaque objects first with the deferred shader
+and then renders the transparent objects on top using the front renderer. This is
+important as the depth buffer has to be filled with opaque objects first, to prevent
+rendering of non-visible transparent objects. When the front renderer is performed,
+the final picture can be rendered to the frame buffer for display.
+The implementation has the following rendering stages:</p>
+<ol>
+<li>Render all opaque geometry to the G-Buffer</li>
+<li>Bind the G-Buffer as texture. For each light in the scene draw a full screen rectangle and calculate lighting at each pixel using the data from the G-Buffer. Save
+result in the P-Buffer.</li>
+<li>Sort all transparent entities in back to front order.</li>
+<li>Render all transparent geometry using the front renderer. Blend the result to the
+P-Buffer using the depth buffer to filter out any non-visible transparent geometry.
+9</li>
+<li>Copy P-Buffer to frame buffer.</li>
+</ol>
+<p>Origin:<br>
+<a href="https://www.csc.kth.se/utbildning/kth/kurser/DD143X/dkand12/Group1Marten/final/final_TransparencyWithDeferredShading.pdf">Transparency with Deferred Shading</a></p>
 <hr>
 <p><code>The only regret I will have in dying is if it is not for love. ― Gabriel García Márquez, Love in the Time of Cholera</code></p>
               
