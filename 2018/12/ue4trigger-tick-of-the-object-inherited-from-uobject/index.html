@@ -368,73 +368,67 @@
 The answer is: <span class="highlight-text green">inherit FTickableGameObject and UObject at the same.</span></p>
 <p>example source</p>
 <p>header:</p>
-<pre><code>UCLASS()
-class UCoolDownMgr : public UObject, public FTickableGameObject
-{
-    GENERATED_BODY()
-public:
-    // Sets default values for this character's properties
-    UCoolDownMgr();
-    virtual ~UCoolDownMgr();
- 
-    // Begin FTickableGameObject Interface.
-    virtual void Tick(float DeltaTime) override;
-    virtual bool IsTickable() const override;
-    virtual TStatId GetStatId() const override;
-    // End FTickableGameObject Interface.
-    
-private:
-    
-    //because engine would construct inner object when game load package (before game start), so we need to add a flag to identify which one need to be constructed on game running.
-    bool bIsCreateOnRunning = false;
-};
-</code></pre>
-<p>cpp:</p>
-<pre><code>UCoolDownMgr::UCoolDownMgr()
-{
-    bIsCreateOnRunning = GIsRunning;
-}
-
-void UCoolDownMgr::Tick(float DeltaTime)
-{
-    //Don't invoke Super::Tick(), otherwise would link failed!!!
-    //Super::Tick(DeltaTime);
-}
- 
-bool UCoolDownMgr::IsTickable() const
-{
-    //notify engine to ignore Tick of the object construction before game running.
-    return bIsCreateOnRunning;
-}
-TStatId UCoolDownMgr::GetStatId() const
-{
-    return UObject::GetStatID();
-}
-</code></pre>
-<div class="alert danger ">
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>UCLASS()
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">UCoolDownMgr</span> <span style="color:#f92672">:</span> <span style="color:#66d9ef">public</span> UObject, <span style="color:#66d9ef">public</span> FTickableGameObject
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    GENERATED_BODY()
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Sets default values for this character&#39;s properties
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    UCoolDownMgr();
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">virtual</span> <span style="color:#f92672">~</span>UCoolDownMgr();
+</span></span><span style="display:flex;"><span> 
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Begin FTickableGameObject Interface.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">virtual</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">Tick</span>(<span style="color:#66d9ef">float</span> DeltaTime) <span style="color:#66d9ef">override</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">virtual</span> <span style="color:#66d9ef">bool</span> <span style="color:#a6e22e">IsTickable</span>() <span style="color:#66d9ef">const</span> <span style="color:#66d9ef">override</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">virtual</span> TStatId <span style="color:#a6e22e">GetStatId</span>() <span style="color:#66d9ef">const</span> <span style="color:#66d9ef">override</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// End FTickableGameObject Interface.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">private</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//because engine would construct inner object when game load package (before game start), so we need to add a flag to identify which one need to be constructed on game running.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">bool</span> bIsCreateOnRunning <span style="color:#f92672">=</span> false;
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p>cpp:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>UCoolDownMgr<span style="color:#f92672">::</span>UCoolDownMgr()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    bIsCreateOnRunning <span style="color:#f92672">=</span> GIsRunning;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> UCoolDownMgr<span style="color:#f92672">::</span>Tick(<span style="color:#66d9ef">float</span> DeltaTime)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//Don&#39;t invoke Super::Tick(), otherwise would link failed!!!
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">//Super::Tick(DeltaTime);
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span><span style="display:flex;"><span> 
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">bool</span> UCoolDownMgr<span style="color:#f92672">::</span>IsTickable() <span style="color:#66d9ef">const</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//notify engine to ignore Tick of the object construction before game running.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">return</span> bIsCreateOnRunning;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>TStatId UCoolDownMgr<span style="color:#f92672">::</span>GetStatId() <span style="color:#66d9ef">const</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> UObject<span style="color:#f92672">::</span>GetStatID();
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><div class="alert danger ">
   <p>Because engine would construct inner object when game load package (before game start), so we need to add a flag (<code>bIsCreateOnRunning</code>) to identify which one is construct on game running.</p>
 </div>
 <p>Reference:<br>
 <a href="https://blog.csdn.net/yangxuan0261/article/details/52093573">https://blog.csdn.net/yangxuan0261/article/details/52093573</a></p>
 <h5 id="2nd-way-ftickerdelegate">2nd way: FTickerDelegate</h5>
 <p>header:</p>
-<pre><code>/** Delegate for callbacks to Tick */
-FTickerDelegate TickDelegate;
-
-/** Handle to various registered delegates */
-FDelegateHandle TickDelegateHandle;
-</code></pre>
-<p>cpp:</p>
-<pre><code>TickDelegate = FTickerDelegate::CreateUObject(this, &amp;UMyObject::MyTick);
-TickDelegateHandle = FTicker::GetCoreTicker().AddTicker(TickDelegate);
-</code></pre>
-<p>Tick function:</p>
-<pre><code>bool UMyObject::MyTick(float DeltaSeconds)
-{
-
-}
-</code></pre>
-<hr>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">/** Delegate for callbacks to Tick */</span>
+</span></span><span style="display:flex;"><span>FTickerDelegate TickDelegate;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">/** Handle to various registered delegates */</span>
+</span></span><span style="display:flex;"><span>FDelegateHandle TickDelegateHandle;
+</span></span></code></pre></div><p>cpp:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>TickDelegate <span style="color:#f92672">=</span> FTickerDelegate<span style="color:#f92672">::</span>CreateUObject(<span style="color:#66d9ef">this</span>, <span style="color:#f92672">&amp;</span>UMyObject<span style="color:#f92672">::</span>MyTick);
+</span></span><span style="display:flex;"><span>TickDelegateHandle <span style="color:#f92672">=</span> FTicker<span style="color:#f92672">::</span>GetCoreTicker().AddTicker(TickDelegate);
+</span></span></code></pre></div><p>Tick function:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">bool</span> UMyObject<span style="color:#f92672">::</span>MyTick(<span style="color:#66d9ef">float</span> DeltaSeconds)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><hr>
 <p><code>生活总是这样，不能叫人处处都满意。但我们还要热情地活下去。人活一生，值得爱的东西很多，不要因为一个不满意，就灰心。</code></p>
               
             </div>
@@ -510,7 +504,7 @@ TickDelegateHandle = FTicker::GetCoreTicker().AddTicker(TickDelegate);
         </article>
         <footer id="footer" class="main-content-wrap">
   <span class="copyrights">
-    &copy; 2023 Wang Aiguo. All Rights Reserved. Powered by <A href="https://gohugo.io/"> Hugo</A> | Theme <A href="https://github.com/kakawait/hugo-tranquilpeak-theme/">Tranquilpeak</A>.
+    &copy; 2024 Wang Aiguo. All Rights Reserved. Powered by <A href="https://gohugo.io/"> Hugo</A> | Theme <A href="https://github.com/kakawait/hugo-tranquilpeak-theme/">Tranquilpeak</A>.
   </span>
 </footer>
 

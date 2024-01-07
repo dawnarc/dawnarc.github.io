@@ -13,18 +13,18 @@
 <meta name="generator" content="Hugo 0.102.3 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Wang Aiguo">
 <meta name="keywords" content="UE4, File & Directory Operation">
-<meta name="description" content="keywords: UE4, File &amp; Directory Operation Notes">
+<meta name="description" content="keywords: UE4 File Directory Operation Notes, Operation System, Platform Process, Windows API, Native Interface">
 
 
-<meta property="og:description" content="keywords: UE4, File &amp; Directory Operation Notes">
+<meta property="og:description" content="keywords: UE4 File Directory Operation Notes, Operation System, Platform Process, Windows API, Native Interface">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[UE4]File &amp; Directory Operation Notes">
 <meta name="twitter:title" content="[UE4]File &amp; Directory Operation Notes">
 <meta property="og:url" content="https://dawnarc.com/2021/11/ue4file-directory-operation-notes/">
 <meta property="twitter:url" content="https://dawnarc.com/2021/11/ue4file-directory-operation-notes/">
 <meta property="og:site_name" content="玄冬Wong">
-<meta property="og:description" content="keywords: UE4, File &amp; Directory Operation Notes">
-<meta name="twitter:description" content="keywords: UE4, File &amp; Directory Operation Notes">
+<meta property="og:description" content="keywords: UE4 File Directory Operation Notes, Operation System, Platform Process, Windows API, Native Interface">
+<meta name="twitter:description" content="keywords: UE4 File Directory Operation Notes, Operation System, Platform Process, Windows API, Native Interface">
 <meta property="og:locale" content="en-us">
 
   
@@ -362,7 +362,7 @@
                 <script>
                      (adsbygoogle = window.adsbygoogle || []).push({});
                 </script>
-              <p>keywords: UE4, File &amp; Directory Operation Notes</p>
+              <p>keywords: UE4 File Directory Operation Notes, Operation System, Platform Process, Windows API, Native Interface</p>
 <h5 id="how-to-read-file">How to read file?</h5>
 <p>Read string:</p>
 <pre><code>FString Str;
@@ -432,6 +432,46 @@ FFileHelper::SaveArrayToFile(Stream, *FilePath);
 </span></span><span style="display:flex;"><span>    FString<span style="color:#f92672">*</span> LatestFile <span style="color:#f92672">=</span> FileMap.Find(TimeArray[<span style="color:#ae81ff">0</span>]);
 </span></span><span style="display:flex;"><span>    UE_LOG(LogTemp, Log, TEXT(<span style="color:#e6db74">&#34;latestfile: %s&#34;</span>), <span style="color:#f92672">*</span>LatestFile);
 </span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h5 id="how-to-create-sub-directory-full-path-multiple-folder-recursively">How to create sub-directory (full path, multiple folder) recursively</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">//BaseDir: D:/MyGame/Content/
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//FullDir: D:/MyGame/Content/foo/bar/baz/
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">void</span> ARGPcgConvertActor<span style="color:#f92672">::</span>CreateSubDirectory(<span style="color:#66d9ef">const</span> FString<span style="color:#f92672">&amp;</span> BaseDir, <span style="color:#66d9ef">const</span> FString<span style="color:#f92672">&amp;</span> FullDir)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    FString BaseDirNew <span style="color:#f92672">=</span> BaseDir.Replace(TEXT(<span style="color:#e6db74">&#34;//&#34;</span>), TEXT(<span style="color:#e6db74">&#34;/&#34;</span>));
+</span></span><span style="display:flex;"><span>    FString FullDirNew <span style="color:#f92672">=</span> FullDir.Replace(TEXT(<span style="color:#e6db74">&#34;//&#34;</span>), TEXT(<span style="color:#e6db74">&#34;/&#34;</span>));
+</span></span><span style="display:flex;"><span>    FString RelativeDir <span style="color:#f92672">=</span> FullDirNew.Replace(<span style="color:#f92672">*</span>BaseDirNew, TEXT(<span style="color:#e6db74">&#34;&#34;</span>));
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//remove the first slash in beginning
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> (RelativeDir.Left(<span style="color:#ae81ff">1</span>) <span style="color:#f92672">==</span> TEXT(<span style="color:#e6db74">&#34;/&#34;</span>))
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        RelativeDir <span style="color:#f92672">=</span> RelativeDir.Right(RelativeDir.Len() <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    FString LastRelativeDir <span style="color:#f92672">=</span> BaseDir;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">while</span> (RelativeDir.Len() <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0</span>)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        FString SubDir;
+</span></span><span style="display:flex;"><span>        int32 SlashIndex <span style="color:#f92672">=</span> RelativeDir.Find(<span style="color:#e6db74">&#34;/&#34;</span>);
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (SlashIndex <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">0</span>)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            SubDir <span style="color:#f92672">=</span> RelativeDir.Mid(<span style="color:#ae81ff">0</span>, SlashIndex);
+</span></span><span style="display:flex;"><span>            RelativeDir <span style="color:#f92672">=</span> RelativeDir.Mid(SlashIndex <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>, RelativeDir.Len() <span style="color:#f92672">-</span> SlashIndex);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">else</span>
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            SubDir <span style="color:#f92672">=</span> RelativeDir;
+</span></span><span style="display:flex;"><span>            RelativeDir <span style="color:#f92672">=</span> TEXT(<span style="color:#e6db74">&#34;&#34;</span>);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        FString NewDir <span style="color:#f92672">=</span> FPaths<span style="color:#f92672">::</span>Combine(LastRelativeDir, SubDir);
+</span></span><span style="display:flex;"><span>        IPlatformFile<span style="color:#f92672">&amp;</span> PlatformFile <span style="color:#f92672">=</span> FPlatformFileManager<span style="color:#f92672">::</span>Get().GetPlatformFile();
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span>PlatformFile.DirectoryExists(<span style="color:#f92672">*</span>NewDir))
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            PlatformFile.CreateDirectory(<span style="color:#f92672">*</span>NewDir);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        LastRelativeDir <span style="color:#f92672">=</span> NewDir;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h5 id="how-to-get-directory-of-custom-config-file-savestringtofile-in-android-failed">How to get directory of custom config file? (SaveStringToFile in android failed)</h5>
 <p><code>FPaths::ProjectDir()</code> works in Windows, but will fail in Android.<br>
 Solution:</p>
@@ -454,9 +494,16 @@ Solution:</p>
 </span></span></span></code></pre></div><p>Origin:<br>
 Shipping build won’t create .ini file in GameDir()<br>
 <a href="https://forums.unrealengine.com/t/shipping-build-wont-create-ini-file-in-gamedir/99905">https://forums.unrealengine.com/t/shipping-build-wont-create-ini-file-in-gamedir/99905</a></p>
-<h5 id="how-to-get-screenshots-directory">How to get Screenshots directory</h5>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">//e.g. [Project]/Saved/Screenshots/WindowsNoEditor/
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>GetDefault<span style="color:#f92672">&lt;</span>UEngine<span style="color:#f92672">&gt;</span>()<span style="color:#f92672">-&gt;</span>GameScreenshotSaveDirectory.Path
+<h5 id="how-to-execute-os-command-windows-batch-cmd-in-c">How to execute OS command (Windows batch, cmd) in C++</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>FString ExePath <span style="color:#f92672">=</span> TEXT(<span style="color:#e6db74">&#34;C:/Program Files/WinRAR/Rar.exe&#34;</span>);
+</span></span><span style="display:flex;"><span>FString Args <span style="color:#f92672">=</span> TEXT(<span style="color:#e6db74">&#34;a -df -k -r -s D:/mysqldump/%filename%-%data_time_str%.rar  %filename%-%date_str%*.sql&#34;</span>);
+</span></span><span style="display:flex;"><span>FProcHandle Handle <span style="color:#f92672">=</span> FPlatformProcess<span style="color:#f92672">::</span>CreateProc(<span style="color:#f92672">*</span>ExePath, <span style="color:#f92672">*</span>Args, false, true, false, <span style="color:#66d9ef">nullptr</span>, <span style="color:#ae81ff">0</span>, <span style="color:#66d9ef">nullptr</span>, <span style="color:#66d9ef">nullptr</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//wait process while running native command
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>FPlatformProcess<span style="color:#f92672">::</span>WaitForProc(Handle);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//check if process was finished
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>FPlatformProcess<span style="color:#f92672">::</span>IsProcRunning(Handle);
 </span></span></code></pre></div><h5 id="how-to-get-conent-directory">How to get Conent directory</h5>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">//e.g. [Project]/Content/
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>FString ContentDir <span style="color:#f92672">=</span> FPaths<span style="color:#f92672">::</span>ProjectContentDir();
@@ -468,6 +515,11 @@ Shipping build won’t create .ini file in GameDir()<br>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>TArray<span style="color:#f92672">&lt;</span>FString<span style="color:#f92672">&gt;</span> AssetList;
 </span></span><span style="display:flex;"><span>FString Path <span style="color:#f92672">=</span> FPaths<span style="color:#f92672">::</span>SourceConfigDir() <span style="color:#f92672">+</span> TEXT(<span style="color:#e6db74">&#34;DefaultMyGameSettings.ini&#34;</span>);
 </span></span><span style="display:flex;"><span>GConfig<span style="color:#f92672">-&gt;</span>GetArray(TEXT(<span style="color:#e6db74">&#34;/Script/MyGame.MyGameSettings&#34;</span>), TEXT(<span style="color:#e6db74">&#34;+AssetList&#34;</span>), AssetList, Path);
+</span></span></code></pre></div><h5 id="how-to-get-project-name">How to get project name</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>FApp<span style="color:#f92672">::</span>GetProjectName()
+</span></span></code></pre></div><h5 id="how-to-get-screenshots-directory">How to get Screenshots directory</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">//e.g. [Project]/Saved/Screenshots/WindowsNoEditor/
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>GetDefault<span style="color:#f92672">&lt;</span>UEngine<span style="color:#f92672">&gt;</span>()<span style="color:#f92672">-&gt;</span>GameScreenshotSaveDirectory.Path
 </span></span></code></pre></div><h5 id="how-to-get-file-size">How to get file size</h5>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>IPlatformFile<span style="color:#f92672">&amp;</span> Handle <span style="color:#f92672">=</span> FPlatformFileManager<span style="color:#f92672">::</span>Get().GetPlatformFile();
 </span></span><span style="display:flex;"><span>int64 Size <span style="color:#f92672">=</span> Handle.FileSize(TEXT(<span style="color:#e6db74">&#34;C:/test.png&#34;</span>));
@@ -552,7 +604,7 @@ Shipping build won’t create .ini file in GameDir()<br>
         </article>
         <footer id="footer" class="main-content-wrap">
   <span class="copyrights">
-    &copy; 2023 Wang Aiguo. All Rights Reserved. Powered by <A href="https://gohugo.io/"> Hugo</A> | Theme <A href="https://github.com/kakawait/hugo-tranquilpeak-theme/">Tranquilpeak</A>.
+    &copy; 2024 Wang Aiguo. All Rights Reserved. Powered by <A href="https://gohugo.io/"> Hugo</A> | Theme <A href="https://github.com/kakawait/hugo-tranquilpeak-theme/">Tranquilpeak</A>.
   </span>
 </footer>
 
