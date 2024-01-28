@@ -738,7 +738,7 @@ Project Settings -&gt; Engine -&gt; Animation -&gt; 勾选 Strip Animation Data 
 <h5 id="内存优化memory-issues">内存优化(Memory Issues)</h5>
 <ol>
 <li>
-<p>开发中测试用的资产放到专用的文件夹下，并且通过<code>DirectoriesToNeverCook</code>（DefaultGame.ini）将其隔离，不参与打包。打包时引擎会扫描所有硬引用，当启动游戏时，引擎会自动加载被硬引用的资产，导致一些不需要的资产被加载到系统内存中，并且会导致打包时cook时长和内存占用急剧增长。<code>DirectoriesToNeverCook</code>会打断硬引用的关系链，避免被加载。</p>
+<p>开发中测试用的资产放到专用的文件夹下，并且通过<code>DirectoriesToNeverCook</code>（DefaultGame.ini）将其隔离，不参与打包。打包时引擎会递归扫描所有硬引用，并对相关资产进行cook和package。当启动游戏时，引擎会自动加载被硬引用的资产到内存，导致内存占用急剧增长（cook时的内存也会急剧增长）。<code>DirectoriesToNeverCook</code>会打断硬引用的关系链，避免资产被cook和package。</p>
 </li>
 <li>
 <p>过多的贴图加载：</p>
@@ -780,7 +780,7 @@ Project Settings -&gt; Engine -&gt; Animation -&gt; 勾选 Strip Animation Data 
 <h5 id="rhi-vulkan--d3d12">RHI (Vulkan &amp; D3D12)</h5>
 <ol>
 <li>
-<p>如果dispatch数量较高（Gears 5平均每帧50左右），则GPU计算开销会显著增加。对于计算量较大的特效，建议使用Async Compute，D3D12的官方example：<a href="https://github.com/GPUOpen-LibrariesAndSDKs/nBodyD3D12/tree/master/Samples/D3D12nBodyGravity">N-body Gravity System</a>。因为历史原因，UE4无法实现async compute（因为需要推翻整个rendering代码重写）。UE5甩掉了包袱已彻底实现：async compute开销一直保持在20%左右（<a href="https://www.unrealengine.com/marketplace/en-US/product/city-sample">Matrix Awakens</a>测试结果），而UE4不到1%，几乎为0。</p>
+<p>如果dispatch数量较高（Gears 5平均每帧50左右），则GPU计算开销会显著增加。对于计算量较大的特效，建议使用Async Compute，D3D12的官方example：<a href="https://github.com/GPUOpen-LibrariesAndSDKs/nBodyD3D12/tree/master/Samples/D3D12nBodyGravity">N-body Gravity System</a>。因为历史原因，UE4无法实现async compute, bindless resource等重要特性（因为需要推翻整个rendering代码重写）。UE5甩掉了包袱已彻底实现：async compute开销一直保持在20%左右（<a href="https://www.unrealengine.com/marketplace/en-US/product/city-sample">Matrix Awakens</a>测试结果），而UE4不到1%，几乎为0。</p>
 </li>
 <li>
 <p>由于UE的deferred shading是multipass，而material的每种buffer（albedo, normal, material properties, ambient occlusion, worldspace reflection等等一共有16种buffer）都对应一个pass，当材质过于复杂（比如玻璃、透明特效等），则dispatch大幅增长，而UE4的rendering没有实现Async Compute所以没法降低dispatch，而dispatch是GPU的开销大户。</p>
@@ -822,6 +822,8 @@ Project Settings -&gt; Engine -&gt; Animation -&gt; 勾选 Strip Animation Data 
 <a href="https://gpuopen.com/unreal-engine-performance-guide/">https://gpuopen.com/unreal-engine-performance-guide/</a></p>
 <p>Aggregating Ticks to Manage Scale in Sea of Thieves | Unreal Fest Europe 2019 | Unreal Engine<br>
 <a href="https://www.youtube.com/watch?v=CBP5bpwkO54">https://www.youtube.com/watch?v=CBP5bpwkO54</a></p>
+<p>Epic Games 王祢：UE4制作多人大地型游戏的优化<br>
+<a href="https://zhuanlan.zhihu.com/p/43742565">https://zhuanlan.zhihu.com/p/43742565</a></p>
 <p>UE4 GameThread优化总结笔记<br>
 <a href="https://zhuanlan.zhihu.com/p/388070138">https://zhuanlan.zhihu.com/p/388070138</a></p>
 <p>通过优化在UE4中实现良好性能和高质量视觉效果<br>

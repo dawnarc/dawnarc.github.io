@@ -393,7 +393,7 @@ new string[]
 <p>Append argument <code>-NotInstalled</code> on game startup:</p>
 <pre><code>MyGame.exe -NotInstalled
 </code></pre>
-<p>Then &ldquo;save&rdquo; files will be saved in relative path (<code>[Project]/Saved/</code>) of .exe, not driver <code>C:</code>.</p>
+<p>Then &ldquo;save&rdquo; files will be saved in relative path (<code>[Project]/Saved/</code>) of .exe, not directory <code>C:\Users\[YourName]\AppData\Local\[YourGame]\Saved\Crashes\</code>.</p>
 <h5 id="how-to-disable-plugin-compiling-in-specified-platform">How to disable plugin compiling in specified platform</h5>
 <p>Add <code>WhitelistPlatforms</code> in <code>.uplugin</code>:</p>
 <pre><code>&quot;WhitelistPlatforms&quot;: [ &quot;Win64&quot;, &quot;Mac&quot;, &quot;IOS&quot;, &quot;Android&quot;, &quot;Linux&quot; ]
@@ -416,46 +416,9 @@ new string[]
 </code></pre>
 <p>Reference:<br>
 <a href="https://github.com/Tencent/UnLua/blob/master/Plugins/UnLua/UnLua.uplugin">https://github.com/Tencent/UnLua/blob/master/Plugins/UnLua/UnLua.uplugin</a></p>
-<h3 id="linux">Linux</h3>
-<h5 id="cross-compiling-for-linux">Cross-Compiling for Linux</h5>
-<p>Cross-Compiling for Linux<br>
-<a href="https://docs.unrealengine.com/en-US/Platforms/Linux/GettingStarted/index.html">https://docs.unrealengine.com/en-US/Platforms/Linux/GettingStarted/index.html</a></p>
-<p>How to Cross-Compile for Linux in Unreal Engine - Setting up the Toolchain<br>
-<a href="https://www.youtube.com/watch?v=WKRi8bZCsFM">https://www.youtube.com/watch?v=WKRi8bZCsFM</a></p>
-<p>Building Unreal Engine Game Client and Dedicated Server on Linux<br>
-<a href="https://gist.github.com/zhiguangwang/42b0584ae689f0f8711790e4c05d76f1">https://gist.github.com/zhiguangwang/42b0584ae689f0f8711790e4c05d76f1</a></p>
-<p>Building and Hosting an Unreal Engine Dedicated Server with AWS and Docker<br>
-<a href="https://medium.com/swlh/building-and-hosting-an-unreal-engine-dedicated-server-with-aws-and-docker-75317780c567">https://medium.com/swlh/building-and-hosting-an-unreal-engine-dedicated-server-with-aws-and-docker-75317780c567</a></p>
-<h5 id="run-ue4-on-linux">Run UE4 on Linux</h5>
-<p>Linux Quick Start. Learn how to download, build, and run UE4 on Linux.
-<a href="https://docs.unrealengine.com/en-US/SharingAndReleasing/Linux/BeginnerLinuxDeveloper/SettingUpAnUnrealWorkflow/index.html">https://docs.unrealengine.com/en-US/SharingAndReleasing/Linux/BeginnerLinuxDeveloper/SettingUpAnUnrealWorkflow/index.html</a></p>
-<h5 id="linux-issues---failed-to-load-vulkan-driver">Linux Issues - Failed to load Vulkan Driver</h5>
-<p>Error on startup editor on Linux:</p>
-<pre><code>Failed to load Vulkan Driver which is required to run the engine. The engine no longer fallbacks to OpenGL4 which has been deprecated.
-</code></pre>
-<p>Solution:</p>
-<pre><code>yum install libvulkan1 mesa-vulkan-drivers vulkan-utils
-</code></pre>
-<p>Reference:<br>
-<a href="https://linuxconfig.org/install-and-test-vulkan-on-linux">https://linuxconfig.org/install-and-test-vulkan-on-linux</a></p>
-<h5 id="linux-issues---thirdpartycef3linux-not-in-executable-format-is-a-directory">Linux Issues - ThirdParty/CEF3/Linux: not in executable format: Is a directory</h5>
-<p>Error while running UE4 client on Linux:</p>
-<pre><code>Error while mapping shared library sections:
-`/home/MyGame/LinuxNoEditor/MyGame/Binaries/Linux/../../../Engine/Binaries/ThirdParty/CEF3/Linux': not in executable format: Is a directory
-</code></pre>
-<p>Solution:<br>
-Add <code>USE_NULL_RHI=1</code> in [Project].Build.cs</p>
-<pre><code>if(Target.Platform == UnrealTargetPlatform.Linux &amp;&amp; Type == TargetType.Game)
-{
-    GlobalDefinitions.Add(&quot;USE_NULL_RHI=1&quot;);
-    System.Console.Out.WriteLine(&quot;===================== USE_NULL_RHI=1&quot;);
-}
-</code></pre>
-<h5 id="how-to-generate-core-dump-file-when-games-crashed-in-shipping-on-linux">How to generate core dump file when games crashed in shipping on Linux</h5>
-<p>Pass <code>-core</code> when running applicaton on Linux:</p>
-<pre><code>MyProj/Binaries/MyProjServer-Linux-Shipping -core -log -port=7777
-</code></pre>
-<h3 id="debug-in-shipping">Debug in Shipping</h3>
+<h5 id="where-is-the-crash-dump-file-saved-directory-while-start-game-from-visual-studio">Where is the crash dump file (Saved directory) while start game from Visual Studio</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Text" data-lang="Text"><span style="display:flex;"><span>D:\MyGame\Saved\Cooked\WindowsClient\MyGame\Saved\Crashes\
+</span></span></code></pre></div><h3 id="debug-in-shipping">Debug in Shipping</h3>
 <h5 id="displaying-debug-information">Displaying Debug information</h5>
 <p>Project Settings -&gt; Packaging -&gt; Project -&gt; check <code>Include Debug Files</code>.</p>
 <h5 id="logging">Logging</h5>
@@ -523,16 +486,58 @@ shot/hiresshot, toggledrawevents, profilegpu</p>
 </code></pre>
 <p>Reference:<br>
 <a href="https://qiita.com/donbutsu17/items/76ea5c5531aa4da77f9d">https://qiita.com/donbutsu17/items/76ea5c5531aa4da77f9d</a></p>
-<h3 id="unrealpak-ue5">UnrealPak (UE5)</h3>
-<h5 id="how-to-extract-files-from-pak">How to extract files from .pak</h5>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Text" data-lang="Text"><span style="display:flex;"><span>&#34;D:\UE_5.3\Engine\Binaries\Win64\UnrealPak.exe&#34; -extract E:/Test.pak E:/output
-</span></span></code></pre></div><h5 id="how-to-create-pak-file-from-uasset-files">How to create pak file from uasset files</h5>
+<h3 id="ue5-cook--package">UE5 Cook &amp; Package</h3>
+<h5 id="how-to-create-pak-file-from-uasset-files">How to create pak file from uasset files</h5>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Text" data-lang="Text"><span style="display:flex;"><span>&#34;D:\UE_5.3\Engine\Binaries\Win64\UnrealPak.exe&#34; -create=E:\MyGame\Saved\Cooked\Windows -compressionformats=Zlib,Gzip,LZ4 -compress
 </span></span></code></pre></div><p>Official command example (from .uproject):</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Text" data-lang="Text"><span style="display:flex;"><span>D:\UE_5.3\Engine\Binaries\Win64\UnrealPak.exe &#34;E:\TestTP\TestTP.uproject&#34; -cryptokeys=&#34;E:\TestTP\Saved\Cooked\Windows\TestTP\Metadata\Crypto.json&#34; -patchpaddingalign=2048 -compressionformats=Oodle -compresslevel=4 -compressmethod=Kraken  -platform=Windows  -CreateMultiple=&#34;C:\Users\Neil\AppData\Roaming\Unreal Engine\AutomationTool\Logs\D+GamesLibrary+EpicGamesStore+UE_5.3\PakCommands.txt&#34;
 </span></span></code></pre></div><p>Official command example (from cook directory):</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Text" data-lang="Text"><span style="display:flex;"><span>D:\UE_5.3\Engine\Binaries\Win64\UnrealPak.exe -CreateGlobalContainer=&#34;E:\TestTP\Saved\StagedBuilds\Windows\TestTP\Content\Paks\global.utoc&#34; -CookedDirectory=&#34;E:\TestTP\Saved\Cooked\Windows&#34; -PackageStoreManifest=&#34;E:\TestTP\Saved\Cooked\Windows\TestTP\Metadata\packagestore.manifest&#34; -Commands=&#34;C:\Users\Neil\AppData\Roaming\Unreal Engine\AutomationTool\Logs\D+GamesLibrary+EpicGamesStore+UE_5.3\IoStoreCommands.txt&#34; -ScriptObjects=&#34;E:\TestTP\Saved\Cooked\Windows\TestTP\Metadata\scriptobjects.bin&#34; -patchpaddingalign=2048 -compressionformats=Oodle -compresslevel=4 -compressmethod=Kraken -cryptokeys=&#34;E:\TestTP\Saved\Cooked\Windows\TestTP\Metadata\Crypto.json&#34; 
-</span></span></code></pre></div><h3 id="issues">Issues</h3>
+</span></span></code></pre></div><h5 id="how-to-extract-files-from-pak">How to extract files from .pak</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Text" data-lang="Text"><span style="display:flex;"><span>&#34;D:\UE_5.3\Engine\Binaries\Win64\UnrealPak.exe&#34; -extract E:/Test.pak E:/output
+</span></span></code></pre></div><h5 id="load-pak-at-runtime">Load pak at runtime</h5>
+<p>Example Project: Loading Pak Files At Runtime<br>
+<a href="https://dev.epicgames.com/community/learning/tutorials/7Bj8/unreal-engine-example-project-loading-pak-files-at-runtime">https://dev.epicgames.com/community/learning/tutorials/7Bj8/unreal-engine-example-project-loading-pak-files-at-runtime</a></p>
+<h3 id="linux">Linux</h3>
+<h5 id="cross-compiling-for-linux">Cross-Compiling for Linux</h5>
+<p>Cross-Compiling for Linux<br>
+<a href="https://docs.unrealengine.com/en-US/Platforms/Linux/GettingStarted/index.html">https://docs.unrealengine.com/en-US/Platforms/Linux/GettingStarted/index.html</a></p>
+<p>How to Cross-Compile for Linux in Unreal Engine - Setting up the Toolchain<br>
+<a href="https://www.youtube.com/watch?v=WKRi8bZCsFM">https://www.youtube.com/watch?v=WKRi8bZCsFM</a></p>
+<p>Building Unreal Engine Game Client and Dedicated Server on Linux<br>
+<a href="https://gist.github.com/zhiguangwang/42b0584ae689f0f8711790e4c05d76f1">https://gist.github.com/zhiguangwang/42b0584ae689f0f8711790e4c05d76f1</a></p>
+<p>Building and Hosting an Unreal Engine Dedicated Server with AWS and Docker<br>
+<a href="https://medium.com/swlh/building-and-hosting-an-unreal-engine-dedicated-server-with-aws-and-docker-75317780c567">https://medium.com/swlh/building-and-hosting-an-unreal-engine-dedicated-server-with-aws-and-docker-75317780c567</a></p>
+<h5 id="run-ue4-on-linux">Run UE4 on Linux</h5>
+<p>Linux Quick Start. Learn how to download, build, and run UE4 on Linux.
+<a href="https://docs.unrealengine.com/en-US/SharingAndReleasing/Linux/BeginnerLinuxDeveloper/SettingUpAnUnrealWorkflow/index.html">https://docs.unrealengine.com/en-US/SharingAndReleasing/Linux/BeginnerLinuxDeveloper/SettingUpAnUnrealWorkflow/index.html</a></p>
+<h5 id="linux-issues---failed-to-load-vulkan-driver">Linux Issues - Failed to load Vulkan Driver</h5>
+<p>Error on startup editor on Linux:</p>
+<pre><code>Failed to load Vulkan Driver which is required to run the engine. The engine no longer fallbacks to OpenGL4 which has been deprecated.
+</code></pre>
+<p>Solution:</p>
+<pre><code>yum install libvulkan1 mesa-vulkan-drivers vulkan-utils
+</code></pre>
+<p>Reference:<br>
+<a href="https://linuxconfig.org/install-and-test-vulkan-on-linux">https://linuxconfig.org/install-and-test-vulkan-on-linux</a></p>
+<h5 id="linux-issues---thirdpartycef3linux-not-in-executable-format-is-a-directory">Linux Issues - ThirdParty/CEF3/Linux: not in executable format: Is a directory</h5>
+<p>Error while running UE4 client on Linux:</p>
+<pre><code>Error while mapping shared library sections:
+`/home/MyGame/LinuxNoEditor/MyGame/Binaries/Linux/../../../Engine/Binaries/ThirdParty/CEF3/Linux': not in executable format: Is a directory
+</code></pre>
+<p>Solution:<br>
+Add <code>USE_NULL_RHI=1</code> in [Project].Build.cs</p>
+<pre><code>if(Target.Platform == UnrealTargetPlatform.Linux &amp;&amp; Type == TargetType.Game)
+{
+    GlobalDefinitions.Add(&quot;USE_NULL_RHI=1&quot;);
+    System.Console.Out.WriteLine(&quot;===================== USE_NULL_RHI=1&quot;);
+}
+</code></pre>
+<h5 id="how-to-generate-core-dump-file-when-games-crashed-in-shipping-on-linux">How to generate core dump file when games crashed in shipping on Linux</h5>
+<p>Pass <code>-core</code> when running applicaton on Linux:</p>
+<pre><code>MyProj/Binaries/MyProjServer-Linux-Shipping -core -log -port=7777
+</code></pre>
+<h3 id="issues">Issues</h3>
 <h5 id="ue4-editor-modifies-the-value-of-globaldefinitions-this-is-not-allowed">UE4 Editor modifies the value of GlobalDefinitions. This is not allowed.</h5>
 <p>Error on building:</p>
 <pre><code>UE4 Editor modifies the value of GlobalDefinitions. This is not allowed, as MyProjectEditor has build products in common with UE4Editor.

@@ -363,6 +363,7 @@
                      (adsbygoogle = window.adsbygoogle || []).push({});
                 </script>
               <p>keywords: [github]设置免密码push时的相关问题</p>
+<h5 id="免密码push设置">免密码push设置</h5>
 <p>1，先在本地生成ssh的公钥，方法如下：</p>
 <p><a href="https://gist.github.com/yisibl/8019693">https://gist.github.com/yisibl/8019693</a></p>
 <p>2，在github自己的账号后台中添加上面生成的key，将id_rsa.pub中的所有内容全部copy过来即可。</p>
@@ -378,6 +379,25 @@
 fatal: Could not read from remote repository
 </code></pre>
 <p>另外，执行此步骤时必须关掉爬墙工具（你懂的），否则会提示链接超时。</p>
+<h5 id="ssh-connect-to-host-githubcom-port-22-connection-timed-out">ssh connect to host github.com port 22 Connection timed out</h5>
+<p>Git 在提交 代码时，报错：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Text" data-lang="Text"><span style="display:flex;"><span>ssh: connect to host github.com port 22: Connection timed out
+</span></span><span style="display:flex;"><span>fatal: Could not read from remote repository.
+</span></span></code></pre></div><p>在连接 github 时，执行<code>ssh -T git@github.com</code>命令时，出现：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Text" data-lang="Text"><span style="display:flex;"><span>$ ssh -T git@github.com
+</span></span><span style="display:flex;"><span>ssh: connect to host github.com port 22: Connection timed out
+</span></span></code></pre></div><p>在存放公钥私钥 (id_rsa 和 id_rsa.pub) 的同级文件夹中，新建 config 文本，内容如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Text" data-lang="Text"><span style="display:flex;"><span>Host github.com
+</span></span><span style="display:flex;"><span>User hellojue@foxmail.com
+</span></span><span style="display:flex;"><span>Hostname ssh.github.com
+</span></span><span style="display:flex;"><span>PreferredAuthentications publickey
+</span></span><span style="display:flex;"><span>IdentityFile ~/.ssh/id_rsa
+</span></span><span style="display:flex;"><span>Port 443
+</span></span></code></pre></div><p>其中 User 为登录 github 的账号名称。<br>
+再次执行<code>ssh -T git@github.com</code>时，这时验证就可以通过：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Text" data-lang="Text"><span style="display:flex;"><span>$ ssh -T git@github.com
+</span></span><span style="display:flex;"><span>Hi Jueee! You&#39;ve successfully authenticated, but GitHub does not provide shell access.
+</span></span></code></pre></div><p>原文：<a href="https://jueee.github.io/2020/10/2020-10-19-github%E8%BF%9E%E6%8E%A5%E6%8A%A5ssh%20connect%20to%20host%20github.com%20port%2022%20Connection%20timed%20out%E9%94%99%E8%AF%AF/">ssh connect to host github.com port 22 Connection timed out - 小决的专栏</a></p>
               
             </div>
           </div>
