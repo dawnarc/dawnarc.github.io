@@ -366,7 +366,24 @@
                 </script>
               <p>Keywords: Graphics, Rendering, Occlusion Culling, Hierarchial Z-Buffer, HZB</p>
 <h3 id="occlusion-culling">Occlusion Culling</h3>
-<h5 id="hzb-hierarchical-z-buffer">HZB (Hierarchical Z-Buffer)</h5>
+<h5 id="occlusion-culling-for-ue4-games">Occlusion Culling for UE4 games</h5>
+<p>Origin: <a href="https://forums.guru3d.com/threads/performance-boost-on-ue4-games-for-radeon-users.445906/">Performance boost on UE4 games for Radeon users - guru3d</a></p>
+<p>This is a simple command that can increase performance by a decent margin, in UE4 games, for Radeon users.
+All we have to do is open the respective engine.ini for each game and add these lines.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#66d9ef">[/script/engine.renderersettings]</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">r.HZBOcclusion</span><span style="color:#f92672">=</span><span style="color:#e6db74">1</span>
+</span></span></code></pre></div><p>A lot of games using UE4, have this setting at &ldquo;0&rdquo;. The reason is probably because this setting at &ldquo;1&rdquo; causes a 10% performance loss on NVidia hardware.<br>
+So if you are using NVidia, make sure this setting is at &ldquo;0&rdquo;. And if you are using AMD, make sure it&rsquo;s set to &ldquo;1&rdquo;.<br>
+Ideally, all games would have this setting exposed for each user to decided. Or have some script that would detect an AMD or NVidia GPU and set the value accordingly.<br>
+So far, the only game I found that has this option in-game is Supraland Six Feet Under.<br>
+Performance gains vary with game and scene, but I tested in a couple of games and found these gains.<br>
+High on Life: 7%<br>
+Supraland SIU: 12%</p>
+<h5 id="principle-of-hzb-occlusion">Principle of HZB Occlusion</h5>
+<p>Origin: <a href="https://forums.guru3d.com/threads/performance-boost-on-ue4-games-for-radeon-users.445906/page-2">Performance boost on UE4 games for Radeon users - guru3d</a><br>
+HZB Occlusion is a technique supposed to increase performance is a method of rasterizing certain portions of a scene into a depth buffer and then performing image-space occlusion queries on a hierarchical structure constructed from the depth buffer.
+In any realistic 3D scene, there are things you can see and things that you can&rsquo;t see. It sounds simple, but the application of this knowledge can have very beneficial effects on the performance of an application billed with rendering the 3D scene in real time. Generally, we want to lower the computational cost of objects that do not contribute to the scene - those objects that are outside our field of view or are obscured by other objects. The Z-buffer is the last stage in the rendering pipeline where an object can be identified as &ldquo;invisible&rdquo;; in this case, the object in question is a fragment, and it can only be identified as invisible when the fragment&rsquo;s depth value is &ldquo;deeper&rdquo; than something that has already been rendered at the same raster position. The Z-buffer test is invoked for each and every fragment of a higher-level object being rendered - the polygonal representation of a &ldquo;thing&rdquo; in the scene, such as a person, a wall, a car, etc - and thus imposes a rather high computational cost of visibility determination, even with recent optimizations made to hardware z-buffer mechanisms.</p>
+<h5 id="hzb-hierarchical-z-buffer-occlusion">HZB (Hierarchical Z-Buffer) Occlusion</h5>
 <p>Hierarchical Z-Buffer Occlusion Culling<br>
 <a href="https://www.nickdarnell.com/hierarchical-z-buffer-occlusion-culling/">https://www.nickdarnell.com/hierarchical-z-buffer-occlusion-culling/</a></p>
 <p>Hierarchical-Z map based occlusion culling<br>
@@ -385,6 +402,9 @@
 <p>Visibility Culling<br>
 <a href="http://www.cse.ohio-state.edu/~hwshen/788/sp01/Culling.ppt">http://www.cse.ohio-state.edu/~hwshen/788/sp01/Culling.ppt</a></p>
 <h3 id="examples">Examples</h3>
+<h5 id="software-occlusion-culling">Software Occlusion Culling</h5>
+<p>A State-of-the-art (fastest) Software Occlusion ulling System (<span class="highlight-text green">Recommended</span>)<br>
+<a href="https://github.com/rawrunprotected/rasterizer">https://github.com/rawrunprotected/rasterizer</a></p>
 <h5 id="opengl">OpenGL</h5>
 <p>OpenGL sample for shader-based occlusion culling<br>
 <a href="https://github.com/nvpro-samples/gl_occlusion_culling">https://github.com/nvpro-samples/gl_occlusion_culling</a></p>
