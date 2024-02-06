@@ -369,63 +369,26 @@
               <p>keywords: OpenGL, GLSL Cookbook</p>
 <p>去年写过一篇文章：<a href="https://dawnarc.com/2017/09/openglglsl-cookbook%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91%E6%AD%A5%E9%AA%A4%E6%B5%81%E7%A8%8B/">[OpenGL]GLSL Cookbook源码编译步骤流程</a><br>
 该文章与github上的最新代码已不再有效（主要是glm和glfw相关的CMake配置发生变动）：</p>
-<p>当前这篇文章针对github的glslcookbook最新代码，重新梳理一次配置流程，保证最新代码能编译工程并跑起来。步骤如下：</p>
-<p>1，下载glm源码，并用cmake-gui生成VS工程文件：<br>
-<a href="https://github.com/g-truc/glm/releases/download/0.9.9.0/glm-0.9.9.0.zip">https://github.com/g-truc/glm/releases/download/0.9.9.0/glm-0.9.9.0.zip</a></p>
-<p>假设<br>
-cmake-gui的source code设置为：<br>
-<code>D:/sdk/glm-0.9.9.0</code><br>
-cmake-gui的build binaries设置为：<br>
-<code>D:/sdk/glm-0.9.9.0/bin</code></p>
-<p>Configure过程中，会有警告，可以无视，直接Generate：</p>
-<pre><code>GLM is a header only library, no need to build it. Set the option GLM_TEST_ENABLE with ON to build and run the test bench
-</code></pre>
-<p>生成完以后，不需要打开VS编译，后面直接使用相关文件即可。</p>
-<p>2，下载glfw源码，并用cmake-gui生成VS工程文件。
-<a href="https://github.com/glfw/glfw/releases/download/3.2.1/glfw-3.2.1.zip">https://github.com/glfw/glfw/releases/download/3.2.1/glfw-3.2.1.zip</a></p>
-<p>假设<br>
-cmake-gui的source code设置为：<br>
-<code>D:/sdk/glfw-3.2.1</code><br>
-cmake-gui的build binaries设置为：<br>
-<code>D:/sdk/glfw-3.2.1/bin</code></p>
-<p>Configure过程中，会有红色警告，可以无视，直接Generate：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Text" data-lang="Text"><span style="display:flex;"><span>CMake Deprecation Warning at CMakeLists.txt:10 (cmake_policy): The OLD behavior for policy 
-</span></span><span style="display:flex;"><span>CMP0042 will be removed from a future version of CMake.
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>The cmake-policies(7) manual explains that the OLD behaviors of all policies are deprecated 
-</span></span><span style="display:flex;"><span>and that a policy should be set to OLD only under specific short-term circumstances. 
-</span></span><span style="display:flex;"><span>Projects should be ported to the NEW behavior and not rely on setting a policy to OLD.
-</span></span></code></pre></div><p>生成完以后，打开bin/GLFW.sln，并编译整个工程。编译完成后，做以下步骤：</p>
-<ul>
-<li>将文件<code>D:\sdk\glfw-3.2.1\bin\src\Debug\glfw3.lib</code>拷贝到<code>D:\sdk\glfw-3.2.1\bin\CMakeFiles\Export\lib</code></li>
-<li>将目录<code>D:\sdk\glfw-3.2.1\include</code>拷贝到<code>D:\sdk\glfw-3.2.1\bin\CMakeFiles\Export\</code></li>
-<li>将文件<code>D:\sdk\glfw-3.2.1\bin\src\</code>下的<code>glfw3Config.cmake</code>和<code>glfw3ConfigVersion.cmake</code>拷贝到<code>D:\sdk\glfw-3.2.1\bin\CMakeFiles\Export\lib\cmake\glfw3</code></li>
-</ul>
-<p>如果不执行这些步骤，后续cmake时会报以下错误：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Text" data-lang="Text"><span style="display:flex;"><span>Could not find a package configuration file provided by &#34;glfw3&#34; (requested version 3.2)
-</span></span><span style="display:flex;"><span>with any of the following names:
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>  glfw3Config.cmake
-</span></span><span style="display:flex;"><span>  glfw3-config.cmake
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>Add the installation prefix of &#34;glfw3&#34; to CMAKE_PREFIX_PATH or set &#34;glfw3_DIR&#34; to a directory 
-</span></span><span style="display:flex;"><span>containing one of the above files.  If &#34;glfw3&#34; provides a separate development package or SDK, 
-</span></span><span style="display:flex;"><span>be sure it has been installed.
-</span></span></code></pre></div><p>若想自动拷贝上述文件，需要改用cmake命令行生成，例如：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>mkdir build
-</span></span><span style="display:flex;"><span>cd build
+<p>当前这篇文章针对github的glslcookbook最新代码，重新梳理一次配置流程。<br>
+原作者使用了cmake标准的<code>find_package()</code>方式来查找引用，但是作者没有提供glm和glfw对应<code>find_package()</code>的构建脚本，导致对cmake不了解的人不友好。</p>
+<p>1，先安装最新版cmake，并为cmake配置环境变量。</p>
+<p>2，分别下载glfw和glm源码，并解压。
+<a href="https://github.com/glfw/glfw/releases/download/3.3.9/glfw-3.3.9.zip">https://github.com/glfw/glfw/releases/download/3.3.9/glfw-3.3.9.zip</a><br>
+<a href="https://github.com/g-truc/glm/archive/refs/tags/1.0.0.zip">https://github.com/g-truc/glm/archive/refs/tags/1.0.0.zip</a></p>
+<p>3，分别进入glfw、glm的文件夹并执行以下命令：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>mkdir build &amp; cd build
 </span></span><span style="display:flex;"><span>cmake ..
-</span></span><span style="display:flex;"><span>cmake --build . --target install --config Release
-</span></span></code></pre></div><p>3，克隆glslcookbook代码：<br>
-<a href="https://github.com/daw42/glslcookbook">https://github.com/daw42/glslcookbook</a></p>
-<p>然后打开CMakeLists.txt，在find_package之前追加两行（注意：斜杠方向向右）：</p>
-<pre><code>set(glm_DIR D:/sdk/glm-0.9.9.0/bin)
-set(glfw3_DIR D:/sdk/glfw-3.2.1/bin/CMakeFiles/Export/lib/cmake/glfw3)
-</code></pre>
-<p>然后用cmake-gui生成VS工程文件，然后打开VS编译工程，并运行相关demo即可。例如：</p>
-<pre><code>D:\glslcookbook\bin\chapter02&gt;start Debug/chapter02.exe ads
-</code></pre>
-<hr>
+</span></span><span style="display:flex;"><span>cmake --build . --config Release
+</span></span><span style="display:flex;"><span>cmake --install . --config Release
+</span></span></code></pre></div><p>4，克隆glslcookbook代码（我在原版基础上修改过cmake配置，代码未修改）：
+<a href="https://github.com/dawnarc/glslcookbook">https://github.com/dawnarc/glslcookbook</a></p>
+<p>5，cd到glslcookbook文件夹并执行命令：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>mkdir build &amp; cd build
+</span></span><span style="display:flex;"><span>cmake ..
+</span></span><span style="display:flex;"><span>cmake --build . --config Release
+</span></span></code></pre></div><p>6，测试是否能正常启动demo：</p>
+<pre tabindex="0"><code>D:/glslcookbook/build/chapter02&gt;start Release/chapter02.exe ads
+</code></pre><hr>
 <p><code>人就是要以自卑为跳板，才能跳得更高。---坂田银时《银魂》</code></p>
               
             </div>

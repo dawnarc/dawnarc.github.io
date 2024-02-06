@@ -367,308 +367,324 @@
 4.14的就不贴了，贴4.15和4.16的build配置代码，4.16的代码更简洁了。<br>
 以官方的ShooterGame为例。</p>
 <h4 id="416">4.16</h4>
-<p><strong>ShooterGame.Build.cs</strong></p>
-<pre><code>// Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.
-
-using UnrealBuildTool;
-
-public class ShooterGame : ModuleRules
-{
-    public ShooterGame(ReadOnlyTargetRules Target) : base(Target)
-    {
-        PrivateIncludePaths.AddRange(
-            new string[] { 
-                &quot;ShooterGame/Classes/Player&quot;,
-                &quot;ShooterGame/Private&quot;,
-                &quot;ShooterGame/Private/UI&quot;,
-                &quot;ShooterGame/Private/UI/Menu&quot;,
-                &quot;ShooterGame/Private/UI/Style&quot;,
-                &quot;ShooterGame/Private/UI/Widgets&quot;,
-            }
-        );
-
-        PublicDependencyModuleNames.AddRange(
-            new string[] {
-                &quot;Core&quot;,
-                &quot;CoreUObject&quot;,
-                &quot;Engine&quot;,
-                &quot;OnlineSubsystem&quot;,
-                &quot;OnlineSubsystemUtils&quot;,
-                &quot;AssetRegistry&quot;,
-                &quot;AIModule&quot;,
-                &quot;GameplayTasks&quot;,
-            }
-        );
-
-        PrivateDependencyModuleNames.AddRange(
-            new string[] {
-                &quot;InputCore&quot;,
-                &quot;Slate&quot;,
-                &quot;SlateCore&quot;,
-                &quot;ShooterGameLoadingScreen&quot;,
-                &quot;Json&quot;
-            }
-        );
-
-        DynamicallyLoadedModuleNames.AddRange(
-            new string[] {
-                &quot;OnlineSubsystemNull&quot;,
-                &quot;NetworkReplayStreaming&quot;,
-                &quot;NullNetworkReplayStreaming&quot;,
-                &quot;HttpNetworkReplayStreaming&quot;
-            }
-        );
-
-        PrivateIncludePathModuleNames.AddRange(
-            new string[] {
-                &quot;NetworkReplayStreaming&quot;
-            }
-        );
-    }
-}
-</code></pre>
-<p><strong>ShooterGame.Target.cs</strong></p>
-<pre><code>// Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.
-
-using UnrealBuildTool;
-using System.Collections.Generic;
-
-public class ShooterGameTarget : TargetRules
-{
-    public ShooterGameTarget(TargetInfo Target) : base(Target)
-    {
-        Type = TargetType.Game;
-        bUsesSteam = true;
-
-        ExtraModuleNames.Add(&quot;ShooterGame&quot;);
-    }
-
-    //
-    // TargetRules interface.
-    //
-
-    public override void SetupGlobalEnvironment(
-            TargetInfo Target,
-            ref LinkEnvironmentConfiguration OutLinkEnvironmentConfiguration,
-            ref CPPEnvironmentConfiguration OutCPPEnvironmentConfiguration
-            )
-    {
-        if (Target.Platform == UnrealTargetPlatform.PS4)
-        {
-            OutCPPEnvironmentConfiguration.Definitions.Add(&quot;GARLIC_HEAP_SIZE=(2600ULL * 1024 * 1024)&quot;);
-            OutCPPEnvironmentConfiguration.Definitions.Add(&quot;ONION_HEAP_SIZE=(200ULL * 1024 * 1024)&quot;);
-            OutCPPEnvironmentConfiguration.Definitions.Add(&quot;RESERVED_MEMORY_SIZE=(1ULL * 1024 * 1024)&quot;);
-            OutCPPEnvironmentConfiguration.Definitions.Add(&quot;LIBC_MALLOC_SIZE=(32ULL * 1024 * 1024)&quot;);
-            OutCPPEnvironmentConfiguration.Definitions.Add(&quot;LIBC_MALLOC_SIZE=(32ULL * 1024 * 1024)&quot;);
-
-            //for a real game these could be behind a call to a virtual function defined in a partial class in a protected folder also.
-            OutCPPEnvironmentConfiguration.Definitions.Add(&quot;UE4_PROJECT_NPTITLEID=NPXX51358_00&quot;);
-            OutCPPEnvironmentConfiguration.Definitions.Add(&quot;UE4_PROJECT_NPTITLESECRET=81ae213eafbc64777574955bf921c9be3c60a3bddef70c357d8fe49ad64e0d0402d2249de390174832c5e4098114c93c33705b597cfbe9b1153d58fe9fae1f0de1466daf18ef25d06122cff7c95bde07bc060109e20c865305692dfbf9d7b726460893c4abd86dc9e8fd6b5db7dca4ffd4eefcb1771baccd576109bea862d6d4&quot;);
-        }
-    }
-}
-</code></pre>
-<p><strong>ShooterGameEditor.Target.cs</strong></p>
-<pre><code>// Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.
-
-using UnrealBuildTool;
-using System.Collections.Generic;
-
-public class ShooterGameEditorTarget : TargetRules
-{
-    public ShooterGameEditorTarget(TargetInfo Target) : base(Target)
-    {
-        Type = TargetType.Editor;
-
-        ExtraModuleNames.Add(&quot;ShooterGame&quot;);
-    }
-}
-</code></pre>
-<p><strong>ShooterGameServer.Target.cs</strong></p>
-<pre><code>// Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.
-
-using UnrealBuildTool;
-using System.Collections.Generic;
-
-[SupportedPlatforms(UnrealPlatformClass.Server)]
-public class ShooterGameServerTarget : TargetRules
-{
-    public ShooterGameServerTarget(TargetInfo Target) : base(Target)
-    {
-        Type = TargetType.Server;
-        bUsesSteam = true;
-
-        ExtraModuleNames.Add(&quot;ShooterGame&quot;);
-    }
-}
-</code></pre>
-<h4 id="415">4.15</h4>
-<p><strong>ShooterGame.Build.cs</strong></p>
-<pre><code>// Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.
-
-using UnrealBuildTool;
-
-public class ShooterGame : ModuleRules
-{
-    public ShooterGame(TargetInfo Target)
-    {
-        PrivateIncludePaths.AddRange(
-            new string[] { 
-                &quot;ShooterGame/Classes/Player&quot;,
-                &quot;ShooterGame/Private&quot;,
-                &quot;ShooterGame/Private/UI&quot;,
-                &quot;ShooterGame/Private/UI/Menu&quot;,
-                &quot;ShooterGame/Private/UI/Style&quot;,
-                &quot;ShooterGame/Private/UI/Widgets&quot;,
-            }
-        );
-
-        PublicDependencyModuleNames.AddRange(
-            new string[] {
-                &quot;Core&quot;,
-                &quot;CoreUObject&quot;,
-                &quot;Engine&quot;,
-                &quot;OnlineSubsystem&quot;,
-                &quot;OnlineSubsystemUtils&quot;,
-                &quot;AssetRegistry&quot;,
-                &quot;AIModule&quot;,
-                &quot;GameplayTasks&quot;,
-            }
-        );
-
-        PrivateDependencyModuleNames.AddRange(
-            new string[] {
-                &quot;InputCore&quot;,
-                &quot;Slate&quot;,
-                &quot;SlateCore&quot;,
-                &quot;ShooterGameLoadingScreen&quot;,
-                &quot;Json&quot;
-            }
-        );
-
-        DynamicallyLoadedModuleNames.AddRange(
-            new string[] {
-                &quot;OnlineSubsystemNull&quot;,
-                &quot;NetworkReplayStreaming&quot;,
-                &quot;NullNetworkReplayStreaming&quot;,
-                &quot;HttpNetworkReplayStreaming&quot;
-            }
-        );
-
-        PrivateIncludePathModuleNames.AddRange(
-            new string[] {
-                &quot;NetworkReplayStreaming&quot;
-            }
-        );
-    }
-}
-</code></pre>
-<p><strong>ShooterGame.Target.cs</strong></p>
-<pre><code>// Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.
-
-using UnrealBuildTool;
-using System.Collections.Generic;
-
-public class ShooterGameTarget : TargetRules
-{
-    public ShooterGameTarget(TargetInfo Target)
-    {
-        Type = TargetType.Game;
-        bUsesSteam = true;
-    }
-
-    //
-    // TargetRules interface.
-    //
-
-    public override void SetupBinaries(
-        TargetInfo Target,
-        ref List&lt;UEBuildBinaryConfiguration&gt; OutBuildBinaryConfigurations,
-        ref List&lt;string&gt; OutExtraModuleNames
-        )
-    {
-        OutExtraModuleNames.Add(&quot;ShooterGame&quot;);
-    }
-
-    public override void SetupGlobalEnvironment(
-            TargetInfo Target,
-            ref LinkEnvironmentConfiguration OutLinkEnvironmentConfiguration,
-            ref CPPEnvironmentConfiguration OutCPPEnvironmentConfiguration
-            )
-    {
-        if (Target.Platform == UnrealTargetPlatform.PS4)
-        {
-            OutCPPEnvironmentConfiguration.Definitions.Add(&quot;GARLIC_HEAP_SIZE=(2600ULL * 1024 * 1024)&quot;);
-            OutCPPEnvironmentConfiguration.Definitions.Add(&quot;ONION_HEAP_SIZE=(200ULL * 1024 * 1024)&quot;);
-            OutCPPEnvironmentConfiguration.Definitions.Add(&quot;RESERVED_MEMORY_SIZE=(1ULL * 1024 * 1024)&quot;);
-            OutCPPEnvironmentConfiguration.Definitions.Add(&quot;LIBC_MALLOC_SIZE=(32ULL * 1024 * 1024)&quot;);
-            OutCPPEnvironmentConfiguration.Definitions.Add(&quot;LIBC_MALLOC_SIZE=(32ULL * 1024 * 1024)&quot;);
-
-            //for a real game these could be behind a call to a virtual function defined in a partial class in a protected folder also.
-            OutCPPEnvironmentConfiguration.Definitions.Add(&quot;UE4_PROJECT_NPTITLEID=NPXX51358_00&quot;);
-            OutCPPEnvironmentConfiguration.Definitions.Add(&quot;UE4_PROJECT_NPTITLESECRET=81ae213eafbc64777574955bf921c9be3c60a3bddef70c357d8fe49ad64e0d0402d2249de390174832c5e4098114c93c33705b597cfbe9b1153d58fe9fae1f0de1466daf18ef25d06122cff7c95bde07bc060109e20c865305692dfbf9d7b726460893c4abd86dc9e8fd6b5db7dca4ffd4eefcb1771baccd576109bea862d6d4&quot;);
-        }
-    }
-}
-</code></pre>
-<p><strong>ShooterGameEditor.Target.cs</strong></p>
-<pre><code>// Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.
-
-using UnrealBuildTool;
-using System.Collections.Generic;
-
-public class ShooterGameEditorTarget : TargetRules
-{
-
-    public ShooterGameEditorTarget(TargetInfo Target)
-    {
-        Type = TargetType.Editor;
-    }
-
-    //
-    // TargetRules interface.
-    //
-
-    public override void SetupBinaries(
-        TargetInfo Target,
-        ref List&lt;UEBuildBinaryConfiguration&gt; OutBuildBinaryConfigurations,
-        ref List&lt;string&gt; OutExtraModuleNames
-        )
-    {
-        OutExtraModuleNames.Add(&quot;ShooterGame&quot;);
-    }
-}
-</code></pre>
-<p><strong>ShooterGameServer.Target.cs</strong></p>
-<pre><code>// Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.
-
-using UnrealBuildTool;
-using System.Collections.Generic;
-
-[SupportedPlatforms(UnrealPlatformClass.Server)]
-public class ShooterGameServerTarget : TargetRules
-{
-    public ShooterGameServerTarget(TargetInfo Target)
-    {
-        Type = TargetType.Server;
-        bUsesSteam = true;
-    }
-
-    //
-    // TargetRules interface.
-    //
-
-    public override void SetupBinaries(
-        TargetInfo Target,
-        ref List&lt;UEBuildBinaryConfiguration&gt; OutBuildBinaryConfigurations,
-        ref List&lt;string&gt; OutExtraModuleNames
-        )
-    {
-        OutExtraModuleNames.Add(&quot;ShooterGame&quot;);
-    }
-}
-</code></pre>
-<hr>
+<p>ShooterGame.Build.cs</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C#" data-lang="C#"><span style="display:flex;"><span><span style="color:#75715e">// Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">using</span> UnrealBuildTool;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ShooterGame</span> : ModuleRules
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> ShooterGame(ReadOnlyTargetRules Target) : <span style="color:#66d9ef">base</span>(Target)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        PrivateIncludePaths.AddRange(
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">new</span> <span style="color:#66d9ef">string</span>[] { 
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;ShooterGame/Classes/Player&#34;</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;ShooterGame/Private&#34;</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;ShooterGame/Private/UI&#34;</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;ShooterGame/Private/UI/Menu&#34;</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;ShooterGame/Private/UI/Style&#34;</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;ShooterGame/Private/UI/Widgets&#34;</span>,
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        );
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        PublicDependencyModuleNames.AddRange(
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">new</span> <span style="color:#66d9ef">string</span>[] {
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;Core&#34;</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;CoreUObject&#34;</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;Engine&#34;</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;OnlineSubsystem&#34;</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;OnlineSubsystemUtils&#34;</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;AssetRegistry&#34;</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;AIModule&#34;</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;GameplayTasks&#34;</span>,
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        );
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        PrivateDependencyModuleNames.AddRange(
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">new</span> <span style="color:#66d9ef">string</span>[] {
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;InputCore&#34;</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;Slate&#34;</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;SlateCore&#34;</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;ShooterGameLoadingScreen&#34;</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;Json&#34;</span>
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        );
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        DynamicallyLoadedModuleNames.AddRange(
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">new</span> <span style="color:#66d9ef">string</span>[] {
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;OnlineSubsystemNull&#34;</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;NetworkReplayStreaming&#34;</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;NullNetworkReplayStreaming&#34;</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;HttpNetworkReplayStreaming&#34;</span>
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        );
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        PrivateIncludePathModuleNames.AddRange(
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">new</span> <span style="color:#66d9ef">string</span>[] {
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;NetworkReplayStreaming&#34;</span>
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        );
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>ShooterGame.Target.cs</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C#" data-lang="C#"><span style="display:flex;"><span><span style="color:#75715e">// Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">using</span> UnrealBuildTool;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">using</span> System.Collections.Generic;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ShooterGameTarget</span> : TargetRules
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> ShooterGameTarget(TargetInfo Target) : <span style="color:#66d9ef">base</span>(Target)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        Type = TargetType.Game;
+</span></span><span style="display:flex;"><span>        bUsesSteam = <span style="color:#66d9ef">true</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        ExtraModuleNames.Add(<span style="color:#e6db74">&#34;ShooterGame&#34;</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    //
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// TargetRules interface.</span>
+</span></span><span style="display:flex;"><span>    //
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">void</span> SetupGlobalEnvironment(
+</span></span><span style="display:flex;"><span>            TargetInfo Target,
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">ref</span> LinkEnvironmentConfiguration OutLinkEnvironmentConfiguration,
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">ref</span> CPPEnvironmentConfiguration OutCPPEnvironmentConfiguration
+</span></span><span style="display:flex;"><span>            )
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (Target.Platform == UnrealTargetPlatform.PS4)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            OutCPPEnvironmentConfiguration.Definitions.Add(<span style="color:#e6db74">&#34;GARLIC_HEAP_SIZE=(2600ULL * 1024 * 1024)&#34;</span>);
+</span></span><span style="display:flex;"><span>            OutCPPEnvironmentConfiguration.Definitions.Add(<span style="color:#e6db74">&#34;ONION_HEAP_SIZE=(200ULL * 1024 * 1024)&#34;</span>);
+</span></span><span style="display:flex;"><span>            OutCPPEnvironmentConfiguration.Definitions.Add(<span style="color:#e6db74">&#34;RESERVED_MEMORY_SIZE=(1ULL * 1024 * 1024)&#34;</span>);
+</span></span><span style="display:flex;"><span>            OutCPPEnvironmentConfiguration.Definitions.Add(<span style="color:#e6db74">&#34;LIBC_MALLOC_SIZE=(32ULL * 1024 * 1024)&#34;</span>);
+</span></span><span style="display:flex;"><span>            OutCPPEnvironmentConfiguration.Definitions.Add(<span style="color:#e6db74">&#34;LIBC_MALLOC_SIZE=(32ULL * 1024 * 1024)&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">//for a real game these could be behind a call to a virtual function defined in a partial class in a protected folder also.</span>
+</span></span><span style="display:flex;"><span>            OutCPPEnvironmentConfiguration.Definitions.Add(<span style="color:#e6db74">&#34;UE4_PROJECT_NPTITLEID=NPXX51358_00&#34;</span>);
+</span></span><span style="display:flex;"><span>            OutCPPEnvironmentConfiguration.Definitions.Add(<span style="color:#e6db74">&#34;UE4_PROJECT_NPTITLESECRET=81ae213eafbc64777574955bf921c9be3c60a3bddef70c357d8fe49ad64e0d0402d2249de390174832c5e4098114c93c33705b597cfbe9b1153d58fe9fae1f0de1466daf18ef25d06122cff7c95bde07bc060109e20c865305692dfbf9d7b726460893c4abd86dc9e8fd6b5db7dca4ffd4eefcb1771baccd576109bea862d6d4&#34;</span>);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>ShooterGameEditor.Target.cs</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C#" data-lang="C#"><span style="display:flex;"><span><span style="color:#75715e">// Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">using</span> UnrealBuildTool;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">using</span> System.Collections.Generic;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ShooterGameEditorTarget</span> : TargetRules
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> ShooterGameEditorTarget(TargetInfo Target) : <span style="color:#66d9ef">base</span>(Target)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        Type = TargetType.Editor;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        ExtraModuleNames.Add(<span style="color:#e6db74">&#34;ShooterGame&#34;</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>ShooterGameServer.Target.cs</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C#" data-lang="C#"><span style="display:flex;"><span><span style="color:#75715e">// Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">using</span> UnrealBuildTool;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">using</span> System.Collections.Generic;
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">
+</span></span></span><span style="display:flex;"><span><span style="color:#a6e22e">[SupportedPlatforms(UnrealPlatformClass.Server)]</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ShooterGameServerTarget</span> : TargetRules
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> ShooterGameServerTarget(TargetInfo Target) : <span style="color:#66d9ef">base</span>(Target)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        Type = TargetType.Server;
+</span></span><span style="display:flex;"><span>        bUsesSteam = <span style="color:#66d9ef">true</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        ExtraModuleNames.Add(<span style="color:#e6db74">&#34;ShooterGame&#34;</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>ShooterGameClient.Target.cs</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C#" data-lang="C#"><span style="display:flex;"><span><span style="color:#75715e">// Copyright Epic Games, Inc. All Rights Reserved.</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">using</span> UnrealBuildTool;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">using</span> System.Collections.Generic;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ShooterGameClientTarget</span> : TargetRules
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> ShooterGameClientTarget(TargetInfo Target) : <span style="color:#66d9ef">base</span>(Target)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        Type = TargetType.Client;
+</span></span><span style="display:flex;"><span>        ExtraModuleNames.Add(<span style="color:#e6db74">&#34;ShooterGame&#34;</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>ShooterGameClient.Target.cs UE5版本</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C#" data-lang="C#"><span style="display:flex;"><span><span style="color:#66d9ef">using</span> UnrealBuildTool;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">using</span> System.Collections.Generic;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ShooterGameClientTarget</span> : TargetRules
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> ShooterGameClientTarget(TargetInfo Target) : <span style="color:#66d9ef">base</span>(Target)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        Type = TargetType.Client;
+</span></span><span style="display:flex;"><span>        DefaultBuildSettings = BuildSettingsVersion.V4;
+</span></span><span style="display:flex;"><span>        IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_3;
+</span></span><span style="display:flex;"><span>        ExtraModuleNames.Add(<span style="color:#e6db74">&#34;ShooterGame&#34;</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h4 id="415">4.15</h4>
+<p>ShooterGame.Build.cs</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C#" data-lang="C#"><span style="display:flex;"><span><span style="color:#75715e">// Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">using</span> UnrealBuildTool;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ShooterGame</span> : ModuleRules
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> ShooterGame(TargetInfo Target)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        PrivateIncludePaths.AddRange(
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">new</span> <span style="color:#66d9ef">string</span>[] { 
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;ShooterGame/Classes/Player&#34;</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;ShooterGame/Private&#34;</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;ShooterGame/Private/UI&#34;</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;ShooterGame/Private/UI/Menu&#34;</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;ShooterGame/Private/UI/Style&#34;</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;ShooterGame/Private/UI/Widgets&#34;</span>,
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        );
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        PublicDependencyModuleNames.AddRange(
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">new</span> <span style="color:#66d9ef">string</span>[] {
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;Core&#34;</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;CoreUObject&#34;</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;Engine&#34;</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;OnlineSubsystem&#34;</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;OnlineSubsystemUtils&#34;</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;AssetRegistry&#34;</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;AIModule&#34;</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;GameplayTasks&#34;</span>,
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        );
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        PrivateDependencyModuleNames.AddRange(
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">new</span> <span style="color:#66d9ef">string</span>[] {
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;InputCore&#34;</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;Slate&#34;</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;SlateCore&#34;</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;ShooterGameLoadingScreen&#34;</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;Json&#34;</span>
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        );
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        DynamicallyLoadedModuleNames.AddRange(
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">new</span> <span style="color:#66d9ef">string</span>[] {
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;OnlineSubsystemNull&#34;</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;NetworkReplayStreaming&#34;</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;NullNetworkReplayStreaming&#34;</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;HttpNetworkReplayStreaming&#34;</span>
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        );
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        PrivateIncludePathModuleNames.AddRange(
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">new</span> <span style="color:#66d9ef">string</span>[] {
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;NetworkReplayStreaming&#34;</span>
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        );
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>ShooterGame.Target.cs</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C#" data-lang="C#"><span style="display:flex;"><span><span style="color:#75715e">// Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">using</span> UnrealBuildTool;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">using</span> System.Collections.Generic;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ShooterGameTarget</span> : TargetRules
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> ShooterGameTarget(TargetInfo Target)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        Type = TargetType.Game;
+</span></span><span style="display:flex;"><span>        bUsesSteam = <span style="color:#66d9ef">true</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    //
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// TargetRules interface.</span>
+</span></span><span style="display:flex;"><span>    //
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">void</span> SetupBinaries(
+</span></span><span style="display:flex;"><span>        TargetInfo Target,
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">ref</span> List&lt;UEBuildBinaryConfiguration&gt; OutBuildBinaryConfigurations,
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">ref</span> List&lt;<span style="color:#66d9ef">string</span>&gt; OutExtraModuleNames
+</span></span><span style="display:flex;"><span>        )
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        OutExtraModuleNames.Add(<span style="color:#e6db74">&#34;ShooterGame&#34;</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">void</span> SetupGlobalEnvironment(
+</span></span><span style="display:flex;"><span>            TargetInfo Target,
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">ref</span> LinkEnvironmentConfiguration OutLinkEnvironmentConfiguration,
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">ref</span> CPPEnvironmentConfiguration OutCPPEnvironmentConfiguration
+</span></span><span style="display:flex;"><span>            )
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (Target.Platform == UnrealTargetPlatform.PS4)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            OutCPPEnvironmentConfiguration.Definitions.Add(<span style="color:#e6db74">&#34;GARLIC_HEAP_SIZE=(2600ULL * 1024 * 1024)&#34;</span>);
+</span></span><span style="display:flex;"><span>            OutCPPEnvironmentConfiguration.Definitions.Add(<span style="color:#e6db74">&#34;ONION_HEAP_SIZE=(200ULL * 1024 * 1024)&#34;</span>);
+</span></span><span style="display:flex;"><span>            OutCPPEnvironmentConfiguration.Definitions.Add(<span style="color:#e6db74">&#34;RESERVED_MEMORY_SIZE=(1ULL * 1024 * 1024)&#34;</span>);
+</span></span><span style="display:flex;"><span>            OutCPPEnvironmentConfiguration.Definitions.Add(<span style="color:#e6db74">&#34;LIBC_MALLOC_SIZE=(32ULL * 1024 * 1024)&#34;</span>);
+</span></span><span style="display:flex;"><span>            OutCPPEnvironmentConfiguration.Definitions.Add(<span style="color:#e6db74">&#34;LIBC_MALLOC_SIZE=(32ULL * 1024 * 1024)&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">//for a real game these could be behind a call to a virtual function defined in a partial class in a protected folder also.</span>
+</span></span><span style="display:flex;"><span>            OutCPPEnvironmentConfiguration.Definitions.Add(<span style="color:#e6db74">&#34;UE4_PROJECT_NPTITLEID=NPXX51358_00&#34;</span>);
+</span></span><span style="display:flex;"><span>            OutCPPEnvironmentConfiguration.Definitions.Add(<span style="color:#e6db74">&#34;UE4_PROJECT_NPTITLESECRET=81ae213eafbc64777574955bf921c9be3c60a3bddef70c357d8fe49ad64e0d0402d2249de390174832c5e4098114c93c33705b597cfbe9b1153d58fe9fae1f0de1466daf18ef25d06122cff7c95bde07bc060109e20c865305692dfbf9d7b726460893c4abd86dc9e8fd6b5db7dca4ffd4eefcb1771baccd576109bea862d6d4&#34;</span>);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>ShooterGameEditor.Target.cs</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C#" data-lang="C#"><span style="display:flex;"><span><span style="color:#75715e">// Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">using</span> UnrealBuildTool;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">using</span> System.Collections.Generic;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ShooterGameEditorTarget</span> : TargetRules
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> ShooterGameEditorTarget(TargetInfo Target)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        Type = TargetType.Editor;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    //
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// TargetRules interface.</span>
+</span></span><span style="display:flex;"><span>    //
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">void</span> SetupBinaries(
+</span></span><span style="display:flex;"><span>        TargetInfo Target,
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">ref</span> List&lt;UEBuildBinaryConfiguration&gt; OutBuildBinaryConfigurations,
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">ref</span> List&lt;<span style="color:#66d9ef">string</span>&gt; OutExtraModuleNames
+</span></span><span style="display:flex;"><span>        )
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        OutExtraModuleNames.Add(<span style="color:#e6db74">&#34;ShooterGame&#34;</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>ShooterGameServer.Target.cs</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C#" data-lang="C#"><span style="display:flex;"><span><span style="color:#75715e">// Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">using</span> UnrealBuildTool;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">using</span> System.Collections.Generic;
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">
+</span></span></span><span style="display:flex;"><span><span style="color:#a6e22e">[SupportedPlatforms(UnrealPlatformClass.Server)]</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ShooterGameServerTarget</span> : TargetRules
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> ShooterGameServerTarget(TargetInfo Target)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        Type = TargetType.Server;
+</span></span><span style="display:flex;"><span>        bUsesSteam = <span style="color:#66d9ef">true</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    //
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// TargetRules interface.</span>
+</span></span><span style="display:flex;"><span>    //
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">void</span> SetupBinaries(
+</span></span><span style="display:flex;"><span>        TargetInfo Target,
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">ref</span> List&lt;UEBuildBinaryConfiguration&gt; OutBuildBinaryConfigurations,
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">ref</span> List&lt;<span style="color:#66d9ef">string</span>&gt; OutExtraModuleNames
+</span></span><span style="display:flex;"><span>        )
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        OutExtraModuleNames.Add(<span style="color:#e6db74">&#34;ShooterGame&#34;</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><hr>
 <p><code>海阔山遥，未知何处是潇湘？---柳永《玉蝴蝶》</code></p>
               
             </div>
