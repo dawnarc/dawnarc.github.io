@@ -402,19 +402,18 @@
 </div>
 <h5 id="设置编译输出路径">设置编译输出路径</h5>
 <p>在CMakeLists.txt中如下设置后，无论是编译可执行文件还是编译静态库，都会输出到指定目录下，而不再是默认的当前目录。</p>
-<pre><code>#静态库输出目录(lib, a)
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY &quot;lib/&quot;)
+<pre tabindex="0"><code>#静态库输出目录(lib, a)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY &#34;lib/&#34;)
 
 #编译时动态库输出目录(dll + lib)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY  &quot;lib/&quot;)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY  &#34;lib/&#34;)
 
 #动态库输出目录(dll, so)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY  &quot;lib/&quot;)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY  &#34;lib/&#34;)
 
 #可执行文件输出目录
-set(EXECUTABLE_OUTPUT_PATH  &quot;bin/&quot;)
-</code></pre>
-<p>参考：<br>
+set(EXECUTABLE_OUTPUT_PATH  &#34;bin/&#34;)
+</code></pre><p>参考：<br>
 is CMake ignoring CMAKE_LIBRARY_OUTPUT_DIRECTORY?<br>
 <a href="https://stackoverflow.com/a/38450844/1645289">https://stackoverflow.com/a/38450844/1645289</a></p>
 <p>How do I make CMake output into a &lsquo;bin&rsquo; dir?
@@ -433,7 +432,9 @@ add_library(mylib STATIC ${CPP_FILES})
 </code></pre>
 <p>参考：How to use cmake GLOB_RECURSE for only some subdirectories<br>
 <a href="https://stackoverflow.com/a/27994855/1645289">https://stackoverflow.com/a/27994855/1645289</a></p>
-<h5 id="打印log">打印log</h5>
+<h5 id="复制文件">复制文件</h5>
+<pre tabindex="0"><code>file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/media DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+</code></pre><h5 id="打印log">打印log</h5>
 <pre><code>if (NOT CMAKE_VERSION VERSION_GREATER &quot;3.0&quot;)
     message(FATAL_ERROR &quot;cmake version 3.x is required!&quot;)
 endif()
@@ -496,13 +497,13 @@ find_package( XXX CONFIG REQUIRED )
 <a href="https://github.com/g-truc/glm/blob/0d973b40a49e550b1ea7df22a8573bc5fff84f24/CMakeLists.txt#L198">https://github.com/g-truc/glm/blob/0d973b40a49e550b1ea7df22a8573bc5fff84f24/CMakeLists.txt#L198</a></p>
 <h5 id="installation-cmake---install">Installation: cmake &ndash;install</h5>
 <p>3.15版本（2019年6月）之前，<code>install</code>必须跟着<code>--build</code>和<code>--target</code>两个参数同时执行：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Shell" data-lang="Shell"><span style="display:flex;"><span>cmake ..
-</span></span><span style="display:flex;"><span>cmake --build . --target install --config Release
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Shell" data-lang="Shell"><span style="display:flex;"><span>cmake . -B build
+</span></span><span style="display:flex;"><span>cmake --build build --target install --config Release
 </span></span></code></pre></div><p>也就是说，install必须和build同时执行，而这种情况不允许：提前build好了，现在只想install。</p>
 <p>3.15版本开始，install和build可以分开执行：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Shell" data-lang="Shell"><span style="display:flex;"><span>cmake ..
-</span></span><span style="display:flex;"><span>cmake --build . --config Release
-</span></span><span style="display:flex;"><span>cmake --install . --config Release
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Shell" data-lang="Shell"><span style="display:flex;"><span>cmake . -B build
+</span></span><span style="display:flex;"><span>cmake --build build --config Release
+</span></span><span style="display:flex;"><span>cmake --install build --config Release
 </span></span></code></pre></div><p>参考：How to use CMake to install<br>
 <a href="https://stackoverflow.com/a/48428846/1645289">https://stackoverflow.com/a/48428846/1645289</a></p>
 <p>要执行install命令，前提是CMakeLists.txt中配置了<code>install()</code>命令，示例（引用自<a href="https://github.com/Perlmint/glew-cmake/blob/062db23216d5efae380c19a0edb28f9442d2b997/CMakeLists.txt#L253">glew-cmake</a>）：</p>
@@ -596,10 +597,12 @@ Compile with /MT instead of /MD using CMake<br>
 <a href="https://stackoverflow.com/a/14172871/1645289">https://stackoverflow.com/a/14172871/1645289</a></p>
 <h3 id="compiler">Compiler</h3>
 <h5 id="how-to-enable-c17-features-for-compiler">How to enable C++17 features for compiler</h5>
-<pre><code># enable C++17 features
+<p>Global:</p>
+<pre tabindex="0"><code>set (CMAKE_CXX_STANDARD 17)
+</code></pre><p>Target only:</p>
+<pre tabindex="0"><code># enable C++17 features
 target_compile_features(${MY_PROJECT_NAME} PRIVATE cxx_std_17)
-</code></pre>
-<p>Origin:<br>
+</code></pre><p>Origin:<br>
 <a href="https://stackoverflow.com/a/53830867/1645289">https://stackoverflow.com/a/53830867/1645289</a></p>
 <h5 id="add_compile_definitions">add_compile_definitions</h5>
 <p><code>add_compile_definitions</code> is a new feature added in version 3.12, example:</p>
