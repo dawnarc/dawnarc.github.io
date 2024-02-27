@@ -441,35 +441,34 @@
 删除一个Program对象后，会自动Detach之前Attach上去的所有ShaderObject（<code>glCreateShader</code>创建），但是不会删除这些ShaderObject，除非调用<code>glDeleteShader</code>。</p>
 <h5 id="动态获取-vertex-input-attributes">动态获取 vertex input attributes</h5>
 <p>一般情况下，vertex输入属性是在shader代码中定义好的：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-glsl" data-lang="glsl"><span style="display:flex;"><span><span style="color:#75715e">#version 410</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-lua" data-lang="lua"><span style="display:flex;"><span><span style="color:#f92672">#</span>version <span style="color:#ae81ff">410</span>
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>layout (location<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>) <span style="color:#66d9ef">in</span> <span style="color:#66d9ef">vec3</span> VertexPosition;
-</span></span><span style="display:flex;"><span>layout (location<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>) <span style="color:#66d9ef">in</span> <span style="color:#66d9ef">vec3</span> VertexColor;
+</span></span><span style="display:flex;"><span>layout (location<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>) <span style="color:#66d9ef">in</span> vec3 VertexPosition;
+</span></span><span style="display:flex;"><span>layout (location<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>) <span style="color:#66d9ef">in</span> vec3 VertexColor;
 </span></span></code></pre></div><p>或者是在Program对象link之前（<code>glLinkProgram</code>），通过<code>glBindAttribLocation</code>来绑定索引：</p>
 <pre><code>//programHandle是已经创建好的Program对象
 glBindAttribLocation(programHandle, 0, &quot;VertexPosition&quot;);
 glBindAttribLocation(programHandle, 1, &quot;VertexColor&quot;);
 </code></pre>
 <p>那么有没办法在Program对象Link之后，再去查询获取vertex attributes的location等信息？方式如下：</p>
-<pre><code>//获取输入属性的个数
-GLint numAttribs;
-glGetProgramInterfaceiv(programHandle, GL_PROGRAM_INPUT, GL_ACTIVE_RESOURCES, &amp;numAttribs);
-
-//获取每个输入属性的名字、类型、索引
-GLenum properties[] = {GL_NAME_LENGTH, GL_TYPE, GL_LOCATION};
-printf(&quot;Active attributes:\n&quot;);
-for( int i = 0; i &lt; numAttribs; ++i ) 
-{
-    GLint results[3];
-    glGetProgramResourceiv(programHhandle, GL_PROGRAM_INPUT, i, 3, properties, 3, NULL, results);
-    GLint nameBufSize = results[0] + 1;
-    char * name = new char[nameBufSize];
-    glGetProgramResourceName(programHandle, GL_PROGRAM_INPUT, i, nameBufSize, NULL, name);
-    printf(&quot;%-5d %s (%s)\n&quot;, results[2], name, getTypeString(results[1]));
-    delete [] name;
-}
-</code></pre>
-<div class="alert warning ">
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C" data-lang="C"><span style="display:flex;"><span><span style="color:#75715e">//获取输入属性的个数
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>GLint numAttribs;
+</span></span><span style="display:flex;"><span>glGetProgramInterfaceiv(programHandle, GL_PROGRAM_INPUT, GL_ACTIVE_RESOURCES, <span style="color:#f92672">&amp;</span>numAttribs);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//获取每个输入属性的名字、类型、索引
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>GLenum properties[] <span style="color:#f92672">=</span> {GL_NAME_LENGTH, GL_TYPE, GL_LOCATION};
+</span></span><span style="display:flex;"><span>printf(<span style="color:#e6db74">&#34;Active attributes:</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span>( <span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; i <span style="color:#f92672">&lt;</span> numAttribs; <span style="color:#f92672">++</span>i ) 
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    GLint results[<span style="color:#ae81ff">3</span>];
+</span></span><span style="display:flex;"><span>    glGetProgramResourceiv(programHhandle, GL_PROGRAM_INPUT, i, <span style="color:#ae81ff">3</span>, properties, <span style="color:#ae81ff">3</span>, NULL, results);
+</span></span><span style="display:flex;"><span>    GLint nameBufSize <span style="color:#f92672">=</span> results[<span style="color:#ae81ff">0</span>] <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span> name <span style="color:#f92672">=</span> new <span style="color:#66d9ef">char</span>[nameBufSize];
+</span></span><span style="display:flex;"><span>    glGetProgramResourceName(programHandle, GL_PROGRAM_INPUT, i, nameBufSize, NULL, name);
+</span></span><span style="display:flex;"><span>    printf(<span style="color:#e6db74">&#34;%-5d %s (%s)</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>, results[<span style="color:#ae81ff">2</span>], name, getTypeString(results[<span style="color:#ae81ff">1</span>]));
+</span></span><span style="display:flex;"><span>    delete [] name;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><div class="alert warning ">
   <p>glGetProgramInterfaceiv、glGetProgramResourceiv、glGetProgramResourceName是OpenGL 4.3才提供的API。4.3之前的版本可以使用 glGetProgramiv、glGetActiveAttrib、glGetAttribLocation等接口来实现上述需求。</p>
 </div>
 <p>输出结果：</p>
@@ -486,21 +485,20 @@ for( int i = 0; i &lt; numAttribs; ++i )
 Uniform variables 可以定义在任何一个 shader 中，如果多个 shader 定义了名字相同的 Uniform variables，那么它们的类型也必须相同，也就是说：<span class="highlight-text green">只要一处定义，就可以被当前程序的所有 shader 对象访问</span>。</p>
 <h5 id="uniform-variables-常用的opengl-api">Uniform variables 常用的OpenGL API</h5>
 <p>假设测试的 uniform.frag 代码如下：</p>
-<pre><code>#version 410
-
-layout (location = 0) in vec3 VertexPosition;
-layout (location = 1) in vec3 VertexColor;
-
-out vec3 Color;
-uniform mat4 RotationMatrix;
-
-void main()
-{
-    Color = VertexColor;
-    gl_Position = RotationMatrix * vec4(VertexPosition,1.0);
-}
-</code></pre>
-<p>那么OpenGL API获取并设置Uniform variables的方式如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-lua" data-lang="lua"><span style="display:flex;"><span><span style="color:#f92672">#</span>version <span style="color:#ae81ff">410</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>layout (location <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>) <span style="color:#66d9ef">in</span> vec3 VertexPosition;
+</span></span><span style="display:flex;"><span>layout (location <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>) <span style="color:#66d9ef">in</span> vec3 VertexColor;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>out vec3 Color;
+</span></span><span style="display:flex;"><span>uniform mat4 RotationMatrix;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>void main()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    Color <span style="color:#f92672">=</span> VertexColor;
+</span></span><span style="display:flex;"><span>    gl_Position <span style="color:#f92672">=</span> RotationMatrix <span style="color:#f92672">*</span> vec4(VertexPosition,<span style="color:#ae81ff">1.0</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>那么OpenGL API获取并设置Uniform variables的方式如下：</p>
 <pre><code>rotationMatrix = glm::rotate(glm::mat4(1.0f), angle, vec3(0.0f,0.0f,1.0f));
 
 GLuint programHandle = prog.getHandle();
@@ -527,25 +525,24 @@ glUniformMatrix4fv(location, 1, GL_FALSE, &amp;rotationMatrix[0][0]);
 </ul>
 <h5 id="动态获取-uniform-variables">动态获取 Uniform variables</h5>
 <p>方式类似前面提到的<strong>动态获取 vertex input attributes</strong>，还是以前面的 uniform.frag 为例：</p>
-<pre><code>GLint numUniforms = 0;
-glGetProgramInterfaceiv( handle, GL_UNIFORM, GL_ACTIVE_RESOURCES, &amp;numUniforms);
-
-GLenum properties[] = {GL_NAME_LENGTH, GL_TYPE, GL_LOCATION, GL_BLOCK_INDEX};
-printf(&quot;Active uniforms:\n&quot;);
-for( int i = 0; i &lt; numUniforms; ++i ) 
-{
-    GLint results[4];
-    glGetProgramResourceiv(handle, GL_UNIFORM, i, 4, properties, 4, NULL, results);
-    if( results[3] != -1 ) 
-        continue;       // Skip uniforms in blocks 
-    GLint nameBufSize = results[0] + 1;
-    char * name = new char[nameBufSize];
-    glGetProgramResourceName(handle, GL_UNIFORM, i, nameBufSize, NULL, name);
-    printf(&quot;%-5d %s (%s)\n&quot;, results[2], name, getTypeString(results[1]));
-    delete [] name;
-}
-</code></pre>
-<div class="alert warning ">
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C" data-lang="C"><span style="display:flex;"><span>GLint numUniforms <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>glGetProgramInterfaceiv( handle, GL_UNIFORM, GL_ACTIVE_RESOURCES, <span style="color:#f92672">&amp;</span>numUniforms);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>GLenum properties[] <span style="color:#f92672">=</span> {GL_NAME_LENGTH, GL_TYPE, GL_LOCATION, GL_BLOCK_INDEX};
+</span></span><span style="display:flex;"><span>printf(<span style="color:#e6db74">&#34;Active uniforms:</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span>( <span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; i <span style="color:#f92672">&lt;</span> numUniforms; <span style="color:#f92672">++</span>i ) 
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    GLint results[<span style="color:#ae81ff">4</span>];
+</span></span><span style="display:flex;"><span>    glGetProgramResourceiv(handle, GL_UNIFORM, i, <span style="color:#ae81ff">4</span>, properties, <span style="color:#ae81ff">4</span>, NULL, results);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span>( results[<span style="color:#ae81ff">3</span>] <span style="color:#f92672">!=</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span> ) 
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">continue</span>;       <span style="color:#75715e">// Skip uniforms in blocks 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    GLint nameBufSize <span style="color:#f92672">=</span> results[<span style="color:#ae81ff">0</span>] <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span> name <span style="color:#f92672">=</span> new <span style="color:#66d9ef">char</span>[nameBufSize];
+</span></span><span style="display:flex;"><span>    glGetProgramResourceName(handle, GL_UNIFORM, i, nameBufSize, NULL, name);
+</span></span><span style="display:flex;"><span>    printf(<span style="color:#e6db74">&#34;%-5d %s (%s)</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>, results[<span style="color:#ae81ff">2</span>], name, getTypeString(results[<span style="color:#ae81ff">1</span>]));
+</span></span><span style="display:flex;"><span>    delete [] name;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><div class="alert warning ">
   <p>OpenGL 4.3 之前的版本，则要使用：glGetProgramiv、glGetActiveUniform、glGetUniformLocation、and glGetActiveUniformName.</p>
 </div>
 <p>打印结果：</p>
@@ -557,94 +554,90 @@ for( int i = 0; i &lt; numUniforms; ++i )
 所以需要一个管理当前Program对象中所有Uniform variables的管理器，这个管理器就是Uniform blocks。</p>
 <p>使用实例：</p>
 <p>以下代码是绘制一个同心圆渐变效果的 shader。</p>
-<p>buniformblock.frag</p>
-<pre><code>#version 430
-
-layout (location = 0) in vec3 VertexPosition;
-layout (location = 1) in vec3 VertexTexCoord;
-
-out vec3 TexCoord;
-
-void main()
-{
-    TexCoord = VertexTexCoord;
-    gl_Position = vec4(VertexPosition,1.0);
-}
-</code></pre>
-<p>basic_uniformblock.vert</p>
-<pre><code>#version 430
-
-in vec3 TexCoord;
-layout (location = 0) out vec4 FragColor;
-
-layout (binding = 1) uniform BlobSettings {
-  vec4 InnerColor;
-  vec4 OuterColor;
-  float RadiusInner;
-  float RadiusOuter;
-} Blob;
-
-void main() 
-{
-    float dx = TexCoord.x - 0.5;
-    float dy = TexCoord.y - 0.5;
-    float dist = sqrt(dx * dx + dy * dy);
-    FragColor =
-       mix( Blob.InnerColor, Blob.OuterColor,
-             smoothstep( Blob.RadiusInner, Blob.RadiusOuter, dist )
-            );
-}
-</code></pre>
-<p>OpenGL API 代码：</p>
-<pre><code>GLuint programHandle = prog.getHandle();
-
-// Get the index of the uniform block
-GLuint blockIndex = glGetUniformBlockIndex(programHandle, &quot;BlobSettings&quot;);
-
-// Allocate space for the buffer
-GLint blockSize;
-glGetActiveUniformBlockiv(programHandle, blockIndex,
-                          GL_UNIFORM_BLOCK_DATA_SIZE, &amp;blockSize);
-GLubyte * blockBuffer;
-blockBuffer = (GLubyte *) malloc(blockSize);
-
-// Query for the offsets of each block variable
-const GLchar *names[] = { &quot;BlobSettings.InnerColor&quot;, &quot;BlobSettings.OuterColor&quot;,
-                          &quot;BlobSettings.RadiusInner&quot;, &quot;BlobSettings.RadiusOuter&quot; };
-
-GLuint indices[4];
-glGetUniformIndices(programHandle, 4, names, indices);
-
-GLint offset[4];
-glGetActiveUniformsiv(programHandle, 4, indices, GL_UNIFORM_OFFSET, offset);
-
-// Store data within the buffer at the appropriate offsets
-GLfloat outerColor[] = {0.0f, 0.0f, 0.0f, 0.0f};
-GLfloat innerColor[] = {1.0f, 1.0f, 0.75f, 1.0f};
-GLfloat innerRadius = 0.25f, outerRadius = 0.45f;
-
-memcpy(blockBuffer + offset[0], innerColor, 4 * sizeof(GLfloat));
-memcpy(blockBuffer + offset[1], outerColor, 4 * sizeof(GLfloat));
-memcpy(blockBuffer + offset[2], &amp;innerRadius, sizeof(GLfloat));
-memcpy(blockBuffer + offset[3], &amp;outerRadius, sizeof(GLfloat));
-
-// Create the buffer object and copy the data
-GLuint uboHandle;
-glGenBuffers( 1, &amp;uboHandle );
-glBindBuffer( GL_UNIFORM_BUFFER, uboHandle );
-glBufferData( GL_UNIFORM_BUFFER, blockSize, blockBuffer, GL_DYNAMIC_DRAW );
-
-// Bind the buffer object to the uniform block
-glBindBufferBase( GL_UNIFORM_BUFFER, 1, uboHandle );
-</code></pre>
-<h5 id="glbufferdata的作用">glBufferData的作用</h5>
+<p>buniformblock.frag:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-lua" data-lang="lua"><span style="display:flex;"><span><span style="color:#f92672">#</span>version <span style="color:#ae81ff">430</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>layout (location <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>) <span style="color:#66d9ef">in</span> vec3 VertexPosition;
+</span></span><span style="display:flex;"><span>layout (location <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>) <span style="color:#66d9ef">in</span> vec3 VertexTexCoord;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>out vec3 TexCoord;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>void main()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    TexCoord <span style="color:#f92672">=</span> VertexTexCoord;
+</span></span><span style="display:flex;"><span>    gl_Position <span style="color:#f92672">=</span> vec4(VertexPosition,<span style="color:#ae81ff">1.0</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>basic_uniformblock.vert:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-lua" data-lang="lua"><span style="display:flex;"><span><span style="color:#f92672">#</span>version <span style="color:#ae81ff">430</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">in</span> vec3 TexCoord;
+</span></span><span style="display:flex;"><span>layout (location <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>) out vec4 FragColor;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>layout (binding <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>) uniform BlobSettings {
+</span></span><span style="display:flex;"><span>  vec4 InnerColor;
+</span></span><span style="display:flex;"><span>  vec4 OuterColor;
+</span></span><span style="display:flex;"><span>  float RadiusInner;
+</span></span><span style="display:flex;"><span>  float RadiusOuter;
+</span></span><span style="display:flex;"><span>} Blob;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>void main() 
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    float dx <span style="color:#f92672">=</span> TexCoord.x <span style="color:#f92672">-</span> <span style="color:#ae81ff">0.5</span>;
+</span></span><span style="display:flex;"><span>    float dy <span style="color:#f92672">=</span> TexCoord.y <span style="color:#f92672">-</span> <span style="color:#ae81ff">0.5</span>;
+</span></span><span style="display:flex;"><span>    float dist <span style="color:#f92672">=</span> sqrt(dx <span style="color:#f92672">*</span> dx <span style="color:#f92672">+</span> dy <span style="color:#f92672">*</span> dy);
+</span></span><span style="display:flex;"><span>    FragColor <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>       mix( Blob.InnerColor, Blob.OuterColor,
+</span></span><span style="display:flex;"><span>             smoothstep( Blob.RadiusInner, Blob.RadiusOuter, dist )
+</span></span><span style="display:flex;"><span>            );
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>OpenGL API 代码：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>GLuint programHandle <span style="color:#f92672">=</span> prog.getHandle();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Get the index of the uniform block
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>GLuint blockIndex <span style="color:#f92672">=</span> glGetUniformBlockIndex(programHandle, <span style="color:#e6db74">&#34;BlobSettings&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Allocate space for the buffer
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>GLint blockSize;
+</span></span><span style="display:flex;"><span>glGetActiveUniformBlockiv(programHandle, blockIndex,
+</span></span><span style="display:flex;"><span>                          GL_UNIFORM_BLOCK_DATA_SIZE, <span style="color:#f92672">&amp;</span>blockSize);
+</span></span><span style="display:flex;"><span>GLubyte <span style="color:#f92672">*</span> blockBuffer;
+</span></span><span style="display:flex;"><span>blockBuffer <span style="color:#f92672">=</span> (GLubyte <span style="color:#f92672">*</span>) malloc(blockSize);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Query for the offsets of each block variable
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> GLchar <span style="color:#f92672">*</span>names[] <span style="color:#f92672">=</span> { <span style="color:#e6db74">&#34;BlobSettings.InnerColor&#34;</span>, <span style="color:#e6db74">&#34;BlobSettings.OuterColor&#34;</span>,
+</span></span><span style="display:flex;"><span>                          <span style="color:#e6db74">&#34;BlobSettings.RadiusInner&#34;</span>, <span style="color:#e6db74">&#34;BlobSettings.RadiusOuter&#34;</span> };
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>GLuint indices[<span style="color:#ae81ff">4</span>];
+</span></span><span style="display:flex;"><span>glGetUniformIndices(programHandle, <span style="color:#ae81ff">4</span>, names, indices);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>GLint offset[<span style="color:#ae81ff">4</span>];
+</span></span><span style="display:flex;"><span>glGetActiveUniformsiv(programHandle, <span style="color:#ae81ff">4</span>, indices, GL_UNIFORM_OFFSET, offset);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Store data within the buffer at the appropriate offsets
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>GLfloat outerColor[] <span style="color:#f92672">=</span> {<span style="color:#ae81ff">0.0f</span>, <span style="color:#ae81ff">0.0f</span>, <span style="color:#ae81ff">0.0f</span>, <span style="color:#ae81ff">0.0f</span>};
+</span></span><span style="display:flex;"><span>GLfloat innerColor[] <span style="color:#f92672">=</span> {<span style="color:#ae81ff">1.0f</span>, <span style="color:#ae81ff">1.0f</span>, <span style="color:#ae81ff">0.75f</span>, <span style="color:#ae81ff">1.0f</span>};
+</span></span><span style="display:flex;"><span>GLfloat innerRadius <span style="color:#f92672">=</span> <span style="color:#ae81ff">0.25f</span>, outerRadius <span style="color:#f92672">=</span> <span style="color:#ae81ff">0.45f</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>memcpy(blockBuffer <span style="color:#f92672">+</span> offset[<span style="color:#ae81ff">0</span>], innerColor, <span style="color:#ae81ff">4</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">sizeof</span>(GLfloat));
+</span></span><span style="display:flex;"><span>memcpy(blockBuffer <span style="color:#f92672">+</span> offset[<span style="color:#ae81ff">1</span>], outerColor, <span style="color:#ae81ff">4</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">sizeof</span>(GLfloat));
+</span></span><span style="display:flex;"><span>memcpy(blockBuffer <span style="color:#f92672">+</span> offset[<span style="color:#ae81ff">2</span>], <span style="color:#f92672">&amp;</span>innerRadius, <span style="color:#66d9ef">sizeof</span>(GLfloat));
+</span></span><span style="display:flex;"><span>memcpy(blockBuffer <span style="color:#f92672">+</span> offset[<span style="color:#ae81ff">3</span>], <span style="color:#f92672">&amp;</span>outerRadius, <span style="color:#66d9ef">sizeof</span>(GLfloat));
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Create the buffer object and copy the data
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>GLuint uboHandle;
+</span></span><span style="display:flex;"><span>glGenBuffers( <span style="color:#ae81ff">1</span>, <span style="color:#f92672">&amp;</span>uboHandle );
+</span></span><span style="display:flex;"><span>glBindBuffer( GL_UNIFORM_BUFFER, uboHandle );
+</span></span><span style="display:flex;"><span>glBufferData( GL_UNIFORM_BUFFER, blockSize, blockBuffer, GL_DYNAMIC_DRAW );
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Bind the buffer object to the uniform block
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>glBindBufferBase( GL_UNIFORM_BUFFER, <span style="color:#ae81ff">1</span>, uboHandle );
+</span></span></code></pre></div><h5 id="glbufferdata的作用">glBufferData的作用</h5>
 <p>Create the buffer object and copy the data into it:</p>
-<pre><code>GLuint uboHandle;
-glGenBuffers( 1, &amp;uboHandle );
-glBindBuffer( GL_UNIFORM_BUFFER, uboHandle );
-glBufferData( GL_UNIFORM_BUFFER, blockSize, blockBuffer, GL_DYNAMIC_DRAW );
-</code></pre>
-<p>The space is allocated within the buffer object and the data is copied when glBufferData is called.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>GLuint uboHandle;
+</span></span><span style="display:flex;"><span>glGenBuffers( <span style="color:#ae81ff">1</span>, <span style="color:#f92672">&amp;</span>uboHandle );
+</span></span><span style="display:flex;"><span>glBindBuffer( GL_UNIFORM_BUFFER, uboHandle );
+</span></span><span style="display:flex;"><span>glBufferData( GL_UNIFORM_BUFFER, blockSize, blockBuffer, GL_DYNAMIC_DRAW );
+</span></span></code></pre></div><p>The space is allocated within the buffer object and the data is copied when glBufferData is called.</p>
 <h5 id="glbindbufferbase的索引问题">glBindBufferBase的索引问题</h5>
 <p>glBindBufferBase函数参数的索引（第二个参数）必须与定义uniform时设定的layout(binding=)相同，例如：</p>
 <pre><code>glBindBufferBase(GL_UNIFORM_BUFFER, 0, uboHandle);
@@ -691,13 +684,23 @@ You might be wondering why we use glBindBuffer and glBindBufferBase with GL_UNIF
 </span></span><span style="display:flex;"><span>glcompileshader() <span style="color:#f92672">/</span> glshadersource()
 </span></span><span style="display:flex;"><span>gllinkprogram()
 </span></span></code></pre></div><h5 id="如何限制帧率">如何限制帧率</h5>
-<p>在<code>glfwMakeContextCurrent(wnd);</code>之后追加<code>glfwSwapInterval()</code>:</p>
+<p>你写一个简单的hello triangle，GPU占用接近100%，大概率是没有限制刷新率（即没有开启垂直同步VSync）。<br>
+在<code>glfwMakeContextCurrent(wnd);</code>之后追加<code>glfwSwapInterval(1)</code>:</p>
 <ul>
 <li><code>glfwSwapInterval(1)</code> : the application should run at &lt;= refresh rate (display hardware).</li>
 <li><code>glfwSwapInterval(0)</code> : the application can run at any rate, and should run faster than with <code>glfwSwapInterval(1)</code>.</li>
 </ul>
+<div class="alert warning ">
+  <p>Windows下若启用了DWM(Desktop Window Manager, also named Desktop Composition)，此时使用<code>glfwSwapInterval(1)</code>开启VSync无效。<br>
+解决办法：<br>
+GLFW提供了cmake的define编译选项<code>GLFW_USE_DWM_SWAP_INTERVAL</code>，表示即使使用DWM或Windows Aero，也强制开启VSync。</p>
+</div>
 <p>Origin:<br>
-<a href="https://discourse.glfw.org/t/i-have-a-question-about-fps/1498">https://discourse.glfw.org/t/i-have-a-question-about-fps/1498</a></p>
+<a href="https://discourse.glfw.org/t/i-have-a-question-about-fps/1498">https://discourse.glfw.org/t/i-have-a-question-about-fps/1498</a><br>
+<a href="https://stackoverflow.com/a/16303811/1645289">https://stackoverflow.com/a/16303811/1645289</a></p>
+<h5 id="gl_position-homogeneous-coordinates">gl_Position (Homogeneous coordinates)</h5>
+<p>What can I do with the 4th component of gl_Position?<br>
+<a href="https://gamedev.stackexchange.com/a/153137/117871">https://gamedev.stackexchange.com/a/153137/117871</a></p>
 <hr>
 <p><code>莫道不消魂？帘卷西风，人比黄花瘦。---李清照《醉花阴》</code></p>
               

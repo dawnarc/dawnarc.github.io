@@ -446,6 +446,9 @@ ViewMode VisualizeBuffer
 <p>显示帧率</p>
 <pre><code>stat fps
 </code></pre>
+<p>限制最大帧率</p>
+<pre><code>t.MaxFPS 60
+</code></pre>
 <p>显示mesh drawcall</p>
 <pre><code>stat scenerendering
 </code></pre>
@@ -669,7 +672,42 @@ Project Settings -&gt; Engine -&gt; General Settings -&gt; Framerate -&gt; Unche
 </span></span><span style="display:flex;"><span>foliage.DensityScale 1.0
 </span></span><span style="display:flex;"><span>grass.DensityScale 1.0
 </span></span></code></pre></div><p>For more detail see: <a href="https://dawnarc.com/2023/04/ue4scalability-notes/">Unreal Scalability</a></p>
-<h5 id="查询命令的参数值">查询命令的参数值</h5>
+<h5 id="如何在引擎或游戏启动时执行命令">如何在引擎或游戏启动时执行命令</h5>
+<p>方式1：修改 Engine/Config/ConsoleVariables.ini，例如，</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Text" data-lang="Text"><span style="display:flex;"><span>[Startup]
+</span></span><span style="display:flex;"><span>r.FogDensity = 0.9
+</span></span><span style="display:flex;"><span>post.ImageGrain = 0.5
+</span></span></code></pre></div><p>方式2：修改Engine.ini(BaseEngine.ini或者DefaultEngine.ini)，在<code>[SystemSettings]或[SystemSettingsEditor]</code>分段下追加。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Text" data-lang="Text"><span style="display:flex;"><span>[SystemSettings]
+</span></span><span style="display:flex;"><span>r.DetectAndWarnOfBadDrivers = 0
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[SystemSettingsEditor]
+</span></span><span style="display:flex;"><span>; System settings overrides for the editor.  Ideally the editor should use the same settings as the game.
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>; Do not vsync in the editor. Throws off gpu profiling.
+</span></span><span style="display:flex;"><span>r.VSync=0
+</span></span></code></pre></div><p><code>[ConsoleVariables]</code>分段也可添加，参考：UE5/Engine/Config/Android/AndroidEngine.ini</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Text" data-lang="Text"><span style="display:flex;"><span>[ConsoleVariables]
+</span></span><span style="display:flex;"><span>Slate.CacheRenderData=0
+</span></span><span style="display:flex;"><span>r.VSync=1
+</span></span><span style="display:flex;"><span>r.ParallelShadows=0
+</span></span><span style="display:flex;"><span>; high priority thread tasks can be downgraded to normal priority if a task is created with EPowerSavingEligibility::Eligible.
+</span></span><span style="display:flex;"><span>TaskGraph.EnablePowerSavingThreadPriorityReduction=1
+</span></span><span style="display:flex;"><span>; prefer D24_S8 for depth/stencil
+</span></span><span style="display:flex;"><span>r.Vulkan.Depth24Bit=1
+</span></span><span style="display:flex;"><span>;GalaxyS6Edge=577
+</span></span><span style="display:flex;"><span>r.Shadow.ForceSerialSingleRenderPass=1
+</span></span><span style="display:flex;"><span>; Support Mali 64k texel buffer limitation, tuned for 1080p. If you target 2k-4k resolutions please also set the LightGridPixelSize to 128
+</span></span><span style="display:flex;"><span>r.Forward.LightGridSizeZ = 8
+</span></span><span style="display:flex;"><span>r.Forward.MaxCulledLightsPerCell = 8
+</span></span><span style="display:flex;"><span>r.HairStrands.Simulation=0
+</span></span><span style="display:flex;"><span>r.HairStrands.Strands=0
+</span></span><span style="display:flex;"><span>r.HairStrands.Binding=0
+</span></span><span style="display:flex;"><span>; R11G11B10 UAV is not supported on Android
+</span></span><span style="display:flex;"><span>r.TemporalAA.R11G11B10History=0
+</span></span><span style="display:flex;"><span>; Do not backtrace vulkan memory allocations
+</span></span><span style="display:flex;"><span>r.Vulkan.MemoryBacktrace=0
+</span></span></code></pre></div><h5 id="查询命令的参数值">查询命令的参数值</h5>
 <p>C++ 或者 蓝图中使用查询函数</p>
 <pre><code>float UKismetSystemLibrary::GetConsoleVariableFloatValue(const FString&amp; VariableName)
 
@@ -680,8 +718,8 @@ int32 UKismetSystemLibrary::GetConsoleVariableIntValue(const FString&amp; Variab
 <pre><code>r.ScreenPercentage 200
 </code></pre>
 <p>然后通过蓝图或者C++查询</p>
-<pre><code>float RetVal = KismetSystemLibrary::GetConsoleVariableIntValue(TEXT(&quot;r.ScreenPercentage&quot;));
-//RetVal is 200.f
+<pre><code>//RetVal is 200.f
+float RetVal = KismetSystemLibrary::GetConsoleVariableIntValue(TEXT(&quot;r.ScreenPercentage&quot;));
 </code></pre>
 <h3 id="文档">文档</h3>
 <h5 id="commands">Commands</h5>
