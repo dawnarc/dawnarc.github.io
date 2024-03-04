@@ -482,7 +482,7 @@ Example in <code>\Engine\Config\BaseDeviceProfiles.ini</code></p>
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">HDRDisplayOutputNits</span><span style="color:#f92672">=</span><span style="color:#e6db74">1000</span>
 </span></span></code></pre></div><div class="alert warning ">
   <p><code>sg.ResolutionQuality</code> isn&rsquo;t using the usual 0/1/2/3 quality levels, the value directly maps to <code>r.ScreenPercentage</code>.<br>
-<code>sg.ResolutionQuality=0</code> (by default) means to apply screen percentage: <code>66.662</code> = 1440.0f / 2160.0f - 0.1f / 2160.0f in UE5, UE4 is <code>100</code> by default.</p>
+<code>sg.ResolutionQuality=0</code> (by default) means to apply screen percentage as default value: UE5 is <code>66.662</code> = (1440.0f / 2160.0f - 0.1f / 2160.0f) , while UE4 is <code>100</code>.</p>
 </div>
 <h5 id="screen-resolution-on-mobile">Screen Resolution on Mobile</h5>
 <p>iOS:</p>
@@ -661,10 +661,16 @@ Fixed frame rate:</p>
 </span></span></code></pre></div><p>Unlimited frame rate:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#66d9ef">[/Script/Engine.Engine]</span>
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">bUseFixedFrameRate</span><span style="color:#f92672">=</span><span style="color:#e6db74">False</span>
-</span></span></code></pre></div><h5 id="how-to-start-game-in-fullscreen-mode">How to start game in fullscreen mode</h5>
+</span></span></code></pre></div><p>You need to disable VSync if want to play with fixed frame rate:
+Engine.ini</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#66d9ef">[SystemSettings]</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">r.VSync</span><span style="color:#f92672">=</span><span style="color:#e6db74">0</span>
+</span></span></code></pre></div><p>Or alter GameUserSettings.ini</p>
+<pre tabindex="0"><code>[/Script/Engine.GameUserSettings]
+bUseVSync=False
+</code></pre><h5 id="how-to-start-game-in-fullscreen-mode">How to start game in fullscreen mode</h5>
 <p>Add follows in MyProject/Config/DefaultGameUserSettings.ini</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#66d9ef">[/Script/Engine.GameUserSettings]</span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">bUseVSync</span><span style="color:#f92672">=</span><span style="color:#e6db74">False</span>
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">//ResolutionSizeX</span><span style="color:#f92672">=</span><span style="color:#e6db74">1920</span>
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">//ResolutionSizeY</span><span style="color:#f92672">=</span><span style="color:#e6db74">1080</span>
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">//LastUserConfirmedResolutionSizeX</span><span style="color:#f92672">=</span><span style="color:#e6db74">1920</span>
@@ -674,7 +680,15 @@ Fixed frame rate:</p>
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">bUseDesktopResolutionForFullscreen</span><span style="color:#f92672">=</span><span style="color:#e6db74">True</span>
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">FullscreenMode</span><span style="color:#f92672">=</span><span style="color:#e6db74">0</span>
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">LastConfirmedFullscreenMode</span><span style="color:#f92672">=</span><span style="color:#e6db74">0</span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">Version</span><span style="color:#f92672">=</span><span style="color:#e6db74">5</span>
+</span></span></code></pre></div><p>The mode type explanation in GameUserSettings.h:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * Game window fullscreen mode
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *  0 = Fullscreen
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *  1 = Windowed fullscreen
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *  2 = Windowed
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> */</span>
+</span></span><span style="display:flex;"><span>UPROPERTY(config)
+</span></span><span style="display:flex;"><span>int32 FullscreenMode;
 </span></span></code></pre></div><p>Origin:<br>
 <a href="https://answers.unrealengine.com/questions/206504/how-to-default-fullscreen-in-shipping-package.html">https://answers.unrealengine.com/questions/206504/how-to-default-fullscreen-in-shipping-package.html</a></p>
 <hr>

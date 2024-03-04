@@ -758,6 +758,11 @@ Project Settings -&gt; Engine -&gt; Animation -&gt; 勾选 Strip Animation Data 
 </ul>
 <p><a href="https://youtu.be/KL3rSV-IJ20?t=2639">The Coalition Studio</a>给出了他们的技术标准：Gear4的texture pool是1500MB，Gear5的texture pool为1150MB，两者都是基于UE4开发。结论：XBox One平台为例，若贴图内存占用超过1.5GB则有性能问题。</p>
 </li>
+</ol>
+<div class="alert success ">
+  <p>Texture Streaming作用是为低端机器节省显存，代价是切换lod时由于加载贴图会导致卡顿，以及画质下降（因为玩家能看到高低精度贴图切换的整个过程）。如果是高配机器，比如显存6G以上，可以关闭texture streaming以获得更好游戏体验。<a href="https://steamcommunity.com/app/2005010/discussions/0/3843304884855583600/">Disable Texture Streaming to improve performance and image quality</a></p>
+</div>
+<ol start="3">
 <li>
 <p>蓝图中过多的资源硬引用（<a href="https://raharuu.github.io/unreal/hard-references-reasons-avoid/">Hard References</a>）。推荐一个硬引用检测插件：<a href="https://github.com/heyomidk/HardReferenceFinder"> HardReferenceFinder</a>。避免硬引用将涉及到<a href="https://dawnarc.com/2018/01/ue4%E8%B5%84%E6%BA%90%E5%BC%82%E6%AD%A5%E5%8A%A0%E8%BD%BDassets-asynchronous-loading%E4%B8%8E%E5%86%85%E5%AD%98%E9%87%8A%E6%94%BEfree-memory/">异步加载</a>，异步加载又涉及到内存管理和事件管理，是一个庞大话题，这里不赘述。</p>
 </li>
@@ -791,7 +796,7 @@ Project Settings -&gt; Engine -&gt; Animation -&gt; 勾选 Strip Animation Data 
 <p>如果dispatch数量较高（Gears 5平均每帧50左右），则GPU计算开销会显著增加。对于计算量较大的特效，建议使用Async Compute，D3D12的官方example：<a href="https://github.com/GPUOpen-LibrariesAndSDKs/nBodyD3D12/tree/master/Samples/D3D12nBodyGravity">N-body Gravity System</a>。因为历史原因，UE4无法实现async compute, bindless resource等重要特性（因为需要推翻整个rendering代码重写）。UE5甩掉了包袱已彻底实现：async compute开销一直保持在20%左右（<a href="https://www.unrealengine.com/marketplace/en-US/product/city-sample">Matrix Awakens</a>测试结果），而UE4不到1%，几乎为0。</p>
 </li>
 <li>
-<p>由于UE的deferred shading是multipass，而material的每种buffer（albedo, normal, material properties, ambient occlusion, worldspace reflection等等一共有16种buffer）都对应一个pass，当材质过于复杂（比如玻璃、透明特效等），则dispatch大幅增长，而UE4的rendering没有实现Async Compute所以没法降低dispatch，而dispatch是GPU的开销大户。</p>
+<p>由于UE的deferred shading是multipass，而material的每种buffer（albedo, normal, material properties, ambient occlusion, worldspace reflection等等一共有16种buffer）都对应一个pass，虽然RDG中做了merge pass优化，但抵不住量大，需要的dispatch也随之增加。所以，材质若过于复杂（玻璃、半透特效、毛发等），会撑爆dispatch，而dispatch数量大则GPU负载高。另外，Insights中的<code>STAT_FRDGPass_Execute</code>次数和dispatch次数正相关。</p>
 </li>
 <li>
 <p>Shaded GS primitives数量正常在10k以内（Gears 5平均在3k左右），如果范围异常（比如十万以上），则说明阴影有问题：点光源或射灯数量过多、阴影质量过高（<code>r.ShadowQuality=5</code>）。另外cast volumetric shadow（DirectionalLight、SkyLight之外其他光源）也会导致GS primitives, vertex, pixel数量急剧增长甚至翻倍。</p>
@@ -822,14 +827,18 @@ Project Settings -&gt; Engine -&gt; Animation -&gt; 勾选 Strip Animation Data 
 <a href="https://www.unrealengine.com/marketplace/performance-optimization-shadows-triggering-zones">https://www.unrealengine.com/marketplace/performance-optimization-shadows-triggering-zones</a></p>
 <p>Low-Level Memory Tracker(New feature in v4.18)<br>
 <a href="https://docs.unrealengine.com/en-US/Programming/Development/Tools/LowLevelMemoryTracker/index.html">https://docs.unrealengine.com/en-US/Programming/Development/Tools/LowLevelMemoryTracker/index.html</a></p>
+<p>Aggregating Ticks to Manage Scale in Sea of Thieves | Unreal Fest Europe 2019 | Unreal Engine<br>
+<a href="https://www.youtube.com/watch?v=CBP5bpwkO54">https://www.youtube.com/watch?v=CBP5bpwkO54</a></p>
 <p>Unreal Insights(New feature in v4.23)<br>
 <a href="https://www.youtube.com/watch?v=TygjPe9XHTw">https://www.youtube.com/watch?v=TygjPe9XHTw</a></p>
 <p>Virtual Texturing(New feature in v4.23)<br>
 <a href="https://www.youtube.com/watch?v=fhoZ2qMAfa4">https://www.youtube.com/watch?v=fhoZ2qMAfa4</a></p>
 <p>Unreal Engine 4 Performance Guide (<span class="highlight-text green">Recommended</span>)<br>
 <a href="https://gpuopen.com/unreal-engine-performance-guide/">https://gpuopen.com/unreal-engine-performance-guide/</a></p>
-<p>Aggregating Ticks to Manage Scale in Sea of Thieves | Unreal Fest Europe 2019 | Unreal Engine<br>
-<a href="https://www.youtube.com/watch?v=CBP5bpwkO54">https://www.youtube.com/watch?v=CBP5bpwkO54</a></p>
+<p>Profiling and Optimization in UE4 | Unreal Indie Dev Days 2019 | Unreal Engine<br>
+<a href="https://www.youtube.com/watch?v=EbXakIuZPFo">https://www.youtube.com/watch?v=EbXakIuZPFo</a></p>
+<p>Maximizing Your Game&rsquo;s Performance in Unreal Engine | Unreal Fest 2022<br>
+<a href="https://www.youtube.com/watch?v=GuIav71867E">https://www.youtube.com/watch?v=GuIav71867E</a></p>
 <p>Epic Games 王祢：UE4制作多人大地型游戏的优化<br>
 <a href="https://zhuanlan.zhihu.com/p/43742565">https://zhuanlan.zhihu.com/p/43742565</a></p>
 <p>UE4 GameThread优化总结笔记<br>
@@ -851,10 +860,14 @@ Project Settings -&gt; Engine -&gt; Animation -&gt; 勾选 Strip Animation Data 
 <p>Optimization Deep Dive: Unreal Engine 4 on Intel<br>
 <a href="https://www.slideshare.net/IntelSoftware/optimization-deep-dive-unreal-engine-4-on-intel">https://www.slideshare.net/IntelSoftware/optimization-deep-dive-unreal-engine-4-on-intel</a></p>
 <p>Unreal Engine Game Optimization on a Budget (<span class="highlight-text green">Recommended</span>)<br>
-<a href="https://www.tomlooman.com/unrealengine-optimization-talk/">https://www.tomlooman.com/unrealengine-optimization-talk/</a>
+<a href="https://www.tomlooman.com/unrealengine-optimization-talk/">https://www.tomlooman.com/unrealengine-optimization-talk/</a><br>
 <a href="https://www.youtube.com/watch?v=G51QWcitCII">https://www.youtube.com/watch?v=G51QWcitCII</a></p>
 <p>Project Optimization in UEFN | Unreal Fest 2023 (<span class="highlight-text green">Recommended</span>)<br>
-<a href="https://www.youtube.com/watch?v=k9fAXZ4U4XA">https://www.youtube.com/watch?v=k9fAXZ4U4XA</a></p>
+<a href="https://www.youtube.com/watch?v=k9fAXZ4U4XA">https://www.youtube.com/watch?v=k9fAXZ4U4XA</a><br>
+Memory Management in UEFN and Fortnite Creative | Unreal Fest 2023<br>
+<a href="https://www.youtube.com/watch?v=gtX0gPOSkbU">https://www.youtube.com/watch?v=gtX0gPOSkbU</a><br>
+GPU Crash Debugging in Unreal Engine: Tools, Techniques, and Best Practices | Unreal Fest 2023 (<span class="highlight-text green">Recommended</span>)<br>
+<a href="https://www.youtube.com/watch?v=CyrGLMmVUAI">https://www.youtube.com/watch?v=CyrGLMmVUAI</a></p>
 <hr>
 <p><code>嗜欲深者天机浅 ---《庄子·大宗师》</code></p>
               
