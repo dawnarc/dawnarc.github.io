@@ -382,7 +382,7 @@
 <ul>
 <li>不指定-G参数（默认方式）：
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>cmake path/to/source/dir
-</span></span><span style="display:flex;"><span>cmake --build . --config Release
+</span></span><span style="display:flex;"><span>cmake --build . --config release
 </span></span></code></pre></div></li>
 <li>msbuild：
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>cmake -G <span style="color:#e6db74">&#34;Visual Studio 17 2022&#34;</span> -A x64 path/to/source/dir
@@ -459,12 +459,14 @@ add_executable(myapp myapp.cpp)
 target_link_libraries(myapp mylib)  
 </code></pre>
 <p>如果引用的很多个第三方库，那么类似上面的内容会写很多（实际项目的第三方库结构比上述更复杂），且当多个项目都引用了同一个第三方库，那么我每个项目的<code>CMakeLists.txt</code>都得写一遍，重复劳动很多。<br>
-那么有没办法为每个第三方库只定义一次它的头文件和库文件信息，然后在自己的工程中只指定名称即可？（类似编译Java的Maven仓库）答案是当然可以，<code>find_package</code>帮你解决。</p>
-<p><code>find_package</code>定义在自己工程的CMakeLists.txt中：</p>
+那么有没办法为每个第三方库只定义一次它的头文件和库文件信息，然后在自己的工程中只指定名称即可？（类似编译Java的Maven仓库）答案是可以，<code>find_package</code>帮你解决。</p>
+<p><code>find_package</code>定义在自己工程的CMakeLists.txt中：<br>
+两种方式，一种叫Module模式：</p>
+<pre><code>find_package( XXX REQUIRED )
+</code></pre>
+<p>另一种叫Config模式：</p>
 <pre><code>find_package( XXX CONFIG REQUIRED )
 </code></pre>
-<p>然后cmake就会在默认的Modules(即<code>CMAKE_MODULE_PATH</code>指定的目录)目录中搜索这个XXX第三方库。<br>
-搜索有两种模式：<code>FindXXX.cmake</code>和<code>XXXConfig.cmake</code>。前者叫做<strong>Module模式</strong>，后者叫做<strong>Config模式</strong>。</p>
 <ul>
 <li>Module模式<br>
 搜索CMAKE_MODULE_PATH指定路径下的FindXXX.cmake文件，通过该文件从而找到XXX库的头文件和lib文件位置。FindXXX.cmake中需要定义<code>XXX_INCLUDE_DIRS</code>和<code>XXX_LIBRARIES</code>。</li>
@@ -483,27 +485,18 @@ target_link_libraries(myapp mylib)
 </div></li>
 </ul>
 <p>Config模式示例：<br>
-先在自己工程的CMakeLists.txt中添加</p>
-<pre><code>set(XXX_DIR D:/sdk/XXX-0.9.9.0/bin)
-find_package( XXX CONFIG REQUIRED )
-</code></pre>
-<p>其中<code>CONFIG</code>表示使用Config模式搜索，默认是Module模式；然后D:/sdk/XXX-0.9.9.0/cmake目录下必须存在XXXConfig.cmake文件，否则当执行cmake时会提示找不到XXXConfig.cmake。</p>
-<div class="alert danger ">
-  <p>XXXConfig.cmake和XXXTargets.cmake都非手写，而是由CMake自动生成！</p>
-</div>
-<p>生成Config.cmake的参考代码：<br>
-<a href="https://github.com/g-truc/glm/blob/0d973b40a49e550b1ea7df22a8573bc5fff84f24/CMakeLists.txt#L175">https://github.com/g-truc/glm/blob/0d973b40a49e550b1ea7df22a8573bc5fff84f24/CMakeLists.txt#L175</a></p>
-<p>生成Targets.cmake的参考代码：<br>
-<a href="https://github.com/g-truc/glm/blob/0d973b40a49e550b1ea7df22a8573bc5fff84f24/CMakeLists.txt#L198">https://github.com/g-truc/glm/blob/0d973b40a49e550b1ea7df22a8573bc5fff84f24/CMakeLists.txt#L198</a></p>
+有点复杂，自己还没研究透彻，不过有个可以跑的demo：<br>
+<a href="https://github.com/forexample/package-example">https://github.com/forexample/package-example</a><br>
+有兴趣的可以研究，主要是<a href="https://github.com/forexample/package-example/blob/master/Foo/CMakeLists.txt">Foo/CMakeLists.txt</a>这个文件。</p>
 <h5 id="installation-cmake---install">Installation: cmake &ndash;install</h5>
 <p>3.15版本（2019年6月）之前，<code>install</code>必须跟着<code>--build</code>和<code>--target</code>两个参数同时执行：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Shell" data-lang="Shell"><span style="display:flex;"><span>cmake . -B build
-</span></span><span style="display:flex;"><span>cmake --build build --target install --config Release
+</span></span><span style="display:flex;"><span>cmake --build build --target install --config release
 </span></span></code></pre></div><p>也就是说，install必须和build同时执行，而这种情况不允许：提前build好了，现在只想install。</p>
 <p>3.15版本开始，install和build可以分开执行：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Shell" data-lang="Shell"><span style="display:flex;"><span>cmake . -B build
-</span></span><span style="display:flex;"><span>cmake --build build --config Release
-</span></span><span style="display:flex;"><span>cmake --install build --config Release
+</span></span><span style="display:flex;"><span>cmake --build build --config release
+</span></span><span style="display:flex;"><span>cmake --install build --config release
 </span></span></code></pre></div><p>参考：How to use CMake to install<br>
 <a href="https://stackoverflow.com/a/48428846/1645289">https://stackoverflow.com/a/48428846/1645289</a></p>
 <p>要执行install命令，前提是CMakeLists.txt中配置了<code>install()</code>命令，示例（引用自<a href="https://github.com/Perlmint/glew-cmake/blob/062db23216d5efae380c19a0edb28f9442d2b997/CMakeLists.txt#L253">glew-cmake</a>）：</p>
@@ -514,7 +507,15 @@ find_package( XXX CONFIG REQUIRED )
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>file<span style="color:#f92672">(</span>GLOB PUBLIC_HEADERS <span style="color:#e6db74">&#34;include/GL/*.h&#34;</span><span style="color:#f92672">)</span>
 </span></span><span style="display:flex;"><span>install<span style="color:#f92672">(</span>FILES <span style="color:#e6db74">${</span>PUBLIC_HEADERS<span style="color:#e6db74">}</span> DESTINATION include/GL/<span style="color:#f92672">)</span>
-</span></span></code></pre></div><p>编写install配置的好处是：别人拿你写的代码编译lib时，只使用<code>find_package</code>来引用你的头文件和lib即可，让CMakeLists.txt更简洁，也省去了手动拷贝lib和header的工作。</p>
+</span></span></code></pre></div><p>编写install配置的好处是：别人需要引用你写的lib时，仅用<code>find_package</code>即可，让CMakeLists.txt更简洁，也省去了手动拷贝lib和header的工作。</p>
+<h5 id="installation-cmake_install_prefix">Installation: CMAKE_INSTALL_PREFIX</h5>
+<p>编译完成后执行安装时：<code>cmake --install build</code>，此时安装的目录默认是<code>/usr/local</code>（Mac、Linux）或<code>C:/Program Files (x86)</code>（Windows），有没办法手动指定安装目录？<br>
+解决办法：<code>CMAKE_INSTALL_PREFIX</code>或者<code>--prefix</code>。<br>
+示例：</p>
+<pre tabindex="0"><code>cmake . -B build -DCMAKE_INSTALL_PREFIX=D:/MyLibs/FOO
+</code></pre><p>或者</p>
+<pre tabindex="0"><code>cmake --install build --prefix D:/MyLibs/FOO
+</code></pre><p>两者等价。</p>
 <h5 id="使用通配符批量指定头文件或源文件-include-source-files-batch-using-wildcard">使用通配符批量指定头文件或源文件 (include source files batch using wildcard)</h5>
 <p>GLOB:</p>
 <pre><code>FILE(GLOB cpp_files ../src/*.cc)
@@ -555,12 +556,12 @@ INCLUDE(&quot;meaningfulFilename.cmake&quot;)
 <h5 id="link-other-library-by-cmakeliststxt">Link other library by CMakeLists.txt</h5>
 <p>A CMakeLists.txt dependents other CMakeLists.txt:</p>
 <ol>
-<li>add sub-project A and sub-project B in main project using <code>add_subdirectory</code>, <a href="https://github.com/dawnarc/rendering_examples/blob/78efd83fa9e7a192a2b73832afe414d5d0964e53/CMakeLists.txt#L23">example code</a>;
+<li>add sub-project A and sub-project B in main project using <code>add_subdirectory</code>, <a href="https://github.com/dawnarc/rendering_examples/blob/8a9cf2f31effd97cf256a1484b68a2665af146f5/CMakeLists.txt#L23">example code</a>;
 <pre tabindex="0"><code>add_subdirectory( ProjA )
 add_subdirectory( ProjB )
 </code></pre></li>
-<li>then you can link project A in project B, <a href="https://github.com/dawnarc/rendering_examples/blob/78efd83fa9e7a192a2b73832afe414d5d0964e53/01.lighting/01.ads_reflection/CMakeLists.txt#L25">example code</a>;
-<pre tabindex="0"><code>target_link_libraries(ProjMain B)
+<li>then you can link project A in project B, <a href="https://github.com/dawnarc/rendering_examples/blob/8a9cf2f31effd97cf256a1484b68a2665af146f5/01.lighting/01.ads_reflection/CMakeLists.txt#L12">example code</a>;
+<pre tabindex="0"><code>target_link_libraries(ProjB ProjA)
 </code></pre></li>
 </ol>
 <h5 id="add_subdirectory-relative-patch-of-subdirectory">add_subdirectory: relative patch of subdirectory</h5>
@@ -600,12 +601,18 @@ MT</p>
 <pre tabindex="0"><code>set(CMAKE_CXX_FLAGS_RELEASE &#34;${CMAKE_CXX_FLAGS_RELEASE} /MT&#34;)
 set(CMAKE_CXX_FLAGS_DEBUG &#34;${CMAKE_CXX_FLAGS_DEBUG} /MTd&#34;)
 </code></pre><p>MD</p>
-<pre tabindex="0"><code># suppress warning - LNK4098: defaultlib &#39;MSVCRT&#39; conflicts with use of other libs
-set(CMAKE_CXX_FLAGS_RELEASE &#34;${CMAKE_CXX_FLAGS_RELEASE} /MD&#34;)
+<pre tabindex="0"><code>set(CMAKE_CXX_FLAGS_RELEASE &#34;${CMAKE_CXX_FLAGS_RELEASE} /MD&#34;)
 set(CMAKE_CXX_FLAGS_DEBUG &#34;${CMAKE_CXX_FLAGS_DEBUG} /MDd&#34;)
 </code></pre><p>Origin:<br>
 Compile with /MT instead of /MD using CMake<br>
 <a href="https://stackoverflow.com/a/14172871/1645289">https://stackoverflow.com/a/14172871/1645289</a></p>
+<h5 id="warning-lnk4098-defaultlib-msvcrt-conflicts-with-use-of-other-libs">Warning: LNK4098, defaultlib &lsquo;MSVCRT&rsquo; conflicts with use of other libs</h5>
+<pre tabindex="0"><code>if(MSVC)
+  # suppress warning on debug config - LNK4098: defaultlib &#39;MSVCRT&#39; conflicts with use of other libs
+  set_property(TARGET ${MyProj} APPEND PROPERTY LINK_FLAGS &#34;/NODEFAULTLIB:MSVCRT&#34;)
+endif()
+</code></pre><p>Origin:<br>
+<a href="https://blog.csdn.net/Ellan_BM/article/details/105688991">https://blog.csdn.net/Ellan_BM/article/details/105688991</a></p>
 <h3 id="compiler">Compiler</h3>
 <h5 id="how-to-enable-c17-features-for-compiler">How to enable C++17 features for compiler</h5>
 <p>Global:</p>
