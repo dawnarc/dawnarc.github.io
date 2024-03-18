@@ -364,42 +364,40 @@
                 </script>
               <p>keywords: [UE4]AddToRoot()要与RemoveFromRoot成对出现</p>
 <p>如果对某个UObject执行了<code>AddToRoot()</code>，那么需要在该UObject所属的上级UOject销毁前，执行<code>RemoveFromRoot()</code>，否则当程序退出时，会出现崩溃，崩溃堆栈：</p>
-<pre><code>Assertion failed: !IsRooted() [File:d:\build\++ue4+release-4.13+compile\sync\engine\source\runtime\coreuobject\public\uobject\UObjectBaseUtility.h] [Line: 135] 
- 
- UE4Editor_Core!FDebug::AssertFailed() [d:\build\++ue4+release-4.13+compile\sync\engine\source\runtime\core\private\misc\outputdevice.cpp:421]
- UE4Editor_UnrealEd!&lt;lambda_26419e543909ee92ebfb672b1e9c08dc&gt;::operator()() [d:\build\++ue4+release-4.13+compile\sync\engine\source\editor\unrealed\private\playlevel.cpp:384]
- UE4Editor_CoreUObject!ForEachObjectWithOuter() [d:\build\++ue4+release-4.13+compile\sync\engine\source\runtime\coreuobject\private\uobject\uobjecthash.cpp:678]
- UE4Editor_UnrealEd!UEditorEngine::EndPlayMap() [d:\build\++ue4+release-4.13+compile\sync\engine\source\editor\unrealed\private\playlevel.cpp:380]
- UE4Editor_UnrealEd!UEditorEngine::Tick() [d:\build\++ue4+release-4.13+compile\sync\engine\source\editor\unrealed\private\editorengine.cpp:1653]
- UE4Editor_UnrealEd!UUnrealEdEngine::Tick() [d:\build\++ue4+release-4.13+compile\sync\engine\source\editor\unrealed\private\unrealedengine.cpp:371]
- UE4Editor!FEngineLoop::Tick() [d:\build\++ue4+release-4.13+compile\sync\engine\source\runtime\launch\private\launchengineloop.cpp:2834]
- UE4Editor!GuardedMain() [d:\build\++ue4+release-4.13+compile\sync\engine\source\runtime\launch\private\launch.cpp:156]
- UE4Editor!GuardedMainWrapper() [d:\build\++ue4+release-4.13+compile\sync\engine\source\runtime\launch\private\windows\launchwindows.cpp:126]
- UE4Editor!WinMain() [d:\build\++ue4+release-4.13+compile\sync\engine\source\runtime\launch\private\windows\launchwindows.cpp:202]
- UE4Editor!__scrt_common_main_seh() [f:\dd\vctools\crt\vcstartup\src\startup\exe_common.inl:264]
- kernel32
- ntdll
-</code></pre>
-<div class="alert danger ">
-  <p>执行<code>RemoveFromRoot()</code>不要放在Actor自己对象的<code>Actor::BeginDestroy()</code>函数内（override 父类<code>BeginDestroy()</code>函数），即使是在<code>Super::BeginDestroy()</code>执行之前。否则退出游戏时（包括PIE模式（编辑器内运行游戏）下退出游戏）会导致崩溃。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Text" data-lang="Text"><span style="display:flex;"><span>Assertion failed: !IsRooted() [File:d:\build\++ue4+release-4.13+compile\sync\engine\source\runtime\coreuobject\public\uobject\UObjectBaseUtility.h] [Line: 135] 
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>UE4Editor_Core!FDebug::AssertFailed() [d:\build\++ue4+release-4.13+compile\sync\engine\source\runtime\core\private\misc\outputdevice.cpp:421]
+</span></span><span style="display:flex;"><span>UE4Editor_UnrealEd!&lt;lambda_26419e543909ee92ebfb672b1e9c08dc&gt;::operator()() [d:\build\++ue4+release-4.13+compile\sync\engine\source\editor\unrealed\private\playlevel.cpp:384]
+</span></span><span style="display:flex;"><span>UE4Editor_CoreUObject!ForEachObjectWithOuter() [d:\build\++ue4+release-4.13+compile\sync\engine\source\runtime\coreuobject\private\uobject\uobjecthash.cpp:678]
+</span></span><span style="display:flex;"><span>UE4Editor_UnrealEd!UEditorEngine::EndPlayMap() [d:\build\++ue4+release-4.13+compile\sync\engine\source\editor\unrealed\private\playlevel.cpp:380]
+</span></span><span style="display:flex;"><span>UE4Editor_UnrealEd!UEditorEngine::Tick() [d:\build\++ue4+release-4.13+compile\sync\engine\source\editor\unrealed\private\editorengine.cpp:1653]
+</span></span><span style="display:flex;"><span>UE4Editor_UnrealEd!UUnrealEdEngine::Tick() [d:\build\++ue4+release-4.13+compile\sync\engine\source\editor\unrealed\private\unrealedengine.cpp:371]
+</span></span><span style="display:flex;"><span>UE4Editor!FEngineLoop::Tick() [d:\build\++ue4+release-4.13+compile\sync\engine\source\runtime\launch\private\launchengineloop.cpp:2834]
+</span></span><span style="display:flex;"><span>UE4Editor!GuardedMain() [d:\build\++ue4+release-4.13+compile\sync\engine\source\runtime\launch\private\launch.cpp:156]
+</span></span><span style="display:flex;"><span>UE4Editor!GuardedMainWrapper() [d:\build\++ue4+release-4.13+compile\sync\engine\source\runtime\launch\private\windows\launchwindows.cpp:126]
+</span></span><span style="display:flex;"><span>UE4Editor!WinMain() [d:\build\++ue4+release-4.13+compile\sync\engine\source\runtime\launch\private\windows\launchwindows.cpp:202]
+</span></span><span style="display:flex;"><span>UE4Editor!__scrt_common_main_seh() [f:\dd\vctools\crt\vcstartup\src\startup\exe_common.inl:264]
+</span></span><span style="display:flex;"><span>kernel32
+</span></span><span style="display:flex;"><span>ntdll
+</span></span></code></pre></div><div class="alert danger ">
+  <p>执行<code>RemoveFromRoot()</code>不要放在Actor自己对象的<code>Actor::BeginDestroy()</code>函数内（override 父类<code>BeginDestroy()</code>函数），即使是在<code>Super::BeginDestroy()</code>执行之前。否则退出游戏时（包括PIE模式（编辑器内运行游戏）下退出游戏）仍会崩溃。</p>
 </div>
 <p>override 父类<code>BeginDestroy()</code>函数并在其内部执行<code>RemoveFromRoot()</code>导致的崩溃堆栈：</p>
-<pre><code>[Inline Frame] UE4Editor-Engine.dll!UObjectBaseUtility::MarkPendingKill() Line 150    C++
- [Inline Frame] UE4Editor-Engine.dll!UWorld::MarkObjectsPendingKill::__l2::&lt;lambda_def76fd07ced75fbbe91915eb5003628&gt;::operator()(UObject * Object) Line 1500    C++
- [Inline Frame] UE4Editor-Engine.dll!Invoke(UWorld::MarkObjectsPendingKill::__l2::&lt;lambda_def76fd07ced75fbbe91915eb5003628&gt; &amp;) Line 45    C++
- UE4Editor-Engine.dll!UE4Function_Private::TFunctionRefCaller&lt;&lt;lambda_def76fd07ced75fbbe91915eb5003628&gt;,void __cdecl(UObject * __ptr64)&gt;::Call(void * Obj, UObject * &amp; &lt;Params_0&gt;) Line 251    C++
- [Inline Frame] UE4Editor-CoreUObject.dll!UE4Function_Private::TFunctionRefBase&lt;TFunctionRef&lt;void __cdecl(UObject *)&gt;,void __cdecl(UObject *)&gt;::operator()(UObject * &lt;Params_0&gt;) Line 290    C++
- UE4Editor-CoreUObject.dll!ForEachObjectWithOuter(const UObjectBase * Outer, TFunctionRef&lt;void __cdecl(UObject *)&gt; Operation, bool bIncludeNestedObjects, EObjectFlags ExclusionFlags, EInternalObjectFlags ExclusionInternalFlags) Line 711    C++
- UE4Editor-Engine.dll!UWorld::MarkObjectsPendingKill() Line 1503    C++
- UE4Editor-UnrealEd.dll!UEditorEngine::EndPlayMap() Line 415    C++
- UE4Editor-UnrealEd.dll!UEditorEngine::Tick(float DeltaSeconds, bool bIdleMode) Line 1957    C++
- UE4Editor-UnrealEd.dll!UUnrealEdEngine::Tick(float DeltaSeconds, bool bIdleMode) Line 403    C++
- UE4Editor.exe!FEngineLoop::Tick() Line 3495    C++
- [Inline Frame] UE4Editor.exe!EngineTick() Line 62    C++
- UE4Editor.exe!GuardedMain(const wchar_t * CmdLine, HINSTANCE__ * hInInstance, HINSTANCE__ * hPrevInstance, int nCmdShow) Line 166    C++
- UE4Editor.exe!WinMain(HINSTANCE__ * hInInstance, HINSTANCE__ * hPrevInstance, char * __formal, int nCmdShow) Line 209    C++
-</code></pre>
-<p>崩溃的函数位置：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Text" data-lang="Text"><span style="display:flex;"><span>[Inline Frame] UE4Editor-Engine.dll!UObjectBaseUtility::MarkPendingKill() Line 150    C++
+</span></span><span style="display:flex;"><span>[Inline Frame] UE4Editor-Engine.dll!UWorld::MarkObjectsPendingKill::__l2::&lt;lambda_def76fd07ced75fbbe91915eb5003628&gt;::operator()(UObject * Object) Line 1500    C++
+</span></span><span style="display:flex;"><span>[Inline Frame] UE4Editor-Engine.dll!Invoke(UWorld::MarkObjectsPendingKill::__l2::&lt;lambda_def76fd07ced75fbbe91915eb5003628&gt; &amp;) Line 45    C++
+</span></span><span style="display:flex;"><span>UE4Editor-Engine.dll!UE4Function_Private::TFunctionRefCaller&lt;&lt;lambda_def76fd07ced75fbbe91915eb5003628&gt;,void __cdecl(UObject * __ptr64)&gt;::Call(void * Obj, UObject * &amp; &lt;Params_0&gt;) Line 251    C++
+</span></span><span style="display:flex;"><span>[Inline Frame] UE4Editor-CoreUObject.dll!UE4Function_Private::TFunctionRefBase&lt;TFunctionRef&lt;void __cdecl(UObject *)&gt;,void __cdecl(UObject *)&gt;::operator()(UObject * &lt;Params_0&gt;) Line 290    C++
+</span></span><span style="display:flex;"><span>UE4Editor-CoreUObject.dll!ForEachObjectWithOuter(const UObjectBase * Outer, TFunctionRef&lt;void __cdecl(UObject *)&gt; Operation, bool bIncludeNestedObjects, EObjectFlags ExclusionFlags, EInternalObjectFlags ExclusionInternalFlags) Line 711    C++
+</span></span><span style="display:flex;"><span>UE4Editor-Engine.dll!UWorld::MarkObjectsPendingKill() Line 1503    C++
+</span></span><span style="display:flex;"><span>UE4Editor-UnrealEd.dll!UEditorEngine::EndPlayMap() Line 415    C++
+</span></span><span style="display:flex;"><span>UE4Editor-UnrealEd.dll!UEditorEngine::Tick(float DeltaSeconds, bool bIdleMode) Line 1957    C++
+</span></span><span style="display:flex;"><span>UE4Editor-UnrealEd.dll!UUnrealEdEngine::Tick(float DeltaSeconds, bool bIdleMode) Line 403    C++
+</span></span><span style="display:flex;"><span>UE4Editor.exe!FEngineLoop::Tick() Line 3495    C++
+</span></span><span style="display:flex;"><span>[Inline Frame] UE4Editor.exe!EngineTick() Line 62    C++
+</span></span><span style="display:flex;"><span>UE4Editor.exe!GuardedMain(const wchar_t * CmdLine, HINSTANCE__ * hInInstance, HINSTANCE__ * hPrevInstance, int nCmdShow) Line 166    C++
+</span></span><span style="display:flex;"><span>UE4Editor.exe!WinMain(HINSTANCE__ * hInInstance, HINSTANCE__ * hPrevInstance, char * __formal, int nCmdShow) Line 209    C++
+</span></span></code></pre></div><p>崩溃的函数位置：</p>
 <pre><code>FORCEINLINE void MarkPendingKill()
 {
     check(!IsRooted());
@@ -407,7 +405,7 @@
 }
 </code></pre>
 <div class="alert success ">
-  <p>建议重写<code>AActor::EndPlay()</code>并在其内部执行<code>RemoveFromRoot</code>。这样即使在PIE模式下退出游戏或者Game模式退出游戏都不会崩溃</p>
+  <p>建议重写<code>AActor::EndPlay()</code>并在其内部执行<code>RemoveFromRoot</code>。这样PIE模式下退出游戏或者Game模式退出游戏都不会崩溃</p>
 </div>
 <pre><code>void AActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
 </code></pre>

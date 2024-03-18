@@ -409,48 +409,93 @@ Unreal Engine 4. Different ways to instantiate the object<br>
 </code></pre>
 <h5 id="initialize-members-of-uobject-from-ini-configuration-file">Initialize members of UObject from ini configuration file</h5>
 <p>Engine\Source\Runtime\CoreUObject\Public\UObject\Object.h</p>
-<pre><code>/**
- * Imports property values from an .ini file.
- *
- * @param    Class                the class to use for determining which section of the ini to retrieve text values from
- * @param    Filename            indicates the filename to load values from; if not specified, uses ConfigClass's ClassConfigName
- * @param    PropagationFlags    indicates how this call to LoadConfig should be propagated; expects a bitmask of UE4::ELoadConfigPropagationFlags values.
- * @param    PropertyToLoad        if specified, only the ini value for the specified property will be imported.
- */
-void LoadConfig( UClass* ConfigClass=NULL, const TCHAR* Filename=NULL, uint32 PropagationFlags=UE4::LCPF_None, class UProperty* PropertyToLoad=NULL );
-
-/**
- * Wrapper method for LoadConfig that is used when reloading the config data for objects at runtime which have already loaded their config data at least once.
- * Allows the objects the receive a callback that it's configuration data has been reloaded.
- *
- * @param    Class                the class to use for determining which section of the ini to retrieve text values from
- * @param    Filename            indicates the filename to load values from; if not specified, uses ConfigClass's ClassConfigName
- * @param    PropagationFlags    indicates how this call to LoadConfig should be propagated; expects a bitmask of UE4::ELoadConfigPropagationFlags values.
- * @param    PropertyToLoad        if specified, only the ini value for the specified property will be imported
- */
-void ReloadConfig( UClass* ConfigClass=NULL, const TCHAR* Filename=NULL, uint32 PropagationFlags=UE4::LCPF_None, class UProperty* PropertyToLoad=NULL );
-
-/** Import an object from a file. */
-void ParseParms( const TCHAR* Parms );
-</code></pre>
-<h5 id="how-do-i-create-a-blueprint-that-can-inherit-from-a-uobject">How do I create a blueprint that can inherit from a UObject</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * Imports property values from an .ini file.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * @param    Class                the class to use for determining which section of the ini to retrieve text values from
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * @param    Filename            indicates the filename to load values from; if not specified, uses ConfigClass&#39;s ClassConfigName
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * @param    PropagationFlags    indicates how this call to LoadConfig should be propagated; expects a bitmask of UE4::ELoadConfigPropagationFlags values.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * @param    PropertyToLoad        if specified, only the ini value for the specified property will be imported.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> */</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">LoadConfig</span>( UClass<span style="color:#f92672">*</span> ConfigClass<span style="color:#f92672">=</span>NULL, <span style="color:#66d9ef">const</span> TCHAR<span style="color:#f92672">*</span> Filename<span style="color:#f92672">=</span>NULL, uint32 PropagationFlags<span style="color:#f92672">=</span>UE4<span style="color:#f92672">::</span>LCPF_None, <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">UProperty</span><span style="color:#f92672">*</span> PropertyToLoad<span style="color:#f92672">=</span>NULL );
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * Wrapper method for LoadConfig that is used when reloading the config data for objects at runtime which have already loaded their config data at least once.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * Allows the objects the receive a callback that it&#39;s configuration data has been reloaded.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * @param    Class                the class to use for determining which section of the ini to retrieve text values from
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * @param    Filename            indicates the filename to load values from; if not specified, uses ConfigClass&#39;s ClassConfigName
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * @param    PropagationFlags    indicates how this call to LoadConfig should be propagated; expects a bitmask of UE4::ELoadConfigPropagationFlags values.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * @param    PropertyToLoad        if specified, only the ini value for the specified property will be imported
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> */</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">ReloadConfig</span>( UClass<span style="color:#f92672">*</span> ConfigClass<span style="color:#f92672">=</span>NULL, <span style="color:#66d9ef">const</span> TCHAR<span style="color:#f92672">*</span> Filename<span style="color:#f92672">=</span>NULL, uint32 PropagationFlags<span style="color:#f92672">=</span>UE4<span style="color:#f92672">::</span>LCPF_None, <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">UProperty</span><span style="color:#f92672">*</span> PropertyToLoad<span style="color:#f92672">=</span>NULL );
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">/** Import an object from a file. */</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">ParseParms</span>( <span style="color:#66d9ef">const</span> TCHAR<span style="color:#f92672">*</span> Parms );
+</span></span></code></pre></div><h5 id="how-do-i-create-a-blueprint-that-can-inherit-from-a-uobject">How do I create a blueprint that can inherit from a UObject</h5>
 <p>Examples:</p>
-<pre><code>UCLASS(Blueprintable, BlueprintType) 
-class ENGINE_API UMyObject : public UObject 
-{
-</code></pre>
-<p>Reference:<br>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>UCLASS(Blueprintable, BlueprintType) 
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ENGINE_API</span> UMyObject : <span style="color:#66d9ef">public</span> UObject 
+</span></span><span style="display:flex;"><span>{
+</span></span></code></pre></div><p>Reference:<br>
 <a href="https://answers.unrealengine.com/questions/35953/view.html">https://answers.unrealengine.com/questions/35953/view.html</a></p>
 <h3 id="config-ini-file">Config (ini file)</h3>
-<h5 id="config-types">Config Types</h5>
-<ul>
-<li><code>perObjectConfig</code>: 使得配置变为针对每个Object的实例，而不是每个Class存一个配置块。</li>
-<li><code>configdonotcheckdefaults</code>: 配置了这个的话，config在读取的时候就不会去读取default配置。</li>
-<li><code>defaultconfig</code>: 配置只保存在default中</li>
-</ul>
-<p>UE4中Config的使用<br>
-<a href="https://blog.ch-wind.com/ue4-config-usage/">https://blog.ch-wind.com/ue4-config-usage/</a></p>
 <h5 id="how-to-add-gui-for-custom-ini-file-in-project-settings">How to add GUI for custom ini file in Project Settings</h5>
+<p>It&rsquo;s much easier to create custom project settings using <a href="https://www.tomlooman.com/unreal-engine-developer-settings/">DeveloperSettings (Custom ‘Project Settings’)</a>, example:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>UCLASS(Config <span style="color:#f92672">=</span> Game, DefaultConfig, meta <span style="color:#f92672">=</span> (DisplayName <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;My Custom Settings&#34;</span>))
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MYGAME_API</span> UMySettings : <span style="color:#66d9ef">public</span> UDeveloperSettings
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    GENERATED_BODY()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    UPROPERTY(Config, EditAnywhere, Category <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Info&#34;</span>)
+</span></span><span style="display:flex;"><span>    FString Foo <span style="color:#f92672">=</span> TEXT(<span style="color:#e6db74">&#34;test&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    UPROPERTY(Config, EditAnywhere, Category <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Info&#34;</span>)
+</span></span><span style="display:flex;"><span>    int32 Bar <span style="color:#f92672">=</span> <span style="color:#ae81ff">222</span>;
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p>Then you can modify values in GUI panel (Project Settings -&gt; Game -&gt; My Settings), and values will be saved to <code>[Project]/Config/DefaultGame.ini</code> (in section <code>[/Script/MyGame.MySettings]</code>) automatically when modify them in project settings panel.</p>
+<p>If want to save values in custom ini file, not Game.ini, you should change</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>UCLASS(Config <span style="color:#f92672">=</span> Game, DefaultConfig, meta <span style="color:#f92672">=</span> (DisplayName <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;My Custom Settings&#34;</span>))
+</span></span></code></pre></div><p>to</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>UCLASS(Config <span style="color:#f92672">=</span> MySetting, DefaultConfig, meta <span style="color:#f92672">=</span> (DisplayName <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;My Custom Settings&#34;</span>))
+</span></span></code></pre></div><p>but then the GUI panel moved into <code>Project Settings -&gt; Engine -&gt; My Custom Settings</code>.</p>
+<p>ini file was saved in <code>[Project]/Config/DefaultMySetting.ini</code> automatically when values was modified in GUI (if the default value wasn&rsquo;t changed),
+but if change value and save it using C++ code: <code>LoadConfig()</code> then <code>SaveConfig()</code>, then ini file will be saved in <code>FPaths::SourceConfigDir()</code> (e.g. [Project]/Saved/Config/WindowsNoEditor/MySetting.ini)</p>
+<p>Change values and save them using C++ at run-time (<code>LoadConfig()</code>, <code>SaveConfig()</code>):</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>UMySettings<span style="color:#f92672">*</span> Settings <span style="color:#f92672">=</span> GetMutableDefault<span style="color:#f92672">&lt;</span>UMySettings<span style="color:#f92672">&gt;</span>();
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//load values from [Project]/Saved/Config/WindowsNoEditor/MySettings.ini
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>Settings<span style="color:#f92672">-&gt;</span>LoadConfig();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Settings<span style="color:#f92672">-&gt;</span>Foo <span style="color:#f92672">=</span> TEXT(<span style="color:#e6db74">&#34;jjjj&#34;</span>);
+</span></span><span style="display:flex;"><span>Settings<span style="color:#f92672">-&gt;</span>Bar <span style="color:#f92672">=</span> <span style="color:#ae81ff">6666</span>;
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//save values into [Project]/Saved/Config/WindowsNoEditor/MySettings.ini
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>Settings<span style="color:#f92672">-&gt;</span>SaveConfig();
+</span></span></code></pre></div><h5 id="defaultconfig-vs-configdonotcheckdefaults">DefaultConfig vs ConfigDoNotCheckDefaults</h5>
+<p>一般一个ini对应的config class长这样：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>UCLASS(Config <span style="color:#f92672">=</span> Game, DefaultConfig, meta <span style="color:#f92672">=</span> (DisplayName <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;My Custom Settings&#34;</span>))
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MYGAME_API</span> UMySettings : <span style="color:#66d9ef">public</span> UDeveloperSettings
+</span></span><span style="display:flex;"><span>{
+</span></span></code></pre></div><p>其中<code>DefaultConfig</code>表示ini文件的读取和存储方式，另外一种方式是<code>ConfigDoNotCheckDefaults</code>。</p>
+<p>读取方式区别：</p>
+<ul>
+<li><code>DefaultConfig</code>: 使用<code>LoadConfig()</code>接口获取的配置，或者编辑器首次启动时，都是从<code>FPaths::SourceConfigDir()</code>目录下的ini读取，比如：<code>[Project]/Saved/Config/WindowsNoEditor/MySettings.ini</code>，而不是DefaultMySettings.ini（即使其内部有修改过的值）。但通过编辑器（Project Settings面板）修改后，会清掉<code>[Project]/Saved/Config/WindowsNoEditor/MySettings.ini</code>中所有内容，即使只修改了一项。同时，将修改过的值保存在<code>[Project]/Config/MySettings.ini</code></li>
+<li><code>ConfigDoNotCheckDefaults</code>: 都是从<code>[Project]/Saved/Config/WindowsNoEditor/MySettings.ini</code>读取。</li>
+</ul>
+<p>存储方式区别（两种情况）：</p>
+<ul>
+<li>使用C++接口<code>SaveConfig()</code>触发的存储都存在<code>FPaths::SourceConfigDir()</code>目录下，比如：<code>[Project]/Saved/Config/WindowsNoEditor/MySettings.ini</code>。</li>
+<li>通过编辑器（Project Settings面板）修改触发的存储：
+<ul>
+<li><code>DefaultConfig</code>: ini文件存放在<code>[Project]/Config/DefaultMySettings.ini</code>中。<code>[Project]/Saved/Config/WindowsNoEditor/MySettings.ini</code>文件仍然存在，但是内容为空。</li>
+<li><code>ConfigDoNotCheckDefaults</code>: <code>[Project]/Config/DefaultMySettings.ini</code>文件不存在，且内容保存在<code>[Project]/Saved/Config/WindowsNoEditor/MySettings.ini</code></li>
+</ul>
+</li>
+</ul>
+<p>参考：UE4中Config的使用<br>
+<a href="https://blog.ch-wind.com/ue4-config-usage/">https://blog.ch-wind.com/ue4-config-usage/</a></p>
+<h5 id="how-to-add-custom-config-in-specified-section-in-project-settings">How to add custom config in specified section in project settings</h5>
 <p>Credits to: <a href="https://github.com/Tencent/UnLua/blob/bb6213568d03a6bc41b3622cf8a6c0daad114c9f/Plugins/UnLua/Source/UnLua/Private/UnLuaModule.cpp#L258">UnLuaModule.cpp</a></p>
 <p>1, Add C++ class for ini config:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>UCLASS(Config <span style="color:#f92672">=</span> UnLua, DefaultConfig, Meta <span style="color:#f92672">=</span> (DisplayName <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;UnLua&#34;</span>))
@@ -486,9 +531,11 @@ class ENGINE_API UMyObject : public UObject
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> <span style="color:#66d9ef">auto</span> Section <span style="color:#f92672">=</span> SettingsModule<span style="color:#f92672">-&gt;</span>RegisterSettings(<span style="color:#e6db74">&#34;Project&#34;</span>, <span style="color:#e6db74">&#34;Plugins&#34;</span>, <span style="color:#e6db74">&#34;UnLua&#34;</span>,
 </span></span><span style="display:flex;"><span>        LOCTEXT(<span style="color:#e6db74">&#34;UnLuaEditorSettingsName&#34;</span>, <span style="color:#e6db74">&#34;UnLua&#34;</span>), LOCTEXT(<span style="color:#e6db74">&#34;UnLuaEditorSettingsDescription&#34;</span>, <span style="color:#e6db74">&#34;UnLua Runtime Settings&#34;</span>),
 </span></span><span style="display:flex;"><span>        GetMutableDefault<span style="color:#f92672">&lt;</span>UUnLuaSettings<span style="color:#f92672">&gt;</span>());
-</span></span><span style="display:flex;"><span>    Section<span style="color:#f92672">-&gt;</span>OnModified().BindRaw(<span style="color:#66d9ef">this</span>, <span style="color:#f92672">&amp;</span>FMyPluginModule<span style="color:#f92672">::</span>OnSettingsModified);
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//bind callback for value changed
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    Section<span style="color:#f92672">-&gt;</span>OnModified().BindRaw(<span style="color:#66d9ef">this</span>, <span style="color:#f92672">&amp;</span>FMyPluginModule<span style="color:#f92672">::</span>OnSettingsModified);
 </span></span><span style="display:flex;"><span><span style="color:#75715e">#endif
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> FMyPluginModule<span style="color:#f92672">::</span>UnregisterSettings()
 </span></span><span style="display:flex;"><span>{
 </span></span><span style="display:flex;"><span><span style="color:#75715e">#if WITH_EDITOR
@@ -497,7 +544,6 @@ class ENGINE_API UMyObject : public UObject
 </span></span><span style="display:flex;"><span>        SettingsModule<span style="color:#f92672">-&gt;</span>UnregisterSettings(<span style="color:#e6db74">&#34;Project&#34;</span>, <span style="color:#e6db74">&#34;Plugins&#34;</span>, <span style="color:#e6db74">&#34;UnLua&#34;</span>);
 </span></span><span style="display:flex;"><span><span style="color:#75715e">#endif
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
-</span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h5 id="plugins-config-fileini">Plugins Config file(ini)</h5>
 <p>You can put config files into plugin&rsquo;s Config directory. e.g.:<br>
 <code>[Porject]\Plugins\[Plugin]\Config\CustomSettings.ini</code></p>
