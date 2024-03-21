@@ -382,7 +382,16 @@ Unreal Engine 4 Save and Load Graphics Settings using Blueprints Tutorial<br>
 <a href="https://www.youtube.com/watch?v=5AXA2CrPwTo">https://www.youtube.com/watch?v=5AXA2CrPwTo</a><br>
 Change Graphics Settings In-Game - Unreal Engine 4 Tutorial<br>
 <a href="https://www.youtube.com/watch?v=T90vqA9x5so">https://www.youtube.com/watch?v=T90vqA9x5so</a></p>
-<h5 id="scalability-on-mobile">Scalability on mobile</h5>
+<p>Q: Is there any way to set all quality groups to the same level?<br>
+A: <code>Scalability::SetFromSingleQualityLevel(3);</code> (in Engine\Source\Runtime\Engine\Public\Scalability.h)</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">// Sets all other settings based on an overall value
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// @param Value 0:low, 1:medium, 2:high, 3:epic, 4:cinematic (gets clamped if needed)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>ENGINE_API <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">SetFromSingleQualityLevel</span>(int32 Value);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Sets all other settings based on an overall value, but relative to the maximum.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// @param Value 0: maximum level, 1: maximumlevel -1, etc
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>ENGINE_API <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">SetFromSingleQualityLevelRelativeToMax</span>(int32 Value);
+</span></span></code></pre></div><h5 id="scalability-on-mobile">Scalability on mobile</h5>
 <p>Take Android device as example, graphics quality configuration on mobile：<br>
 Example in <code>\Engine\Config\Android\AndroidScalability.ini</code></p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#75715e">; ------------------------------------------------------------------------------</span>
@@ -482,7 +491,8 @@ Example in <code>\Engine\Config\BaseDeviceProfiles.ini</code></p>
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">HDRDisplayOutputNits</span><span style="color:#f92672">=</span><span style="color:#e6db74">1000</span>
 </span></span></code></pre></div><div class="alert warning ">
   <p><code>sg.ResolutionQuality</code> isn&rsquo;t using the usual 0/1/2/3 quality levels, the value directly maps to <code>r.ScreenPercentage</code>.<br>
-<code>sg.ResolutionQuality=0</code> (by default) means to apply screen percentage as default value: UE5 is <code>66.662</code> = (1440.0f / 2160.0f - 0.1f / 2160.0f) , while UE4 is <code>100</code>.</p>
+<code>sg.ResolutionQuality=0</code> (by default) means to apply screen percentage as default value: UE5 is <code>66.662</code> = (1440.0f / 2160.0f - 0.1f / 2160.0f) , while UE4 is <code>100</code>.<br>
+For more detail see <a href="https://github.com/EpicGames/UnrealEngine/blob/072300df18a94f18077ca20a14224b5d99fee872/Engine/Config/BaseScalability.ini#L10">BaseScalability.ini</a>.</p>
 </div>
 <h5 id="screen-resolution-on-mobile">Screen Resolution on Mobile</h5>
 <p>iOS:</p>
@@ -519,7 +529,10 @@ Console command:</p>
 </span></span><span style="display:flex;"><span>    GameUserSettings<span style="color:#f92672">-&gt;</span>ApplyHardwareBenchmarkResults();
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>Gather CPU and GPU benchmark data：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> Scalability<span style="color:#f92672">::</span>FQualityLevels State <span style="color:#f92672">=</span> Scalability<span style="color:#f92672">::</span>BenchmarkQualityLevels();
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>uint32 WorkScale <span style="color:#f92672">=</span> <span style="color:#ae81ff">10.f</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">float</span> CPUMultiplier <span style="color:#f92672">=</span> <span style="color:#ae81ff">1.f</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">float</span> GPUMultiplier <span style="color:#f92672">=</span> <span style="color:#ae81ff">1.f</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> Scalability<span style="color:#f92672">::</span>FQualityLevels State <span style="color:#f92672">=</span> Scalability<span style="color:#f92672">::</span>BenchmarkQualityLevels(uint32 WorkScale, <span style="color:#66d9ef">float</span> CPUMultiplier, <span style="color:#66d9ef">float</span> GPUMultiplier);
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#66d9ef">float</span> CPUIndex <span style="color:#f92672">=</span> State.CPUBenchmarkResults;
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#66d9ef">float</span> GPUIndex <span style="color:#f92672">=</span> State.GPUBenchmarkResults;
 </span></span></code></pre></div><p>The return value corresponds to the configuration in <code>Engine\Config\BaseScalability.ini</code>：</p>
@@ -609,6 +622,9 @@ Console command:</p>
 <div class="alert warning ">
   <p><code>GameUserSettings-&gt;RunHardwareBenchmark();</code> and <code>Scalability::BenchmarkQualityLevels();</code> only work on PC and console. The mobile device fluctuates inaccurately, and may be greatly affected by temperature.</p>
 </div>
+<div class="alert info ">
+  <p>By default GTX 970 will be identified as <code>Epic</code> group (yes, even UE5), but for your game, probably the <code>Epic</code> group should be at least RTX 3070, to solve this problem, you can tweak <code>GPUMultiplier</code>, e.g. <code>0.39</code>.</p>
+</div>
 <h5 id="how-to-read-config-file-ini">How to read config file (.ini)</h5>
 <p>config file path: <code>[Project]/Config/DefaultMyGameSettings.ini</code></p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#66d9ef">[/Script/MyGame.MyGameSettings]</span>
@@ -691,7 +707,54 @@ bUseVSync=False
 </span></span><span style="display:flex;"><span>int32 FullscreenMode;
 </span></span></code></pre></div><p>Origin:<br>
 <a href="https://answers.unrealengine.com/questions/206504/how-to-default-fullscreen-in-shipping-package.html">https://answers.unrealengine.com/questions/206504/how-to-default-fullscreen-in-shipping-package.html</a></p>
-<h5 id="references">References</h5>
+<h5 id="how-to-get-cpu-model-and-gpu-model-brand-information">How to get CPU model and GPU model (brand information)</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>FString FWindowsPlatformMisc<span style="color:#f92672">::</span>GetPrimaryGPUBrand()
+</span></span><span style="display:flex;"><span>FString FWindowsPlatformMisc<span style="color:#f92672">::</span>GetCPUBrand()
+</span></span></code></pre></div><h5 id="callstack-from-ukismetsystemlibraryexecuteconsolecommand-to-fconsolevariablebasecanchange">Callstack: from UKismetSystemLibrary::ExecuteConsoleCommand to FConsoleVariableBase::CanChange</h5>
+<p>Callstack in UE5 (but still works for UE4):</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Text" data-lang="Text"><span style="display:flex;"><span>FConsoleVariableBase::CanChange(EConsoleVariableFlags SetBy) Line 144
+</span></span><span style="display:flex;"><span>    at D:\UE5\Engine\Source\Runtime\Core\Private\HAL\ConsoleManager.cpp(144)
+</span></span><span style="display:flex;"><span>FConsoleVariable&lt;int&gt;::Set(const wchar_t * InValue, EConsoleVariableFlags SetBy) Line 568
+</span></span><span style="display:flex;"><span>    at D:\UE5\Engine\Source\Runtime\Core\Private\HAL\ConsoleManager.cpp(568)
+</span></span><span style="display:flex;"><span>OnSetCVarFromIniEntry(const wchar_t * IniFile, const wchar_t * Key, const wchar_t * Value, unsigned int SetBy, bool bAllowCheating) Line 5094
+</span></span><span style="display:flex;"><span>    at D:\UE5\Engine\Source\Runtime\Core\Private\Misc\ConfigCacheIni.cpp(5094)
+</span></span><span style="display:flex;"><span>ApplyCVarSettingsFromIni(const wchar_t * InSectionName, const wchar_t * InIniFilename, unsigned int SetBy, bool bAllowCheating) Line 5138
+</span></span><span style="display:flex;"><span>    at D:\UE5\Engine\Source\Runtime\Core\Private\Misc\ConfigCacheIni.cpp(5138)
+</span></span><span style="display:flex;"><span>Scalability::SetGroupQualityLevel(const wchar_t * InGroupName, int InQualityLevel, int InNumLevels) Line 402
+</span></span><span style="display:flex;"><span>    at D:\UE5\Engine\Source\Runtime\Engine\Private\Scalability.cpp(402)
+</span></span><span style="display:flex;"><span>Invoke(void(*)(IConsoleVariable *) &amp;) Line 47
+</span></span><span style="display:flex;"><span>    at D:\UE5\Engine\Source\Runtime\Core\Public\Templates\Invoke.h(47)
+</span></span><span style="display:flex;"><span>UE::Core::Private::Tuple::TTupleBase&lt;TIntegerSequence&lt;unsigned int&gt;&gt;::ApplyAfter(void(*)(IConsoleVariable *) &amp;) Line 324
+</span></span><span style="display:flex;"><span>    at D:\UE5\Engine\Source\Runtime\Core\Public\Templates\Tuple.h(324)
+</span></span><span style="display:flex;"><span>TBaseStaticDelegateInstance&lt;void __cdecl(IConsoleVariable *),FDefaultDelegateUserPolicy&gt;::ExecuteIfSafe(IConsoleVariable * &lt;Params_0&gt;) Line 731
+</span></span><span style="display:flex;"><span>    at D:\UE5\Engine\Source\Runtime\Core\Public\Delegates\DelegateInstancesImpl.h(731)
+</span></span><span style="display:flex;"><span>TMulticastDelegate&lt;void __cdecl(IConsoleVariable *),FDefaultDelegateUserPolicy&gt;::Broadcast(IConsoleVariable *) Line 967
+</span></span><span style="display:flex;"><span>    at D:\UE5\Engine\Source\Runtime\Core\Public\Delegates\DelegateSignatureImpl.inl(967)
+</span></span><span style="display:flex;"><span>FConsoleVariableBase::OnChanged(EConsoleVariableFlags SetBy) Line 196
+</span></span><span style="display:flex;"><span>    at D:\UE5\Engine\Source\Runtime\Core\Private\HAL\ConsoleManager.cpp(196)
+</span></span><span style="display:flex;"><span>FConsoleVariable&lt;int&gt;::OnChanged(EConsoleVariableFlags) Line 605
+</span></span><span style="display:flex;"><span>    at D:\UE5\Engine\Source\Runtime\Core\Private\HAL\ConsoleManager.cpp(605)
+</span></span><span style="display:flex;"><span>FConsoleVariable&lt;int&gt;::Set(const wchar_t * InValue, EConsoleVariableFlags SetBy) Line 571
+</span></span><span style="display:flex;"><span>    at D:\UE5\Engine\Source\Runtime\Core\Private\HAL\ConsoleManager.cpp(571)
+</span></span><span style="display:flex;"><span>FConsoleManager::ProcessUserConsoleInput(const wchar_t * InInput, FOutputDevice &amp; Ar, UWorld * InWorld) Line 1798
+</span></span><span style="display:flex;"><span>    at D:\UE5\Engine\Source\Runtime\Core\Private\HAL\ConsoleManager.cpp(1798)
+</span></span><span style="display:flex;"><span>UEngine::Exec(UWorld * InWorld, const wchar_t * Cmd, FOutputDevice &amp; Ar) Line 4871
+</span></span><span style="display:flex;"><span>    at D:\UE5\Engine\Source\Runtime\Engine\Private\UnrealEngine.cpp(4871)
+</span></span><span style="display:flex;"><span>UEditorEngine::Exec(UWorld * InWorld, const wchar_t * Stream, FOutputDevice &amp; Ar) Line 5914
+</span></span><span style="display:flex;"><span>    at D:\UE5\Engine\Source\Editor\UnrealEd\Private\EditorServer.cpp(5914)
+</span></span><span style="display:flex;"><span>UUnrealEdEngine::Exec(UWorld * InWorld, const wchar_t * Stream, FOutputDevice &amp; Ar) Line 659
+</span></span><span style="display:flex;"><span>    at D:\UE5\Engine\Source\Editor\UnrealEd\Private\UnrealEdSrv.cpp(659)
+</span></span><span style="display:flex;"><span>UGameViewportClient::Exec(UWorld * InWorld, const wchar_t * Cmd, FOutputDevice &amp; Ar) Line 3014
+</span></span><span style="display:flex;"><span>    at D:\UE5\Engine\Source\Runtime\Engine\Private\GameViewportClient.cpp(3014)
+</span></span><span style="display:flex;"><span>ULocalPlayer::Exec(UWorld * InWorld, const wchar_t * Cmd, FOutputDevice &amp; Ar) Line 1499
+</span></span><span style="display:flex;"><span>    at D:\UE5\Engine\Source\Runtime\Engine\Private\LocalPlayer.cpp(1499)
+</span></span><span style="display:flex;"><span>UPlayer::ConsoleCommand(const FString &amp; Cmd, bool bWriteToLog) Line 51
+</span></span><span style="display:flex;"><span>    at D:\UE5\Engine\Source\Runtime\Engine\Private\Player.cpp(51)
+</span></span><span style="display:flex;"><span>APlayerController::ConsoleCommand(const FString &amp; Cmd, bool bWriteToLog) Line 411
+</span></span><span style="display:flex;"><span>    at D:\UE5\Engine\Source\Runtime\Engine\Private\PlayerController.cpp(411)
+</span></span><span style="display:flex;"><span>UKismetSystemLibrary::ExecuteConsoleCommand(const UObject * WorldContextObject, const FString &amp; Command, APlayerController * Player) Line 396
+</span></span><span style="display:flex;"><span>    at D:\UE5\Engine\Source\Runtime\Engine\Private\KismetSystemLibrary.cpp(396)
+</span></span></code></pre></div><h5 id="references">References</h5>
 <p><a href="https://docs.unrealengine.com/5.3/en-US/scalability-and-device-profiles-in-lyra-sample-game-for-unreal-engine/">Lyra Scalability and Device Profiles - UE5 Official Docs</a></p>
 <hr>
 <p><code>A man who cannot tolerate small misfortunes can never accomplish great things. -Chinese Proverbs</code></p>

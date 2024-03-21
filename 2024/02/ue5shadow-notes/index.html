@@ -58,8 +58,8 @@
 
 
 
-  <meta property="og:image" content="https://dawnarc.com/thumbnail/cover-beijing.jpg">
-  <meta property="twitter:image" content="https://dawnarc.com/thumbnail/cover-beijing.jpg">
+  <meta property="og:image" content="https://dawnarc.com/thumbnail/beijing/thumbnail-beijing-001.jpg">
+  <meta property="twitter:image" content="https://dawnarc.com/thumbnail/beijing/thumbnail-beijing-001.jpg">
 
 
 
@@ -365,17 +365,27 @@
               <p>keywords: UE5, Shadow, ShadowMap, DirectX 12, D3D12, DirectX 11, D3D11</p>
 <h3 id="common">Common</h3>
 <h5 id="how-to-go-back-to-ue4-visual-effect-to-save-performance">How to go back to UE4 visual effect to save performance</h5>
-<p>Disable 3 features of UE5:</p>
+<p>Disable 4 features of UE5:</p>
 <ul>
 <li>Lumen: Settings -&gt; Rendering -&gt; Dynamic Global Illuminatioin Method : <code>Standalone Ray Traced</code>.</li>
 <li>Nanite: Settings -&gt; Rendering -&gt; Uncheck <code>Nanite</code>.</li>
 <li>Virtual Shadow Maps: Settings -&gt; Rendering -&gt; Shadow Map Method: <code>Shadow Maps</code>.</li>
+<li>TSR: Settings -&gt; Rendering -&gt; Anti Aliasing Method: Temporal Super Resolution (TSR).</li>
 </ul>
 <p>Or alter Engine.ini:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Text" data-lang="Text"><span style="display:flex;"><span>[/Script/Engine.RendererSettings]
 </span></span><span style="display:flex;"><span>r.DynamicGlobalIlluminationMethod=3
 </span></span><span style="display:flex;"><span>r.Nanite.ProjectEnabled=False
 </span></span><span style="display:flex;"><span>r.Shadow.Virtual.Enable=0
+</span></span><span style="display:flex;"><span>r.AntiAliasingMethod=2
+</span></span><span style="display:flex;"><span>r.TemporalAA.Upsampling=True
+</span></span></code></pre></div><p><div class="alert warning ">
+  <p>Virtual Shadow Maps and Nanite require DirectX 12 or Vulkan, so if don&rsquo;t use them, you can switch RHI to DirectX 11.</p>
+</div>
+If forgot to disable Nanite in project settings (<code>r.Nanite.ProjectEnabled=True</code> by default) before packaging, execute console command <code>r.Nanite 0</code> at run-time to disable Nanite.</p>
+<p>Engine.ini (set RHI to DirectX 11):</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Text" data-lang="Text"><span style="display:flex;"><span>[/Script/WindowsTargetPlatform.WindowsTargetSettings]
+</span></span><span style="display:flex;"><span>DefaultGraphicsRHI=DefaultGraphicsRHI_DX11
 </span></span></code></pre></div><p>Comparison:
 <figure><img src="https://dawnarc.com/img/2024/20240222-[UE5]Shadow%20Notes/[UE5]Shadow%20Notes%20-%2001.gif"/>
 </figure>
@@ -383,17 +393,14 @@
 <figure><img src="https://dawnarc.com/img/2024/20240222-[UE5]Shadow%20Notes/[UE5]Shadow%20Notes%20-%2002.gif"/>
 </figure>
 
-<figure><img src="https://dawnarc.com/img/2024/20240222-[UE5]Shadow%20Notes/[UE5]Shadow%20Notes%20-%2003.gif"/>
+<figure><img src="https://dawnarc.com/img/2024/20240222-[UE5]Shadow%20Notes/[UE5]Shadow%20Notes%20-%2003.png"/>
 </figure>
 </p>
-<p>If forgot to disable Nanite in project settings (<code>r.Nanite.ProjectEnabled=True</code> by default) before packaging, execute console command <code>r.Nanite 0</code> at run-time to disable Nanite.</p>
-<div class="alert warning ">
-  <p>Virtual Shadow Maps and Nanite require DirectX 12 or Vulkan, so if don&rsquo;t use them, you can switch RHI to DirectX 11.</p>
+<div class="alert info ">
+  <p>The main reason why the frame rate increased significantly is because TSR was turned off.<br>
+The default value of <code>r.ScreenPercentage</code> for TSR is <code>66.667</code>, when your switch from TSR to TAA, you need to increase <code>r.ScreenPercentage</code> to improve image sharpness.</p>
 </div>
-<p>Engine.ini (set RHI to DirectX 11):</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Text" data-lang="Text"><span style="display:flex;"><span>[/Script/WindowsTargetPlatform.WindowsTargetSettings]
-</span></span><span style="display:flex;"><span>DefaultGraphicsRHI=DefaultGraphicsRHI_DX11
-</span></span></code></pre></div><h3 id="misc">Misc</h3>
+<h3 id="misc">Misc</h3>
 <h5 id="issues">Issues</h5>
 <p>Fixing the Ugly Shadow Issues in Unreal Engine 5 (Ray Traced Shadows Issue)<br>
 <a href="https://www.youtube.com/watch?v=F3XSKXhIAuU">https://www.youtube.com/watch?v=F3XSKXhIAuU</a></p>
@@ -428,7 +435,7 @@
           
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--disabled">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2024/03/ue5anti-aliasing-notes/" data-tooltip="[UE5]Anti-Aliasing Notes">
               
                   <i class="fa fa-angle-left"></i>
                   <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
@@ -491,7 +498,7 @@
           
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--disabled">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2024/03/ue5anti-aliasing-notes/" data-tooltip="[UE5]Anti-Aliasing Notes">
               
                   <i class="fa fa-angle-left"></i>
                   <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
