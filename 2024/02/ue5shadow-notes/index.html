@@ -13,18 +13,18 @@
 <meta name="generator" content="Hugo 0.102.3 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Wang Aiguo">
 <meta name="keywords" content="UE5, Rendering">
-<meta name="description" content="keywords: UE5, Shadow, ShadowMap, DirectX 12, D3D12, DirectX 11, D3D11">
+<meta name="description" content="keywords: UE5, Shadow, ShadowMap, VSM (Virtual Shadow Maps),  DirectX 12, D3D12, DirectX 11, D3D11">
 
 
-<meta property="og:description" content="keywords: UE5, Shadow, ShadowMap, DirectX 12, D3D12, DirectX 11, D3D11">
+<meta property="og:description" content="keywords: UE5, Shadow, ShadowMap, VSM (Virtual Shadow Maps),  DirectX 12, D3D12, DirectX 11, D3D11">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[UE5]Shadow Notes">
 <meta name="twitter:title" content="[UE5]Shadow Notes">
 <meta property="og:url" content="https://dawnarc.com/2024/02/ue5shadow-notes/">
 <meta property="twitter:url" content="https://dawnarc.com/2024/02/ue5shadow-notes/">
 <meta property="og:site_name" content="玄冬Wong">
-<meta property="og:description" content="keywords: UE5, Shadow, ShadowMap, DirectX 12, D3D12, DirectX 11, D3D11">
-<meta name="twitter:description" content="keywords: UE5, Shadow, ShadowMap, DirectX 12, D3D12, DirectX 11, D3D11">
+<meta property="og:description" content="keywords: UE5, Shadow, ShadowMap, VSM (Virtual Shadow Maps),  DirectX 12, D3D12, DirectX 11, D3D11">
+<meta name="twitter:description" content="keywords: UE5, Shadow, ShadowMap, VSM (Virtual Shadow Maps),  DirectX 12, D3D12, DirectX 11, D3D11">
 <meta property="og:locale" content="en-us">
 
   
@@ -362,8 +362,14 @@
                 <script>
                      (adsbygoogle = window.adsbygoogle || []).push({});
                 </script>
-              <p>keywords: UE5, Shadow, ShadowMap, DirectX 12, D3D12, DirectX 11, D3D11</p>
+              <p>keywords: UE5, Shadow, ShadowMap, VSM (Virtual Shadow Maps),  DirectX 12, D3D12, DirectX 11, D3D11</p>
 <h3 id="common">Common</h3>
+<h5 id="vsm-optimization">VSM Optimization</h5>
+<p>Experiment with reducing this value from the default of 8. The visual difference between any two adjacent values, e.g., 7 and 8, is nearly imperceptible. However, the performance benefit will not go unnoticed, especially in scenes with lots of shadow casting lights:</p>
+<pre tabindex="0"><code>r.Shadow.Virtual.SMRT.SamplesPerRayLocal
+</code></pre><p>The corresponding <code>SamplesPerRayDirectional</code> has similarly low impact on visual fidelity, but only improves performance on your directional lights (e.g. sun, moon, etc.), which are generally less prevalent in most game levels. Thus modification of this parameter has less of an impact on performance.</p>
+<pre tabindex="0"><code>r.Shadow.Virtual.SMRT.SamplesPerRayDirectional
+</code></pre><p>Origin:<a href="https://gpuopen.com/learn/unreal-engine-performance-guide/">unreal-engine-performance-guide</a></p>
 <h5 id="how-to-go-back-to-ue4-visual-effect-to-save-performance">How to go back to UE4 visual effect to save performance</h5>
 <p>Disable 4 features of UE5:</p>
 <ul>
