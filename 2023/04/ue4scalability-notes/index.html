@@ -754,7 +754,15 @@ bUseVSync=False
 </span></span><span style="display:flex;"><span>    at D:\UE5\Engine\Source\Runtime\Engine\Private\PlayerController.cpp(411)
 </span></span><span style="display:flex;"><span>UKismetSystemLibrary::ExecuteConsoleCommand(const UObject * WorldContextObject, const FString &amp; Command, APlayerController * Player) Line 396
 </span></span><span style="display:flex;"><span>    at D:\UE5\Engine\Source\Runtime\Engine\Private\KismetSystemLibrary.cpp(396)
-</span></span></code></pre></div><h5 id="references">References</h5>
+</span></span></code></pre></div><h5 id="issue-console-priority">Issue: Console Priority</h5>
+<p>Error when execute console command:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Text" data-lang="Text"><span style="display:flex;"><span>LogConsoleManager: Warning: |ConsoleManager.cpp:161|Setting the console variable &#39;r.ViewDistanceScale&#39; with &#39;SetByScalability&#39; was ignored as it is lower priority than the previous &#39;SetByConsole&#39;. Value remains &#39;1&#39;
+</span></span></code></pre></div><p>Solution:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>IConsoleVariable<span style="color:#f92672">*</span> Var <span style="color:#f92672">=</span> IConsoleManager<span style="color:#f92672">::</span>Get().FindConsoleVariable(TEXT(<span style="color:#e6db74">&#34;r.ViewDistanceScale&#34;</span>));
+</span></span><span style="display:flex;"><span>Var<span style="color:#f92672">-&gt;</span>Set(TEXT(<span style="color:#e6db74">&#34;0.8&#34;</span>), ECVF_SetByConsole);
+</span></span></code></pre></div><p>Origin: UE4控制台命令<br>
+<a href="https://www.cnblogs.com/kekec/p/11102365.html">https://www.cnblogs.com/kekec/p/11102365.html</a></p>
+<h5 id="references">References</h5>
 <p><a href="https://docs.unrealengine.com/5.3/en-US/scalability-and-device-profiles-in-lyra-sample-game-for-unreal-engine/">Lyra Scalability and Device Profiles - UE5 Official Docs</a></p>
 <hr>
 <p><code>A man who cannot tolerate small misfortunes can never accomplish great things. -Chinese Proverbs</code></p>
