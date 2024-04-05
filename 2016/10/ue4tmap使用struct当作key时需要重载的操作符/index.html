@@ -363,72 +363,79 @@
                      (adsbygoogle = window.adsbygoogle || []).push({});
                 </script>
               <p>keywords: [UE4]TMap使用Struct当作key时需要重载的操作符</p>
+<h5 id="示例">示例</h5>
 <p>定义struct：</p>
-<pre><code>struct FMyStruct
-{
-    // String which identifies our key
-    FString UniqueID;
-
-    // Some state which doesn't affect struct identity
-    float SomeFloat;
-
-    explicit FMyStruct(float InFloat)
-        : UniqueID (FGuid::NewGuid().ToString())
-        , SomeFloat(InFloat)
-    {
-    }
-};
-
-template &lt;typename ValueType&gt;
-struct TMyStructMapKeyFuncs :
-    BaseKeyFuncs&lt;
-        TPair&lt;FMyStruct, ValueType&gt;,
-        FString
-    &gt;
-{
-private:
-    typedef BaseKeyFuncs&lt;
-        TPair&lt;FMyStruct, ValueType&gt;,
-        FString
-    &gt; Super;
-
-public:
-    typedef typename Super::ElementInitType ElementInitType;
-    typedef typename Super::KeyInitType     KeyInitType;
-
-    static KeyInitType GetSetKey(ElementInitType Element)
-    {
-        return Element.Key.UniqueID;
-    }
-
-    static bool Matches(KeyInitType A, KeyInitType B)
-    {
-        return A.Compare(B, ESearchCase::CaseSensitive) == 0;
-    }
-
-    static uint32 GetKeyHash(KeyInitType Key)
-    {
-        return FCrc::StrCrc32(*Key);
-    }
-};
-</code></pre>
-<p>添加struct元素：</p>
-<pre><code>TMap&lt;
-    FMyStruct,
-    int32,
-    FDefaultSetAllocator,
-    TMyStructMapKeyFuncs&lt;int32&gt;
-&gt; MyMapToInt32;
-
-// Add some elements
-MyMapToInt32.Add(FMyStruct(3.14f), 5);
-MyMapToInt32.Add(FMyStruct(1.23f), 2);
-</code></pre>
-<h5 id="参考文档">参考文档：</h5>
-<p>TMap KeyFuncs</p>
-<p><a href="https://docs.unrealengine.com/latest/INT/Programming/UnrealArchitecture/TMap/index.html#keyfuncs">https://docs.unrealengine.com/latest/INT/Programming/UnrealArchitecture/TMap/index.html#keyfuncs</a></p>
-<p>TMap with struct</p>
-<p><a href="https://forums.unrealengine.com/showthread.php?83995-TMap-with-struct">https://forums.unrealengine.com/showthread.php?83995-TMap-with-struct</a></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">FMyStruct</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// String which identifies our key
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    FString UniqueID;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Some state which doesn&#39;t affect struct identity
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">float</span> SomeFloat;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">explicit</span> <span style="color:#a6e22e">FMyStruct</span>(<span style="color:#66d9ef">float</span> InFloat)
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">:</span> UniqueID (FGuid<span style="color:#f92672">::</span>NewGuid().ToString())
+</span></span><span style="display:flex;"><span>        , SomeFloat(InFloat)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">template</span> <span style="color:#f92672">&lt;</span><span style="color:#66d9ef">typename</span> ValueType<span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">TMyStructMapKeyFuncs</span> <span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    BaseKeyFuncs<span style="color:#f92672">&lt;</span>
+</span></span><span style="display:flex;"><span>        TPair<span style="color:#f92672">&lt;</span>FMyStruct, ValueType<span style="color:#f92672">&gt;</span>,
+</span></span><span style="display:flex;"><span>        FString
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">private</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">typedef</span> BaseKeyFuncs<span style="color:#f92672">&lt;</span>
+</span></span><span style="display:flex;"><span>        TPair<span style="color:#f92672">&lt;</span>FMyStruct, ValueType<span style="color:#f92672">&gt;</span>,
+</span></span><span style="display:flex;"><span>        FString
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&gt;</span> Super;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">typedef</span> <span style="color:#66d9ef">typename</span> Super<span style="color:#f92672">::</span>ElementInitType ElementInitType;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">typedef</span> <span style="color:#66d9ef">typename</span> Super<span style="color:#f92672">::</span>KeyInitType     KeyInitType;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">static</span> KeyInitType <span style="color:#a6e22e">GetSetKey</span>(ElementInitType Element)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> Element.Key.UniqueID;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">bool</span> <span style="color:#a6e22e">Matches</span>(KeyInitType A, KeyInitType B)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> A.Compare(B, ESearchCase<span style="color:#f92672">::</span>CaseSensitive) <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">static</span> uint32 <span style="color:#a6e22e">GetKeyHash</span>(KeyInitType Key)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> FCrc<span style="color:#f92672">::</span>StrCrc32(<span style="color:#f92672">*</span>Key);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p>添加struct元素：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>TMap<span style="color:#f92672">&lt;</span>
+</span></span><span style="display:flex;"><span>    FMyStruct,
+</span></span><span style="display:flex;"><span>    int32,
+</span></span><span style="display:flex;"><span>    FDefaultSetAllocator,
+</span></span><span style="display:flex;"><span>    TMyStructMapKeyFuncs<span style="color:#f92672">&lt;</span>int32<span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&gt;</span> MyMapToInt32;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Add some elements
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>MyMapToInt32.Add(FMyStruct(<span style="color:#ae81ff">3.14f</span>), <span style="color:#ae81ff">5</span>);
+</span></span><span style="display:flex;"><span>MyMapToInt32.Add(FMyStruct(<span style="color:#ae81ff">1.23f</span>), <span style="color:#ae81ff">2</span>);
+</span></span></code></pre></div><p>参考资料<br>
+<a href="https://docs.unrealengine.com/latest/INT/Programming/UnrealArchitecture/TMap/index.html#keyfuncs">TMap KeyFuncs</a><br>
+<a href="https://forums.unrealengine.com/showthread.php?83995-TMap-with-struct">TMap with struct</a></p>
+<h5 id="如何在tmap中存放一个tarray数组">如何在TMap中存放一个TArray数组</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>USTRUCT()
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">FConversations</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    UPROPERTY()
+</span></span><span style="display:flex;"><span>    TArray<span style="color:#f92672">&lt;</span>FString<span style="color:#f92672">&gt;</span> Entries;
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>TMap<span style="color:#f92672">&lt;</span>EConversationNode, FConversations<span style="color:#f92672">&gt;</span> testMap;
+</span></span></code></pre></div><p>原文：<a href="https://answers.unrealengine.com/questions/319040/is-there-any-way-to-store-an-array-in-a-tmap.html?sort=oldest">Is there any way to store an array in a tmap?</a></p>
               
             </div>
           </div>
