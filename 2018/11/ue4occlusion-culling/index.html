@@ -383,6 +383,23 @@ Project Settings -&gt; Engine -&gt; Rendering -&gt; Culling -&gt; <code>Occlusio
 <p>Local Switch(for single Primitive):<br>
 Details Panel of Mesh -&gt; Rendering -&gt; LOD -&gt; <code>Never Distance Cull</code>, <code>false</code> by default.<br>
 This property in C++ is <code>UPrimitiveComponent::bNeverDistanceCull</code>.</p>
+<h5 id="mask-material-only-in-early-z-pass">Mask material only in early Z-pass</h5>
+<p>Force early Z to be turned on for the mask material. In order to reduce the computing of depth pass (belonging to PrePass in UE), UE4 will decide whether to turn on the Early Z pass of the mask material based on the hardware characteristics. This causes some machines (especially Android devices) to automatically turn off the Early Z pass of the mask material, but this The overdraw of pixel pass (belonging to BasePass in UE) will be greatly increased.</p>
+<p>It is necessary to test whether Early Z has a net gaint on performance based in the different scenario, the console command for testing (needs to be restarted, runtime switching is not supported)：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#66d9ef">[/Script/Engine.RendererSettings]</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">; default is 3</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">r.EarlyZPass</span><span style="color:#f92672">=</span><span style="color:#e6db74">2</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">; default is false</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">r.EarlyZPassOnlyMaterialMasking</span><span style="color:#f92672">=</span><span style="color:#e6db74">True</span>
+</span></span></code></pre></div><p>The switches in settings：Project Settings -&gt; Rendering -&gt; Optimizations:</p>
+<ul>
+<li>Early Z-pass</li>
+<li>Mask material only in early Z-pass
+<figure><img src="https://dawnarc.com/img/2018/20181122-[UE4]Occlusion%20Culling/[UE4]Occlusion%20Culling%20-%2001.gif"/>
+</figure>
+</li>
+</ul>
+<p>For more details, see：<a href="https://www.slideshare.net/EpicGamesJapan/mask-material-only-in-early-zpass">Effects and mechanism of Mask Material only in Early Z-pass</a></p>
 <h5 id="documents">Documents</h5>
 <p>Visibility and Occlusion Culling<br>
 <a href="https://docs.unrealengine.com/en-US/Engine/Rendering/VisibilityCulling/index.html">https://docs.unrealengine.com/en-US/Engine/Rendering/VisibilityCulling/index.html</a></p>
