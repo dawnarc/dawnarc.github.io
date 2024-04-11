@@ -481,13 +481,15 @@ stat UnitGraph  //附带各个参数的实时曲线图
 <pre><code>r.SetRes 1920x1080f
 </code></pre>
 <p>如果是移动端，使用<code>r.MobileContentScaleFactor</code>来控制分辨率。<code>MobileContentScaleFactor</code>减小会导致UI变模糊，解决办法是对应增大<code>ScreenPercentage</code>。</p>
-<p>查看遮挡剔除：</p>
+<p>强制开启early Z pass：</p>
+<pre><code>r.EarlyZPass 2
+r.EarlyZPassOnlyMaterialMasking 1
+</code></pre>
+<p>默认是<code>r.EarlyZPass 3</code>，表示根据硬件特性选择性开启（比如mask材质的物体可能不开启）。<br>
+EarlyZPass有没开启成功，可根据遮挡剔除有没生效来验证：</p>
 <pre><code>r.visualizeOccludedPrimitives 1
 </code></pre>
-<p>启用early Z pass，默认已开启：</p>
-<pre><code>r.EarlyZPass 3
-</code></pre>
-<p>较高的drawcall情况下，开启后如果basepass的overdraw反而较少，说明early Z pass效果明显。修改值后需要重新运行游戏生效。</p>
+<p>较高drawcall情况下，开启early Z后如果basepass的overdraw明显较少，说明early Z pass效果明显。修改值后需要重新运行游戏生效。更多详情参考：<a href="https://dawnarc.com/2016/12/ue4%E4%BC%98%E5%8C%96%E5%BB%BA%E8%AE%AE%E4%B8%8E%E7%BB%8F%E9%AA%8C/">[UE4]优化建议与经验</a></p>
 <p>设置贴图的尺寸级别（精度），<span class="highlight-text red">前提是贴图已经生成了LOD（即mipmap） </span>：</p>
 <pre><code>r.mipmaplodbias 0
 </code></pre>
