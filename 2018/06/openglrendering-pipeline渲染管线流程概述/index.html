@@ -388,9 +388,17 @@
 <li>Primitive Clipping, the perspective divide, and the viewport transform to window space.</li>
 </ol>
 </li>
-<li>Primitive Assembly</li>
+<li>Primitive Assembly<br>
+The main primitive assembly stage just turns one stream of primitives into a stream of primitives that can be converted into fragments. So, it’s the last thing that happens before everything in the pipeline is converted into fragments (pixels).<br>
+There are different types of primitives, and each stage can take different types of primitives as inputs, and produce different types of primitives as outputs:
+<ul>
+<li>The tesselation evaluation shader takes patches as input. So you cannot put normal primitive assembly before the tesselation evaluation shader, since primitive assembly produces points, lines, or triangles.</li>
+<li>The geometry shader takes points, lines, triangles, lines with adjacency, or triangles with adjacency as input. So you cannot put normal primitive assembly before the geometry shader, because otherwise you would not be able to use lines or triangles with adjacency data.</li>
+</ul>
+</li>
 <li>Scan conversion and primitive parameter interpolation, which generates a number of Fragments.</li>
-<li>A Fragment Shader processes each fragment. Each fragment generates a number of outputs.</li>
+<li>A Fragment Shader processes each fragment. Each fragment generates a number of outputs.<br>
+<span class="highlight-text green">注：Fragment Shader是GLSL的叫法，HLSL中叫做Pixel Shader。</span></li>
 <li>Per-Sample_Processing:
 <ol>
 <li>Scissor Test</li>
@@ -402,10 +410,35 @@
 </ol>
 </li>
 </ol>
-<p>参考自：Rendering Pipeline Overview<br>
+<p>参考资料：<br>
+Rendering Pipeline Overview<br>
 <a href="https://www.khronos.org/opengl/wiki/Rendering_Pipeline_Overview">https://www.khronos.org/opengl/wiki/Rendering_Pipeline_Overview</a></p>
+<p>What happens at the &ldquo;Primitive assembly&rdquo; stage in OpenGL<br>
+<a href="https://stackoverflow.com/a/61899548/1645289">https://stackoverflow.com/a/61899548/1645289</a></p>
+<p>Primitive Assembly<br>
+<a href="https://www.khronos.org/opengl/wiki/Primitive_Assembly">https://www.khronos.org/opengl/wiki/Primitive_Assembly</a></p>
+<p>Shader<br>
+<a href="https://www.khronos.org/opengl/wiki/Shader#Stages">https://www.khronos.org/opengl/wiki/Shader#Stages</a></p>
+<h5 id="primitive-assembly-stage">Primitive Assembly stage</h5>
+<p>Q: How does the GPU know in which order the vertices have to be processed? Maybe a triangle uses the first and the last vertex of the VBO, so primitive assembly stage would have to wait until the whole VBO is processed?</p>
+<p>A: The order vertices were processed in is not particularly important by the time you arrive at primitive assembly; there is no order-dependence at the vertex shader level (the vertices could have all been processed in parallel for all you know). All you need to know is that the results of a vertex shader are appended to a special buffer called the post-transform cache.</p>
+<p>A Geometry Shader (programmable primitve assembly) will fetch its input vertices from the post-transform cache, and it will do that in a specific order. Given a traditional FIFO implementation of the post-transform cache, order dictates cache replacement and strip-based primitives tend to maximize the cache hit rate during primitive assembly. A cache miss in the post-transform cache would cause a stall, but only for the vertices that were not in cache - it is not going to stall while every vertex in your vertex buffer is unnecessarily processed.</p>
+<p>The good news is most modeling software these days outputs vertices in a cache efficient order and the cache is larger and smarter than ever, so this is not something you often have to worry about. 15 years ago vertex caching was a very hot topic and everyone you talked to would have their own theory regarding what worked best, now it is largely a waste of time and strip-order is probably as far as you want to take it.</p>
+<p>参考自：Primitive assembly performance<br>
+<a href="https://stackoverflow.com/a/28644620/1645289">https://stackoverflow.com/a/28644620/1645289</a></p>
+<h5 id="compute-shader">Compute Shader</h5>
+<p>Compute shaders are not part of the regular rendering pipeline. So when executing a Drawing Command, the compute shader linked into the current program or pipeline is not involved.</p>
+<p>There are two functions to initiate compute operations. They will use whichever compute shader is currently active (via <code>glBindProgramPipeline</code> or <code>glUseProgram</code>, following the usual rules for determining the active program for a stage). Though they are not Drawing Commands, they are Rendering Commands, so they can be conditionally executed.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C" data-lang="C"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">glDispatchCompute</span>(GLuint num_groups_x, GLuint num_groups_y, GLuint num_groups_z);
+</span></span></code></pre></div><p>The <em>num_groups_*</em> parameters define the work group count, in three dimensions. These numbers cannot be zero. There are limitations on the number of work groups that can be dispatched.</p>
+<p>It is possible to execute dispatch operations where the work group counts come from information stored in a Buffer Object. This is similar to indirect drawing for vertex data:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C" data-lang="C"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">glDispatchComputeIndirect</span>(GLintptr indirect);
+</span></span></code></pre></div><p>The <em>indirect</em> parameter is the byte-offset to the buffer currently bound to the <code>GL_DISPATCH_INDIRECT_BUFFER</code> target. Note that the same limitations on the work group counts still apply; however, indirect dispatch bypasses OpenGL&rsquo;s usual error checking. As such, attempting to dispatch with out-of-bounds work group sizes can cause a crash or even a GPU hard-lock, so be careful when generating this data.</p>
+<p>References:<br>
+<a href="https://www.khronos.org/opengl/wiki/Compute_Shader">Compute Shader - khronos.org</a><br>
+<a href="https://www.khronos.org/opengl/wiki/Shader_Storage_Buffer_Object">Shader Storage Buffer Object - khronos.org</a></p>
 <h5 id="流程实例">流程实例</h5>
-<p>有了上述概念后，再来以一个简单实例演示管线流程：从一个 vertex shader 到一个 fragment shader 最简单流程。</p>
+<p>以一个简单实例演示渲染管线流程：从一个 vertex shader 到一个 fragment shader 最简单流程。</p>
 <p>basic.vert</p>
 <pre><code>#version 410
 
