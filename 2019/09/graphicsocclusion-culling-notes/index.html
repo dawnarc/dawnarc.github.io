@@ -13,18 +13,18 @@
 <meta name="generator" content="Hugo 0.102.3 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Wang Aiguo">
 <meta name="keywords" content="Graphics, Rendering, Occlusion Culling, Hierarchial Z-Buffer, HZB">
-<meta name="description" content="Keywords: Graphics, Rendering, Occlusion Culling, Hierarchial Z-Buffer, HZB">
+<meta name="description" content="Keywords: Graphics, Rendering, Occlusion Culling, Depth Testing, Hierarchial Z-Buffer, HZB, Early Z">
 
 
-<meta property="og:description" content="Keywords: Graphics, Rendering, Occlusion Culling, Hierarchial Z-Buffer, HZB">
+<meta property="og:description" content="Keywords: Graphics, Rendering, Occlusion Culling, Depth Testing, Hierarchial Z-Buffer, HZB, Early Z">
 <meta property="og:type" content="article">
-<meta property="og:title" content="[Graphics]Occlusion Culling(Hierarchial Z-Buffer Visibility) Notes">
-<meta name="twitter:title" content="[Graphics]Occlusion Culling(Hierarchial Z-Buffer Visibility) Notes">
-<meta property="og:url" content="https://dawnarc.com/2019/09/graphicsocclusion-cullinghierarchial-z-buffer-visibility-notes/">
-<meta property="twitter:url" content="https://dawnarc.com/2019/09/graphicsocclusion-cullinghierarchial-z-buffer-visibility-notes/">
+<meta property="og:title" content="[Graphics]Occlusion Culling Notes">
+<meta name="twitter:title" content="[Graphics]Occlusion Culling Notes">
+<meta property="og:url" content="https://dawnarc.com/2019/09/graphicsocclusion-culling-notes/">
+<meta property="twitter:url" content="https://dawnarc.com/2019/09/graphicsocclusion-culling-notes/">
 <meta property="og:site_name" content="玄冬Wong">
-<meta property="og:description" content="Keywords: Graphics, Rendering, Occlusion Culling, Hierarchial Z-Buffer, HZB">
-<meta name="twitter:description" content="Keywords: Graphics, Rendering, Occlusion Culling, Hierarchial Z-Buffer, HZB">
+<meta property="og:description" content="Keywords: Graphics, Rendering, Occlusion Culling, Depth Testing, Hierarchial Z-Buffer, HZB, Early Z">
+<meta name="twitter:description" content="Keywords: Graphics, Rendering, Occlusion Culling, Depth Testing, Hierarchial Z-Buffer, HZB, Early Z">
 <meta property="og:locale" content="en-us">
 
   
@@ -71,14 +71,14 @@
   <meta property="twitter:image" content="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=640">
 
 
-    <title>[Graphics]Occlusion Culling(Hierarchial Z-Buffer Visibility) Notes</title>
+    <title>[Graphics]Occlusion Culling Notes</title>
 
     <link rel="icon" href="https://dawnarc.com/favicon.png">
     
 
     
 
-    <link rel="canonical" href="https://dawnarc.com/2019/09/graphicsocclusion-cullinghierarchial-z-buffer-visibility-notes/">
+    <link rel="canonical" href="https://dawnarc.com/2019/09/graphicsocclusion-culling-notes/">
 
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
@@ -320,7 +320,7 @@
             <div class="post-header main-content-wrap text-left">
   
     <h1 class="post-title" itemprop="headline">
-      [Graphics]Occlusion Culling(Hierarchial Z-Buffer Visibility) Notes
+      [Graphics]Occlusion Culling Notes
     </h1>
   
   
@@ -364,8 +364,18 @@
                 <script>
                      (adsbygoogle = window.adsbygoogle || []).push({});
                 </script>
-              <p>Keywords: Graphics, Rendering, Occlusion Culling, Hierarchial Z-Buffer, HZB</p>
-<h3 id="occlusion-culling">Occlusion Culling</h3>
+              <p>Keywords: Graphics, Rendering, Occlusion Culling, Depth Testing, Hierarchial Z-Buffer, HZB, Early Z</p>
+<h3 id="depth-testing">Depth Testing</h3>
+<h5 id="documents">Documents</h5>
+<p>Depth testing - OpenGL<br>
+<a href="https://learnopengl.com/Advanced-OpenGL/Depth-testing">https://learnopengl.com/Advanced-OpenGL/Depth-testing</a></p>
+<p>Stencil testing - OpenGL<br>
+<a href="https://learnopengl.com/Advanced-OpenGL/Stencil-testing">https://learnopengl.com/Advanced-OpenGL/Stencil-testing</a></p>
+<h3 id="hierarchial-z-buffer-occlusion">Hierarchial Z-Buffer Occlusion</h3>
+<h5 id="principle-of-hzb-occlusion">Principle of HZB Occlusion</h5>
+<p>Origin: <a href="https://forums.guru3d.com/threads/performance-boost-on-ue4-games-for-radeon-users.445906/page-2">Performance boost on UE4 games for Radeon users - guru3d</a><br>
+HZB Occlusion is a technique supposed to increase performance is a method of rasterizing certain portions of a scene into a depth buffer and then performing image-space occlusion queries on a hierarchical structure constructed from the depth buffer.
+In any realistic 3D scene, there are things you can see and things that you can&rsquo;t see. It sounds simple, but the application of this knowledge can have very beneficial effects on the performance of an application billed with rendering the 3D scene in real time. Generally, we want to lower the computational cost of objects that do not contribute to the scene - those objects that are outside our field of view or are obscured by other objects. The Z-buffer is the last stage in the rendering pipeline where an object can be identified as &ldquo;invisible&rdquo;; in this case, the object in question is a fragment, and it can only be identified as invisible when the fragment&rsquo;s depth value is &ldquo;deeper&rdquo; than something that has already been rendered at the same raster position. The Z-buffer test is invoked for each and every fragment of a higher-level object being rendered - the polygonal representation of a &ldquo;thing&rdquo; in the scene, such as a person, a wall, a car, etc - and thus imposes a rather high computational cost of visibility determination, even with recent optimizations made to hardware z-buffer mechanisms.</p>
 <h5 id="occlusion-culling-for-ue4-games">Occlusion Culling for UE4 games</h5>
 <p>Origin: <a href="https://forums.guru3d.com/threads/performance-boost-on-ue4-games-for-radeon-users.445906/">Performance boost on UE4 games for Radeon users - guru3d</a></p>
 <p>This is a simple command that can increase performance by a decent margin, in UE4 games, for Radeon users.
@@ -379,11 +389,7 @@ So far, the only game I found that has this option in-game is Supraland Six Feet
 Performance gains vary with game and scene, but I tested in a couple of games and found these gains.<br>
 High on Life: 7%<br>
 Supraland SIU: 12%</p>
-<h5 id="principle-of-hzb-occlusion">Principle of HZB Occlusion</h5>
-<p>Origin: <a href="https://forums.guru3d.com/threads/performance-boost-on-ue4-games-for-radeon-users.445906/page-2">Performance boost on UE4 games for Radeon users - guru3d</a><br>
-HZB Occlusion is a technique supposed to increase performance is a method of rasterizing certain portions of a scene into a depth buffer and then performing image-space occlusion queries on a hierarchical structure constructed from the depth buffer.
-In any realistic 3D scene, there are things you can see and things that you can&rsquo;t see. It sounds simple, but the application of this knowledge can have very beneficial effects on the performance of an application billed with rendering the 3D scene in real time. Generally, we want to lower the computational cost of objects that do not contribute to the scene - those objects that are outside our field of view or are obscured by other objects. The Z-buffer is the last stage in the rendering pipeline where an object can be identified as &ldquo;invisible&rdquo;; in this case, the object in question is a fragment, and it can only be identified as invisible when the fragment&rsquo;s depth value is &ldquo;deeper&rdquo; than something that has already been rendered at the same raster position. The Z-buffer test is invoked for each and every fragment of a higher-level object being rendered - the polygonal representation of a &ldquo;thing&rdquo; in the scene, such as a person, a wall, a car, etc - and thus imposes a rather high computational cost of visibility determination, even with recent optimizations made to hardware z-buffer mechanisms.</p>
-<h5 id="hzb-hierarchical-z-buffer-occlusion">HZB (Hierarchical Z-Buffer) Occlusion</h5>
+<h5 id="blogs-of-hzbo">Blogs of HZBO</h5>
 <p>Hierarchical Z-Buffer Occlusion Culling<br>
 <a href="https://www.nickdarnell.com/hierarchical-z-buffer-occlusion-culling/">https://www.nickdarnell.com/hierarchical-z-buffer-occlusion-culling/</a></p>
 <p>Hierarchical-Z map based occlusion culling<br>

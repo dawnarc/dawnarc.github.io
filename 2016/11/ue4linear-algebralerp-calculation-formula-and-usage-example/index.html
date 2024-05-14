@@ -426,20 +426,32 @@ const float LerpDuration = 2.5f;
 }
 </code></pre>
 <h5 id="usage-example-damping-mode-cushion-mode-strong-at-first-then-soft">Usage example: Damping mode (Cushion mode: strong at first, then soft)</h5>
-<p>Rotation changing example:</p>
-<pre><code>void AMyActor::Tick(float DeltaSecond)
-{
-    FVector MyLoc = GetActorLocation();
-    FVector TargetLoc = PlayerCharacter-&gt;GetActorLocation();
-    FVector Dir = (TargetLoc - MyLoc);
-    Dir.Normalize();
-
-    MyCharacter-&gt;SetActorRotation(FMath::Lerp(GetActorRotation(),Dir.Rotation(),0.05f));
-}
-</code></pre>
-<p>Reference:<br>
-<a href="https://answers.unrealengine.com/questions/223469/smoothly-rotate-object.html">https://answers.unrealengine.com/questions/223469/smoothly-rotate-object.html</a></p>
-<p><code>Lerp</code> Example：</p>
+<p>Rotating example 01 (by speed):</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> AMyActor<span style="color:#f92672">::</span>Tick(<span style="color:#66d9ef">float</span> DeltaSeconds)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    FRotator <span style="color:#a6e22e">DestRot_WorldSpace</span>(<span style="color:#ae81ff">100.f</span>, <span style="color:#ae81ff">100.f</span>, <span style="color:#ae81ff">0.f</span>);
+</span></span><span style="display:flex;"><span>    FRotator RotOffset <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>        UKismetMathLibrary<span style="color:#f92672">::</span>InverseTransformRotation(GetActorTransform(), DestRot_WorldSpace);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span>FMath<span style="color:#f92672">::</span>IsNearlyEqual(RotOffset, FRotator<span style="color:#f92672">::</span>ZeroRotator, <span style="color:#ae81ff">0.1f</span>))
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        SetActorRotation(
+</span></span><span style="display:flex;"><span>            FMath<span style="color:#f92672">::</span>RInterpTo(GetActorRotation(), DestRot_WorldSpace, DeltaSeconds, <span style="color:#ae81ff">3.0f</span> <span style="color:#75715e">/*InterpSpeed*/</span> ));
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Rotating example 02 (by duration):</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> AMyActor<span style="color:#f92672">::</span>Tick(<span style="color:#66d9ef">float</span> DeltaSeconds)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (LerpDelta <span style="color:#f92672">&lt;=</span> LerpDuration)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        LerpDelta <span style="color:#f92672">+=</span> DeltaSeconds;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">float</span> Alpha <span style="color:#f92672">=</span> LerpDelta <span style="color:#f92672">/</span> LerpDuration;
+</span></span><span style="display:flex;"><span>        Alpha <span style="color:#f92672">=</span> FMath<span style="color:#f92672">::</span>Clamp(Alpha, <span style="color:#ae81ff">0.f</span>, <span style="color:#ae81ff">1.f</span>);
+</span></span><span style="display:flex;"><span>        NewRot <span style="color:#f92672">=</span> FMath<span style="color:#f92672">::</span>Lerp<span style="color:#f92672">&lt;</span>FRotator<span style="color:#f92672">&gt;</span>(GetActorRotation(), DestRot_WorldSpace, Alpha);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        SetActorRotation(NewRot);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p><code>Lerp</code> Example：</p>
 <pre><code>NewLoc = FMath::Lerp&lt;FVector&gt;(NewLoc, DistLoc, LerpTime / LerpDuration);
 </code></pre>
 <p><code>VInterpTo</code> Example：</p>

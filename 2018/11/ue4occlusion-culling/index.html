@@ -384,8 +384,12 @@ Project Settings -&gt; Engine -&gt; Rendering -&gt; Culling -&gt; <code>Occlusio
 Details Panel of Mesh -&gt; Rendering -&gt; LOD -&gt; <code>Never Distance Cull</code>, <code>false</code> by default.<br>
 This property in C++ is <code>UPrimitiveComponent::bNeverDistanceCull</code>.</p>
 <h5 id="mask-material-only-in-early-z-pass">Mask material only in early Z-pass</h5>
-<p>Whether force early Z to be turned on for the mask material?</p>
-<p>In order to reduce the computing of depth pass (belonging to PrePass in UE), UE4 will decide whether to turn on the Early Z pass of the mask material based on the hardware characteristics. This causes some machines (especially Android devices) to automatically turn off the Early Z pass of the mask material, but this The overdraw of pixel pass (belonging to BasePass in UE) will be greatly increased.</p>
+<p>Q: What&rsquo;s mean by <code>Mask material only in early Z-pass</code>?<br>
+A: Put the depth calculation of the mask material into Early Z-pass (depth calculation on CPU-side).</p>
+<p>In order to reduce the calculation of depth pass (also called depth prepass, which is part of UE&rsquo;s PrePass), UE4 will let the GPU calculate by itself (The depth is calculated in post z. Different platforms and different manufacturers have huge differences in the performance overhead of calculating depth.) for materials with unknown final depth (e.g. mask material), and depth calculation is likely to trigger alpha testing, and alpha testing is the weakness of tile-based GPUs (e.g. mainstream mobile GPUs).<br>
+This leads to a situation: if the depth of mask material is calculated on the depth pass, the additional overhead is much less than the alpha test. The most common scene of this kind is large-area foliages with mask material.<br>
+In addition, there is another problem: when calculating depth, the opaque material can only need early z (called PreZ in UE4) without pixel shader, while the mask material requires pixel shader to calculate, and it will increase the overdraw of pixel pass (is part of UE‘s BasePass) to increase.<br>
+UE4.16 has been optimized: write the depth of the entire scene in Early Z-pass, then write the mask material into an opaque material in BasePass, and finally use Equal instead of LessEqual to execute DepthTest to skip the GPU Hardware-level depth calculation.</p>
 <p>It&rsquo;s necessary to test whether Early Z has a net gain on performance in the different scenario, the console command for testing (needs to be restarted, runtime switching is not supported)：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#66d9ef">[/Script/Engine.RendererSettings]</span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">; default is 3</span>
@@ -402,7 +406,16 @@ This property in C++ is <code>UPrimitiveComponent::bNeverDistanceCull</code>.</p
 </ul>
 <p>You can also check if occlusion culling works using console:</p>
 <pre tabindex="0"><code>r.visualizeOccludedPrimitives 1
-</code></pre><p>For more details, see：<a href="https://www.slideshare.net/EpicGamesJapan/mask-material-only-in-early-zpass">Effects and mechanism of Mask Material only in Early Z-pass</a></p>
+</code></pre><div class="alert info ">
+  <p><p>Which materials will be forced to turn on post z (late z) by the GPU to calculate the final depth (the calculation process is still in the pixel shader, and early z is turned off):</p>
+<ul>
+<li>mask materials (because alpha test needs to be done).</li>
+<li>opaque materials whose <code>Opacity Mask</code> has been parameterized.</li>
+<li>Materials whose <code>Pixel Depth Offset</code> has been parameterized.</li>
+</ul>
+</p>
+</div>
+<p>For more details, see：<a href="https://www.slideshare.net/EpicGamesJapan/mask-material-only-in-early-zpass">Effects and mechanism of Mask Material only in Early Z-pass</a></p>
 <h5 id="documents">Documents</h5>
 <p>Visibility and Occlusion Culling<br>
 <a href="https://docs.unrealengine.com/en-US/Engine/Rendering/VisibilityCulling/index.html">https://docs.unrealengine.com/en-US/Engine/Rendering/VisibilityCulling/index.html</a></p>
@@ -413,7 +426,7 @@ This property in C++ is <code>UPrimitiveComponent::bNeverDistanceCull</code>.</p
 <p><a href="https://docs.unrealengine.com/4.27/en-US/RenderingAndGraphics/VisibilityCulling/SoftwareOcclusionQueries/">Software Occlusion Queries for Mobile - UnrealEngine Official Docs</a></p>
 <h3 id="occlusion-culling-in-ue5">Occlusion Culling in UE5</h3>
 <h5 id="cpu-based-occlusion-culling">CPU based Occlusion Culling</h5>
-<p>UE5 discarded software occlusion culling (CPU-side) and use HZBO (GPU-side) by default.<br>
+<p>UE5 discarded software occlusion culling (CPU-side) and use HZBO (Hierarchical Z-Buffer Occlusion, GPU-side) by default.<br>
 <a href="https://www.linkedin.com/posts/kristofferbenjaminsson_ue5-vr-unreal-activity-7094343904832946177-6pwi/">Port and extend the UE4 Occlusion Culling system to UE5 - LinkedIn</a><br>
 <a href="https://github.com/MrBenj4min/UnrealEngine-Epic/tree/SnowOcclusion">Software Occlusion Culling for UE5 - github</a></p>
 <h3 id="issues">Issues</h3>
