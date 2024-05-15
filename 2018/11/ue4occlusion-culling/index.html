@@ -385,11 +385,11 @@ Details Panel of Mesh -&gt; Rendering -&gt; LOD -&gt; <code>Never Distance Cull<
 This property in C++ is <code>UPrimitiveComponent::bNeverDistanceCull</code>.</p>
 <h5 id="mask-material-only-in-early-z-pass">Mask material only in early Z-pass</h5>
 <p>Q: What&rsquo;s mean by <code>Mask material only in early Z-pass</code>?<br>
-A: Put the depth calculation of the mask material into Early Z-pass (depth calculation on CPU-side).</p>
+A: Put the depth calculation of the mask material into Early Z-pass(utilize the hardware feature <code>early depth testing</code>).</p>
 <p>In order to reduce the calculation of depth pass (also called depth prepass, which is part of UE&rsquo;s PrePass), UE4 will let the GPU calculate by itself (The depth is calculated in post z. Different platforms and different manufacturers have huge differences in the performance overhead of calculating depth.) for materials with unknown final depth (e.g. mask material), and depth calculation is likely to trigger alpha testing, and alpha testing is the weakness of tile-based GPUs (e.g. mainstream mobile GPUs).<br>
 This leads to a situation: if the depth of mask material is calculated on the depth pass, the additional overhead is much less than the alpha test. The most common scene of this kind is large-area foliages with mask material.<br>
 In addition, there is another problem: when calculating depth, the opaque material can only need early z (called PreZ in UE4) without pixel shader, while the mask material requires pixel shader to calculate, and it will increase the overdraw of pixel pass (is part of UE‘s BasePass) to increase.<br>
-UE4.16 has been optimized: write the depth of the entire scene in Early Z-pass, then write the mask material into an opaque material in BasePass, and finally use Equal instead of LessEqual to execute DepthTest to skip the GPU Hardware-level depth calculation.</p>
+UE4.16 has been optimized: write the depth of the entire scene in Early Z-pass, then write the mask material into an opaque material in BasePass, and finally use Equal instead of LessEqual to execute DepthTest to avoid the depth calculation on pixel pass.</p>
 <p>It&rsquo;s necessary to test whether Early Z has a net gain on performance in the different scenario, the console command for testing (needs to be restarted, runtime switching is not supported)：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#66d9ef">[/Script/Engine.RendererSettings]</span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">; default is 3</span>
@@ -406,7 +406,7 @@ UE4.16 has been optimized: write the depth of the entire scene in Early Z-pass, 
 </ul>
 <p>You can also check if occlusion culling works using console:</p>
 <pre tabindex="0"><code>r.visualizeOccludedPrimitives 1
-</code></pre><div class="alert info ">
+</code></pre><div class="alert warning ">
   <p><p>Which materials will be forced to turn on post z (late z) by the GPU to calculate the final depth (the calculation process is still in the pixel shader, and early z is turned off):</p>
 <ul>
 <li>mask materials (because alpha test needs to be done).</li>
