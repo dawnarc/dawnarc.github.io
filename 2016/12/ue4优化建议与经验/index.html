@@ -511,6 +511,9 @@ Unity早期文档：灯光 Light<br>
 <span class="highlight-text green">不考虑阴影的情况下点光源的衰减计算比聚光灯简单很多，只和距离相关，射灯要计算距离衰减和内外角衰减，有cos sin指令，代价相对来说会大很多，但是实际使用过程中射灯照亮区域远小于点光源，反而在绝大多数场景消耗比点光源低。当然这个是基于延迟渲染和ClusterBased裁剪后的灯光来说的，实际Unity Forward渲染是不裁剪光源的，所有像素都会计算一遍点光源和射灯光照，所以射灯消耗会远大于点光源（Forward Add中渲染），Unity的默认射灯没有内外角一说，依靠一张贴图来做衰减模拟，所以Unity的射灯比点光源多了一次采样环节。</span></p>
 </li>
 <li>
+<p>动态光的Shadow Map Caching。这个是UE默认开启的功能，当点动态光源或聚光灯静止不动时，则存储当前的shadow map给下一帧复用。详情见：<a href="https://docs.unrealengine.com/4.27/en-US/BuildingWorlds/LightingAndShadows/LightMobility/DynamicLights/">Movable Lights</a></p>
+</li>
+<li>
 <p>在建构光照贴图时，若场景中没有给予Lightmass Importance Volume，会对整个场景做间接光照的采样，产生Indirect Lighting Cache，这对大型游戏场景是相当的浪费，像是游戏角色到不了的中、远景不需要产生Indirect Lighting Cache，这时候就可以在场景中置入Lightmass Importance Volume，指定特定区域内才会产生Indirect Lighting Cache，节省不少建构光照的时间。</p>
 </li>
 <li>
@@ -542,7 +545,10 @@ DFAO相关的两个优化选项：</p>
 </ul>
 </li>
 <li>
-<p>如果场景中有大量点光源和聚光灯且都是动态的，此时通过<code>Distance Field</code>动态地对LightComponet执行<code>SetVisibility</code>和<code>SetHiddenInGame</code>，那么性能可提高30%到60%。这个结论是基于对官方商城一款付费插件 <a href="https://www.unrealengine.com/marketplace/en-US/product/dynamic-lighting-portal-system-performance-booster">Dynamic Lighting Portal System (Performance Booster)</a> 的源码研读。引擎本身有对灯光<code>Occlusion Culling</code>，至于为什么<code>SetVisibility</code>和<code>SetHiddenInGame</code>之后还能有这么大性能提升，估计需要仔细研究UE4渲染相关代码，个人不成熟的推测：以deferred shading为例，每个光源在image space处理像素时，即使某个光源没有对当前像素产生明显影响，但是对应的计算过程仍然执行了，可能渲染层并没有因上层应用是游戏项目还是影视动画渲染而去做专门优化，而这个插件通过将灯光隐藏并禁用后，那么在处理各个像素光照信息时，这些光源的计算逻辑直接跳过了，所以可以大幅提升性能。</p>
+<p>如果场景中有大量点光源和聚光灯且都是动态的，此时通过<code>Distance Field</code>动态地对LightComponet执行<code>SetVisibility</code>和<code>SetHiddenInGame</code>，那么性能可提高30%到60%。这个结论是基于对官方商城一款付费插件 <a href="https://www.unrealengine.com/marketplace/en-US/product/dynamic-lighting-portal-system-performance-booster">Dynamic Lighting Portal System (Performance Booster)</a> 的源码研读。注：只有当场景中点光源不仅数量多，而且cast shadow开启的数量也多，此时该插件的优化效果才明显。</p>
+</li>
+<li>
+<p>灯光有个属性：<code>Max Draw Distance</code>，表示当摄像机超过这个距离后，自动关闭灯光，另外<code>Max Distance Fade Range</code>表示：光照在<code>Max Distance Fade Range</code>和<code>Max Draw Distance</code>之间做线性衰减，用于关闭灯光前的自然过度。示例：<a href="https://dawnarc.com/2018/04/ue4shadows/#max-draw-distance">Max Draw Distance</a></p>
 </li>
 </ol>
 <h5 id="阴影优化">阴影优化</h5>
@@ -573,6 +579,12 @@ Dynamic Shadow Distance 表示在多少距离内使用动态阴影，超过这�
 </li>
 <li>
 <p>关闭灯光的CSM(Cascade Shadow Mapping)，默认关闭。开启后可以节省shadow map的内存占用（High quality级别的shadow选项设置下，大型户外场景的shadow map内存占用巨大），但是会增加计算开销，比如shadow map的culling和combining。</p>
+</li>
+<li>
+<p>由于dynamic shadow消耗很高，而且shadow mapping和mesh面数正相关（因为shadow map存储的是当前light所能看见的所有surface的depth），所以若参与计算shadow map的surface（也就是三角面）数量越少，则计算越小。为此UE提供了优化：为结构复杂的mesh提供低模mesh来计算shadow map<a href="https://docs.unrealengine.com/4.27/en-US/TestingAndOptimization/ProxyGeoTool/ProxyGeoShadows/">Proxy Geometry Shadows</a>。</p>
+</li>
+<li>
+<p>严格控制产生dynamic shadow（UE的非static类型灯光cast shadow，则都属于dynamic shadow）的灯光数量。一些初学者有个严重误解：deferred rendering在渲染成百上千的点电源时，依然不影响性能。网上一些show case看样子也确实如此，数千个光源下，帧率依然很高。但问题是，这些光源没有cast shadow，这种demo不适用于工业生产。除了前一条讲到的shadow map受mesh面数影响外，每多一个动态光（非static类型的light），framebuffer(主要是d-buffer)就会额外再build一次，以生成最终shadow map。</p>
 </li>
 </ol>
 <h5 id="材质优化">材质优化</h5>
@@ -819,7 +831,7 @@ Project Settings -&gt; Engine -&gt; Animation -&gt; 勾选 Strip Animation Data 
 <p>由于UE的deferred shading是multipass，而material的每种buffer（albedo, normal, material properties, ambient occlusion, worldspace reflection等等一共有16种buffer）都对应一个pass，虽然RDG中做了merge pass优化，但抵不住量大，需要的dispatch也随之增加。所以，材质若过于复杂（玻璃、半透特效、毛发等），会撑爆dispatch，而dispatch数量大则GPU负载高。另外，Insights中的<code>STAT_FRDGPass_Execute</code>次数和dispatch次数正相关。</p>
 </li>
 <li>
-<p>Shaded GS primitives数量正常在10k以内（Gears 5平均在3k左右），如果范围异常（比如十万以上），则说明阴影有问题：点光源或射灯数量过多、阴影质量过高（<code>r.ShadowQuality=5</code>）。另外cast volumetric shadow（DirectionalLight、SkyLight之外其他光源）也会导致GS primitives, vertex, pixel数量急剧增长甚至翻倍。</p>
+<p>Shaded GS primitives数量正常在10k以内（Gears 5平均在3k左右），如果范围异常（比如十万以上），则说明点光源和聚光灯的阴影有性能问题：启用<code>Cast Shadow</code>的灯光数量较多，且阴影质量过高（<code>r.ShadowQuality=5</code>，阴影质量过高会增加阴影投射范围的全局distance scale，低阴影质量下引擎会自动关闭远处灯光的cast shadow）。另外cast volumetric shadow（DirectionalLight、SkyLight之外其他光源）也会导致GS primitives, vertex, pixel数量急剧增长甚至翻倍。原因是point light的shadow map不是2D的，而是3D的cube-based shadow map，而这个cubemap的生成是在geometry shader中发起，并通过<a href="https://www.khronos.org/opengl/wiki/Geometry_Shader#Layered_rendering">Layered rendering</a>指定当前mesh（也就是primitive）上的所有vertex属于layered image的layer index。</p>
 </li>
 <li>
 <p>CopyTextureRegion次数不影响性能，从几个到几百都是正常范围，一般刚进入新场景时CopyTextureRegion数量较高，此时正在mip slicing（个人推测）。</p>

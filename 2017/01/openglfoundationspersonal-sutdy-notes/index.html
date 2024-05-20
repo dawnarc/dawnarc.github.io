@@ -370,6 +370,10 @@
 <a href="https://docs.gl/">https://docs.gl/</a></p>
 <p>OpenGL 4 Shading Language Cookbook, Second Edition<br>
 <a href="https://github.com/daw42/glslcookbook">https://github.com/daw42/glslcookbook</a></p>
+<p>Learn OpenGL<br>
+<a href="https://learnopengl.com/">https://learnopengl.com/</a></p>
+<p>opengl-tutorial<br>
+<a href="https://www.opengl-tutorial.org/">https://www.opengl-tutorial.org/</a></p>
 <h5 id="术语解释">术语解释：</h5>
 <ul>
 <li><code>GLEW</code> (OpenGL Extension Wrangler).</li>
@@ -379,7 +383,7 @@
 <h5 id="shader类型">Shader类型</h5>
 <ul>
 <li>vertex shader</li>
-<li>fragment shader</li>
+<li>fragment shader（HLSL中叫做pixel shader，也是工业界的主流叫法）</li>
 <li>geometry shader</li>
 <li>tess_control shader</li>
 <li>tess_evaluation shader</li>
@@ -499,15 +503,14 @@ Uniform variables 可以定义在任何一个 shader 中，如果多个 shader �
 </span></span><span style="display:flex;"><span>    gl_Position <span style="color:#f92672">=</span> RotationMatrix <span style="color:#f92672">*</span> vec4(VertexPosition,<span style="color:#ae81ff">1.0</span>);
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>那么OpenGL API获取并设置Uniform variables的方式如下：</p>
-<pre><code>rotationMatrix = glm::rotate(glm::mat4(1.0f), angle, vec3(0.0f,0.0f,1.0f));
-
-GLuint programHandle = prog.getHandle();
-//获取 Uniform variables 索引
-GLuint location = glGetUniformLocation(programHandle, &quot;RotationMatrix&quot;);
-//通过索引获取 Uniform variables 的值
-glUniformMatrix4fv(location, 1, GL_FALSE, &amp;rotationMatrix[0][0]);
-</code></pre>
-<p>常用技巧：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C" data-lang="C"><span style="display:flex;"><span>rotationMatrix <span style="color:#f92672">=</span> glm<span style="color:#f92672">::</span>rotate(glm<span style="color:#f92672">::</span>mat4(<span style="color:#ae81ff">1.0f</span>), angle, vec3(<span style="color:#ae81ff">0.0f</span>,<span style="color:#ae81ff">0.0f</span>,<span style="color:#ae81ff">1.0f</span>));
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>GLuint programHandle <span style="color:#f92672">=</span> prog.getHandle();
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//获取 Uniform variables 索引
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>GLuint location <span style="color:#f92672">=</span> glGetUniformLocation(programHandle, <span style="color:#e6db74">&#34;RotationMatrix&#34;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//通过索引获取 Uniform variables 的值
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>glUniformMatrix4fv(location, <span style="color:#ae81ff">1</span>, GL_FALSE, <span style="color:#f92672">&amp;</span>rotationMatrix[<span style="color:#ae81ff">0</span>][<span style="color:#ae81ff">0</span>]);
+</span></span></code></pre></div><p>常用技巧：</p>
 <ul>
 <li>
 <p>如果要使用vec3作为 Uniform variables 类型，那么可以使用 <code>glUniform3f</code> 或者 <code>glUniform3fv</code>，<span class="highlight-text green"> 后缀带'v'的表示数组类型 </span>。</p>
@@ -674,6 +677,15 @@ You might be wondering why we use glBindBuffer and glBindBufferBase with GL_UNIF
 </figure>
 
 <p>Between the vertex and fragment shader, the vertices are assembled into primitives, clipping takes place, and the viewport transformation is applied (among other operations). The rasterization process then takes place and the polygon is filled (if necessary). The fragment shader is executed once for each fragment (pixel) of the polygon being rendered (typically in parallel). Data provided from the vertex shader is (by default) interpolated in a perspective correct manner, and provided to the fragment shader via shader input variables. The fragment shader determines the appropriate color for the pixel and sends it to the frame buffer using output variables. The depth information is handled automatically.</p>
+<h5 id="attribute-vs-uniform-vs-varying">Attribute vs Uniform vs Varying</h5>
+<ul>
+<li>const – The declaration is of a compile time constant.</li>
+<li>attribute – Global variables that may change per vertex, that are passed from the OpenGL application to vertex shaders. This qualifier can only be used in vertex shaders. For the shader this is a read-only variable. See Attribute section.</li>
+<li>uniform – Global variables that may change per primitive [&hellip;], that are passed from the OpenGL application to the shaders. This qualifier can be used in both vertex and fragment shaders. For the shaders this is a read-only variable. See Uniform section.</li>
+<li>varying – used for interpolated data between a vertex shader and a fragment shader. Available for writing in the vertex shader, and read-only in a fragment shader. See Varying section.</li>
+</ul>
+<p>Origin: differences between an attribute, a uniform, and a varying variable<br>
+<a href="https://stackoverflow.com/a/17557438/1645289">https://stackoverflow.com/a/17557438/1645289</a></p>
 <h5 id="opengl耗时较高的函数">OpenGL耗时较高的函数</h5>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C" data-lang="C"><span style="display:flex;"><span>glBufferData()
 </span></span><span style="display:flex;"><span>glBufferSubData()
@@ -701,6 +713,43 @@ GLFW提供了cmake的define编译选项<code>GLFW_USE_DWM_SWAP_INTERVAL</code>�
 <h5 id="gl_position-homogeneous-coordinates">gl_Position (Homogeneous coordinates)</h5>
 <p>What can I do with the 4th component of gl_Position?<br>
 <a href="https://gamedev.stackexchange.com/a/153137/117871">https://gamedev.stackexchange.com/a/153137/117871</a></p>
+<h5 id="如何通过uv获取纹理采样中的像素">如何通过UV获取纹理采样中的像素</h5>
+<p>vertex shader</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-TS" data-lang="TS"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">#</span><span style="color:#a6e22e">version</span> <span style="color:#ae81ff">330</span> <span style="color:#a6e22e">core</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">layout</span> (<span style="color:#a6e22e">location</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>) <span style="color:#66d9ef">in</span> <span style="color:#a6e22e">vec3</span> <span style="color:#a6e22e">aPos</span>;
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">layout</span> (<span style="color:#a6e22e">location</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>) <span style="color:#66d9ef">in</span> <span style="color:#a6e22e">vec3</span> <span style="color:#a6e22e">aColor</span>;
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">layout</span> (<span style="color:#a6e22e">location</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">2</span>) <span style="color:#66d9ef">in</span> <span style="color:#a6e22e">vec2</span> <span style="color:#a6e22e">aTexCoord</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">out</span> <span style="color:#a6e22e">vec3</span> <span style="color:#a6e22e">ourColor</span>;
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">out</span> <span style="color:#a6e22e">vec2</span> <span style="color:#a6e22e">TexCoord</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span>()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">gl_Position</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">vec4</span>(<span style="color:#a6e22e">aPos</span>, <span style="color:#ae81ff">1.0</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">ourColor</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">aColor</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">TexCoord</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">aTexCoord</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>pixel shader</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-TS" data-lang="TS"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">#</span><span style="color:#a6e22e">version</span> <span style="color:#ae81ff">330</span> <span style="color:#a6e22e">core</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">out</span> <span style="color:#a6e22e">vec4</span> <span style="color:#a6e22e">FragColor</span>;
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">in</span> <span style="color:#a6e22e">vec3</span> <span style="color:#a6e22e">ourColor</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">in</span> <span style="color:#a6e22e">vec2</span> <span style="color:#a6e22e">TexCoord</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">uniform</span> <span style="color:#a6e22e">sampler2D</span> <span style="color:#a6e22e">ourTexture</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span>()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">FragColor</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">texture</span>(<span style="color:#a6e22e">ourTexture</span>, <span style="color:#a6e22e">TexCoord</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Origin: Texture
+<a href="https://learnopengl.com/Getting-started/Textures">https://learnopengl.com/Getting-started/Textures</a></p>
+<h5 id="layered-rendering-layered-images">Layered rendering (Layered Images)</h5>
+<p>AMD RGP统计数据有个叫<code>Shaded GS primitives</code>的属性，其统计来源自cube-based shadow mapping（比如point light的shadow map），而cube-based shadow mapping是通过Layered rendering来实现。</p>
+<p>Layered rendering<br>
+<a href="https://www.khronos.org/opengl/wiki/Geometry_Shader#Layered_rendering">https://www.khronos.org/opengl/wiki/Geometry_Shader#Layered_rendering</a></p>
+<p>Layered Images<br>
+<a href="https://www.khronos.org/opengl/wiki/Framebuffer_Object#Layered_Images">https://www.khronos.org/opengl/wiki/Framebuffer_Object#Layered_Images</a></p>
 <hr>
 <p><code>莫道不消魂？帘卷西风，人比黄花瘦。---李清照《醉花阴》</code></p>
               

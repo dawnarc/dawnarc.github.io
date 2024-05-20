@@ -368,10 +368,11 @@
 <h5 id="enable-dynamic-shadow-distance">Enable Dynamic Shadow Distance</h5>
 <p>Testing Case: 500 Actors are rendering in screen, Camera height is 4000, DirectionalLight&rsquo;s property <code>Dynamic Shadow Distance StationaryLight</code> (Default value is 0, which means disabled) should be larger than the straight-line distance from Camera to Actor (Beacause the distance need to cover all Actors, so the distance would be better be larger ), otherwise frame rate would drop down from 200 fps to 100 fps.</p>
 <h5 id="how-to-cast-shadow-by-camera-distance">How to Cast Shadow by Camera Distance</h5>
-<p>Tow factors</p>
+<p>Three factors:</p>
 <ul>
 <li>RayTraced Distance Field Soft Shadows</li>
 <li>Scalability of Shadow</li>
+<li>Max Draw Distance</li>
 </ul>
 <h5 id="raytraced-distance-field-soft-shadows">RayTraced Distance Field Soft Shadows</h5>
 <ol>
@@ -477,12 +478,39 @@ Effect<br>
 </ul>
 <p>Scalability Reference<br>
 <a href="https://docs.unrealengine.com/en-US/engine/performance/scalability/scalabilityreference">https://docs.unrealengine.com/en-US/engine/performance/scalability/scalabilityreference</a></p>
-<h5 id="cast-shadow-by-level-of-detail-lod">Cast shadow by level of detail (LOD)</h5>
+<h5 id="max-draw-distance">Max Draw Distance</h5>
+<figure><img src="https://dawnarc.com/img/2018/20180427-[UE4]Shadows/[UE4]Shadows-27.gif"/>
+</figure>
+
+<p>Max Draw Distance = 5000<br>
+Max Distance Fade Range = 0<br>
+<figure><img src="https://dawnarc.com/img/2018/20180427-[UE4]Shadows/[UE4]Shadows-28.gif"/>
+</figure>
+
+Max Draw Distance = 5000<br>
+Max Distance Fade Range = 2500<br>
+<figure><img src="https://dawnarc.com/img/2018/20180427-[UE4]Shadows/[UE4]Shadows-29.gif"/>
+</figure>
+</p>
+<h5 id="cast-shadow-by-level-of-detail-lod">Cast Shadow by Level of Detail (LOD)</h5>
 <p>Console command:</p>
 <pre><code>//LOD level to force for the shadow map generation only, -1 is off.
 r.ForceLODShadow
 </code></pre>
 <p>It works only for non-dynamic lights.</p>
+<h5 id="dynamic-shadows--for-dense-geometry">Dynamic Shadows  for Dense Geometry</h5>
+<p>How to optimize the performance of dynamic shadows?<br>
+Steps:</p>
+<ol>
+<li>Disable <code>Cast Shadow</code> in original static mesh.</li>
+<li>Add Proxy Geometry settings in Proxy Mesh tab of Merge Actor tool.</li>
+<li>Leave Cast Shadows enabled on the proxy shadow caster.</li>
+<li>In the Details panel under Rendering , disable Render in Main Pass on the proxy shadow caster.</li>
+</ol>
+<p>Proxy Geometry Shadows<br>
+<a href="https://docs.unrealengine.com/4.27/en-US/TestingAndOptimization/ProxyGeoTool/ProxyGeoShadows/">https://docs.unrealengine.com/4.27/en-US/TestingAndOptimization/ProxyGeoTool/ProxyGeoShadows/</a><br>
+TIP: Shadow Optimization - Proxy Shadows<br>
+<a href="https://dev.epicgames.com/documentation/en-us/unreal-engine/proxy-geometry-tool-overview-in-unreal-engine">https://dev.epicgames.com/documentation/en-us/unreal-engine/proxy-geometry-tool-overview-in-unreal-engine</a></p>
 <h5 id="shadowmap-memory-size">ShadowMap Memory Size</h5>
 <p>Testing case:<br>
 Place 1024 cubes in an empty level, casting shadow by stationary DirectionalLight, and check the memory cost of shadow map. (console cmd:<code>stat rhi</code>)</p>
