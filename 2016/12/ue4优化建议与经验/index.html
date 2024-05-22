@@ -460,6 +460,9 @@ UE4做了优化，当你使用<code>FTransform::TransformXXX()</code>时，如�
 <h5 id="occlusion-culling-遮挡剔除">Occlusion Culling 遮挡剔除</h5>
 <ol>
 <li>
+<p>UE的Visibility计算分为4种，消耗从低到高依次是：Distance，View Frustum，<a href="https://dev.epicgames.com/documentation/en-us/unreal-engine/precomputed-visibility-volumes-in-unreal-engine">Precomputed Visibility</a>，Dynamic Occlusion（也就是常说的OC）。详情见文档：<a href="https://dev.epicgames.com/documentation/en-us/unreal-engine/visibility-and-occlusion-culling-in-unreal-engine">Visibility and Occlusion Culling</a></p>
+</li>
+<li>
 <p>开启<code>Occlusion Culling</code> (Project Settings -&gt; Engine -&gt; Rendering -&gt; Occlusion Culling，默认已开启)，这是针对被遮挡的mesh进行剔除。<br>
 另外，还有针对Light、Z Pass、Shadowd的剔除，如果需要增大以屏占比基准的剔除强度（代价是剔除效果比较突兀）以提升渲染效率，将以下属性值增大：<br>
 <code>Min Screen Radius for Lights</code><br>
@@ -511,7 +514,7 @@ Unity早期文档：灯光 Light<br>
 <span class="highlight-text green">不考虑阴影的情况下点光源的衰减计算比聚光灯简单很多，只和距离相关，射灯要计算距离衰减和内外角衰减，有cos sin指令，代价相对来说会大很多，但是实际使用过程中射灯照亮区域远小于点光源，反而在绝大多数场景消耗比点光源低。当然这个是基于延迟渲染和ClusterBased裁剪后的灯光来说的，实际Unity Forward渲染是不裁剪光源的，所有像素都会计算一遍点光源和射灯光照，所以射灯消耗会远大于点光源（Forward Add中渲染），Unity的默认射灯没有内外角一说，依靠一张贴图来做衰减模拟，所以Unity的射灯比点光源多了一次采样环节。</span></p>
 </li>
 <li>
-<p>动态光的Shadow Map Caching。这个是UE默认开启的功能，当点动态光源或聚光灯静止不动时，则存储当前的shadow map给下一帧复用。详情见：<a href="https://docs.unrealengine.com/4.27/en-US/BuildingWorlds/LightingAndShadows/LightMobility/DynamicLights/">Movable Lights</a></p>
+<p>动态光的Shadow Map Caching。这个是UE默认开启的功能，当动态点光源或聚光灯静止不动时，则存储当前的shadow map给下一帧复用。详情见：<a href="https://docs.unrealengine.com/4.27/en-US/BuildingWorlds/LightingAndShadows/LightMobility/DynamicLights/">Movable Lights</a></p>
 </li>
 <li>
 <p>在建构光照贴图时，若场景中没有给予Lightmass Importance Volume，会对整个场景做间接光照的采样，产生Indirect Lighting Cache，这对大型游戏场景是相当的浪费，像是游戏角色到不了的中、远景不需要产生Indirect Lighting Cache，这时候就可以在场景中置入Lightmass Importance Volume，指定特定区域内才会产生Indirect Lighting Cache，节省不少建构光照的时间。</p>
@@ -581,7 +584,7 @@ Dynamic Shadow Distance 表示在多少距离内使用动态阴影，超过这�
 <p>关闭灯光的CSM(Cascade Shadow Mapping)，默认关闭。开启后可以节省shadow map的内存占用（High quality级别的shadow选项设置下，大型户外场景的shadow map内存占用巨大），但是会增加计算开销，比如shadow map的culling和combining。</p>
 </li>
 <li>
-<p>由于dynamic shadow消耗很高，而且shadow mapping和mesh面数正相关（因为shadow map存储的是当前light所能看见的所有surface的depth），所以若参与计算shadow map的surface（也就是三角面）数量越少，则计算越小。为此UE提供了优化：为结构复杂的mesh提供低模mesh来计算shadow map<a href="https://docs.unrealengine.com/4.27/en-US/TestingAndOptimization/ProxyGeoTool/ProxyGeoShadows/">Proxy Geometry Shadows</a>。</p>
+<p>由于dynamic shadow消耗很高，而且shadow mapping和mesh面数正相关（因为shadow map存储的是当前light所能看见的所有surface的depth），所以若参与计算shadow map的surface（也就是三角面）数量越少，则计算越小。为此UE提供了优化工具，为结构复杂的mesh提供低模mesh来计算shadow map：<a href="https://docs.unrealengine.com/4.27/en-US/TestingAndOptimization/ProxyGeoTool/ProxyGeoShadows/">Proxy Geometry Shadows</a>。</p>
 </li>
 <li>
 <p>严格控制产生dynamic shadow（UE的非static类型灯光cast shadow，则都属于dynamic shadow）的灯光数量。一些初学者有个严重误解：deferred rendering在渲染成百上千的点电源时，依然不影响性能。网上一些show case看样子也确实如此，数千个光源下，帧率依然很高。但问题是，这些光源没有cast shadow，这种demo不适用于工业生产。除了前一条讲到的shadow map受mesh面数影响外，每多一个动态光（非static类型的light），framebuffer(主要是d-buffer)就会额外再build一次，以生成最终shadow map。</p>
@@ -831,7 +834,12 @@ Project Settings -&gt; Engine -&gt; Animation -&gt; 勾选 Strip Animation Data 
 <p>由于UE的deferred shading是multipass，而material的每种buffer（albedo, normal, material properties, ambient occlusion, worldspace reflection等等一共有16种buffer）都对应一个pass，虽然RDG中做了merge pass优化，但抵不住量大，需要的dispatch也随之增加。所以，材质若过于复杂（玻璃、半透特效、毛发等），会撑爆dispatch，而dispatch数量大则GPU负载高。另外，Insights中的<code>STAT_FRDGPass_Execute</code>次数和dispatch次数正相关。</p>
 </li>
 <li>
-<p>Shaded GS primitives数量正常在10k以内（Gears 5平均在3k左右），如果范围异常（比如十万以上），则说明点光源和聚光灯的阴影有性能问题：启用<code>Cast Shadow</code>的灯光数量较多，且阴影质量过高（<code>r.ShadowQuality=5</code>，阴影质量过高会增加阴影投射范围的全局distance scale，低阴影质量下引擎会自动关闭远处灯光的cast shadow）。另外cast volumetric shadow（DirectionalLight、SkyLight之外其他光源）也会导致GS primitives, vertex, pixel数量急剧增长甚至翻倍。原因是point light的shadow map不是2D的，而是3D的cube-based shadow map，而这个cubemap的生成是在geometry shader中发起，并通过<a href="https://www.khronos.org/opengl/wiki/Geometry_Shader#Layered_rendering">Layered rendering</a>指定当前mesh（也就是primitive）上的所有vertex属于layered image的layer index。</p>
+<p>Shaded GS primitives数量正常在10k以内（Gears 5平均在3k左右），如果范围异常（比如十万以上），说明有两方面问题：</p>
+<ul>
+<li>启用<code>Cast Shadow</code>的灯光数量较多（点光源和聚光灯），且阴影质量过高（<code>r.ShadowQuality=5</code>，阴影质量过高会增加阴影投射范围的全局distance scale，低阴影质量下引擎会自动关闭远处灯光的cast shadow）。另外cast volumetric shadow（DirectionalLight、SkyLight之外其他光源）也会导致GS primitives, vertex, pixel数量急剧增长甚至翻倍。</li>
+<li>零散的mesh数量太多，没有做merge，引擎自带mesh merge工具：<a href="https://docs.unrealengine.com/4.27/en-US/Basics/Actors/Merging/">Actor Merging</a>。</li>
+</ul>
+<p>原因是point light的shadow map不是普通的framebuffer，而是3D的cube-based shadow map（6张framebuffer），而这个cubemap的生成是在geometry shader中发起，并通过<a href="https://www.khronos.org/opengl/wiki/Geometry_Shader#Layered_rendering">Layered rendering</a>指定当前mesh（也就是primitive）上的所有vertex所属layered image（cubemap的六个面之一）的layer index。</p>
 </li>
 <li>
 <p>CopyTextureRegion次数不影响性能，从几个到几百都是正常范围，一般刚进入新场景时CopyTextureRegion数量较高，此时正在mip slicing（个人推测）。</p>
