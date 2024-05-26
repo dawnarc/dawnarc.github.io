@@ -493,6 +493,32 @@ The good thing about <code>glMapBuffer</code> is that you dont need to copy the 
 <p>Samplers can only read data from textures; image variables can read and/or write data, as well as perform atomic operations on them. Of course, writing data from shaders requires special care, specifically when <a href="https://www.opengl.org/wiki/Memory_Model#Incoherent_memory_access">someone goes to read that data</a>.</p>
 <p>Origin: What is the difference between glBindImageTexture() and glBindTexture()?<br>
 <a href="https://stackoverflow.com/a/37140611/1645289">https://stackoverflow.com/a/37140611/1645289</a></p>
+<h5 id="the-common-usage-of-uniform-buffer">The Common Usage of Uniform Buffer</h5>
+<p>Most commonly used scenarios:</p>
+<ul>
+<li><a href="https://stackoverflow.com/questions/69301997/android-opengl-es-3-0-skeletal-animations-glitch-with-ubo">Skeletal Animation</a></li>
+<li><a href="https://stackoverflow.com/questions/10868958/what-does-sampler2d-store">sampler2D texture</a></li>
+</ul>
+<h5 id="ubo-vs-ssbo-uniform-buffer-objects-shader-storage-buffer-objects">UBO vs SSBO (Uniform Buffer Objects, Shader Storage Buffer Objects)</h5>
+<p>原文： <a href="http://wangyudong.xyz/?p=256">http://wangyudong.xyz/?p=256</a></p>
+<ul>
+<li>大小限制：UBO大小限制为KB级别，64KB或128KB，具体与硬件相关。而SSBO则灵活得多，大小可为显存大小（GB），因而更适合与存储大量的数据。而且SSBO可以在shader运行时再确定大小，而非编译时。</li>
+<li>存取速度：UBO存储区为显卡的常量区，而SSBO为全局的显存，UBO速度高于SSBO。</li>
+<li>读写：UBO对于shader来讲是只读常量，只能通过外部程序更新。SSBO则是shader可以读写的（例如在compute shader中更新顶点的位置）。</li>
+<li>SSBO还有一个特点，就是任何其他类型的OpenGL buffer都可绑定到GL_SHADER_STORAGE_BUFFER 目标上，因而很灵活。</li>
+</ul>
+<p>RBO(Render Buffer Object)和texture在FBO(Frame Buffer Object)中都可以用于绑定相应的attachment，功能也比较相似。但是RBO效率更高，因为RBO中的数据采用OpenGL的内部格式，操作过程中无需转换格式。texture则必须转换为纹理颜色的格式。</p>
+<p>Shader Storage Buffer Object<br>
+<a href="https://www.khronos.org/opengl/wiki/Shader_Storage_Buffer_Object">https://www.khronos.org/opengl/wiki/Shader_Storage_Buffer_Object</a></p>
+<h5 id="ubo-vs-tbo-uniform-buffer-objects-texture-buffer-objects">UBO vs TBO (Uniform Buffer Objects, Texture Buffer Objects)</h5>
+<p>Uniform Buffers VS Texture Buffers<br>
+<a href="https://www.rastergrid.com/blog/2010/01/uniform-buffers-vs-texture-buffers/">https://www.rastergrid.com/blog/2010/01/uniform-buffers-vs-texture-buffers/</a></p>
+<h5 id="pbo-vs-fbo-pixel-buffer-objects-frame-buffer-objects">PBO vs FBO (Pixel Buffer Objects, Frame Buffer Objects)</h5>
+<p>Quoted from: <a href="https://www.khronos.org/opengl/wiki/Pixel_Buffer_Object">Pixel Buffer Object</a><br>
+PBOs have nothing to do with Framebuffer Objects. Note the capitalization; &ldquo;framebuffer&rdquo; is one word. FBOs are not buffer objects; PBOs are. FBOs are about rendering to off-screen images; PBOs are about pixel transfers to/from the user from/to images in OpenGL. They are not alike.</p>
+<p>References:<br>
+<a href="https://mp.weixin.qq.com/s?__biz=MzIwNTIwMzAzNg==&amp;mid=2654161764&amp;idx=1&amp;sn=cae0909d8ce82051d38fa0182704a25b">NDK OpenGL ES 3.0 开发（二十二）：PBO</a><br>
+<a href="https://mp.weixin.qq.com/s?__biz=MzIwNTIwMzAzNg==&amp;mid=2654175120&amp;idx=2&amp;sn=6a76505812684229c60889ae703db0be&amp;chksm=8cf3aca3bb8425b59c9a0e637af5db247ab73b08f354d5fbdc7a9321485777740829c5f10ef6">熟悉 OpenGL VAO、VBO、FBO、PBO 等对象，看这一篇就够了</a></p>
 <hr>
 <p><code>He who thinks too much about every step he takes will always stay on one leg. -Chinese Proverbs</code></p>
               

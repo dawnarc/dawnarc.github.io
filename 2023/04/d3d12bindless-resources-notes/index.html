@@ -375,6 +375,36 @@ Quoted from: <a href="https://www.reddit.com/r/GraphicsProgramming/comments/tyil
 Bindless designs make the cpu side work a lot faster due to the CPU having to do much less work, and the GPU can also go faster due to better utilization as each drawcall is “bigger”. The less drawcalls you use to render your scene, the better, as modern GPUs are really big and have a big ramp up/ramp down time.
 </span><br>
 Quoted from <a href="https://vkguide.dev/docs/gpudriven/gpu_driven_engines/">GPU Driven Rendering Overview</a></p>
+<p>Resource Binding<br>
+Modern Graphics APIs give you more control over resource binding, such as with DirectX Root Signatures and Vulkan* Pipeline Layout. Using these requires particular attention to maximize performance. When designing an application strategy for resource binding, employ the following guidance:</p>
+<ul>
+<li>Minimize the number of root signature slots or descriptor sets to only what will be used by a shader.</li>
+<li>Try to find a balance between root signature or descriptor set reuse across shaders.</li>
+<li>For multiple constant buffers that do not change between draws, consider packing all constant buffer views into one descriptor table.</li>
+<li>For multiple Unordered Access Views (UAVs) and Shader Resource Views (SRVs) that do not span a consecutive range of registers and do not change between draws, it is best to pack them into a descriptor table.</li>
+<li>Minimize descriptor heap changes. Changing descriptor heaps severely stalls the graphics pipeline. Ideally, all resources will have views appropriated out of one descriptor heap.</li>
+<li>Avoid generic root signature definitions where unnecessary descriptors are defined and not leveraged. Instead, optimize root signature definitions to the minimal set of descriptor tables needed.
+<ul>
+<li>Vulkan: When creating a Descriptor Set, using the BindAfterFlag bit beware that Xe-LP only supports 1M Descriptors. Only Create needed descriptors (when porting from DX12, remember that D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV maps to 7 Vulkan types [VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE, *_STORAGE_IMAGE, *_UNIFORM_TEXEL_BUFFER,*_STORAGE_TEXEL_BUFFER, *_UNIFORM_BUFFER, *_STORAGE_BUFFER])</li>
+</ul>
+</li>
+<li>Favor root constants over root descriptors, and favor root descriptors over descriptor tables when working with constants.
+<ul>
+<li>Make use of root/push constants to enable fast access to constant buffer data (they are pre-loaded into registers).</li>
+<li>Root/push constants are great to use on frequently changing constant buffer data.</li>
+</ul>
+</li>
+<li>Use root/push constants for cases where the constants are changing at a high frequency.
+<ul>
+<li>If certain Root Signature slots are less frequently used (not referenced by a PSO), put those at the end of the root signature to reduce GRF usage</li>
+</ul>
+</li>
+<li>Be sure to use hints that allow the driver to perform constant-based optimizations, such as D3D12_DESCRIPTOR_RANGE_FLAG_DATA_STATIC.</li>
+<li>For placed resources, initialize with a clear, copy, or discard before rendering to the resource. This helps enable proper compression by putting the placed resource into a valid state.</li>
+<li>When creating resource heaps, resources that need to be accessed by the GPU should be placed in heaps that are declared as resident in GPU memory, preferably exclusively. This has a significant impact on discrete GPU performance.</li>
+<li>Use queries to identify scenarios when GPU local memory gets oversubscribed and adjust resource location to accommodate this.</li>
+</ul>
+<p>Quoted from <a href="https://www.intel.com/content/www/us/en/developer/articles/guide/lp-api-developer-optimization-guide.html#inpage-nav-3-1">Intel® Processor Graphics Xᵉ-LP API Developer and Optimization Guide</a></p>
 <h5 id="presentations">Presentations</h5>
 <p>Exploration of Bindless Rendering in Vulkan, DirectX 12, and OpenGL [2021-04-21]<br>
 <a href="https://www.youtube.com/watch?v=SVm0HanVTRw">https://www.youtube.com/watch?v=SVm0HanVTRw</a></p>

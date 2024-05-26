@@ -464,14 +464,17 @@ Unreal Engine 4. Different ways to instantiate the object<br>
 <p>ini file was saved in <code>[Project]/Config/DefaultMySetting.ini</code> automatically when values was modified in GUI (if the default value wasn&rsquo;t changed),
 but if change value and save it using C++ code: <code>LoadConfig()</code> then <code>SaveConfig()</code>, then ini file will be saved in <code>FPaths::SourceConfigDir()</code> (e.g. [Project]/Saved/Config/WindowsNoEditor/MySetting.ini)</p>
 <p>Change values and save them using C++ at run-time (<code>LoadConfig()</code>, <code>SaveConfig()</code>):</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>UMySettings<span style="color:#f92672">*</span> Settings <span style="color:#f92672">=</span> GetMutableDefault<span style="color:#f92672">&lt;</span>UMySettings<span style="color:#f92672">&gt;</span>();
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">static</span> <span style="color:#66d9ef">const</span> FString ConfigFileName <span style="color:#f92672">=</span> TEXT(<span style="color:#e6db74">&#34;MySettings.ini&#34;</span>);
+</span></span><span style="display:flex;"><span>FString Path <span style="color:#f92672">=</span> FPaths<span style="color:#f92672">::</span>SourceConfigDir() <span style="color:#f92672">+</span> ConfigFileName;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>UMySettings<span style="color:#f92672">*</span> Settings <span style="color:#f92672">=</span> GetMutableDefault<span style="color:#f92672">&lt;</span>UMySettings<span style="color:#f92672">&gt;</span>();
 </span></span><span style="display:flex;"><span><span style="color:#75715e">//load values from [Project]/Saved/Config/WindowsNoEditor/MySettings.ini
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>Settings<span style="color:#f92672">-&gt;</span>LoadConfig();
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>Settings<span style="color:#f92672">-&gt;</span>LoadConfig(<span style="color:#66d9ef">nullptr</span>, <span style="color:#f92672">*</span>Path);
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>Settings<span style="color:#f92672">-&gt;</span>Foo <span style="color:#f92672">=</span> TEXT(<span style="color:#e6db74">&#34;jjjj&#34;</span>);
 </span></span><span style="display:flex;"><span>Settings<span style="color:#f92672">-&gt;</span>Bar <span style="color:#f92672">=</span> <span style="color:#ae81ff">6666</span>;
 </span></span><span style="display:flex;"><span><span style="color:#75715e">//save values into [Project]/Saved/Config/WindowsNoEditor/MySettings.ini
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>Settings<span style="color:#f92672">-&gt;</span>SaveConfig();
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>Settings<span style="color:#f92672">-&gt;</span>SaveConfig(CPF_Config, <span style="color:#f92672">*</span>Path);
 </span></span></code></pre></div><h5 id="defaultconfig-vs-configdonotcheckdefaults">DefaultConfig vs ConfigDoNotCheckDefaults</h5>
 <p>一般一个ini对应的config class长这样：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>UCLASS(Config <span style="color:#f92672">=</span> Game, DefaultConfig, meta <span style="color:#f92672">=</span> (DisplayName <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;My Custom Settings&#34;</span>))

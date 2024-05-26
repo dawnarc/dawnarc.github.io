@@ -460,7 +460,7 @@ UE4做了优化，当你使用<code>FTransform::TransformXXX()</code>时，如�
 <h5 id="occlusion-culling-遮挡剔除">Occlusion Culling 遮挡剔除</h5>
 <ol>
 <li>
-<p>UE的Visibility计算分为4种，消耗从低到高依次是：Distance，View Frustum，<a href="https://dev.epicgames.com/documentation/en-us/unreal-engine/precomputed-visibility-volumes-in-unreal-engine">Precomputed Visibility</a>，Dynamic Occlusion（也就是常说的OC）。详情见文档：<a href="https://dev.epicgames.com/documentation/en-us/unreal-engine/visibility-and-occlusion-culling-in-unreal-engine">Visibility and Occlusion Culling</a></p>
+<p>UE的Visibility计算分为4种，消耗从低到高依次是：Distance，View Frustum，<a href="https://dev.epicgames.com/documentation/en-us/unreal-engine/precomputed-visibility-volumes-in-unreal-engine">Precomputed Visibility</a>，Dynamic Occlusion（也就是常说的OC：遮挡剔除）。详情见文档：<a href="https://dev.epicgames.com/documentation/en-us/unreal-engine/visibility-and-occlusion-culling-in-unreal-engine">Visibility and Occlusion Culling</a></p>
 </li>
 <li>
 <p>开启<code>Occlusion Culling</code> (Project Settings -&gt; Engine -&gt; Rendering -&gt; Occlusion Culling，默认已开启)，这是针对被遮挡的mesh进行剔除。<br>
@@ -614,6 +614,11 @@ Dynamic Shadow Distance 表示在多少距离内使用动态阴影，超过这�
 <p>当半透或透明材质的物体较多时，则要严格检查Overdraw。透明材质本身已经非常耗，如果再因为overdraw导致部分像素被重复绘制多次，则开销会暴涨，参考：<a href="https://developer.arm.com/documentation/102676/0100/Transparency-considerations">Transparency considerations</a>。</p>
 </li>
 </ol>
+<h5 id="后处理-post-process优化">后处理 (Post Process)优化</h5>
+<ol>
+<li>MeshComponent上有个属性<code>Render CustomDepth Pass</code>，用于控制自定义深度（比如描边），但Custom Depth开销较大，不需要时需及时关掉（比如射击游戏中，只有在红外成像仪激活状态下才开启custom depth）。运行时开启关闭CustomDepth的命令：<code>r.CustomDepth 0</code>（1表示开启）。<br>
+如何确定CustomDepth是否生效？先执行命令<code>ViewMode VisualizeBuffer</code>，再执行命令<code>r.BufferVisualizationTarget CustomeDepth</code>，如果能看见深灰色像素，说明custom depth起效。</li>
+</ol>
 <h5 id="geometry优化">Geometry优化</h5>
 <ol>
 <li>
@@ -696,7 +701,7 @@ Animation Fast Path Optimization<br>
 <p><code>Morph Targets</code>的计算消耗较大，默认是在GPU上计算，如果当GPU上有性能瓶颈且CPU算力充足时，可以将<code>Morph Targets</code>改成CPU计算，方式：Project Settings -&gt; Engine -&gt; Rendering -&gt; Uncheck <code>Use GPU for computing morph targets</code>.</p>
 </li>
 <li>
-<p>将Skeletal Mesh的动画烘焙成贴图：<a href="https://github.com/Rexocrates/Vertex_Anim_Toolset">Vertex Anim Toolset</a>。UE5中官方已集成类似插件，叫做：AnimToTexture。</p>
+<p>将Skeletal Mesh的动画烘焙成贴图：<a href="https://github.com/Rexocrates/Vertex_Anim_Toolset">Vertex Anim Toolset</a>。UE5官方自带插件：<a href="https://github.com/dawnarc/VertexAnimSample">AnimToTexture</a>。</p>
 </li>
 <li>
 <p>动画切换尽量少用Animation Trees（动画蓝图State Machine下的蜘蛛网, 位于AnimGraph中），复杂的AT会极大增加CPU开销（Unity的Blend Tree也同理）。切换动画尽可能用状态机（包括BlendPoseBy等节点），且使用带有闪电小icon的节点。</p>

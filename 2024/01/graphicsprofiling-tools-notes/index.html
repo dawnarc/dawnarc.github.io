@@ -507,11 +507,16 @@ ValueData : 0
 <p>References:<br>
 <a href="https://learn.microsoft.com/en-us/windows-hardware/drivers/display/tdr-registry-keys">Testing and debugging TDR during driver development - learn.microsoft.com</a><br>
 <a href="https://learn.microsoft.com/en-us/windows/uwp/gaming/use-the-directx-runtime-and-visual-studio-graphics-diagnostic-features">Graphics diagnostics tools - learn.microsoft.com</a></p>
+<div class="alert warning ">
+  <p>If do profiling using PIX GUI on localhost, even if TDR is turned off, you still can&rsquo;t capture the dispatching diagram between Async Compute Queue and Graphics Queue, Wave Distribution and Cache Utilization (similar with AMD RGP) will also be lost.<br>
+To address this issue on localhost, you should do profiling using programmatic API, for more details, see: <a href="https://dawnarc.com/2024/05/graphicspix-on-ue5-notes/"></a></p>
+</div>
 <h5 id="pix-on-windows-in-ue5">PIX on Windows in UE5</h5>
 <p>Added support for attaching to PIX on startup. You can either pass parameter on the command line:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#a6e22e">-attachPIX</span>
-</span></span></code></pre></div><p>or add variable in ConsoleVariables.ini:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#a6e22e">r.D3D12.AutoAttachPIX</span><span style="color:#f92672">=</span><span style="color:#e6db74">1</span>
+</span></span></code></pre></div><p>or add variable in UE5/Engine/Config/ConsoleVariables.ini:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#66d9ef">[Startup]</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">r.D3D12.AutoAttachPIX</span><span style="color:#f92672">=</span><span style="color:#e6db74">1</span>
 </span></span></code></pre></div><p>You will still need to manually hit “attach” inside PIX.</p>
 <p>Origin:<br>
 <a href="https://forums.unrealengine.com/t/pix-for-windows/106536">https://forums.unrealengine.com/t/pix-for-windows/106536</a></p>
@@ -521,25 +526,10 @@ ValueData : 0
 </span></span><span style="display:flex;"><span><span style="color:#75715e">; (Vulkan will auto-enable frame markers for RGP, but in D3D12, they have to be enabled manually for now.)</span>
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">D3D12.EmitRgpFrameMarkers</span><span style="color:#f92672">=</span><span style="color:#e6db74">1</span>
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">r.AsyncPipelineCompile</span><span style="color:#f92672">=</span><span style="color:#e6db74">0</span>
-</span></span></code></pre></div><h5 id="how-to-measure-gpu-performance-from-scratch-without-benchmark">How to measure GPU performance from scratch (without benchmark)</h5>
-<p>Start a query, upload a large buffer, and when you get the query back you can measure the time delta.</p>
-<p>Origin: <a href="https://www.reddit.com/r/GraphicsProgramming/comments/1ckmkqc/comment/l2tyzx9/?utm_source=share&amp;utm_medium=web3x&amp;utm_name=web3xcss&amp;utm_term=1&amp;utm_content=share_button">Is there any way to get the count of TMU and ROP of GPU at run-time? - reddit</a></p>
-<h5 id="hardware-gpu-information">Hardware (GPU) Information</h5>
-<p>Check GPU API (OpenGL, D3D, Vulkan) extentions<br>
-<a href="https://gfxbench.com/result.jsp">https://gfxbench.com/result.jsp</a></p>
-<p>C++ Library for pulling system and hardware information, without hitting the command line.<br>
-<a href="https://github.com/ThePhD/infoware">https://github.com/ThePhD/infoware</a></p>
-<p>Home of the community driven hardware databases for Khronos APIs.<br>
-<a href="https://gpuinfo.org/">https://gpuinfo.org/</a></p>
-<p>GPU Specs Database<br>
-<a href="https://www.techpowerup.com/gpu-specs/">https://www.techpowerup.com/gpu-specs/</a></p>
-<h5 id="debugging--profiling">Debugging &amp; Profiling</h5>
-<p>Orbit &amp; Dive: C/C++ Performance Profiler (both for CPU and GPU)<br>
-<a href="https://github.com/google/orbit">https://github.com/google/orbit</a></p>
-<p>The RAD Debugger is a native, user-mode, multi-process, graphical debugger.<br>
-<a href="https://github.com/EpicGames/raddebugger">https://github.com/EpicGames/raddebugger</a></p>
-<hr>
-<p><code>Dig the well before you are thirsty. -Chinese Proverbs</code></p>
+</span></span></code></pre></div><div class="alert info ">
+  <p>Markers is similar to <code>SCOPED_NAMED_EVENT</code> on the CPU, which is used to capture timing on the GPU.</p>
+<!-- raw HTML omitted --></p>
+</div>
               
             </div>
           </div>
