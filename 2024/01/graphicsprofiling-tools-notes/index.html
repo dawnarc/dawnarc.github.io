@@ -461,6 +461,10 @@ Then extract libs into directory: %NDKROOT%/sources/third_party/vulkan/src/build
 <div class="alert warning ">
   <p><code>Dispatch Started</code> is the ratio of current dispatch count to the maximum dispatch count. See the <a href="https://docs.nvidia.com/nsight-systems/UserGuide/index.html">Nsight profiling specifications</a>.</p>
 </div></p>
+<p>PIX: (Just for Nvidia, not AMD)<br>
+<figure><img src="https://dawnarc.com/img/2024/20240128-[Graphics]Profiling%20Tools%20Notes/[Graphics]Profiling%20Tools%20Notes%20-%2003-A.gif"/>
+</figure>
+</p>
 <h5 id="how-to-debug-d3d12-run-debug-layer-or-gpu-validation-in-renderdoc-for-ue5-games">How to debug D3D12 (run Debug Layer or GPU Validation) in RenderDoc for UE5 games</h5>
 <p>1, Build package in Development.</p>
 <p>2, Disable TDR detection:</p>
@@ -473,6 +477,9 @@ ValueData : 0
 
 <div class="alert warning ">
   <p>Need to reboot device to take effect.</p>
+</div>
+<div class="alert success ">
+  <p>The latest PIX will disable TDR detection automatically when you capture GPU frame at first.</p>
 </div></p>
 <p>3, Append <code>-d3ddebug</code> in arguments to initialize a device with the debug layer enabled.
 <figure><img src="https://dawnarc.com/img/2024/20240128-[Graphics]Profiling%20Tools%20Notes/[Graphics]Profiling%20Tools%20Notes%20-%2016.gif"/>
@@ -508,18 +515,9 @@ ValueData : 0
 <a href="https://learn.microsoft.com/en-us/windows-hardware/drivers/display/tdr-registry-keys">Testing and debugging TDR during driver development - learn.microsoft.com</a><br>
 <a href="https://learn.microsoft.com/en-us/windows/uwp/gaming/use-the-directx-runtime-and-visual-studio-graphics-diagnostic-features">Graphics diagnostics tools - learn.microsoft.com</a></p>
 <div class="alert warning ">
-  <p>If do profiling using PIX GUI on localhost, even if TDR is turned off, you still can&rsquo;t capture the dispatching diagram between Async Compute Queue and Graphics Queue, Wave Distribution and Cache Utilization (similar with AMD RGP) will also be lost.<br>
-To address this issue on localhost, you should do profiling using programmatic API, for more details, see: <a href="https://dawnarc.com/2024/05/graphicspix-on-ue5-notes/">PIX on UE5 Notes</a></p>
+  <p>If capture GPU Frame from PIX GUI on local machine, even if TDR detection is turned off, sometimes PIX GUI may crash while parsing data. PIX recommends analysising remotely.<br>
+To address this issue, you should do profiling using programmatic API, for more details, see: <a href="https://dawnarc.com/2024/05/graphicspix-on-ue5-notes/">PIX on UE5 Notes</a></p>
 </div>
-<h5 id="pix-on-windows-in-ue5">PIX on Windows in UE5</h5>
-<p>Added support for attaching to PIX on startup. You can either pass parameter on the command line:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#a6e22e">-attachPIX</span>
-</span></span></code></pre></div><p>or add variable in UE5/Engine/Config/ConsoleVariables.ini:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#66d9ef">[Startup]</span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">r.D3D12.AutoAttachPIX</span><span style="color:#f92672">=</span><span style="color:#e6db74">1</span>
-</span></span></code></pre></div><p>You will still need to manually hit “attach” inside PIX.</p>
-<p>Origin:<br>
-<a href="https://forums.unrealengine.com/t/pix-for-windows/106536">https://forums.unrealengine.com/t/pix-for-windows/106536</a></p>
 <h5 id="enable-rgp-frame-markers-in-ue5">Enable RGP Frame Markers in UE5</h5>
 <p>D:\UE5\Engine\Config\ConsoleVariables.ini</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#75715e">; Uncomment to enable frame markers in D3D12 for the Radeon GPU Profiler (RGP)</span>
@@ -527,8 +525,10 @@ To address this issue on localhost, you should do profiling using programmatic A
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">D3D12.EmitRgpFrameMarkers</span><span style="color:#f92672">=</span><span style="color:#e6db74">1</span>
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">r.AsyncPipelineCompile</span><span style="color:#f92672">=</span><span style="color:#e6db74">0</span>
 </span></span></code></pre></div><div class="alert info ">
-  <p>Frame Marker is similar to <code>SCOPED_NAMED_EVENT</code> on the CPU, which is used to capture timing on the GPU.</p>
+  <p>Frame Marker is similar to <code>SCOPED_NAMED_EVENT</code> of the CPU, which is used to capture timing on the GPU, but need to insert code manually.<br>
+Fortunately, UE5 has already inserted these codes in Development mode.</p>
 </div>
+<p>If want to integrate PIX Event (likes RGP Frame Marker) in UE5, see: <a href="https://devblogs.microsoft.com/pix/winpixeventruntime/">WinPixEventRuntime</a></p>
 <h5 id="how-to-measure-gpu-performance-from-scratch-without-benchmark">How to measure GPU performance from scratch (without benchmark)</h5>
 <p>Start a query, upload a large buffer, and when you get the query back you can measure the time delta.</p>
 <p>Origin: <a href="https://www.reddit.com/r/GraphicsProgramming/comments/1ckmkqc/comment/l2tyzx9/?utm_source=share&amp;utm_medium=web3x&amp;utm_name=web3xcss&amp;utm_term=1&amp;utm_content=share_button">Is there any way to get the count of TMU and ROP of GPU at run-time? - reddit</a></p>

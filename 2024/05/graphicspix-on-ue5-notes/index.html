@@ -364,14 +364,19 @@
                 </script>
               <p>keywords: Graphics, PIX, Profiling, GPU Capture, Wave Distribution</p>
 <h5 id="gpu-frame-capture">GPU Frame Capture</h5>
-<p>Replace the line <code>PIXBeginCapture2()</code> with <code>PIXGpuCaptureNextFrames()</code> since the output file (*.wpix) can&rsquo;t be open (cause a crash when parsing the data):</p>
+<div class="alert warning ">
+  <p>If capture GPU Frame from PIX GUI on local machine, even if TDR detection is turned off, sometimes PIX GUI may crash while parsing data. PIX recommends analysising remotely.<br>
+To address this issue, you should do profiling using programmatic API.</p>
+</div>
+<p>Steps:<br>
+Replace the line <code>PIXBeginCapture2()</code> with <code>PIXGpuCaptureNextFrames()</code> since the output file (*.wpix) can&rsquo;t be open (cause a crash when parsing the data):</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C" data-lang="C"><span style="display:flex;"><span>PIXGpuCaptureNextFrames(TEXT(<span style="color:#e6db74">&#34;E:/pixtest.wpix&#34;</span>), <span style="color:#ae81ff">1</span>);
 </span></span></code></pre></div><figure><img src="https://dawnarc.com/img/2024/20240526-[Graphics]PIX%20on%20UE5%20Notes/[Graphics]PIX%20on%20UE5%20Notes%20-%2001.gif"/>
 </figure>
 
 <p>Then build game in Development, and start game with argument:</p>
 <pre tabindex="0"><code>MyGame.exe -attachPIX
-</code></pre><p>Then run command <code>pix.GpuCaptureFrame</code> in console at runtime, finally the data file will be outputed in directory <code>E:/</code>.</p>
+</code></pre><p>Then run command <code>pix.GpuCaptureFrame</code> in console at runtime, after a while of stun, finally the data file will be outputed in directory <code>E:/</code>.</p>
 <p>Open it and start analysising. Overview of result:
 <figure><img src="https://dawnarc.com/img/2024/20240526-[Graphics]PIX%20on%20UE5%20Notes/[Graphics]PIX%20on%20UE5%20Notes%20-%2002.gif"/>
 </figure>
@@ -380,10 +385,13 @@
 <figure><img src="https://dawnarc.com/img/2024/20240526-[Graphics]PIX%20on%20UE5%20Notes/[Graphics]PIX%20on%20UE5%20Notes%20-%2003.gif"/>
 </figure>
 </p>
-<p>Wave Distribution (Wavefront of Wave Intrinsics):
+<p>Wave Intrinsics (Wavefront):
 <figure><img src="https://dawnarc.com/img/2024/20240526-[Graphics]PIX%20on%20UE5%20Notes/[Graphics]PIX%20on%20UE5%20Notes%20-%2004.gif"/>
 </figure>
 </p>
+<div class="alert warning ">
+  <p>There&rsquo;s a switch named <code>r.D3D12.AutoAttachPIX</code> in UE5/Engine/Config/ConsoleVariables.ini, it&rsquo;s just used for profiling from programmatic API, not PIX GUI.</p>
+</div>
 <h5 id="gpu-timing-capture">GPU Timing Capture</h5>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C" data-lang="C"><span style="display:flex;"><span><span style="color:#75715e">//
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e">//  timing capture
