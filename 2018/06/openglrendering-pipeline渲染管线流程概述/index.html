@@ -426,6 +426,14 @@ Rendering Pipeline Overview<br>
 <p>The good news is most modeling software these days outputs vertices in a cache efficient order and the cache is larger and smarter than ever, so this is not something you often have to worry about. 15 years ago vertex caching was a very hot topic and everyone you talked to would have their own theory regarding what worked best, now it is largely a waste of time and strip-order is probably as far as you want to take it.</p>
 <p>参考自：Primitive assembly performance<br>
 <a href="https://stackoverflow.com/a/28644620/1645289">https://stackoverflow.com/a/28644620/1645289</a></p>
+<h5 id="geometry-shader">Geometry Shader</h5>
+<p>Geometry Shader vs Vertex Shader:</p>
+<ul>
+<li>While GS&rsquo;s can amplify geometry and perform tessellation, that&rsquo;s not really what they&rsquo;re for. Their main purposes are for handling transform feedback data (particularly hardware that can handle multi-stream output) and layered rendering.</li>
+<li>Do as little work in the GS as is reasonable. The GS happens after the post-T&amp;L cache, and you want to get as much out of that as possible. So do as much of your real transformation work as is reasonable in the vertex shader.</li>
+</ul>
+<p>Origin:<br>
+<a href="https://stackoverflow.com/a/13189880/1645289">https://stackoverflow.com/a/13189880/1645289</a></p>
 <h5 id="compute-shader">Compute Shader</h5>
 <p>Compute shaders are not part of the regular rendering pipeline. So when executing a Drawing Command, the compute shader linked into the current program or pipeline is not involved.</p>
 <p>There are two functions to initiate compute operations. They will use whichever compute shader is currently active (via <code>glBindProgramPipeline</code> or <code>glUseProgram</code>, following the usual rules for determining the active program for a stage). Though they are not Drawing Commands, they are Rendering Commands, so they can be conditionally executed.</p>

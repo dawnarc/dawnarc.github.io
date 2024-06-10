@@ -486,13 +486,13 @@ UE4为了减少depth pass (又叫depth prepass，属于UE的PrePass)的计算，
 除此之外，还有另一个问题：计算depth时，opaque材质可以只需early z（UE4的叫做PreZ），无需pixel shader，而mask材质需要pixel shader计算，
 且会导致pixel pass (属于UE的BasePass)的overdraw增加。<br>
 UE4.16做了优化：在Early Z-pass中写入全场景的depth，然后在BasePass中将mask材质写入一张opaque材质，最后以Equal取代LessEqual来执行DepthTest，以此跳过pixel pass的depth计算。<br>
-优化选项开关：</p>
+优化选项开关（需要重启，不支持运行时切换）：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#66d9ef">[/Script/Engine.RendererSettings]</span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">; 默认是3</span>
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">r.EarlyZPass</span><span style="color:#f92672">=</span><span style="color:#e6db74">2</span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">; 默认为false</span>
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">r.EarlyZPassOnlyMaterialMasking</span><span style="color:#f92672">=</span><span style="color:#e6db74">True</span>
-</span></span></code></pre></div><p>需要根据实际项目，测试<code>EarlyZPassOnlyMaterialMasking</code>对性能是正收益还是负收益，测试console命令（需要重启，不支持运行时切换）。</p>
+</span></span></code></pre></div><p>需要根据实际项目，测试<code>EarlyZPassOnlyMaterialMasking</code>对性能是正收益还是负收益。</p>
 <p>更多细节参考：<a href="https://dawnarc.com/2018/11/ue4occlusion-culling/#mask-material-only-in-early-z-pass">Mask material only in early Z-pass</a></p>
 </li>
 </ol>
@@ -587,7 +587,10 @@ Dynamic Shadow Distance 表示在多少距离内使用动态阴影，超过这�
 <p>由于dynamic shadow消耗很高，而且shadow mapping和mesh面数正相关（因为shadow map存储的是当前light所能看见的所有surface的depth），所以若参与计算shadow map的surface（也就是三角面）数量越少，则计算越小。为此UE提供了优化工具，为结构复杂的mesh提供低模mesh来计算shadow map：<a href="https://docs.unrealengine.com/4.27/en-US/TestingAndOptimization/ProxyGeoTool/ProxyGeoShadows/">Proxy Geometry Shadows</a>。</p>
 </li>
 <li>
-<p>严格控制产生dynamic shadow（UE的非static类型灯光cast shadow，则都属于dynamic shadow）的灯光数量。一些初学者有个严重误解：deferred rendering在渲染成百上千的点电源时，依然不影响性能。网上一些show case看样子也确实如此，数千个光源下，帧率依然很高。但问题是，这些光源没有cast shadow，这种demo不适用于工业生产。除了前一条讲到的shadow map受mesh面数影响外，每多一个动态光（非static类型的light），framebuffer(主要是d-buffer)就会额外再build一次，以生成最终shadow map。</p>
+<p>严格控制产生dynamic shadow（UE的非static类型灯光cast shadow，则都属于dynamic shadow）的灯光数量。一些初学者有个严重误解：deferred rendering在渲染成百上千的点光源时，依然不影响性能。网上一些show case看起来也确实如此，数千个光源下，帧率依然很高。但问题是，这些光源没有cast shadow，这种demo不适用于工业生产。除了前一条讲到的shadow map受mesh面数影响外，每多一个动态光（非static类型的light），framebuffer(主要是d-buffer)就会额外再build一次，以生成最终的shadow map。</p>
+</li>
+<li>
+<p>植被若要投射阴影，则要改用<a href="https://docs.unrealengine.com/4.27/en-US/BuildingWorlds/LightingAndShadows/ContactShadows/">Screen Space Contact Shadows</a>。</p>
 </li>
 </ol>
 <h5 id="材质优化">材质优化</h5>
@@ -642,6 +645,12 @@ Dynamic Shadow Distance 表示在多少距离内使用动态阴影，超过这�
 </li>
 <li>
 <p>为Instanced Mesh设置合适的<code>Cull Distance</code>。</p>
+</li>
+<li>
+<p>若植被数量较多，且材质类型为mask时，开启：Early Z Pass Only Material Masking。详情见前面章节Occlusion Culling下的第6条。</p>
+</li>
+<li>
+<p>植被若要开启阴影，不要用传统的shadow map（会导致计算开销和内存占用都很大），一个这种方案是<a href="https://docs.unrealengine.com/4.27/en-US/BuildingWorlds/LightingAndShadows/ContactShadows/">Screen Space Contact Shadow</a>，Contact Shadows并不是专门为植被而设计，而是为了提升阴影细节（摄像机拉近后的阴影细节）。针对植被阴影时，调整合理的Contact Shadow Length，以牺牲一定的阴影效果来提升阴影性能。</p>
 </li>
 </ol>
 <h5 id="物理与碰撞优化">物理与碰撞优化</h5>
@@ -804,12 +813,15 @@ Project Settings -&gt; Engine -&gt; Animation -&gt; 勾选 Strip Animation Data 
 <p>蓝图中过多的资源硬引用（<a href="https://raharuu.github.io/unreal/hard-references-reasons-avoid/">Hard References</a>）。推荐一个硬引用检测插件：<a href="https://github.com/heyomidk/HardReferenceFinder"> HardReferenceFinder</a>。避免硬引用将涉及到<a href="https://dawnarc.com/2018/01/ue4%E8%B5%84%E6%BA%90%E5%BC%82%E6%AD%A5%E5%8A%A0%E8%BD%BDassets-asynchronous-loading%E4%B8%8E%E5%86%85%E5%AD%98%E9%87%8A%E6%94%BEfree-memory/">异步加载</a>，异步加载又涉及到内存管理和事件管理，是一个庞大话题，这里不赘述。</p>
 </li>
 <li>
-<p>Shadow map（非动态光照）内存占用：</p>
+<p>Shadow map内存占用：</p>
 <ul>
 <li>场景内静态物体的数量越多，则shadow map res越大，内存占用也越大；</li>
-<li>阴影质量(Shadows quality)越高，则light map res越大，内存占用也越大；</li>
+<li>cast shadow的灯光数量越多，shadow map res越大；</li>
 <li>RHI memory(显存)中受阴影质量影响的数据类型包括：<code>Render target memory Cube</code>, <code>Render target memory 2D</code>, <code>Render target memory 3D</code>；</li>
 </ul>
+</li>
+<li>
+<p>Light map内存占用受light map res大小影响，不过lightmass默认有开启压缩，以节省内存。另外UE会将shadow map和light map捆绑并写入多个图集(texture atlas)中，详情见：<a href="https://docs.unrealengine.com/4.27/en-US/WorkingWithContent/Types/StaticMeshes/LightmapUnwrapping/#packedlightandshadowmaptexturesize">Unwrapping UVs for Lightmaps</a>。</p>
 </li>
 <li>
 <p>过多的shader置换（<a href="https://therealmjp.github.io/posts/shader-permutations-part1/">Shader Permutation</a>，Unity中叫<a href="https://docs.unity3d.com/Manual/shader-variants.html">Shader Variants</a>）会导致显存暴涨。<br>
@@ -841,14 +853,17 @@ Project Settings -&gt; Engine -&gt; Animation -&gt; 勾选 Strip Animation Data 
 <li>
 <p>Shaded GS primitives数量正常在10k以内（Gears 5平均在3k左右），如果范围异常（比如十万以上），说明有两方面问题：</p>
 <ul>
-<li>启用<code>Cast Shadow</code>的灯光数量较多（点光源和聚光灯），且阴影质量过高（<code>r.ShadowQuality=5</code>，阴影质量过高会增加阴影投射范围的全局distance scale，低阴影质量下引擎会自动关闭远处灯光的cast shadow）。另外cast volumetric shadow（DirectionalLight、SkyLight之外其他光源）也会导致GS primitives, vertex, pixel数量急剧增长甚至翻倍。</li>
-<li>零散的mesh数量太多，没有做merge，引擎自带mesh merge工具：<a href="https://docs.unrealengine.com/4.27/en-US/Basics/Actors/Merging/">Actor Merging</a>。</li>
+<li>启用<code>Cast Shadow</code>的灯光数量较多（PointLight），且阴影质量过高（<code>r.ShadowQuality=5</code>，阴影质量过高会增加阴影投射范围的全局distance scale，低阴影质量下引擎会自动关闭远处灯光的cast shadow）。另外cast volumetric shadow（DirectionalLight、SkyLight之外其他光源）也会导致GS primitives, vertex, pixel数量急剧增长甚至翻倍。</li>
+<li>cast shadow的pointlight数量不多，但是其影响的mesh数量太多，没有对大量零散的mesh做merge，引擎自带mesh merge工具：<a href="https://docs.unrealengine.com/4.27/en-US/Basics/Actors/Merging/">Actor Merging</a>。</li>
 </ul>
-<p>原因是point light的shadow map不是普通的framebuffer，而是3D的cube-based shadow map（6张framebuffer），而这个cubemap的生成是在geometry shader中发起，并通过<a href="https://www.khronos.org/opengl/wiki/Geometry_Shader#Layered_rendering">Layered rendering</a>指定当前mesh（也就是primitive）上的所有vertex所属layered image（cubemap的六个面之一）的layer index。</p>
 </li>
-<li>
-<p>CopyTextureRegion次数不影响性能，从几个到几百都是正常范围，一般刚进入新场景时CopyTextureRegion数量较高，此时正在mip slicing（个人推测）。</p>
-</li>
+</ol>
+<div class="alert info ">
+  <p>point light的shadow map不是普通的framebuffer，而是3D的cube-based shadow map（6张framebuffer），而这个cubemap的生成是在geometry shader中发起，并通过<a href="https://www.khronos.org/opengl/wiki/Geometry_Shader#Layered_rendering">Layered rendering</a>指定当前mesh（也就是primitive）上的所有vertex所属layered image（cubemap的六个面之一）的layer index。<br>
+另外mesh merge也不是合并的越多越好，一次性合并太多，形成一个超大mesh，会影响视锥剔除，可能得不偿失。</p>
+</div>
+<ol start="4">
+<li>CopyTextureRegion次数不影响性能，从几个到几百都是正常范围，一般刚进入新场景时CopyTextureRegion数量较高，此时正在mip slicing（个人推测）。</li>
 </ol>
 <h5 id="参考资料">参考资料</h5>
 <p>Performance and Profiling<br>

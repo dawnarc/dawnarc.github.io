@@ -13,18 +13,18 @@
 <meta name="generator" content="Hugo 0.102.3 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Wang Aiguo">
 <meta name="keywords" content="Graphics, Transparency, Rendering">
-<meta name="description" content="keywords: Graphics, Transparency Rendering">
+<meta name="description" content="keywords: Graphics, Transparency Rendering, Semi-transparency, Translucency, Translucent Shader">
 
 
-<meta property="og:description" content="keywords: Graphics, Transparency Rendering">
+<meta property="og:description" content="keywords: Graphics, Transparency Rendering, Semi-transparency, Translucency, Translucent Shader">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[Graphics]Transparency Rendering">
 <meta name="twitter:title" content="[Graphics]Transparency Rendering">
 <meta property="og:url" content="https://dawnarc.com/2022/05/graphicstransparency-rendering/">
 <meta property="twitter:url" content="https://dawnarc.com/2022/05/graphicstransparency-rendering/">
 <meta property="og:site_name" content="玄冬Wong">
-<meta property="og:description" content="keywords: Graphics, Transparency Rendering">
-<meta name="twitter:description" content="keywords: Graphics, Transparency Rendering">
+<meta property="og:description" content="keywords: Graphics, Transparency Rendering, Semi-transparency, Translucency, Translucent Shader">
+<meta name="twitter:description" content="keywords: Graphics, Transparency Rendering, Semi-transparency, Translucency, Translucent Shader">
 <meta property="og:locale" content="en-us">
 
   
@@ -362,10 +362,25 @@
                 <script>
                      (adsbygoogle = window.adsbygoogle || []).push({});
                 </script>
-              <p>keywords: Graphics, Transparency Rendering</p>
+              <p>keywords: Graphics, Transparency Rendering, Semi-transparency, Translucency, Translucent Shader</p>
+<h5 id="optimization">Optimization</h5>
+<p>Quoted from <a href="https://stackoverflow.com/a/9036349/1645289">Is discard bad for program performance in OpenGL?</a>:<br>
+&ldquo;discard&rdquo; is bad for every mainstream graphics acceleration technique - IMR, TBR, TBDR. This is because visibility of a fragment (and hence depth) is only determinable after fragment processing and not during Early-Z or PowerVR&rsquo;s HSR (hidden surface removal) etc. The further down the graphics pipeline something gets before removal tends to indicate its effect on performance; in this case more processing of fragments + disruption of depth processing of other polygons = bad effect.</p>
+<p>If you must use discard make sure that only the tris that need it are rendered with a shader containing it and, to minimise its effect on overall rendering performance, render your objects in the order: opaque, discard, blended.</p>
+<p>Incidentally, only PowerVR hardware determines visibility in the deferred step (hence it&rsquo;s the only GPU termed as &ldquo;TBDR&rdquo;). Other solutions may be tile-based (TBR), but are still using Early Z techniques dependent on submission order like an IMR does. TBRs and TBDRs do blending on-chip (faster, less power-hungry than going to main memory) so blending should be favoured for transparency. The usual procedure to render blended polygons correctly is to disable depth writes (but not tests) and render tris in back-to-front depth order (unless the blend operation is order-independent). Often approximate sorting is good enough. Geometry should be such that large areas of completely transparent fragments are avoided. More than one fragment still gets processed per pixel this way, but HW depth optimisation isn&rsquo;t interrupted like with discarded fragments.</p>
 <h5 id="documents">Documents</h5>
+<p>overview of a few methods to render with transparency in OpenGL:</p>
+<ul>
+<li>Alpha Testing</li>
+<li>Sorting and Blending</li>
+<li>Depth Peeling</li>
+<li>Alpha to Coverage</li>
+</ul>
+<p>Origin: <a href="https://stackoverflow.com/a/23283256">OpenGL ES2 Alpha test problems</a></p>
 <p>Order Independent Transparency In OpenGL 4.x<br>
 <a href="https://on-demand.gputechconf.com/gtc/2014/presentations/S4385-order-independent-transparency-opengl.pdf">https://on-demand.gputechconf.com/gtc/2014/presentations/S4385-order-independent-transparency-opengl.pdf</a></p>
+<p>Order-independent transparency - LearnOpenGL<br>
+<a href="https://learnopengl.com/Guest-Articles/2020/OIT/Introduction">https://learnopengl.com/Guest-Articles/2020/OIT/Introduction</a></p>
 <h5 id="examples">Examples</h5>
 <p>Demonstrates seven different techniques for order-independent transparency in Vulkan.<br>
 <a href="https://github.com/nvpro-samples/vk_order_independent_transparency">https://github.com/nvpro-samples/vk_order_independent_transparency</a></p>
