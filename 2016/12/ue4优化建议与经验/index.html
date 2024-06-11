@@ -481,11 +481,11 @@ UE4做了优化，当你使用<code>FTransform::TransformXXX()</code>时，如�
 </li>
 <li>
 <p>将mask材质的depth计算放到Early Z-pass（利用硬件级特性<code>early depth testing</code>，无需在BasePass中计算）中执行。<br>
-UE4为了减少depth pass (又叫depth prepass，属于UE的PrePass)的计算，对于final depth不确定的材质（mask材质是最主要的一种），UE会让GPU自己计算（post z中计算出depth。不同平台，不同厂商，其计算depth的性能开销也差异巨大），而depth计算很可能触发alpha test，而alpha test是tile-based gpu（主要是移动端gpu）的软肋。<br>
+UE4为了减少depth pass (又叫depth prepass，属于UE的PrePass)的计算，对于final depth不确定的材质（mask材质是最主要的一种），UE会让GPU自己计算（post z中计算出depth。不同平台，不同厂商，其计算depth的性能开销也差异巨大），而depth计算很可能触发alpha test（原因见下方参考链接），而alpha test是tile-based gpu（主要是移动端gpu）的阿喀琉斯之踵（详情见：<a href="https://dawnarc.com/2022/05/graphicstransparency-rendering/#early-z-and-discard-on-powervr">Early Z and Discard in PowerVR</a>）。<br>
 这就导致了一种情形：如果在depth pass上就计算mask材质的depth，其增加的开销远小于alpha test。这种场景最常见的就是mask类型材质的大面积植被。<br>
 除此之外，还有另一个问题：计算depth时，opaque材质可以只需early z（UE4的叫做PreZ），无需pixel shader，而mask材质需要pixel shader计算，
 且会导致pixel pass (属于UE的BasePass)的overdraw增加。<br>
-UE4.16做了优化：在Early Z-pass中写入全场景的depth，然后在BasePass中将mask材质写入一张opaque材质，最后以Equal取代LessEqual来执行DepthTest，以此跳过pixel pass的depth计算。<br>
+UE4.16做了优化：在Early Z-pass中写入全场景的depth，然后在BasePass中将mask材质写入一张opaque材质，最后用EQUAL取代LESS来执行DepthTest，以此跳过pixel pass的depth计算。<br>
 优化选项开关（需要重启，不支持运行时切换）：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#66d9ef">[/Script/Engine.RendererSettings]</span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">; 默认是3</span>
@@ -650,7 +650,7 @@ Dynamic Shadow Distance 表示在多少距离内使用动态阴影，超过这�
 <p>若植被数量较多，且材质类型为mask时，开启：Early Z Pass Only Material Masking。详情见前面章节Occlusion Culling下的第6条。</p>
 </li>
 <li>
-<p>植被若要开启阴影，不要用传统的shadow map（会导致计算开销和内存占用都很大），一个这种方案是<a href="https://docs.unrealengine.com/4.27/en-US/BuildingWorlds/LightingAndShadows/ContactShadows/">Screen Space Contact Shadow</a>，Contact Shadows并不是专门为植被而设计，而是为了提升阴影细节（摄像机拉近后的阴影细节）。针对植被阴影时，调整合理的Contact Shadow Length，以牺牲一定的阴影效果来提升阴影性能。</p>
+<p>植被若要开启阴影，不要用传统的shadow map（会导致计算开销和内存占用都很大），一个妥协方案是<a href="https://docs.unrealengine.com/4.27/en-US/BuildingWorlds/LightingAndShadows/ContactShadows/">Screen Space Contact Shadow</a>，Contact Shadows并不是专门为植被而设计，而是为了提升阴影细节（摄像机拉近后的阴影细节）。针对植被阴影时，调整合理的Contact Shadow Length，以牺牲一定的阴影效果来提升阴影性能。</p>
 </li>
 </ol>
 <h5 id="物理与碰撞优化">物理与碰撞优化</h5>

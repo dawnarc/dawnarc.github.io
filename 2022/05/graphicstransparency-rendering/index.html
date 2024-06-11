@@ -13,18 +13,18 @@
 <meta name="generator" content="Hugo 0.102.3 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Wang Aiguo">
 <meta name="keywords" content="Graphics, Transparency, Rendering">
-<meta name="description" content="keywords: Graphics, Transparency Rendering, Semi-transparency, Translucency, Translucent Shader">
+<meta name="description" content="keywords: Graphics, Transparency Rendering, Semi-transparency, Translucency, Translucent Shader, Early Z, Hi-Z, Discard, Depth Test, Depth Writing">
 
 
-<meta property="og:description" content="keywords: Graphics, Transparency Rendering, Semi-transparency, Translucency, Translucent Shader">
+<meta property="og:description" content="keywords: Graphics, Transparency Rendering, Semi-transparency, Translucency, Translucent Shader, Early Z, Hi-Z, Discard, Depth Test, Depth Writing">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[Graphics]Transparency Rendering">
 <meta name="twitter:title" content="[Graphics]Transparency Rendering">
 <meta property="og:url" content="https://dawnarc.com/2022/05/graphicstransparency-rendering/">
 <meta property="twitter:url" content="https://dawnarc.com/2022/05/graphicstransparency-rendering/">
 <meta property="og:site_name" content="玄冬Wong">
-<meta property="og:description" content="keywords: Graphics, Transparency Rendering, Semi-transparency, Translucency, Translucent Shader">
-<meta name="twitter:description" content="keywords: Graphics, Transparency Rendering, Semi-transparency, Translucency, Translucent Shader">
+<meta property="og:description" content="keywords: Graphics, Transparency Rendering, Semi-transparency, Translucency, Translucent Shader, Early Z, Hi-Z, Discard, Depth Test, Depth Writing">
+<meta name="twitter:description" content="keywords: Graphics, Transparency Rendering, Semi-transparency, Translucency, Translucent Shader, Early Z, Hi-Z, Discard, Depth Test, Depth Writing">
 <meta property="og:locale" content="en-us">
 
   
@@ -362,12 +362,7 @@
                 <script>
                      (adsbygoogle = window.adsbygoogle || []).push({});
                 </script>
-              <p>keywords: Graphics, Transparency Rendering, Semi-transparency, Translucency, Translucent Shader</p>
-<h5 id="optimization">Optimization</h5>
-<p>Quoted from <a href="https://stackoverflow.com/a/9036349/1645289">Is discard bad for program performance in OpenGL?</a>:<br>
-&ldquo;discard&rdquo; is bad for every mainstream graphics acceleration technique - IMR, TBR, TBDR. This is because visibility of a fragment (and hence depth) is only determinable after fragment processing and not during Early-Z or PowerVR&rsquo;s HSR (hidden surface removal) etc. The further down the graphics pipeline something gets before removal tends to indicate its effect on performance; in this case more processing of fragments + disruption of depth processing of other polygons = bad effect.</p>
-<p>If you must use discard make sure that only the tris that need it are rendered with a shader containing it and, to minimise its effect on overall rendering performance, render your objects in the order: opaque, discard, blended.</p>
-<p>Incidentally, only PowerVR hardware determines visibility in the deferred step (hence it&rsquo;s the only GPU termed as &ldquo;TBDR&rdquo;). Other solutions may be tile-based (TBR), but are still using Early Z techniques dependent on submission order like an IMR does. TBRs and TBDRs do blending on-chip (faster, less power-hungry than going to main memory) so blending should be favoured for transparency. The usual procedure to render blended polygons correctly is to disable depth writes (but not tests) and render tris in back-to-front depth order (unless the blend operation is order-independent). Often approximate sorting is good enough. Geometry should be such that large areas of completely transparent fragments are avoided. More than one fragment still gets processed per pixel this way, but HW depth optimisation isn&rsquo;t interrupted like with discarded fragments.</p>
+              <p>keywords: Graphics, Transparency Rendering, Semi-transparency, Translucency, Translucent Shader, Early Z, Hi-Z, Discard, Depth Test, Depth Writing</p>
 <h5 id="documents">Documents</h5>
 <p>overview of a few methods to render with transparency in OpenGL:</p>
 <ul>
@@ -377,10 +372,52 @@
 <li>Alpha to Coverage</li>
 </ul>
 <p>Origin: <a href="https://stackoverflow.com/a/23283256">OpenGL ES2 Alpha test problems</a></p>
-<p>Order Independent Transparency In OpenGL 4.x<br>
-<a href="https://on-demand.gputechconf.com/gtc/2014/presentations/S4385-order-independent-transparency-opengl.pdf">https://on-demand.gputechconf.com/gtc/2014/presentations/S4385-order-independent-transparency-opengl.pdf</a></p>
+<p>Blending<br>
+<a href="https://learnopengl.com/Advanced-OpenGL/Blending">https://learnopengl.com/Advanced-OpenGL/Blending</a></p>
 <p>Order-independent transparency - LearnOpenGL<br>
 <a href="https://learnopengl.com/Guest-Articles/2020/OIT/Introduction">https://learnopengl.com/Guest-Articles/2020/OIT/Introduction</a></p>
+<p>Order Independent Transparency In OpenGL 4.x<br>
+<a href="https://on-demand.gputechconf.com/gtc/2014/presentations/S4385-order-independent-transparency-opengl.pdf">https://on-demand.gputechconf.com/gtc/2014/presentations/S4385-order-independent-transparency-opengl.pdf</a></p>
+<h5 id="early-z-and-discard-on-powervr">Early Z and Discard on PowerVR</h5>
+<p>Conclusions:</p>
+<ul>
+<li>Either Early-Z or discard can prevent a fragment from being drawn, so it&rsquo;s very possible to do one and then the other. But for PowerVR, only one of the two (Early Z and Discard) can be executed at a time.
+<ul>
+<li>Opaque primitives: Early-Z.</li>
+<li>Semi-transparency primitives: Discard (depth test, after fragment shader has executed).</li>
+</ul>
+</li>
+<li>The reason whty PowerVR(TBDRs) can only execute only one of two(Early Z and Discard):
+<ul>
+<li>When an alpha tested primitive is submitted, early depth testing - such as PowerVR’s Hidden Surface Removal (HSR) - can discard fragments that are occluded by fragments closer to the camera. Unlike opaque primitives that would also perform depth writes at this pipeline stage, alpha tested primitives cannot write data to the depth buffer until the fragment shader has executed and fragment visibility is known. These deferred depth writes can impact performance, as subsequent primitives cannot be processed until the depth buffers are updated with the alpha tested primitive’s values.</li>
+<li>To avoid accessing main memory (but accesses faster cache, which saves more power), the discarding logic is bundled with the depth testing logic on hardware, so alpha tested primitives write data to the depth buffer in the deferred step.</li>
+</ul>
+</li>
+<li>TBRs and TBDRs do blending on-chip (faster, less power-hungry than going to main memory) so blending should be favoured for transparency. The usual procedure to render blended polygons correctly is to disable depth writes (but not tests) and render tris in back-to-front depth order (unless the blend operation is order-independent)</li>
+</ul>
+<p>References:<br>
+<a href="https://powervr-graphics.github.io/WebGL_SDK/WebGL_SDK/Documentation/Architecture%20Guides/PowerVR%20Performance%20Recommendations.The%20Golden%20Rules.pdf">PowerVR Performance Recommendations - The Golden Rules</a>
+<figure><img src="https://dawnarc.com/img/2022/20220508-[Graphics]Transparency%20Rendering/[Graphics]Transparency%20Rendering%20-%2001.png"/>
+</figure>
+</p>
+<p>Quoted from <a href="https://stackoverflow.com/a/9036349/1645289">Is discard bad for program performance in OpenGL?</a></p>
+<p>– gmaclachlan:<br>
+&ldquo;discard&rdquo; is bad for every mainstream graphics acceleration technique - IMR, TBR, TBDR. This is because visibility of a fragment (and hence depth) is only determinable after fragment processing and not during Early-Z or PowerVR&rsquo;s HSR (hidden surface removal) etc. The further down the graphics pipeline something gets before removal tends to indicate its effect on performance; in this case more processing of fragments + disruption of depth processing of other polygons = bad effect.<br>
+If you must use discard make sure that only the tris that need it are rendered with a shader containing it and, to minimise its effect on overall rendering performance, render your objects in the order: opaque, discard, blended.<br>
+Incidentally, only PowerVR hardware determines visibility in the deferred step (hence it&rsquo;s the only GPU termed as &ldquo;TBDR&rdquo;). Other solutions may be tile-based (TBR), but are still using Early Z techniques dependent on submission order like an IMR does. TBRs and TBDRs do blending on-chip (faster, less power-hungry than going to main memory) so blending should be favoured for transparency. The usual procedure to render blended polygons correctly is to disable depth writes (but not tests) and render tris in back-to-front depth order (unless the blend operation is order-independent). Often approximate sorting is good enough. Geometry should be such that large areas of completely transparent fragments are avoided. More than one fragment still gets processed per pixel this way, but HW depth optimisation isn&rsquo;t interrupted like with discarded fragments.</p>
+<p>– Nicol Bolas:<br>
+&ldquo;visibility of a fragment(and hence depth) is only determinable after fragment processing and not during Early-Z or PowerVR&rsquo;s HSR (hidden surface removal) etc.&rdquo; That&rsquo;s not entirely true. Either Early-Z or discard can prevent a fragment from being drawn. So it&rsquo;s very possible to do one and then the other. PowerVR can&rsquo;t for the reasons you and I stated. But traditional renderers certainly can. If they don&rsquo;t, it would only be because the discarding logic is bundled with the depth testing logic. That&rsquo;s a hardware design issue, not an algorithmic necessity.</p>
+<p>– gmaclachlan:<br>
+I missed out the case where a discard fragment is rendered &lsquo;behind&rsquo; existing geometry :S - is that what you mean? Both early Z and HSR will reject fragments without fragment processing in that situation. Even then, Early-Z requires the obscuring fragments to be rendered before the obscured, discard ones or the discard shader still needs to be run for those fragments to determine depth. HSR is not dependent on submission order in this case - at the end of a frame, if discard fragments are behind opaque fragments then they don&rsquo;t get processed by PowerVR.</p>
+<p>– Nicol Bolas:<br>
+A fragment can fail to be rendered for many reasons. Depth test is one, discard is another. Early-Z simply performs the depth test first. The only reason discard would interfere with this is if the discard logic were tied into the depth test logic in the hardware. Just because something passes the depth test does not mean that it will pass everything. If the depth and discard are coupled, it is only because hardware is built that way, not because it has to be done that way by the algorithm. You should be able to do Early-Z tests and still later discard.</p>
+<p>– gmaclachlan:<br>
+Of course you can, but it&rsquo;s slower that way because depth information isn&rsquo;t determined until later in the pipeline. &lsquo;discard&rsquo; in the shader (with the usual render state) affects the depth write value of a fragment so it affects the performance of subsequent depth testing in hardware. This is what makes it different from blending.</p>
+<p>– Nicol Bolas:<br>
+Depth writing would happen at the same time as color writing. discard, like the depth test or stencil test, would affect both depth and color writing. Doing the depth test before the fragment shader does not require that the depth tested is ultimately written. Now, certain Z-culling techniques (Hi-Z, Hierarchial-Z, etc) do require that. So you can&rsquo;t use them with discard. But those are different from Early-Z, which is simply doing the depth test per-fragment before the fragment shader.<br>
+There is evidence that some hardware can do depth tests without depth writes. This can be found with extensions like AMD_conservative_depth, which allows one to say how they&rsquo;re changing the depth value they&rsquo;re writing. This allows hardware to do the depth test early if it knows that you&rsquo;re not changing the depth in a way that will make that test invalid. That wouldn&rsquo;t work if the hardware wrote the depth it tested against; it still has to write the actual depth computed in the shader. So Early-Z tests are not linked to Early-Z writes.</p>
+<p>– gmaclachlan:<br>
+discard tri goes through pipeline, passes early-Z, Hi-Z etc., goes to fragment processing, depth is determined with colour and written out. But&hellip; if a fragment is rendered to the same x-y after this then the Early Z etc. has to wait for the discard fragment&rsquo;s depth to be processed and written before it can perform the depth test with up-to-date data (or potentially process obscured fragments). Hence performance hit.BTW I think I mention disabling depth write (but not tests) above.</p>
 <h5 id="examples">Examples</h5>
 <p>Demonstrates seven different techniques for order-independent transparency in Vulkan.<br>
 <a href="https://github.com/nvpro-samples/vk_order_independent_transparency">https://github.com/nvpro-samples/vk_order_independent_transparency</a></p>
