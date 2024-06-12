@@ -394,6 +394,14 @@ This property in C++ is <code>UPrimitiveComponent::bNeverDistanceCull</code>.</p
 <h5 id="mask-material-only-in-early-z-pass">Mask material only in early Z-pass</h5>
 <p>Q: What&rsquo;s mean by <code>Mask material only in early Z-pass</code>?<br>
 A: Put the depth calculation of the mask material into Early Z-pass(utilize the hardware feature <code>early depth testing</code>).</p>
+<p>The requirements of <code>Mask material only in early Z-pass</code>:</p>
+<ul>
+<li>All objects that write depth, such as masked objects and skeletal meshes, must be put into Early Z-pass.
+<ul>
+<li>In scenes with many characters, the overall GPU cost may be high.</li>
+</ul>
+</li>
+</ul>
 <p>In order to reduce the calculation of depth pass (also called depth prepass, which is part of UE&rsquo;s PrePass), UE4 will let the GPU calculate by itself (The depth is calculated in post z. Different platforms and different manufacturers have huge differences in the performance overhead of calculating depth.) for materials with unknown final depth (e.g. mask material), and depth calculation is likely to trigger alpha testing, and alpha testing is the weakness of tile-based GPUs (e.g. mainstream mobile GPUs).<br>
 This leads to a situation: if the depth of mask material is calculated on the depth pass, the additional overhead is much less than the alpha test. The most common scene of this kind is large-area foliages with mask material.<br>
 In addition, there is another problem: when calculating depth, the opaque material can only need early z (called PreZ in UE4) without pixel shader, while the mask material requires pixel shader to calculate, and it will increase the overdraw of pixel pass (is part of UE‘s BasePass) to increase.<br>
@@ -415,15 +423,16 @@ UE4.16 has been optimized: write the depth of the entire scene in Early Z-pass, 
 <p>You can also check if occlusion culling works using console:</p>
 <pre tabindex="0"><code>r.visualizeOccludedPrimitives 1
 </code></pre><div class="alert warning ">
-  <p><p>Which materials will be forced to turn on post z (late z, do Discarding: stencil test, depth test) by the GPU to calculate the final depth (the calculation process is still in the pixel shader, and early z is turned off):</p>
+  <p><p>Which primitive will be forced to turn on post z (late z, do Discarding: stencil test, depth test) by the GPU to calculate the final depth (the calculation process is still in the pixel shader, and early z is turned off):</p>
 <ul>
-<li>mask materials (because alpha test needs to be done).</li>
-<li>opaque materials whose <code>Opacity Mask</code> has been parameterized.</li>
-<li>Materials whose <code>Pixel Depth Offset</code> has been parameterized.</li>
+<li>Masked materials whose <code>Opacity Mask</code> has been parameterized.</li>
+<li>Opaque materials whose <code>Pixel Depth Offset</code> has been parameterized.</li>
 </ul>
 </p>
 </div>
-<p>For more details, see：<a href="https://www.slideshare.net/EpicGamesJapan/mask-material-only-in-early-zpass">Effects and mechanism of Mask Material only in Early Z-pass</a></p>
+<p>For more details, see:<br>
+<a href="https://www.slideshare.net/EpicGamesJapan/mask-material-only-in-early-zpass">Effects and mechanism of Mask Material only in Early Z-pass</a><br>
+<a href="https://www.slideshare.net/slideshow/cedec2016-unreal-engine-4/65344798">A complete review of the rendering flow of Unreal Engine 4</a></p>
 <h3 id="occlusion-culling-in-ue5">Occlusion Culling in UE5</h3>
 <h5 id="cpu-based-occlusion-culling">CPU based Occlusion Culling</h5>
 <p>UE5 discarded software occlusion culling (CPU-side) and use HZBO (Hierarchical Z-Buffer Occlusion, GPU-side) by default.<br>

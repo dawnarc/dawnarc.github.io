@@ -481,7 +481,7 @@ UE4做了优化，当你使用<code>FTransform::TransformXXX()</code>时，如�
 </li>
 <li>
 <p>将mask材质的depth计算放到Early Z-pass（利用硬件级特性<code>early depth testing</code>，无需在BasePass中计算）中执行。<br>
-UE4为了减少depth pass (又叫depth prepass，属于UE的PrePass)的计算，对于final depth不确定的材质（mask材质是最主要的一种），UE会让GPU自己计算（post z中计算出depth。不同平台，不同厂商，其计算depth的性能开销也差异巨大），而depth计算很可能触发alpha test（原因见下方参考链接），而alpha test是tile-based gpu（主要是移动端gpu）的阿喀琉斯之踵（详情见：<a href="https://dawnarc.com/2022/05/graphicstransparency-rendering/#early-z-and-discard-on-powervr">Early Z and Discard in PowerVR</a>）。<br>
+UE4为了减少depth pass (又叫depth prepass，属于UE的PrePass)的计算，对于final depth不确定的材质（mask材质是最主要的一种），UE会让GPU自己计算（post z中计算出depth。不同平台，不同厂商，其计算depth的性能开销也差异巨大），而depth计算很可能触发alpha test（原因见下方参考链接），而alpha test是tile-based gpu（主要是移动端gpu）的阿喀琉斯之踵（详情见：<a href="https://dawnarc.com/2022/05/graphicstransparency-rendering/#early-z-and-discard-on-powervr">Early Z and Discard on PowerVR</a>）。<br>
 这就导致了一种情形：如果在depth pass上就计算mask材质的depth，其增加的开销远小于alpha test。这种场景最常见的就是mask类型材质的大面积植被。<br>
 除此之外，还有另一个问题：计算depth时，opaque材质可以只需early z（UE4的叫做PreZ），无需pixel shader，而mask材质需要pixel shader计算，
 且会导致pixel pass (属于UE的BasePass)的overdraw增加。<br>
