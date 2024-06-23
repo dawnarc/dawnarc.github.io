@@ -387,6 +387,11 @@ System memory,AGP memory和video memory<br>
 <li><code>GL_STREAM_DRAW</code>: basically means &ldquo;I am planning to change this vertex data basically every frame.&rdquo; If you are manipulating the vertices a lot on the CPU, and it&rsquo;s not feasible to use shaders instead, you probably want to use this one. Sprites or particles with complex behavior are often best served as STREAM vertices. While STATIC+shaders is preferable for animated geometry, modern hardware can spew incredible amounts of vertex data from the CPU to the GPU every frame without breaking a sweat, so you will generally not notice the performance impact.</li>
 <li><code>GL_DYNAMIC_DRAW</code>: basically means &ldquo;I may need to occasionally update this vertex data, but not every frame.&rdquo; This is the least common one. It&rsquo;s not really suited for most forms of animation since those usually require very frequent updates. Animations where the vertex shader interpolates between occasional keyframe updates are one possible case. A game with Minecraft-style dynamic terrain might try using DYNAMIC, since the terrain changes occur less frequently than every frame. DYNAMIC also tends to be useful in more obscure scenarios, such as if you&rsquo;re batching different chunks of model data in the same vertex buffer, and you occasionally need to move them around.</li>
 </ul>
+<p>Quoted from <a href="https://registry.khronos.org/OpenGL-Refpages/es1.1/xhtml/glBufferData.xml">glBufferData - khronos.org</a>:</p>
+<ul>
+<li><code>GL_STATIC_DRAW</code>: The data store contents will be modified once and used many times as the source for GL drawing commands.</li>
+<li><code>GL_DYNAMIC_DRAW</code>: The data store contents will be modified repeatedly and used many times as the source for GL drawing commands.</li>
+</ul>
 <p>OpenGL缓冲区对象允许usage标示符取以下9种值（credits to <a href="https://blog.csdn.net/kunluo/article/details/72818069">kunluo - CSDN</a>）：</p>
 <ul>
 <li><code>GL_STATIC_DRAW</code>, <code>GL_STATIC_READ</code>, <code>GL_STATIC_COPY</code></li>
@@ -395,7 +400,7 @@ System memory,AGP memory和video memory<br>
 </ul>
 <p>区别：</p>
 <ul>
-<li>&ldquo;static&quot;意味着VBO中的数据不会被改变（一次修改，多次使用）；</li>
+<li>&ldquo;static&quot;意味着buffer的数据不会被改变（一次修改，多次使用）；</li>
 <li>&ldquo;dynamic&quot;意味着数据可以被频繁修改（多次修改，多次使用）；</li>
 <li>&ldquo;stream&quot;意味着数据每帧都不同（一次修改，一次使用）；</li>
 <li>&ldquo;Draw&quot;意味着数据将会被送往GPU进行绘制，&ldquo;read&quot;意味着数据会被用户的应用读取，&ldquo;copy&quot;意味着数据会被用于绘制和读取。</li>

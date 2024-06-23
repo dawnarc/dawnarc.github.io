@@ -699,12 +699,10 @@ Dynamic Shadow Distance 表示在多少距离内使用动态阴影，超过这�
 默认会被编译优化的参数类型包括：<br>
 member variables;<br>
 negated boolean member variables;<br>
-members of a nested structure;<br>
-具体说明见官方文档：<br>
-Animation Optimization<br>
-<a href="https://docs.unrealengine.com/en-us/Engine/Animation/Optimization">https://docs.unrealengine.com/en-us/Engine/Animation/Optimization</a><br>
-Animation Fast Path Optimization<br>
-<a href="https://docs.unrealengine.com/en-us/Engine/Animation/Optimization/FastPath">https://docs.unrealengine.com/en-us/Engine/Animation/Optimization/FastPath</a></p>
+members of a nested structure;</p>
+</li>
+<li>
+<p>启用<code>Component Use Fixed Skel Bounds</code>（位于SkeletalMeshComponent中），避免Bounding Box实时更新。</p>
 </li>
 <li>
 <p><code>Morph Targets</code>的计算消耗较大，默认是在GPU上计算，如果当GPU上有性能瓶颈且CPU算力充足时，可以将<code>Morph Targets</code>改成CPU计算，方式：Project Settings -&gt; Engine -&gt; Rendering -&gt; Uncheck <code>Use GPU for computing morph targets</code>.</p>
@@ -713,9 +711,14 @@ Animation Fast Path Optimization<br>
 <p>将Skeletal Mesh的动画烘焙成贴图：<a href="https://github.com/Rexocrates/Vertex_Anim_Toolset">Vertex Anim Toolset</a>。UE5官方自带插件：<a href="https://github.com/dawnarc/VertexAnimSample">AnimToTexture</a>。</p>
 </li>
 <li>
+<p>SkeletalMesh的Physics Asset当不需要时及时销毁掉，比如仅用于对话的NPC。</p>
+</li>
+<li>
 <p>动画切换尽量少用Animation Trees（动画蓝图State Machine下的蜘蛛网, 位于AnimGraph中），复杂的AT会极大增加CPU开销（Unity的Blend Tree也同理）。切换动画尽可能用状态机（包括BlendPoseBy等节点），且使用带有闪电小icon的节点。</p>
 </li>
 </ol>
+<p>Animation Optimization<br>
+<a href="https://dev.epicgames.com/documentation/en-us/unreal-engine/animation-optimization-in-unreal-engine">https://dev.epicgames.com/documentation/en-us/unreal-engine/animation-optimization-in-unreal-engine</a></p>
 <h5 id="ui优化">UI优化</h5>
 <ol>
 <li>
