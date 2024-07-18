@@ -365,48 +365,46 @@
               <p>keywords: [UE4]UFunction-ProcessEvent返回值与输出参数获取</p>
 <h5 id="调用ufunction">调用UFunction</h5>
 <p>执行UFuncion，使用 <code>ProcessEvent</code> ：</p>
-<pre><code>UFunction* Fun = Actor-&gt;FindFunction(TEXT(&quot;TestFun&quot;));
-if(Fun)
-{
-    Actor-&gt;ProcessEvent(Fun, Buffer);
-}
-</code></pre>
-<h5 id="查询ufunction信息">查询UFunction信息</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>UFunction<span style="color:#f92672">*</span> Fun <span style="color:#f92672">=</span> Actor<span style="color:#f92672">-&gt;</span>FindFunction(TEXT(<span style="color:#e6db74">&#34;TestFun&#34;</span>));
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span>(Fun)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    Actor<span style="color:#f92672">-&gt;</span>ProcessEvent(Fun, Buffer);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h5 id="查询ufunction信息">查询UFunction信息</h5>
 <p>获取返回值：</p>
-<pre><code>UFunction* Fun = Actor-&gt;FindFunction(TEXT(&quot;TestFun&quot;));
-if(Fun)
-{
-    FFrame frame = FFrame(Actor, Fun, Buffer, NULL, Fun-&gt;Children);
-    uint8* ReturnValueAdress = Buffer + Fun-&gt;ReturnValueOffset;
-    int* intp = (int*)ReturnValueAdress; //hardcoded exemple for a int return
-    Fun-&gt;Invoke(Actor, frame, intp);
-}
-</code></pre>
-<p>获取输出参数：</p>
-<pre><code>if(UFunction* Fun = Actor-&gt;FindFunction(TEXT(&quot;TestFun&quot;)))
-{
-    if(uint8* Buffer = (uint8*)FMemory_Alloca(Fun-&gt;ParmsSize))
-    {
-        for (TFieldIterator&lt;UProperty&gt; PropIt(Fun, EFieldIteratorFlags::ExcludeSuper); PropIt; ++PropIt)
-        {
-            UProperty* Property = *PropIt;
-
-            bool isOut = Property-&gt;HasAnyPropertyFlags(CPF_OutParm);
-            if (!isOut)
-            {
-                continue;
-            }
-
-            uint8* outValueAddr = Property-&gt;ContainerPtrToValuePtr&lt;uint8&gt;(Buffer);
-            float* floatp = (float*)outValueAddr;   //hardcoded example for float
-        }
-    }
-}
-</code></pre>
-<div class="alert warning ">
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>UFunction<span style="color:#f92672">*</span> Fun <span style="color:#f92672">=</span> Actor<span style="color:#f92672">-&gt;</span>FindFunction(TEXT(<span style="color:#e6db74">&#34;TestFun&#34;</span>));
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span>(Fun)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    FFrame frame <span style="color:#f92672">=</span> FFrame(Actor, Fun, Buffer, NULL, Fun<span style="color:#f92672">-&gt;</span>Children);
+</span></span><span style="display:flex;"><span>    uint8<span style="color:#f92672">*</span> ReturnValueAdress <span style="color:#f92672">=</span> Buffer <span style="color:#f92672">+</span> Fun<span style="color:#f92672">-&gt;</span>ReturnValueOffset;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span><span style="color:#f92672">*</span> intp <span style="color:#f92672">=</span> (<span style="color:#66d9ef">int</span><span style="color:#f92672">*</span>)ReturnValueAdress; <span style="color:#75715e">//hardcoded exemple for a int return
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    Fun<span style="color:#f92672">-&gt;</span>Invoke(Actor, frame, intp);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>获取输出参数：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">if</span>(UFunction<span style="color:#f92672">*</span> Fun <span style="color:#f92672">=</span> Actor<span style="color:#f92672">-&gt;</span>FindFunction(TEXT(<span style="color:#e6db74">&#34;TestFun&#34;</span>)))
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span>(uint8<span style="color:#f92672">*</span> Buffer <span style="color:#f92672">=</span> (uint8<span style="color:#f92672">*</span>)FMemory_Alloca(Fun<span style="color:#f92672">-&gt;</span>ParmsSize))
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> (TFieldIterator<span style="color:#f92672">&lt;</span>UProperty<span style="color:#f92672">&gt;</span> PropIt(Fun, EFieldIteratorFlags<span style="color:#f92672">::</span>ExcludeSuper); PropIt; <span style="color:#f92672">++</span>PropIt)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            UProperty<span style="color:#f92672">*</span> Property <span style="color:#f92672">=</span> <span style="color:#f92672">*</span>PropIt;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">bool</span> isOut <span style="color:#f92672">=</span> Property<span style="color:#f92672">-&gt;</span>HasAnyPropertyFlags(CPF_OutParm);
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span>isOut)
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">continue</span>;
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            uint8<span style="color:#f92672">*</span> outValueAddr <span style="color:#f92672">=</span> Property<span style="color:#f92672">-&gt;</span>ContainerPtrToValuePtr<span style="color:#f92672">&lt;</span>uint8<span style="color:#f92672">&gt;</span>(Buffer);
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">float</span><span style="color:#f92672">*</span> floatp <span style="color:#f92672">=</span> (<span style="color:#66d9ef">float</span><span style="color:#f92672">*</span>)outValueAddr;   <span style="color:#75715e">//hardcoded example for float
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><div class="alert warning ">
   <p>通过 FindFunction 查找的函数必须添加 UFUNCTION() 宏，否则 FindFunction 返回NULL。</p>
 </div>
-<p>参考自：https://answers.unrealengine.com/questions/516440/ufunction-invoke.html</p>
+<p>参考自：<br>
+<a href="https://answers.unrealengine.com/questions/516440/ufunction-invoke.html">https://answers.unrealengine.com/questions/516440/ufunction-invoke.html</a></p>
 <hr>
 <p><code>对的那条路，往往不是最好走的。</code></p>
               

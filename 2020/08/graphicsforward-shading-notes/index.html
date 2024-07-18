@@ -363,15 +363,20 @@
                      (adsbygoogle = window.adsbygoogle || []).push({});
                 </script>
               <p>keywords: Graphics, Forward Shading, Forward Rendering</p>
-<p>Forward Rendering – Pros and Cons</p>
+<p>Related articles:<br>
+<a href="https://dawnarc.com/2019/10/graphicsdeferred-shading-notes/">[Graphics]Deferred Shading Notes</a></p>
+<h3 id="forward-rendering">Forward Rendering</h3>
+<h5 id="pros-and-cons">Pros and Cons</h5>
 <p>Pros:</p>
 <ul>
 <li>MSAA</li>
 <li>Complex Materials</li>
 <li>Bandwidth friendly</li>
 <li>Translucency just works</li>
-<li>Features can be enabled per-material
-Cons:</li>
+<li>Features can be enabled per-material</li>
+</ul>
+<p>Cons:</p>
+<ul>
 <li>No screen-space operations
 <ul>
 <li>SSR, SSAO, Contact Shadows, IES, Subsurface Profiles.</li>
@@ -381,10 +386,20 @@ Cons:</li>
 <ul>
 <li>Tiny triangles</li>
 <li>VGPR Usage</li>
+<li>Wavefront unfriendly (see: <a href="https://www.gamedev.net/forums/topic/683544-clustered-shading-why-deferred/">Clustered shading - why deferred?</a>)</li>
 </ul>
 </li>
 </ul>
 <p>Origin: <a href="https://gpuopen.com/wp-content/uploads/2017/04/Capsaicin-Cream-GDC2017-TomSanocki-DaveWilkinson.pdf">Subsurface Scattering in the Unreal Forward Renderer</a></p>
+<h5 id="performance-tradeoff">Performance tradeoff</h5>
+<p>Forward rendering is the process of computing a radiance value for a surface fragment directly from input geometry and lighting information. Deferred rendering splits that process into two steps: first producing a screen-space buffer containing material properties (a geometry buffer, or G-buffer) built by rasterizing the input geometry, and second producing a radiance value for each pixel by combining the G-buffer with lighting information.</p>
+<p>Deferred rendering is often presented as an optimization of forward rendering. One explanation is that lighting is fairly expensive and if you have any overdraw then you are lighting pixels that will never be seen on screen, whereas if you store material properties into a G-buffer and light afterwards, you are only lighting a pixel that will actually appear on-screen. Is this actually an advantage of deferred, given that you can also do a depth pre-pass and then do a forward rendering pass with depth test set to <code>D3D11_COMPARISON_EQUAL</code> or <code>GL_EQUAL</code> or the equivalent?</p>
+<p>Deferred rendering also has the potential to schedule better on the GPU. Splitting one large warp/wavefront into a smaller geometry wavefront and then smaller lighting wavefronts later improves occupancy (more wavefronts in flight simultaneously). But you also end up with a lot more bandwidth use (writing out a large number of channels to the G-buffer, then reading them back in during lighting). Obviously the specifics here depend a lot on your GPU, but what are the general principles?</p>
+<p>Are there other practical performance considerations when deciding between forward and deferred rendering? (Assume that we can use variations of each technique if necessary: i.e. we can compare tiled forward to tiled deferred as well.)</p>
+<p>It is possible to avoid overdraw from opaque objects even with forward rendering by doing a depth pre-pass and using that information to reject any pixel that is not actually visible. However, depending on the vertex cost of your scene, a depth pre-pass may add an unacceptable amount of performance overhead. Additionally, rendering using the pixel shading pipeline of the GPU means that you don&rsquo;t pay a cost per pixel that is rendered, you pay a cost per 2x2 pixel quad that is rendered. So even doing a depth pre-pass still causes triangle edges to waste work shading pixels that will be discarded.</p>
+<p>GPU scheduling is a complex topic, and the tradeoff between forward and deferred does not boil down simply to &ldquo;runs faster but uses more bandwidth.&rdquo; If you have two equally cheap operations that run in sequence and each use the same number of resources, there&rsquo;s no reason to split them into separate shaders: two small wavefronts that each use X resources don&rsquo;t fundamentally work better than a single longer wavefront that also uses X resources. If you have a cheap operation and an expensive operation to run in sequence, though, it may benefit from splitting into separate shaders: the shader in general will reserve the maximum amount of resources that it might use at any point. It&rsquo;s conceivable that forward rendering may not be able to use all the bandwidth of your GPU because there are so few wavefronts in flight that it cannot issue enough operations to saturate the bandwidth. But if you are bandwidth limited, there may be no advantage to deferred rendering (since it will probably use more bandwidth).</p>
+<p>An additional performance concern is that forward rendering supports different material types (different BRDFs, say) simply by using a different shader for that object. A straightforward deferred renderer needs to handle different material types in a different way (potentially a branch in the shader), since work is no longer grouped into warps/wavefronts coherently depending on the object being rendered. This can be mitigated with a tiled renderer—if only specific areas of the screen use an alternate material type (say, for hair), then you can use the shader variation with a material type branch only for tiles that contain any pixels with that material.</p>
+<p>Origin: <a href="https://computergraphics.stackexchange.com/questions/146/what-is-the-performance-tradeoff-between-forward-and-deferred-rendering">What is the performance tradeoff between forward and deferred rendering?</a></p>
 <h3 id="forward-plus-tiled-forward-shading">Forward Plus (Tiled Forward) Shading</h3>
 <h5 id="source">Source</h5>
 <p>Forward+ renderer in Vulkan using Compute Shader. An Upenn CIS565 final project.<br>

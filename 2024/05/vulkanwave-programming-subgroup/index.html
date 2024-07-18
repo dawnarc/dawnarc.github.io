@@ -13,18 +13,18 @@
 <meta name="generator" content="Hugo 0.102.3 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Wang Aiguo">
 <meta name="keywords" content="Vulkan, Wave Intrinsics, Wave Programming">
-<meta name="description" content="keywords: Graphics, Vulkan Subgroup, D3D12 Warp, Wave Intrinsics,">
+<meta name="description" content="keywords: Graphics, Vulkan Subgroup, D3D12 Warp, Wave Intrinsics, Wavefronts, SIMD">
 
 
-<meta property="og:description" content="keywords: Graphics, Vulkan Subgroup, D3D12 Warp, Wave Intrinsics,">
+<meta property="og:description" content="keywords: Graphics, Vulkan Subgroup, D3D12 Warp, Wave Intrinsics, Wavefronts, SIMD">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[Vulkan]Wave Programming (Subgroup)">
 <meta name="twitter:title" content="[Vulkan]Wave Programming (Subgroup)">
 <meta property="og:url" content="https://dawnarc.com/2024/05/vulkanwave-programming-subgroup/">
 <meta property="twitter:url" content="https://dawnarc.com/2024/05/vulkanwave-programming-subgroup/">
 <meta property="og:site_name" content="玄冬Wong">
-<meta property="og:description" content="keywords: Graphics, Vulkan Subgroup, D3D12 Warp, Wave Intrinsics,">
-<meta name="twitter:description" content="keywords: Graphics, Vulkan Subgroup, D3D12 Warp, Wave Intrinsics,">
+<meta property="og:description" content="keywords: Graphics, Vulkan Subgroup, D3D12 Warp, Wave Intrinsics, Wavefronts, SIMD">
+<meta name="twitter:description" content="keywords: Graphics, Vulkan Subgroup, D3D12 Warp, Wave Intrinsics, Wavefronts, SIMD">
 <meta property="og:locale" content="en-us">
 
   
@@ -362,7 +362,7 @@
                 <script>
                      (adsbygoogle = window.adsbygoogle || []).push({});
                 </script>
-              <p>keywords: Graphics, Vulkan Subgroup, D3D12 Warp, Wave Intrinsics,</p>
+              <p>keywords: Graphics, Vulkan Subgroup, D3D12 Warp, Wave Intrinsics, Wavefronts, SIMD</p>
 <h5 id="overview">Overview</h5>
 <ul>
 <li>Vulkan/OpenCL calls it a Subgroup</li>
@@ -377,6 +377,8 @@
 <a href="https://gpuopen.com/presentations/2019/Surfing_the_Wavefronts.pdf">https://gpuopen.com/presentations/2019/Surfing_the_Wavefronts.pdf</a></p>
 <p>Occupancy explained<br>
 <a href="https://gpuopen.com/learn/occupancy-explained/">https://gpuopen.com/learn/occupancy-explained/</a></p>
+<p>SIMD in the GPU world<br>
+<a href="https://www.rastergrid.com/blog/gpu-tech/2022/02/simd-in-the-gpu-world/">https://www.rastergrid.com/blog/gpu-tech/2022/02/simd-in-the-gpu-world/</a></p>
 <p>Subgroups - 2018 Vulkan Devday<br>
 <a href="https://www.khronos.org/assets/uploads/developers/library/2018-vulkan-devday/06-subgroups.pdf">https://www.khronos.org/assets/uploads/developers/library/2018-vulkan-devday/06-subgroups.pdf</a></p>
 <p>Wave Intrinsics<br>
@@ -389,6 +391,20 @@
 <h5 id="blogs">Blogs</h5>
 <p>Visualizing GL_NV_shader_sm_builtins<br>
 <a href="https://wunkolo.github.io/post/2020/02/visualizing-gl_nv_shader_sm_builtins/">https://wunkolo.github.io/post/2020/02/visualizing-gl_nv_shader_sm_builtins/</a></p>
+<h5 id="forums">Forums</h5>
+<p>Quote from <a href="https://www.gamedev.net/forums/topic/674684-what-is-a-wavefront/5270787/">gamedev.net</a>:<br>
+None of the things you&rsquo;ve quoted are contractory &ndash; the first quote says that a wavefront is 64 threads, not that a wavefront is 1 thread.</p>
+<p>A SIMD unit can have up to 10 wavefronts in flight at once. Each wavefront contains 64 threads. Hence a SIMD unit can have up to 640 threads in flight at once (in multiples of 64).</p>
+<p>The scheduler will take the pixels/vertices that need to be processed, allocate one thread per pixel/vertex, and then tries to group up to 64 threads together into a wavefront. That bundle of threads is then given to a SIMD, which runs the shader code.</p>
+<p>The number of wavefronts that &lsquo;fit&rsquo; into a SIMD depends on the complexity of the shader code. For simple shaders, you can squeeze 10 wavefronts at a time into a SIMD, but for complex shaders you may only be able to fit one or two wavefronts into a SIMD.</p>
+<p>This is because different shaders require different numbers of temporary registers, which are stored in the SIMD&rsquo;s register array. Say the SIMD has 1000 registers in total &ndash; if a shader uses 100 or less, then you can fit 10 (or more) &ldquo;instances&rdquo; of that shader into the register array. If a shader uses 500 temporary registers, then only two &ldquo;instances&rdquo; of that shader will fit into the SIMD - so the SIMD will only accept two concurrent wavefronts.</p>
+<p>Each &ldquo;register&rdquo; actually contains 64 floats &ndash; which is why this calculation is done for wavefronts and not threads. One register is used by a wavefront to store a value for each of it&rsquo;s threads.</p>
+<p>What&rsquo;s a &ldquo;wavefront&rdquo; in the context of real-time rendering?<br>
+<a href="https://stackoverflow.com/a/70249817/1645289">https://stackoverflow.com/a/70249817/1645289</a></p>
+<p>Clustered shading - why deferred?<br>
+<a href="https://www.gamedev.net/forums/topic/683544-clustered-shading-why-deferred/">https://www.gamedev.net/forums/topic/683544-clustered-shading-why-deferred/</a></p>
+<p>What are screen space derivatives and when would I use them?<br>
+<a href="https://gamedev.stackexchange.com/a/130933/117871">https://gamedev.stackexchange.com/a/130933/117871</a></p>
 <hr>
 <p><code>Teachers open the door, but you must enter by yourself. -Chinese Proverbs</code></p>
               

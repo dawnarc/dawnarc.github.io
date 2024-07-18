@@ -587,7 +587,15 @@ Dynamic Shadow Distance 表示在多少距离内使用动态阴影，超过这�
 <p>由于dynamic shadow消耗很高，而且shadow mapping和mesh面数正相关（因为shadow map存储的是当前light所能看见的所有surface的depth），所以若参与计算shadow map的surface（也就是三角面）数量越少，则计算越小。为此UE提供了优化工具，为结构复杂的mesh提供低模mesh来计算shadow map：<a href="https://docs.unrealengine.com/4.27/en-US/TestingAndOptimization/ProxyGeoTool/ProxyGeoShadows/">Proxy Geometry Shadows</a>。</p>
 </li>
 <li>
-<p>严格控制产生dynamic shadow（UE的非static类型灯光cast shadow，则都属于dynamic shadow）的灯光数量。一些初学者有个严重误解：deferred rendering在渲染成百上千的点光源时，依然不影响性能。网上一些show case看起来也确实如此，数千个光源下，帧率依然很高。但问题是，这些光源没有cast shadow，这种demo不适用于工业生产。除了前一条讲到的shadow map受mesh面数影响外，每多一个动态光（非static类型的light），framebuffer(主要是d-buffer)就会额外再build一次，以生成最终的shadow map。</p>
+<p>Proxy Geometry Shadows适用于static mesh，skeletal mesh有没类似的优化？答：<a href="https://docs.unrealengine.com/4.27/en-US/BuildingWorlds/LightingAndShadows/CapsuleShadows/QuickStart/">Shadow Physics Asset</a>，也就是Capsule Shadows。</p>
+</li>
+<li>
+<p>严格控制产生dynamic shadow的灯光数量。初学者有个严重误解：deferred rendering在渲染成百上千的点光源时，依然不影响性能。网上一些show case看起来也确实如此，数千个光源下，帧率依然很高。但问题是，这些光源没有cast shadow，这种demo不适用于工业生产。除了前一条讲到的shadow map受mesh面数影响外，每多一个动态光（非static类型的light），framebuffer(主要是d-buffer)就会额外再build一次，以生成最终的shadow map。<br>
+哪些情况下会产生大量dynamic shadow？</p>
+<ul>
+<li>Movable Light数量多且cast shadow；（这种情况较少，因为很好排查）</li>
+<li>Stationary Light数量不多，但受其影响的动态物体多（比如大量怪物、会摇动的树林），因为每个可移动物体都会创建两个dynamic shadow，分别用于自身投射阴影到场景中，以及静态物体投射阴影到自身，并且combine到最终的shadow map；详情见：<a href="https://docs.unrealengine.com/4.27/en-US/BuildingWorlds/LightingAndShadows/LightMobility/StationaryLights/">Stationary Lights</a>。</li>
+</ul>
 </li>
 <li>
 <p>植被若要投射阴影，则要改用<a href="https://docs.unrealengine.com/4.27/en-US/BuildingWorlds/LightingAndShadows/ContactShadows/">Screen Space Contact Shadows</a>。</p>
@@ -650,7 +658,7 @@ Dynamic Shadow Distance 表示在多少距离内使用动态阴影，超过这�
 <p>若植被数量较多，且材质类型为mask时，开启：Early Z Pass Only Material Masking。详情见前面章节Occlusion Culling下的第6条。</p>
 </li>
 <li>
-<p>植被若要开启阴影，不要用传统的shadow map（会导致计算开销和内存占用都很大），一个妥协方案是<a href="https://docs.unrealengine.com/4.27/en-US/BuildingWorlds/LightingAndShadows/ContactShadows/">Screen Space Contact Shadow</a>，Contact Shadows并不是专门为植被而设计，而是为了提升阴影细节（摄像机拉近后的阴影细节）。针对植被阴影时，调整合理的Contact Shadow Length，以牺牲一定的阴影效果来提升阴影性能。</p>
+<p>植被若要开启阴影，不要用传统的shadow map（会导致计算开销和内存占用都很大），一个妥协方案是<a href="https://docs.unrealengine.com/4.27/en-US/BuildingWorlds/LightingAndShadows/ContactShadows/">Screen Space Contact Shadow</a>，Contact Shadows并不是专门为植被而设计，而是为了提升阴影细节（摄像机拉近后的阴影细节）。针对植被阴影时，调整合理的Contact Shadow Length，以牺牲一定的阴影效果来提升阴影性能。参考文档：<a href="https://www.unrealengine.com/en-US/tech-blog/virtual-shadow-maps-in-fortnite-battle-royale-chapter-4">Virtual Shadow Maps in Fortnite Battle Royale Chapter 4</a></p>
 </li>
 </ol>
 <h5 id="物理与碰撞优化">物理与碰撞优化</h5>
