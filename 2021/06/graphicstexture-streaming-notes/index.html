@@ -10,7 +10,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.102.3 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.132.2 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Wang Aiguo">
 <meta name="keywords" content="Graphics, Texture Streaming Notes">
 <meta name="description" content="keywords: Graphics, Texture Streaming Notes">
@@ -368,6 +368,12 @@
 <a href="https://www.gamedev.net/forums/topic/698332-what-is-texture-streaming/">https://www.gamedev.net/forums/topic/698332-what-is-texture-streaming/</a></p>
 <p>Like ChuckNovice explained, it&rsquo;s the concept of streaming texture data in and out of GPU memory based on which textures are necessary to render the current viewpoint. The basic idea is that you only need high-resolution textures when the camera is close to a surface that uses the texture, so you can drop the higher-resolution mip levels as you get further away. So for instance if you have a 2048x2048 texture, as you get further away you would drop down to 1024x1024, and then 512x512, and so-on.</p>
 <p>Generally there&rsquo;s two main parts of this that can be tricky. The first is the actual streaming infrastructure for streaming texture data off disk (possible decompressing), and then making sure that they find their way into GPU memory using whichever graphics API you&rsquo;re currently utilizing. You usually want to stream as fast as you can, but you also want to make sure that you don&rsquo;t use too much CPU/GPU resources since that can interfere with the game&rsquo;s performance. The other hard part is actually determining which mip level should be used for each texture. There&rsquo;s several possible avenues for doing this, with different tradeoffs on accuracy, runtime performance, and the ability for things to move around at runtime. Many games with mostly-static worlds will chunk up their scenes into discrete regions, and pre-compute the required texture mip levels for each region. Then as the camera moves through the world from one region to the next, the engine&rsquo;s streaming systems moves textures in and out of memory based on the current visible set for that region. You can see this presentation about Titanfall 2 for an example of this approach. Other games will try to compute the required texture set on the fly, possible by reading back information from the GPU itself. RAGE took this approach, where they rendered out ID&rsquo;s to a low-resolution render target and read that back on the CPU to feed into their streaming system. In their case they were streaming in pages for their virtual texture system, but the basic concept is the same for normal texturing. More details on that here. The upside of that approach is that it handled fully dynamic geometry, and gave rather accurate results for the current viewpoint. The downside was that it was always at least a frame behind the current camera movement, and couldn&rsquo;t predict very quick camera motions. So if you spun the camera around 180 degrees really quickly, you might see some textures slowly pop in as they get streamed off disk. In their case the issue was made worse by their choice of have totally unique texture pages for the whole world, but you could still have the same problem with traditional textures.</p>
+<p>Quoted from <a href="https://www.gamedev.net/forums/topic/641283-fastest-way-to-stream-video-to-texture/5049834/">Fastest way to stream video to Texture - gamedev.net</a></p>
+<p>TexImage vs TexStorage<br>
+TexStorage will just allocate storage for the texture, and can allocate storage for multiple miplevels in one go (ensuring that things are set up correctly for submips). The miplevels part is not relevant for you here, but using TexStorage is the more correct modern OpenGL way of doing this.<br>
+Think of it in terms of malloc, memcpy and free - it&rsquo;s a rough (and not entirely accurate) analogy but should work for the purpose of helping you understand. TexImage needs to check if the texture storage already exists, delete it if so, allocate new storage, then (if the data pointer is non-NULL) copy in the supplied data. TexStorage just needs to allocate storage. Since that&rsquo;s all you need for your initial texture creation, TexStorage is sufficient.</p>
+<p>OpenGL Texture Mipmaps: Load and Unload<br>
+<a href="https://stackoverflow.com/a/34315149/1645289">https://stackoverflow.com/a/34315149/1645289</a></p>
 <h5 id="reference">Reference</h5>
 <p>What is Texture Streaming<br>
 <a href="https://www.gamedev.net/forums/topic/615368-what-is-texture-streaming/">https://www.gamedev.net/forums/topic/615368-what-is-texture-streaming/</a></p>
@@ -430,7 +436,6 @@
         </li>
         
       
-      
       <li class="post-action">
         
           <a class="post-action-btn btn btn--default" href="#">
@@ -492,7 +497,6 @@
           </a>
         </li>
         
-      
       
       <li class="post-action">
         
@@ -590,11 +594,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
   });
 });
 </script>
-
-
-  
-    
-  
 
 
 

@@ -10,7 +10,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.102.3 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.132.2 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Wang Aiguo">
 <meta name="keywords" content="">
 <meta name="description" content="keywords: [VersionControl]转载：简单对比git pull和git pull &ndash;rebase的使用">
@@ -369,23 +369,23 @@
 <span class="highlight-text green">git pull --rebase = git fetch + git rebase</span></p>
 <p>现在来看看git merge和git rebase的区别。</p>
 <p>假设有3次提交A,B,C。
-<figure><img src="https://dawnarc.com/img/20181106-[VersionControl]%e8%bd%ac%e8%bd%bd%ef%bc%9a%e7%ae%80%e5%8d%95%e5%af%b9%e6%af%94git%20pull%e5%92%8cgit%20pull%20--rebase%e7%9a%84%e4%bd%bf%e7%94%a8/[VersionControl]%e8%bd%ac%e8%bd%bd%ef%bc%9a%e7%ae%80%e5%8d%95%e5%af%b9%e6%af%94git%20pull%e5%92%8cgit%20pull%20--rebase%e7%9a%84%e4%bd%bf%e7%94%a8-01.png"/>
+<figure><img src="https://dawnarc.com/img/20181106-%5BVersionControl%5D%E8%BD%AC%E8%BD%BD%EF%BC%9A%E7%AE%80%E5%8D%95%E5%AF%B9%E6%AF%94git%20pull%E5%92%8Cgit%20pull%20--rebase%E7%9A%84%E4%BD%BF%E7%94%A8/%5BVersionControl%5D%E8%BD%AC%E8%BD%BD%EF%BC%9A%E7%AE%80%E5%8D%95%E5%AF%B9%E6%AF%94git%20pull%E5%92%8Cgit%20pull%20--rebase%E7%9A%84%E4%BD%BF%E7%94%A8-01.png">
 </figure>
 </p>
 <p>在远程分支origin的基础上创建一个名为&quot;mywork&quot;的分支并提交了，同时有其他人在&quot;origin&quot;上做了一些修改并提交了。
-<figure><img src="https://dawnarc.com/img/20181106-[VersionControl]%e8%bd%ac%e8%bd%bd%ef%bc%9a%e7%ae%80%e5%8d%95%e5%af%b9%e6%af%94git%20pull%e5%92%8cgit%20pull%20--rebase%e7%9a%84%e4%bd%bf%e7%94%a8/[VersionControl]%e8%bd%ac%e8%bd%bd%ef%bc%9a%e7%ae%80%e5%8d%95%e5%af%b9%e6%af%94git%20pull%e5%92%8cgit%20pull%20--rebase%e7%9a%84%e4%bd%bf%e7%94%a8-02.png"/>
+<figure><img src="https://dawnarc.com/img/20181106-%5BVersionControl%5D%E8%BD%AC%E8%BD%BD%EF%BC%9A%E7%AE%80%E5%8D%95%E5%AF%B9%E6%AF%94git%20pull%E5%92%8Cgit%20pull%20--rebase%E7%9A%84%E4%BD%BF%E7%94%A8/%5BVersionControl%5D%E8%BD%AC%E8%BD%BD%EF%BC%9A%E7%AE%80%E5%8D%95%E5%AF%B9%E6%AF%94git%20pull%E5%92%8Cgit%20pull%20--rebase%E7%9A%84%E4%BD%BF%E7%94%A8-02.png">
 </figure>
 </p>
 <p>其实这个时候E不应该提交，因为提交后会发生冲突。如何解决这些冲突呢？有以下两种方法：</p>
 <ol>
 <li><strong>git merge</strong><br>
 用git pull命令把&quot;origin&quot;分支上的修改pull下来与本地提交合并（merge）成版本M，但这样会形成图中的菱形，让人很困惑。
-<figure><img src="https://dawnarc.com/img/20181106-[VersionControl]%e8%bd%ac%e8%bd%bd%ef%bc%9a%e7%ae%80%e5%8d%95%e5%af%b9%e6%af%94git%20pull%e5%92%8cgit%20pull%20--rebase%e7%9a%84%e4%bd%bf%e7%94%a8/[VersionControl]%e8%bd%ac%e8%bd%bd%ef%bc%9a%e7%ae%80%e5%8d%95%e5%af%b9%e6%af%94git%20pull%e5%92%8cgit%20pull%20--rebase%e7%9a%84%e4%bd%bf%e7%94%a8-03.png"/>
+<figure><img src="https://dawnarc.com/img/20181106-%5BVersionControl%5D%E8%BD%AC%E8%BD%BD%EF%BC%9A%E7%AE%80%E5%8D%95%E5%AF%B9%E6%AF%94git%20pull%E5%92%8Cgit%20pull%20--rebase%E7%9A%84%E4%BD%BF%E7%94%A8/%5BVersionControl%5D%E8%BD%AC%E8%BD%BD%EF%BC%9A%E7%AE%80%E5%8D%95%E5%AF%B9%E6%AF%94git%20pull%E5%92%8Cgit%20pull%20--rebase%E7%9A%84%E4%BD%BF%E7%94%A8-03.png">
 </figure>
 </li>
 <li><strong>git rebase</strong><br>
 创建一个新的提交R，R的文件内容和上面M的一样，但我们将E提交废除，当它不存在（图中用虚线表示）。由于这种删除，小李不应该push其他的repository.rebase的好处是避免了菱形的产生，保持提交曲线为直线，让大家易于理解。
-<figure><img src="https://dawnarc.com/img/20181106-[VersionControl]%e8%bd%ac%e8%bd%bd%ef%bc%9a%e7%ae%80%e5%8d%95%e5%af%b9%e6%af%94git%20pull%e5%92%8cgit%20pull%20--rebase%e7%9a%84%e4%bd%bf%e7%94%a8/[VersionControl]%e8%bd%ac%e8%bd%bd%ef%bc%9a%e7%ae%80%e5%8d%95%e5%af%b9%e6%af%94git%20pull%e5%92%8cgit%20pull%20--rebase%e7%9a%84%e4%bd%bf%e7%94%a8-04.png"/>
+<figure><img src="https://dawnarc.com/img/20181106-%5BVersionControl%5D%E8%BD%AC%E8%BD%BD%EF%BC%9A%E7%AE%80%E5%8D%95%E5%AF%B9%E6%AF%94git%20pull%E5%92%8Cgit%20pull%20--rebase%E7%9A%84%E4%BD%BF%E7%94%A8/%5BVersionControl%5D%E8%BD%AC%E8%BD%BD%EF%BC%9A%E7%AE%80%E5%8D%95%E5%AF%B9%E6%AF%94git%20pull%E5%92%8Cgit%20pull%20--rebase%E7%9A%84%E4%BD%BF%E7%94%A8-04.png">
 </figure>
 </li>
 </ol>
@@ -442,7 +442,6 @@
           </a>
         </li>
         
-      
       
       <li class="post-action">
         
@@ -505,7 +504,6 @@
           </a>
         </li>
         
-      
       
       <li class="post-action">
         
@@ -603,11 +601,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
   });
 });
 </script>
-
-
-  
-    
-  
 
 
 

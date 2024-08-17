@@ -10,7 +10,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.102.3 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.132.2 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Wang Aiguo">
 <meta name="keywords" content="UE5, Rendering">
 <meta name="description" content="keywords: UE5, Groom, Hair, Fur, Performance Optimization">
@@ -387,16 +387,40 @@
 </span></span></code></pre></div><h3 id="performance-optimization">Performance Optimization</h3>
 <h5 id="groom-asset-performance-optimization">Groom Asset Performance Optimization</h5>
 <p>Reduce <code>Curve Decimation</code> and <code>Vertex Decimation</code> in Interpolation detail panel.
-<figure><img src="https://dawnarc.com/img/2024/20240304-[UE5]Groom%20%28Hair%29%20Notes/[UE5]Groom%20%28Hair%29%20Notes%20-%2001.png"/>
+<figure><img src="https://dawnarc.com/img/2024/20240304-%5BUE5%5DGroom%20%28Hair%29%20Notes/%5BUE5%5DGroom%20%28Hair%29%20Notes%20-%2001.png">
 </figure>
 </p>
 <p>Disable <code>Voxelize</code> and <code>Use Stable Rasterization</code> in Strands details panel.
-<figure><img src="https://dawnarc.com/img/2024/20240304-[UE5]Groom%20%28Hair%29%20Notes/[UE5]Groom%20%28Hair%29%20Notes%20-%2002.png"/>
+<figure><img src="https://dawnarc.com/img/2024/20240304-%5BUE5%5DGroom%20%28Hair%29%20Notes/%5BUE5%5DGroom%20%28Hair%29%20Notes%20-%2002.png">
 </figure>
 </p>
 <h5 id="use-attach-parent-bound">Use Attach Parent Bound</h5>
 <p>Enable <code>bUseAttachParentBound</code>.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>UGroomComponent<span style="color:#f92672">::</span>bUseAttachParentBound
+</span></span></code></pre></div><h5 id="how-to-disable-or-enable-groom-physics-simulation-at-runtime">How to disable or enable groom physics simulation at runtime</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">SetGroomPhysicsEnable</span>(UGroomComponent<span style="color:#f92672">*</span> GroomComponent, <span style="color:#66d9ef">bool</span> bEnble)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">if</span> (GroomComponent)
+</span></span><span style="display:flex;"><span>	{
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">if</span> (UGroomAsset<span style="color:#f92672">*</span> Groom <span style="color:#f92672">=</span> GroomComponent<span style="color:#f92672">-&gt;</span>GroomAsset)
+</span></span><span style="display:flex;"><span>		{
+</span></span><span style="display:flex;"><span>			<span style="color:#66d9ef">bool</span> bIsDirty <span style="color:#f92672">=</span> false;
+</span></span><span style="display:flex;"><span>			<span style="color:#66d9ef">for</span> (FHairGroupsPhysics<span style="color:#f92672">&amp;</span> HairGroupsPhysics : Groom<span style="color:#f92672">-&gt;</span>HairGroupsPhysics)
+</span></span><span style="display:flex;"><span>			{
+</span></span><span style="display:flex;"><span>				<span style="color:#66d9ef">if</span> (HairGroupsPhysics.SolverSettings.EnableSimulation <span style="color:#f92672">!=</span> bEnble)
+</span></span><span style="display:flex;"><span>				{
+</span></span><span style="display:flex;"><span>					HairGroupsPhysics.SolverSettings.EnableSimulation <span style="color:#f92672">=</span> bEnble;
+</span></span><span style="display:flex;"><span>					bIsDirty <span style="color:#f92672">=</span> true;
+</span></span><span style="display:flex;"><span>				}
+</span></span><span style="display:flex;"><span>			}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>			<span style="color:#66d9ef">if</span> (bIsDirty)
+</span></span><span style="display:flex;"><span>			{
+</span></span><span style="display:flex;"><span>				Groom<span style="color:#f92672">-&gt;</span>MarkPackageDirty();
+</span></span><span style="display:flex;"><span>			}
+</span></span><span style="display:flex;"><span>		}
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h3 id="issues">Issues</h3>
 <h5 id="issue-how-to-fix-the-flickering-in-groom-hair-ue4">Issue: How to fix the flickering in groom hair [UE4]</h5>
 <p>Enable <code>Cast Deep Shadows</code> in light actors.</p>
@@ -409,7 +433,7 @@
 </span></span></code></pre></div><p>Reason:<br>
 The origins of the coordinate axes of the hair and the character are not match.<br>
 Need to assign the Source Skeletal Mesh when creating Groom Binding asset.
-<figure><img src="https://dawnarc.com/img/2024/20240304-[UE5]Groom%20%28Hair%29%20Notes/[UE5]Groom%20%28Hair%29%20Notes%20-%2019.gif"/>
+<figure><img src="https://dawnarc.com/img/2024/20240304-%5BUE5%5DGroom%20%28Hair%29%20Notes/%5BUE5%5DGroom%20%28Hair%29%20Notes%20-%2019.gif">
 </figure>
 </p>
 <h5 id="groom-disappears-after-assigning-binding-asset">Groom disappears after assigning Binding Asset</h5>
@@ -495,7 +519,6 @@ Need to assign the Source Skeletal Mesh when creating Groom Binding asset.
         </li>
         
       
-      
       <li class="post-action">
         
           <a class="post-action-btn btn btn--default" href="#">
@@ -557,7 +580,6 @@ Need to assign the Source Skeletal Mesh when creating Groom Binding asset.
           </a>
         </li>
         
-      
       
       <li class="post-action">
         
@@ -655,11 +677,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
   });
 });
 </script>
-
-
-  
-    
-  
 
 
 
