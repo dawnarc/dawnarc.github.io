@@ -12,36 +12,36 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="generator" content="Hugo 0.132.2 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Wang Aiguo">
-<meta name="keywords" content="D3D12">
-<meta name="description" content="keywords: Direct3D 12, D3D12, Vulkan, Bindless, Texture and Buffer, DescriptorSet, Descriptor Set Layout, Descriptor Indexing">
+<meta name="keywords" content="">
+<meta name="description" content="keywords: C, printf, Format">
 
 
-<meta property="og:description" content="keywords: Direct3D 12, D3D12, Vulkan, Bindless, Texture and Buffer, DescriptorSet, Descriptor Set Layout, Descriptor Indexing">
+<meta property="og:description" content="keywords: C, printf, Format">
 <meta property="og:type" content="article">
-<meta property="og:title" content="[D3D12]Bindless Resources Notes">
-<meta name="twitter:title" content="[D3D12]Bindless Resources Notes">
-<meta property="og:url" content="https://dawnarc.com/2023/04/d3d12bindless-resources-notes/">
-<meta property="twitter:url" content="https://dawnarc.com/2023/04/d3d12bindless-resources-notes/">
+<meta property="og:title" content="[C&#43;&#43;]Format Notes">
+<meta name="twitter:title" content="[C&#43;&#43;]Format Notes">
+<meta property="og:url" content="https://dawnarc.com/2017/04/c-format-notes/">
+<meta property="twitter:url" content="https://dawnarc.com/2017/04/c-format-notes/">
 <meta property="og:site_name" content="玄冬Wong">
-<meta property="og:description" content="keywords: Direct3D 12, D3D12, Vulkan, Bindless, Texture and Buffer, DescriptorSet, Descriptor Set Layout, Descriptor Indexing">
-<meta name="twitter:description" content="keywords: Direct3D 12, D3D12, Vulkan, Bindless, Texture and Buffer, DescriptorSet, Descriptor Set Layout, Descriptor Indexing">
+<meta property="og:description" content="keywords: C, printf, Format">
+<meta name="twitter:description" content="keywords: C, printf, Format">
 <meta property="og:locale" content="en-us">
 
   
-    <meta property="article:published_time" content="2023-04-29T17:03:28">
+    <meta property="article:published_time" content="2017-04-17T15:48:40">
   
   
-    <meta property="article:modified_time" content="2023-04-29T17:03:28">
+    <meta property="article:modified_time" content="2017-04-17T15:48:40">
   
-  
-  
-    
-      <meta property="article:section" content="D3D12">
-    
   
   
     
-      <meta property="article:tag" content="D3D12">
+      <meta property="article:section" content="C&#43;&#43;">
+    
+  
+  
+    
+      <meta property="article:tag" content="C">
     
   
 
@@ -58,8 +58,8 @@
 
 
 
-  <meta property="og:image" content="https://dawnarc.com/thumbnail/beijing/thumbnail-beijing-016.jpg">
-  <meta property="twitter:image" content="https://dawnarc.com/thumbnail/beijing/thumbnail-beijing-016.jpg">
+  <meta property="og:image" content="https://dawnarc.com/thumbnail/beijing/thumbnail-beijing-011.jpg">
+  <meta property="twitter:image" content="https://dawnarc.com/thumbnail/beijing/thumbnail-beijing-011.jpg">
 
 
 
@@ -69,14 +69,14 @@
   <meta property="twitter:image" content="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=640">
 
 
-    <title>[D3D12]Bindless Resources Notes</title>
+    <title>[C&#43;&#43;]Format Notes</title>
 
     <link rel="icon" href="https://dawnarc.com/favicon.png">
     
 
     
 
-    <link rel="canonical" href="https://dawnarc.com/2023/04/d3d12bindless-resources-notes/">
+    <link rel="canonical" href="https://dawnarc.com/2017/04/c-format-notes/">
 
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
@@ -318,19 +318,19 @@
             <div class="post-header main-content-wrap text-left">
   
     <h1 class="post-title" itemprop="headline">
-      [D3D12]Bindless Resources Notes
+      [C&#43;&#43;]Format Notes
     </h1>
   
   
   <div class="postShorten-meta post-meta">
     
-      <time itemprop="datePublished" datetime="2023-04-29T17:03:28&#43;08:00">
+      <time itemprop="datePublished" datetime="2017-04-17T15:48:40&#43;08:00">
         
   
   
   
   
-    Saturday, 17:03, Apr 29, 2023
+    Monday, 15:48, Apr 17, 2017
   
 
       </time>
@@ -340,7 +340,7 @@
   
     <span>in</span>
     
-      <a class="category-link" href="https://dawnarc.com/categories/d3d12">D3D12</a>
+      <a class="category-link" href="https://dawnarc.com/categories/c&#43;&#43;">C&#43;&#43;</a>
     
   
 
@@ -362,78 +362,122 @@
                 <script>
                      (adsbygoogle = window.adsbygoogle || []).push({});
                 </script>
-              <p>keywords: Direct3D 12, D3D12, Vulkan, Bindless, Texture and Buffer, DescriptorSet, Descriptor Set Layout, Descriptor Indexing</p>
-<h3 id="summary">Summary</h3>
-<h5 id="advantages">Advantages</h5>
-<p>Difference between array textures (slot-based) and bindless textures:<br>
-<span class="highlight-text green">
-Array textures are generally restricted by the fact that all textures in the array are required to use the same format and dimensions. Bindless textures are independent in size and format, but can still be accessed directly from the shader and don't require a CPU-side bind call to enable them for the shader.
-</span><br>
-Quoted from: <a href="https://www.reddit.com/r/GraphicsProgramming/comments/tyilet/comment/i3sskjy/?utm_source=share&amp;utm_medium=web2x&amp;context=3">How are bindless resources different from slot-based resources</a></p>
-<p>The bindless descriptors advantages:<br>
-<span class="highlight-text green">
-Bindless designs make the cpu side work a lot faster due to the CPU having to do much less work, and the GPU can also go faster due to better utilization as each drawcall is “bigger”. The less drawcalls you use to render your scene, the better, as modern GPUs are really big and have a big ramp up/ramp down time.
-</span><br>
-Quoted from <a href="https://vkguide.dev/docs/gpudriven/gpu_driven_engines/">GPU Driven Rendering Overview</a></p>
-<h5 id="optimization">Optimization</h5>
-<p>Quoted from <a href="https://www.intel.com/content/www/us/en/developer/articles/guide/lp-api-developer-optimization-guide.html#inpage-nav-3-1">Intel® Processor Graphics Xᵉ-LP API Developer and Optimization Guide</a>:<br>
-Modern Graphics APIs give you more control over resource binding, such as with DirectX Root Signatures and Vulkan* Pipeline Layout. Using these requires particular attention to maximize performance. When designing an application strategy for resource binding, employ the following guidance:</p>
-<ul>
-<li>Minimize the number of root signature slots or descriptor sets to only what will be used by a shader.</li>
-<li>Try to find a balance between root signature or descriptor set reuse across shaders.</li>
-<li>For multiple constant buffers that do not change between draws, consider packing all constant buffer views into one descriptor table.</li>
-<li>For multiple Unordered Access Views (UAVs) and Shader Resource Views (SRVs) that do not span a consecutive range of registers and do not change between draws, it is best to pack them into a descriptor table.</li>
-<li>Minimize descriptor heap changes. Changing descriptor heaps severely stalls the graphics pipeline. Ideally, all resources will have views appropriated out of one descriptor heap.</li>
-<li>Avoid generic root signature definitions where unnecessary descriptors are defined and not leveraged. Instead, optimize root signature definitions to the minimal set of descriptor tables needed.
-<ul>
-<li>Vulkan: When creating a Descriptor Set, using the BindAfterFlag bit beware that Xe-LP only supports 1M Descriptors. Only Create needed descriptors (when porting from DX12, remember that <code>D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV</code> maps to 7 Vulkan types [<code>VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE</code>, <code>*_STORAGE_IMAGE</code>, <code>*_UNIFORM_TEXEL_BUFFER</code>, <code>*_STORAGE_TEXEL_BUFFER</code>, <code>*_UNIFORM_BUFFER</code>, <code>*_STORAGE_BUFFER</code>])</li>
-</ul>
-</li>
-<li>Favor root constants over root descriptors, and favor root descriptors over descriptor tables when working with constants.
-<ul>
-<li>Make use of root/push constants to enable fast access to constant buffer data (they are pre-loaded into registers).</li>
-<li>Root/push constants are great to use on frequently changing constant buffer data.</li>
-</ul>
-</li>
-<li>Use root/push constants for cases where the constants are changing at a high frequency.
-<ul>
-<li>If certain Root Signature slots are less frequently used (not referenced by a PSO), put those at the end of the root signature to reduce GRF usage</li>
-</ul>
-</li>
-<li>Be sure to use hints that allow the driver to perform constant-based optimizations, such as <code>D3D12_DESCRIPTOR_RANGE_FLAG_DATA_STATIC</code>.</li>
-<li>For placed resources, initialize with a clear, copy, or discard before rendering to the resource. This helps enable proper compression by putting the placed resource into a valid state.</li>
-<li>When creating resource heaps, resources that need to be accessed by the GPU should be placed in heaps that are declared as resident in GPU memory, preferably exclusively. This has a significant impact on discrete GPU performance.</li>
-<li>Use queries to identify scenarios when GPU local memory gets oversubscribed and adjust resource location to accommodate this.</li>
-</ul>
-<h5 id="presentations">Presentations</h5>
-<p>Exploration of Bindless Rendering in Vulkan, DirectX 12, and OpenGL [2021-04-21]<br>
-<a href="https://www.youtube.com/watch?v=SVm0HanVTRw">https://www.youtube.com/watch?v=SVm0HanVTRw</a></p>
-<h3 id="d3d12">D3D12</h3>
-<h5 id="documents">Documents</h5>
-<p>Bindless Descriptors<br>
-<a href="https://wickedengine.net/2021/04/06/bindless-descriptors/">https://wickedengine.net/2021/04/06/bindless-descriptors/</a></p>
-<p>Binding Bindlessly<br>
-<a href="https://alextardif.com/Bindless.html">https://alextardif.com/Bindless.html</a></p>
-<p>Bindless Texturing for Deferred Rendering and Decals<br>
-<a href="https://therealmjp.github.io/posts/bindless-texturing-for-deferred-rendering-and-decals/">https://therealmjp.github.io/posts/bindless-texturing-for-deferred-rendering-and-decals/</a><br>
-<a href="https://github.com/TheRealMJP/DeferredTexturing">https://github.com/TheRealMJP/DeferredTexturing</a></p>
-<h3 id="vulkan">Vulkan</h3>
-<h5 id="documents-1">Documents</h5>
-<p>Managing bindless descriptors in Vulkan<br>
-<a href="https://dev.to/gasim/implementing-bindless-design-in-vulkan-34no">https://dev.to/gasim/implementing-bindless-design-in-vulkan-34no</a></p>
-<p><a href="https://community.arm.com/arm-community-blogs/b/graphics-gaming-and-vr-blog/posts/vulkan-descriptor-indexing">New game changing Vulkan extensions for mobile: Descriptor Indexing</a></p>
-<p>Vulkan Pills 1: Bindless Textures<br>
-<a href="https://jorenjoestar.github.io/post/vulkan_bindless_texture/">https://jorenjoestar.github.io/post/vulkan_bindless_texture/</a></p>
-<p>Bindless descriptor sets<br>
-<a href="https://vincent-p.github.io/posts/vulkan_bindless_descriptors/">https://vincent-p.github.io/posts/vulkan_bindless_descriptors/</a></p>
-<p>Descriptorless Rendering in Vulkan<br>
-<a href="https://msiglreith.gitbook.io/blog/descriptorless-rendering-in-vulkan">https://msiglreith.gitbook.io/blog/descriptorless-rendering-in-vulkan</a></p>
-<h5 id="presentations-1">Presentations</h5>
-<p><a href="https://vulkan.org/user/pages/09.events/vulkanised-2023/vulkanised_2023_setting_up_a_bindless_rendering_pipeline.pdf">Setting up a bindless rendering pipeline</a></p>
-<p>Resources &amp; Descriptors | &ldquo;Use Buffers and Images in Vulkan Shaders&rdquo;<br>
-<a href="https://www.youtube.com/watch?v=5VBVWCg7riQ">https://www.youtube.com/watch?v=5VBVWCg7riQ</a></p>
+              <p>keywords: C, printf, Format</p>
+<h5 id="format">Format</h5>
+<p>Example:</p>
+<pre tabindex="0"><code class="language-C:" data-lang="C:">/* printf example */
+#include &lt;stdio.h&gt;
+
+int main()
+{
+   printf (&#34;Characters: %c %c \n&#34;, &#39;a&#39;, 65);
+   printf (&#34;Decimals: %d %ld\n&#34;, 1977, 650000L);
+   printf (&#34;Preceding with blanks: %10d \n&#34;, 1977);
+   printf (&#34;Preceding with zeros: %010d \n&#34;, 1977);
+   printf (&#34;Some different radices: %d %x %o %#x %#o \n&#34;, 100, 100, 100, 100, 100);
+   printf (&#34;floats: %4.2f %+.0e %E \n&#34;, 3.1416, 3.1416, 3.1416);
+   printf (&#34;Width trick: %*d \n&#34;, 5, 10);
+   printf (&#34;%s \n&#34;, &#34;A string&#34;);
+   return 0;
+}
+</code></pre><p>Output:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Text" data-lang="Text"><span style="display:flex;"><span>Characters: a A
+</span></span><span style="display:flex;"><span>Decimals: 1977 650000
+</span></span><span style="display:flex;"><span>Preceding with blanks:       1977
+</span></span><span style="display:flex;"><span>Preceding with zeros: 0000001977
+</span></span><span style="display:flex;"><span>Some different radices: 100 64 144 0x64 0144
+</span></span><span style="display:flex;"><span>floats: 3.14 +3e+000 3.141600E+000
+</span></span><span style="display:flex;"><span>Width trick:    10
+</span></span><span style="display:flex;"><span>A string
+</span></span></code></pre></div><p>Reference:<br>
+<a href="https://www.cplusplus.com/reference/cstdio/printf/">https://www.cplusplus.com/reference/cstdio/printf/</a></p>
+<h5 id="int64-format">int64 Format</h5>
+<p>For <code>int64_t</code> type:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C" data-lang="C"><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;inttypes.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">int64_t</span> t;
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">printf</span>(<span style="color:#e6db74">&#34;%&#34;</span> PRId64 <span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>, t);
+</span></span></code></pre></div><p>for <code>uint64_t</code> type:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C" data-lang="C"><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;inttypes.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">uint64_t</span> t;
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">printf</span>(<span style="color:#e6db74">&#34;%&#34;</span> PRIu64 <span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>, t);
+</span></span></code></pre></div><p>you can also use <code>PRIx64</code> to print in hexadecimal.</p>
+<p>Origin: How to portably print a int64_t type in C<br>
+<a href="https://stackoverflow.com/a/9225648/1645289">https://stackoverflow.com/a/9225648/1645289</a></p>
+<h5 id="hexadecimal-format">Hexadecimal Format</h5>
+<pre tabindex="0"><code class="language-C:" data-lang="C:">int i = 7;
+
+printf(&#34;%#010x\n&#34;, i);  // gives 0x00000007
+printf(&#34;%#08x\n&#34;, i);   // gives 0x000007
+printf(&#34;0x%08x\n&#34;, i);  // gives 0x00000007
+</code></pre><p>Also changing the case of x, affects the casing of the outputted characters:</p>
+<pre tabindex="0"><code class="language-C:" data-lang="C:">printf(&#34;%04x&#34;, 4779); // gives 12ab
+printf(&#34;%04X&#34;, 4779); // gives 12AB
+</code></pre><p>Origin: printf() formatting for hexadecimal<br>
+<a href="https://stackoverflow.com/a/14733875/1645289">https://stackoverflow.com/a/14733875/1645289</a></p>
+<h5 id="c20-format">C++20 Format</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>std<span style="color:#f92672">::</span>format(<span style="color:#e6db74">&#34;{:#x}&#34;</span>, <span style="color:#ae81ff">42</span>);    <span style="color:#75715e">// 0x2a
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>std<span style="color:#f92672">::</span>format(<span style="color:#e6db74">&#34;{:#010x}&#34;</span>, <span style="color:#ae81ff">42</span>); <span style="color:#75715e">// 0x0000002a
+</span></span></span></code></pre></div><h5 id="printf函数源码实现">printf函数源码实现</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C" data-lang="C"><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;stdio.h&gt;  </span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;stdarg.h&gt;  </span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//va_start(arg,format),初始化参数指针arg，将函数参数format右边第一个参数地址赋值给arg  
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//format必须是一个参数的指针，所以，此种类型函数至少要有一个普通的参数,   
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//从而提供给va_start ,这样va_start才能找到可变参数在栈上的位置。   
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//va_arg(arg,char),获得arg指向参数的值，同时使arg指向下一个参数,char用来指名当前参数型  
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//va_end 在有些实现中可能会把arg改成无效值，这里，是把arg指针指向了 NULL,避免出现野指针   
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">print</span>(<span style="color:#66d9ef">const</span> <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>format, ...)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    va_list arg;
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">va_start</span>(arg, format);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">while</span> (<span style="color:#f92672">*</span>format)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">char</span> ret <span style="color:#f92672">=</span> <span style="color:#f92672">*</span>format;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (ret <span style="color:#f92672">==</span> <span style="color:#e6db74">&#39;%&#39;</span>)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">switch</span> (<span style="color:#f92672">*++</span>format)
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">case</span> <span style="color:#e6db74">&#39;c&#39;</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">char</span> ch <span style="color:#f92672">=</span> <span style="color:#a6e22e">va_arg</span>(arg, <span style="color:#66d9ef">char</span>);
+</span></span><span style="display:flex;"><span>                <span style="color:#a6e22e">putchar</span>(ch);
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">break</span>;
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">case</span> <span style="color:#e6db74">&#39;s&#39;</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>pc <span style="color:#f92672">=</span> <span style="color:#a6e22e">va_arg</span>(arg, <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>);
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">while</span> (<span style="color:#f92672">*</span>pc)
+</span></span><span style="display:flex;"><span>                {
+</span></span><span style="display:flex;"><span>                    <span style="color:#a6e22e">putchar</span>(<span style="color:#f92672">*</span>pc);
+</span></span><span style="display:flex;"><span>                    pc<span style="color:#f92672">++</span>;
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">break</span>;
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">default</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">break</span>;
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">else</span>
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">putchar</span>(<span style="color:#f92672">*</span>format);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        format<span style="color:#f92672">++</span>;  
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">va_end</span>(arg);  
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">main</span>()  
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">print</span>(<span style="color:#e6db74">&#34;%s %s %c%c%c%c%c!</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>, <span style="color:#e6db74">&#34;welcome&#34;</span>, <span style="color:#e6db74">&#34;to&#34;</span>, <span style="color:#e6db74">&#39;C&#39;</span>, <span style="color:#e6db74">&#39;h&#39;</span>, <span style="color:#e6db74">&#39;i&#39;</span>, <span style="color:#e6db74">&#39;n&#39;</span>, <span style="color:#e6db74">&#39;a&#39;</span>);  
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">system</span>(<span style="color:#e6db74">&#34;pause&#34;</span>);  
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>;  
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Origin:<br>
+<a href="https://blog.csdn.net/iynu17/article/details/51588199">https://blog.csdn.net/iynu17/article/details/51588199</a></p>
 <hr>
-<p><code>One moment of patience may ward off great disaster. One moment of impatience may ruin a whole life. -Chinese Proverbs</code></p>
+<p><code>察见渊鱼者不祥，智料隐匿者有殃。----《列子》</code></p>
               
             </div>
           </div>
@@ -445,7 +489,7 @@ Modern Graphics APIs give you more control over resource binding, such as with D
                   <div class="post-footer-tags">
                     <span class="text-color-light text-small">TAGGED IN</span><br/>
                     
-  <a class="tag tag--primary tag--small" href="https://dawnarc.com/tags/d3d12/">D3D12</a>
+  <a class="tag tag--primary tag--small" href="https://dawnarc.com/tags/c/">C</a>
 
                   </div>
                 
@@ -458,7 +502,7 @@ Modern Graphics APIs give you more control over resource binding, such as with D
           
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2023/04/d3d12asynchronous-compute-notes/" data-tooltip="[D3D12]Asynchronous Compute Notes">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2017/04/c-%E5%8F%AF%E5%8F%98%E5%8F%82%E6%95%B0_va_args__/" data-tooltip="[C&#43;&#43;]可变参数_VA_ARGS__ ">
               
                   <i class="fa fa-angle-left"></i>
                   <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
@@ -466,7 +510,7 @@ Modern Graphics APIs give you more control over resource binding, such as with D
             </li>
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2023/04/d3d12memory-management-notes/" data-tooltip="[D3D12]Memory Management Notes">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2017/04/zbrushcurvetube%E7%AC%94%E5%88%B7/" data-tooltip="[ZBrush]CurveTube笔刷">
               
                   <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
                   <i class="fa fa-angle-right"></i>
@@ -520,7 +564,7 @@ Modern Graphics APIs give you more control over resource binding, such as with D
           
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2023/04/d3d12asynchronous-compute-notes/" data-tooltip="[D3D12]Asynchronous Compute Notes">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2017/04/c-%E5%8F%AF%E5%8F%98%E5%8F%82%E6%95%B0_va_args__/" data-tooltip="[C&#43;&#43;]可变参数_VA_ARGS__ ">
               
                   <i class="fa fa-angle-left"></i>
                   <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
@@ -528,7 +572,7 @@ Modern Graphics APIs give you more control over resource binding, such as with D
             </li>
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2023/04/d3d12memory-management-notes/" data-tooltip="[D3D12]Memory Management Notes">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2017/04/zbrushcurvetube%E7%AC%94%E5%88%B7/" data-tooltip="[ZBrush]CurveTube笔刷">
               
                   <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
                   <i class="fa fa-angle-right"></i>

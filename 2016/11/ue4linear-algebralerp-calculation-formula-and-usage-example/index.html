@@ -366,66 +366,64 @@
                 </script>
               <p>keywords: [UE4][Linear Algebra]Lerp calculation formula and usage example</p>
 <p>UnrealMathUnlity.h：</p>
-<pre><code>/** Performs a linear interpolation between two values, Alpha ranges from 0-1 */
-template&lt; class T, class U &gt; 
-static FORCEINLINE_DEBUGGABLE T Lerp( const T&amp; A, const T&amp; B, const U&amp; Alpha )
-{
-    return (T)(A + Alpha * (B-A));
-}
-
-/** Performs a linear interpolation between two values, Alpha ranges from 0-1. Handles full numeric range of T */
-template&lt; class T &gt; 
-static FORCEINLINE_DEBUGGABLE T LerpStable( const T&amp; A, const T&amp; B, double Alpha )
-{
-    return (T)((A * (1.0 - Alpha)) + (B * Alpha));
-}
-
-/** Performs a linear interpolation between two values, Alpha ranges from 0-1. Handles full numeric range of T */
-template&lt; class T &gt;
-static FORCEINLINE_DEBUGGABLE T LerpStable(const T&amp; A, const T&amp; B, float Alpha)
-{
-    return (T)((A * (1.0f - Alpha)) + (B * Alpha));
-}
-
-/** Performs a 2D linear interpolation between four values values, FracX, FracY ranges from 0-1 */
-template&lt; class T, class U &gt; 
-static FORCEINLINE_DEBUGGABLE T BiLerp(const T&amp; P00,const T&amp; P10,const T&amp; P01,const T&amp; P11, const U&amp; FracX, const U&amp; FracY)
-{
-    return Lerp(
-        Lerp(P00,P10,FracX),
-        Lerp(P01,P11,FracX),
-        FracY
-        );
-}
-
-/** Interpolate vector from Current to Target. Scaled by distance to Target, so it has a strong start speed and ease out. */
-static CORE_API FVector VInterpTo( const FVector&amp; Current, const FVector&amp; Target, float DeltaTime, float InterpSpeed );
-
-/** Interpolate rotator from Current to Target. Scaled by distance to Target, so it has a strong start speed and ease out. */
-static CORE_API FRotator RInterpTo( const FRotator&amp; Current, const FRotator&amp; Target, float DeltaTime, float InterpSpeed);
-
-/** Interpolate float from Current to Target. Scaled by distance to Target, so it has a strong start speed and ease out. */
-static CORE_API float FInterpTo( float Current, float Target, float DeltaTime, float InterpSpeed );
-</code></pre>
-<h5 id="usage-example-uniform-velocity-mode">Usage example: Uniform velocity mode</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">/** Performs a linear interpolation between two values, Alpha ranges from 0-1 */</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">template</span><span style="color:#f92672">&lt;</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">T</span>, <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">U</span> <span style="color:#f92672">&gt;</span> 
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">static</span> FORCEINLINE_DEBUGGABLE T Lerp( <span style="color:#66d9ef">const</span> T<span style="color:#f92672">&amp;</span> A, <span style="color:#66d9ef">const</span> T<span style="color:#f92672">&amp;</span> B, <span style="color:#66d9ef">const</span> U<span style="color:#f92672">&amp;</span> Alpha )
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> (T)(A <span style="color:#f92672">+</span> Alpha <span style="color:#f92672">*</span> (B<span style="color:#f92672">-</span>A));
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">/** Performs a linear interpolation between two values, Alpha ranges from 0-1. Handles full numeric range of T */</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">template</span><span style="color:#f92672">&lt;</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">T</span> <span style="color:#f92672">&gt;</span> 
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">static</span> FORCEINLINE_DEBUGGABLE T LerpStable( <span style="color:#66d9ef">const</span> T<span style="color:#f92672">&amp;</span> A, <span style="color:#66d9ef">const</span> T<span style="color:#f92672">&amp;</span> B, <span style="color:#66d9ef">double</span> Alpha )
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> (T)((A <span style="color:#f92672">*</span> (<span style="color:#ae81ff">1.0</span> <span style="color:#f92672">-</span> Alpha)) <span style="color:#f92672">+</span> (B <span style="color:#f92672">*</span> Alpha));
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">/** Performs a linear interpolation between two values, Alpha ranges from 0-1. Handles full numeric range of T */</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">template</span><span style="color:#f92672">&lt;</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">T</span> <span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">static</span> FORCEINLINE_DEBUGGABLE T LerpStable(<span style="color:#66d9ef">const</span> T<span style="color:#f92672">&amp;</span> A, <span style="color:#66d9ef">const</span> T<span style="color:#f92672">&amp;</span> B, <span style="color:#66d9ef">float</span> Alpha)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> (T)((A <span style="color:#f92672">*</span> (<span style="color:#ae81ff">1.0f</span> <span style="color:#f92672">-</span> Alpha)) <span style="color:#f92672">+</span> (B <span style="color:#f92672">*</span> Alpha));
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">/** Performs a 2D linear interpolation between four values values, FracX, FracY ranges from 0-1 */</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">template</span><span style="color:#f92672">&lt;</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">T</span>, <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">U</span> <span style="color:#f92672">&gt;</span> 
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">static</span> FORCEINLINE_DEBUGGABLE T BiLerp(<span style="color:#66d9ef">const</span> T<span style="color:#f92672">&amp;</span> P00,<span style="color:#66d9ef">const</span> T<span style="color:#f92672">&amp;</span> P10,<span style="color:#66d9ef">const</span> T<span style="color:#f92672">&amp;</span> P01,<span style="color:#66d9ef">const</span> T<span style="color:#f92672">&amp;</span> P11, <span style="color:#66d9ef">const</span> U<span style="color:#f92672">&amp;</span> FracX, <span style="color:#66d9ef">const</span> U<span style="color:#f92672">&amp;</span> FracY)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">Lerp</span>(
+</span></span><span style="display:flex;"><span>        Lerp(P00,P10,FracX),
+</span></span><span style="display:flex;"><span>        Lerp(P01,P11,FracX),
+</span></span><span style="display:flex;"><span>        FracY
+</span></span><span style="display:flex;"><span>        );
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">/** Interpolate vector from Current to Target. Scaled by distance to Target, so it has a strong start speed and ease out. */</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">static</span> CORE_API FVector <span style="color:#a6e22e">VInterpTo</span>( <span style="color:#66d9ef">const</span> FVector<span style="color:#f92672">&amp;</span> Current, <span style="color:#66d9ef">const</span> FVector<span style="color:#f92672">&amp;</span> Target, <span style="color:#66d9ef">float</span> DeltaTime, <span style="color:#66d9ef">float</span> InterpSpeed );
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">/** Interpolate rotator from Current to Target. Scaled by distance to Target, so it has a strong start speed and ease out. */</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">static</span> CORE_API FRotator <span style="color:#a6e22e">RInterpTo</span>( <span style="color:#66d9ef">const</span> FRotator<span style="color:#f92672">&amp;</span> Current, <span style="color:#66d9ef">const</span> FRotator<span style="color:#f92672">&amp;</span> Target, <span style="color:#66d9ef">float</span> DeltaTime, <span style="color:#66d9ef">float</span> InterpSpeed);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">/** Interpolate float from Current to Target. Scaled by distance to Target, so it has a strong start speed and ease out. */</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">static</span> CORE_API <span style="color:#66d9ef">float</span> <span style="color:#a6e22e">FInterpTo</span>( <span style="color:#66d9ef">float</span> Current, <span style="color:#66d9ef">float</span> Target, <span style="color:#66d9ef">float</span> DeltaTime, <span style="color:#66d9ef">float</span> InterpSpeed );
+</span></span></code></pre></div><h5 id="usage-example-uniform-velocity-mode">Usage example: Uniform velocity mode</h5>
 <p>Define two member variables:</p>
 <pre><code>float LerpTime = 0.f;
 const float LerpDuration = 2.5f;
 </code></pre>
 <p>Then calculate in Tick：</p>
-<pre><code>void AMyActor::Tick(float DeltaSecond)
-{
-    if(LerpTime &lt; LerpDuration)
-    {
-        LerpTime += DeltaSecond;
-        
-        FVector NewLoc = FMath::Lerp&lt;FVector&gt;(SrcLoc, DistLoc, LerpTime / LerpDuration);
-    
-        MyCharacter-&gt;SetActorLocation(NewLoc);
-    }
-}
-</code></pre>
-<h5 id="usage-example-damping-mode-cushion-mode-strong-at-first-then-soft">Usage example: Damping mode (Cushion mode: strong at first, then soft)</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> AMyActor<span style="color:#f92672">::</span>Tick(<span style="color:#66d9ef">float</span> DeltaSecond)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span>(LerpTime <span style="color:#f92672">&lt;</span> LerpDuration)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        LerpTime <span style="color:#f92672">+=</span> DeltaSecond;
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        FVector NewLoc <span style="color:#f92672">=</span> FMath<span style="color:#f92672">::</span>Lerp<span style="color:#f92672">&lt;</span>FVector<span style="color:#f92672">&gt;</span>(SrcLoc, DistLoc, LerpTime <span style="color:#f92672">/</span> LerpDuration);
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>        MyCharacter<span style="color:#f92672">-&gt;</span>SetActorLocation(NewLoc);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h5 id="usage-example-damping-mode-cushion-mode-strong-at-first-then-soft">Usage example: Damping mode (Cushion mode: strong at first, then soft)</h5>
 <p>Rotating example 01 (by speed):</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> AMyActor<span style="color:#f92672">::</span>Tick(<span style="color:#66d9ef">float</span> DeltaSeconds)
 </span></span><span style="display:flex;"><span>{
@@ -452,12 +450,10 @@ const float LerpDuration = 2.5f;
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p><code>Lerp</code> Example：</p>
-<pre><code>NewLoc = FMath::Lerp&lt;FVector&gt;(NewLoc, DistLoc, LerpTime / LerpDuration);
-</code></pre>
-<p><code>VInterpTo</code> Example：</p>
-<pre><code>NewLoc = FMath::VInterpTo(NewLoc, DistLoc, DeltaTime, InterpSpeed);
-</code></pre>
-<div class="alert info ">
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>NewLoc <span style="color:#f92672">=</span> FMath<span style="color:#f92672">::</span>Lerp<span style="color:#f92672">&lt;</span>FVector<span style="color:#f92672">&gt;</span>(NewLoc, DistLoc, LerpTime <span style="color:#f92672">/</span> LerpDuration);
+</span></span></code></pre></div><p><code>VInterpTo</code> Example：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>NewLoc <span style="color:#f92672">=</span> FMath<span style="color:#f92672">::</span>VInterpTo(NewLoc, DistLoc, DeltaTime, InterpSpeed);
+</span></span></code></pre></div><div class="alert info ">
   <p>Difference between <code>Lerp</code> and <code>VInterpTo</code>: <code>VInterpTo</code> using <code>InterpSpeed</code> instead of <code>LerpTime / LerpDuration</code>.</p>
 </div>
 <div class="alert success ">

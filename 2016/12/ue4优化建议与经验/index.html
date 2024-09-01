@@ -822,7 +822,7 @@ Project Settings -&gt; Engine -&gt; Animation -&gt; 勾选 Strip Animation Data 
 <ul>
 <li>没有设置为streaming（勾选了<code>Never Streaming</code>，默认没有勾选）；</li>
 <li>没有生成mipmap（设置了<code>NoMipmaps</code>。默认会生成mipmap）；</li>
-<li>材质中过多的纹理采样（比如，为了一个材质处理各种特效，挂了N张纹理）；</li>
+<li>材质中过多的纹理采样（比如，为了一个材质处理各种特效，挂了N张贴图。<span class="highlight-text red">即使通过材质实例的static switch将不需要的贴图排除，渲染时依然会将材质内这些贴图上传到RAM（Texture 2D）和VRAM（GPU Texture Pool）</span>）；</li>
 <li>gameplay加载贴图不合理（比如，PVP场景加载了PVE场景的UI）；</li>
 <li>硬引用导致的加载贴图不合理（事项1中已阐述）；</li>
 </ul>
@@ -887,7 +887,7 @@ Project Settings -&gt; Engine -&gt; Animation -&gt; 勾选 Strip Animation Data 
 另外mesh merge也不是合并的越多越好，一次性合并太多，形成一个超大mesh，会影响视锥剔除，可能得不偿失。</p>
 </div>
 <ol start="4">
-<li>CopyTextureRegion次数不影响性能，从几个到几百都是正常范围，一般刚进入新场景时CopyTextureRegion数量较高，此时正在mip slicing（个人推测）。</li>
+<li>CopyTextureRegion从几个到几百都是正常范围，贴图尺寸过大会影响copy性能。一般刚进入新场景时CopyTextureRegion数量较高，此时正在mip slicing（个人推测）。</li>
 </ol>
 <h5 id="参考资料">参考资料</h5>
 <p>Performance and Profiling<br>
