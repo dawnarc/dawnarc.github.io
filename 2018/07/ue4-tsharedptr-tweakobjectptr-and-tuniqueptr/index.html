@@ -365,12 +365,89 @@
               <p><code>TSharedPtr</code>, <code>TWeakObjectPtr</code> and <code>TUniquePtr</code> imitated from <code>shared_ptr</code>, <code>weak_ptr</code> and <code>unique_ptr</code> of C++11.</p>
 <h3 id="tsharedptr">TSharedPtr</h3>
 <h5 id="summary">Summary</h5>
-<p><code>TSharedPtr</code> is the counter of reference of object. The count that <code>TSharedPtr</code> reference to would increase one while <code>TSharedPtr</code> was assigned once, the object would be destroyed when the count of reference is 0.</p>
+<p><code>TSharedPtr</code> is the counter of reference of raw objects (Non-UObject). The count that <code>TSharedPtr</code> reference to would increase one while <code>TSharedPtr</code> was assigned once, the object would be destroyed when the count of reference is 0.</p>
 <p>Usage:</p>
-<pre><code>TSharedPtr&lt;TestClass&gt; ObjPtr = MakeShareable(new TestClass());
-</code></pre>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>TSharedPtr<span style="color:#f92672">&lt;</span>FRawClass<span style="color:#f92672">&gt;</span> ObjPtr <span style="color:#f92672">=</span> MakeShareable(<span style="color:#66d9ef">new</span> FRawClass());
+</span></span></code></pre></div><h5 id="example">Example</h5>
+<p>RawClass.h</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">#pragma once
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;CoreMinimal.h&#34;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">TP_54_API</span> FRawClass
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    FRawClass()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        GEngine<span style="color:#f92672">-&gt;</span>AddOnScreenDebugMessage(<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">5.f</span>, FColor<span style="color:#f92672">::</span>Cyan, TEXT(<span style="color:#e6db74">&#34;=== Construct&#34;</span>));
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">~</span>FRawClass()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        GEngine<span style="color:#f92672">-&gt;</span>AddOnScreenDebugMessage(<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">5.f</span>, FColor<span style="color:#f92672">::</span>Orange, TEXT(<span style="color:#e6db74">&#34;=== Destruct&#34;</span>));
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p>MyTestGameMode.h</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">#pragma once
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;CoreMinimal.h&#34;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;GameFramework/GameModeBase.h&#34;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;TP_54GameMode.generated.h&#34;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">FRawClass</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>UCLASS(minimalapi)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">AMyTestGameMode</span> <span style="color:#f92672">:</span> <span style="color:#66d9ef">public</span> AGameModeBase
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    GENERATED_BODY()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    AMyTestGameMode();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    UFUNCTION(Exec)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">void</span> CreatePtr();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    UFUNCTION(Exec)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">void</span> ReleaseFoo();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    UFUNCTION(Exec)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">void</span> ReleaseBar();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">protected</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    TSharedPtr<span style="color:#f92672">&lt;</span>FRawClass<span style="color:#f92672">&gt;</span> Foo <span style="color:#f92672">=</span> <span style="color:#66d9ef">nullptr</span>;
+</span></span><span style="display:flex;"><span>    TSharedPtr<span style="color:#f92672">&lt;</span>FRawClass<span style="color:#f92672">&gt;</span> Bar <span style="color:#f92672">=</span> <span style="color:#66d9ef">nullptr</span>;
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p>MyTestGameMode.cpp</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;RawClass.h&#34;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;Templates/SharedPointer.h&#34;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> AMyTestGameMode<span style="color:#f92672">::</span>CreatePtr()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    Foo <span style="color:#f92672">=</span> MakeShareable(<span style="color:#66d9ef">new</span> FRawClass());
+</span></span><span style="display:flex;"><span>    Bar <span style="color:#f92672">=</span> Foo;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> AMyTestGameMode<span style="color:#f92672">::</span>ReleaseFoo()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    Foo <span style="color:#f92672">=</span> <span style="color:#66d9ef">nullptr</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> AMyTestGameMode<span style="color:#f92672">::</span>ReleaseBar()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    Bar <span style="color:#f92672">=</span> <span style="color:#66d9ef">nullptr</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Console command for testing:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Text" data-lang="Text"><span style="display:flex;"><span>CreatePtr       //screen prints: === Construct
+</span></span><span style="display:flex;"><span>ReleaseFoo      //nothing happens
+</span></span><span style="display:flex;"><span>ReleaseBar      //screen prints: === Destruct
+</span></span></code></pre></div><h5 id="cautions">Cautions</h5>
 <div class="alert danger ">
   <p>Objects would never be destroyed if two <code>TSharedPtr</code>, which are reference to a same object, were assigned to each other, resulting a memory leak.</p>
+</div>
+<div class="alert warning ">
+  <p>If the class of TSharedPtr contains lambda functions, you must be careful to ensure the current object is valid while executing lambda, because the object ref counter may reach to 0 which causes the destruction in the gap time between current function and lambda function.<br>
+For more details, see: <a href="https://dawnarc.com/2017/12/ue4gameplay-dev-notes/#shared-pointer-in-async-task">Shared Pointer in Async Task</a></p>
 </div>
 <h5 id="whether-if-tsharedptr-works-for-uobject-or-not">Whether if TSharedPtr works for UObject or not</h5>
 <p>As the comments of <code>TSharedPtr</code> say, it only works for <code>raw pointers</code>:</p>
@@ -403,13 +480,12 @@
 </span></span></code></pre></div><p>In theory, Unreal GC system is to <code>UObject</code> what <code>std::shared_ptr&lt;&gt;</code> is to raw pointer, so <code>TSharedPtr</code> doesn&rsquo;t need to work for <code>UObject</code>.<br>
 But, there&rsquo;s no limitation for counting <code>UObject</code> in the source code of <code>SharedPointerInternals.h</code> in engine.<br>
 If a <code>UObject</code> was passed as parameter into <code>TSharedPtr</code>:</p>
-<pre><code>void ATestPlayerController::TestFun()
-{
-    TestActor = NewObject&lt;AActor&gt;(this);
-    TSharedPtr&lt;AActor&gt; SharePtr2 = MakeShareable(TestActor);
-}
-</code></pre>
-<p>Application would crash after jumping out of function <code>TestFun</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> ATestPlayerController<span style="color:#f92672">::</span>TestFun()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    TestActor <span style="color:#f92672">=</span> NewObject<span style="color:#f92672">&lt;</span>AActor<span style="color:#f92672">&gt;</span>(<span style="color:#66d9ef">this</span>);
+</span></span><span style="display:flex;"><span>    TSharedPtr<span style="color:#f92672">&lt;</span>AActor<span style="color:#f92672">&gt;</span> SharePtr2 <span style="color:#f92672">=</span> MakeShareable(TestActor);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Application would crash after jumping out of function <code>TestFun</code>:</p>
 <pre tabindex="0"><code class="language-Log" data-lang="Log">Assertion failed: GetFName() == NAME_None [File:D:/Build/++UE4/Sync/Engine/Source/Runtime/CoreUObject/Private/UObject/UObjectBase.cpp] [Line: 136]
 
 UE4Editor_Core!AssertFailedImplV() [d:\build\++ue4\sync\engine\source\runtime\core\private\misc\assertionmacros.cpp:105]
@@ -431,23 +507,20 @@ UE4Editor_TestTD4_Win64_DebugGame!ATestPlayerController::TestFun() [D:\workspace
 <p>The memory presented by <code>TWeakObjectPtr</code> can&rsquo;t be prevented from garbage collecting. Once the object that was presented by <code>TWeakObjectPtr</code> was destroyed in other place, the inner pointer of <code>TWeakObjectPtr</code> would be assigned as <code>nullptr</code> automatically, and <code>TWeakObjectPtr::IsValid()</code> would return <code>false</code>. But <code>TSharedPtr</code> has no features of <code>TWeakObjectPtr</code>.</p>
 <h5 id="usage">Usage</h5>
 <p>Assignment</p>
-<pre><code>TWeakObjectPtr&lt;AActor&gt; MyWeakActor;
-MyWeakActor = MyActor;
-</code></pre>
-<p>Get value</p>
-<pre><code>AActor* Actor = MyWeakActor.Get();
-</code></pre>
-<p>or</p>
-<pre><code>if(MyWeakActor.Get())
-{
-    ACharacter* Character = Cast&lt;ACharacter&gt;(MyWeakActor);
-}
-</code></pre>
-<p>if <code>MyActor</code> has been destroyed, <code>MyWeakActor.Get()</code> would return <code>nullptr</code></p>
-<pre><code>MyActor-&gt;Destroy();
-bool IsValid = MyWeakActor.Get() != nullptr;    //false
-</code></pre>
-<div class="alert danger ">
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>TWeakObjectPtr<span style="color:#f92672">&lt;</span>AActor<span style="color:#f92672">&gt;</span> MyWeakActor;
+</span></span><span style="display:flex;"><span>MyWeakActor <span style="color:#f92672">=</span> MyActor;
+</span></span></code></pre></div><p>Get value</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>AActor<span style="color:#f92672">*</span> Actor <span style="color:#f92672">=</span> MyWeakActor.Get();
+</span></span></code></pre></div><p>or</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">if</span>(MyWeakActor.Get())
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    ACharacter<span style="color:#f92672">*</span> Character <span style="color:#f92672">=</span> Cast<span style="color:#f92672">&lt;</span>ACharacter<span style="color:#f92672">&gt;</span>(MyWeakActor);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>if <code>MyActor</code> has been destroyed, <code>MyWeakActor.Get()</code> returns <code>nullptr</code>.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>MyActor<span style="color:#f92672">-&gt;</span>Destroy();
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">bool</span> IsNull <span style="color:#f92672">=</span> MyWeakActor.Get() <span style="color:#f92672">==</span> <span style="color:#66d9ef">nullptr</span>;    <span style="color:#75715e">//true
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">bool</span> IsValid <span style="color:#f92672">=</span> MyWeakActor.IsValid();    <span style="color:#75715e">//false
+</span></span></span></code></pre></div><div class="alert danger ">
   <p>if <code>MyActor</code> has been recycled by GC, <code>Cast&lt;AMyCharacter&gt;(MyActor)</code> would cause crash after a while, but <code>Cast&lt;AMyCharacter&gt;(MyWeakActor)</code> would not.</p>
 </div>
 <h5 id="remove-in-array">Remove in Array</h5>
@@ -468,18 +541,128 @@ bool IsValid = MyWeakActor.Get() != nullptr;    //false
 </span></span><span style="display:flex;"><span>TestArray.Remove(WeakPtr2);
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">int</span> Num2 <span style="color:#f92672">=</span> TestArray.Num();    <span style="color:#75715e">// 1
 </span></span></span></code></pre></div><h3 id="tweakptr">TWeakPtr</h3>
-<h5 id="difference-between-tweakptr-and-tweakobjectptr">Difference between TWeakPtr and TWeakObjectPtr</h5>
-<div class="alert danger ">
-  <p>TWeakObjectPtr works for weak pointers of UObjects, TWeakPtr works for pointers to everything else.<br>
-Since UObjects are garbage collected and shared pointers are reference counted, we cannot have the same weak pointer type for all, unfortunately.</p>
-</div>
-<p>Difference between TWeakPtr and TWeakObjectPtr?<br>
-<a href="https://answers.unrealengine.com/questions/298868/difference-between-tweakptr-and-tweakobjectptr.html">https://answers.unrealengine.com/questions/298868/difference-between-tweakptr-and-tweakobjectptr.html</a></p>
-<h5 id="convert-tweakptr-to-tsharedptr">Convert TWeakPtr to TSharedPtr</h5>
-<p>Example from <code>Engine\Source\Runtime\MediaAssets\Private\Misc\MediaTextureResource.cpp</code>:</p>
-<pre><code>TSharedPtr&lt;FMediaTextureSampleSource, ESPMode::ThreadSafe&gt; SampleSource = Params.SampleSource.Pin();
-</code></pre>
-<h3 id="tuniqueptr-unique-pointers">TUniquePtr (Unique Pointers)</h3>
+<h5 id="tweakobjectptr-vs-tweakptr">TWeakObjectPtr vs TWeakPtr</h5>
+<p>Difference:</p>
+<ul>
+<li>TWeakObjectPtr works for UObjects only, TWeakPtr works for raw objects (Non-UObject) only;</li>
+<li>TWeakObjectPtr can works independently with UObjects, while TWeakPtr must work with TSharedPtr.</li>
+</ul>
+<p>TWeakPtr Example:</p>
+<h5 id="example-1">Example</h5>
+<p>RawClass.h</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">#pragma once
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;CoreMinimal.h&#34;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MYTEST_API</span> FRawClass
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    FRawClass()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        GEngine<span style="color:#f92672">-&gt;</span>AddOnScreenDebugMessage(<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">5.f</span>, FColor<span style="color:#f92672">::</span>Cyan, TEXT(<span style="color:#e6db74">&#34;=== Construct&#34;</span>));
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">~</span>FRawClass()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        GEngine<span style="color:#f92672">-&gt;</span>AddOnScreenDebugMessage(<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">5.f</span>, FColor<span style="color:#f92672">::</span>Orange, TEXT(<span style="color:#e6db74">&#34;=== Destruct&#34;</span>));
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p>MyTestGameMode.h</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">#pragma once
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;CoreMinimal.h&#34;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;GameFramework/GameModeBase.h&#34;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;TP_54GameMode.generated.h&#34;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">FRawClass</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>UCLASS(minimalapi)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">AMyTestGameMode</span> <span style="color:#f92672">:</span> <span style="color:#66d9ef">public</span> AGameModeBase
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    GENERATED_BODY()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    AMyTestGameMode();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    UFUNCTION(Exec)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">void</span> CreatePtr();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    UFUNCTION(Exec)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">void</span> ReleaseFoo();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    UFUNCTION(Exec)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">void</span> ReleaseBar();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    UFUNCTION(Exec)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">void</span> KeepBaz();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    UFUNCTION(Exec)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">void</span> ReleaseQux();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    UFUNCTION(Exec)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">void</span> CheckBaz();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">protected</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    TSharedPtr<span style="color:#f92672">&lt;</span>FRawClass<span style="color:#f92672">&gt;</span> Foo <span style="color:#f92672">=</span> <span style="color:#66d9ef">nullptr</span>;
+</span></span><span style="display:flex;"><span>    TSharedPtr<span style="color:#f92672">&lt;</span>FRawClass<span style="color:#f92672">&gt;</span> Bar <span style="color:#f92672">=</span> <span style="color:#66d9ef">nullptr</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    TWeakPtr<span style="color:#f92672">&lt;</span>FRawClass<span style="color:#f92672">&gt;</span> Baz <span style="color:#f92672">=</span> <span style="color:#66d9ef">nullptr</span>;
+</span></span><span style="display:flex;"><span>    TSharedPtr<span style="color:#f92672">&lt;</span>FRawClass<span style="color:#f92672">&gt;</span> Qux <span style="color:#f92672">=</span> <span style="color:#66d9ef">nullptr</span>;
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p>MyTestGameMode.cpp</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;RawClass.h&#34;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;Templates/SharedPointer.h&#34;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> AMyTestGameMode<span style="color:#f92672">::</span>CreatePtr()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    Foo <span style="color:#f92672">=</span> MakeShareable(<span style="color:#66d9ef">new</span> FRawClass());
+</span></span><span style="display:flex;"><span>    Bar <span style="color:#f92672">=</span> Foo;
+</span></span><span style="display:flex;"><span>    Baz <span style="color:#f92672">=</span> Foo;
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//Baz = new FRawClass();    //compilation error: weak ptr must be initialized with share ptr.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> AMyTestGameMode<span style="color:#f92672">::</span>ReleaseFoo()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    Foo <span style="color:#f92672">=</span> <span style="color:#66d9ef">nullptr</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> AMyTestGameMode<span style="color:#f92672">::</span>ReleaseBar()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    Bar <span style="color:#f92672">=</span> <span style="color:#66d9ef">nullptr</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> AMyTestGameMode<span style="color:#f92672">::</span>KeepBaz()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//create a new TSharedPtr from TWeakPtr to keep the object ref.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    Qux <span style="color:#f92672">=</span> Baz.Pin();
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> AMyTestGameMode<span style="color:#f92672">::</span>ReleaseQux()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    Qux <span style="color:#f92672">=</span> <span style="color:#66d9ef">nullptr</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> AMyTestGameMode<span style="color:#f92672">::</span>CheckBaz()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    FString Info <span style="color:#f92672">=</span> Baz.IsValid() <span style="color:#f92672">?</span> TEXT(<span style="color:#e6db74">&#34;Valid+++&#34;</span>) <span style="color:#f92672">:</span> TEXT(<span style="color:#e6db74">&#34;Invalid---&#34;</span>);
+</span></span><span style="display:flex;"><span>    GEngine<span style="color:#f92672">-&gt;</span>AddOnScreenDebugMessage(<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">5.f</span>, FColor<span style="color:#f92672">::</span>Cyan, Info);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Console command for testing weak ptr:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Text" data-lang="Text"><span style="display:flex;"><span>CreatePtr       //screen prints: === Construct
+</span></span><span style="display:flex;"><span>ReleaseFoo      //nothing happens
+</span></span><span style="display:flex;"><span>CheckBaz        //screen prints: Valid+++
+</span></span><span style="display:flex;"><span>ReleaseBar      //screen prints: === Destruct
+</span></span><span style="display:flex;"><span>CheckBaz        //screen prints: Invalid---
+</span></span></code></pre></div><p>Console command for testing Pin function:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Text" data-lang="Text"><span style="display:flex;"><span>CreatePtr       //screen prints: === Construct
+</span></span><span style="display:flex;"><span>ReleaseFoo      //nothing happens
+</span></span><span style="display:flex;"><span>CheckBaz        //screen prints: Valid+++
+</span></span><span style="display:flex;"><span>KeepBaz         //creat a new shared ptr to keep object ref
+</span></span><span style="display:flex;"><span>ReleaseBar      //nothing happens
+</span></span><span style="display:flex;"><span>ReleaseQux      //screen prints: === Destruct
+</span></span><span style="display:flex;"><span>CheckBaz        //screen prints: Invalid---
+</span></span></code></pre></div><h3 id="tuniqueptr-unique-pointers">TUniquePtr (Unique Pointers)</h3>
 <h5 id="summary-2">Summary</h5>
 <p>A Unique Pointer solely and explicitly owns the object it references. Since there can only be one Unique Pointer to a given resource, Unique Pointers can transfer ownership, but cannot share it. Any attempts to copy a Unique Pointer will result in a compile error. When a Unique Pointer is goes out of scope, it will automatically delete the object it references.</p>
 <div class="alert danger ">
@@ -514,27 +697,22 @@ Since UObjects are garbage collected and shared pointers are reference counted, 
 2&gt;          ]
 </code></pre><p>Remove element:<br>
 1st way:</p>
-<pre><code>TUniquePtr&lt;FTestStruct&gt; Ptr = MoveTemp(TestQueue.Peek());
-TestQueue.pop();
-</code></pre>
-<p>2nd way (recommended) :</p>
-<pre><code>TUniquePtr&lt;FTestStruct&gt; Buffer;
-TestQueue.Dequeue(Buffer)
-</code></pre>
-<h5 id="example--tuniqueptr--tarray">Example : TUniquePtr &amp; TArray</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>TUniquePtr<span style="color:#f92672">&lt;</span>FTestStruct<span style="color:#f92672">&gt;</span> Ptr <span style="color:#f92672">=</span> MoveTemp(TestQueue.Peek());
+</span></span><span style="display:flex;"><span>TestQueue.pop();
+</span></span></code></pre></div><p>2nd way (recommended) :</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>TUniquePtr<span style="color:#f92672">&lt;</span>FTestStruct<span style="color:#f92672">&gt;</span> Buffer;
+</span></span><span style="display:flex;"><span>TestQueue.Dequeue(Buffer)
+</span></span></code></pre></div><h5 id="example--tuniqueptr--tarray">Example : TUniquePtr &amp; TArray</h5>
 <p>Add Element:</p>
-<pre><code>TUniquePtr&lt;FTestStruct&gt; Ptr = MakeUnique&lt;FTestStruct&gt;();
-TestArray.Add(MoveTemp(Ptr));
-</code></pre>
-<p>Remove element:<br>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>TUniquePtr<span style="color:#f92672">&lt;</span>FTestStruct<span style="color:#f92672">&gt;</span> Ptr <span style="color:#f92672">=</span> MakeUnique<span style="color:#f92672">&lt;</span>FTestStruct<span style="color:#f92672">&gt;</span>();
+</span></span><span style="display:flex;"><span>TestArray.Add(MoveTemp(Ptr));
+</span></span></code></pre></div><p>Remove element:<br>
 1st way:</p>
-<pre><code>TUniquePtr&lt;FTestStruct&gt; Ptr = MoveTemp(TestArray[TestArray.Num() - 1]);
-TestArray.RemoveAt(TestArray.Num() - 1);
-</code></pre>
-<p>2nd way (recommended) :</p>
-<pre><code>TUniquePtr&lt;FTestStruct&gt; Ptr = TestArray.Pop();
-</code></pre>
-<h5 id="issues">Issues</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>TUniquePtr<span style="color:#f92672">&lt;</span>FTestStruct<span style="color:#f92672">&gt;</span> Ptr <span style="color:#f92672">=</span> MoveTemp(TestArray[TestArray.Num() <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>]);
+</span></span><span style="display:flex;"><span>TestArray.RemoveAt(TestArray.Num() <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>);
+</span></span></code></pre></div><p>2nd way (recommended) :</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>TUniquePtr<span style="color:#f92672">&lt;</span>FTestStruct<span style="color:#f92672">&gt;</span> Ptr <span style="color:#f92672">=</span> TestArray.Pop();
+</span></span></code></pre></div><h5 id="issues">Issues</h5>
 <div class="alert warning ">
   <p>If there&rsquo;s <code>FString</code> varible in class and want to create <code>TUniquePtr</code> using this class, <code>Move Constructor</code> need to be provided in class.</p>
 </div>
@@ -582,6 +760,8 @@ Engine\Source\Runtime\Online\WebSockets\Private\Lws\LwsWebSocket.h</p>
 <a href="https://answers.unrealengine.com/questions/201186/what-is-a-weak-object-pointer.html">https://answers.unrealengine.com/questions/201186/what-is-a-weak-object-pointer.html</a></p>
 <p>Unreal Smart Pointer Library<br>
 <a href="https://docs.unrealengine.com/en-US/Programming/UnrealArchitecture/SmartPointerLibrary/index.html">https://docs.unrealengine.com/en-US/Programming/UnrealArchitecture/SmartPointerLibrary/index.html</a></p>
+<p>TSharedPtr、UniquePtr、TWeakPtr、TSharedRef<br>
+<a href="https://www.cnblogs.com/shiroe/p/14729821.html">https://www.cnblogs.com/shiroe/p/14729821.html</a></p>
 <hr>
 <p><code>已识乾坤大，犹怜草木青。长空送鸟印，留幻与人灵。--- 马一浮《旷怡亭口占》</code></p>
               

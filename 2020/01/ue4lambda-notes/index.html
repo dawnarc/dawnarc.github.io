@@ -366,61 +366,56 @@
 <p>Origin: Understanding Lambda Expressions<br>
 <a href="https://www.orfeasel.com/understanding-lambda-expressions/">https://www.orfeasel.com/understanding-lambda-expressions/</a></p>
 <p>Exampe 1:</p>
-<pre><code>FTimerHandle TimerHandle;
- 
-GetWorld()-&gt;GetTimerManager().SetTimer(TimerHandle, this, &amp;AActor::Destroy(), 5.f);
-</code></pre>
-<p>Exampe 2:</p>
-<pre><code>FTimerHandle TimerHandle;
-
-FTimerDelegate TimerDelegate;
- 
-//Binding our Lambda expression
-TimerDelegate.BindLambda([&amp;]()
-{
-    //Typing the logic of our function here just like any other function...
-    GLog-&gt;Log(&quot;Destroying Actor now...&quot;);
-    Destroy();
-});//Don't forget the &quot;;&quot; in the end of your parenthesis!
- 
-GetWorld()-&gt;GetTimerManager().SetTimer(TimerHandle, TimerDelegate, 5.f, false);
-</code></pre>
-<p>Exampe 3:</p>
-<pre><code>void ALambdaActor::BeginPlay()
-{
-    Super::BeginPlay();
- 
-    //Declaring an Array of Actors
-    TArray&lt;AActor*&gt; ActorsArray;
- 
-    //Declaring a delegate with one int32 parameter
-    DECLARE_DELEGATE_OneParam(MyUsefulDelegate, int32);
- 
-    //The following functions populates the ActorsArray with all the Actors which reside inside our current level
-    UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), ActorsArray);
- 
-    //Declaring a MyUsefulDelegate
-    MyUsefulDelegate Del;
-   
-    //Binding a Lambda to it
-    //In this lambda we pass the ActorsArray by value since we won't make any changes
-    //or want any changes reflected outside the lambda expression
-    //If we don't pass the ActorsArray in the capturelist then we won't be able to have access to it!
-    Del.BindLambda([ActorsArray](int32 ActorIndex)
-    {
-        //Print the name of the Actor which has an index equal to the one we provided (ActorIndex)
-        //Make sure we provided a valid index for our array
-        if (ActorsArray.IsValidIndex(ActorIndex))
-            GLog-&gt;Log(&quot;Actor with given index:&quot; + ActorsArray[ActorIndex]-&gt;GetName());
-        else
-            GLog-&gt;Log(&quot;You've entered an invalid index. That's unfortunate :(&quot;);
-    });
- 
-    //Show me the 16th Actor of the Array - Don't forget that TArray is zero-based!
-    Del.ExecuteIfBound(15);
-}
-</code></pre>
-<h5 id="weak-lambda">Weak Lambda</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>FTimerHandle TimerHandle;
+</span></span><span style="display:flex;"><span>GetWorld()<span style="color:#f92672">-&gt;</span>GetTimerManager().SetTimer(TimerHandle, <span style="color:#66d9ef">this</span>, <span style="color:#f92672">&amp;</span>AActor<span style="color:#f92672">::</span>Destroy(), <span style="color:#ae81ff">5.f</span>);
+</span></span></code></pre></div><p>Exampe 2:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>FTimerHandle TimerHandle;
+</span></span><span style="display:flex;"><span>FTimerDelegate TimerDelegate;
+</span></span><span style="display:flex;"><span> 
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//Binding our Lambda expression
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>TimerDelegate.BindLambda([<span style="color:#f92672">&amp;</span>]()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//Typing the logic of our function here just like any other function...
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    GLog<span style="color:#f92672">-&gt;</span>Log(<span style="color:#e6db74">&#34;Destroying Actor now...&#34;</span>);
+</span></span><span style="display:flex;"><span>    Destroy();
+</span></span><span style="display:flex;"><span>});<span style="color:#75715e">//Don&#39;t forget the &#34;;&#34; in the end of your parenthesis!
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span> 
+</span></span><span style="display:flex;"><span>GetWorld()<span style="color:#f92672">-&gt;</span>GetTimerManager().SetTimer(TimerHandle, TimerDelegate, <span style="color:#ae81ff">5.f</span>, false);
+</span></span></code></pre></div><p>Exampe 3:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> ALambdaActor<span style="color:#f92672">::</span>BeginPlay()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    Super<span style="color:#f92672">::</span>BeginPlay();
+</span></span><span style="display:flex;"><span> 
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//Declaring an Array of Actors
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    TArray<span style="color:#f92672">&lt;</span>AActor<span style="color:#f92672">*&gt;</span> ActorsArray;
+</span></span><span style="display:flex;"><span> 
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//Declaring a delegate with one int32 parameter
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    DECLARE_DELEGATE_OneParam(MyUsefulDelegate, int32);
+</span></span><span style="display:flex;"><span> 
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//The following functions populates the ActorsArray with all the Actors which reside inside our current level
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    UGameplayStatics<span style="color:#f92672">::</span>GetAllActorsOfClass(GetWorld(), AActor<span style="color:#f92672">::</span>StaticClass(), ActorsArray);
+</span></span><span style="display:flex;"><span> 
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//Declaring a MyUsefulDelegate
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    MyUsefulDelegate Del;
+</span></span><span style="display:flex;"><span>   
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//Binding a Lambda to it
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">//In this lambda we pass the ActorsArray by value since we won&#39;t make any changes
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">//or want any changes reflected outside the lambda expression
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">//If we don&#39;t pass the ActorsArray in the capturelist then we won&#39;t be able to have access to it!
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    Del.BindLambda([ActorsArray](int32 ActorIndex)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//Print the name of the Actor which has an index equal to the one we provided (ActorIndex)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#75715e">//Make sure we provided a valid index for our array
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">if</span> (ActorsArray.IsValidIndex(ActorIndex))
+</span></span><span style="display:flex;"><span>            GLog<span style="color:#f92672">-&gt;</span>Log(<span style="color:#e6db74">&#34;Actor with given index:&#34;</span> <span style="color:#f92672">+</span> ActorsArray[ActorIndex]<span style="color:#f92672">-&gt;</span>GetName());
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">else</span>
+</span></span><span style="display:flex;"><span>            GLog<span style="color:#f92672">-&gt;</span>Log(<span style="color:#e6db74">&#34;You&#39;ve entered an invalid index. That&#39;s unfortunate :(&#34;</span>);
+</span></span><span style="display:flex;"><span>    });
+</span></span><span style="display:flex;"><span> 
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//Show me the 16th Actor of the Array - Don&#39;t forget that TArray is zero-based!
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    Del.ExecuteIfBound(<span style="color:#ae81ff">15</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h5 id="weak-lambda">Weak Lambda</h5>
 <p>TBaseDelegate:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">auto</span> TestFun <span style="color:#f92672">=</span> TBaseDelegate<span style="color:#f92672">&lt;</span>int32, int32<span style="color:#f92672">&gt;::</span>CreateWeakLambda(<span style="color:#66d9ef">this</span>, [](int32 Value){ <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">111</span> <span style="color:#f92672">+</span> Value; });
 </span></span></code></pre></div><p>FTimerDelegate:</p>
@@ -432,18 +427,16 @@ GetWorld()-&gt;GetTimerManager().SetTimer(TimerHandle, TimerDelegate, 5.f, false
 </span></span><span style="display:flex;"><span>    Delegate.ExecuteIfBound(bInIsOpening);
 </span></span><span style="display:flex;"><span>});,
 </span></span></code></pre></div><h5 id="tarrayfindbypredicate">TArray::FindByPredicate()</h5>
-<pre><code> // Find first odd number
- if (const int32* Val = MyArrayOfInts.FindByPredicate([](int32 n){ return n % 1; }))
- {
-     // Val points to odd number
- }
-</code></pre>
-<p><a href="https://answers.unrealengine.com/questions/58463/are-the-examples-of-using-container-find-with-a-pr.html">https://answers.unrealengine.com/questions/58463/are-the-examples-of-using-container-find-with-a-pr.html</a></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span> <span style="color:#75715e">// Find first odd number
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span> <span style="color:#66d9ef">if</span> (<span style="color:#66d9ef">const</span> int32<span style="color:#f92672">*</span> Val <span style="color:#f92672">=</span> MyArrayOfInts.FindByPredicate([](int32 n){ <span style="color:#66d9ef">return</span> n <span style="color:#f92672">%</span> <span style="color:#ae81ff">1</span>; }))
+</span></span><span style="display:flex;"><span> {
+</span></span><span style="display:flex;"><span>     <span style="color:#75715e">// Val points to odd number
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span> }
+</span></span></code></pre></div><p><a href="https://answers.unrealengine.com/questions/58463/are-the-examples-of-using-container-find-with-a-pr.html">https://answers.unrealengine.com/questions/58463/are-the-examples-of-using-container-find-with-a-pr.html</a></p>
 <h5 id="tarraysort">TArray::Sort()</h5>
-<pre><code>TArray&lt;FMyStruct*&gt; TestArray;
-TestArray.Sort([](const FMyStruct&amp; a, const FMyStruct&amp; b) { return a.field &lt; b.field; });
-</code></pre>
-<p><a href="https://www.reddit.com/r/unrealengine/comments/d6fjii/how_does_one_sort_a_tarray_in_descending_order/">https://www.reddit.com/r/unrealengine/comments/d6fjii/how_does_one_sort_a_tarray_in_descending_order/</a></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>TArray<span style="color:#f92672">&lt;</span>FMyStruct<span style="color:#f92672">*&gt;</span> TestArray;
+</span></span><span style="display:flex;"><span>TestArray.Sort([](<span style="color:#66d9ef">const</span> FMyStruct<span style="color:#f92672">&amp;</span> a, <span style="color:#66d9ef">const</span> FMyStruct<span style="color:#f92672">&amp;</span> b) { <span style="color:#66d9ef">return</span> a.field <span style="color:#f92672">&lt;</span> b.field; });
+</span></span></code></pre></div><p><a href="https://www.reddit.com/r/unrealengine/comments/d6fjii/how_does_one_sort_a_tarray_in_descending_order/">https://www.reddit.com/r/unrealengine/comments/d6fjii/how_does_one_sort_a_tarray_in_descending_order/</a></p>
 <h5 id="run-lambda-on-gamethread-and-anythread">Run Lambda on GameThread and AnyThread</h5>
 <p>Long Running Async Lambdas, lock-free (UE4)<br>
 <a href="https://gist.github.com/getnamo/c9ca2095d449381bdeaa">https://gist.github.com/getnamo/c9ca2095d449381bdeaa</a></p>

@@ -516,6 +516,58 @@ Engine\Plugins\Experimental\CommonUI\Source\CommonUI\Private\CommonUISubsystemBa
 </span></span><span style="display:flex;"><span>    Interface<span style="color:#f92672">-&gt;</span>OnDamage(DamageValue, DamagePosition);
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>Reference: <a href="https://docs.unrealengine.com/4.27/en-US/ProgrammingAndScripting/GameplayArchitecture/Interfaces/">Unreal Interfaces</a></p>
+<h5 id="async-task">Async Task</h5>
+<p>Quoted from UE5\Engine\Plugins\AI\MLAdapter\Source\MLAdapter\Public\MLAdapterAsync.h</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">// sends InFunction to be called on the GameThread and waits for the result
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">template</span><span style="color:#f92672">&lt;</span><span style="color:#66d9ef">typename</span> RetType<span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>RetType CallOnGameThread(TFunction<span style="color:#f92672">&lt;</span>RetType()<span style="color:#f92672">&gt;</span> InFunction)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    TOptional<span style="color:#f92672">&lt;</span>RetType<span style="color:#f92672">&gt;</span> Result;
+</span></span><span style="display:flex;"><span>    TAtomic<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">bool</span><span style="color:#f92672">&gt;</span> bCompleted(false);
+</span></span><span style="display:flex;"><span>    AsyncTask(ENamedThreads<span style="color:#f92672">::</span>GameThread, [<span style="color:#f92672">&amp;</span>Result, <span style="color:#f92672">&amp;</span>bCompleted, <span style="color:#f92672">&amp;</span>InFunction]
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        Result <span style="color:#f92672">=</span> InFunction();
+</span></span><span style="display:flex;"><span>        bCompleted <span style="color:#f92672">=</span> true;
+</span></span><span style="display:flex;"><span>    });
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">while</span> (<span style="color:#f92672">!</span>bCompleted);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">MoveTemp</span>(Result.GetValue());
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// fire (InFunction to be called on the GameThread) and forget
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">template</span><span style="color:#f92672">&lt;&gt;</span>
+</span></span><span style="display:flex;"><span>FORCEINLINE <span style="color:#66d9ef">void</span> CallOnGameThread(TFunction<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">void</span>()<span style="color:#f92672">&gt;</span> InFunction)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    AsyncTask(ENamedThreads<span style="color:#f92672">::</span>GameThread, InFunction);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h5 id="shared-pointer-in-async-task">Shared Pointer in Async Task</h5>
+<p>Quoted from UE5 engine source FileSourceControlContextMenu.cpp.</p>
+<p>Step 1: inherit class <code>TSharedFromThis</code>.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">FFileSourceControlContextMenuState</span> <span style="color:#f92672">:</span> <span style="color:#66d9ef">public</span> TSharedFromThis<span style="color:#f92672">&lt;</span>FFileSourceControlContextMenuState<span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Step 2: create shared pointer using <code>MakeShared()</code>.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> FFileSourceControlContextMenu<span style="color:#f92672">::</span>MakeContextMenu()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    InnerState <span style="color:#f92672">=</span> MakeShared<span style="color:#f92672">&lt;</span>FFileSourceControlContextMenuState<span style="color:#f92672">&gt;</span>();
+</span></span><span style="display:flex;"><span>    InnerState<span style="color:#f92672">-&gt;</span>Initialize();
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Step 3: create a &ldquo;temporary&rdquo; TSharedPtr for the lambda function using <code>[this, This = AsShared()]</code>, this new shared ref (TSharedRef) will release the ref automatically when lambda function execution finished.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> FFileSourceControlContextMenuState<span style="color:#f92672">::</span>NextAsyncState()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (TrySetAsyncState(EAsyncState<span style="color:#f92672">::</span>None, EAsyncState<span style="color:#f92672">::</span>TryCacheCanExecute))
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        Async(EAsyncExecution<span style="color:#f92672">::</span>ThreadPool, [<span style="color:#66d9ef">this</span>, This <span style="color:#f92672">=</span> AsShared()]()
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            TryCacheCanExecuteVars(SelectedFiles, <span style="color:#f92672">&amp;</span>PathsWithUnknownState);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">// Source control operations have to be started from the main thread
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            Async(EAsyncExecution<span style="color:#f92672">::</span>TaskGraphMainThread, [<span style="color:#66d9ef">this</span>, This <span style="color:#f92672">=</span> AsShared()]() { NextAsyncState(); });
+</span></span><span style="display:flex;"><span>        });
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><div class="alert danger ">
+  <p>This action ensures the current object (this pointer) still be valid if shared ref counter reach to 0 outside the lambda function. Otherwise <code>this</code> pointer will goes to wild pointer and crashes on executing lambda function.</p>
+</div>
 <hr>
 <p><code>几时归去，作个闲人。对一张琴、一壶酒、一溪云。----宋·苏轼《行香子》</code></p>
               
