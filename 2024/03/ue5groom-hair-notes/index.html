@@ -431,6 +431,17 @@ The safety way is to swith LOD of skeletal mesh, switching LOD of skeletal mesh 
 </span></span><span style="display:flex;"><span>		}
 </span></span><span style="display:flex;"><span>	}
 </span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h5 id="asynchronous-loading">Asynchronous Loading</h5>
+<div class="alert warning ">
+  <p>By default, loading groom bulk data from disk blocks the rendering thread, then rendering thread blocks the game thread, cause application hitching, especially on HDD.</p>
+</div>
+<p>Set <code>GHairStrandsBulkData_AsyncLoading</code> value large then -1 (the minimum LOD for async loading) to enable async loading.</p>
+<p>Engine\Plugins\Runtime\HairStrands\Source\HairStrandsCore\Private\GroomResources.cpp</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">static</span> int32 GHairStrandsBulkData_AsyncLoading <span style="color:#f92672">=</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">static</span> int32 GHairCardsBulkData_AsyncLoading <span style="color:#f92672">=</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">static</span> FAutoConsoleVariableRef <span style="color:#a6e22e">CVarHairStrandsBulkData_AsyncLoading</span>(TEXT(<span style="color:#e6db74">&#34;r.HairStrands.Strands.BulkData.AsyncLoading&#34;</span>), GHairStrandsBulkData_AsyncLoading, TEXT(<span style="color:#e6db74">&#34;Load hair strands data with async loading so that it is not blocking the rendering thread. This value define the MinLOD at which this happen. Default disabled (-1)&#34;</span>));
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">static</span> FAutoConsoleVariableRef <span style="color:#a6e22e">CVarHairCardsBulkData_AsyncLoading</span>(TEXT(<span style="color:#e6db74">&#34;r.HairStrands.Cards.BulkData.AsyncLoading&#34;</span>), GHairCardsBulkData_AsyncLoading, TEXT(<span style="color:#e6db74">&#34;Load hair cards/meshes data with async loading so that it is not blocking the rendering thread. This value define the MinLOD at which this happen. Default disabled (-1)&#34;</span>));
 </span></span></code></pre></div><h3 id="issues">Issues</h3>
 <h5 id="issue-how-to-fix-the-flickering-in-groom-hair-ue4">Issue: How to fix the flickering in groom hair [UE4]</h5>
 <p>Enable <code>Cast Deep Shadows</code> in light actors.</p>
