@@ -375,40 +375,40 @@
 <a href="https://answers.unrealengine.com/questions/55477/the-difference-of-the-two-functions.html">https://answers.unrealengine.com/questions/55477/the-difference-of-the-two-functions.html</a></p>
 <p>UE4中动态创建并加载流关卡<br>
 <a href="http://blog.csdn.net/xi_niuniu/article/details/54408188">http://blog.csdn.net/xi_niuniu/article/details/54408188</a></p>
-<pre><code>// 获取永久性关卡  
-UWorld* PersistentWorld = GetWorld();
-
-if (!PersistentWorld)
-{
-    UE_LOG(LogTemp, Fatal, TEXT(&quot;UDynamicLevels::LoadTileToStreamingArray &gt;&gt; Invalid PersistentWorld!!!&quot;));
-    return;
-}
-
-UE_LOG(LogTemp, Display, TEXT(&quot;aaaaaaaaaaaaaa&quot;));
-
-//new StreamingClass Instance 新流关卡实例  
-UClass* StreamingClass = ULevelStreamingKismet::StaticClass();
-ULevelStreaming* StreamingLevel = Cast&lt;ULevelStreaming&gt;(StaticConstructObject_Internal(StreamingClass, PersistentWorld));
-
-// FName PackageName = TEXT(&quot;/Game/TempUmap/Level_01&quot;) 根据项目实际情况获取并设置PackageName  
-FName PackageName(TEXT(&quot;/Game/Demo/scecn_test/scene_create_role&quot;));
-StreamingLevel-&gt;SetWorldAssetByPackageName(PackageName);
-
-UE_LOG(LogTemp, Display, TEXT(&quot;bbbbb&quot;));
-
-//Make New Level Visible 使流关卡可见  
-StreamingLevel-&gt;bShouldBeLoaded = true;
-StreamingLevel-&gt;bShouldBeVisible = true;
-StreamingLevel-&gt;bShouldBlockOnLoad = false;
-
-UE_LOG(LogTemp, Display, TEXT(&quot;cccccc&quot;));
-
-//Very Important, used by LevelStreaming* to load the map 设置流关卡的包名  
-StreamingLevel-&gt;PackageNameToLoad = PackageName;
-//Add to UWorld 将流关卡添加到World中  
-PersistentWorld-&gt;StreamingLevels.Add(StreamingLevel);
-</code></pre>
-<p>Levels loaded from .umap file name during Runtime flicker constantly and Lightning never finishes rebuilding<br>
+<p>示例：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">// 获取永久性关卡  
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>UWorld<span style="color:#f92672">*</span> PersistentWorld <span style="color:#f92672">=</span> GetWorld();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span>PersistentWorld)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    UE_LOG(LogTemp, Fatal, TEXT(<span style="color:#e6db74">&#34;UDynamicLevels::LoadTileToStreamingArray &gt;&gt; Invalid PersistentWorld!!!&#34;</span>));
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>UE_LOG(LogTemp, Display, TEXT(<span style="color:#e6db74">&#34;aaaaaaaaaaaaaa&#34;</span>));
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//new StreamingClass Instance 新流关卡实例  
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>UClass<span style="color:#f92672">*</span> StreamingClass <span style="color:#f92672">=</span> ULevelStreamingKismet<span style="color:#f92672">::</span>StaticClass();
+</span></span><span style="display:flex;"><span>ULevelStreaming<span style="color:#f92672">*</span> StreamingLevel <span style="color:#f92672">=</span> Cast<span style="color:#f92672">&lt;</span>ULevelStreaming<span style="color:#f92672">&gt;</span>(StaticConstructObject_Internal(StreamingClass, PersistentWorld));
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// FName PackageName = TEXT(&#34;/Game/TempUmap/Level_01&#34;) 根据项目实际情况获取并设置PackageName  
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>FName <span style="color:#a6e22e">PackageName</span>(TEXT(<span style="color:#e6db74">&#34;/Game/Demo/scecn_test/scene_create_role&#34;</span>));
+</span></span><span style="display:flex;"><span>StreamingLevel<span style="color:#f92672">-&gt;</span>SetWorldAssetByPackageName(PackageName);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>UE_LOG(LogTemp, Display, TEXT(<span style="color:#e6db74">&#34;bbbbb&#34;</span>));
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//Make New Level Visible 使流关卡可见  
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>StreamingLevel<span style="color:#f92672">-&gt;</span>bShouldBeLoaded <span style="color:#f92672">=</span> true;
+</span></span><span style="display:flex;"><span>StreamingLevel<span style="color:#f92672">-&gt;</span>bShouldBeVisible <span style="color:#f92672">=</span> true;
+</span></span><span style="display:flex;"><span>StreamingLevel<span style="color:#f92672">-&gt;</span>bShouldBlockOnLoad <span style="color:#f92672">=</span> false;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>UE_LOG(LogTemp, Display, TEXT(<span style="color:#e6db74">&#34;cccccc&#34;</span>));
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//Very Important, used by LevelStreaming* to load the map 设置流关卡的包名  
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>StreamingLevel<span style="color:#f92672">-&gt;</span>PackageNameToLoad <span style="color:#f92672">=</span> PackageName;
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//Add to UWorld 将流关卡添加到World中  
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>PersistentWorld<span style="color:#f92672">-&gt;</span>StreamingLevels.Add(StreamingLevel);
+</span></span></code></pre></div><p>Levels loaded from .umap file name during Runtime flicker constantly and Lightning never finishes rebuilding<br>
 <a href="https://answers.unrealengine.com/questions/39875/levels-loaded-from-umap-file-name-during-runtime-f.html">https://answers.unrealengine.com/questions/39875/levels-loaded-from-umap-file-name-during-runtime-f.html</a></p>
 <p>Unreal4 入门（关卡动态加载）<br>
 <a href="http://blog.sina.com.cn/s/blog_7c5fd2e90101kxig.html">http://blog.sina.com.cn/s/blog_7c5fd2e90101kxig.html</a></p>
@@ -416,79 +416,64 @@ PersistentWorld-&gt;StreamingLevels.Add(StreamingLevel);
 <a href="http://blog.csdn.net/qq_20309931/article/details/52850547">http://blog.csdn.net/qq_20309931/article/details/52850547</a></p>
 <p>！！！How do I use PrepareMapChange/CommitMapChange?<br>
 <a href="https://answers.unrealengine.com/questions/46503/how-to-use-preparemapchangecommitmapchange.html">https://answers.unrealengine.com/questions/46503/how-to-use-preparemapchangecommitmapchange.html</a></p>
-<pre><code>void AWarSoulPlayerController::TestSwitchScene(int32 Value)
-{
-    if (Value)
-    {
-        bool rs = GetWorld()-&gt;ServerTravel(TEXT(&quot;/Game/Demo/scene/scene_01&quot;));
-        UE_LOG(LogTemp, Display, TEXT(&quot;aaa %d&quot;), rs ? 1 : 0);
-    }
-    else
-    {
-        bool rs = GetWorld()-&gt;ServerTravel(TEXT(&quot;/Game/Demo/scene/scene_01&quot;));
-        UE_LOG(LogTemp, Display, TEXT(&quot;bbb %d&quot;), rs ? 1 : 0);
-    }
-}
-</code></pre>
 <p>如何触发ServerTravel()相关的回调函数（切换场景之前、切换场景之后等）：<br>
 Runtime\Engine\Classes\GameFramework\GameModeBase.h</p>
-<pre><code>/** Returns true if allowed to server travel */
-virtual bool CanServerTravel(const FString&amp; URL, bool bAbsolute);
-
-/** Handles request for server to travel to a new URL, with all players */
-virtual void ProcessServerTravel(const FString&amp; URL, bool bAbsolute = false);
-
-/** 
- * called on server during seamless level transitions to get the list of Actors that should be moved into the new level
- * PlayerControllers, Role &lt; ROLE_Authority Actors, and any non-Actors that are inside an Actor that is in the list
- * (i.e. Object.Outer == Actor in the list)
- * are all automatically moved regardless of whether they're included here
- * only dynamic actors in the PersistentLevel may be moved (this includes all actors spawned during gameplay)
- * this is called for both parts of the transition because actors might change while in the middle (e.g. players might join or leave the game)
- * @see also PlayerController::GetSeamlessTravelActorList() (the function that's called on clients)
- * @param bToTransition true if we are going from old level to transition map, false if we are going from transition map to new level
- * @param ActorList (out) list of actors to maintain
- */
-virtual void GetSeamlessTravelActorList(bool bToTransition, TArray&lt;AActor*&gt;&amp; ActorList);
-
-/**
- * Used to swap a viewport/connection's PlayerControllers when seamless traveling and the new GameMode's
- * controller class is different than the previous
- * includes network handling
- * @param OldPC - the old PC that should be discarded
- * @param NewPC - the new PC that should be used for the player
- */
-virtual void SwapPlayerControllers(APlayerController* OldPC, APlayerController* NewPC);
-
-/**
- * Handles reinitializing players that remained through a seamless level transition
- * called from C++ for players that finished loading after the server
- * @param C the Controller to handle
- */
-virtual void HandleSeamlessTravelPlayer(AController*&amp; C);
-
-/**
- * Called after a seamless level transition has been completed on the *new* GameMode.
- * Used to reinitialize players already in the game as they won't have *Login() called on them
- */
-virtual void PostSeamlessTravel();
-
-/** Start the transition out of the current map. Called at start of seamless travel, or right before map change for hard travel. */
-virtual void StartToLeaveMap();
-
-
-/**
- * Spawns a PlayerController at the specified location; split out from Login()/HandleSeamlessTravelPlayer() for easier overriding
- *
- * @param RemoteRole the role this controller will play remotely
- * @param SpawnLocation location in the world to spawn
- * @param SpawnRotation rotation to set relative to the world
- *
- * @return PlayerController for the player, NULL if there is any reason this player shouldn't exist or due to some error
- */
-virtual APlayerController* SpawnPlayerController(ENetRole InRemoteRole, FVector const&amp; SpawnLocation, FRotator const&amp; SpawnRotation);
-</code></pre>
-<p>打包时需要设置的地图选项<br>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">/** Returns true if allowed to server travel */</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">virtual</span> <span style="color:#66d9ef">bool</span> <span style="color:#a6e22e">CanServerTravel</span>(<span style="color:#66d9ef">const</span> FString<span style="color:#f92672">&amp;</span> URL, <span style="color:#66d9ef">bool</span> bAbsolute);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">/** Handles request for server to travel to a new URL, with all players */</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">virtual</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">ProcessServerTravel</span>(<span style="color:#66d9ef">const</span> FString<span style="color:#f92672">&amp;</span> URL, <span style="color:#66d9ef">bool</span> bAbsolute <span style="color:#f92672">=</span> false);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">/** 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * called on server during seamless level transitions to get the list of Actors that should be moved into the new level
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * PlayerControllers, Role &lt; ROLE_Authority Actors, and any non-Actors that are inside an Actor that is in the list
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * (i.e. Object.Outer == Actor in the list)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * are all automatically moved regardless of whether they&#39;re included here
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * only dynamic actors in the PersistentLevel may be moved (this includes all actors spawned during gameplay)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * this is called for both parts of the transition because actors might change while in the middle (e.g. players might join or leave the game)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * @see also PlayerController::GetSeamlessTravelActorList() (the function that&#39;s called on clients)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * @param bToTransition true if we are going from old level to transition map, false if we are going from transition map to new level
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * @param ActorList (out) list of actors to maintain
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> */</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">virtual</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">GetSeamlessTravelActorList</span>(<span style="color:#66d9ef">bool</span> bToTransition, TArray<span style="color:#f92672">&lt;</span>AActor<span style="color:#f92672">*&gt;&amp;</span> ActorList);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * Used to swap a viewport/connection&#39;s PlayerControllers when seamless traveling and the new GameMode&#39;s
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * controller class is different than the previous
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * includes network handling
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * @param OldPC - the old PC that should be discarded
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * @param NewPC - the new PC that should be used for the player
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> */</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">virtual</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">SwapPlayerControllers</span>(APlayerController<span style="color:#f92672">*</span> OldPC, APlayerController<span style="color:#f92672">*</span> NewPC);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * Handles reinitializing players that remained through a seamless level transition
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * called from C++ for players that finished loading after the server
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * @param C the Controller to handle
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> */</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">virtual</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">HandleSeamlessTravelPlayer</span>(AController<span style="color:#f92672">*&amp;</span> C);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * Called after a seamless level transition has been completed on the *new* GameMode.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * Used to reinitialize players already in the game as they won&#39;t have *Login() called on them
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> */</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">virtual</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">PostSeamlessTravel</span>();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">/** Start the transition out of the current map. Called at start of seamless travel, or right before map change for hard travel. */</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">virtual</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">StartToLeaveMap</span>();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * Spawns a PlayerController at the specified location; split out from Login()/HandleSeamlessTravelPlayer() for easier overriding
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * @param RemoteRole the role this controller will play remotely
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * @param SpawnLocation location in the world to spawn
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * @param SpawnRotation rotation to set relative to the world
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * @return PlayerController for the player, NULL if there is any reason this player shouldn&#39;t exist or due to some error
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> */</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">virtual</span> APlayerController<span style="color:#f92672">*</span> <span style="color:#a6e22e">SpawnPlayerController</span>(ENetRole InRemoteRole, FVector <span style="color:#66d9ef">const</span><span style="color:#f92672">&amp;</span> SpawnLocation, FRotator <span style="color:#66d9ef">const</span><span style="color:#f92672">&amp;</span> SpawnRotation);
+</span></span></code></pre></div><p>打包时需要设置的地图选项<br>
 <a href="https://answers.unrealengine.com/questions/196214/failed-to-load-package-on-client.html">https://answers.unrealengine.com/questions/196214/failed-to-load-package-on-client.html</a></p>
 <p>[4.14] ServerTravel with more than the Server doesn&rsquo;t work in PIE<br>
 <a href="https://answers.unrealengine.com/questions/523891/414-servertravel-with-more-than-the-server-doesnt.html">https://answers.unrealengine.com/questions/523891/414-servertravel-with-more-than-the-server-doesnt.html</a></p>

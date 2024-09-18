@@ -506,7 +506,7 @@
 </span></span><span style="display:flex;"><span>{
 </span></span><span style="display:flex;"><span>    UE_LOG(LogTemp, Warning, TEXT(<span style="color:#e6db74">&#34;Invalid image format cannot decode %d&#34;</span>), (int32)DetectedFormat);
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><h5 id="how-to-invoke-functions-of-game-source-in-render-thread">How to invoke functions of game source in render thread</h5>
+</span></span></code></pre></div><h5 id="how-to-do-create-async-task-lambda-of-render-thread-in-game-thread">How to do create async task (lambda) of render thread in game thread</h5>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">namespace</span>
 </span></span><span style="display:flex;"><span>{
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">DoTesting_OnRenderThread</span>(FRHICommandListImmediate<span style="color:#f92672">&amp;</span> RHICmdList, AMyActor<span style="color:#f92672">*</span> Actor)
@@ -596,9 +596,8 @@ Engine\Plugins\Runtime\Oculus\OculusVR\Source\OculusHMD\Private\OculusHMD_Layer.
 <h3 id="issues">Issues</h3>
 <h5 id="please-use-enqueue_render_command-instead-please-update-your-code-to-the-new-api-before-upgrading-to-the-next-release">Please use ENQUEUE_RENDER_COMMAND instead Please update your code to the new API before upgrading to the next release</h5>
 <p>Warning on compiling:</p>
-<pre><code>warning: Please use ENQUEUE_RENDER_COMMAND instead Please update your code to the new API before upgrading to the next release, otherwise your project will no longer compile. [-W#pragma-messages]
-</code></pre>
-<p>Caused by:<br>
+<pre tabindex="0"><code class="language-Log" data-lang="Log">warning: Please use ENQUEUE_RENDER_COMMAND instead Please update your code to the new API before upgrading to the next release, otherwise your project will no longer compile. [-W#pragma-messages]
+</code></pre><p>Caused by:<br>
 <code>ENQUEUE_UNIQUE_RENDER_COMMAND_ONEPARAMETER</code> was obsolete, use <code>ENQUEUE_RENDER_COMMAND</code> instead.</p>
 <p>Solution:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>MyRenderingHandle<span style="color:#f92672">*</span> Handle <span style="color:#f92672">=</span> CreateMyRenderingHandle();

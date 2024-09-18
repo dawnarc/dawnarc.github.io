@@ -13,18 +13,18 @@
 <meta name="generator" content="Hugo 0.132.2 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Wang Aiguo">
 <meta name="keywords" content="UE4, GarbageCollect, TSharedPtr, TWeakObjectPtr">
-<meta name="description" content="TSharedPtr, TWeakObjectPtr and TUniquePtr imitated from shared_ptr, weak_ptr and unique_ptr of C&#43;&#43;11.">
+<meta name="description" content="TSharedPtr, TWeakPtr and TUniquePtr imitated from shared_ptr, weak_ptr and unique_ptr of C&#43;&#43;11.">
 
 
-<meta property="og:description" content="TSharedPtr, TWeakObjectPtr and TUniquePtr imitated from shared_ptr, weak_ptr and unique_ptr of C&#43;&#43;11.">
+<meta property="og:description" content="TSharedPtr, TWeakPtr and TUniquePtr imitated from shared_ptr, weak_ptr and unique_ptr of C&#43;&#43;11.">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[UE4] TSharedPtr, TWeakObjectPtr and TUniquePtr">
 <meta name="twitter:title" content="[UE4] TSharedPtr, TWeakObjectPtr and TUniquePtr">
 <meta property="og:url" content="https://dawnarc.com/2018/07/ue4-tsharedptr-tweakobjectptr-and-tuniqueptr/">
 <meta property="twitter:url" content="https://dawnarc.com/2018/07/ue4-tsharedptr-tweakobjectptr-and-tuniqueptr/">
 <meta property="og:site_name" content="玄冬Wong">
-<meta property="og:description" content="TSharedPtr, TWeakObjectPtr and TUniquePtr imitated from shared_ptr, weak_ptr and unique_ptr of C&#43;&#43;11.">
-<meta name="twitter:description" content="TSharedPtr, TWeakObjectPtr and TUniquePtr imitated from shared_ptr, weak_ptr and unique_ptr of C&#43;&#43;11.">
+<meta property="og:description" content="TSharedPtr, TWeakPtr and TUniquePtr imitated from shared_ptr, weak_ptr and unique_ptr of C&#43;&#43;11.">
+<meta name="twitter:description" content="TSharedPtr, TWeakPtr and TUniquePtr imitated from shared_ptr, weak_ptr and unique_ptr of C&#43;&#43;11.">
 <meta property="og:locale" content="en-us">
 
   
@@ -362,7 +362,7 @@
                 <script>
                      (adsbygoogle = window.adsbygoogle || []).push({});
                 </script>
-              <p><code>TSharedPtr</code>, <code>TWeakObjectPtr</code> and <code>TUniquePtr</code> imitated from <code>shared_ptr</code>, <code>weak_ptr</code> and <code>unique_ptr</code> of C++11.</p>
+              <p><code>TSharedPtr</code>, <code>TWeakPtr</code> and <code>TUniquePtr</code> imitated from <code>shared_ptr</code>, <code>weak_ptr</code> and <code>unique_ptr</code> of C++11.</p>
 <h3 id="tsharedptr">TSharedPtr</h3>
 <h5 id="summary">Summary</h5>
 <p><code>TSharedPtr</code> is the counter of reference of raw objects (Non-UObject). The count that <code>TSharedPtr</code> reference to would increase one while <code>TSharedPtr</code> was assigned once, the object would be destroyed when the count of reference is 0.</p>
@@ -438,10 +438,10 @@
 </span></span><span style="display:flex;"><span>    Bar <span style="color:#f92672">=</span> <span style="color:#66d9ef">nullptr</span>;
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>Console command for testing:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Text" data-lang="Text"><span style="display:flex;"><span>CreatePtr       //screen prints: === Construct
-</span></span><span style="display:flex;"><span>ReleaseFoo      //nothing happens
-</span></span><span style="display:flex;"><span>ReleaseBar      //screen prints: === Destruct
-</span></span></code></pre></div><h5 id="cautions">Cautions</h5>
+<pre tabindex="0"><code class="language-Log" data-lang="Log">CreatePtr       //screen prints: === Construct
+ReleaseFoo      //nothing happens
+ReleaseBar      //screen prints: === Destruct
+</code></pre><h5 id="cautions">Cautions</h5>
 <div class="alert danger ">
   <p>Objects would never be destroyed if two <code>TSharedPtr</code>, which are reference to a same object, were assigned to each other, resulting a memory leak.</p>
 </div>
@@ -479,13 +479,13 @@ For more details, see: <a href="https://dawnarc.com/2017/12/ue4gameplay-dev-note
 </span></span><span style="display:flex;"><span>};
 </span></span></code></pre></div><p>In theory, Unreal GC system is to <code>UObject</code> what <code>std::shared_ptr&lt;&gt;</code> is to raw pointer, so <code>TSharedPtr</code> doesn&rsquo;t need to work for <code>UObject</code>.<br>
 But, there&rsquo;s no limitation for counting <code>UObject</code> in the source code of <code>SharedPointerInternals.h</code> in engine.<br>
-If a <code>UObject</code> was passed as parameter into <code>TSharedPtr</code>:</p>
+If an <code>UObject</code> was passed as constructor&rsquo;s argument of <code>TSharedPtr</code>:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> ATestPlayerController<span style="color:#f92672">::</span>TestFun()
 </span></span><span style="display:flex;"><span>{
 </span></span><span style="display:flex;"><span>    TestActor <span style="color:#f92672">=</span> NewObject<span style="color:#f92672">&lt;</span>AActor<span style="color:#f92672">&gt;</span>(<span style="color:#66d9ef">this</span>);
 </span></span><span style="display:flex;"><span>    TSharedPtr<span style="color:#f92672">&lt;</span>AActor<span style="color:#f92672">&gt;</span> SharePtr2 <span style="color:#f92672">=</span> MakeShareable(TestActor);
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>Application would crash after jumping out of function <code>TestFun</code>:</p>
+</span></span></code></pre></div><p>application will crash after jumping out of function <code>TestFun</code>:</p>
 <pre tabindex="0"><code class="language-Log" data-lang="Log">Assertion failed: GetFName() == NAME_None [File:D:/Build/++UE4/Sync/Engine/Source/Runtime/CoreUObject/Private/UObject/UObjectBase.cpp] [Line: 136]
 
 UE4Editor_Core!AssertFailedImplV() [d:\build\++ue4\sync\engine\source\runtime\core\private\misc\assertionmacros.cpp:105]
@@ -508,51 +508,7 @@ UE4Editor_TestTD4_Win64_DebugGame!ATestPlayerController::TestFun() [D:\workspace
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
 </span></span><span style="display:flex;"><span>    FAppleARKitVideoOverlay();
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">virtual</span> <span style="color:#f92672">~</span>FAppleARKitVideoOverlay();
-</span></span></code></pre></div><h3 id="tweakobjectptr">TWeakObjectPtr</h3>
-<h5 id="summary-1">Summary</h5>
-<p>The memory presented by <code>TWeakObjectPtr</code> can&rsquo;t be prevented from garbage collecting. Once the object that was presented by <code>TWeakObjectPtr</code> was destroyed in other place, the inner pointer of <code>TWeakObjectPtr</code> would be assigned as <code>nullptr</code> automatically, and <code>TWeakObjectPtr::IsValid()</code> would return <code>false</code>. But <code>TSharedPtr</code> has no features of <code>TWeakObjectPtr</code>.</p>
-<h5 id="usage">Usage</h5>
-<p>Assignment</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>TWeakObjectPtr<span style="color:#f92672">&lt;</span>AActor<span style="color:#f92672">&gt;</span> MyWeakActor;
-</span></span><span style="display:flex;"><span>MyWeakActor <span style="color:#f92672">=</span> MyActor;
-</span></span></code></pre></div><p>Get value</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>AActor<span style="color:#f92672">*</span> Actor <span style="color:#f92672">=</span> MyWeakActor.Get();
-</span></span></code></pre></div><p>or</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">if</span>(MyWeakActor.Get())
-</span></span><span style="display:flex;"><span>{
-</span></span><span style="display:flex;"><span>    ACharacter<span style="color:#f92672">*</span> Character <span style="color:#f92672">=</span> Cast<span style="color:#f92672">&lt;</span>ACharacter<span style="color:#f92672">&gt;</span>(MyWeakActor);
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>if <code>MyActor</code> has been destroyed, <code>MyWeakActor.Get()</code> returns <code>nullptr</code>.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>MyActor<span style="color:#f92672">-&gt;</span>Destroy();
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">bool</span> IsNull <span style="color:#f92672">=</span> MyWeakActor.Get() <span style="color:#f92672">==</span> <span style="color:#66d9ef">nullptr</span>;    <span style="color:#75715e">//true
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">bool</span> IsValid <span style="color:#f92672">=</span> MyWeakActor.IsValid();    <span style="color:#75715e">//false
-</span></span></span></code></pre></div><div class="alert danger ">
-  <p>if <code>MyActor</code> has been recycled by GC, <code>Cast&lt;AMyCharacter&gt;(MyActor)</code> would cause crash after a while, but <code>Cast&lt;AMyCharacter&gt;(MyWeakActor)</code> would not.</p>
-</div>
-<h5 id="remove-in-array">Remove in Array</h5>
-<p>Examples:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>APawn<span style="color:#f92672">*</span> TestPawn <span style="color:#f92672">=</span> GetWorld()<span style="color:#f92672">-&gt;</span>SpawnActor<span style="color:#f92672">&lt;</span>APawn<span style="color:#f92672">&gt;</span>(MyPawnClass, FVector(<span style="color:#ae81ff">100.f</span>, <span style="color:#ae81ff">100.f</span>, <span style="color:#ae81ff">0.f</span>), FRotator<span style="color:#f92672">::</span>ZeroRotator);
-</span></span><span style="display:flex;"><span>APawn<span style="color:#f92672">*</span> MyPawn <span style="color:#f92672">=</span> GetWorld()<span style="color:#f92672">-&gt;</span>SpawnActor<span style="color:#f92672">&lt;</span>APawn<span style="color:#f92672">&gt;</span>(MyPawnClass, FVector(<span style="color:#ae81ff">200.f</span>, <span style="color:#ae81ff">200.f</span>, <span style="color:#ae81ff">0.f</span>), FRotator<span style="color:#f92672">::</span>ZeroRotator);
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>TestArray.Add(TWeakObjectPtr<span style="color:#f92672">&lt;</span>APawn<span style="color:#f92672">&gt;</span>(TestPawn));
-</span></span><span style="display:flex;"><span>TestArray.Add(TWeakObjectPtr<span style="color:#f92672">&lt;</span>APawn<span style="color:#f92672">&gt;</span>(MyPawn));
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">int</span> Num <span style="color:#f92672">=</span> TestArray.Num();    <span style="color:#75715e">// 2
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
-</span></span><span style="display:flex;"><span>TWeakObjectPtr<span style="color:#f92672">&lt;</span>APawn<span style="color:#f92672">&gt;</span> WeakPtr1(TestPawn);
-</span></span><span style="display:flex;"><span>TestArray.Remove(WeakPtr1);
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">int</span> Num <span style="color:#f92672">=</span> TestArray.Num();    <span style="color:#75715e">// 1
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
-</span></span><span style="display:flex;"><span>TWeakObjectPtr<span style="color:#f92672">&lt;</span>APawn<span style="color:#f92672">&gt;</span> WeakPtr2(TestPawn);
-</span></span><span style="display:flex;"><span>TestArray.Remove(WeakPtr2);
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">int</span> Num2 <span style="color:#f92672">=</span> TestArray.Num();    <span style="color:#75715e">// 1
-</span></span></span></code></pre></div><h3 id="tweakptr">TWeakPtr</h3>
-<h5 id="tweakobjectptr-vs-tweakptr">TWeakObjectPtr vs TWeakPtr</h5>
-<p>Difference:</p>
-<ul>
-<li>TWeakObjectPtr works for UObjects only, TWeakPtr works for raw objects (Non-UObject) only;</li>
-<li>TWeakObjectPtr can works independently with UObjects, while TWeakPtr must work with TSharedPtr.</li>
-</ul>
+</span></span></code></pre></div><h3 id="tweakptr">TWeakPtr</h3>
 <h5 id="example-1">Example</h5>
 <p>RawClass.h</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">#pragma once
@@ -566,7 +522,6 @@ UE4Editor_TestTD4_Win64_DebugGame!ATestPlayerController::TestFun() [D:\workspace
 </span></span><span style="display:flex;"><span>    {
 </span></span><span style="display:flex;"><span>        GEngine<span style="color:#f92672">-&gt;</span>AddOnScreenDebugMessage(<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">5.f</span>, FColor<span style="color:#f92672">::</span>Cyan, TEXT(<span style="color:#e6db74">&#34;=== Construct&#34;</span>));
 </span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>    <span style="color:#f92672">~</span>FRawClass()
 </span></span><span style="display:flex;"><span>    {
 </span></span><span style="display:flex;"><span>        GEngine<span style="color:#f92672">-&gt;</span>AddOnScreenDebugMessage(<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">5.f</span>, FColor<span style="color:#f92672">::</span>Orange, TEXT(<span style="color:#e6db74">&#34;=== Destruct&#34;</span>));
@@ -654,21 +609,21 @@ UE4Editor_TestTD4_Win64_DebugGame!ATestPlayerController::TestFun() [D:\workspace
 </span></span><span style="display:flex;"><span>    GEngine<span style="color:#f92672">-&gt;</span>AddOnScreenDebugMessage(<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">5.f</span>, FColor<span style="color:#f92672">::</span>Cyan, Info);
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>Console command for testing weak ptr:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Text" data-lang="Text"><span style="display:flex;"><span>CreatePtr       //screen prints: === Construct
-</span></span><span style="display:flex;"><span>ReleaseFoo      //nothing happens
-</span></span><span style="display:flex;"><span>CheckBaz        //screen prints: Valid+++
-</span></span><span style="display:flex;"><span>ReleaseBar      //screen prints: === Destruct
-</span></span><span style="display:flex;"><span>CheckBaz        //screen prints: Invalid---
-</span></span></code></pre></div><p>Console command for testing Pin function:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Text" data-lang="Text"><span style="display:flex;"><span>CreatePtr       //screen prints: === Construct
-</span></span><span style="display:flex;"><span>ReleaseFoo      //nothing happens
-</span></span><span style="display:flex;"><span>CheckBaz        //screen prints: Valid+++
-</span></span><span style="display:flex;"><span>KeepBaz         //creat a new shared ptr to keep object ref
-</span></span><span style="display:flex;"><span>ReleaseBar      //nothing happens
-</span></span><span style="display:flex;"><span>ReleaseQux      //screen prints: === Destruct
-</span></span><span style="display:flex;"><span>CheckBaz        //screen prints: Invalid---
-</span></span></code></pre></div><h3 id="tuniqueptr-unique-pointers">TUniquePtr (Unique Pointers)</h3>
-<h5 id="summary-2">Summary</h5>
+<pre tabindex="0"><code class="language-Log" data-lang="Log">CreatePtr       //screen prints: === Construct
+ReleaseFoo      //nothing happens
+CheckBaz        //screen prints: Valid+++
+ReleaseBar      //screen prints: === Destruct
+CheckBaz        //screen prints: Invalid---
+</code></pre><p>Console command for testing Pin function:</p>
+<pre tabindex="0"><code class="language-Log" data-lang="Log">CreatePtr       //screen prints: === Construct
+ReleaseFoo      //nothing happens
+CheckBaz        //screen prints: Valid+++
+KeepBaz         //creat a new shared ptr to keep object ref
+ReleaseBar      //nothing happens
+ReleaseQux      //screen prints: === Destruct
+CheckBaz        //screen prints: Invalid---
+</code></pre><h3 id="tuniqueptr-unique-pointers">TUniquePtr (Unique Pointers)</h3>
+<h5 id="summary-1">Summary</h5>
 <p>A Unique Pointer solely and explicitly owns the object it references. Since there can only be one Unique Pointer to a given resource, Unique Pointers can transfer ownership, but cannot share it. Any attempts to copy a Unique Pointer will result in a compile error. When a Unique Pointer is goes out of scope, it will automatically delete the object it references.</p>
 <div class="alert danger ">
   <p><code>TUniquePtr</code> works for Non-UObject, there&rsquo;s compilation error while initializing <code>TUniquePtr</code> with <code>UObject</code>.</p>
@@ -677,11 +632,13 @@ UE4Editor_TestTD4_Win64_DebugGame!ATestPlayerController::TestFun() [D:\workspace
 <p>Define:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>TUniquePtr<span style="color:#f92672">&lt;</span>FMeshTriOctree<span style="color:#f92672">&gt;</span> MTOctree;
 </span></span></code></pre></div><p>Instantiate:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>MTOctree <span style="color:#f92672">=</span> MakeUnique<span style="color:#f92672">&lt;</span>FMeshTriOctree<span style="color:#f92672">&gt;</span>(
-</span></span><span style="display:flex;"><span>        Bounds.GetCenter(),
-</span></span><span style="display:flex;"><span>        Bounds.GetExtent().GetMax()
-</span></span><span style="display:flex;"><span>    );
-</span></span></code></pre></div><h5 id="example--tuniqueptr--tqueue">Example : TUniquePtr &amp; TQueue</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>MTOctree <span style="color:#f92672">=</span> MakeUnique<span style="color:#f92672">&lt;</span>FMeshTriOctree<span style="color:#f92672">&gt;</span>(Bounds.GetCenter(), Bounds.GetExtent().GetMax());
+</span></span></code></pre></div><p>Pass reference between two TUniquePtr:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>TUniquePtr<span style="color:#f92672">&lt;</span>FMeshTriOctree<span style="color:#f92672">&gt;</span> MTOctree02 <span style="color:#f92672">=</span> MoveTemp(MTOctree);
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//TUniquePtr&lt;FMeshTriOctree&gt; MTOctree02 = MTOctree; // compilation error
+</span></span></span></code></pre></div><p>If you assign to new TUniquePtr without <code>MoveTemp</code>, you will get error:</p>
+<pre tabindex="0"><code class="language-Log" data-lang="Log">error C2280: &#39;TUniquePtr&lt;FMeshTriOctree,TDefaultDelete&lt;T&gt;&gt;::TUniquePtr(const TUniquePtr&lt;T,TDefaultDelete&lt;T&gt;&gt; &amp;)&#39;: attempting to reference a deleted function
+</code></pre><h5 id="example--tuniqueptr--tqueue">Example : TUniquePtr &amp; TQueue</h5>
 <p>Add element:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">FTestStruct</span> 
 </span></span><span style="display:flex;"><span>{
@@ -694,7 +651,7 @@ UE4Editor_TestTD4_Win64_DebugGame!ATestPlayerController::TestFun() [D:\workspace
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>TQueue<span style="color:#f92672">&lt;</span>TUniquePtr<span style="color:#f92672">&lt;</span>FTestStruct<span style="color:#f92672">&gt;&gt;</span> TestQueue;
 </span></span><span style="display:flex;"><span>TUniquePtr<span style="color:#f92672">&lt;</span>FTestStruct<span style="color:#f92672">&gt;</span> Ptr <span style="color:#f92672">=</span> MakeUnique<span style="color:#f92672">&lt;</span>FTestStruct<span style="color:#f92672">&gt;</span>();
 </span></span><span style="display:flex;"><span>TestQueue.Enqueue(Ptr);
-</span></span></code></pre></div><p>You would get error:</p>
+</span></span></code></pre></div><p>You will get error:</p>
 <pre tabindex="0"><code class="language-Log" data-lang="Log">D:\UE_4.22\Engine\Source\Runtime\Core\Public\Containers/Queue.h(252): error C2248: &#39;TUniquePtr&lt;FTestStruct,TDefaultDelete&lt;T&gt;&gt;::TUniquePtr&#39;: cannot access private member declared in class &#39;TUniquePtr&lt;FTestStruct,TDefaultDelete&lt;T&gt;&gt;&#39;
 2&gt;          with
 2&gt;          [
@@ -717,44 +674,51 @@ UE4Editor_TestTD4_Win64_DebugGame!ATestPlayerController::TestFun() [D:\workspace
 </span></span><span style="display:flex;"><span>TestArray.RemoveAt(TestArray.Num() <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>);
 </span></span></code></pre></div><p>2nd way (recommended) :</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>TUniquePtr<span style="color:#f92672">&lt;</span>FTestStruct<span style="color:#f92672">&gt;</span> Ptr <span style="color:#f92672">=</span> TestArray.Pop();
-</span></span></code></pre></div><h5 id="issues">Issues</h5>
-<div class="alert warning ">
-  <p>If there&rsquo;s <code>FString</code> varible in class and want to create <code>TUniquePtr</code> using this class, <code>Move Constructor</code> need to be provided in class.</p>
-</div>
-<p>Example:<br>
-Engine\Source\Runtime\Online\WebSockets\Private\Lws\LwsWebSocket.h</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">FLwsReceiveBufferText</span>
+</span></span></code></pre></div><h3 id="tweakobjectptr">TWeakObjectPtr</h3>
+<h5 id="summary-2">Summary</h5>
+<p>The memory (UObjects only, not raw objects) presented by <code>TWeakObjectPtr</code> can&rsquo;t be prevented from garbage collecting. Once the object that was presented by <code>TWeakObjectPtr</code> was destroyed in other place, the inner pointer of <code>TWeakObjectPtr</code> would be assigned as <code>nullptr</code> automatically, and <code>TWeakObjectPtr::IsValid()</code> would return <code>false</code>. But <code>TSharedPtr</code> has no features of <code>TWeakObjectPtr</code>.</p>
+<h5 id="tweakobjectptr-vs-tweakptr">TWeakObjectPtr vs TWeakPtr</h5>
+<p>Difference:</p>
+<ul>
+<li>TWeakObjectPtr works for UObjects only, TWeakPtr works for raw objects (Non-UObject) only;</li>
+<li>TWeakObjectPtr can works independently with UObjects, while TWeakPtr must work with TSharedPtr.</li>
+</ul>
+<h5 id="usage">Usage</h5>
+<p>Assignment</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>TWeakObjectPtr<span style="color:#f92672">&lt;</span>AActor<span style="color:#f92672">&gt;</span> MyWeakActor;
+</span></span><span style="display:flex;"><span>MyWeakActor <span style="color:#f92672">=</span> MyActor;
+</span></span></code></pre></div><p>Get value</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>AActor<span style="color:#f92672">*</span> Actor <span style="color:#f92672">=</span> MyWeakActor.Get();
+</span></span></code></pre></div><p>or</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">if</span>(MyWeakActor.Get())
 </span></span><span style="display:flex;"><span>{
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/**
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * Constructor
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * @param InText The packet contents
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     */</span>
-</span></span><span style="display:flex;"><span>    FLwsReceiveBufferText(FString<span style="color:#f92672">&amp;&amp;</span> InText) <span style="color:#f92672">:</span> Text(MoveTemp(InText))
-</span></span><span style="display:flex;"><span>    {
-</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    ACharacter<span style="color:#f92672">*</span> Character <span style="color:#f92672">=</span> Cast<span style="color:#f92672">&lt;</span>ACharacter<span style="color:#f92672">&gt;</span>(MyWeakActor);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>if <code>MyActor</code> has been destroyed, <code>MyWeakActor.Get()</code> returns <code>nullptr</code>.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>MyActor<span style="color:#f92672">-&gt;</span>Destroy();
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">bool</span> IsNull <span style="color:#f92672">=</span> MyWeakActor.Get() <span style="color:#f92672">==</span> <span style="color:#66d9ef">nullptr</span>;    <span style="color:#75715e">//true
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">bool</span> IsValid <span style="color:#f92672">=</span> MyWeakActor.IsValid();    <span style="color:#75715e">//false
+</span></span></span></code></pre></div><div class="alert danger ">
+  <p>if <code>MyActor</code> has been recycled by GC, <code>Cast&lt;AMyCharacter&gt;(MyActor)</code> would cause crash after a while, but <code>Cast&lt;AMyCharacter&gt;(MyWeakActor)</code> would not.</p>
+</div>
+<h5 id="remove-in-array">Remove in Array</h5>
+<p>Examples:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>APawn<span style="color:#f92672">*</span> TestPawn <span style="color:#f92672">=</span> GetWorld()<span style="color:#f92672">-&gt;</span>SpawnActor<span style="color:#f92672">&lt;</span>APawn<span style="color:#f92672">&gt;</span>(MyPawnClass, FVector(<span style="color:#ae81ff">100.f</span>, <span style="color:#ae81ff">100.f</span>, <span style="color:#ae81ff">0.f</span>), FRotator<span style="color:#f92672">::</span>ZeroRotator);
+</span></span><span style="display:flex;"><span>APawn<span style="color:#f92672">*</span> MyPawn <span style="color:#f92672">=</span> GetWorld()<span style="color:#f92672">-&gt;</span>SpawnActor<span style="color:#f92672">&lt;</span>APawn<span style="color:#f92672">&gt;</span>(MyPawnClass, FVector(<span style="color:#ae81ff">200.f</span>, <span style="color:#ae81ff">200.f</span>, <span style="color:#ae81ff">0.f</span>), FRotator<span style="color:#f92672">::</span>ZeroRotator);
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/** Text packet received */</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> FString Text;
-</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>TestArray.Add(TWeakObjectPtr<span style="color:#f92672">&lt;</span>APawn<span style="color:#f92672">&gt;</span>(TestPawn));
+</span></span><span style="display:flex;"><span>TestArray.Add(TWeakObjectPtr<span style="color:#f92672">&lt;</span>APawn<span style="color:#f92672">&gt;</span>(MyPawn));
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">typedef</span> TUniquePtr<span style="color:#f92672">&lt;</span>FLwsReceiveBufferText<span style="color:#f92672">&gt;</span> FLwsReceiveBufferTextPtr;
-</span></span></code></pre></div><p>Otherwise you will get a compilication error upon using your class as a template parameter (e.g. <code>TQueue&lt;UniquePtr&lt;FTestStruct&gt;&gt;</code>):</p>
-<pre tabindex="0"><code class="language-Log" data-lang="Log">D:\UE_4.22\Engine\Source\Runtime\Core\Public\Containers/Queue.h(252): error C2248: &#39;TUniquePtr&lt;FTestStruct,TDefaultDelete&lt;T&gt;&gt;::TUniquePtr&#39;: cannot access private member declared in class &#39;TUniquePtr&lt;FTestStruct,TDefaultDelete&lt;T&gt;&gt;&#39;
-    2&gt;          with
-    2&gt;          [
-    2&gt;              T=FTestStruct
-    2&gt;          ]
-    2&gt;  D:\UE_4.22\Engine\Source\Runtime\Core\Public\Templates/UniquePtr.h(305): note: see declaration of &#39;TUniquePtr&lt;FTestStruct,TDefaultDelete&lt;T&gt;&gt;::TUniquePtr&#39;
-    2&gt;          with
-    2&gt;          [
-    2&gt;              T=FTestStruct
-    2&gt;          ]
-    2&gt;  D:\workspace\unreal_dev\TestProj\Source\Public\TestClass.h(73): note: see declaration of &#39;TUniquePtr&lt;FTestStruct,TDefaultDelete&lt;T&gt;&gt;&#39;
-    2&gt;          with
-    2&gt;          [
-    2&gt;              T=FTestStruct
-    2&gt;          ]
-</code></pre><h3 id="reference">Reference</h3>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">int</span> Num <span style="color:#f92672">=</span> TestArray.Num();    <span style="color:#75715e">// 2
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>TWeakObjectPtr<span style="color:#f92672">&lt;</span>APawn<span style="color:#f92672">&gt;</span> WeakPtr1(TestPawn);
+</span></span><span style="display:flex;"><span>TestArray.Remove(WeakPtr1);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">int</span> Num <span style="color:#f92672">=</span> TestArray.Num();    <span style="color:#75715e">// 1
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>TWeakObjectPtr<span style="color:#f92672">&lt;</span>APawn<span style="color:#f92672">&gt;</span> WeakPtr2(TestPawn);
+</span></span><span style="display:flex;"><span>TestArray.Remove(WeakPtr2);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">int</span> Num2 <span style="color:#f92672">=</span> TestArray.Num();    <span style="color:#75715e">// 1
+</span></span></span></code></pre></div><h3 id="reference">Reference</h3>
 <p>unreal-unique-pointer<br>
 <a href="https://baemincheon.github.io/2020/03/14/unreal-unique-pointer/">https://baemincheon.github.io/2020/03/14/unreal-unique-pointer/</a></p>
 <p>UE4 TSharedPtr和UObject的垃圾回收<br>
@@ -768,7 +732,7 @@ Engine\Source\Runtime\Online\WebSockets\Private\Lws\LwsWebSocket.h</p>
 <p>TSharedPtr、UniquePtr、TWeakPtr、TSharedRef<br>
 <a href="https://www.cnblogs.com/shiroe/p/14729821.html">https://www.cnblogs.com/shiroe/p/14729821.html</a></p>
 <hr>
-<p><code>已识乾坤大，犹怜草木青。长空送鸟印，留幻与人灵。--- 马一浮《旷怡亭口占》</code></p>
+<p><code>已识乾坤大，犹怜草木青。长空送鸟印，留幻与人灵。 -马一浮《旷怡亭口占》</code></p>
               
             </div>
           </div>

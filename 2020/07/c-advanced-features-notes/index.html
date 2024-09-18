@@ -460,9 +460,6 @@ In what ways do C++ exceptions slow down code when there are no exceptions thown
 </span></span></code></pre></div><p>Origin:<br>
 <a href="https://en.cppreference.com/w/cpp/language/raii">https://en.cppreference.com/w/cpp/language/raii</a></p>
 <h3 id="lambda">Lambda</h3>
-<h5 id="memory-leak">Memory leak</h5>
-<p>Lambda + shared_ptr&lt;&gt; = memory leak<br>
-<a href="https://floating.io/2017/07/lambda-shared_ptr-memory-leak/">https://floating.io/2017/07/lambda-shared_ptr-memory-leak/</a></p>
 <h5 id="this-vs-">this vs &amp;</h5>
 <p>C++ lambda capture this vs capture by reference<br>
 <a href="https://stackoverflow.com/questions/33575563/c-lambda-capture-this-vs-capture-by-reference">https://stackoverflow.com/questions/33575563/c-lambda-capture-this-vs-capture-by-reference</a></p>
@@ -485,10 +482,73 @@ In what ways do C++ exceptions slow down code when there are no exceptions thown
 13
 </code></pre><p>Is there any difference betwen [=] and [&amp;] in lambda functions?<br>
 <a href="https://stackoverflow.com/a/21105182/1645289">https://stackoverflow.com/a/21105182/1645289</a></p>
-<h5 id="weak_ptr">weak_ptr</h5>
-<p>Binding to a weak_ptr<br>
-<a href="https://stackoverflow.com/questions/11680680/binding-to-a-weak-ptr">https://stackoverflow.com/questions/11680680/binding-to-a-weak-ptr</a></p>
-<h3 id="type-support">Type support</h3>
+<h5 id="shared_ptr-with-lambda">shared_ptr with Lambda</h5>
+<p>C99</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">template</span><span style="color:#f92672">&lt;</span><span style="color:#66d9ef">typename</span> T, <span style="color:#66d9ef">typename</span> F<span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">shared_this_lambda</span> {
+</span></span><span style="display:flex;"><span>  std<span style="color:#f92672">::</span>shared_ptr<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> t;  <span style="color:#75715e">// just for lifetime
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  F f;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>  shared_this_lambda(std<span style="color:#f92672">::</span>shared_ptr<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> t, F f)<span style="color:#f92672">:</span> t(t), f(f) {}
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">template</span><span style="color:#f92672">&lt;</span><span style="color:#66d9ef">class</span><span style="color:#960050;background-color:#1e0010">... </span><span style="color:#a6e22e">Args</span><span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">auto</span> <span style="color:#66d9ef">operator</span>()(Args <span style="color:#f92672">&amp;&amp;</span>...args)
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">-&gt;</span> <span style="color:#66d9ef">decltype</span>(<span style="color:#66d9ef">this</span><span style="color:#f92672">-&gt;</span>f(std<span style="color:#f92672">::</span>forward<span style="color:#f92672">&lt;</span>Args<span style="color:#f92672">&gt;</span>(args)...)) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">f</span>(std<span style="color:#f92672">::</span>forward<span style="color:#f92672">&lt;</span>Args<span style="color:#f92672">&gt;</span>(args)...);
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">template</span><span style="color:#f92672">&lt;</span><span style="color:#66d9ef">typename</span> T<span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">enable_shared_this_lambda</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">static_assert</span>(std<span style="color:#f92672">::</span>is_base_of<span style="color:#f92672">&lt;</span>std<span style="color:#f92672">::</span>enable_shared_from_this<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span>, T<span style="color:#f92672">&gt;::</span>value,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;T must inherit enable_shared_from_this&lt;T&gt;&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">template</span><span style="color:#f92672">&lt;</span><span style="color:#66d9ef">typename</span> F<span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">auto</span> make_shared_this_lambda(F f) <span style="color:#f92672">-&gt;</span> shared_this_lambda<span style="color:#f92672">&lt;</span>T, F<span style="color:#f92672">&gt;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> shared_this_lambda<span style="color:#f92672">&lt;</span>T, F<span style="color:#f92672">&gt;</span>(
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">static_cast</span><span style="color:#f92672">&lt;</span>T <span style="color:#f92672">*&gt;</span>(<span style="color:#66d9ef">this</span>)<span style="color:#f92672">-&gt;</span>shared_from_this(), f);
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">template</span><span style="color:#f92672">&lt;</span><span style="color:#66d9ef">typename</span> F<span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">auto</span> make_shared_this_lambda(F f) <span style="color:#66d9ef">const</span> <span style="color:#f92672">-&gt;</span> shared_this_lambda<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">const</span> T, F<span style="color:#f92672">&gt;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> shared_this_lambda<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">const</span> T, F<span style="color:#f92672">&gt;</span>(
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">static_cast</span><span style="color:#f92672">&lt;</span><span style="color:#66d9ef">const</span> T <span style="color:#f92672">*&gt;</span>(<span style="color:#66d9ef">this</span>)<span style="color:#f92672">-&gt;</span>shared_from_this(), f);
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p>Usage</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>doSomethingAsynchronously(make_shared_this_lambda([<span style="color:#66d9ef">this</span>] {
+</span></span><span style="display:flex;"><span>  someMember_ <span style="color:#f92672">=</span> <span style="color:#ae81ff">42</span>;
+</span></span><span style="display:flex;"><span>}));
+</span></span></code></pre></div><p>Orgin: <a href="https://stackoverflow.com/a/13879226/1645289">Using C++11 lambdas asynchronously, safely</a></p>
+<h5 id="weak_ptr-with-lambda">weak_ptr with Lambda</h5>
+<p>Example:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>std<span style="color:#f92672">::</span>weak_ptr<span style="color:#f92672">&lt;</span>MyClass<span style="color:#f92672">&gt;</span> thisWeakPtr(shared_from_this());
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">return</span> std<span style="color:#f92672">::</span>function<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">void</span>()<span style="color:#f92672">&gt;</span>([thisWeakPtr]()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">auto</span> myPtr <span style="color:#f92672">=</span> thisWeakPtr.lock();
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">if</span>(myPtr)
+</span></span><span style="display:flex;"><span>    myPtr<span style="color:#f92672">-&gt;</span>CallbackFunc()
+</span></span><span style="display:flex;"><span>});
+</span></span></code></pre></div><p>Origin: <a href="https://stackoverflow.com/a/12231627/1645289">Binding to a weak_ptr</a></p>
+<h5 id="error-c2663--2-overloads-have-no-legal-conversion-for-this-pointer">Error C2663 : 2 overloads have no legal conversion for &rsquo;this&rsquo; pointer</h5>
+<p>Case 01:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">Process</span>(FRDGBuilder<span style="color:#f92672">&amp;</span> Builder)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    AsyncLoad([Builder](FRenderData<span style="color:#f92672">&amp;</span> Data)  <span style="color:#75715e">//this fires compilation error
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        {
+</span></span><span style="display:flex;"><span>            Builder.CreatBuffer(Data);
+</span></span><span style="display:flex;"><span>        });
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Compiliation error:</p>
+<pre tabindex="0"><code class="language-Log" data-lang="Log">error C2663: &#39;FRDGBuilder::CreateBuffer&#39;: 2 overloads have no legal conversion for &#39;this&#39; pointer
+</code></pre><p>Solution:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">Process</span>(FRDGBuilder<span style="color:#f92672">&amp;</span> Builder)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    AsyncLoad([<span style="color:#f92672">&amp;</span>Builder](FRenderData<span style="color:#f92672">&amp;</span> Data)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            Builder.CreatBuffer(Data);
+</span></span><span style="display:flex;"><span>        });
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="type-support">Type support</h3>
 <h5 id="offsetof">offsetof</h5>
 <p>The macro <code>offsetof</code> expands to an integral constant expression of type std::size_t, the value of which is the offset, in bytes, from the beginning of an object of specified type to its specified subobject, including padding bits if any.</p>
 <p>References:<br>
