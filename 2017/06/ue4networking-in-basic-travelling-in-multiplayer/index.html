@@ -18,10 +18,10 @@
 
 <meta property="og:description" content="Keywords: UE4, Networking, Dedicated Server,ClientTravel, ServerTravel, UEngine::Browse">
 <meta property="og:type" content="article">
-<meta property="og:title" content="[UE4]Networking in Baisc - Travelling in Multiplayer">
-<meta name="twitter:title" content="[UE4]Networking in Baisc - Travelling in Multiplayer">
-<meta property="og:url" content="https://dawnarc.com/2017/06/ue4networking-in-baisc-travelling-in-multiplayer/">
-<meta property="twitter:url" content="https://dawnarc.com/2017/06/ue4networking-in-baisc-travelling-in-multiplayer/">
+<meta property="og:title" content="[UE4]Networking in Basic - Travelling in Multiplayer">
+<meta name="twitter:title" content="[UE4]Networking in Basic - Travelling in Multiplayer">
+<meta property="og:url" content="https://dawnarc.com/2017/06/ue4networking-in-basic-travelling-in-multiplayer/">
+<meta property="twitter:url" content="https://dawnarc.com/2017/06/ue4networking-in-basic-travelling-in-multiplayer/">
 <meta property="og:site_name" content="玄冬Wong">
 <meta property="og:description" content="Keywords: UE4, Networking, Dedicated Server,ClientTravel, ServerTravel, UEngine::Browse">
 <meta name="twitter:description" content="Keywords: UE4, Networking, Dedicated Server,ClientTravel, ServerTravel, UEngine::Browse">
@@ -69,14 +69,14 @@
   <meta property="twitter:image" content="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=640">
 
 
-    <title>[UE4]Networking in Baisc - Travelling in Multiplayer</title>
+    <title>[UE4]Networking in Basic - Travelling in Multiplayer</title>
 
     <link rel="icon" href="https://dawnarc.com/favicon.png">
     
 
     
 
-    <link rel="canonical" href="https://dawnarc.com/2017/06/ue4networking-in-baisc-travelling-in-multiplayer/">
+    <link rel="canonical" href="https://dawnarc.com/2017/06/ue4networking-in-basic-travelling-in-multiplayer/">
 
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
@@ -318,7 +318,7 @@
             <div class="post-header main-content-wrap text-left">
   
     <h1 class="post-title" itemprop="headline">
-      [UE4]Networking in Baisc - Travelling in Multiplayer
+      [UE4]Networking in Basic - Travelling in Multiplayer
     </h1>
   
   
@@ -386,31 +386,28 @@
 <p>When execute <code>PlayerController-&gt;ClientTravel</code>, default URL is like this:</p>
 <pre><code>FString Address = TEXT(&quot;127.0.0.1:7777&quot;);
 </code></pre>
-<p>If want to pass arguments to Server when logining, URL format is like this:</p>
+<p>If want to pass arguments to Server when logining, format URL like this:</p>
 <pre><code>FString Address = FString::Printf(TEXT(&quot;127.0.0.1:7777?Param1=%s?Param2=%s&quot;), *Param1, *Param2);
 </code></pre>
 <h5 id="how-to-parse-arguments-sent-by-client-on-server">How to parse arguments sent by Client on Server</h5>
 <p>Overrice function <code>InitNewPlayer()</code> in <code>GameMode</code>, then parse arguments like this:</p>
-<pre><code>FString AMyGameMode::InitNewPlayer(APlayerController* NewPlayerController, const FUniqueNetIdRepl&amp; UniqueId, const FString&amp; Options, const FString&amp; Portal = TEXT(&quot;&quot;))
-{
-    FString Param1 = UGameplayStatics::ParseOption(Options, TEXT(&quot;Param1&quot;));
-    FString Param2 = UGameplayStatics::ParseOption(Options, TEXT(&quot;Param2&quot;));
-}
-</code></pre>
-<p>Official Doc: Passing Arguments To Server During Connection<br>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>FString AMyGameMode<span style="color:#f92672">::</span>InitNewPlayer(APlayerController<span style="color:#f92672">*</span> NewPlayerController, <span style="color:#66d9ef">const</span> FUniqueNetIdRepl<span style="color:#f92672">&amp;</span> UniqueId, <span style="color:#66d9ef">const</span> FString<span style="color:#f92672">&amp;</span> Options, <span style="color:#66d9ef">const</span> FString<span style="color:#f92672">&amp;</span> Portal <span style="color:#f92672">=</span> TEXT(<span style="color:#e6db74">&#34;&#34;</span>))
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    FString Param1 <span style="color:#f92672">=</span> UGameplayStatics<span style="color:#f92672">::</span>ParseOption(Options, TEXT(<span style="color:#e6db74">&#34;Param1&#34;</span>));
+</span></span><span style="display:flex;"><span>    FString Param2 <span style="color:#f92672">=</span> UGameplayStatics<span style="color:#f92672">::</span>ParseOption(Options, TEXT(<span style="color:#e6db74">&#34;Param2&#34;</span>));
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Official Doc: Passing Arguments To Server During Connection<br>
 <a href="https://wiki.unrealengine.com/Passing_Arguments_To_Server_During_Connection">https://wiki.unrealengine.com/Passing_Arguments_To_Server_During_Connection</a></p>
 <h5 id="how-does-server-informs-clients-which-are-connected-to-server-to-travel-map">How does Server informs Clients which are connected to Server to travel map</h5>
 <p>Execute <code>ClientTravel</code> on Server:</p>
-<pre><code>void AMyGameModeBase::PostLogin(APlayerController* NewPlayer)
-{
-    Super::PostLogin(NewPlayer);
-    
-    FString URL = TEXT(&quot;/Game/Maps/TestMap&quot;);
-    NewPlayer-&gt;ClientTravel(URL, TRAVEL_Absolute);
-    
-}
-</code></pre>
-<div class="alert warning ">
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> AMyGameModeBase<span style="color:#f92672">::</span>PostLogin(APlayerController<span style="color:#f92672">*</span> NewPlayer)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    Super<span style="color:#f92672">::</span>PostLogin(NewPlayer);
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    FString URL <span style="color:#f92672">=</span> TEXT(<span style="color:#e6db74">&#34;/Game/Maps/TestMap&#34;</span>);
+</span></span><span style="display:flex;"><span>    NewPlayer<span style="color:#f92672">-&gt;</span>ClientTravel(URL, TRAVEL_Absolute);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><div class="alert warning ">
   <p>This way works right for travelling to new map, but Client would also disconnect to Server. It means that the <code>NetMode</code> of all Actors in Client would be set as <code>NM_Standalone</code>.</p>
 </div>
 <h5 id="how-to-use-servertravel">How to use ServerTravel</h5>
@@ -436,84 +433,82 @@
 <a href="https://answers.unrealengine.com/questions/251940/post-login-event-not-firing-on-active-clients-afte.html">https://answers.unrealengine.com/questions/251940/post-login-event-not-firing-on-active-clients-afte.html</a></p>
 <h5 id="travelling-api-in-gamemode">Travelling API in GameMode</h5>
 <p>ClientTravel:</p>
-<pre><code>APlayerController* AGameModeBase::ProcessClientTravel(FString&amp; FURL, FGuid NextMapGuid, bool bSeamless, bool bAbsolute)
-{
-    // We call PreClientTravel directly on any local PlayerPawns (ie listen server)
-    APlayerController* LocalPlayerController = nullptr;
-    for (FConstPlayerControllerIterator Iterator = GetWorld()-&gt;GetPlayerControllerIterator(); Iterator; ++Iterator)
-    {
-        if (APlayerController* PlayerController = Iterator-&gt;Get())
-        {
-            if (Cast&lt;UNetConnection&gt;(PlayerController-&gt;Player) != nullptr)
-            {
-                // Remote player
-                PlayerController-&gt;ClientTravel(FURL, TRAVEL_Relative, bSeamless, NextMapGuid);
-            }
-            else
-            {
-                // Local player
-                LocalPlayerController = PlayerController;
-                PlayerController-&gt;PreClientTravel(FURL, bAbsolute ? TRAVEL_Absolute : TRAVEL_Relative, bSeamless);
-            }
-        }
-    }
-
-    return LocalPlayerController;
-}
-</code></pre>
-<p>ServerTravel:</p>
-<pre><code>void AGameModeBase::ProcessServerTravel(const FString&amp; URL, bool bAbsolute)
-{
-#if WITH_SERVER_CODE
-    StartToLeaveMap();
-
-    // Force an old style load screen if the server has been up for a long time so that TimeSeconds doesn't overflow and break everything
-    bool bSeamless = (bUseSeamlessTravel &amp;&amp; GetWorld()-&gt;TimeSeconds &lt; 172800.0f); // 172800 seconds == 48 hours
-
-    FString NextMap;
-    if (URL.ToUpper().Contains(TEXT(&quot;?RESTART&quot;)))
-    {
-        NextMap = UWorld::RemovePIEPrefix(GetOutermost()-&gt;GetName());
-    }
-    else
-    {
-        int32 OptionStart = URL.Find(TEXT(&quot;?&quot;));
-        if (OptionStart == INDEX_NONE)
-        {
-            NextMap = URL;
-        }
-        else
-        {
-            NextMap = URL.Left(OptionStart);
-        }
-    }
-
-    FGuid NextMapGuid = UEngine::GetPackageGuid(FName(*NextMap), GetWorld()-&gt;IsPlayInEditor());
-
-    // Notify clients we're switching level and give them time to receive.
-    FString URLMod = URL;
-    APlayerController* LocalPlayer = ProcessClientTravel(URLMod, NextMapGuid, bSeamless, bAbsolute);
-
-    UE_LOG(LogGameMode, Log, TEXT(&quot;ProcessServerTravel: %s&quot;), *URL);
-    UWorld* World = GetWorld();
-    check(World);
-    World-&gt;NextURL = URL;
-    ENetMode NetMode = GetNetMode();
-
-    if (bSeamless)
-    {
-        World-&gt;SeamlessTravel(World-&gt;NextURL, bAbsolute);
-        World-&gt;NextURL = TEXT(&quot;&quot;);
-    }
-    // Switch immediately if not networking.
-    else if (NetMode != NM_DedicatedServer &amp;&amp; NetMode != NM_ListenServer)
-    {
-        World-&gt;NextSwitchCountdown = 0.0f;
-    }
-#endif // WITH_SERVER_CODE
-}
-</code></pre>
-<h3 id="reference">Reference</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>APlayerController<span style="color:#f92672">*</span> AGameModeBase<span style="color:#f92672">::</span>ProcessClientTravel(FString<span style="color:#f92672">&amp;</span> FURL, FGuid NextMapGuid, <span style="color:#66d9ef">bool</span> bSeamless, <span style="color:#66d9ef">bool</span> bAbsolute)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// We call PreClientTravel directly on any local PlayerPawns (ie listen server)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    APlayerController<span style="color:#f92672">*</span> LocalPlayerController <span style="color:#f92672">=</span> <span style="color:#66d9ef">nullptr</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> (FConstPlayerControllerIterator Iterator <span style="color:#f92672">=</span> GetWorld()<span style="color:#f92672">-&gt;</span>GetPlayerControllerIterator(); Iterator; <span style="color:#f92672">++</span>Iterator)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (APlayerController<span style="color:#f92672">*</span> PlayerController <span style="color:#f92672">=</span> Iterator<span style="color:#f92672">-&gt;</span>Get())
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (Cast<span style="color:#f92672">&lt;</span>UNetConnection<span style="color:#f92672">&gt;</span>(PlayerController<span style="color:#f92672">-&gt;</span>Player) <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nullptr</span>)
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                <span style="color:#75715e">// Remote player
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>                PlayerController<span style="color:#f92672">-&gt;</span>ClientTravel(FURL, TRAVEL_Relative, bSeamless, NextMapGuid);
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">else</span>
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                <span style="color:#75715e">// Local player
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>                LocalPlayerController <span style="color:#f92672">=</span> PlayerController;
+</span></span><span style="display:flex;"><span>                PlayerController<span style="color:#f92672">-&gt;</span>PreClientTravel(FURL, bAbsolute <span style="color:#f92672">?</span> TRAVEL_Absolute : TRAVEL_Relative, bSeamless);
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> LocalPlayerController;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>ServerTravel:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> AGameModeBase<span style="color:#f92672">::</span>ProcessServerTravel(<span style="color:#66d9ef">const</span> FString<span style="color:#f92672">&amp;</span> URL, <span style="color:#66d9ef">bool</span> bAbsolute)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#if WITH_SERVER_CODE
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    StartToLeaveMap();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Force an old style load screen if the server has been up for a long time so that TimeSeconds doesn&#39;t overflow and break everything
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">bool</span> bSeamless <span style="color:#f92672">=</span> (bUseSeamlessTravel <span style="color:#f92672">&amp;&amp;</span> GetWorld()<span style="color:#f92672">-&gt;</span>TimeSeconds <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">172800.0f</span>); <span style="color:#75715e">// 172800 seconds == 48 hours
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>    FString NextMap;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (URL.ToUpper().Contains(TEXT(<span style="color:#e6db74">&#34;?RESTART&#34;</span>)))
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        NextMap <span style="color:#f92672">=</span> UWorld<span style="color:#f92672">::</span>RemovePIEPrefix(GetOutermost()<span style="color:#f92672">-&gt;</span>GetName());
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">else</span>
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        int32 OptionStart <span style="color:#f92672">=</span> URL.Find(TEXT(<span style="color:#e6db74">&#34;?&#34;</span>));
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (OptionStart <span style="color:#f92672">==</span> INDEX_NONE)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            NextMap <span style="color:#f92672">=</span> URL;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">else</span>
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            NextMap <span style="color:#f92672">=</span> URL.Left(OptionStart);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    FGuid NextMapGuid <span style="color:#f92672">=</span> UEngine<span style="color:#f92672">::</span>GetPackageGuid(FName(<span style="color:#f92672">*</span>NextMap), GetWorld()<span style="color:#f92672">-&gt;</span>IsPlayInEditor());
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Notify clients we&#39;re switching level and give them time to receive.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    FString URLMod <span style="color:#f92672">=</span> URL;
+</span></span><span style="display:flex;"><span>    APlayerController<span style="color:#f92672">*</span> LocalPlayer <span style="color:#f92672">=</span> ProcessClientTravel(URLMod, NextMapGuid, bSeamless, bAbsolute);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    UE_LOG(LogGameMode, Log, TEXT(<span style="color:#e6db74">&#34;ProcessServerTravel: %s&#34;</span>), <span style="color:#f92672">*</span>URL);
+</span></span><span style="display:flex;"><span>    UWorld<span style="color:#f92672">*</span> World <span style="color:#f92672">=</span> GetWorld();
+</span></span><span style="display:flex;"><span>    check(World);
+</span></span><span style="display:flex;"><span>    World<span style="color:#f92672">-&gt;</span>NextURL <span style="color:#f92672">=</span> URL;
+</span></span><span style="display:flex;"><span>    ENetMode NetMode <span style="color:#f92672">=</span> GetNetMode();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (bSeamless)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        World<span style="color:#f92672">-&gt;</span>SeamlessTravel(World<span style="color:#f92672">-&gt;</span>NextURL, bAbsolute);
+</span></span><span style="display:flex;"><span>        World<span style="color:#f92672">-&gt;</span>NextURL <span style="color:#f92672">=</span> TEXT(<span style="color:#e6db74">&#34;&#34;</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Switch immediately if not networking.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">else</span> <span style="color:#a6e22e">if</span> (NetMode <span style="color:#f92672">!=</span> NM_DedicatedServer <span style="color:#f92672">&amp;&amp;</span> NetMode <span style="color:#f92672">!=</span> NM_ListenServer)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        World<span style="color:#f92672">-&gt;</span>NextSwitchCountdown <span style="color:#f92672">=</span> <span style="color:#ae81ff">0.0f</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#endif </span><span style="color:#75715e">// WITH_SERVER_CODE
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span></code></pre></div><h3 id="reference">Reference</h3>
 <h5 id="official-docs">Official Docs</h5>
 <p>Travelling in Multiplayer<br>
 <a href="https://docs.unrealengine.com/en-US/Gameplay/Networking/Travelling/index.html">https://docs.unrealengine.com/en-US/Gameplay/Networking/Travelling/index.html</a></p>

@@ -363,7 +363,99 @@
                      (adsbygoogle = window.adsbygoogle || []).push({});
                 </script>
               <p>keywords: UE5, RDG, Render Dependency Graph</p>
-<h5 id="documents">Documents</h5>
+<p>Related article: <a href="https://dawnarc.com/2020/06/ue4rhi-rendering-hardware-interface-notes/">[UE4]RHI (Rendering Hardware Interface) Notes</a></p>
+<h5 id="how-to-debug-rdg-inspect-the-detail-of-gpu-crash-and-cpu-overhead">How to debug RDG (inspect the detail of GPU crash and CPU overhead)</h5>
+<p>Engine/Config/ConsoleVariables.ini</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#75715e">; Uncomment to get render graph executing passes as they get created to easily debug crashes caused by pass wiring logic.</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">r.RDG.ImmediateMode</span><span style="color:#f92672">=</span><span style="color:#e6db74">1</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">; Uncomment to get render graph to emit warnings for inneficiencies that are normally too CPU costly, and have draw event names</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">; formatting even if frame are not emiting draw events.</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">r.RDG.Debug</span><span style="color:#f92672">=</span><span style="color:#e6db74">1</span>
+</span></span></code></pre></div><h5 id="how-to-profile-rdg">How to profile RDG</h5>
+<figure><img src="https://dawnarc.com/img/2024/20240305-%5BUE5%5DRDG%20Notes/%5BUE5%5DRDG%20Notes%20-%2001.png">
+</figure>
+
+<ul>
+<li><code>SCOPED_NAMED_EVENT</code> : Tracking for the CPU timeline, which was shown in the CPU thread (GameThread, RenderThread etc.) panels;</li>
+<li><code>SCOPE_CYCLE_COUNTER</code> : Tracking time overheads that was shown in <code>stat</code> console command, it&rsquo;s more convenient than Insights to get a quick view of performance. For more details, see <a href="https://dawnarc.com/2016/10/ue4program-debugging-tricks-notes/#scope_cycle_counter-usage">SCOPE_CYCLE_COUNTER Usage</a>.</li>
+<li><code>RDG_EVENT_SCOPE</code> : Add a GPU tracking scope around passes. These are consumed by external profilers like RenderDoc, PIX (Windows), Snapdragon (Android), as well as RDG Insights.</li>
+<li><code>RDG_GPU_STAT_SCOPE</code> : Add a new scope for the console command: <code>stat gpu</code> and <code>profilegpu</code> .</li>
+<li><code>RDG_CSV_STAT_EXCLUSIVE_SCOPE</code> : Add a new scope for the <a href="https://dev.epicgames.com/documentation/en-us/unreal-engine/csv-profiler">CSV profiler</a>.</li>
+</ul>
+<p>Insights command:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Text" data-lang="Text"><span style="display:flex;"><span>MyGameSample\Binaries\Win64\MyGameSample.exe -trace=default,rdg
+</span></span></code></pre></div><h5 id="pass-and-dispatch">Pass and Dispatch</h5>
+<p>Relationship between Pass and Dispatch:</p>
+<ul>
+<li>Pass was created and inserted into queue in the RenderThread, this&rsquo;s the main job of RDG.</li>
+<li>Take Compute Shader as example, the input data of Pass was composed in the async threads of Task Graph, when input data was ready the RHIThread consume and execute (Dispatch or IndrectDispatch) these passes which were produced in RenderThread.</li>
+<li>Most passes cannot be merged, especially in forward shading, so one Pass represents to one Dispatch in most situations.</li>
+</ul>
+<h5 id="renderthread-addpass">RenderThread: AddPass</h5>
+<pre tabindex="0"><code>UnrealEditor-RenderCore.dll!TRDGHandleRegistry&lt;TRDGHandle&lt;FRDGPass,unsigned short&gt;,0&gt;::Insert(FRDGPass * Object) Line 425
+[Inline Frame] UnrealEditor-RenderCore.dll!FRDGBuilder::AddPassInternal(FRDGEventName &amp;&amp;) Line 278
+[Inline Frame] UnrealEditor-RenderCore.dll!FRDGBuilder::AddPass(FRDGEventName &amp;&amp;) Line 293
+UnrealEditor-RenderCore.dll!FComputeShaderUtils::AddPass&lt;FRDGScatterCopyCS&gt;(FRDGBuilder &amp; GraphBuilder, FRDGEventName &amp;&amp; PassName, ERDGPassFlags PassFlags, const TShaderRefBase&lt;FRDGScatterCopyCS,FShaderMapPointerTable&gt; &amp; ComputeShader, const FShaderParametersMetadata * ParametersMetadata, FRDGScatterCopyCS::FParameters * Parameters, UE::Math::TIntVector3&lt;int&gt; GroupCount) Line 564
+[Inline Frame] UnrealEditor-RenderCore.dll!FComputeShaderUtils::AddPass(FRDGBuilder &amp;) Line 632
+UnrealEditor-RenderCore.dll!ScatterCopyResource(FRDGBuilder &amp; GraphBuilder, FRDGViewableResource * DstResource, FRDGBufferSRV * ScatterBufferSRV, FRDGBufferSRV * UploadBufferSRV, const FScatterCopyParams &amp; Params) Line 801
+UnrealEditor-RenderCore.dll!FRDGScatterUploadBuffer::ResourceUploadToInternal(FRDGBuilder &amp; GraphBuilder, FRDGViewableResource * DstResource) Line 902
+[Inline Frame] UnrealEditor-Renderer.dll!FRDGScatterUploadBuffer::ResourceUploadTo(FRDGBuilder &amp;) Line 427
+[Inline Frame] UnrealEditor-Renderer.dll!FVirtualShadowMapArray::UploadProjectionData(FRDGBuilder &amp;) Line 1185
+UnrealEditor-Renderer.dll!FVirtualShadowMapArray::BuildPageAllocations(FRDGBuilder &amp; GraphBuilder, const FMinimalSceneTextures &amp; SceneTextures, const TArrayView&lt;FViewInfo const ,int&gt; &amp; Views, const FEngineShowFlags &amp; EngineShowFlags, const FSortedLightSetSceneInfo &amp; SortedLightsInfo, const TArrayView&lt;FVisibleLightInfo const ,int&gt; &amp; VisibleLightInfos, const FSingleLayerWaterPrePassResult * SingleLayerWaterPrePassResult, const FFrontLayerTranslucencyData &amp; FrontLayerTranslucencyData) Line 1259
+UnrealEditor-Renderer.dll!FDeferredShadingSceneRenderer::Render(FRDGBuilder &amp; GraphBuilder) Line 3748
+UnrealEditor-Renderer.dll!RenderViewFamilies_RenderThread(FRHICommandListImmediate &amp; RHICmdList, const TArray&lt;FSceneRenderer *,TSizedDefaultAllocator&lt;32&gt;&gt; &amp; SceneRenderers) Line 4575
+UnrealEditor-Renderer.dll!FRendererModule::BeginRenderingViewFamilies::__l87::&lt;lambda_3&gt;::operator()(FRHICommandListImmediate &amp; RHICmdList) Line 4849
+UnrealEditor-Renderer.dll!TEnqueueUniqueRenderCommandType&lt;`FRendererModule::BeginRenderingViewFamilies&#39;::`87&#39;::FDrawSceneCommandName,`FRendererModule::BeginRenderingViewFamilies&#39;::`87&#39;::&lt;lambda_3&gt;&gt;::DoTask(ENamedThreads::Type CurrentThread, const TRefCountPtr&lt;FGraphEvent&gt; &amp; MyCompletionGraphEvent) Line 209
+UnrealEditor-Renderer.dll!TGraphTask&lt;TEnqueueUniqueRenderCommandType&lt;`FRendererModule::BeginRenderingViewFamilies&#39;::`87&#39;::FDrawSceneCommandName,`FRendererModule::BeginRenderingViewFamilies&#39;::`87&#39;::&lt;lambda_3&gt;&gt;&gt;::ExecuteTask(TArray&lt;FBaseGraphTask *,TSizedDefaultAllocator&lt;32&gt;&gt; &amp; NewTasks, ENamedThreads::Type CurrentThread, bool bDeleteOnCompletion) Line 1265
+[Inline Frame] UnrealEditor-Core.dll!FBaseGraphTask::Execute(TArray&lt;FBaseGraphTask *,TSizedDefaultAllocator&lt;32&gt;&gt; &amp; CurrentThread, ENamedThreads::Type) Line 866
+UnrealEditor-Core.dll!FNamedTaskThread::ProcessTasksNamedThread(int QueueIndex, bool bAllowStall) Line 758
+UnrealEditor-Core.dll!FNamedTaskThread::ProcessTasksUntilQuit(int QueueIndex) Line 649
+UnrealEditor-RenderCore.dll!RenderingThreadMain(FEvent * TaskGraphBoundSyncEvent) Line 411
+UnrealEditor-RenderCore.dll!FRenderingThread::Run() Line 564
+UnrealEditor-Core.dll!FRunnableThreadWin::Run() Line 149
+UnrealEditor-Core.dll!FRunnableThreadWin::GuardedRun() Line 71
+</code></pre><h5 id="async-task-threadbackground-worker-after-the-calculation-of-input-data-fire-the-dispath-on-renderthread">Async Task Thread(Background Worker): After the calculation of input data, fire the Dispath on RenderThread</h5>
+<p>Compose the input data (texture that can be sampled) in async thread, then return into RenderThread to execute the pass (Dispatch or IndrectDispatch):</p>
+<pre tabindex="0"><code>UnrealEditor-HairStrandsCore.dll!FComputeShaderUtils::Dispatch&lt;FClearVelocityGridCS&gt;(FRHIComputeCommandList &amp; RHICmdList, const TShaderRefBase&lt;FClearVelocityGridCS,FShaderMapPointerTable&gt; &amp; ComputeShader, const FShaderParametersMetadata * ParametersMetadata, const FClearVelocityGridCS::FParameters &amp; Parameters, UE::Math::TIntVector3&lt;int&gt; GroupCount) Line 498
+[Inline Frame] UnrealEditor-HairStrandsCore.dll!FComputeShaderUtils::AddPass::__l2::&lt;lambda_1&gt;::operator()(FRHIComputeCommandList &amp;) Line 571
+[Inline Frame] UnrealEditor-HairStrandsCore.dll!TRDGLambdaPass&lt;void,`FComputeShaderUtils::AddPass&lt;FClearVelocityGridCS&gt;&#39;::`2&#39;::&lt;lambda_1&gt;&gt;::ExecuteLambdaFunc(FRHIComputeCommandList &amp;) Line 607
+UnrealEditor-HairStrandsCore.dll!TRDGLambdaPass&lt;void,`FComputeShaderUtils::AddPass&lt;FClearVelocityGridCS&gt;&#39;::`2&#39;::&lt;lambda_1&gt;&gt;::Execute(FRHIComputeCommandList &amp; RHICmdList) Line 616
+UnrealEditor-RenderCore.dll!FRDGBuilder::ExecutePass(FRDGPass * Pass, FRHIComputeCommandList &amp; RHICmdListPass) Line 2917
+UnrealEditor-RenderCore.dll!FRDGBuilder::DispatchParallelExecute::__l13::&lt;lambda_1&gt;::operator()() Line 2729
+UnrealEditor-RenderCore.dll!UE::Tasks::Private::FTaskBase::TryExecuteTask() Line 436
+[Inline Frame] UnrealEditor-RenderCore.dll!UE::Tasks::Private::FTaskBase::Init::__l2::&lt;lambda_1&gt;::operator()() Line 157
+[Inline Frame] UnrealEditor-RenderCore.dll!LowLevelTasks::FTask::Init::__l11::&lt;lambda_1&gt;::operator()(const bool) Line 499
+[Inline Frame] UnrealEditor-RenderCore.dll!Invoke(LowLevelTasks::FTask::Init::__l11::&lt;lambda_1&gt; &amp;) Line 47
+[Inline Frame] UnrealEditor-RenderCore.dll!LowLevelTasks::TTaskDelegate&lt;LowLevelTasks::FTask * __cdecl(bool),48&gt;::TTaskDelegateImpl&lt;`LowLevelTasks::FTask::Init&lt;`UE::Tasks::Private::FTaskBase::Init&#39;::`2&#39;::&lt;lambda_1&gt;&gt;&#39;::`11&#39;::&lt;lambda_1&gt;,0&gt;::Call(void *) Line 162
+UnrealEditor-RenderCore.dll!LowLevelTasks::TTaskDelegate&lt;LowLevelTasks::FTask * __cdecl(bool),48&gt;::TTaskDelegateImpl&lt;`LowLevelTasks::FTask::Init&lt;`UE::Tasks::Private::FTaskBase::Init&#39;::`2&#39;::&lt;lambda_1&gt;&gt;&#39;::`11&#39;::&lt;lambda_1&gt;,0&gt;::CallAndMove(LowLevelTasks::TTaskDelegate&lt;LowLevelTasks::FTask * __cdecl(bool),48&gt; &amp; Destination, void * InlineData, unsigned int DestInlineSize, bool &lt;Params_0&gt;) Line 171
+[Inline Frame] UnrealEditor-Core.dll!LowLevelTasks::TTaskDelegate&lt;LowLevelTasks::FTask * __cdecl(bool),48&gt;::CallAndMove(LowLevelTasks::TTaskDelegate&lt;LowLevelTasks::FTask * __cdecl(bool),48&gt; &amp;) Line 308
+UnrealEditor-Core.dll!LowLevelTasks::FTask::ExecuteTask() Line 627
+UnrealEditor-Core.dll!LowLevelTasks::FScheduler::ExecuteTask(LowLevelTasks::FTask * &amp; InOutTask) Line 150
+UnrealEditor-Core.dll!LowLevelTasks::FScheduler::TryExecuteTaskFrom&lt;LowLevelTasks::TLocalQueueRegistry&lt;1024&gt;::TLocalQueue,&amp;LowLevelTasks::TLocalQueueRegistry&lt;1024&gt;::TLocalQueue::DequeueGlobal,0&gt;(LowLevelTasks::TLocalQueueRegistry&lt;1024&gt;::TLocalQueue * Queue, LowLevelTasks::TLocalQueueRegistry&lt;1024&gt;::FOutOfWork &amp; OutOfWork, bool bPermitBackgroundWork, bool bDisableThrottleStealing) Line 350
+UnrealEditor-Core.dll!LowLevelTasks::FScheduler::WorkerMain(LowLevelTasks::FSleepEvent * WorkerEvent, LowLevelTasks::TLocalQueueRegistry&lt;1024&gt;::TLocalQueue * WorkerLocalQueue, unsigned int WaitCycles, bool bPermitBackgroundWork) Line 378
+[Inline Frame] UnrealEditor-Core.dll!LowLevelTasks::FScheduler::CreateWorker::__l2::&lt;lambda&gt;() Line 70
+[Inline Frame] UnrealEditor-Core.dll!Invoke(LowLevelTasks::FScheduler::CreateWorker::__l2::void &lt;lambda&gt;(const TArray&lt;FString,TSizedDefaultAllocator&lt;32&gt;&gt; &amp;, UWorld *, FOutputDevice &amp;) &amp;) Line 47
+UnrealEditor-Core.dll!UE::Core::Private::Function::TFunctionRefCaller&lt;`LowLevelTasks::FScheduler::CreateWorker&#39;::`2&#39;::void &lt;lambda&gt;(const TArray&lt;FString,TSizedDefaultAllocator&lt;32&gt;&gt; &amp;, UWorld *, FOutputDevice &amp;),void __cdecl(void)&gt;::Call(void * Obj) Line 480
+[Inline Frame] UnrealEditor-Core.dll!UE::Core::Private::Function::TFunctionRefBase&lt;UE::Core::Private::Function::TFunctionStorage&lt;1&gt;,void __cdecl(void)&gt;::operator()() Line 629
+UnrealEditor-Core.dll!FThreadImpl::Run() Line 69
+UnrealEditor-Core.dll!FRunnableThreadWin::Run() Line 149
+UnrealEditor-Core.dll!FRunnableThreadWin::GuardedRun() Line 71
+</code></pre><h5 id="rhithread-command-queue-commandlist-cycle-to-id3d12graphicscommandlistdispatch">RHIThread: Command Queue (CommandList) cycle to ID3D12GraphicsCommandList::Dispatch()</h5>
+<pre tabindex="0"><code>UnrealEditor-D3D12RHI.dll!FD3D12CommandContext::RHIDispatchComputeShader(unsigned int ThreadGroupCountX, unsigned int ThreadGroupCountY, unsigned int ThreadGroupCountZ) Line 114
+UnrealEditor-Renderer.dll!FRHICommand&lt;FRHICommandDispatchComputeShader,FRHICommandDispatchComputeShaderString1652&gt;::ExecuteAndDestruct(FRHICommandListBase &amp; CmdList, FRHICommandListDebugContext &amp; Context) Line 1245
+UnrealEditor-RHI.dll!FRHICommandListBase::Execute(TRHIPipelineArray&lt;IRHIComputeContext *&gt; &amp; InOutContexts, FRHICommandListBase::FPersistentState::FGPUStats * ParentStats) Line 461
+UnrealEditor-RHI.dll!FRHICommandListImmediate::QueueAsyncCommandListSubmit::__l50::&lt;lambda&gt;(FRHICommandListBase &amp; ParentCmdList) Line 668
+UnrealEditor-RHI.dll!TRHILambdaCommand&lt;FRHICommandListImmediate,`FRHICommandListImmediate::QueueAsyncCommandListSubmit&#39;::`50&#39;::void &lt;lambda&gt;(const TArray&lt;FString,TSizedDefaultAllocator&lt;32&gt;&gt; &amp;, UWorld *, FOutputDevice &amp;)&gt;::ExecuteAndDestruct(FRHICommandListBase &amp; CmdList, FRHICommandListDebugContext &amp; __formal) Line 471
+UnrealEditor-RHI.dll!FRHICommandListBase::Execute(TRHIPipelineArray&lt;IRHIComputeContext *&gt; &amp; InOutContexts, FRHICommandListBase::FPersistentState::FGPUStats * ParentStats) Line 461
+UnrealEditor-RHI.dll!FRHICommandListImmediate::ExecuteAndReset::__l35::&lt;lambda&gt;() Line 772
+[Inline Frame] UnrealEditor-RHI.dll!UE::Core::Private::Function::TFunctionRefBase&lt;UE::Core::Private::Function::TFunctionStorage&lt;1&gt;,void __cdecl(void)&gt;::operator()() Line 629
+[Inline Frame] UnrealEditor-RHI.dll!TFunctionGraphTaskImpl&lt;void __cdecl(void),0&gt;::DoTaskImpl(TUniqueFunction&lt;void __cdecl(void)&gt; &amp; Function, ENamedThreads::Type) Line 1754
+[Inline Frame] UnrealEditor-RHI.dll!TFunctionGraphTaskImpl&lt;void __cdecl(void),0&gt;::DoTask(ENamedThreads::Type) Line 1747
+UnrealEditor-RHI.dll!TGraphTask&lt;TFunctionGraphTaskImpl&lt;void __cdecl(void),0&gt;&gt;::ExecuteTask(TArray&lt;FBaseGraphTask *,TSizedDefaultAllocator&lt;32&gt;&gt; &amp; NewTasks, ENamedThreads::Type CurrentThread, bool bDeleteOnCompletion) Line 1265
+[Inline Frame] UnrealEditor-Core.dll!FBaseGraphTask::Execute(TArray&lt;FBaseGraphTask *,TSizedDefaultAllocator&lt;32&gt;&gt; &amp; CurrentThread, ENamedThreads::Type) Line 866
+UnrealEditor-Core.dll!FNamedTaskThread::ProcessTasksNamedThread(int QueueIndex, bool bAllowStall) Line 758
+UnrealEditor-Core.dll!FNamedTaskThread::ProcessTasksUntilQuit(int QueueIndex) Line 649
+</code></pre><h5 id="references">References</h5>
 <p>Render Dependency Graph, An immediate-mode API which records render commands into a graph data structure to be compiled and executed.<br>
 <a href="https://dev.epicgames.com/documentation/en-us/unreal-engine/render-dependency-graph-in-unreal-engine">https://dev.epicgames.com/documentation/en-us/unreal-engine/render-dependency-graph-in-unreal-engine</a><br>
 RDG Insights Plugin<br>
@@ -378,17 +470,7 @@ RDG Insights Plugin<br>
 <p>Implement a single Static Mesh renderer with your own mesh path<br>
 <a href="https://strv.dev/blog/unrealengine--lets-implement-a-single-mesh-renderer/">https://strv.dev/blog/unrealengine--lets-implement-a-single-mesh-renderer/</a><br>
 <a href="https://strv.dev/blog/unrealengine--lets-implement-a-single-mesh-renderer-2/">https://strv.dev/blog/unrealengine--lets-implement-a-single-mesh-renderer-2/</a></p>
-<h5 id="how-to-debug-rdg-inspect-the-detail-of-gpu-crash-and-cpu-overhead">How to debug RDG (inspect the detail of GPU crash and CPU overhead)</h5>
-<p>Engine/Config/ConsoleVariables.ini</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#75715e">; Uncomment to get render graph executing passes as they get created to easily debug crashes caused by pass wiring logic.</span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">r.RDG.ImmediateMode</span><span style="color:#f92672">=</span><span style="color:#e6db74">1</span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">; Uncomment to get render graph to emit warnings for inneficiencies that are normally too CPU costly, and have draw event names</span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">; formatting even if frame are not emiting draw events.</span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">r.RDG.Debug</span><span style="color:#f92672">=</span><span style="color:#e6db74">1</span>
-</span></span></code></pre></div><h5 id="how-to-profile-rdg">How to profile RDG</h5>
-<p>Insights command:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Text" data-lang="Text"><span style="display:flex;"><span>MyGameSample\Binaries\Win64\MyGameSample.exe -trace=default,rdg
-</span></span></code></pre></div><hr>
+<hr>
 <p><code>Tell me and I’ll forget; show me and I may remember; involve me and I’ll understand. -Chinese Proverbs</code></p>
               
             </div>

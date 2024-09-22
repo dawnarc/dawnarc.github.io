@@ -13,18 +13,18 @@
 <meta name="generator" content="Hugo 0.132.2 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Wang Aiguo">
 <meta name="keywords" content="UE4, Trace, Debug, Tricks, Memory, Insights">
-<meta name="description" content="Keywords: UE4, Programming Debug Tricks Notes, Trace, Insights, Memory, Profiling, Optimization">
+<meta name="description" content="Keywords: UE4, Programming Debug Tricks, Insights, Memory, Tracking, Profiling, Performance Optimization">
 
 
-<meta property="og:description" content="Keywords: UE4, Programming Debug Tricks Notes, Trace, Insights, Memory, Profiling, Optimization">
+<meta property="og:description" content="Keywords: UE4, Programming Debug Tricks, Insights, Memory, Tracking, Profiling, Performance Optimization">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[UE4]Program Debugging Tricks Notes">
 <meta name="twitter:title" content="[UE4]Program Debugging Tricks Notes">
 <meta property="og:url" content="https://dawnarc.com/2016/10/ue4program-debugging-tricks-notes/">
 <meta property="twitter:url" content="https://dawnarc.com/2016/10/ue4program-debugging-tricks-notes/">
 <meta property="og:site_name" content="玄冬Wong">
-<meta property="og:description" content="Keywords: UE4, Programming Debug Tricks Notes, Trace, Insights, Memory, Profiling, Optimization">
-<meta name="twitter:description" content="Keywords: UE4, Programming Debug Tricks Notes, Trace, Insights, Memory, Profiling, Optimization">
+<meta property="og:description" content="Keywords: UE4, Programming Debug Tricks, Insights, Memory, Tracking, Profiling, Performance Optimization">
+<meta name="twitter:description" content="Keywords: UE4, Programming Debug Tricks, Insights, Memory, Tracking, Profiling, Performance Optimization">
 <meta property="og:locale" content="en-us">
 
   
@@ -362,7 +362,7 @@
                 <script>
                      (adsbygoogle = window.adsbygoogle || []).push({});
                 </script>
-              <p>Keywords: UE4, Programming Debug Tricks Notes, Trace, Insights, Memory, Profiling, Optimization</p>
+              <p>Keywords: UE4, Programming Debug Tricks, Insights, Memory, Tracking, Profiling, Performance Optimization</p>
 <h3 id="ue_log-related">UE_LOG Related</h3>
 <h5 id="shipping-版本开启log">Shipping 版本开启log</h5>
 <p>添加以下到 Target.cs 的构造函数中（Editor.Target.cs不需要添加）：</p>
@@ -382,9 +382,8 @@
 </span>
 <h5 id="android-device-monitor-打印log">Android Device Monitor 打印log</h5>
 <p>比如UE4工程的C++代码中有如下log打印语句：</p>
-<pre><code>UE_LOG(LogTemp, Display, TEXT(&quot;aaaaaaa&quot;));
-</code></pre>
-<p>我们希望这句话在Android Device Monitor中能也能够打印出来，默认情况下，需要在将设备的Config设置为DebugGame或者Development，Shipping下则不会打印。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>UE_LOG(LogTemp, Display, TEXT(<span style="color:#e6db74">&#34;aaaaaaa&#34;</span>));
+</span></span></code></pre></div><p>我们希望这句话在Android Device Monitor中能也能够打印出来，默认情况下，需要在将设备的Config设置为DebugGame或者Development，Shipping下则不会打印。</p>
 <figure><img src="https://dawnarc.com/img/20161016-%5BUE4%5DShipping%E7%89%88%E6%9C%AC%E4%B8%AD%E5%BC%80%E5%90%AFUE_LOG%E7%9A%84%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9/%5BUE4%5DShipping%E7%89%88%E6%9C%AC%E4%B8%AD%E5%BC%80%E5%90%AFUE_LOG%E7%9A%84%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9-01.jpg">
 </figure>
 
@@ -396,57 +395,80 @@
 <p>Use <code>FORCEINLINE_DEBUGGABLE</code>.</p>
 <p>Example:<br>
 from <code>Engine\Source\Runtime\RHI\Public\RHICommandList.h</code>:</p>
-<pre><code>FORCEINLINE_DEBUGGABLE void CopyTexture(FRHITexture* SourceTextureRHI, FRHITexture* DestTextureRHI, const FRHICopyTextureInfo&amp; CopyInfo)
-{
-}
-</code></pre>
-<p>Setup:<br>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>FORCEINLINE_DEBUGGABLE <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">CopyTexture</span>(FRHITexture<span style="color:#f92672">*</span> SourceTextureRHI, FRHITexture<span style="color:#f92672">*</span> DestTextureRHI, <span style="color:#66d9ef">const</span> FRHICopyTextureInfo<span style="color:#f92672">&amp;</span> CopyInfo)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Setup:<br>
 Modify &ldquo;Engine\Source\Runtime\Core\Public\Misc\CoreMiscDefines.h&rdquo;:<br>
 Origin:</p>
-<pre><code>#if UE_BUILD_DEBUG
-    #define FORCEINLINE_DEBUGGABLE FORCEINLINE_DEBUGGABLE_ACTUAL
-#else
-    #define FORCEINLINE_DEBUGGABLE FORCEINLINE
-#endif
-</code></pre>
-<p>New:</p>
-<pre><code>#if UE_BUILD_DEBUG
-    #define FORCEINLINE_DEBUGGABLE FORCEINLINE_DEBUGGABLE_ACTUAL
-#else
-    #if UE_BUILD_DEVELOPMENT
-        #define FORCEINLINE_DEBUGGABLE FORCEINLINE_DEBUGGABLE_ACTUAL
-    #else
-        #define FORCEINLINE_DEBUGGABLE FORCEINLINE
-    #endif
-#endif
-</code></pre>
-<h5 id="how-to-print-log-in-low-level">How to print log in low level</h5>
-<pre><code>FPlatformMisc::LowLevelOutputDebugStringf(TEXT(&quot;FWebBrowserTextureResource:CopySample 11&quot;));
-</code></pre>
-<h3 id="trace--insight">Trace &amp; Insight</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">#if UE_BUILD_DEBUG
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">#define FORCEINLINE_DEBUGGABLE FORCEINLINE_DEBUGGABLE_ACTUAL
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#else
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">#define FORCEINLINE_DEBUGGABLE FORCEINLINE
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#endif
+</span></span></span></code></pre></div><p>New:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">#if UE_BUILD_DEBUG
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">#define FORCEINLINE_DEBUGGABLE FORCEINLINE_DEBUGGABLE_ACTUAL
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#else
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">#if UE_BUILD_DEVELOPMENT
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#75715e">#define FORCEINLINE_DEBUGGABLE FORCEINLINE_DEBUGGABLE_ACTUAL
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">#else
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#75715e">#define FORCEINLINE_DEBUGGABLE FORCEINLINE
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">#endif
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#endif
+</span></span></span></code></pre></div><h5 id="how-to-print-log-in-low-level">How to print log in low level</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>FPlatformMisc<span style="color:#f92672">::</span>LowLevelOutputDebugStringf(TEXT(<span style="color:#e6db74">&#34;FWebBrowserTextureResource:CopySample 11&#34;</span>));
+</span></span></code></pre></div><h3 id="trace--insight">Trace &amp; Insight</h3>
 <h5 id="how-to-record-tracing-data-for-insights">How to record tracing data for Insights</h5>
 <p>cpp code:</p>
-<pre><code>void UCharacterMovementComponent::TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction)
-{
-    SCOPED_NAMED_EVENT(UCharacterMovementComponent_TickComponent, FColor::Yellow);
-    SCOPE_CYCLE_COUNTER(STAT_CharacterMovement);
-    SCOPE_CYCLE_COUNTER(STAT_CharacterMovementTick);
-    CSV_SCOPED_TIMING_STAT_EXCLUSIVE(CharacterMovement);
-    ...
-}
-</code></pre>
-<p>Then start <code>Engine\Binaries\Win64\Engine\Binaries\Win64\UnrealInsights.exe</code>, then start application using CMD appending arguments:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>MyGame.exe -trace<span style="color:#f92672">=</span>cpu,gpu,counters -statnamedevents
-</span></span></code></pre></div><p>How to profile remoted Insights?<br>
-command:</p>
-<pre><code>TestServer.exe -tracehost=`your ip`
-</code></pre>
-<p>Q: How to enable Insights on Linux?<br>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> UCharacterMovementComponent<span style="color:#f92672">::</span>TickComponent(<span style="color:#66d9ef">float</span> DeltaTime, <span style="color:#66d9ef">enum</span> <span style="color:#a6e22e">ELevelTick</span> TickType, FActorComponentTickFunction <span style="color:#f92672">*</span>ThisTickFunction)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    SCOPED_NAMED_EVENT(UCharacterMovementComponent_TickComponent, FColor<span style="color:#f92672">::</span>Yellow);
+</span></span><span style="display:flex;"><span>    SCOPE_CYCLE_COUNTER(STAT_CharacterMovement);
+</span></span><span style="display:flex;"><span>    SCOPE_CYCLE_COUNTER(STAT_CharacterMovementTick);
+</span></span><span style="display:flex;"><span>    CSV_SCOPED_TIMING_STAT_EXCLUSIVE(CharacterMovement);
+</span></span><span style="display:flex;"><span>    ...
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Then start <code>Engine\Binaries\Win64\Engine\Binaries\Win64\UnrealInsights.exe</code>, then start application using CMD appending arguments:</p>
+<pre tabindex="0"><code class="language-Log" data-lang="Log">MyGame.exe -trace=default,counters -statnamedevents
+</code></pre><p>Profiling for remoted Insights:</p>
+<pre tabindex="0"><code class="language-Log" data-lang="Log">TestServer.exe -tracehost=`your ip`
+</code></pre><p>Q: How to enable Insights on Linux?<br>
 A: Add <code>PLATFORM_LINUX</code> in <code>Engine\Source\Runtime\TraceLog\Public\Trace\Config.h</code>.</p>
+<h5 id="scope_cycle_counter-usage">SCOPE_CYCLE_COUNTER Usage</h5>
+<p>Take <code>STAT_CharacterMovement</code> for example:</p>
+<ol>
+<li>Declare your Stat firstly (for more details, see: UE4\Engine\Source\Runtime\Engine\Public\EngineStats.h):
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>DECLARE_CYCLE_STAT_EXTERN(TEXT(<span style="color:#e6db74">&#34;Char Movement Total&#34;</span>), STAT_CharacterMovement, STATGROUP_Game, );
+</span></span></code></pre></div><div class="alert success ">
+  <p><code>STATGROUP_Game</code> means you can capture this counter using command <code>stat game</code>.<br>
+You can also add your customized stat command, such as <code>STATGROUP_MYTEST</code>.</p>
+</div></li>
+<li>Then add your Stat in your game source (see: CharacterMovementComponent.cpp):
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> UCharacterMovementComponent<span style="color:#f92672">::</span>TickComponent()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    SCOPE_CYCLE_COUNTER(STAT_CharacterMovement);
+</span></span><span style="display:flex;"><span>    ...
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div></li>
+<li>Then profiling your game using Insights, flag <code>counters</code> must be appended.
+<pre tabindex="0"><code class="language-Log" data-lang="Log">MyGame.exe -trace=default,counters
+</code></pre></li>
+<li>Finally, you can view the counter in Insights.
+<figure><img src="https://dawnarc.com/img/2016/20161016-%5BUE4%5DProgram%20Debugging%20Tricks%20Notes/%5BUE4%5DProgram%20Debugging%20Tricks%20Notes%20-%2002.gif">
+    </figure>
+</li>
+</ol>
+<p>You can also capture the counter from console command: <code>stat game</code>.
+<figure><img src="https://dawnarc.com/img/2016/20161016-%5BUE4%5DProgram%20Debugging%20Tricks%20Notes/%5BUE4%5DProgram%20Debugging%20Tricks%20Notes%20-%2001.gif">
+</figure>
+</p>
+<p>References:<br>
+<a href="https://blog.csdn.net/qq_29523119/article/details/123606732">https://blog.csdn.net/qq_29523119/article/details/123606732</a><br>
+<a href="https://blog.csdn.net/wmy19890322/article/details/131944569">https://blog.csdn.net/wmy19890322/article/details/131944569</a></p>
 <h5 id="how-to-print-call-stack-in-log">How to print call stack in log</h5>
-<pre><code>FDebug::DumpStackTraceToLog() 
-</code></pre>
-<p>Origin:How to print callstack into log ?<br>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>FDebug<span style="color:#f92672">::</span>DumpStackTraceToLog() 
+</span></span></code></pre></div><p>Origin:How to print callstack into log ?<br>
 <a href="https://answers.unrealengine.com/questions/446990/how-to-print-callstack-into-log.html">https://answers.unrealengine.com/questions/446990/how-to-print-callstack-into-log.html</a></p>
 <h5 id="how-to-use-insights-on-android">How to use Insights on Android</h5>
 <p>Using Insights on Android (UE4.24 or later)<br>
