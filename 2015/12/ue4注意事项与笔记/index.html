@@ -373,8 +373,6 @@ File -&gt; New C++ Class -&gt; 选择None，然后即可创建自己C++代码</p
 <p>我的windows10上遇到的奇怪问题有：</p>
 <p>(1)，项目自定义的GameMode没生效，进游戏是默认的自由摄像机控制器。这个问题我没有重新建工程，而是把level删掉重新建了一次。</p>
 <p>(2)，打包安卓Android部署时，提示错误：DistributionSigning settings are not all set. Check the DistributionSetting</p>
-<p>【2016-05-15】<br>
-如果项目中使用了LoadClass<!-- raw HTML omitted -->，那么蓝图相关的class构造函数中不要执行和实例化对象相关的操作，因为当执行LoadClass时也会把对应class的构造函数执行一遍（即使我们没有手动执行spawn或者create等函数，原因是LoadClass执行了LoadObject，而LoadObject内部又会执行ConstructorHelpers::FObjectFinder()，所以会触发class的构造函数，比如自己新建了一个UserWidget class，这个class的默认构造函数会在LoadClass时被执行一次），建议将初始化操作放在Initialize、BeginPlay等函数中。</p>
 <p>【2016-05-17】<br>
 内存溢出导致的问题：在用FString拼接字符串的时候，抛了一个异常，但是相同的代码在另一个地方是正常的，两个地方都是非GameThread，崩掉的位置发在调用FString::FromInt()。后来用itoa代替就正常了。很可能是逻辑代码有内存溢出的bug。</p>
 <p>【2016-06-02】<br>

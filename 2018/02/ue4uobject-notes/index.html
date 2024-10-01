@@ -439,6 +439,9 @@ Unreal Engine 4. Different ways to instantiate the object<br>
 </span></span><span style="display:flex;"><span>{
 </span></span></code></pre></div><p>Reference:<br>
 <a href="https://answers.unrealengine.com/questions/35953/view.html">https://answers.unrealengine.com/questions/35953/view.html</a></p>
+<h3 id="loadclass">LoadClass</h3>
+<h5 id="loadclass触发构造函数的问题">LoadClass触发构造函数的问题</h5>
+<p>如果项目中使用了LoadClass<!-- raw HTML omitted -->，那么蓝图相关的class构造函数中不要执行和实例化对象相关的操作，因为当执行LoadClass时也会把对应class的构造函数执行一遍（即使我们没有手动执行spawn或者create等函数，原因是LoadClass执行了LoadObject，而LoadObject内部又会执行ConstructorHelpers::FObjectFinder()，所以会触发class的构造函数，比如自己新建了一个UserWidget class，这个class的默认构造函数会在LoadClass时被执行一次），建议将初始化操作放在Initialize、BeginPlay等函数中。</p>
 <h3 id="config-ini-file">Config (ini file)</h3>
 <h5 id="how-to-add-gui-for-custom-ini-file-in-project-settings">How to add GUI for custom ini file in Project Settings</h5>
 <p>It&rsquo;s much easier to create custom project settings using <a href="https://www.tomlooman.com/unreal-engine-developer-settings/">DeveloperSettings (Custom ‘Project Settings’)</a>, example:</p>

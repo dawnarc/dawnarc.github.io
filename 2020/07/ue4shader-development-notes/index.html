@@ -13,18 +13,18 @@
 <meta name="generator" content="Hugo 0.132.2 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Wang Aiguo">
 <meta name="keywords" content="UE4, Shader, Development">
-<meta name="description" content="Keywords: UE4, Shader Development, Material Optimization">
+<meta name="description" content="Keywords: UE4, Shader Development, Material Optimization, Shader Debugging">
 
 
-<meta property="og:description" content="Keywords: UE4, Shader Development, Material Optimization">
+<meta property="og:description" content="Keywords: UE4, Shader Development, Material Optimization, Shader Debugging">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[UE4]Shader Development Notes">
 <meta name="twitter:title" content="[UE4]Shader Development Notes">
 <meta property="og:url" content="https://dawnarc.com/2020/07/ue4shader-development-notes/">
 <meta property="twitter:url" content="https://dawnarc.com/2020/07/ue4shader-development-notes/">
 <meta property="og:site_name" content="玄冬Wong">
-<meta property="og:description" content="Keywords: UE4, Shader Development, Material Optimization">
-<meta name="twitter:description" content="Keywords: UE4, Shader Development, Material Optimization">
+<meta property="og:description" content="Keywords: UE4, Shader Development, Material Optimization, Shader Debugging">
+<meta name="twitter:description" content="Keywords: UE4, Shader Development, Material Optimization, Shader Debugging">
 <meta property="og:locale" content="en-us">
 
   
@@ -362,7 +362,7 @@
                 <script>
                      (adsbygoogle = window.adsbygoogle || []).push({});
                 </script>
-              <p>Keywords: UE4, Shader Development, Material Optimization</p>
+              <p>Keywords: UE4, Shader Development, Material Optimization, Shader Debugging</p>
 <h3 id="common-case">Common Case</h3>
 <h5 id="environment-setup">Environment Setup</h5>
 <p>1, Set <code>LoadingPhase</code> as <code>PostConfigInit</code>, default is <code>Default</code>.<br>
@@ -479,6 +479,43 @@ r.DumpShaderDebugShortNames=1
 </div>
 Then statistics data output to directory: <code>[MyProj]/Saved/MaterialStats/*.csv</code>.<br>
 UE4&rsquo;s cook command only output sum of shader count, UE5&rsquo;s command output shader count and shader type.</p>
+<h5 id="how-to-recompile-shaders-after-usf-was-modifed">How to recompile shaders after .usf was modifed</h5>
+<div class="alert warning ">
+  <p>Shaders will not take effect directly when changed code in .usf source file, need to run console command to fire shader recompilation manually.<br>
+The prerequisite is to turn on <code>r.ShaderDevelopmentMode=1</code> in ConsoleVariables.ini.</p>
+</div>
+<p>Console command:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Text" data-lang="Text"><span style="display:flex;"><span>RecompileShaders changed
+</span></span></code></pre></div><h5 id="shader-compilation">Shader Compilation</h5>
+<p>Incredibuild may struggle with remote connections and builds may end up slower with it enabled.<br>
+You can disable Incredibuild in Engine/Config/ConsoleVariables.ini:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#75715e">; r.XGEShaderCompile is now enabled by default in source. Uncomment to disable XGE shader compilation.</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">r.XGEShaderCompile</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">0</span>
+</span></span></code></pre></div><p>Origin: <a href="https://forums.unrealengine.com/t/work-from-home-disable-xge-incredibuild/141160">https://forums.unrealengine.com/t/work-from-home-disable-xge-incredibuild/141160</a></p>
+<h5 id="shader-debugging-ue5">Shader Debugging (UE5)</h5>
+<p>Edit Engine/Config/ConsoleVariables.ini and uncomment these lines:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#75715e">; Uncomment to get detailed logs on shader compiles and the opportunity to retry on errors</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">r.ShaderDevelopmentMode</span><span style="color:#f92672">=</span><span style="color:#e6db74">1</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">; Uncomment when running with a graphical debugger (but not when profiling)</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">r.Shaders.Optimize</span><span style="color:#f92672">=</span><span style="color:#e6db74">0</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">; When this is enabled, shaders will have extra debugging info. This could change patch sizes, uniqueness, etc and will recompile the shaders</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">r.Shaders.Symbols</span><span style="color:#f92672">=</span><span style="color:#e6db74">1</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">; When this is enabled, ShaderName field of FRHIShader will be populated (Development and Debug builds only)</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">r.Shaders.ExtraData</span><span style="color:#f92672">=</span><span style="color:#e6db74">1</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">; Uncomment to skip shader compression. Can save a significant time when using debug shaders.</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">r.Shaders.SkipCompression</span><span style="color:#f92672">=</span><span style="color:#e6db74">1</span>
+</span></span></code></pre></div><div class="alert warning ">
+  <p>For packaged builds, disable IoStore (as it doesn&rsquo;t support shader symbol files) and EOS overlay (conflicts with RenderDoc&rsquo;s DirectX hooks).</p>
+</div>
+<p>For more details, see: <a href="https://dawnarc.com/2024/05/graphicspix-on-ue5-notes/#shader-debugging-in-pix">Shader Debugging in PIX</a></p>
+<h5 id="issueue5-virtual-shader-source-file-name-should-be-absolute-from-the-virtual-root-directory">Issue(UE5): Virtual shader source file name should be absolute from the virtual root directory</h5>
+<p>Error on building:</p>
+<pre tabindex="0"><code class="language-Log" data-lang="Log">UATHelper: Packaging (Windows): LogShaders: Error: Virtual shader source file name &#34;D:\Engine\Private\BasePassPixelShader.usf.intermediate.hlsl&#34; should be absolute from the virtual root directory &#34;/&#34;.
+UATHelper: Packaging (Windows): LogShaders: Error: Backslashes are not permitted in virtual shader source file name &#34;D:\Engine\Private\BasePassPixelShader.usf.intermediate.hlsl&#34;
+UATHelper: Packaging (Windows): LogShaders: Error: Extension on virtual shader source file name &#34;D:\Engine\Private\BasePassPixelShader.usf.intermediate.hlsl&#34; is wrong. Only .usf or .ush allowed.
+</code></pre><p>Solution:<br>
+Uncheck SM5 (DirectX 11) in Project Settings, using SM6 (DirectX 12) instead.</p>
 <h3 id="references">References</h3>
 <h5 id="official-documents">Official Documents</h5>
 <p><a href="https://docs.unrealengine.com/4.27/en-US/ProgrammingAndScripting/Rendering/ShaderDevelopment/">Shader Development</a><br>

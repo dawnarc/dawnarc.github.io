@@ -384,12 +384,11 @@ git commit -m &quot;fix&quot;
 <p>Origin:<br>
 <a href="https://stackoverflow.com/a/55888099/1645289">https://stackoverflow.com/a/55888099/1645289</a></p>
 <p>3, Remove file</p>
-<pre><code>#git rm --cached file1.txt    #remove file from remote, but keep file in local.
-git rm file1.txt    #remove file from both remote and local.
-git commit -m &quot;delete file aaa&quot;
-git push origin master
-</code></pre>
-<p>4, abort merge</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e">#git rm --cached file1.txt    #remove file from remote, but keep file in local.</span>
+</span></span><span style="display:flex;"><span>git rm file1.txt    <span style="color:#75715e">#remove file from both remote and local.</span>
+</span></span><span style="display:flex;"><span>git commit -m <span style="color:#e6db74">&#34;delete file aaa&#34;</span>
+</span></span><span style="display:flex;"><span>git push origin master
+</span></span></code></pre></div><p>4, abort merge</p>
 <pre><code>git merge --abort
 </code></pre>
 <p>5, Hard reset of a single file (discard local file changes)</p>
@@ -399,10 +398,9 @@ git push origin master
 <pre><code>git reset --hard origin/master
 </code></pre>
 <p>7, Change connection from SSH to HTTPS</p>
-<pre><code>git remote set-url origin https://...
-git remote set-url --push origin https://...
-</code></pre>
-<p>Reference:<br>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>git remote set-url origin https://...
+</span></span><span style="display:flex;"><span>git remote set-url --push origin https://...
+</span></span></code></pre></div><p>Reference:<br>
 <a href="https://stackoverflow.com/a/30683599/1645289">https://stackoverflow.com/a/30683599/1645289</a></p>
 <h5 id="clone-only-one-branch-without-history">Clone only one branch without history</h5>
 <p><code>git clone --depth 1 --branch &lt;branch&gt; url</code></p>
@@ -484,63 +482,70 @@ Make sure master is up to date first, and stash changed files, then execute <cod
 </span></span><span style="display:flex;"><span>git branch --all
 </span></span></code></pre></div><p>Origin:<br>
 <a href="https://stackoverflow.com/a/59441804/1645289">https://stackoverflow.com/a/59441804/1645289</a></p>
+<h5 id="cherry-pick">cherry-pick</h5>
+<p>Merge single commits:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>git cherry-pick commit_id
+</span></span></code></pre></div><p>Merge multiple commits:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>git cherry-pick commit_01 commit_02 commit_03
+</span></span></code></pre></div><p>Merge a range of commits:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#75715e"># NOT including the commit_01</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">git cherry-pick commit_01..commit_09</span>
+</span></span></code></pre></div><p>If there&rsquo;re some conflicts where merge commitment, need to add or remove conflict files and continue after the conflict resolved.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>git add/rm &lt;conflict file path&gt;
+</span></span><span style="display:flex;"><span>git cherry-pick --continue
+</span></span></code></pre></div><p>Reference: <a href="https://stackoverflow.com/a/69472178/1645289">https://stackoverflow.com/a/69472178/1645289</a></p>
 <h3 id="rollback-commits">Rollback Commits</h3>
 <h5 id="hard-delete-unpublished-commits">Hard delete unpublished commits</h5>
-<pre><code># This will destroy any local modifications.
-# Don't do it if you have uncommitted work you want to keep.
-git reset --hard 0d1d7fc32
-
-# Alternatively, if there's work to keep:
-git stash
-git reset --hard 0d1d7fc32
-git stash pop
-# This saves the modifications, then reapplies that patch after resetting.
-# You could get merge conflicts, if you've modified things which were
-# changed since the commit you reset to.
-</code></pre>
-<p>How do I revert a Git repository to a previous commit?<br>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e"># This will destroy any local modifications.</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Don&#39;t do it if you have uncommitted work you want to keep.</span>
+</span></span><span style="display:flex;"><span>git reset --hard 0d1d7fc32
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Alternatively, if there&#39;s work to keep:</span>
+</span></span><span style="display:flex;"><span>git stash
+</span></span><span style="display:flex;"><span>git reset --hard 0d1d7fc32
+</span></span><span style="display:flex;"><span>git stash pop
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># This saves the modifications, then reapplies that patch after resetting.</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># You could get merge conflicts, if you&#39;ve modified things which were</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># changed since the commit you reset to.</span>
+</span></span></code></pre></div><p>How do I revert a Git repository to a previous commit?<br>
 <a href="https://stackoverflow.com/a/4114122/1645289">https://stackoverflow.com/a/4114122/1645289</a></p>
 <h5 id="undo-published-commits-with-new-commits">Undo published commits with new commits</h5>
-<pre><code># This will create three separate revert commits:
-git revert a867b4af 25eee4ca 0766c053
-
-# It also takes ranges. This will revert the last two commits:
-git revert HEAD~2..HEAD
-
-#Similarly, you can revert a range of commits using commit hashes (non inclusive of first hash):
-git revert 0d1d7fc..a867b4a
-
-# Reverting a merge commit
-git revert -m 1 &lt;merge_commit_sha&gt;
-
-# To get just one, you could use `rebase -i` to squash them afterwards
-# Or, you could do it manually (be sure to do this at top level of the repo)
-# get your index and work tree into the desired state, without changing HEAD:
-git checkout 0d1d7fc32 .
-
-# Then commit. Be sure and write a good message describing what you just did
-git commit
-</code></pre>
-<p>How do I revert a Git repository to a previous commit?<br>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e"># This will create three separate revert commits:</span>
+</span></span><span style="display:flex;"><span>git revert a867b4af 25eee4ca 0766c053
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># It also takes ranges. This will revert the last two commits:</span>
+</span></span><span style="display:flex;"><span>git revert HEAD~2..HEAD
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#Similarly, you can revert a range of commits using commit hashes (non inclusive of first hash):</span>
+</span></span><span style="display:flex;"><span>git revert 0d1d7fc..a867b4a
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Reverting a merge commit</span>
+</span></span><span style="display:flex;"><span>git revert -m <span style="color:#ae81ff">1</span> &lt;merge_commit_sha&gt;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># To get just one, you could use `rebase -i` to squash them afterwards</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Or, you could do it manually (be sure to do this at top level of the repo)</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># get your index and work tree into the desired state, without changing HEAD:</span>
+</span></span><span style="display:flex;"><span>git checkout 0d1d7fc32 .
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Then commit. Be sure and write a good message describing what you just did</span>
+</span></span><span style="display:flex;"><span>git commit
+</span></span></code></pre></div><p>How do I revert a Git repository to a previous commit?<br>
 <a href="https://stackoverflow.com/a/4114122/1645289">https://stackoverflow.com/a/4114122/1645289</a></p>
 <h5 id="other-ways">Other ways</h5>
 <p>1st way:</p>
-<pre><code>//revert back 3 commits
-git revert HEAD~3
-</code></pre>
-<p>2nd way:</p>
-<pre><code>//This will revert everything from the HEAD back to the commit hash, meaning it will recreate that commit state in the working tree as if every commit after `0766c053` had been walked back.
-git revert --no-commit 0766c053..HEAD
-git commit
-</code></pre>
-<p>This is a safe and easy way to rollback to a previous state. No history is destroyed, so it can be used for commits that have already been made public.<br>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>//revert back <span style="color:#ae81ff">3</span> commits
+</span></span><span style="display:flex;"><span>git revert HEAD~3
+</span></span></code></pre></div><p>2nd way:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e"># This will revert everything from the HEAD back to the commit hash, meaning it will recreate that commit state in the working tree as if every commit after `0766c053` had been walked back.</span>
+</span></span><span style="display:flex;"><span>git revert --no-commit 0766c053..HEAD
+</span></span><span style="display:flex;"><span>git commit
+</span></span></code></pre></div><p>This is a safe and easy way to rollback to a previous state. No history is destroyed, so it can be used for commits that have already been made public.<br>
 Origin:<br>
 <a href="https://stackoverflow.com/a/21718540/1645289">https://stackoverflow.com/a/21718540/1645289</a></p>
 <p>3rd way:</p>
-<pre><code>git revert --no-commit hash1 hash2
-git commit -m &quot;Message&quot;
-</code></pre>
-<h3 id="revert">Revert</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>git revert --no-commit hash1 hash2
+</span></span><span style="display:flex;"><span>git commit -m <span style="color:#e6db74">&#34;Message&#34;</span>
+</span></span></code></pre></div><h3 id="revert">Revert</h3>
 <h5 id="re-clone">Re-clone</h5>
 <pre><code>GIT=$(git rev-parse --show-toplevel)
 cd $GIT/..

@@ -384,11 +384,11 @@
 </ul>
 <p>Insights command:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Text" data-lang="Text"><span style="display:flex;"><span>MyGameSample\Binaries\Win64\MyGameSample.exe -trace=default,rdg
-</span></span></code></pre></div><h5 id="pass-and-dispatch">Pass and Dispatch</h5>
-<p>Relationship between Pass and Dispatch:</p>
+</span></span></code></pre></div><h5 id="pass-and-dispatch-computeshader">Pass and Dispatch (ComputeShader)</h5>
+<p>Relationship between Pass and Dispatch, take Compute Shader as example:</p>
 <ul>
 <li>Pass was created and inserted into queue in the RenderThread, this&rsquo;s the main job of RDG.</li>
-<li>Take Compute Shader as example, the input data of Pass was composed in the async threads of Task Graph, when input data was ready the RHIThread consume and execute (Dispatch or IndrectDispatch) these passes which were produced in RenderThread.</li>
+<li>The input data of Pass was composed in the async threads of Task Graph, when input data was ready the RHIThread consume and execute (Dispatch or IndirectDispatch) these passes which were produced in RenderThread.</li>
 <li>Most passes cannot be merged, especially in forward shading, so one Pass represents to one Dispatch in most situations.</li>
 </ul>
 <h5 id="renderthread-addpass">RenderThread: AddPass</h5>
@@ -415,7 +415,7 @@ UnrealEditor-RenderCore.dll!FRenderingThread::Run() Line 564
 UnrealEditor-Core.dll!FRunnableThreadWin::Run() Line 149
 UnrealEditor-Core.dll!FRunnableThreadWin::GuardedRun() Line 71
 </code></pre><h5 id="async-task-threadbackground-worker-after-the-calculation-of-input-data-fire-the-dispath-on-renderthread">Async Task Thread(Background Worker): After the calculation of input data, fire the Dispath on RenderThread</h5>
-<p>Compose the input data (texture that can be sampled) in async thread, then return into RenderThread to execute the pass (Dispatch or IndrectDispatch):</p>
+<p>Compose the input data (e.g. textures that can be sampled) in async thread, then return into RenderThread to execute the pass (Dispatch or IndrectDispatch):</p>
 <pre tabindex="0"><code>UnrealEditor-HairStrandsCore.dll!FComputeShaderUtils::Dispatch&lt;FClearVelocityGridCS&gt;(FRHIComputeCommandList &amp; RHICmdList, const TShaderRefBase&lt;FClearVelocityGridCS,FShaderMapPointerTable&gt; &amp; ComputeShader, const FShaderParametersMetadata * ParametersMetadata, const FClearVelocityGridCS::FParameters &amp; Parameters, UE::Math::TIntVector3&lt;int&gt; GroupCount) Line 498
 [Inline Frame] UnrealEditor-HairStrandsCore.dll!FComputeShaderUtils::AddPass::__l2::&lt;lambda_1&gt;::operator()(FRHIComputeCommandList &amp;) Line 571
 [Inline Frame] UnrealEditor-HairStrandsCore.dll!TRDGLambdaPass&lt;void,`FComputeShaderUtils::AddPass&lt;FClearVelocityGridCS&gt;&#39;::`2&#39;::&lt;lambda_1&gt;&gt;::ExecuteLambdaFunc(FRHIComputeCommandList &amp;) Line 607

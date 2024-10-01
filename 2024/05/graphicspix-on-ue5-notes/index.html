@@ -13,18 +13,18 @@
 <meta name="generator" content="Hugo 0.132.2 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Wang Aiguo">
 <meta name="keywords" content="Graphics, PIX, Profiling">
-<meta name="description" content="keywords: Graphics, PIX, Profiling, GPU Capture, Wave Distribution">
+<meta name="description" content="keywords: Graphics, PIX, Profiling, GPU Capture, Wave Distribution, UE5 Shader Debugging">
 
 
-<meta property="og:description" content="keywords: Graphics, PIX, Profiling, GPU Capture, Wave Distribution">
+<meta property="og:description" content="keywords: Graphics, PIX, Profiling, GPU Capture, Wave Distribution, UE5 Shader Debugging">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[Graphics]PIX on UE5 Notes">
 <meta name="twitter:title" content="[Graphics]PIX on UE5 Notes">
 <meta property="og:url" content="https://dawnarc.com/2024/05/graphicspix-on-ue5-notes/">
 <meta property="twitter:url" content="https://dawnarc.com/2024/05/graphicspix-on-ue5-notes/">
 <meta property="og:site_name" content="玄冬Wong">
-<meta property="og:description" content="keywords: Graphics, PIX, Profiling, GPU Capture, Wave Distribution">
-<meta name="twitter:description" content="keywords: Graphics, PIX, Profiling, GPU Capture, Wave Distribution">
+<meta property="og:description" content="keywords: Graphics, PIX, Profiling, GPU Capture, Wave Distribution, UE5 Shader Debugging">
+<meta name="twitter:description" content="keywords: Graphics, PIX, Profiling, GPU Capture, Wave Distribution, UE5 Shader Debugging">
 <meta property="og:locale" content="en-us">
 
   
@@ -362,20 +362,29 @@
                 <script>
                      (adsbygoogle = window.adsbygoogle || []).push({});
                 </script>
-              <p>keywords: Graphics, PIX, Profiling, GPU Capture, Wave Distribution</p>
+              <p>keywords: Graphics, PIX, Profiling, GPU Capture, Wave Distribution, UE5 Shader Debugging</p>
 <h5 id="gpu-frame-capture">GPU Frame Capture</h5>
 <div class="alert warning ">
-  <p>If capture GPU Frame from the PIX GUI on local machine, even if the TDR detection has been turned off, sometimes PIX GUI may crash while parsing data. PIX recommends analysising remotely.<br>
-To address this issue on local machine, you should do profiling using programmatic API.</p>
+  <p>If capture GPU Frame from the PIX GUI on local machine, even if the TDR detection has been turned off, sometimes PIX GUI may crash while parsing data. PIX recommends analysising remotely.</p>
 </div>
-<p>Steps:<br>
+<p><figure><img src="https://dawnarc.com/img/2024/20240526-%5BGraphics%5DPIX%20on%20UE5%20Notes/%5BGraphics%5DPIX%20on%20UE5%20Notes%20-%2010.png">
+</figure>
+
+<figure><img src="https://dawnarc.com/img/2024/20240526-%5BGraphics%5DPIX%20on%20UE5%20Notes/%5BGraphics%5DPIX%20on%20UE5%20Notes%20-%2011.png">
+</figure>
+
+<figure><img src="https://dawnarc.com/img/2024/20240526-%5BGraphics%5DPIX%20on%20UE5%20Notes/%5BGraphics%5DPIX%20on%20UE5%20Notes%20-%2012.png">
+</figure>
+</p>
+<p>To address this issue on local machine, you should do profiling using programmatic API.<br>
+Steps:<br>
 Replace the line <code>PIXBeginCapture2()</code> with <code>PIXGpuCaptureNextFrames()</code> since the output file (*.wpix) can&rsquo;t be open (cause a crash when parsing the data):</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C" data-lang="C"><span style="display:flex;"><span><span style="color:#a6e22e">PIXGpuCaptureNextFrames</span>(<span style="color:#a6e22e">TEXT</span>(<span style="color:#e6db74">&#34;E:/pixtest.wpix&#34;</span>), <span style="color:#ae81ff">1</span>);
 </span></span></code></pre></div><figure><img src="https://dawnarc.com/img/2024/20240526-%5BGraphics%5DPIX%20on%20UE5%20Notes/%5BGraphics%5DPIX%20on%20UE5%20Notes%20-%2001.gif">
 </figure>
 
 <p>Then build game in Development, and start game with argument:</p>
-<pre tabindex="0"><code>MyGame.exe -attachPIX
+<pre tabindex="0"><code>MyGame.exe -attachPIX -d3ddebug
 </code></pre><p>Then run command <code>pix.GpuCaptureFrame</code> in console at runtime, after a while of hitching, finally the data file will be outputed in directory <code>E:/</code>.</p>
 <p>Open it and start analysising. Overview of result:
 <figure><img src="https://dawnarc.com/img/2024/20240526-%5BGraphics%5DPIX%20on%20UE5%20Notes/%5BGraphics%5DPIX%20on%20UE5%20Notes%20-%2002.gif">
@@ -392,6 +401,41 @@ Replace the line <code>PIXBeginCapture2()</code> with <code>PIXGpuCaptureNextFra
 <div class="alert warning ">
   <p>There&rsquo;s a switch named <code>r.D3D12.AutoAttachPIX</code> in UE5/Engine/Config/ConsoleVariables.ini, it&rsquo;s just used for profiling from programmatic API, not PIX GUI.</p>
 </div>
+<h5 id="shader-debugging-in-pix">Shader Debugging in PIX</h5>
+<p>1, Edit Engine/Config/ConsoleVariables.ini and uncomment follows:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#75715e">; Uncomment to get detailed logs on shader compiles and the opportunity to retry on errors</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">r.ShaderDevelopmentMode</span><span style="color:#f92672">=</span><span style="color:#e6db74">1</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">; Uncomment when running with a graphical debugger (but not when profiling)</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">r.Shaders.Optimize</span><span style="color:#f92672">=</span><span style="color:#e6db74">0</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">; When this is enabled, shaders will have extra debugging info. This could change patch sizes, uniqueness, etc and will recompile the shaders</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">r.Shaders.Symbols</span><span style="color:#f92672">=</span><span style="color:#e6db74">1</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">; When this is enabled, ShaderName field of FRHIShader will be populated (Development and Debug builds only)</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">r.Shaders.ExtraData</span><span style="color:#f92672">=</span><span style="color:#e6db74">1</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">; Uncomment to skip shader compression. Can save a significant time when using debug shaders.</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">r.Shaders.SkipCompression</span><span style="color:#f92672">=</span><span style="color:#e6db74">1</span>
+</span></span></code></pre></div><p>2, Disable IoStore: Project Settings -&gt; Packaging -&gt; Uncheck <code>Use Io Store</code>.</p>
+<p>3, Build package in Development mode.</p>
+<p>4, Catpure GPU frame in PIX (start game with argument: <code>-d3ddebug</code>).</p>
+<p>4, Start analysis, and select target profiling marker in the Pipeline view.
+<figure><img src="https://dawnarc.com/img/2024/20240526-%5BGraphics%5DPIX%20on%20UE5%20Notes/%5BGraphics%5DPIX%20on%20UE5%20Notes%20-%2006.gif">
+</figure>
+</p>
+<p>5, Select target buffer or texture, then pick the target pixel.
+<figure><img src="https://dawnarc.com/img/2024/20240526-%5BGraphics%5DPIX%20on%20UE5%20Notes/%5BGraphics%5DPIX%20on%20UE5%20Notes%20-%2007.gif">
+</figure>
+</p>
+<p>6, Then click Debug Pixel.
+<figure><img src="https://dawnarc.com/img/2024/20240526-%5BGraphics%5DPIX%20on%20UE5%20Notes/%5BGraphics%5DPIX%20on%20UE5%20Notes%20-%2008.gif">
+</figure>
+</p>
+<p>7, After a while, you can enter the process of shader debugging, hit F11 to step into function, hit F10 to step over.
+<figure><img src="https://dawnarc.com/img/2024/20240526-%5BGraphics%5DPIX%20on%20UE5%20Notes/%5BGraphics%5DPIX%20on%20UE5%20Notes%20-%2009.gif">
+</figure>
+</p>
+<p>References:<br>
+<a href="https://dev.epicgames.com/community/learning/tutorials/dXl5/advanced-debugging-in-unreal-engine#gpu%E2%80%93debuggingshaders">GPU – Debugging Shaders - dev.epicgames.com</a><br>
+<a href="https://dev.epicgames.com/documentation/en-us/unreal-engine/shader-debugging-workflows-unreal-engine">Shader Debugging Workflows - dev.epicgames.com</a></p>
 <h5 id="gpu-timing-capture">GPU Timing Capture</h5>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C" data-lang="C"><span style="display:flex;"><span><span style="color:#75715e">//
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e">//  timing capture
@@ -417,6 +461,8 @@ Check <code>Force D3D11On12</code>.
 </figure>
 </p>
 <h5 id="references">References</h5>
+<p>GPU Captures (<span class="highlight-text green">Recommended</span>)<br>
+<a href="https://devblogs.microsoft.com/pix/gpu-captures/">https://devblogs.microsoft.com/pix/gpu-captures/</a></p>
 <p>Hardware Counters in GPU Captures<br>
 <a href="https://devblogs.microsoft.com/pix/hardware-counters-in-gpu-captures/">https://devblogs.microsoft.com/pix/hardware-counters-in-gpu-captures/</a></p>
 <p>Occupancy explained (AMD RGP Limiters Graph)<br>
