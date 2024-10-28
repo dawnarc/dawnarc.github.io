@@ -365,7 +365,7 @@
               <p>keywords: Graphics, PIX, Profiling, GPU Capture, Wave Distribution, UE5 Shader Debugging</p>
 <h5 id="gpu-frame-capture">GPU Frame Capture</h5>
 <div class="alert warning ">
-  <p>If capture GPU Frame from the PIX GUI on local machine, even if the TDR detection has been turned off, sometimes PIX GUI may crash while parsing data. PIX recommends analysising remotely.</p>
+  <p>If capture GPU Frame from the PIX GUI on local machine, even if the TDR detection has been turned off, sometimes (depended on GPU driver) PIX GUI may crash while parsing data. PIX recommends analysising remotely.</p>
 </div>
 <p><figure><img src="https://dawnarc.com/img/2024/20240526-%5BGraphics%5DPIX%20on%20UE5%20Notes/%5BGraphics%5DPIX%20on%20UE5%20Notes%20-%2010.png">
 </figure>
@@ -415,9 +415,15 @@ Replace the line <code>PIXBeginCapture2()</code> with <code>PIXGpuCaptureNextFra
 </span></span><span style="display:flex;"><span><span style="color:#75715e">; Uncomment to skip shader compression. Can save a significant time when using debug shaders.</span>
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">r.Shaders.SkipCompression</span><span style="color:#f92672">=</span><span style="color:#e6db74">1</span>
 </span></span></code></pre></div><p>2, Disable IoStore: Project Settings -&gt; Packaging -&gt; Uncheck <code>Use Io Store</code>.</p>
-<p>3, Build package in Development mode.</p>
-<p>4, Catpure GPU frame in PIX (start game with argument: <code>-d3ddebug</code>).</p>
-<p>4, Start analysis, and select target profiling marker in the Pipeline view.
+<p>3, Build package in Development mode.
+<div class="alert warning ">
+  <p>Make sure there is enough space on the RAM, 128GB was recommended, since the building for shader debugging consumes huge RAM that much more than normal building.</p>
+</div></p>
+<p>The shader source files (bytecode packaged for HLSL) output path (SM6 example) which will be packed into pak:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Text" data-lang="Text"><span style="display:flex;"><span>MyGame\Saved\Shaders\PCD3D_SM6-PCD3D_SM6\ShaderCode-MyGame-PCD3D_SM6-PCD3D_SM6.ushaderbytecode
+</span></span><span style="display:flex;"><span>MyGame\Saved\Shaders\PCD3D_SM6-PCD3D_SM6\ShaderCode-Global-PCD3D_SM6-PCD3D_SM6.ushaderbytecode
+</span></span></code></pre></div><p>4, Catpure GPU frame in PIX (start game with argument: <code>-d3ddebug</code>).</p>
+<p>4, Start analysis, and select target marker (GPU validation event) in the Pipeline view.
 <figure><img src="https://dawnarc.com/img/2024/20240526-%5BGraphics%5DPIX%20on%20UE5%20Notes/%5BGraphics%5DPIX%20on%20UE5%20Notes%20-%2006.gif">
 </figure>
 </p>

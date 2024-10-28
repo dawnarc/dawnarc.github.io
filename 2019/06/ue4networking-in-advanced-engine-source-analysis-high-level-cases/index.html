@@ -414,64 +414,67 @@ e.g. If there&rsquo;s a requirement that make a decision to tell Client which Se
 <p>Custom Struct Serialization for Networking in Unreal Engine<br>
 <a href="http://www.aclockworkberry.com/custom-struct-serialization-for-networking-in-unreal-engine/">http://www.aclockworkberry.com/custom-struct-serialization-for-networking-in-unreal-engine/</a></p>
 <h3 id="engine-source-analysis-for-networking">Engine Source Analysis for Networking</h3>
-<h5 id="properties-used-for-replication-in-common">Properties used for Replication in Common</h5>
-<pre><code>/** Square of the max distance from the client's viewpoint that this actor is relevant and will be replicated. */
-UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category=Replication)
-float NetCullDistanceSquared;   
-
-/** Internal - used by UNetDriver */
-UPROPERTY(Transient)
-int32 NetTag;
-
-/** How often (per second) this actor will be considered for replication, used to determine NetUpdateTime */
-UPROPERTY(Category=Replication, EditDefaultsOnly, BlueprintReadWrite)
-float NetUpdateFrequency;
-
-/** Used to determine what rate to throttle down to when replicated properties are changing infrequently */
-UPROPERTY(Category=Replication, EditDefaultsOnly, BlueprintReadWrite)
-float MinNetUpdateFrequency;
-
-/** Priority for this actor when checking for replication in a low bandwidth or saturated situation, higher priority means it is more likely to replicate */
-UPROPERTY(Category=Replication, EditDefaultsOnly, BlueprintReadWrite)
-float NetPriority;
-</code></pre>
-<h5 id="how-does-engine-check-if-actor-is-relevant-to-connection">How does engine check if Actor is relevant to connection</h5>
+<h5 id="main-source-files-for-replication">Main source files for replication</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Text" data-lang="Text"><span style="display:flex;"><span>Runtime\Engine\Private\ActorReplication.cpp
+</span></span><span style="display:flex;"><span>Runtime\Engine\Private\Replication.cpp
+</span></span><span style="display:flex;"><span>Runtime\Engine\Public\Net\DataReplication.cpp
+</span></span><span style="display:flex;"><span>Engine\Plugins\Messaging\TcpMessaging\Source\TcpMessaging\Private\TcpMessagingModule.cpp
+</span></span></code></pre></div><h5 id="properties-used-for-replication-in-common">Properties used for Replication in Common</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">/** Square of the max distance from the client&#39;s viewpoint that this actor is relevant and will be replicated. */</span>
+</span></span><span style="display:flex;"><span>UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category<span style="color:#f92672">=</span>Replication)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">float</span> NetCullDistanceSquared;   
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">/** Internal - used by UNetDriver */</span>
+</span></span><span style="display:flex;"><span>UPROPERTY(Transient)
+</span></span><span style="display:flex;"><span>int32 NetTag;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">/** How often (per second) this actor will be considered for replication, used to determine NetUpdateTime */</span>
+</span></span><span style="display:flex;"><span>UPROPERTY(Category<span style="color:#f92672">=</span>Replication, EditDefaultsOnly, BlueprintReadWrite)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">float</span> NetUpdateFrequency;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">/** Used to determine what rate to throttle down to when replicated properties are changing infrequently */</span>
+</span></span><span style="display:flex;"><span>UPROPERTY(Category<span style="color:#f92672">=</span>Replication, EditDefaultsOnly, BlueprintReadWrite)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">float</span> MinNetUpdateFrequency;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">/** Priority for this actor when checking for replication in a low bandwidth or saturated situation, higher priority means it is more likely to replicate */</span>
+</span></span><span style="display:flex;"><span>UPROPERTY(Category<span style="color:#f92672">=</span>Replication, EditDefaultsOnly, BlueprintReadWrite)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">float</span> NetPriority;
+</span></span></code></pre></div><h5 id="how-does-engine-check-if-actor-is-relevant-to-connection">How does engine check if Actor is relevant to connection</h5>
 <p>Critical Code:<br>
 Engine\Source\Runtime\Engine\Private\ActorReplication.cpp</p>
-<pre><code>bool AActor::IsNetRelevantFor(const AActor* RealViewer, const AActor* ViewTarget, const FVector&amp; SrcLocation) const
-{
-    if (bAlwaysRelevant || IsOwnedBy(ViewTarget) || IsOwnedBy(RealViewer) || this == ViewTarget || ViewTarget == Instigator)
-    {
-        return true;
-    }
-    else if ( bNetUseOwnerRelevancy &amp;&amp; Owner)
-    {
-        return Owner-&gt;IsNetRelevantFor(RealViewer, ViewTarget, SrcLocation);
-    }
-    else if ( bOnlyRelevantToOwner )
-    {
-        return false;
-    }
-    else if ( RootComponent &amp;&amp; RootComponent-&gt;GetAttachParent() &amp;&amp; RootComponent-&gt;GetAttachParent()-&gt;GetOwner() &amp;&amp; (Cast&lt;USkeletalMeshComponent&gt;(RootComponent-&gt;GetAttachParent()) || (RootComponent-&gt;GetAttachParent()-&gt;GetOwner() == Owner)) )
-    {
-        return RootComponent-&gt;GetAttachParent()-&gt;GetOwner()-&gt;IsNetRelevantFor(RealViewer, ViewTarget, SrcLocation);
-    }
-    else if( bHidden &amp;&amp; (!RootComponent || !RootComponent-&gt;IsCollisionEnabled()) )
-    {
-        return false;
-    }
-
-    if (!RootComponent)
-    {
-        UE_LOG(LogNet, Warning, TEXT(&quot;Actor %s / %s has no root component in AActor::IsNetRelevantFor. (Make bAlwaysRelevant=true?)&quot;), *GetClass()-&gt;GetName(), *GetName() );
-        return false;
-    }
-
-    return !GetDefault&lt;AGameNetworkManager&gt;()-&gt;bUseDistanceBasedRelevancy ||
-            IsWithinNetRelevancyDistance(SrcLocation);
-}
-</code></pre>
-<p>Call Stack:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">bool</span> AActor<span style="color:#f92672">::</span>IsNetRelevantFor(<span style="color:#66d9ef">const</span> AActor<span style="color:#f92672">*</span> RealViewer, <span style="color:#66d9ef">const</span> AActor<span style="color:#f92672">*</span> ViewTarget, <span style="color:#66d9ef">const</span> FVector<span style="color:#f92672">&amp;</span> SrcLocation) <span style="color:#66d9ef">const</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (bAlwaysRelevant <span style="color:#f92672">||</span> IsOwnedBy(ViewTarget) <span style="color:#f92672">||</span> IsOwnedBy(RealViewer) <span style="color:#f92672">||</span> <span style="color:#66d9ef">this</span> <span style="color:#f92672">==</span> ViewTarget <span style="color:#f92672">||</span> ViewTarget <span style="color:#f92672">==</span> Instigator)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> true;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">else</span> <span style="color:#a6e22e">if</span> ( bNetUseOwnerRelevancy <span style="color:#f92672">&amp;&amp;</span> Owner)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> Owner<span style="color:#f92672">-&gt;</span>IsNetRelevantFor(RealViewer, ViewTarget, SrcLocation);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">else</span> <span style="color:#a6e22e">if</span> ( bOnlyRelevantToOwner )
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> false;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">else</span> <span style="color:#a6e22e">if</span> ( RootComponent <span style="color:#f92672">&amp;&amp;</span> RootComponent<span style="color:#f92672">-&gt;</span>GetAttachParent() <span style="color:#f92672">&amp;&amp;</span> RootComponent<span style="color:#f92672">-&gt;</span>GetAttachParent()<span style="color:#f92672">-&gt;</span>GetOwner() <span style="color:#f92672">&amp;&amp;</span> (Cast<span style="color:#f92672">&lt;</span>USkeletalMeshComponent<span style="color:#f92672">&gt;</span>(RootComponent<span style="color:#f92672">-&gt;</span>GetAttachParent()) <span style="color:#f92672">||</span> (RootComponent<span style="color:#f92672">-&gt;</span>GetAttachParent()<span style="color:#f92672">-&gt;</span>GetOwner() <span style="color:#f92672">==</span> Owner)) )
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> RootComponent<span style="color:#f92672">-&gt;</span>GetAttachParent()<span style="color:#f92672">-&gt;</span>GetOwner()<span style="color:#f92672">-&gt;</span>IsNetRelevantFor(RealViewer, ViewTarget, SrcLocation);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">else</span> <span style="color:#a6e22e">if</span>( bHidden <span style="color:#f92672">&amp;&amp;</span> (<span style="color:#f92672">!</span>RootComponent <span style="color:#f92672">||</span> <span style="color:#f92672">!</span>RootComponent<span style="color:#f92672">-&gt;</span>IsCollisionEnabled()) )
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> false;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span>RootComponent)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        UE_LOG(LogNet, Warning, TEXT(<span style="color:#e6db74">&#34;Actor %s / %s has no root component in AActor::IsNetRelevantFor. (Make bAlwaysRelevant=true?)&#34;</span>), <span style="color:#f92672">*</span>GetClass()<span style="color:#f92672">-&gt;</span>GetName(), <span style="color:#f92672">*</span>GetName() );
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> false;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#f92672">!</span>GetDefault<span style="color:#f92672">&lt;</span>AGameNetworkManager<span style="color:#f92672">&gt;</span>()<span style="color:#f92672">-&gt;</span>bUseDistanceBasedRelevancy <span style="color:#f92672">||</span>
+</span></span><span style="display:flex;"><span>            IsWithinNetRelevancyDistance(SrcLocation);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Call Stack:</p>
 <pre><code>UE4Editor-Engine.dll!AActor::IsNetRelevantFor(const AActor * RealViewer, const AActor * ViewTarget, const FVector &amp; SrcLocation) Line 320    C++
 [Inline Frame] UE4Editor-Engine.dll!IsActorRelevantToConnection(const AActor *) Line 3661    C++
 UE4Editor-Engine.dll!UNetDriver::ServerReplicateActors_PrioritizeActors(UNetConnection * Connection, const TArray&lt;FNetViewer,FDefaultAllocator&gt; &amp; ConnectionViewers, const TArray&lt;FNetworkObjectInfo *,FDefaultAllocator&gt; ConsiderList, const bool bCPUSaturated, FActorPriority * &amp; OutPriorityList, FActorPriority * * &amp; OutPriorityActors) Line 3780    C++

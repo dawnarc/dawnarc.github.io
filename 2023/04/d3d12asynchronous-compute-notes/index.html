@@ -363,6 +363,26 @@
                      (adsbygoogle = window.adsbygoogle || []).push({});
                 </script>
               <p>keywords: DirectX 12, Direct3D 12, D3D12, Vulkan, Asynchronous Compute, Async Compute</p>
+<h5 id="overview">Overview</h5>
+<p>Quoted from <a href="https://www.digitaltrends.com/computing/directx-12-vs-directx-11/">digitaltrends.com</a>:<br>
+Another significant change in DirectX 12 is parallel compute.  DirectX 11 handles serial operations, which means there’s a single queue of operations that execute in order. Parallel compute opens up the option for developers to make multiple calls at the same time, vastly improving the efficiency of operations.</p>
+<p>Similarly, DirectX 12 opens up the possibility of asynchronous operations. This is similar to parallel compute, but they’re not the same thing. Asynchronous compute allows your hardware to continue operations without waiting for another operation to complete. For example, your CPU can execute an introduction to receive textures from memory and move on to executing another function (like AI for a character) without waiting for that memory instruction to finish. This prioritization can shave minor bits of latency in thousands of places, making your games run much faster overall.</p>
+<h5 id="amd-card-is-better-then-nvidias-on-async-compute">AMD Card is better then Nvidia&rsquo;s on Async Compute</h5>
+<p>Quoted from <a href="https://www.reddit.com/r/pcgaming/comments/4s5zav/can_someone_help_me_understand_the_importance_of/">reddit.com</a>:<br>
+Firstly the topic at hand is hard to understand because people have confused 2 similar concepts. What AMD is better at is Asynchronous Shaders, which is different than Asynchronous Compute. With Async Shaders the GPU is not doing 2 things at once, and therefor not in parallel. What does this mean? AMD&rsquo;s GPU&rsquo;s have die space dedicated to ACE&rsquo;s these handle the switching between the tasks at a hardware level, this is called context switching.</p>
+<p>Context switching means interrupting one running thread, throwing the associated data in a cache, working on another thread. AMD (GCN) can do a quick context switch because it has a dedicated buffer (I forgot what they call it) so they can afford to run concurrent loads on a single CU (64 ALUs, or rather 4 16-wide vector units)</p>
+<p>NVIDIA cannot do this, instead they use dynamic load balancing (as opposed to static load balancing on MAXWELL) to repartition the SMs between compute and graphics when necessary This is my understanding at least. Async compute is simply a concept, the fact that AMD&rsquo;s implementation operates at the CU level does not make it better or worse, simply more suited for the architecture. for the record GCN can&rsquo;t do graphics and compute in parallel within one CU. I found this particularly strange when the issue exploded initially. Lots of people, well informed people, mistakenly claimed it is done in parallel. That is absurd. There&rsquo;s a context switch, it&rsquo;s fast, but it&rsquo;s a context switch. So it is not parallel. It is concurrent. Any parallelism would stem from work done on different CUs, exactly like on maxwell and pascal.</p>
+<p>TLDR:</p>
+<ul>
+<li>Async Compute = paradigm</li>
+<li>Async Shaders = AMD implementation</li>
+<li>AMD (GCN): concurrent graphics + compute within ONE CU</li>
+<li>NVIDIA (CUDA): concurrent graphics + compute within one GPC (5 SMs)</li>
+</ul>
+<p>Quoted from <a href="https://www.reddit.com/r/Amd/comments/18u0kyd/async_compute_nowadays/">reddit.com</a>:<br>
+Very much is, along with mesh shaders and other tech. It&rsquo;s why the GTX10 series cards have been falling behind GPUs that it handily beat before.</p>
+<p>In <a href="https://www.youtube.com/watch?v=q_k8TosMV80&amp;t=313s">Cyberpunk 2077</a> for example the GTX 1080 Ti is being beaten by a 2060 Super and 5700XT, something that would have been hard to imagine back during the DX11 days.</p>
+<p>Hardware Unboxed revisited the 1080 Ti back in 2021 and it was barely ahead of the 5700XT. I believe if they do a re-review today it might be behind even the 2060 Super.</p>
 <h5 id="documents">Documents</h5>
 <p>Advanced Graphics Tech: &ldquo;Async Compute: Deep Dive&rdquo; &amp; &ldquo;Raster Ordered Views and Conservative Rasterization&rdquo;<br>
 <a href="https://www.gdcvault.com/play/1024385/Advanced-Graphics-Tech-Async-Compute">https://www.gdcvault.com/play/1024385/Advanced-Graphics-Tech-Async-Compute</a></p>
@@ -374,6 +394,8 @@ Flex is a particle-based simulation library designed for real-time applications.
 <p><a href="https://www.khronos.org/assets/uploads/developers/library/2016-vulkan-devday-uk/9-Asynchonous-compute.pdf">Moving To Vulkan Asynchronous Compute</a></p>
 <p>Leveraging Asynchronous Queues for Concurrent Execution<br>
 <a href="https://gpuopen.com/learn/concurrent-execution-asynchronous-queues/">https://gpuopen.com/learn/concurrent-execution-asynchronous-queues/</a></p>
+<p>Optimizing the Graphics Pipeline with Compute, GDC 2016<br>
+<a href="https://www.slideshare.net/slideshow/optimizing-the-graphics-pipeline-with-compute-gdc-2016/59747720">https://www.slideshare.net/slideshow/optimizing-the-graphics-pipeline-with-compute-gdc-2016/59747720</a></p>
 <h5 id="examples">Examples</h5>
 <p>This sample demonstrates the use of asynchronous compute shaders (multi-engine) to simulate an n-body gravity system.<br>
 <a href="https://github.com/microsoft/DirectX-Graphics-Samples/tree/master/Samples/Desktop/D3D12nBodyGravity">https://github.com/microsoft/DirectX-Graphics-Samples/tree/master/Samples/Desktop/D3D12nBodyGravity</a><br>

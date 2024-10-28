@@ -370,6 +370,16 @@
 <li>Nvidia calls it a <a href="https://learn.microsoft.com/en-us/windows/win32/direct3darticles/directx-warp#what-is-warp">Warp</a></li>
 <li>AMD calls it a <a href="https://gpuopen.com/learn/occupancy-explained/">Wavefront</a></li>
 </ul>
+<p>Quoted from <a href="https://devblogs.microsoft.com/pix/gpu-captures/">GPU Occupancy (PIX GPU Captures)</a>:<br>
+On NVIDIA GPUs, in addition to timing data, PIX can gather information about shader execution within a single event.</p>
+<p>GPUs are usually constructed as a hierarchy of repeated blocks, where each level might share a resource. For example, an imaginary GPU might be structured like this:
+<figure><img src="https://dawnarc.com/img/2024/20240527-%5BVulkan%5DWave%20Programming%20%28Subgroup%29/%5BVulkan%5DWave%20Programming%20%28Subgroup%29%20-%2001.png">
+</figure>
+
+GPUs execute shaders by breaking up the shader work into waves (these are also called warps or wave fronts). In the above diagram, each blue block is capable of executing one wave. Each green block could execute up to four waves.</p>
+<p>As all the blues share a single set of registers, if a workload needs all the registers then only one wave at a time can execute in the green block. In this case the occupancy of the green block would be 1, out of a total possible occupancy of 4.</p>
+<p>At any point in time, all the green blocks may be executing different number of waves. Of the four green blocks above, one might be executing 3 waves, another 2 waves, and the remaining 1 wave. PIX boils all this data down to a single value – the maximum occupancy, which would be 3 in this example.</p>
+<p>This is presented in PIX in the Occupancy lane, which shows the maximum occupancy, separated by shader stage. This is an indication of how much work the GPU is able to do in parallel – higher bars show better GPU utilization.</p>
 <h5 id="documents">Documents</h5>
 <p>Wave Programming in D3D12 and Vulkan - GDC2017<br>
 <a href="https://gpuopen.com/wp-content/uploads/2017/07/GDC2017-Wave-Programming-D3D12-Vulkan.pdf">https://gpuopen.com/wp-content/uploads/2017/07/GDC2017-Wave-Programming-D3D12-Vulkan.pdf</a></p>

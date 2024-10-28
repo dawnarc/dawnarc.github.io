@@ -557,22 +557,21 @@ Engine\Source\Runtime\Engine\Private\UnrealEngine.cpp</p>
 <pre><code>stat Hitches    //或者stat DumpHitches 记录log文件
 </code></pre>
 <p>程序运行时一旦某帧耗时超过<code>t.HitchFrameTimeThreshold</code>指定的时长，则函数堆栈就会被打印出来。<br>
-例如，以下 hitchdump 显示LoadObject耗时较长（<code>Self</code>表示函数堆栈中上一级函数，即<code>LoadObject</code>，所占用耗时），则表示是加载资源导致顿卡</p>
-<pre><code>   477.514ms (   4)  -  Thread_4118_0 - GameThread - STATGROUP_Threads - STATCAT_Advanced
-     477.510ms (   2)  -  FrameTime - STAT_FrameTime - STATGROUP_Engine - STATCAT_Advanced
-       470.844ms (   1)  -  FrameTime - STAT_FrameTime - STATGROUP_Engine - STATCAT_Advanced
-         470.840ms (   1)  -  World Tick Time - STAT_WorldTickTime - STATGROUP_Game - STATCAT_Advanced
-           470.758ms (   5)  -  Tick Time - STAT_TickTime - STATGROUP_Game - STATCAT_Advanced
-             470.590ms (   2)  -  TG_PrePhysics - STAT_TG_PrePhysics - STATGROUP_TickGroups - STATCAT_Advanced
-               470.585ms (   2)  -  ReleaseTickGroup Block - STAT_ReleaseTickGroup_Block - STATGROUP_TickGroups - STATCAT_Advanced
-                 470.579ms (   1)  -  Game TaskGraph Tasks - STAT_TaskGraph_GameTasks - STATGROUP_Threading - STATCAT_Advanced
-                   470.512ms (  20)  -  FTickFunctionTask - STATGROUP_TaskGraphTasks - STATCAT_Advanced
-                     470.309ms (   1)  -  BaseGameMode/Game/Map/PVP/UEDPIE_0_PVP.PVP.PersistentLevel.BaseGameMode - STATGROUP_UObjects - STATCAT_Advanced
-                       469.638ms (   3)  -  LoadObject - STAT_LoadObject - STATGROUP_Object - STATCAT_Advanced
-                         377.887ms (   3)  -  Self
-                         26.688ms ( 533)  -  STAT_FArchiveAsync2_WaitRead - STATGROUP_Quick - STATCAT_Advanced
-</code></pre>
-<p><code>stat DumpHitches</code>命令有可选参数，<code>-start</code>和<code>-stop</code>，表示dump的开始和结束位置：</p>
+例如，以下 hitchdump 显示LoadObject耗时较长（<code>Self</code>表示函数堆栈中上一级函数，即<code>LoadObject</code>，所占用耗时），则表示是加载资源导致顿卡：</p>
+<pre tabindex="0"><code class="language-Log" data-lang="Log">477.514ms (   4)  -  Thread_4118_0 - GameThread - STATGROUP_Threads - STATCAT_Advanced
+ 477.510ms (   2)  -  FrameTime - STAT_FrameTime - STATGROUP_Engine - STATCAT_Advanced
+   470.844ms (   1)  -  FrameTime - STAT_FrameTime - STATGROUP_Engine - STATCAT_Advanced
+     470.840ms (   1)  -  World Tick Time - STAT_WorldTickTime - STATGROUP_Game - STATCAT_Advanced
+       470.758ms (   5)  -  Tick Time - STAT_TickTime - STATGROUP_Game - STATCAT_Advanced
+         470.590ms (   2)  -  TG_PrePhysics - STAT_TG_PrePhysics - STATGROUP_TickGroups - STATCAT_Advanced
+           470.585ms (   2)  -  ReleaseTickGroup Block - STAT_ReleaseTickGroup_Block - STATGROUP_TickGroups - STATCAT_Advanced
+             470.579ms (   1)  -  Game TaskGraph Tasks - STAT_TaskGraph_GameTasks - STATGROUP_Threading - STATCAT_Advanced
+               470.512ms (  20)  -  FTickFunctionTask - STATGROUP_TaskGraphTasks - STATCAT_Advanced
+                 470.309ms (   1)  -  BaseGameMode/Game/Map/PVP/UEDPIE_0_PVP.PVP.PersistentLevel.BaseGameMode - STATGROUP_UObjects - STATCAT_Advanced
+                   469.638ms (   3)  -  LoadObject - STAT_LoadObject - STATGROUP_Object - STATCAT_Advanced
+                     377.887ms (   3)  -  Self
+                     26.688ms ( 533)  -  STAT_FArchiveAsync2_WaitRead - STATGROUP_Quick - STATCAT_Advanced
+</code></pre><p><code>stat DumpHitches</code>命令有可选参数，<code>-start</code>和<code>-stop</code>，表示dump的开始和结束位置：</p>
 <pre><code>stat DumpHitches -start
 stat DumpHitches -stop
 </code></pre>
@@ -589,7 +588,7 @@ stat DumpHitches -stop
 <p>另外一个类似命令:<code>profilegpuhitches</code>，表示每当GPU有卡顿时，自动弹出一个当时所在帧的 GPUProfile 面板。</p>
 <p>GPUProfile面板上的可视化信息，在log文件（<code>工程名\Saved\Logs\工程名.log</code>）里面也会以文本形式打印出来。<br>
 在Development 打包模式下，由于无法打开GPUProfile 面板，所以分析数据只打印在log里，示例：</p>
-<pre><code>Profiling the next GPU frame
+<pre tabindex="0"><code class="language-Log" data-lang="Log">Profiling the next GPU frame
 LogD3D11RHI: Warning: 
 LogD3D11RHI: Warning: 
 LogRHI: Perf marker hierarchy, total GPU time 4.33ms
@@ -604,8 +603,7 @@ LogRHI:        0.2% 0.01ms   Compact 1 draws 1 prims 0 verts
 LogRHI:     0.1% 0.00ms   BeginOcclusionTests 16 draws 192 prims 128 verts
 LogRHI:        0.1% 0.00ms   ViewOcclusionTests 0 16 draws 192 prims 128 verts
 LogRHI:           0.1% 0.00ms   IndividualQueries 16 draws 192 prims 128 verts
-</code></pre>
-<p>如果不需要gpu耗时存到文本，也不需要GUI面板，只是在屏幕上实时打印（适合快速分析单个指标，无需<code>profilegpu</code>的详细数据），使用命令：</p>
+</code></pre><p>如果不需要gpu耗时存到文本，也不需要GUI面板，只是在屏幕上实时打印（适合快速分析单个指标，无需<code>profilegpu</code>的详细数据），使用命令：</p>
 <pre><code>stat gpu
 </code></pre>
 <div class="alert warning ">
@@ -699,7 +697,8 @@ Project Settings -&gt; Engine -&gt; General Settings -&gt; Framerate -&gt; Unche
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>; Do not vsync in the editor. Throws off gpu profiling.
 </span></span><span style="display:flex;"><span>r.VSync=0
-</span></span></code></pre></div><p><code>[ConsoleVariables]</code>分段也可添加，参考：UE5/Engine/Config/Android/AndroidEngine.ini</p>
+</span></span></code></pre></div><p>方式3：当前平台下的Engine.ini文件中，<code>[ConsoleVariables]</code>分段下添加。<br>
+参考：UE5/Engine/Config/Android/AndroidEngine.ini</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Text" data-lang="Text"><span style="display:flex;"><span>[ConsoleVariables]
 </span></span><span style="display:flex;"><span>Slate.CacheRenderData=0
 </span></span><span style="display:flex;"><span>r.VSync=1
@@ -720,7 +719,8 @@ Project Settings -&gt; Engine -&gt; General Settings -&gt; Framerate -&gt; Unche
 </span></span><span style="display:flex;"><span>r.TemporalAA.R11G11B10History=0
 </span></span><span style="display:flex;"><span>; Do not backtrace vulkan memory allocations
 </span></span><span style="display:flex;"><span>r.Vulkan.MemoryBacktrace=0
-</span></span></code></pre></div><h5 id="查询命令的参数值">查询命令的参数值</h5>
+</span></span></code></pre></div><p>Windows平台对应的ini路径：Engine\Config\Windows\WindowsEngine.ini</p>
+<h5 id="查询命令的参数值">查询命令的参数值</h5>
 <p>C++ 或者 蓝图中使用查询函数</p>
 <pre><code>float UKismetSystemLibrary::GetConsoleVariableFloatValue(const FString&amp; VariableName)
 

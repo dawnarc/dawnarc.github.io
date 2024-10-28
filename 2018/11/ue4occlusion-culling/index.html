@@ -403,10 +403,10 @@ A: Put the depth calculation of the mask material into Early Z-pass(utilize the 
 </li>
 </ul>
 <p>In order to reduce the calculation of depth pass (also called depth prepass, which is part of UE&rsquo;s PrePass), UE4 will let the GPU calculate by itself (The depth is calculated in post z. Different platforms and different manufacturers have huge differences in the performance overhead of calculating depth.) for materials with unknown final depth (e.g. mask material), and depth calculation is likely to trigger alpha testing (the reason see warning follows), and alpha testing is the weakness of tile-based GPUs (e.g. mainstream mobile GPUs, the reason see: <a href="https://dawnarc.com/2022/05/graphicstransparency-rendering/#early-z-and-discard-on-powervr">Early Z and Discard on PowerVR</a>).</p>
-<p>This leads to a situation: if the depth of mask material is calculated on the depth pass, the additional overhead is much less than the alpha test. The most common scene of this kind is large-area foliages with mask material.<br>
-In addition, there is another problem: when calculating depth, the opaque material can only need early z (called PreZ in UE4) without pixel shader, while the mask material requires pixel shader to calculate, and it will increase the overdraw of pixel pass (is part of UE‘s BasePass) to increase.</p>
-<p>UE4.16 has been optimized: write the depth of the entire scene in Early Z-pass, then write the mask material into an opaque material in BasePass, and finally use EQUAL instead of LESS to execute DepthTest to avoid the depth calculation on pixel pass.</p>
-<p>It&rsquo;s necessary to test whether Early Z has a net gain on performance in the different scenario, the console command for testing (needs to be restarted, runtime switching is not supported)：</p>
+<p>This is the reason why <code>EarlyZPassOnlyMaterialMasking</code> was disabled by default: Alpha-tested shader in early z pass makes it slower and brings in some complications.<br>
+The most common scenario of this kind is large-area foliages with mask material: if materials contain parameterized <code>Opacity Mask</code>, then the performance will be dropped down when <code>EarlyZPassOnlyMaterialMasking</code> was enabled.</p>
+<p>In addition, there is another problem: when calculating depth, the opaque material can only need early z (called PreZ in UE4) without pixel shader, while the mask material requires pixel shader to calculate, and it will increase the overdraw of pixel pass (is part of UE‘s BasePass) to increase.</p>
+<p>So, it&rsquo;s necessary to test whether Early Z has a net gain on performance in the different scenario, the console command for testing (needs to be restarted, runtime switching is not supported)：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#66d9ef">[/Script/Engine.RendererSettings]</span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">; default is 3</span>
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">r.EarlyZPass</span><span style="color:#f92672">=</span><span style="color:#e6db74">2</span>
@@ -418,7 +418,8 @@ In addition, there is another problem: when calculating depth, the opaque materi
 <li>Mask material only in early Z-pass
 <figure><img src="https://dawnarc.com/img/2018/20181122-%5BUE4%5DOcclusion%20Culling/%5BUE4%5DOcclusion%20Culling%20-%2001.gif">
 </figure>
-</li>
+
+UE4.16 has been optimized: write the depth of the entire scene in Early Z-pass, then write the mask material into an opaque material in BasePass, and finally use EQUAL instead of LESS to execute DepthTest to avoid the depth calculation on pixel pass.</li>
 </ul>
 <p>You can also check if occlusion culling works using console:</p>
 <pre tabindex="0"><code>r.visualizeOccludedPrimitives 1
@@ -430,6 +431,7 @@ In addition, there is another problem: when calculating depth, the opaque materi
 </ul></p>
 </div>
 <p>For more details, see:<br>
+<a href="https://forums.unrealengine.com/t/why-mask-material-only-in-early-z-pass-not-default-on-for-early-z-pass/108000">Why “Mask material only in early Z-pass&quot;not default On for Early Z-pass?</a><br>
 <a href="https://www.slideshare.net/EpicGamesJapan/mask-material-only-in-early-zpass">Effects and mechanism of Mask Material only in Early Z-pass</a><br>
 <a href="https://www.slideshare.net/slideshow/cedec2016-unreal-engine-4/65344798">A complete review of the rendering flow of Unreal Engine 4</a></p>
 <h3 id="occlusion-culling-in-ue5">Occlusion Culling in UE5</h3>

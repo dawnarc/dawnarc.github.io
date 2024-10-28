@@ -442,169 +442,165 @@
 <pre><code>#include &quot;Components/Image.h&quot;
 </code></pre>
 <p>具体代码如下：</p>
-<p><strong>UMGTestGameModeBase.h</strong></p>
-<pre><code>#pragma once
-
-#include &quot;CoreMinimal.h&quot;
-#include &quot;GameFramework/GameModeBase.h&quot;
-#include &quot;UMGTestGameModeBase.generated.h&quot;
-
-/**
-* 
-*/
-UCLASS()
-class UMGTEST_API AUMGTestGameModeBase : public AGameModeBase
-{
-    GENERATED_BODY()
-
-public:
-
-    AUMGTestGameModeBase();
-
-    protected:
-
-    virtual void BeginPlay() override;
-
-private:
-
-    //UMG蓝图的实例对象，用于显示在游戏的Viewport
-    UUserWidget* MyWidgetInstance;
-};
-</code></pre>
-<p><strong>UMGTestGameModeBase.cpp</strong></p>
-<pre><code>#include &quot;UMGTestGameModeBase.h&quot;
-#include &quot;Blueprint/UserWidget.h&quot;
-
-AUMGTestGameModeBase::AUMGTestGameModeBase()
-{
-    MyWidgetInstance = nullptr;
-}
-
-void AUMGTestGameModeBase::BeginPlay()
-{
-    //检测Widget对象是否存在，如果存在则移除掉。
-    if (MyWidgetInstance)
-    {
-        MyWidgetInstance-&gt;RemoveFromViewport();
-        MyWidgetInstance = nullptr;
-    }
-
-    //加载自定义UMG的class，通过这个class创建Widget对象，并显示在界面中。
-    if (UClass* MyWidgetClass = LoadClass&lt;UUserWidget&gt;(nullptr, TEXT(&quot;WidgetBlueprint'/Game/NewWidgetBlueprint.NewWidgetBlueprint_C'&quot;)))
-    {
-        if (APlayerController* PC = GetWorld()-&gt;GetFirstPlayerController())
-        {
-            MyWidgetInstance = CreateWidget&lt;UUserWidget&gt;(PC, MyWidgetClass);
-            if (MyWidgetInstance)
-            {
-                MyWidgetInstance-&gt;AddToViewport();
-            }
-        }
-    }
-}
-</code></pre>
-<p><strong>MyUserWidget.h</strong></p>
-<pre><code>#pragma once
-
-#include &quot;CoreMinimal.h&quot;
-#include &quot;Blueprint/UserWidget.h&quot;
-#include &quot;Components/Image.h&quot;
-
-#include &quot;MyUserWidget.generated.h&quot;
-
-/**
-* 
-*/
-UCLASS()
-class UMGTEST_API UMyUserWidget : public UUserWidget
-{
-    GENERATED_BODY()
-
-public:
-
-    UMyUserWidget(const FObjectInitializer&amp; ObjectInitializer);
-
-    protected:
-
-    virtual void NativeConstruct() override;
-
-    UFUNCTION()
-    void OnBtnChangeImgClick();
-
-private:
-
-    //英雄头像的显示图片
-    UImage* HeroIcon;
-
-    //两张图片素材
-    UTexture2D* TexHero1;
-    UTexture2D* TexHero2;
-
-    //显示状态标识
-    int ImgFlag;
-};
-</code></pre>
-<p><strong>MyUserWidget.cpp</strong></p>
-<pre><code>#include &quot;MyUserWidget.h&quot;
-#include &quot;Components/Button.h&quot;
-#include &quot;Engine/Texture2D.h&quot;
-
-UMyUserWidget::UMyUserWidget(const FObjectInitializer&amp; ObjectInitializer) : Super(ObjectInitializer)
-{
-    HeroIcon = nullptr;
-    TexHero1 = nullptr;
-    TexHero2 = nullptr;
-    ImgFlag = 0;
-}
-
-void UMyUserWidget::NativeConstruct()
-{
-    Super::NativeConstruct();
-
-    //根据组件ID查找Image组件
-    if (UImage* img = Cast&lt;UImage&gt;(GetWidgetFromName(FName(TEXT(&quot;ImgHero&quot;)))))
-    {
-        HeroIcon = img;
-    }
-
-    //根据组件ID查找Button组件，并为其添加Click回调事件
-    if (UButton* btn = Cast&lt;UButton&gt;(GetWidgetFromName(&quot;BtnChangeImg&quot;)))
-    {
-        FScriptDelegate Del;
-        Del.BindUFunction(this, &quot;OnBtnChangeImgClick&quot;);
-        btn-&gt;OnClicked.Add(Del);
-    }
-
-    //加载图片资源
-    if (TexHero1)
-    {
-        //如果已经加载过，则先销毁掉
-        TexHero1-&gt;ConditionalBeginDestroy();
-        TexHero1 = nullptr;
-        GEngine-&gt;ForceGarbageCollection(true);
-    }
-    TexHero1 = LoadObject&lt;UTexture2D&gt;(nullptr, TEXT(&quot;Texture2D'/Game/pic_01.pic_01'&quot;));
-
-    if (TexHero2)
-    {
-        TexHero2-&gt;ConditionalBeginDestroy();
-        TexHero2 = nullptr;
-        GEngine-&gt;ForceGarbageCollection(true);
-    }
-    TexHero2 = LoadObject&lt;UTexture2D&gt;(nullptr, TEXT(&quot;Texture2D'/Game/pic_02.pic_02'&quot;));
-}
-
-void UMyUserWidget::OnBtnChangeImgClick()
-{
-    //切换显示图片
-    if (HeroIcon &amp;&amp; TexHero1 &amp;&amp; TexHero2)
-    {
-        HeroIcon-&gt;SetBrushFromTexture(ImgFlag ? TexHero1 : TexHero2);
-        ImgFlag = ImgFlag == 0 ? 1 : 0;
-    }
-}
-</code></pre>
-<h5 id="最终效果">最终效果</h5>
+<p>UMGTestGameModeBase.h</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">#pragma once
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;CoreMinimal.h&#34;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;GameFramework/GameModeBase.h&#34;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;UMGTestGameModeBase.generated.h&#34;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">* 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">*/</span>
+</span></span><span style="display:flex;"><span>UCLASS()
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">UMGTEST_API</span> AUMGTestGameModeBase : <span style="color:#66d9ef">public</span> AGameModeBase
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    GENERATED_BODY()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    AUMGTestGameModeBase();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">protected</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">virtual</span> <span style="color:#66d9ef">void</span> BeginPlay() <span style="color:#66d9ef">override</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">private</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//UMG蓝图的实例对象，用于显示在游戏的Viewport
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    UUserWidget<span style="color:#f92672">*</span> MyWidgetInstance;
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p>UMGTestGameModeBase.cpp</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;UMGTestGameModeBase.h&#34;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;Blueprint/UserWidget.h&#34;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>AUMGTestGameModeBase<span style="color:#f92672">::</span>AUMGTestGameModeBase()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    MyWidgetInstance <span style="color:#f92672">=</span> <span style="color:#66d9ef">nullptr</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> AUMGTestGameModeBase<span style="color:#f92672">::</span>BeginPlay()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//检测Widget对象是否存在，如果存在则移除掉。
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> (MyWidgetInstance)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        MyWidgetInstance<span style="color:#f92672">-&gt;</span>RemoveFromViewport();
+</span></span><span style="display:flex;"><span>        MyWidgetInstance <span style="color:#f92672">=</span> <span style="color:#66d9ef">nullptr</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//加载自定义UMG的class，通过这个class创建Widget对象，并显示在界面中。
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> (UClass<span style="color:#f92672">*</span> MyWidgetClass <span style="color:#f92672">=</span> LoadClass<span style="color:#f92672">&lt;</span>UUserWidget<span style="color:#f92672">&gt;</span>(<span style="color:#66d9ef">nullptr</span>, TEXT(<span style="color:#e6db74">&#34;WidgetBlueprint&#39;/Game/NewWidgetBlueprint.NewWidgetBlueprint_C&#39;&#34;</span>)))
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (APlayerController<span style="color:#f92672">*</span> PC <span style="color:#f92672">=</span> GetWorld()<span style="color:#f92672">-&gt;</span>GetFirstPlayerController())
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            MyWidgetInstance <span style="color:#f92672">=</span> CreateWidget<span style="color:#f92672">&lt;</span>UUserWidget<span style="color:#f92672">&gt;</span>(PC, MyWidgetClass);
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (MyWidgetInstance)
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                MyWidgetInstance<span style="color:#f92672">-&gt;</span>AddToViewport();
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>MyUserWidget.h</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">#pragma once
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;CoreMinimal.h&#34;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;Blueprint/UserWidget.h&#34;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;Components/Image.h&#34;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;MyUserWidget.generated.h&#34;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">* 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">*/</span>
+</span></span><span style="display:flex;"><span>UCLASS()
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">UMGTEST_API</span> UMyUserWidget : <span style="color:#66d9ef">public</span> UUserWidget
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    GENERATED_BODY()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    UMyUserWidget(<span style="color:#66d9ef">const</span> FObjectInitializer<span style="color:#f92672">&amp;</span> ObjectInitializer);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">protected</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">virtual</span> <span style="color:#66d9ef">void</span> NativeConstruct() <span style="color:#66d9ef">override</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    UFUNCTION()
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">void</span> OnBtnChangeImgClick();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">private</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//英雄头像的显示图片
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    UImage<span style="color:#f92672">*</span> HeroIcon;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//两张图片素材
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    UTexture2D<span style="color:#f92672">*</span> TexHero1;
+</span></span><span style="display:flex;"><span>    UTexture2D<span style="color:#f92672">*</span> TexHero2;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//显示状态标识
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">int</span> ImgFlag;
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p>MyUserWidget.cpp</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;MyUserWidget.h&#34;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;Components/Button.h&#34;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;Engine/Texture2D.h&#34;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>UMyUserWidget<span style="color:#f92672">::</span>UMyUserWidget(<span style="color:#66d9ef">const</span> FObjectInitializer<span style="color:#f92672">&amp;</span> ObjectInitializer) <span style="color:#f92672">:</span> Super(ObjectInitializer)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    HeroIcon <span style="color:#f92672">=</span> <span style="color:#66d9ef">nullptr</span>;
+</span></span><span style="display:flex;"><span>    TexHero1 <span style="color:#f92672">=</span> <span style="color:#66d9ef">nullptr</span>;
+</span></span><span style="display:flex;"><span>    TexHero2 <span style="color:#f92672">=</span> <span style="color:#66d9ef">nullptr</span>;
+</span></span><span style="display:flex;"><span>    ImgFlag <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> UMyUserWidget<span style="color:#f92672">::</span>NativeConstruct()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    Super<span style="color:#f92672">::</span>NativeConstruct();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//根据组件ID查找Image组件
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> (UImage<span style="color:#f92672">*</span> img <span style="color:#f92672">=</span> Cast<span style="color:#f92672">&lt;</span>UImage<span style="color:#f92672">&gt;</span>(GetWidgetFromName(FName(TEXT(<span style="color:#e6db74">&#34;ImgHero&#34;</span>)))))
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        HeroIcon <span style="color:#f92672">=</span> img;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//根据组件ID查找Button组件，并为其添加Click回调事件
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> (UButton<span style="color:#f92672">*</span> btn <span style="color:#f92672">=</span> Cast<span style="color:#f92672">&lt;</span>UButton<span style="color:#f92672">&gt;</span>(GetWidgetFromName(<span style="color:#e6db74">&#34;BtnChangeImg&#34;</span>)))
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        FScriptDelegate Del;
+</span></span><span style="display:flex;"><span>        Del.BindUFunction(<span style="color:#66d9ef">this</span>, <span style="color:#e6db74">&#34;OnBtnChangeImgClick&#34;</span>);
+</span></span><span style="display:flex;"><span>        btn<span style="color:#f92672">-&gt;</span>OnClicked.Add(Del);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//加载图片资源
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> (TexHero1)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//如果已经加载过，则先销毁掉
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        TexHero1<span style="color:#f92672">-&gt;</span>ConditionalBeginDestroy();
+</span></span><span style="display:flex;"><span>        TexHero1 <span style="color:#f92672">=</span> <span style="color:#66d9ef">nullptr</span>;
+</span></span><span style="display:flex;"><span>        GEngine<span style="color:#f92672">-&gt;</span>ForceGarbageCollection(true);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    TexHero1 <span style="color:#f92672">=</span> LoadObject<span style="color:#f92672">&lt;</span>UTexture2D<span style="color:#f92672">&gt;</span>(<span style="color:#66d9ef">nullptr</span>, TEXT(<span style="color:#e6db74">&#34;Texture2D&#39;/Game/pic_01.pic_01&#39;&#34;</span>));
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (TexHero2)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        TexHero2<span style="color:#f92672">-&gt;</span>ConditionalBeginDestroy();
+</span></span><span style="display:flex;"><span>        TexHero2 <span style="color:#f92672">=</span> <span style="color:#66d9ef">nullptr</span>;
+</span></span><span style="display:flex;"><span>        GEngine<span style="color:#f92672">-&gt;</span>ForceGarbageCollection(true);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    TexHero2 <span style="color:#f92672">=</span> LoadObject<span style="color:#f92672">&lt;</span>UTexture2D<span style="color:#f92672">&gt;</span>(<span style="color:#66d9ef">nullptr</span>, TEXT(<span style="color:#e6db74">&#34;Texture2D&#39;/Game/pic_02.pic_02&#39;&#34;</span>));
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> UMyUserWidget<span style="color:#f92672">::</span>OnBtnChangeImgClick()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//切换显示图片
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> (HeroIcon <span style="color:#f92672">&amp;&amp;</span> TexHero1 <span style="color:#f92672">&amp;&amp;</span> TexHero2)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        HeroIcon<span style="color:#f92672">-&gt;</span>SetBrushFromTexture(ImgFlag <span style="color:#f92672">?</span> TexHero1 : TexHero2);
+</span></span><span style="display:flex;"><span>        ImgFlag <span style="color:#f92672">=</span> ImgFlag <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span> <span style="color:#f92672">?</span> <span style="color:#ae81ff">1</span> <span style="color:#f92672">:</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h5 id="最终效果">最终效果</h5>
 <p>按Shift+F1切换到光标显示模式，然后点击按钮，就可以切换图片。
 <figure><img src="https://dawnarc.com/img/20171108-%5BUE4%5DUMG%E4%BD%BF%E7%94%A8%E5%AE%9E%E4%BE%8B%28C&#43;&#43;%29/%5BUE4%5DUMG%E4%BD%BF%E7%94%A8%E5%AE%9E%E4%BE%8B%28C&#43;&#43;%29-14.jpg">
 </figure>

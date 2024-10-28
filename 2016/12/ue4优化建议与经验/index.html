@@ -481,18 +481,18 @@ UE4做了优化，当你使用<code>FTransform::TransformXXX()</code>时，如�
 </li>
 <li>
 <p>将mask材质的depth计算放到Early Z-pass（利用硬件级特性<code>early depth testing</code>，无需在BasePass中计算）中执行。<br>
-UE4为了减少depth pass (又叫depth prepass，属于UE的PrePass)的计算，对于final depth不确定的材质（mask材质是最主要的一种），UE会让GPU自己计算（post z中计算出depth。不同平台，不同厂商，其计算depth的性能开销也差异巨大），而depth计算很可能触发alpha test（原因见下方参考链接），而alpha test是tile-based gpu（主要是移动端gpu）的阿喀琉斯之踵（详情见：<a href="https://dawnarc.com/2022/05/graphicstransparency-rendering/#early-z-and-discard-on-powervr">Early Z and Discard on PowerVR</a>）。<br>
-这就导致了一种情形：如果在depth pass上就计算mask材质的depth，其增加的开销远小于alpha test。这种场景最常见的就是mask类型材质的大面积植被。<br>
+UE4为了减少depth pass (又叫depth prepass，属于UE的PrePass)的计算，对于final depth不确定的材质（mask材质是最主要的一种），UE会让GPU自己计算（post z中计算出depth。不同平台，不同厂商，不同时期规格，其计算depth的性能开销也差异巨大），而depth计算很可能触发alpha test（原因见下方参考链接），而alpha test是tile-based gpu（主要是移动端gpu）的阿喀琉斯之踵（详情见：<a href="https://dawnarc.com/2022/05/graphicstransparency-rendering/#early-z-and-discard-on-powervr">Early Z and Discard on PowerVR</a>）。<br>
+这也是为什么<code>r.EarlyZPassOnlyMaterialMasking</code>没有默认开启的原因：一旦场景中有alpha-tested shader，则early z pass计算会更加复杂且更慢。最常见的就是mask类型材质的大面积植被，材质若含有参数化的<code>Opacity Mask</code>，则开启<code>EarlyZPassOnlyMaterialMasking</code>后性能反而下降。<br>
 除此之外，还有另一个问题：计算depth时，opaque材质可以只需early z（UE4的叫做PreZ），无需pixel shader，而mask材质需要pixel shader计算，
 且会导致pixel pass (属于UE的BasePass)的overdraw增加。<br>
-UE4.16做了优化：在Early Z-pass中写入全场景的depth，然后在BasePass中将mask材质写入一张opaque材质，最后用EQUAL取代LESS来执行DepthTest，以此跳过pixel pass的depth计算。<br>
+所以，需要根据实际项目，测试此开关对性能是正收益还是负收益。<br>
 优化选项开关（需要重启，不支持运行时切换）：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#66d9ef">[/Script/Engine.RendererSettings]</span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">; 默认是3</span>
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">r.EarlyZPass</span><span style="color:#f92672">=</span><span style="color:#e6db74">2</span>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">; 默认为false</span>
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">r.EarlyZPassOnlyMaterialMasking</span><span style="color:#f92672">=</span><span style="color:#e6db74">True</span>
-</span></span></code></pre></div><p>需要根据实际项目，测试<code>EarlyZPassOnlyMaterialMasking</code>对性能是正收益还是负收益。<br>
+</span></span></code></pre></div><p>UE4.16做了优化：在Early Z-pass中写入全场景的depth，然后在BasePass中将mask材质写入一张opaque材质，最后用EQUAL取代LESS来执行DepthTest，以此跳过pixel pass的depth计算。<br>
 更多细节参考：<a href="https://dawnarc.com/2018/11/ue4occlusion-culling/#mask-material-only-in-early-z-pass">Mask material only in early Z-pass</a></p>
 </li>
 </ol>
@@ -613,7 +613,7 @@ Dynamic Shadow Distance 表示在多少距离内使用动态阴影，超过这�
 <p>如果GPUVisualizer的<code>BasePass</code>耗时较高，那么很大一部分原因是材质复杂度过高。</p>
 </li>
 <li>
-<p><span class="highlight-text yellow">Decal消耗和像素数量有关</span>，<span class="highlight-text red">程序功能绝对不要乱用贴花</span>，美术铺场景除外。比如程序想用贴花做一个范围标记，如果当标记范围很大时绝对不要用贴花，可以改成划线或者不通透贴图。如果场景需要大量使用贴花，根据视距动态创建和销毁贴花，仅仅<code>SetVisibility</code>是不够的，隐藏后还是会有巨大的开销（不过也可能是编辑器在地形编辑这块有bug，因为UE4场景编辑器有很多bug，特别当升级引擎版本后，旧版本中创建的地形在新版本中可能出现各种莫名其妙的bug）。</p>
+<p><span class="highlight-text yellow">Decal消耗和像素数量有关</span>，<span class="highlight-text red">程序功能绝对不要乱用贴花</span>，美术铺场景除外。比如程序想用贴花做一个范围标记，如果当标记范围很大时绝对不要用贴花，可以改成划线或者不通透贴图。如果场景需要大量使用贴花，根据视距动态创建和销毁贴花，仅仅<code>SetVisibility</code>是不够的，隐藏后还是会有巨大的开销（不过也可能是编辑器在地形编辑这块有bug，因为UE4场景编辑器有很多bug，特别当升级引擎版本后，旧版本中创建的地形在新版本中可能出现各种莫名其妙的问题）。</p>
 </li>
 <li>
 <p>场景中的材质种类要提前规划好，拼场景时只在规划好的材质中选择。如果同屏的材质种类较多，会增加draw call。特别是场景美术用网上素材东拼西凑，很容易导致材质种类数量急剧上涨。</p>
@@ -622,7 +622,7 @@ Dynamic Shadow Distance 表示在多少距离内使用动态阴影，超过这�
 <p>一般针对材质的优化方式是，抓帧查看shader instruction count。引擎提供了工具函数<code>FMaterialStatistics Stats = UMaterialEditingLibrary::GetStatistics(_YourMaterialInterfaceObject_);</code>，自己写个插件，批量导出所有材质的最贵指令数量，并支持排序。</p>
 </li>
 <li>
-<p>当半透或透明材质的物体较多时，则要严格检查Overdraw。透明材质本身已经非常耗，如果再因为overdraw导致部分像素被重复绘制多次，则开销会暴涨，参考：<a href="https://developer.arm.com/documentation/102676/0100/Transparency-considerations">Transparency considerations</a>。</p>
+<p>当半透或透明材质的物体较多时，则要严格检查Overdraw。透明材质本身已经非常耗，如果再因为overdraw导致部分像素被重复绘制多次，则开销会暴涨，参考：<a href="https://developer.arm.com/documentation/102676/0100/Transparency-condisderations">Transparency considerations</a>。</p>
 </li>
 </ol>
 <h5 id="贴图优化">贴图优化</h5>
@@ -737,6 +737,9 @@ members of a nested structure;</p>
 </li>
 <li>
 <p>动画切换尽量少用Animation Trees（动画蓝图State Machine下的蜘蛛网, 位于AnimGraph中），复杂的AT会极大增加CPU开销（Unity的Blend Tree也同理）。切换动画尽可能用状态机（包括BlendPoseBy等节点），且使用带有闪电小icon的节点。</p>
+</li>
+<li>
+<p>开启<a href="https://dev.epicgames.com/documentation/en-us/unreal-engine/skeletal-mesh-rendering-paths-in-unreal-engine">GPU Skin Cache</a>。Skin Cache的最大优点是避免了vertex在各个pass中来回传递（depth pass, bass pass, shadow pass, velocity pass），将position和normal计算从vertex shader转嫁到compute shader中异步计算（UE4由于D3D12是软适配，没有异步计算，所以性能提升没有UE5明显），避免了因vertex数量过多而阻塞3D图形管线的问题。缺点也很明显，显存开销较大。参考：<a href="https://forums.unrealengine.com/t/what-is-the-purpose-of-the-gpu-skin-cache/370993">What is the purpose of the GPU Skin Cache?</a></p>
 </li>
 </ol>
 <p>Animation Optimization<br>
@@ -870,7 +873,7 @@ Project Settings -&gt; Engine -&gt; Animation -&gt; 勾选 Strip Animation Data 
 <h5 id="rhi-vulkan--d3d12">RHI (Vulkan &amp; D3D12)</h5>
 <ol>
 <li>
-<p>如果dispatch数量较高（Gears 5平均每帧50左右），则GPU计算开销会显著增加。对于计算量较大的特效，建议使用Async Compute，D3D12的官方example：<a href="https://github.com/GPUOpen-LibrariesAndSDKs/nBodyD3D12/tree/master/Samples/D3D12nBodyGravity">N-body Gravity System</a>。因为历史原因，UE4无法实现async compute, bindless resource等重要特性（因为需要推翻整个rendering代码重写）。UE5甩掉了包袱已彻底实现：async compute开销一直保持在20%左右（<a href="https://www.unrealengine.com/marketplace/en-US/product/city-sample">Matrix Awakens</a>测试结果），而UE4不到1%，几乎为0。</p>
+<p>如果dispatch数量较高（Gears 5平均每帧50左右），则GPU计算开销会显著增加。对于计算量较大的特效，建议使用Async Compute，D3D12的官方example：<a href="https://github.com/GPUOpen-LibrariesAndSDKs/nBodyD3D12/tree/master/Samples/D3D12nBodyGravity">N-body Gravity System</a>。因为历史原因，UE4无法实现async compute, bindless resource等重要特性（因为需要推翻整个rendering代码重写）。UE5甩掉了包袱已彻底实现：async compute开销一直保持在20%左右（<a href="https://www.unrealengine.com/marketplace/en-US/product/city-sample">Matrix Awakens</a>在N卡下的测试结果，A卡下更高），而UE4不到1%，几乎为0。</p>
 </li>
 <li>
 <p>由于UE的deferred shading是multipass，而material的每种buffer（albedo, normal, material properties, ambient occlusion, worldspace reflection等等一共有16种buffer）都对应一个pass，绝大部分pass都会单独提交一个dispatch（虽然RDG中做了merge pass优化，但抵不住基数大）。所以，材质若过于复杂（玻璃、半透特效、毛发等），会撑爆dispatch，而dispatch数量大则GPU负载高。另外，Insights中的<code>STAT_FRDGPass_Execute</code>次数和dispatch次数正相关。</p>
