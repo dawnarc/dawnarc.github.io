@@ -389,8 +389,7 @@ Constructor:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>GetWorld()<span style="color:#f92672">-&gt;</span>GetTimerManager().SetTimerForNextTick(FTimerDelegate<span style="color:#f92672">::</span>CreateWeakLambda(<span style="color:#66d9ef">this</span>, []() 
 </span></span><span style="display:flex;"><span>    {
 </span></span><span style="display:flex;"><span>        <span style="color:#75715e">//some codes
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    }
-</span></span><span style="display:flex;"><span>    ));
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    }));
 </span></span></code></pre></div><p>or:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>FTimerHandle TimerHandle;
 </span></span><span style="display:flex;"><span>GetWorld()<span style="color:#f92672">-&gt;</span>GetTimerManager().SetTimer(TimerHandle, []
@@ -407,25 +406,23 @@ Constructor:</p>
 <p><code>Tick()</code> will only be executed at game run-time by default, if you want to execute <code>Tick()</code> in Editor, do that in the following way:</p>
 <p>For Actor:<br>
 Override <code>ShouldTickIfViewportsOnly()</code>, and return <code>true</code>, return value is <code>false</code> by default.</p>
-<pre><code>bool Actor::ShouldTickIfViewportsOnly() const
-{
-    return true;
-}
-</code></pre>
-<p>For ActorComponent:<br>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">bool</span> Actor<span style="color:#f92672">::</span>ShouldTickIfViewportsOnly() <span style="color:#66d9ef">const</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> true;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>For ActorComponent:<br>
 Has <code>bTickInEditor</code> set be <code>true</code> to trigger <code>TickComponent()</code>, it&rsquo;s false by default.</p>
 <div class="alert warning ">
   <p>Even you have done it in above way, <code>Tick()</code> will only trigger when open Actor Blueprint in editor, it would not be triggered at Editor startup.</p>
 </div>
 <h5 id="reduce-tick-frequency">Reduce tick frequency</h5>
 <p>CPP:</p>
-<pre><code>//Component
-PrimaryComponentTick.TickInterval = 1.0f;
-
-//Actor
-PrimaryActorTick.TickInterval = 1.0f;
-</code></pre>
-<p>BP Node:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">//Component
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>PrimaryComponentTick.TickInterval <span style="color:#f92672">=</span> <span style="color:#ae81ff">1.0f</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//Actor
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>PrimaryActorTick.TickInterval <span style="color:#f92672">=</span> <span style="color:#ae81ff">1.0f</span>;
+</span></span></code></pre></div><p>BP Node:</p>
 <pre><code>Set Actor Tick Interval
 </code></pre>
 <p>Reference:<br>

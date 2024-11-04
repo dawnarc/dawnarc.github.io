@@ -646,11 +646,11 @@ Uniform variables 可以定义在任何一个 shader 中，如果多个 shader �
 <pre><code>glBindBufferBase(GL_UNIFORM_BUFFER, 0, uboHandle);
 </code></pre>
 <p>对应的uniform定义</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-glsl" data-lang="glsl"><span style="display:flex;"><span>layout (binding <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>) <span style="color:#66d9ef">uniform</span> BlobSettings {
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">vec4</span> InnerColor;
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">vec4</span> OuterColor;
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">float</span> RadiusInner;
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">float</span> RadiusOuter;
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-py" data-lang="py"><span style="display:flex;"><span>layout (binding <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>) uniform BlobSettings {
+</span></span><span style="display:flex;"><span>    vec4 InnerColor;
+</span></span><span style="display:flex;"><span>    vec4 OuterColor;
+</span></span><span style="display:flex;"><span>    float RadiusInner;
+</span></span><span style="display:flex;"><span>    float RadiusOuter;
 </span></span><span style="display:flex;"><span>};
 </span></span></code></pre></div><h5 id="glbindbuffer与glbindbufferbase的区别">glBindBuffer与glBindBufferBase的区别</h5>
 <div class="alert info ">
@@ -667,10 +667,10 @@ You might be wondering why we use glBindBuffer and glBindBufferBase with GL_UNIF
 <li>column_major</li>
 </ul>
 <p>例如：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-glsl" data-lang="glsl"><span style="display:flex;"><span>layout( std140 ) <span style="color:#66d9ef">uniform</span> BlobSettings {
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-py" data-lang="py"><span style="display:flex;"><span>layout( std140 ) uniform BlobSettings {
 </span></span><span style="display:flex;"><span>    };
 </span></span></code></pre></div><p>多个修饰符可以组合使用：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-glsl" data-lang="glsl"><span style="display:flex;"><span>layout( row_major, shared ) <span style="color:#66d9ef">uniform</span> BlobSettings {
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-py" data-lang="py"><span style="display:flex;"><span>layout( row_major, shared ) uniform BlobSettings {
 </span></span><span style="display:flex;"><span>    };
 </span></span></code></pre></div><h5 id="fragment-shader到vertex-shader之间的工作流程page-58">fragment shader到vertex shader之间的工作流程（page 58）</h5>
 <figure><img src="https://dawnarc.com/img/20170113-%5BShading%5DOpenGL%E5%B8%B8%E7%94%A8%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%28%E4%B8%AA%E4%BA%BA%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%29/%5BShading%5DOpenGL%E5%B8%B8%E7%94%A8%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%28%E4%B8%AA%E4%BA%BA%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%29-01.png">
@@ -715,32 +715,32 @@ GLFW提供了cmake的define编译选项<code>GLFW_USE_DWM_SWAP_INTERVAL</code>�
 <a href="https://gamedev.stackexchange.com/a/153137/117871">https://gamedev.stackexchange.com/a/153137/117871</a></p>
 <h5 id="如何通过uv获取纹理采样中的像素">如何通过UV获取纹理采样中的像素</h5>
 <p>vertex shader</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-TS" data-lang="TS"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">#</span><span style="color:#a6e22e">version</span> <span style="color:#ae81ff">330</span> <span style="color:#a6e22e">core</span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">layout</span> (<span style="color:#a6e22e">location</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>) <span style="color:#66d9ef">in</span> <span style="color:#a6e22e">vec3</span> <span style="color:#a6e22e">aPos</span>;
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">layout</span> (<span style="color:#a6e22e">location</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>) <span style="color:#66d9ef">in</span> <span style="color:#a6e22e">vec3</span> <span style="color:#a6e22e">aColor</span>;
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">layout</span> (<span style="color:#a6e22e">location</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">2</span>) <span style="color:#66d9ef">in</span> <span style="color:#a6e22e">vec2</span> <span style="color:#a6e22e">aTexCoord</span>;
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-py" data-lang="py"><span style="display:flex;"><span><span style="color:#75715e">#version 330 core</span>
+</span></span><span style="display:flex;"><span>layout (location <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>) <span style="color:#f92672">in</span> vec3 aPos;
+</span></span><span style="display:flex;"><span>layout (location <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>) <span style="color:#f92672">in</span> vec3 aColor;
+</span></span><span style="display:flex;"><span>layout (location <span style="color:#f92672">=</span> <span style="color:#ae81ff">2</span>) <span style="color:#f92672">in</span> vec2 aTexCoord;
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">out</span> <span style="color:#a6e22e">vec3</span> <span style="color:#a6e22e">ourColor</span>;
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">out</span> <span style="color:#a6e22e">vec2</span> <span style="color:#a6e22e">TexCoord</span>;
+</span></span><span style="display:flex;"><span>out vec3 ourColor;
+</span></span><span style="display:flex;"><span>out vec2 TexCoord;
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span>()
+</span></span><span style="display:flex;"><span>void main()
 </span></span><span style="display:flex;"><span>{
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">gl_Position</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">vec4</span>(<span style="color:#a6e22e">aPos</span>, <span style="color:#ae81ff">1.0</span>);
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">ourColor</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">aColor</span>;
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">TexCoord</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">aTexCoord</span>;
+</span></span><span style="display:flex;"><span>    gl_Position <span style="color:#f92672">=</span> vec4(aPos, <span style="color:#ae81ff">1.0</span>);
+</span></span><span style="display:flex;"><span>    ourColor <span style="color:#f92672">=</span> aColor;
+</span></span><span style="display:flex;"><span>    TexCoord <span style="color:#f92672">=</span> aTexCoord;
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>pixel shader</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-TS" data-lang="TS"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">#</span><span style="color:#a6e22e">version</span> <span style="color:#ae81ff">330</span> <span style="color:#a6e22e">core</span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">out</span> <span style="color:#a6e22e">vec4</span> <span style="color:#a6e22e">FragColor</span>;
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-py" data-lang="py"><span style="display:flex;"><span><span style="color:#75715e">#version 330 core</span>
+</span></span><span style="display:flex;"><span>out vec4 FragColor;
 </span></span><span style="display:flex;"><span>  
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">in</span> <span style="color:#a6e22e">vec3</span> <span style="color:#a6e22e">ourColor</span>;
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">in</span> <span style="color:#a6e22e">vec2</span> <span style="color:#a6e22e">TexCoord</span>;
+</span></span><span style="display:flex;"><span><span style="color:#f92672">in</span> vec3 ourColor;
+</span></span><span style="display:flex;"><span><span style="color:#f92672">in</span> vec2 TexCoord;
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">uniform</span> <span style="color:#a6e22e">sampler2D</span> <span style="color:#a6e22e">ourTexture</span>;
+</span></span><span style="display:flex;"><span>uniform sampler2D ourTexture;
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span>()
+</span></span><span style="display:flex;"><span>void main()
 </span></span><span style="display:flex;"><span>{
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">FragColor</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">texture</span>(<span style="color:#a6e22e">ourTexture</span>, <span style="color:#a6e22e">TexCoord</span>);
+</span></span><span style="display:flex;"><span>    FragColor <span style="color:#f92672">=</span> texture(ourTexture, TexCoord);
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>Origin: Texture
 <a href="https://learnopengl.com/Getting-started/Textures">https://learnopengl.com/Getting-started/Textures</a></p>

@@ -385,7 +385,7 @@
 <li>If we add other nodes(Curve, Locator, etc.) directly into skeleton hierarchy, it will cause issues when it comes to export to the Unreal Engine.</li>
 </ul>
 <p>So we need a top layer to drive joints, that&rsquo;s Layered Controls!</p>
-<h5 id="create-controller">Create Controller</h5>
+<h5 id="create-controller-method-1st-parent-constraints-recommended">Create Controller Method 1st: Parent Constraints (Recommended)</h5>
 <p>Take shoulder joint as example.</p>
 <p>1, Create Curve: Create -&gt; NURBS Primitives -&gt; Circle
 <figure><img src="https://dawnarc.com/img/2024/20241027-%5BMaya%5DRigging%2004%20-%20Controller/%5BMaya%5DRigging%2004%20-%20Controller%20-%2001.gif">
@@ -421,15 +421,8 @@ Select both shoulder joint and curve, Hold Space -&gt; Constrain -&gt; Parent.
 <figure><img src="https://dawnarc.com/img/2024/20241027-%5BMaya%5DRigging%2004%20-%20Controller/%5BMaya%5DRigging%2004%20-%20Controller%20-%2007.gif">
 </figure>
 </p>
-<p>You can also change the display color.
-<figure><img src="https://dawnarc.com/img/2024/20241027-%5BMaya%5DRigging%2004%20-%20Controller/%5BMaya%5DRigging%2004%20-%20Controller%20-%2008.gif">
-</figure>
-
-<figure><img src="https://dawnarc.com/img/2024/20241027-%5BMaya%5DRigging%2004%20-%20Controller/%5BMaya%5DRigging%2004%20-%20Controller%20-%2009.gif">
-</figure>
-</p>
 <p>More control curve templates: <a href="https://github.com/dawnarc/maya_examples/tree/main/tools/controller">Control Icons</a></p>
-<h5 id="merge-curves-transform-node">Merge Curve&rsquo;s Transform Node</h5>
+<h5 id="create-controller-method-2nd-merge-curves-transform-node">Create Controller Method 2nd: Merge Curve&rsquo;s Transform Node</h5>
 <p>1, Create a curve and tweak the transform.
 <figure><img src="https://dawnarc.com/img/2024/20241027-%5BMaya%5DRigging%2004%20-%20Controller/%5BMaya%5DRigging%2004%20-%20Controller%20-%2010.gif">
 </figure>
@@ -456,8 +449,109 @@ Which axis is modified depends on the target joint coordinate axis.
 <figure><img src="https://dawnarc.com/img/2024/20241027-%5BMaya%5DRigging%2004%20-%20Controller/%5BMaya%5DRigging%2004%20-%20Controller%20-%2014.gif">
 </figure>
 </p>
-<h5 id="group-transform-offset">Group Transform Offset</h5>
-<p>WIP&hellip;</p>
+<h5 id="controller-tweaking">Controller Tweaking</h5>
+<p>Change the display color:
+<figure><img src="https://dawnarc.com/img/2024/20241027-%5BMaya%5DRigging%2004%20-%20Controller/%5BMaya%5DRigging%2004%20-%20Controller%20-%2008.gif">
+</figure>
+
+<figure><img src="https://dawnarc.com/img/2024/20241027-%5BMaya%5DRigging%2004%20-%20Controller/%5BMaya%5DRigging%2004%20-%20Controller%20-%2009.gif">
+</figure>
+</p>
+<p>Change the display size:
+<figure><img src="https://dawnarc.com/img/2024/20241027-%5BMaya%5DRigging%2004%20-%20Controller/%5BMaya%5DRigging%2004%20-%20Controller%20-%2031.gif">
+</figure>
+
+<figure><img src="https://dawnarc.com/img/2024/20241027-%5BMaya%5DRigging%2004%20-%20Controller/%5BMaya%5DRigging%2004%20-%20Controller%20-%2032.gif">
+</figure>
+</p>
+<h5 id="hide-joint-for-controler">Hide Joint for Controler</h5>
+<p>The process of rigging, we can hide the joints to highlight the controllers: Show -&gt; Viewport -&gt; Uncheck <code>Joints</code>.
+<figure><img src="https://dawnarc.com/img/2024/20241027-%5BMaya%5DRigging%2004%20-%20Controller/%5BMaya%5DRigging%2004%20-%20Controller%20-%2015.gif">
+</figure>
+</p>
+<p>But it causes to hide controllers when the visibility of joint was off.
+<figure><img src="https://dawnarc.com/img/2024/20241027-%5BMaya%5DRigging%2004%20-%20Controller/%5BMaya%5DRigging%2004%20-%20Controller%20-%2016.gif">
+</figure>
+</p>
+<p>Q: As mentioned before, to prevent animator from touching skeleton, so we need to hide the joint, is there any way to display the controllers while joint was hidden?<br>
+A: Change the joint&rsquo;s draw sytle.
+<figure><img src="https://dawnarc.com/img/2024/20241027-%5BMaya%5DRigging%2004%20-%20Controller/%5BMaya%5DRigging%2004%20-%20Controller%20-%2017.gif">
+</figure>
+</p>
+<p>We can change only one joint at a time on GUI, but can do it in batch using script.
+<figure><img src="https://dawnarc.com/img/2024/20241027-%5BMaya%5DRigging%2004%20-%20Controller/%5BMaya%5DRigging%2004%20-%20Controller%20-%2018.gif">
+</figure>
+</p>
+<p>Hide all joints:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>string $target <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;root&#34;</span>;
+</span></span><span style="display:flex;"><span>select <span style="color:#f92672">-</span>r $target;
+</span></span><span style="display:flex;"><span>string $joints<span style="color:#f92672">[]</span> <span style="color:#f92672">=</span> <span style="color:#960050;background-color:#1e0010">`</span>ls <span style="color:#f92672">-</span>type joint<span style="color:#960050;background-color:#1e0010">`</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span>($joint in $joints)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>	setAttr ($joint <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;.drawStyle&#34;</span>) 2;
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">//print($joint + &#34;\n&#34;);</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Show all joints:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#75715e">//change drawStyle from 2 to 0</span>
+</span></span><span style="display:flex;"><span>setAttr ($joint <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;.drawStyle&#34;</span>) 0;
+</span></span></code></pre></div><h5 id="transform-offset-method-1st-group">Transform Offset Method 1st: Group</h5>
+<p>As the <strong>Create Controller Method 1st</strong> say, when you tweaked the transform of controller, Translate and Rotation are non-Zero, thus it&rsquo;s not friendly for animator.
+<figure><img src="https://dawnarc.com/img/2024/20241027-%5BMaya%5DRigging%2004%20-%20Controller/%5BMaya%5DRigging%2004%20-%20Controller%20-%2019.gif">
+</figure>
+
+<figure><img src="https://dawnarc.com/img/2024/20241027-%5BMaya%5DRigging%2004%20-%20Controller/%5BMaya%5DRigging%2004%20-%20Controller%20-%2020.gif">
+</figure>
+</p>
+<p>Solution:<br>
+1, Create an empty Group. (shortcut: Ctrl + G)
+<figure><img src="https://dawnarc.com/img/2024/20241027-%5BMaya%5DRigging%2004%20-%20Controller/%5BMaya%5DRigging%2004%20-%20Controller%20-%2021.gif">
+</figure>
+</p>
+<p>2, Select Group first, then select Controller, then Match All Transforms.
+<figure><img src="https://dawnarc.com/img/2024/20241027-%5BMaya%5DRigging%2004%20-%20Controller/%5BMaya%5DRigging%2004%20-%20Controller%20-%2022.gif">
+</figure>
+
+Then you can see the Group&rsquo;s transform changed.
+<figure><img src="https://dawnarc.com/img/2024/20241027-%5BMaya%5DRigging%2004%20-%20Controller/%5BMaya%5DRigging%2004%20-%20Controller%20-%2023.gif">
+</figure>
+</p>
+<p>3, Drag the Controller into Group, then you can see the Controller&rsquo;s transform was zeroed.
+<figure><img src="https://dawnarc.com/img/2024/20241027-%5BMaya%5DRigging%2004%20-%20Controller/%5BMaya%5DRigging%2004%20-%20Controller%20-%2024.gif">
+</figure>
+
+<figure><img src="https://dawnarc.com/img/2024/20241027-%5BMaya%5DRigging%2004%20-%20Controller/%5BMaya%5DRigging%2004%20-%20Controller%20-%2025.gif">
+</figure>
+</p>
+<h5 id="transform-offset-method-2nd-offset-parent-matrix">Transform Offset Method 2nd: Offset Parent Matrix</h5>
+<p>Take <strong>Create Controller Method 1st</strong> as an example again.
+<figure><img src="https://dawnarc.com/img/2024/20241027-%5BMaya%5DRigging%2004%20-%20Controller/%5BMaya%5DRigging%2004%20-%20Controller%20-%2019.gif">
+</figure>
+
+<figure><img src="https://dawnarc.com/img/2024/20241027-%5BMaya%5DRigging%2004%20-%20Controller/%5BMaya%5DRigging%2004%20-%20Controller%20-%2020.gif">
+</figure>
+</p>
+<p>From Maya 2020, it provide a new feature named <strong>Offset Parent Matrix</strong> to offset transform.<br>
+You can just copy the transform from Transform Attributes to Offset Parent Matrix, then zero the transform from Transform Attributes.
+<figure><img src="https://dawnarc.com/img/2024/20241027-%5BMaya%5DRigging%2004%20-%20Controller/%5BMaya%5DRigging%2004%20-%20Controller%20-%2026.gif">
+</figure>
+
+<figure><img src="https://dawnarc.com/img/2024/20241027-%5BMaya%5DRigging%2004%20-%20Controller/%5BMaya%5DRigging%2004%20-%20Controller%20-%2027.gif">
+</figure>
+
+Now you can found that the controller&rsquo;s transform was zeroed.
+<figure><img src="https://dawnarc.com/img/2024/20241027-%5BMaya%5DRigging%2004%20-%20Controller/%5BMaya%5DRigging%2004%20-%20Controller%20-%2028.gif">
+</figure>
+</p>
+<p><div class="alert warning ">
+  <p>Q: why don&rsquo;t we zero transform offset using Freeze Transformations before Parent Constraints?<br>
+A: Freeze Transformations will change the axis direction of pivot.</p>
+</div>
+<figure><img src="https://dawnarc.com/img/2024/20241027-%5BMaya%5DRigging%2004%20-%20Controller/%5BMaya%5DRigging%2004%20-%20Controller%20-%2029.gif">
+</figure>
+
+<figure><img src="https://dawnarc.com/img/2024/20241027-%5BMaya%5DRigging%2004%20-%20Controller/%5BMaya%5DRigging%2004%20-%20Controller%20-%2030.gif">
+</figure>
+</p>
 <h5 id="references">References</h5>
 <p>Character Rigging for Beginners: 03 Primary Controls<br>
 <a href="https://www.youtube.com/watch?v=m37fhS9MNSI&amp;list=PLbvsJz5ZcmxHEPiw_kF3vHjR023rIjR05&amp;index=3">https://www.youtube.com/watch?v=m37fhS9MNSI&amp;list=PLbvsJz5ZcmxHEPiw_kF3vHjR023rIjR05&amp;index=3</a></p>
