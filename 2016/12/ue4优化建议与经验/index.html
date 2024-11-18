@@ -590,7 +590,7 @@ Dynamic Shadow Distance 表示在多少距离内使用动态阴影，超过这�
 <p>Proxy Geometry Shadows适用于static mesh，skeletal mesh有没类似的优化？答：<a href="https://docs.unrealengine.com/4.27/en-US/BuildingWorlds/LightingAndShadows/CapsuleShadows/QuickStart/">Shadow Physics Asset</a>，也就是Capsule Shadows。</p>
 </li>
 <li>
-<p>严格控制产生dynamic shadow的灯光数量。初学者有个严重误解：deferred rendering在渲染成百上千的点光源时，依然不影响性能。网上一些show case看起来也确实如此，数千个光源下，帧率依然很高。但问题是，这些光源没有cast shadow，这种demo不适用于工业生产。除了前一条讲到的shadow map受mesh面数影响外，每多一个动态光（非static类型的light），framebuffer(主要是d-buffer)就会额外再build一次，以生成最终的shadow map。<br>
+<p>严格控制产生dynamic shadow的灯光数量。初学者有个严重误解：deferred rendering在渲染成百上千的点光源时，依然不影响性能。网上一些show case看起来也确实如此，数千个光源下，帧率依然很高。但问题是，这些光源没有cast shadow，这种demo不适用于工业生产。除了前一条讲到的shadow map受mesh面数影响外，每多一个动态光（非static类型的light），framebuffer(主要是d-buffer)就会额外再build一次，以生成最终的shadow map（atlas图集）。<br>
 哪些情况下会产生大量dynamic shadow？</p>
 <ul>
 <li>Movable Light数量多且cast shadow；（这种情况较少，因为很好排查）</li>
@@ -632,7 +632,7 @@ Dynamic Shadow Distance 表示在多少距离内使用动态阴影，超过这�
 <h5 id="后处理-post-process优化">后处理 (Post Process)优化</h5>
 <ol>
 <li>MeshComponent上有个属性<code>Render CustomDepth Pass</code>，用于控制自定义深度（比如描边），但Custom Depth开销较大，不需要时需及时关掉（比如射击游戏中，只有在红外成像仪激活状态下才开启custom depth）。运行时开启关闭CustomDepth的命令：<code>r.CustomDepth 0</code>（1表示开启）。<br>
-如何确定CustomDepth是否生效？先执行命令<code>ViewMode VisualizeBuffer</code>，再执行命令<code>r.BufferVisualizationTarget CustomeDepth</code>，如果能看见深灰色像素，说明custom depth起效。</li>
+如何确定CustomDepth是否生效？先执行命令<code>ViewMode VisualizeBuffer</code>，再执行命令<code>r.BufferVisualizationTarget CustomeDepth</code>，如果能看见深灰色像素，说明custom depth已开启。</li>
 </ol>
 <h5 id="geometry优化">Geometry优化</h5>
 <ol>

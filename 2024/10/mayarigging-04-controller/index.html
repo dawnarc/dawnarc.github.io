@@ -62,8 +62,8 @@
 
 
 
-  <meta property="og:image" content="https://dawnarc.com/thumbnail/cover-beijing.jpg">
-  <meta property="twitter:image" content="https://dawnarc.com/thumbnail/cover-beijing.jpg">
+  <meta property="og:image" content="https://dawnarc.com/thumbnail/beijing/thumbnail-beijing-016.jpg">
+  <meta property="twitter:image" content="https://dawnarc.com/thumbnail/beijing/thumbnail-beijing-016.jpg">
 
 
 
@@ -374,9 +374,10 @@
 <li><a href="https://dawnarc.com/2024/04/mayarigging-02-skinning/">[Maya]Rigging 02 - Skinning</a></li>
 <li><a href="https://dawnarc.com/2024/07/mayarigging-03-visualization/">[Maya]Rigging 03 - Visualization</a></li>
 <li><a href="https://dawnarc.com/2024/10/mayarigging-04-controller/">[Maya]Rigging 04 - Controller</a></li>
-<li>[Maya]Rigging 05 - IK &amp; FK (WIP)</li>
-<li>[Maya]Rigging 06 - Keyframe (WIP)</li>
-<li>[Maya]Rigging 07 - Common Tricks (WIP)</li>
+<li><a href="https://dawnarc.com/2024/11/mayarigging-05-attributes/">[Maya]Rigging 05 - Attributes</a></li>
+<li>[Maya]Rigging 06 - IK &amp; FK (WIP)</li>
+<li>[Maya]Rigging 07 - Keyframe (WIP)</li>
+<li>[Maya]Rigging 08 - Common Tricks (WIP)</li>
 </ul>
 <h5 id="summary">Summary</h5>
 <p>Why we need the Layered Controls? two reasons:</p>
@@ -406,6 +407,10 @@
 <p>4, Match Transforms.<br>
 Select shoulder joint and curve together, Modify -&gt; Match Transformations -&gt; Match All Transforms.
 <figure><img src="https://dawnarc.com/img/2024/20241027-%5BMaya%5DRigging%2004%20-%20Controller/%5BMaya%5DRigging%2004%20-%20Controller%20-%2004.gif">
+</figure>
+</p>
+<p>Another way to snap Control to Joint: Hold V and drag Control to target joint.
+<figure><img src="https://dawnarc.com/img/2024/20241027-%5BMaya%5DRigging%2004%20-%20Controller/%5BMaya%5DRigging%2004%20-%20Controller%20-%2004-A.gif">
 </figure>
 </p>
 <p>5, Tweak the curve&rsquo;s rotation.
@@ -457,7 +462,7 @@ Which axis is modified depends on the target joint coordinate axis.
 <figure><img src="https://dawnarc.com/img/2024/20241027-%5BMaya%5DRigging%2004%20-%20Controller/%5BMaya%5DRigging%2004%20-%20Controller%20-%2009.gif">
 </figure>
 </p>
-<p>Change the display size:
+<p>Change the line width:
 <figure><img src="https://dawnarc.com/img/2024/20241027-%5BMaya%5DRigging%2004%20-%20Controller/%5BMaya%5DRigging%2004%20-%20Controller%20-%2031.gif">
 </figure>
 
@@ -465,7 +470,7 @@ Which axis is modified depends on the target joint coordinate axis.
 </figure>
 </p>
 <h5 id="hide-joint-for-controler">Hide Joint for Controler</h5>
-<p>The process of rigging, we can hide the joints to highlight the controllers: Show -&gt; Viewport -&gt; Uncheck <code>Joints</code>.
+<p>In the process of rigging, we can hide the joints to highlight the controllers: Show -&gt; Viewport -&gt; Uncheck <code>Joints</code>.
 <figure><img src="https://dawnarc.com/img/2024/20241027-%5BMaya%5DRigging%2004%20-%20Controller/%5BMaya%5DRigging%2004%20-%20Controller%20-%2015.gif">
 </figure>
 </p>
@@ -542,7 +547,53 @@ Now you can found that the controller&rsquo;s transform was zeroed.
 <figure><img src="https://dawnarc.com/img/2024/20241027-%5BMaya%5DRigging%2004%20-%20Controller/%5BMaya%5DRigging%2004%20-%20Controller%20-%2028.gif">
 </figure>
 </p>
-<p><div class="alert warning ">
+<p>Script to copy Offset Parent Matirx and zero Transformation (credits to <a href="https://gist.github.com/Muream/b4255ec4f690222d92fe794be249b7f1">Muream</a>):</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-py" data-lang="py"><span style="display:flex;"><span><span style="color:#f92672">import</span> maya.api.OpenMaya <span style="color:#66d9ef">as</span> om
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> maya.cmds <span style="color:#66d9ef">as</span> cmds
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>TRANSFORM_NODETYPES <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#34;transform&#34;</span>, <span style="color:#e6db74">&#34;joint&#34;</span>]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">has_non_default_locked_attributes</span>(node):
+</span></span><span style="display:flex;"><span>    locked_attributes <span style="color:#f92672">=</span> []
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> attribute <span style="color:#f92672">in</span> [<span style="color:#e6db74">&#34;translate&#34;</span>, <span style="color:#e6db74">&#34;rotate&#34;</span>, <span style="color:#e6db74">&#34;scale&#34;</span>, <span style="color:#e6db74">&#34;jointOrient&#34;</span>]:
+</span></span><span style="display:flex;"><span>        default_value <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span> <span style="color:#66d9ef">if</span> attribute <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;scale&#34;</span> <span style="color:#66d9ef">else</span> <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> axis <span style="color:#f92672">in</span> <span style="color:#e6db74">&#34;XYZ&#34;</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> cmds<span style="color:#f92672">.</span>attributeQuery(attribute <span style="color:#f92672">+</span> axis, node<span style="color:#f92672">=</span>node, exists<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>):
+</span></span><span style="display:flex;"><span>                attribute_name <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">{}</span><span style="color:#e6db74">.</span><span style="color:#e6db74">{}{}</span><span style="color:#e6db74">&#34;</span><span style="color:#f92672">.</span>format(node, attribute, axis)
+</span></span><span style="display:flex;"><span>                current_value <span style="color:#f92672">=</span> cmds<span style="color:#f92672">.</span>getAttr(attribute_name)
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">if</span> cmds<span style="color:#f92672">.</span>getAttr(attribute_name, lock<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>) <span style="color:#f92672">and</span> current_value <span style="color:#f92672">!=</span> default_value:
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">True</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">reset_transforms</span>(node):
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> attribute <span style="color:#f92672">in</span> [<span style="color:#e6db74">&#34;translate&#34;</span>, <span style="color:#e6db74">&#34;rotate&#34;</span>, <span style="color:#e6db74">&#34;scale&#34;</span>, <span style="color:#e6db74">&#34;jointOrient&#34;</span>]:
+</span></span><span style="display:flex;"><span>        value <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span> <span style="color:#66d9ef">if</span> attribute <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;scale&#34;</span> <span style="color:#66d9ef">else</span> <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> axis <span style="color:#f92672">in</span> <span style="color:#e6db74">&#34;XYZ&#34;</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> cmds<span style="color:#f92672">.</span>attributeQuery(attribute <span style="color:#f92672">+</span> axis, node<span style="color:#f92672">=</span>node, exists<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>):
+</span></span><span style="display:flex;"><span>                attribute_name <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">{}</span><span style="color:#e6db74">.</span><span style="color:#e6db74">{}{}</span><span style="color:#e6db74">&#34;</span><span style="color:#f92672">.</span>format(node, attribute, axis)
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> cmds<span style="color:#f92672">.</span>getAttr(attribute_name, lock<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>):
+</span></span><span style="display:flex;"><span>                    cmds<span style="color:#f92672">.</span>setAttr(attribute_name, value)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">bake_transform_to_offset_parent_matrix</span>(node):
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> cmds<span style="color:#f92672">.</span>nodeType(node) <span style="color:#f92672">not</span> <span style="color:#f92672">in</span> TRANSFORM_NODETYPES:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">raise</span> <span style="color:#a6e22e">ValueError</span>(<span style="color:#e6db74">&#34;Node </span><span style="color:#e6db74">{}</span><span style="color:#e6db74"> is not a transform node&#34;</span><span style="color:#f92672">.</span>format(node))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> has_non_default_locked_attributes(node):
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">raise</span> <span style="color:#a6e22e">RuntimeError</span>(<span style="color:#e6db74">&#34;Node </span><span style="color:#e6db74">{}</span><span style="color:#e6db74"> has at least one non default locked attribute(s)&#34;</span><span style="color:#f92672">.</span>format(node))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    local_matrix <span style="color:#f92672">=</span> om<span style="color:#f92672">.</span>MMatrix(cmds<span style="color:#f92672">.</span>xform(node, q<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>, m<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>, ws<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>))
+</span></span><span style="display:flex;"><span>    offset_parent_matrix <span style="color:#f92672">=</span> om<span style="color:#f92672">.</span>MMatrix(cmds<span style="color:#f92672">.</span>getAttr(node <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;.offsetParentMatrix&#34;</span>))
+</span></span><span style="display:flex;"><span>    baked_matrix <span style="color:#f92672">=</span> local_matrix <span style="color:#f92672">*</span> offset_parent_matrix
+</span></span><span style="display:flex;"><span>    cmds<span style="color:#f92672">.</span>setAttr(node <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;.offsetParentMatrix&#34;</span>, baked_matrix, type<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;matrix&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    reset_transforms(node)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">bake_transform_to_offset_parent_matrix_selection</span>():
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> node <span style="color:#f92672">in</span> cmds<span style="color:#f92672">.</span>ls(sl<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>):
+</span></span><span style="display:flex;"><span>        bake_transform_to_offset_parent_matrix(node)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> __name__ <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;__main__&#34;</span>:
+</span></span><span style="display:flex;"><span>    bake_transform_to_offset_parent_matrix_selection()
+</span></span></code></pre></div><p><div class="alert warning ">
   <p>Q: why don&rsquo;t we zero transform offset using Freeze Transformations before Parent Constraints?<br>
 A: Freeze Transformations will change the axis direction of pivot.</p>
 </div>
@@ -593,7 +644,7 @@ A: Freeze Transformations will change the axis direction of pivot.</p>
           
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--disabled">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2024/11/mayarigging-05-attributes/" data-tooltip="[Maya]Rigging 05 - Attributes">
               
                   <i class="fa fa-angle-left"></i>
                   <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
@@ -655,7 +706,7 @@ A: Freeze Transformations will change the axis direction of pivot.</p>
           
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--disabled">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2024/11/mayarigging-05-attributes/" data-tooltip="[Maya]Rigging 05 - Attributes">
               
                   <i class="fa fa-angle-left"></i>
                   <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>

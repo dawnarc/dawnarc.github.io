@@ -446,7 +446,7 @@ ReleaseBar      //screen prints: === Destruct
   <p>Objects would never be destroyed if two <code>TSharedPtr</code>, which are reference to a same object, were assigned to each other, resulting a memory leak.</p>
 </div>
 <div class="alert warning ">
-  <p>If the class of TSharedPtr contains lambda functions, you must be careful to ensure the current object is valid while executing lambda, because the object ref counter may reach to 0 which causes the destruction in the gap time between current function and lambda function.<br>
+  <p>If the class of TSharedPtr contains lambda functions, you must be careful to ensure the current object is valid while executing lambda, because the object ref counter may reach to zero which causes the destruction in the gap time between current function and lambda function.<br>
 For more details, see: <a href="https://dawnarc.com/2017/12/ue4gameplay-dev-notes/#shared-pointer-in-async-task">Shared Pointer in Async Task</a></p>
 </div>
 <h5 id="whether-if-tsharedptr-works-for-uobject-or-not">Whether if TSharedPtr works for UObject or not</h5>
@@ -661,7 +661,9 @@ CheckBaz        //screen prints: Invalid---
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>TUniquePtr<span style="color:#f92672">&lt;</span>FTestStruct<span style="color:#f92672">&gt;</span> Buffer;
 </span></span><span style="display:flex;"><span>TestQueue.Dequeue(Buffer)
 </span></span></code></pre></div><h5 id="example--tuniqueptr--tarray">Example : TUniquePtr &amp; TArray</h5>
-<p>Add Element:</p>
+<p>Define:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>TArray<span style="color:#f92672">&lt;</span>TWeakObjectPtr<span style="color:#f92672">&lt;</span>APawn<span style="color:#f92672">&gt;&gt;</span> TestArray;
+</span></span></code></pre></div><p>Add Element:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>TUniquePtr<span style="color:#f92672">&lt;</span>FTestStruct<span style="color:#f92672">&gt;</span> Ptr <span style="color:#f92672">=</span> MakeUnique<span style="color:#f92672">&lt;</span>FTestStruct<span style="color:#f92672">&gt;</span>();
 </span></span><span style="display:flex;"><span>TestArray.Add(MoveTemp(Ptr));
 </span></span></code></pre></div><p>Remove element:<br>
@@ -699,21 +701,25 @@ CheckBaz        //screen prints: Invalid---
 </div>
 <h5 id="remove-in-array">Remove in Array</h5>
 <p>Examples:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>APawn<span style="color:#f92672">*</span> TestPawn <span style="color:#f92672">=</span> GetWorld()<span style="color:#f92672">-&gt;</span>SpawnActor<span style="color:#f92672">&lt;</span>APawn<span style="color:#f92672">&gt;</span>(MyPawnClass, FVector(<span style="color:#ae81ff">100.f</span>, <span style="color:#ae81ff">100.f</span>, <span style="color:#ae81ff">0.f</span>), FRotator<span style="color:#f92672">::</span>ZeroRotator);
-</span></span><span style="display:flex;"><span>APawn<span style="color:#f92672">*</span> MyPawn <span style="color:#f92672">=</span> GetWorld()<span style="color:#f92672">-&gt;</span>SpawnActor<span style="color:#f92672">&lt;</span>APawn<span style="color:#f92672">&gt;</span>(MyPawnClass, FVector(<span style="color:#ae81ff">200.f</span>, <span style="color:#ae81ff">200.f</span>, <span style="color:#ae81ff">0.f</span>), FRotator<span style="color:#f92672">::</span>ZeroRotator);
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>TArray<span style="color:#f92672">&lt;</span>TWeakObjectPtr<span style="color:#f92672">&lt;</span>APawn<span style="color:#f92672">&gt;&gt;</span> TestArray;
+</span></span><span style="display:flex;"><span>APawn<span style="color:#f92672">*</span> TestPawn01 <span style="color:#f92672">=</span> GetWorld()<span style="color:#f92672">-&gt;</span>SpawnActor<span style="color:#f92672">&lt;</span>APawn<span style="color:#f92672">&gt;</span>(APawn<span style="color:#f92672">::</span>StaticClass(), FVector(<span style="color:#ae81ff">100.f</span>, <span style="color:#ae81ff">100.f</span>, <span style="color:#ae81ff">0.f</span>), FRotator<span style="color:#f92672">::</span>ZeroRotator);
+</span></span><span style="display:flex;"><span>APawn<span style="color:#f92672">*</span> TestPawn02 <span style="color:#f92672">=</span> GetWorld()<span style="color:#f92672">-&gt;</span>SpawnActor<span style="color:#f92672">&lt;</span>APawn<span style="color:#f92672">&gt;</span>(APawn<span style="color:#f92672">::</span>StaticClass(), FVector(<span style="color:#ae81ff">200.f</span>, <span style="color:#ae81ff">200.f</span>, <span style="color:#ae81ff">0.f</span>), FRotator<span style="color:#f92672">::</span>ZeroRotator);
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>TestArray.Add(TWeakObjectPtr<span style="color:#f92672">&lt;</span>APawn<span style="color:#f92672">&gt;</span>(TestPawn));
-</span></span><span style="display:flex;"><span>TestArray.Add(TWeakObjectPtr<span style="color:#f92672">&lt;</span>APawn<span style="color:#f92672">&gt;</span>(MyPawn));
+</span></span><span style="display:flex;"><span>TestArray.Add(TWeakObjectPtr<span style="color:#f92672">&lt;</span>APawn<span style="color:#f92672">&gt;</span>(TestPawn01));
+</span></span><span style="display:flex;"><span>TestArray.Add(TWeakObjectPtr<span style="color:#f92672">&lt;</span>APawn<span style="color:#f92672">&gt;</span>(TestPawn02));
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">int</span> Num <span style="color:#f92672">=</span> TestArray.Num();    <span style="color:#75715e">// 2
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
-</span></span><span style="display:flex;"><span>TWeakObjectPtr<span style="color:#f92672">&lt;</span>APawn<span style="color:#f92672">&gt;</span> WeakPtr1(TestPawn);
+</span></span><span style="display:flex;"><span>TWeakObjectPtr<span style="color:#f92672">&lt;</span>APawn<span style="color:#f92672">&gt;</span> WeakPtr1(TestPawn01);
 </span></span><span style="display:flex;"><span>TestArray.Remove(WeakPtr1);
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">int</span> Num <span style="color:#f92672">=</span> TestArray.Num();    <span style="color:#75715e">// 1
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
-</span></span><span style="display:flex;"><span>TWeakObjectPtr<span style="color:#f92672">&lt;</span>APawn<span style="color:#f92672">&gt;</span> WeakPtr2(TestPawn);
-</span></span><span style="display:flex;"><span>TestArray.Remove(WeakPtr2);
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">int</span> Num2 <span style="color:#f92672">=</span> TestArray.Num();    <span style="color:#75715e">// 1
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>TWeakObjectPtr<span style="color:#f92672">&lt;</span>APawn<span style="color:#f92672">&gt;</span> WeakPtr2(TestPawn01);
+</span></span><span style="display:flex;"><span>TestArray.Remove(WeakPtr2);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">int</span> Num3 <span style="color:#f92672">=</span> TestArray.Num();    <span style="color:#75715e">// 1
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>TestArray.Remove(TestPawn02);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">int</span> Num4 <span style="color:#f92672">=</span> TestArray.Num();    <span style="color:#75715e">// 0
 </span></span></span></code></pre></div><h3 id="reference">Reference</h3>
 <p>unreal-unique-pointer<br>
 <a href="https://baemincheon.github.io/2020/03/14/unreal-unique-pointer/">https://baemincheon.github.io/2020/03/14/unreal-unique-pointer/</a></p>

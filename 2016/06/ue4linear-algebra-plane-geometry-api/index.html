@@ -368,315 +368,270 @@
 <p>keywords：UE4、Linear Algebra、Plane Geometry、线性代数、解析几何</p>
 <h3 id="范围判定">范围判定</h3>
 <h5 id="检测一个点是否在一个多边形或矩形的内部2d和3d">检测一个点是否在一个多边形(或矩形)的内部(2D和3D)</h5>
-<pre><code>FBox2D::IsInside(const FVector2D&amp; TestPoint)
-FBox::IsInside(const FVector&amp; TestPoint)
-FIntRect::Contains( FIntPoint P )
-</code></pre>
-<h3 id="角度计算">角度计算</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>FBox2D<span style="color:#f92672">::</span>IsInside(<span style="color:#66d9ef">const</span> FVector2D<span style="color:#f92672">&amp;</span> TestPoint)
+</span></span><span style="display:flex;"><span>FBox<span style="color:#f92672">::</span>IsInside(<span style="color:#66d9ef">const</span> FVector<span style="color:#f92672">&amp;</span> TestPoint)
+</span></span><span style="display:flex;"><span>FIntRect<span style="color:#f92672">::</span>Contains( FIntPoint P )
+</span></span></code></pre></div><h3 id="角度计算">角度计算</h3>
 <h5 id="计算两个向量的夹角get-an-angle-between-2-vectors范围0-180">计算两个向量的夹角(Get an angle between 2 Vectors)，范围：(0, 180)</h5>
-<pre><code>float AimAtAngle = FMath::RadiansToDegrees(acosf(FVector::DotProduct(PlayerDirection, MouseDirection)));
-</code></pre>
-<p>参考：How to get an angle between 2 Vectors?<br>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">float</span> AimAtAngle <span style="color:#f92672">=</span> FMath<span style="color:#f92672">::</span>RadiansToDegrees(acosf(FVector<span style="color:#f92672">::</span>DotProduct(PlayerDirection, MouseDirection)));
+</span></span></code></pre></div><p>参考：How to get an angle between 2 Vectors?<br>
 <a href="https://answers.unrealengine.com/questions/31058/how-to-get-an-angle-between-2-vectors.html">https://answers.unrealengine.com/questions/31058/how-to-get-an-angle-between-2-vectors.html</a></p>
 <h5 id="计算方向向量与空间坐标轴xyz的夹角范围-180-180">计算方向向量与空间坐标轴（X、Y、Z）的夹角，范围：(-180, 180)</h5>
-<pre><code>FRotator Rot = UKismetMathLibrary::MakeRotFromX(TestVector);
-float Angle = Rot.Yaw;  //(-180, 180)
-</code></pre>
-<h5 id="判断角色a在角色b的左边还是右边或者角色a相对角色b的四个方向">判断角色A在角色B的左边还是右边（或者角色A相对角色B的四个方向）</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>FRotator Rot <span style="color:#f92672">=</span> UKismetMathLibrary<span style="color:#f92672">::</span>MakeRotFromX(TestVector);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">float</span> Angle <span style="color:#f92672">=</span> Rot.Yaw;  <span style="color:#75715e">//(-180, 180)
+</span></span></span></code></pre></div><h5 id="判断角色a在角色b的左边还是右边或者角色a相对角色b的四个方向">判断角色A在角色B的左边还是右边（或者角色A相对角色B的四个方向）</h5>
 <p>参考自引擎代码：<code>UAnimInstance::CalculateDirection()</code></p>
-<pre><code>//-180到0表示 ActorA 在 ActorB 左边，0到180表示 ActorA 在 ActorB 右边
-float CalculateDirecton(const AActor* ActorA, const AActor* ActorB)
-{
-    FVector TestDire = ActorA-&gt;GetActorLocation() - ActorB-&gt;GetActorLocation();
-
-    FMatrix RotMatrix = FRotationMatrix(ActorB-&gt;GetActorRotation());
-    FVector ForwardVector = RotMatrix.GetScaledAxis(EAxis::X);
-    FVector RightVector = RotMatrix.GetScaledAxis(EAxis::Y);
-    FVector NormalizedVel = TestDire.GetSafeNormal2D();
-
-    // get a cos(alpha) of forward vector vs velocity
-    float ForwardCosAngle = FVector::DotProduct(ForwardVector, NormalizedVel);
-    // now get the alpha and convert to degree
-    float ForwardDeltaDegree = FMath::RadiansToDegrees(FMath::Acos(ForwardCosAngle));
-
-    // depending on where right vector is, flip it
-    float RightCosAngle = FVector::DotProduct(RightVector, NormalizedVel);
-    if (RightCosAngle &lt; 0)
-    {
-        ForwardDeltaDegree *= -1;
-    }
-    
-    return ForwardDeltaDegree;
-}
-</code></pre>
-<h5 id="计算方向向量-indirection-相对-referenceframe-的方位俯仰角azimuth-elevation">计算方向向量 InDirection 相对 ReferenceFrame 的方位俯仰角(Azimuth-Elevation)</h5>
-<pre><code>void UKismetMathLibrary::GetAzimuthAndElevation(FVector InDirection, const FTransform&amp; ReferenceFrame, float&amp; Azimuth, float&amp; Elevation);
-</code></pre>
-<h5 id="根据入射向量和法线向量计算反射向量">根据入射向量和法线向量计算反射向量</h5>
-<pre><code>FVector FMath::GetReflectionVector(const FVector&amp; Direction, const FVector&amp; SurfaceNormal);
-</code></pre>
-<h5 id="根据地面的法线向量right方向向量up向量向量计算出斜坡的-roll-和-pitch-方向的角度">根据地面的法线向量、Right方向向量、Up向量向量，计算出斜坡的 Roll 和 Pitch 方向的角度</h5>
-<pre><code>void UKismetMathLibrary::GetSlopeDegreeAngles(const FVector&amp; MyRightYAxis, const FVector&amp; FloorNormal, const FVector&amp; UpVector, 
-    float&amp; OutSlopePitchDegreeAngle, float&amp; OutSlopeRollDegreeAngle);
-</code></pre>
-<h3 id="点坐标计算">点坐标计算</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">//-180到0表示 ActorA 在 ActorB 左边，0到180表示 ActorA 在 ActorB 右边
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">float</span> <span style="color:#a6e22e">CalculateDirecton</span>(<span style="color:#66d9ef">const</span> AActor<span style="color:#f92672">*</span> ActorA, <span style="color:#66d9ef">const</span> AActor<span style="color:#f92672">*</span> ActorB)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    FVector TestDire <span style="color:#f92672">=</span> ActorA<span style="color:#f92672">-&gt;</span>GetActorLocation() <span style="color:#f92672">-</span> ActorB<span style="color:#f92672">-&gt;</span>GetActorLocation();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    FMatrix RotMatrix <span style="color:#f92672">=</span> FRotationMatrix(ActorB<span style="color:#f92672">-&gt;</span>GetActorRotation());
+</span></span><span style="display:flex;"><span>    FVector ForwardVector <span style="color:#f92672">=</span> RotMatrix.GetScaledAxis(EAxis<span style="color:#f92672">::</span>X);
+</span></span><span style="display:flex;"><span>    FVector RightVector <span style="color:#f92672">=</span> RotMatrix.GetScaledAxis(EAxis<span style="color:#f92672">::</span>Y);
+</span></span><span style="display:flex;"><span>    FVector NormalizedVel <span style="color:#f92672">=</span> TestDire.GetSafeNormal2D();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// get a cos(alpha) of forward vector vs velocity
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">float</span> ForwardCosAngle <span style="color:#f92672">=</span> FVector<span style="color:#f92672">::</span>DotProduct(ForwardVector, NormalizedVel);
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// now get the alpha and convert to degree
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">float</span> ForwardDeltaDegree <span style="color:#f92672">=</span> FMath<span style="color:#f92672">::</span>RadiansToDegrees(FMath<span style="color:#f92672">::</span>Acos(ForwardCosAngle));
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// depending on where right vector is, flip it
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">float</span> RightCosAngle <span style="color:#f92672">=</span> FVector<span style="color:#f92672">::</span>DotProduct(RightVector, NormalizedVel);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (RightCosAngle <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">0</span>)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        ForwardDeltaDegree <span style="color:#f92672">*=</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> ForwardDeltaDegree;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h5 id="计算方向向量-indirection-相对-referenceframe-的方位俯仰角azimuth-elevation">计算方向向量 InDirection 相对 ReferenceFrame 的方位俯仰角(Azimuth-Elevation)</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> UKismetMathLibrary<span style="color:#f92672">::</span>GetAzimuthAndElevation(FVector InDirection, <span style="color:#66d9ef">const</span> FTransform<span style="color:#f92672">&amp;</span> ReferenceFrame, <span style="color:#66d9ef">float</span><span style="color:#f92672">&amp;</span> Azimuth, <span style="color:#66d9ef">float</span><span style="color:#f92672">&amp;</span> Elevation);
+</span></span></code></pre></div><h5 id="根据入射向量和法线向量计算反射向量">根据入射向量和法线向量计算反射向量</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>FVector FMath<span style="color:#f92672">::</span>GetReflectionVector(<span style="color:#66d9ef">const</span> FVector<span style="color:#f92672">&amp;</span> Direction, <span style="color:#66d9ef">const</span> FVector<span style="color:#f92672">&amp;</span> SurfaceNormal);
+</span></span></code></pre></div><h5 id="根据地面的法线向量right方向向量up向量向量计算出斜坡的-roll-和-pitch-方向的角度">根据地面的法线向量、Right方向向量、Up向量向量，计算出斜坡的 Roll 和 Pitch 方向的角度</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> UKismetMathLibrary<span style="color:#f92672">::</span>GetSlopeDegreeAngles(<span style="color:#66d9ef">const</span> FVector<span style="color:#f92672">&amp;</span> MyRightYAxis, <span style="color:#66d9ef">const</span> FVector<span style="color:#f92672">&amp;</span> FloorNormal, <span style="color:#66d9ef">const</span> FVector<span style="color:#f92672">&amp;</span> UpVector, 
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">float</span><span style="color:#f92672">&amp;</span> OutSlopePitchDegreeAngle, <span style="color:#66d9ef">float</span><span style="color:#f92672">&amp;</span> OutSlopeRollDegreeAngle);
+</span></span></code></pre></div><h3 id="点坐标计算">点坐标计算</h3>
 <h5 id="计算直线外一点到该直线的最近的点垂足的坐标">计算直线外一点到该直线的最近的点（垂足的坐标）</h5>
-<pre><code>FVector UKismetMathLibrary::FindClosestPointOnLine(FVector Point, FVector LineOrigin, FVector LineDirection);
-</code></pre>
-<h5 id="计算直线与平面交叉点的坐标">计算直线与平面交叉点的坐标</h5>
-<pre><code>bool UKismetMathLibrary::LinePlaneIntersection(const FVector&amp; LineStart, const FVector&amp; LineEnd, 
-    const FPlane&amp; APlane, float&amp; T, FVector&amp; Intersection);
-</code></pre>
-<h5 id="计算平面外一点投射到平面的坐标点">计算平面外一点投射到平面的坐标点</h5>
-<pre><code>FVector UKismetMathLibrary::ProjectPointOnToPlane(FVector Point, FVector PlaneBase, FVector PlaneNormal);
-</code></pre>
-<h5 id="计算线段上到某点的最近的点坐标">计算线段上到某点的最近的点坐标</h5>
-<pre><code>//Returns closest point on a segment to a given point.
-FVector FMath::ClosestPointOnSegment(const FVector &amp;Point, const FVector &amp;StartPoint, const FVector &amp;EndPoint);
-</code></pre>
-<h5 id="计算线某点到线段的最短距离">计算线某点到线段的最短距离</h5>
-<pre><code>//Returns square of the distance from a point to the closest point on a segment.
-float FMath::PointDistToSegmentSquared(const FVector &amp;Point, const FVector &amp;StartPoint, const FVector &amp;EndPoint);
-</code></pre>
-<h3 id="向量矢量计算">向量（矢量）计算</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>FVector UKismetMathLibrary<span style="color:#f92672">::</span>FindClosestPointOnLine(FVector Point, FVector LineOrigin, FVector LineDirection);
+</span></span></code></pre></div><h5 id="计算直线与平面交叉点的坐标">计算直线与平面交叉点的坐标</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">bool</span> UKismetMathLibrary<span style="color:#f92672">::</span>LinePlaneIntersection(<span style="color:#66d9ef">const</span> FVector<span style="color:#f92672">&amp;</span> LineStart, <span style="color:#66d9ef">const</span> FVector<span style="color:#f92672">&amp;</span> LineEnd, 
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> FPlane<span style="color:#f92672">&amp;</span> APlane, <span style="color:#66d9ef">float</span><span style="color:#f92672">&amp;</span> T, FVector<span style="color:#f92672">&amp;</span> Intersection);
+</span></span></code></pre></div><h5 id="计算平面外一点投射到平面的坐标点">计算平面外一点投射到平面的坐标点</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>FVector UKismetMathLibrary<span style="color:#f92672">::</span>ProjectPointOnToPlane(FVector Point, FVector PlaneBase, FVector PlaneNormal);
+</span></span></code></pre></div><h5 id="计算线段上到某点的最近的点坐标">计算线段上到某点的最近的点坐标</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">//Returns closest point on a segment to a given point.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>FVector FMath<span style="color:#f92672">::</span>ClosestPointOnSegment(<span style="color:#66d9ef">const</span> FVector <span style="color:#f92672">&amp;</span>Point, <span style="color:#66d9ef">const</span> FVector <span style="color:#f92672">&amp;</span>StartPoint, <span style="color:#66d9ef">const</span> FVector <span style="color:#f92672">&amp;</span>EndPoint);
+</span></span></code></pre></div><h5 id="计算线某点到线段的最短距离">计算线某点到线段的最短距离</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">//Returns square of the distance from a point to the closest point on a segment.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">float</span> FMath<span style="color:#f92672">::</span>PointDistToSegmentSquared(<span style="color:#66d9ef">const</span> FVector <span style="color:#f92672">&amp;</span>Point, <span style="color:#66d9ef">const</span> FVector <span style="color:#f92672">&amp;</span>StartPoint, <span style="color:#66d9ef">const</span> FVector <span style="color:#f92672">&amp;</span>EndPoint);
+</span></span></code></pre></div><h3 id="向量矢量计算">向量（矢量）计算</h3>
 <h5 id="向量a投射到以z轴为法线的平面的投射向量">向量A投射到以Z轴为法线的平面的投射向量</h5>
-<pre><code>/**
- * Projects 2D components of vector based on Z.
- *
- * @return Projected version of vector based on Z.
- */
-FVector Projection() const;
-</code></pre>
-<h5 id="计算平面外矢量投射到平面后的矢量">计算平面外矢量投射到平面后的矢量</h5>
-<pre><code>FVector UKismetMathLibrary::ProjectVectorOnToPlane(FVector V, FVector PlaneNormal);
-
-FVector FVector::VectorPlaneProject(const FVector&amp; V, const FVector&amp; PlaneNormal);
-</code></pre>
-<h5 id="计算一组向量的平均向量">计算一组向量的平均向量</h5>
-<pre><code>FVector GetVectorArrayAverage(const TArray&lt;FVector&gt;&amp; Vectors);
-</code></pre>
-<h5 id="获取反向方向--获取a向量相对b向量的镜像向量">获取反向方向 / 获取A向量相对B向量的镜像向量</h5>
-<pre><code>/** 
- * Given a direction vector and a surface normal, returns the vector reflected across the surface normal.
- * Produces a result like shining a laser at a mirror!
- *
- * @param Direction Direction vector the ray is coming from.
- * @param SurfaceNormal A normal of the surface the ray should be reflected on.
- *
- * @returns Reflected vector.
- */
-static CORE_API FVector GetReflectionVector(const FVector&amp; Direction, const FVector&amp; SurfaceNormal);
-</code></pre>
-<h5 id="获取世界rotator对应世界坐标系的3个轴向向量">获取世界Rotator对应世界坐标系的3个轴向向量</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * Projects 2D components of vector based on Z.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * @return Projected version of vector based on Z.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> */</span>
+</span></span><span style="display:flex;"><span>FVector <span style="color:#a6e22e">Projection</span>() <span style="color:#66d9ef">const</span>;
+</span></span></code></pre></div><h5 id="计算平面外矢量投射到平面后的矢量">计算平面外矢量投射到平面后的矢量</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>FVector UKismetMathLibrary<span style="color:#f92672">::</span>ProjectVectorOnToPlane(FVector V, FVector PlaneNormal);
+</span></span><span style="display:flex;"><span>FVector FVector<span style="color:#f92672">::</span>VectorPlaneProject(<span style="color:#66d9ef">const</span> FVector<span style="color:#f92672">&amp;</span> V, <span style="color:#66d9ef">const</span> FVector<span style="color:#f92672">&amp;</span> PlaneNormal);
+</span></span></code></pre></div><h5 id="计算一组向量的平均向量">计算一组向量的平均向量</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>FVector <span style="color:#a6e22e">GetVectorArrayAverage</span>(<span style="color:#66d9ef">const</span> TArray<span style="color:#f92672">&lt;</span>FVector<span style="color:#f92672">&gt;&amp;</span> Vectors);
+</span></span></code></pre></div><h5 id="获取反向方向--获取a向量相对b向量的镜像向量">获取反向方向 / 获取A向量相对B向量的镜像向量</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">/** 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * Given a direction vector and a surface normal, returns the vector reflected across the surface normal.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * Produces a result like shining a laser at a mirror!
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * @param Direction Direction vector the ray is coming from.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * @param SurfaceNormal A normal of the surface the ray should be reflected on.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * @returns Reflected vector.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> */</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">static</span> CORE_API FVector <span style="color:#a6e22e">GetReflectionVector</span>(<span style="color:#66d9ef">const</span> FVector<span style="color:#f92672">&amp;</span> Direction, <span style="color:#66d9ef">const</span> FVector<span style="color:#f92672">&amp;</span> SurfaceNormal);
+</span></span></code></pre></div><h5 id="获取世界rotator对应世界坐标系的3个轴向向量">获取世界Rotator对应世界坐标系的3个轴向向量</h5>
 <p>另一种等价表述：以Rotator自身朝向为X轴，获取对应的X、Y、Z轴方向的世界坐标系方向</p>
 <p>接口1：</p>
-<pre><code>FMatrix RotMatrix = FRotationMatrix(ActorB-&gt;GetActorRotation());
-FVector ForwardVector = RotMatrix.GetScaledAxis(EAxis::X);
-FVector RightVector = RotMatrix.GetScaledAxis(EAxis::Y);
-FVector TopVector = RotMatrix.GetScaledAxis(EAxis::Z);
-</code></pre>
-<p>如果是想获取对应的方向向量使用：</p>
-<pre><code>FVector FMatrix::GetUnitAxis( EAxis::Type InAxis ) const
-</code></pre>
-<p>接口2：</p>
-<pre><code>FRotator TestRot(450.f, 45.f, 0.f);
-FVector OutX;
-FVector OutY;
-FVector OutZ;
-UKismetMathLibrary::GetAxes(TestRot, OutX, OutY, OutZ);
-</code></pre>
-<p>接口3：</p>
-<pre><code>FVector VecFwd = UKismetMathLibrary::GetForwardVector(TestRot);
-FVector VecRight = UKismetMathLibrary::GetRightVector(TestRot);
-FVector VecUp = UKismetMathLibrary::GetUpVector(TestRot);
-</code></pre>
-<h5 id="以rotator自身朝向为x轴计算指定向量映射在这个局部坐标系xyz轴方向的局部空间向量">以Rotator自身朝向为X轴，计算指定向量映射在这个局部坐标系X、Y、Z轴方向的局部空间向量</h5>
-<pre><code>FRotator Rot(45.f, 45.f, 0);
-FVector Velocity(90.f, 90.f, 0);
-FVector VeclocityInNewDire = Rot.UnrotateVector(Velocity);
-float ForwardSpeed = VeclocityInNewDire.X;
-float RightSpeed = VeclocityInNewDire.Y;
-</code></pre>
-<p>蓝图示例
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>FMatrix RotMatrix <span style="color:#f92672">=</span> FRotationMatrix(ActorB<span style="color:#f92672">-&gt;</span>GetActorRotation());
+</span></span><span style="display:flex;"><span>FVector ForwardVector <span style="color:#f92672">=</span> RotMatrix.GetScaledAxis(EAxis<span style="color:#f92672">::</span>X);
+</span></span><span style="display:flex;"><span>FVector RightVector <span style="color:#f92672">=</span> RotMatrix.GetScaledAxis(EAxis<span style="color:#f92672">::</span>Y);
+</span></span><span style="display:flex;"><span>FVector TopVector <span style="color:#f92672">=</span> RotMatrix.GetScaledAxis(EAxis<span style="color:#f92672">::</span>Z);
+</span></span></code></pre></div><p>如果是想获取对应的方向向量使用：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>FVector FMatrix<span style="color:#f92672">::</span>GetUnitAxis( EAxis<span style="color:#f92672">::</span>Type InAxis ) <span style="color:#66d9ef">const</span>
+</span></span></code></pre></div><p>接口2：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>FRotator <span style="color:#a6e22e">TestRot</span>(<span style="color:#ae81ff">450.f</span>, <span style="color:#ae81ff">45.f</span>, <span style="color:#ae81ff">0.f</span>);
+</span></span><span style="display:flex;"><span>FVector OutX;
+</span></span><span style="display:flex;"><span>FVector OutY;
+</span></span><span style="display:flex;"><span>FVector OutZ;
+</span></span><span style="display:flex;"><span>UKismetMathLibrary<span style="color:#f92672">::</span>GetAxes(TestRot, OutX, OutY, OutZ);
+</span></span></code></pre></div><p>接口3：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>FVector VecFwd <span style="color:#f92672">=</span> UKismetMathLibrary<span style="color:#f92672">::</span>GetForwardVector(TestRot);
+</span></span><span style="display:flex;"><span>FVector VecRight <span style="color:#f92672">=</span> UKismetMathLibrary<span style="color:#f92672">::</span>GetRightVector(TestRot);
+</span></span><span style="display:flex;"><span>FVector VecUp <span style="color:#f92672">=</span> UKismetMathLibrary<span style="color:#f92672">::</span>GetUpVector(TestRot);
+</span></span></code></pre></div><h5 id="以rotator自身朝向为x轴计算指定向量映射在这个局部坐标系xyz轴方向的局部空间向量">以Rotator自身朝向为X轴，计算指定向量映射在这个局部坐标系X、Y、Z轴方向的局部空间向量</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>FRotator <span style="color:#a6e22e">Rot</span>(<span style="color:#ae81ff">45.f</span>, <span style="color:#ae81ff">45.f</span>, <span style="color:#ae81ff">0</span>);
+</span></span><span style="display:flex;"><span>FVector <span style="color:#a6e22e">Velocity</span>(<span style="color:#ae81ff">90.f</span>, <span style="color:#ae81ff">90.f</span>, <span style="color:#ae81ff">0</span>);
+</span></span><span style="display:flex;"><span>FVector VeclocityInNewDire <span style="color:#f92672">=</span> Rot.UnrotateVector(Velocity);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">float</span> ForwardSpeed <span style="color:#f92672">=</span> VeclocityInNewDire.X;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">float</span> RightSpeed <span style="color:#f92672">=</span> VeclocityInNewDire.Y;
+</span></span></code></pre></div><p>蓝图示例
 <figure><img src="https://dawnarc.com/img/20160623-%5BUE4%5DLinear%20Algebra%20&amp;%20Plane%20Geometry%20API/%5BUE4%5DLinear%20Algebra%20&amp;%20Plane%20Geometry%20API-01.jpg">
 </figure>
-</p>
-<p><code>UnrotateVector</code>的另一个应用，计算A向量相对B向量的Offset。<br>
+
+<code>UnrotateVector</code>的另一个应用，计算A向量相对B向量的Offset。<br>
 示例：</p>
-<pre><code>FVector Direction(1.f, 1.f, 0.f);
-FVector BaseDire(0, -1.f, 0.f);
-FVector OffsetDire = BaseDire.Rotation().UnrotateVector(Direction);
-</code></pre>
-<h5 id="计算向量的相反方向向量">计算向量的相反方向向量</h5>
-<pre><code>FVector UKismetMathLibrary::NegateVector(FVector A)
-</code></pre>
-<p>或者</p>
-<pre><code>FVector Direction;
-FVector InverseDire = -Direction;
-</code></pre>
-<h3 id="插值相关">插值相关</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>FVector <span style="color:#a6e22e">Direction</span>(<span style="color:#ae81ff">1.f</span>, <span style="color:#ae81ff">1.f</span>, <span style="color:#ae81ff">0.f</span>);
+</span></span><span style="display:flex;"><span>FVector <span style="color:#a6e22e">BaseDire</span>(<span style="color:#ae81ff">0</span>, <span style="color:#f92672">-</span><span style="color:#ae81ff">1.f</span>, <span style="color:#ae81ff">0.f</span>);
+</span></span><span style="display:flex;"><span>FVector OffsetDire <span style="color:#f92672">=</span> BaseDire.Rotation().UnrotateVector(Direction);
+</span></span></code></pre></div><h5 id="计算向量的相反方向向量">计算向量的相反方向向量</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>FVector UKismetMathLibrary<span style="color:#f92672">::</span>NegateVector(FVector A)
+</span></span></code></pre></div><p>或者</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>FVector Direction;
+</span></span><span style="display:flex;"><span>FVector InverseDire <span style="color:#f92672">=</span> <span style="color:#f92672">-</span>Direction;
+</span></span></code></pre></div><h3 id="插值相关">插值相关</h3>
 <h5 id="interpolate">Interpolate</h5>
 <p>使用简单弹簧模型（Spring）来 interpolate 浮点数值（范围从 Current 到 Target）</p>
-<pre><code>float UKismetMathLibrary::FloatSpringInterp(float Current, float Target, UPARAM(ref) FFloatSpringState&amp; SpringState, 
-    float Stiffness, float CriticalDampingFactor, float DeltaTime, float Mass = 1.f);
-</code></pre>
-<p>同上，数值类型为 Vector：</p>
-<pre><code>FVector UKismetMathLibrary::VectorSpringInterp(FVector Current, FVector Target, UPARAM(ref) FVectorSpringState&amp; SpringState, float Stiffness, float CriticalDampingFactor, float DeltaTime, float Mass = 1.f);
-</code></pre>
-<p>Transform 插值计算：</p>
-<pre><code>FTransform UKismetMathLibrary::TInterpTo(const FTransform&amp; Current, const FTransform&amp; Target, float DeltaTime, float InterpSpeed);
-</code></pre>
-<h3 id="coordinate-system-related">Coordinate System Related</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">float</span> UKismetMathLibrary<span style="color:#f92672">::</span>FloatSpringInterp(<span style="color:#66d9ef">float</span> Current, <span style="color:#66d9ef">float</span> Target, UPARAM(ref) FFloatSpringState<span style="color:#f92672">&amp;</span> SpringState, 
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">float</span> Stiffness, <span style="color:#66d9ef">float</span> CriticalDampingFactor, <span style="color:#66d9ef">float</span> DeltaTime, <span style="color:#66d9ef">float</span> Mass <span style="color:#f92672">=</span> <span style="color:#ae81ff">1.f</span>);
+</span></span></code></pre></div><p>同上，数值类型为 Vector：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>FVector UKismetMathLibrary<span style="color:#f92672">::</span>VectorSpringInterp(FVector Current, FVector Target, UPARAM(ref) FVectorSpringState<span style="color:#f92672">&amp;</span> SpringState, <span style="color:#66d9ef">float</span> Stiffness, <span style="color:#66d9ef">float</span> CriticalDampingFactor, <span style="color:#66d9ef">float</span> DeltaTime, <span style="color:#66d9ef">float</span> Mass <span style="color:#f92672">=</span> <span style="color:#ae81ff">1.f</span>);
+</span></span></code></pre></div><p>Transform 插值计算：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>FTransform UKismetMathLibrary<span style="color:#f92672">::</span>TInterpTo(<span style="color:#66d9ef">const</span> FTransform<span style="color:#f92672">&amp;</span> Current, <span style="color:#66d9ef">const</span> FTransform<span style="color:#f92672">&amp;</span> Target, <span style="color:#66d9ef">float</span> DeltaTime, <span style="color:#66d9ef">float</span> InterpSpeed);
+</span></span></code></pre></div><h5 id="平滑连续的随机数生成">平滑连续的随机数生成</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>FMath<span style="color:#f92672">::</span>PerlinNoise1D(<span style="color:#66d9ef">float</span> Time);
+</span></span></code></pre></div><h3 id="coordinate-system-related">Coordinate System Related</h3>
 <h5 id="rotation-transform">Rotation Transform</h5>
 <p>Transform rotation from World Space to Local Space:</p>
-<pre><code>FORCEINLINE FQuat FTransform::InverseTransformRotation(const FQuat&amp; Q) const;
-</code></pre>
-<p>example:</p>
-<pre><code>FRotator DestWorldRot(100.f, 100.f, 0.f);
-FQuat QuatWorld = DestWorldRot.Quaternion();
-FQuat QuatLocal = MyActor-&gt;GetComponentTransform().InverseTransformRotation(QuatWorld);
-FRotator RotOffset = QuatLocal.Rotator();
-</code></pre>
-<p>Transform rotation from Local Space to World Space:</p>
-<pre><code>FORCEINLINE FQuat FTransform::TransformRotation(const FQuat&amp; Q) const;
-</code></pre>
-<p>example:</p>
-<pre><code>FRotator DestRotOffset(100.f, 100.f, 0.f);
-FRotator DestRotInWorld = FTransform(CameraRotInWorld).TransformRotation(DestRotOffset.Quaternion()).Rotator();
-</code></pre>
-<h5 id="location-transform">Location Transform</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>FORCEINLINE FQuat FTransform<span style="color:#f92672">::</span>InverseTransformRotation(<span style="color:#66d9ef">const</span> FQuat<span style="color:#f92672">&amp;</span> Q) <span style="color:#66d9ef">const</span>;
+</span></span></code></pre></div><p>Example:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>FRotator <span style="color:#a6e22e">DestWorldRot</span>(<span style="color:#ae81ff">100.f</span>, <span style="color:#ae81ff">100.f</span>, <span style="color:#ae81ff">0.f</span>);
+</span></span><span style="display:flex;"><span>FQuat QuatWorld <span style="color:#f92672">=</span> DestWorldRot.Quaternion();
+</span></span><span style="display:flex;"><span>FQuat QuatLocal <span style="color:#f92672">=</span> MyActor<span style="color:#f92672">-&gt;</span>GetComponentTransform().InverseTransformRotation(QuatWorld);
+</span></span><span style="display:flex;"><span>FRotator RotOffset <span style="color:#f92672">=</span> QuatLocal.Rotator();
+</span></span></code></pre></div><p>Transform rotation from Local Space to World Space:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>FORCEINLINE FQuat FTransform<span style="color:#f92672">::</span>TransformRotation(<span style="color:#66d9ef">const</span> FQuat<span style="color:#f92672">&amp;</span> Q) <span style="color:#66d9ef">const</span>;
+</span></span></code></pre></div><p>Example:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>FRotator <span style="color:#a6e22e">DestRotOffset</span>(<span style="color:#ae81ff">100.f</span>, <span style="color:#ae81ff">100.f</span>, <span style="color:#ae81ff">0.f</span>);
+</span></span><span style="display:flex;"><span>FRotator DestRotInWorld <span style="color:#f92672">=</span> FTransform(CameraRotInWorld).TransformRotation(DestRotOffset.Quaternion()).Rotator();
+</span></span></code></pre></div><h5 id="location-transform">Location Transform</h5>
 <p>World Space To Local Space:</p>
-<pre><code>FORCEINLINE FVector FTransform::InverseTransformPositionNoScale(const FVector &amp;V) const;
-</code></pre>
-<p>Blueprint Node:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>FORCEINLINE FVector FTransform<span style="color:#f92672">::</span>InverseTransformPositionNoScale(<span style="color:#66d9ef">const</span> FVector <span style="color:#f92672">&amp;</span>V) <span style="color:#66d9ef">const</span>;
+</span></span></code></pre></div><p>Blueprint Node:</p>
 <pre><code>InverseTransformLocation
 </code></pre>
 <p>Local Space To World Space:</p>
-<pre><code>FORCEINLINE FVector FTransform::TransformPositionNoScale(const FVector&amp; V) const;
-</code></pre>
-<div class="alert danger ">
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>FORCEINLINE FVector FTransform<span style="color:#f92672">::</span>TransformPositionNoScale(<span style="color:#66d9ef">const</span> FVector<span style="color:#f92672">&amp;</span> V) <span style="color:#66d9ef">const</span>;
+</span></span></code></pre></div><div class="alert danger ">
   <p>If you want only to calculate the Position Offset between two points, Rotation and Scale must be set to Zero. Otherwise the offset Vector would take account of direction. e.g. use <code>FTransform(Comp1-&gt;GetComponentLocation()).InverseTransformPosition(Loc2);</code> rather than <code>Comp1-&gt;GetComponentTransform().InverseTransformPosition(Loc2);</code></p>
 </div>
 <h5 id="direction-transform">Direction Transform</h5>
 <p>World To Local:</p>
-<pre><code>FORCEINLINE FVector FTransform::InverseTransformVectorNoScale(const FVector &amp;V) const
-</code></pre>
-<p>example:</p>
-<pre><code>//return the offset from Camera's World Rotation to Character's World Rotation.
-FRotator ASBaseCharacter::GetAimOffsets() const
-{
-    const FVector AimDirWS = GetBaseAimRotation().Vector();
-    const FVector AimDirLS = ActorToWorld().InverseTransformVectorNoScale(AimDirWS);
-    const FRotator AimRotLS = AimDirLS.Rotation();
-
-    return AimRotLS;
-}
-</code></pre>
-<p>Origin:<br>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>FORCEINLINE FVector FTransform<span style="color:#f92672">::</span>InverseTransformVectorNoScale(<span style="color:#66d9ef">const</span> FVector <span style="color:#f92672">&amp;</span>V) <span style="color:#66d9ef">const</span>
+</span></span></code></pre></div><p>Example:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">//return the offset from Camera&#39;s World Rotation to Character&#39;s World Rotation.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>FRotator ASBaseCharacter<span style="color:#f92672">::</span>GetAimOffsets() <span style="color:#66d9ef">const</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> FVector AimDirWS <span style="color:#f92672">=</span> GetBaseAimRotation().Vector();
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> FVector AimDirLS <span style="color:#f92672">=</span> ActorToWorld().InverseTransformVectorNoScale(AimDirWS);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> FRotator AimRotLS <span style="color:#f92672">=</span> AimDirLS.Rotation();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> AimRotLS;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Origin:<br>
 <a href="https://github.com/tomlooman/EpicSurvivalGameSeries/blob/4a6ee9a6081529fadbe0f693b2e4e6729d5ec08d/SurvivalGame/Source/SurvivalGame/Private/Player/SBaseCharacter.cpp#L374">SBaseCharacter in EpicSurvivalGameSeries</a></p>
 <p>Local To World:</p>
-<pre><code>FORCEINLINE FVector FTransform::TransformVectorNoScale(const FVector&amp; V) const
-</code></pre>
-<div class="alert warning ">
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>FORCEINLINE FVector FTransform<span style="color:#f92672">::</span>TransformVectorNoScale(<span style="color:#66d9ef">const</span> FVector<span style="color:#f92672">&amp;</span> V) <span style="color:#66d9ef">const</span>
+</span></span></code></pre></div><div class="alert warning ">
   <p>If you want to calculate the Offset only between two Rotation (take no account of Location and Scale), the simplest way is to minus:<code>FRotator Offset = R2 - R1;</code>, but the result need to be corrected, because degrees may less than -180 or larger than 180.</p>
 </div>
 <h5 id="local-space-position-direction-or-rotation-to-world-space">Local Space (Position, Direction or Rotation) to World Space</h5>
 <p>Transform a position:</p>
-<pre><code>/** 
- *    Transform a position by the supplied transform.
- *    For example, if T was an object's transform, this would transform a position from local space to world space.
- */
-UFUNCTION(BlueprintPure, Category=&quot;Math|Transform&quot;, meta=(Keywords=&quot;location&quot;))
-static FVector UKismetMathLibrary::TransformLocation(const FTransform&amp; T, FVector Location);
-</code></pre>
-<p>equals:</p>
-<pre><code>FVector FTransform::TransformPosition(const FVector&amp; V) const;
-</code></pre>
-<p>Transform a direction vector:</p>
-<pre><code>/** 
- *    Transform a direction vector by the supplied transform - will not change its length. 
- *    For example, if T was an object's transform, this would transform a direction from local space to world space.
- */
-UFUNCTION(BlueprintPure, Category=&quot;Math|Transform&quot;)
-static FVector UKismetMathLibrary::TransformDirection(const FTransform&amp; T, FVector Direction);
-</code></pre>
-<p>equals:</p>
-<pre><code>FVector FTransform::TransformVectorNoScale(const FVector&amp; V) const;
-</code></pre>
-<p>Transform a rotator:</p>
-<pre><code>/** 
- *    Transform a rotator by the supplied transform. 
- *    For example, if T was an object's transform, this would transform a rotation from local space to world space.
- */
-UFUNCTION(BlueprintPure, Category=&quot;Math|Transform&quot;)
-static FRotator UKismetMathLibrary::TransformRotation(const FTransform&amp; T, FRotator Rotation);
-</code></pre>
-<p>equals:</p>
-<pre><code>FQuat FTransform::TransformRotation(const FQuat&amp; Q) const;
-T.TransformRotation(Rotation.Quaternion()).Rotator();
-</code></pre>
-<h5 id="world-space-position-direction-or-rotation-to-local-space">World Space (Position, Direction or Rotation) to Local Space</h5>
-<pre><code>/** 
- *    Transform a position by the inverse of the supplied transform.
- *    For example, if T was an object's transform, this would transform a position from world space to local space.
- */
-UFUNCTION(BlueprintPure, Category=&quot;Math|Transform&quot;, meta=(Keywords=&quot;location&quot;))
-static FVector UKismetMathLibrary::InverseTransformLocation(const FTransform&amp; T, FVector Location);
-
-FVector FTransform::InverseTransformPosition(const FVector &amp;V) const;
-
-/** 
- *    Transform a direction vector by the inverse of the supplied transform - will not change its length.
- *    For example, if T was an object's transform, this would transform a direction from world space to local space.
- */
-UFUNCTION(BlueprintPure, Category=&quot;Math|Transform&quot;)
-static FVector UKismetMathLibrary::InverseTransformDirection(const FTransform&amp; T, FVector Direction);
-
-/** 
- *    Transform a direction vector by the inverse of this matrix - will not take into account translation part.
- *    If you want to transform a surface normal (or plane) and correctly account for non-uniform scaling you should use TransformByUsingAdjointT with adjoint of matrix inverse.
- */
-FVector FTransform::InverseTransformVector(const FVector &amp;V) const;
-FVector FTransform::InverseTransformVectorNoScale(const FVector &amp;V) const;
-
-/** 
- *    Transform a rotator by the inverse of the supplied transform. 
- *    For example, if T was an object's transform, this would transform a rotation from world space to local space.
- */
-UFUNCTION(BlueprintPure, Category=&quot;Math|Transform&quot;)
-static FRotator UKismetMathLibrary::InverseTransformRotation(const FTransform&amp; T, FRotator Rotation);
-
-FQuat FTransform::InverseTransformRotation(const FQuat&amp; Q) const;
-T.InverseTransformRotation(Rotation.Quaternion()).Rotator();
-</code></pre>
-<div class="alert info ">
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">/** 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *    Transform a position by the supplied transform.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *    For example, if T was an object&#39;s transform, this would transform a position from local space to world space.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> */</span>
+</span></span><span style="display:flex;"><span>UFUNCTION(BlueprintPure, Category<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Math|Transform&#34;</span>, meta<span style="color:#f92672">=</span>(Keywords<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;location&#34;</span>))
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">static</span> FVector UKismetMathLibrary<span style="color:#f92672">::</span>TransformLocation(<span style="color:#66d9ef">const</span> FTransform<span style="color:#f92672">&amp;</span> T, FVector Location);
+</span></span></code></pre></div><p>Equals:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>FVector FTransform<span style="color:#f92672">::</span>TransformPosition(<span style="color:#66d9ef">const</span> FVector<span style="color:#f92672">&amp;</span> V) <span style="color:#66d9ef">const</span>;
+</span></span></code></pre></div><p>Transform a direction vector:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">/** 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *    Transform a direction vector by the supplied transform - will not change its length. 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *    For example, if T was an object&#39;s transform, this would transform a direction from local space to world space.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> */</span>
+</span></span><span style="display:flex;"><span>UFUNCTION(BlueprintPure, Category<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Math|Transform&#34;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">static</span> FVector UKismetMathLibrary<span style="color:#f92672">::</span>TransformDirection(<span style="color:#66d9ef">const</span> FTransform<span style="color:#f92672">&amp;</span> T, FVector Direction);
+</span></span></code></pre></div><p>Equals:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>FVector FTransform<span style="color:#f92672">::</span>TransformVectorNoScale(<span style="color:#66d9ef">const</span> FVector<span style="color:#f92672">&amp;</span> V) <span style="color:#66d9ef">const</span>;
+</span></span></code></pre></div><p>Transform a rotator:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">/** 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *    Transform a rotator by the supplied transform. 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *    For example, if T was an object&#39;s transform, this would transform a rotation from local space to world space.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> */</span>
+</span></span><span style="display:flex;"><span>UFUNCTION(BlueprintPure, Category<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Math|Transform&#34;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">static</span> FRotator UKismetMathLibrary<span style="color:#f92672">::</span>TransformRotation(<span style="color:#66d9ef">const</span> FTransform<span style="color:#f92672">&amp;</span> T, FRotator Rotation);
+</span></span></code></pre></div><p>Equals:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>FQuat FTransform<span style="color:#f92672">::</span>TransformRotation(<span style="color:#66d9ef">const</span> FQuat<span style="color:#f92672">&amp;</span> Q) <span style="color:#66d9ef">const</span>;
+</span></span><span style="display:flex;"><span>T.TransformRotation(Rotation.Quaternion()).Rotator();
+</span></span></code></pre></div><h5 id="world-space-position-direction-or-rotation-to-local-space">World Space (Position, Direction or Rotation) to Local Space</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">/** 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *    Transform a position by the inverse of the supplied transform.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *    For example, if T was an object&#39;s transform, this would transform a position from world space to local space.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> */</span>
+</span></span><span style="display:flex;"><span>UFUNCTION(BlueprintPure, Category<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Math|Transform&#34;</span>, meta<span style="color:#f92672">=</span>(Keywords<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;location&#34;</span>))
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">static</span> FVector UKismetMathLibrary<span style="color:#f92672">::</span>InverseTransformLocation(<span style="color:#66d9ef">const</span> FTransform<span style="color:#f92672">&amp;</span> T, FVector Location);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>FVector FTransform<span style="color:#f92672">::</span>InverseTransformPosition(<span style="color:#66d9ef">const</span> FVector <span style="color:#f92672">&amp;</span>V) <span style="color:#66d9ef">const</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">/** 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *    Transform a direction vector by the inverse of the supplied transform - will not change its length.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *    For example, if T was an object&#39;s transform, this would transform a direction from world space to local space.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> */</span>
+</span></span><span style="display:flex;"><span>UFUNCTION(BlueprintPure, Category<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Math|Transform&#34;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">static</span> FVector UKismetMathLibrary<span style="color:#f92672">::</span>InverseTransformDirection(<span style="color:#66d9ef">const</span> FTransform<span style="color:#f92672">&amp;</span> T, FVector Direction);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">/** 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *    Transform a direction vector by the inverse of this matrix - will not take into account translation part.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *    If you want to transform a surface normal (or plane) and correctly account for non-uniform scaling you should use TransformByUsingAdjointT with adjoint of matrix inverse.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> */</span>
+</span></span><span style="display:flex;"><span>FVector FTransform<span style="color:#f92672">::</span>InverseTransformVector(<span style="color:#66d9ef">const</span> FVector <span style="color:#f92672">&amp;</span>V) <span style="color:#66d9ef">const</span>;
+</span></span><span style="display:flex;"><span>FVector FTransform<span style="color:#f92672">::</span>InverseTransformVectorNoScale(<span style="color:#66d9ef">const</span> FVector <span style="color:#f92672">&amp;</span>V) <span style="color:#66d9ef">const</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">/** 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *    Transform a rotator by the inverse of the supplied transform. 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *    For example, if T was an object&#39;s transform, this would transform a rotation from world space to local space.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> */</span>
+</span></span><span style="display:flex;"><span>UFUNCTION(BlueprintPure, Category<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Math|Transform&#34;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">static</span> FRotator UKismetMathLibrary<span style="color:#f92672">::</span>InverseTransformRotation(<span style="color:#66d9ef">const</span> FTransform<span style="color:#f92672">&amp;</span> T, FRotator Rotation);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>FQuat FTransform<span style="color:#f92672">::</span>InverseTransformRotation(<span style="color:#66d9ef">const</span> FQuat<span style="color:#f92672">&amp;</span> Q) <span style="color:#66d9ef">const</span>;
+</span></span><span style="display:flex;"><span>T.InverseTransformRotation(Rotation.Quaternion()).Rotator();
+</span></span></code></pre></div><div class="alert info ">
   <p>Inner of InverseTransformXXX is using <code>UnrotateVector</code>.</p>
 </div>
 <h3 id="cruve-related">Cruve Related</h3>
 <h5 id="bezier-cruve">Bezier Cruve</h5>
 <p>API:</p>
-<pre><code>/**
- * Generates a list of sample points on a Bezier curve defined by 2 points.
- *
- * @param ControlPoints    Array of 4 FVectors (vert1, controlpoint1, controlpoint2, vert2).
- * @param NumPoints Number of samples.
- * @param OutPoints Receives the output samples.
- * @return The path length.
- */
-static CORE_API float FVector::EvaluateBezier(const FVector* ControlPoints, int32 NumPoints, TArray&lt;FVector&gt;&amp; OutPoints);
-</code></pre>
-<p>Example:</p>
-<pre><code>FVector MyControlPoints[4]; 
-
-// Fill out your control points.
-
-TArray&lt;FVector&gt; OutPoints;
-FVector::EvaluateBezier(MyControlPoints, 2, OutPoints);
-</code></pre>
-<h3 id="tutorials">Tutorials</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * Generates a list of sample points on a Bezier curve defined by 2 points.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * @param ControlPoints    Array of 4 FVectors (vert1, controlpoint1, controlpoint2, vert2).
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * @param NumPoints Number of samples.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * @param OutPoints Receives the output samples.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * @return The path length.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> */</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">static</span> CORE_API <span style="color:#66d9ef">float</span> FVector<span style="color:#f92672">::</span>EvaluateBezier(<span style="color:#66d9ef">const</span> FVector<span style="color:#f92672">*</span> ControlPoints, int32 NumPoints, TArray<span style="color:#f92672">&lt;</span>FVector<span style="color:#f92672">&gt;&amp;</span> OutPoints);
+</span></span></code></pre></div><p>Example:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>FVector MyControlPoints[<span style="color:#ae81ff">4</span>]; 
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Fill out your control points.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>TArray<span style="color:#f92672">&lt;</span>FVector<span style="color:#f92672">&gt;</span> OutPoints;
+</span></span><span style="display:flex;"><span>FVector<span style="color:#f92672">::</span>EvaluateBezier(MyControlPoints, <span style="color:#ae81ff">2</span>, OutPoints);
+</span></span></code></pre></div><h3 id="tutorials">Tutorials</h3>
 <h5 id="video-tutorials">Video Tutorials</h5>
 <p>Math for Artists | Live from HQ | Inside Unreal<br>
 <a href="https://www.youtube.com/watch?v=KrghZBIIsXc">https://www.youtube.com/watch?v=KrghZBIIsXc</a></p>
+<hr>
 <p><code>无欲则刚，关心则乱。----《论语》</code></p>
               
             </div>

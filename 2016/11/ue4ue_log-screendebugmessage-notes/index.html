@@ -366,7 +366,6 @@
                 </script>
               <p>Keywords: UE4 UE_LOG &amp; ScreenDebugMessage Notes</p>
 <h3 id="ue_log">UE_LOG</h3>
-<p>三种方式：</p>
 <h5 id="方式1glog">方式1：GLog</h5>
 <pre><code>GLog-&gt;Log(&quot;Does something&quot;);
 </code></pre>
@@ -374,34 +373,34 @@
 <pre><code>UE_LOG(LogTemp, Log, TEXT(&quot;%d&quot;), 1111);
 UE_LOG(LogTemp, Warning, TEXT(&quot;%d&quot;), 1111);
 </code></pre>
-<h5 id="方式3自定义log">方式3：自定义log</h5>
-<p>转载自：http://www.cnblogs.com/pengyingh/articles/5472998.html</p>
-<p>头文件中加入：</p>
-<pre><code>#pragma once
-
-#include &quot;GameFramework/Actor.h&quot;
-#include &quot;FloatingActor.generated.h&quot;
-DECLARE_LOG_CATEGORY_EXTERN(YourLog, Log, All);
-</code></pre>
-<p>cpp文件中加入：</p>
-<pre><code>#include &quot;FirstProject.h&quot;
-#include &quot;FloatingActor.h&quot;
-
-DEFINE_LOG_CATEGORY(YourLog);
-</code></pre>
-<p>使用</p>
-<pre><code>UE_LOG(YourLog, Warning, TEXT(&quot;Test UE_LOG %d&quot;), rand());
-</code></pre>
-<h5 id="方式4自定义log方式2">方式4：自定义log方式2</h5>
-<pre><code>DEFINE_LOG_CATEGORY_STATIC(LogGameNetworkManager, Log, All);
-</code></pre>
-<p>其中：LogGameNetworkManager为Log名，Log为运行时log级别，All为编译期间的log级别。</p>
+<h5 id="方式3一处定义多处使用">方式3：一处定义，多处使用</h5>
+<p>单个头文件中声明：MyTest.h</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">#pragma once
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>MYGAME_API <span style="color:#a6e22e">DECLARE_LOG_CATEGORY_EXTERN</span>(MyTestLog, Log, All);
+</span></span></code></pre></div><p>对应的CPP中定义：MyTest.cpp</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;MyTest.h&#34;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>DEFINE_LOG_CATEGORY(MyTestLog);
+</span></span></code></pre></div><p>其他cpp文件中使用：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;MyTest.h&#34;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>MyBlueprintLibrary<span style="color:#f92672">::</span>DoWork()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    UE_LOG(MyTestLog, Display, TEXT(<span style="color:#e6db74">&#34;Work start!&#34;</span>));
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><div class="alert warning ">
+  <p>使用DECLARE_LOG_CATEGORY_EXTERN声明时，一定要加上前缀，比如 MYGAME_API。</p>
+</div>
+<h5 id="方式4仅在指定的单个cpp中使用">方式4：仅在指定的单个CPP中使用</h5>
+<p>单个CPP中定义后，只在当前CPP范围内使用：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>DEFINE_LOG_CATEGORY_STATIC(LogNetwork, Log, All);
+</span></span></code></pre></div><p>其中：LogNetwork为Log名，Log为运行时log级别，All为编译期间的log级别。</p>
 <h5 id="方式1和方式2的输出结果">方式1和方式2的输出结果</h5>
-<pre><code>Does something
-LogTemp: 1111
-LogTemp: Warning: 1111（黄色）
-</code></pre>
-<h5 id="修改log输出文件的文件名">修改log输出文件的文件名</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>Does something
+</span></span><span style="display:flex;"><span>LogTemp: <span style="color:#ae81ff">1111</span>
+</span></span><span style="display:flex;"><span>LogTemp: Warning: <span style="color:#ae81ff">1111</span><span style="color:#960050;background-color:#1e0010">（黄色）</span>
+</span></span></code></pre></div><h5 id="修改log输出文件的文件名">修改log输出文件的文件名</h5>
 <p>启动命令行追加：</p>
 <pre><code>LOG=my_custom_log_file.log
 </code></pre>
@@ -425,7 +424,7 @@ GEngine-&gt;AddOnScreenDebugMessage(1, 1.f, FColor::Green, FString(&quot;aaaaa&q
 <pre><code>D:\UnrealEngine-4.10.0-release\Engine\Programs\AutomationTool\Saved\Logs\
 </code></pre>
 <h5 id="build-log-from-installed-distributions-of-engine">Build log from installed distributions of engine</h5>
-<p>todo</p>
+<p>TODO</p>
 <h3 id="game-log-directory-on-shipping">Game log directory on shipping</h3>
 <h5 id="windows">Windows</h5>
 <p>Game: <code>%localappdata%\&lt;ProjectName&gt;\Saved\Logs</code>
@@ -435,7 +434,14 @@ Server: <code>WindowsServer\&lt;ProjectName&gt;\Saved\Logs</code> (e.g Windows)<
 <code>/root/.config/Epic/[YourGame]/Saved/Logs</code></p>
 <p>UE4 shipping config directory:<br>
 <code>/root/.config/Epic/[YourGame]/Saved/Config</code></p>
-<h3 id="issues">Issues</h3>
+<h3 id="error-message-box">Error Message Box</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>FTextBuilder ErrorMessage;
+</span></span><span style="display:flex;"><span>ErrorMessage.AppendLine(FText<span style="color:#f92672">::</span>FromString(TEXT(<span style="color:#e6db74">&#34;GPU Driver Issue.</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>)));
+</span></span><span style="display:flex;"><span>ErrorMessage.AppendLine(FText<span style="color:#f92672">::</span>FromString(TEXT(<span style="color:#e6db74">&#34;Please update the latest driver.</span><span style="color:#ae81ff">\r</span><span style="color:#e6db74">&#34;</span>)));
+</span></span><span style="display:flex;"><span>FPlatformMisc<span style="color:#f92672">::</span>MessageBoxExt(EAppMsgType<span style="color:#f92672">::</span>Ok, <span style="color:#f92672">*</span>ErrorMessage.ToText().ToString(), TEXT(<span style="color:#e6db74">&#34;Error&#34;</span>));
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>FPlatformMisc<span style="color:#f92672">::</span>RequestExit(true, TEXT(<span style="color:#e6db74">&#34;GPU Device Issue&#34;</span>));
+</span></span></code></pre></div><h3 id="issues">Issues</h3>
 <h5 id="crash-in-logmacroscpp">Crash in LogMacros.cpp</h5>
 <pre><code>LogAresMessageBus: ON ACTOR SPAWNED!
 LogWindows: Error: === Critical error: ===
@@ -458,62 +464,61 @@ Don&rsquo;t use <code>UE_LOG</code> in non-GameThread of Unreal.</p>
 <h3 id="verbosity-levels">Verbosity Levels</h3>
 <h5 id="verbosity-levels-in-source">Verbosity Levels in source</h5>
 <p>Engine\Source\Runtime\Core\Public\Logging\LogVerbosity.h</p>
-<pre><code>/** 
- * Enum that defines the verbosity levels of the logging system.
- * Also defines some non-verbosity levels that are hacks that allow
- * breaking on a given log line or setting the color.
-**/
-namespace ELogVerbosity
-{
-    enum Type : uint8
-    {
-        /** Not used */
-        NoLogging        = 0,
-
-        /** Always prints a fatal error to console (and log file) and crashes (even if logging is disabled) */
-        Fatal,
-
-        /** 
-         * Prints an error to console (and log file). 
-         * Commandlets and the editor collect and report errors. Error messages result in commandlet failure.
-         */
-        Error,
-
-        /** 
-         * Prints a warning to console (and log file).
-         * Commandlets and the editor collect and report warnings. Warnings can be treated as an error.
-         */
-        Warning,
-
-        /** Prints a message to console (and log file) */
-        Display,
-
-        /** Prints a message to a log file (does not print to console) */
-        Log,
-
-        /** 
-         * Prints a verbose message to a log file (if Verbose logging is enabled for the given category, 
-         * usually used for detailed logging) 
-         */
-        Verbose,
-
-        /** 
-         * Prints a verbose message to a log file (if VeryVerbose logging is enabled, 
-         * usually used for detailed logging that would otherwise spam output) 
-         */
-        VeryVerbose,
-
-        // Log masks and special Enum values
-
-        All                = VeryVerbose,
-        NumVerbosity,
-        VerbosityMask    = 0xf,
-        SetColor        = 0x40, // not actually a verbosity, used to set the color of an output device 
-        BreakOnLog        = 0x80
-    };
-}
-</code></pre>
-<h5 id="where-to-change-verbosity-level-of-engine">Where to change verbosity level of engine</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">/** 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * Enum that defines the verbosity levels of the logging system.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * Also defines some non-verbosity levels that are hacks that allow
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * breaking on a given log line or setting the color.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">**/</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">namespace</span> ELogVerbosity
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">enum</span> <span style="color:#a6e22e">Type</span> <span style="color:#f92672">:</span> uint8
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">/** Not used */</span>
+</span></span><span style="display:flex;"><span>        NoLogging        <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>,
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">/** Always prints a fatal error to console (and log file) and crashes (even if logging is disabled) */</span>
+</span></span><span style="display:flex;"><span>        Fatal,
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">/** 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">         * Prints an error to console (and log file). 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">         * Commandlets and the editor collect and report errors. Error messages result in commandlet failure.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">         */</span>
+</span></span><span style="display:flex;"><span>        Error,
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">/** 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">         * Prints a warning to console (and log file).
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">         * Commandlets and the editor collect and report warnings. Warnings can be treated as an error.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">         */</span>
+</span></span><span style="display:flex;"><span>        Warning,
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">/** Prints a message to console (and log file) */</span>
+</span></span><span style="display:flex;"><span>        Display,
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">/** Prints a message to a log file (does not print to console) */</span>
+</span></span><span style="display:flex;"><span>        Log,
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">/** 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">         * Prints a verbose message to a log file (if Verbose logging is enabled for the given category, 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">         * usually used for detailed logging) 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">         */</span>
+</span></span><span style="display:flex;"><span>        Verbose,
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">/** 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">         * Prints a verbose message to a log file (if VeryVerbose logging is enabled, 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">         * usually used for detailed logging that would otherwise spam output) 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">         */</span>
+</span></span><span style="display:flex;"><span>        VeryVerbose,
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// Log masks and special Enum values
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>        All                <span style="color:#f92672">=</span> VeryVerbose,
+</span></span><span style="display:flex;"><span>        NumVerbosity,
+</span></span><span style="display:flex;"><span>        VerbosityMask    <span style="color:#f92672">=</span> <span style="color:#ae81ff">0xf</span>,
+</span></span><span style="display:flex;"><span>        SetColor        <span style="color:#f92672">=</span> <span style="color:#ae81ff">0x40</span>, <span style="color:#75715e">// not actually a verbosity, used to set the color of an output device 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        BreakOnLog        <span style="color:#f92672">=</span> <span style="color:#ae81ff">0x80</span>
+</span></span><span style="display:flex;"><span>    };
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h5 id="where-to-change-verbosity-level-of-engine">Where to change verbosity level of engine</h5>
 <p>Engine\Source\Runtime\Engine\Public\EngineLogs.h</p>
 <h3 id="references">References</h3>
 <h5 id="blogs">Blogs</h5>

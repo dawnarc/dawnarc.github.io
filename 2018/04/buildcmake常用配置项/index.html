@@ -402,18 +402,18 @@
 </div>
 <h5 id="设置编译输出路径">设置编译输出路径</h5>
 <p>在CMakeLists.txt中如下设置后，无论是编译可执行文件还是编译静态库，都会输出到指定目录下，而不再是默认的当前目录。</p>
-<pre tabindex="0"><code>#静态库输出目录(lib, a)
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY &#34;lib/&#34;)
-
-#编译时动态库输出目录(dll + lib)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY  &#34;lib/&#34;)
-
-#动态库输出目录(dll, so)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY  &#34;lib/&#34;)
-
-#可执行文件输出目录
-set(EXECUTABLE_OUTPUT_PATH  &#34;bin/&#34;)
-</code></pre><p>参考：<br>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-py" data-lang="py"><span style="display:flex;"><span><span style="color:#75715e">#静态库输出目录(lib, a)</span>
+</span></span><span style="display:flex;"><span>set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY <span style="color:#e6db74">&#34;lib/&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#编译时动态库输出目录(dll + lib)</span>
+</span></span><span style="display:flex;"><span>set(CMAKE_LIBRARY_OUTPUT_DIRECTORY  <span style="color:#e6db74">&#34;lib/&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#动态库输出目录(dll, so)</span>
+</span></span><span style="display:flex;"><span>set(CMAKE_RUNTIME_OUTPUT_DIRECTORY  <span style="color:#e6db74">&#34;lib/&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#可执行文件输出目录</span>
+</span></span><span style="display:flex;"><span>set(EXECUTABLE_OUTPUT_PATH  <span style="color:#e6db74">&#34;bin/&#34;</span>)
+</span></span></code></pre></div><p>参考：<br>
 is CMake ignoring CMAKE_LIBRARY_OUTPUT_DIRECTORY?<br>
 <a href="https://stackoverflow.com/a/38450844/1645289">https://stackoverflow.com/a/38450844/1645289</a></p>
 <p>How do I make CMake output into a &lsquo;bin&rsquo; dir?
@@ -433,32 +433,28 @@ add_library(mylib STATIC ${CPP_FILES})
 <p>参考：How to use cmake GLOB_RECURSE for only some subdirectories<br>
 <a href="https://stackoverflow.com/a/27994855/1645289">https://stackoverflow.com/a/27994855/1645289</a></p>
 <h5 id="复制文件">复制文件</h5>
-<pre tabindex="0"><code>file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/media DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-</code></pre><h5 id="打印log">打印log</h5>
-<pre><code>if (NOT CMAKE_VERSION VERSION_GREATER &quot;3.0&quot;)
-    message(FATAL_ERROR &quot;cmake version 3.x is required!&quot;)
-endif()
-</code></pre>
-<h5 id="打印变量">打印变量</h5>
-<pre><code>message(STATUS &quot;foo include dir: ${foo_INCLUDE}&quot;)
-</code></pre>
-<h5 id="修改默认的cmake_module_path目录">修改默认的CMAKE_MODULE_PATH目录</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-py" data-lang="py"><span style="display:flex;"><span>file(COPY <span style="color:#960050;background-color:#1e0010">$</span>{CMAKE_CURRENT_SOURCE_DIR}<span style="color:#f92672">/</span>media DESTINATION <span style="color:#960050;background-color:#1e0010">$</span>{CMAKE_CURRENT_BINARY_DIR})
+</span></span></code></pre></div><h5 id="打印log">打印log</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-py" data-lang="py"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> (NOT CMAKE_VERSION VERSION_GREATER <span style="color:#e6db74">&#34;3.0&#34;</span>)
+</span></span><span style="display:flex;"><span>    message(FATAL_ERROR <span style="color:#e6db74">&#34;cmake version 3.x is required!&#34;</span>)
+</span></span><span style="display:flex;"><span>endif()
+</span></span></code></pre></div><h5 id="打印变量">打印变量</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-py" data-lang="py"><span style="display:flex;"><span>message(STATUS <span style="color:#e6db74">&#34;foo include dir: $</span><span style="color:#e6db74">{foo_INCLUDE}</span><span style="color:#e6db74">&#34;</span>)
+</span></span></code></pre></div><h5 id="修改默认的cmake_module_path目录">修改默认的CMAKE_MODULE_PATH目录</h5>
 <p>CMAKE_MODULE_PATH是供<code>find_package</code>搜索第三方库用的。cmake的默认Modules目录在安装目录中：<code>cmake-3.11.3-win64-x64\share\cmake-3.11\Modules</code>。<br>
 如果要追加Modules目录，有3种方式：</p>
-<pre><code>set(CMAKE_MODULE_PATH &quot;${CMAKE_SOURCE_PATH}:${CMAKE_MODULE_PATH}&quot;)
-
-LIST(APPEND CMAKE_MODULE_PATH &quot;${CMAKE_SOURCE_PREFIX}&quot;)
-
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-</code></pre>
-<h5 id="find_package用法">find_package用法</h5>
-<p>通常情况下，包含第三方库需要写以下内容</p>
-<pre><code>include_directories(&quot;${project_root_path}/include/&quot;)  
-link_directories(./lib)
-add_executable(myapp myapp.cpp)
-target_link_libraries(myapp mylib)  
-</code></pre>
-<p>如果引用的很多个第三方库，那么类似上面的内容会写很多（实际项目的第三方库结构比上述更复杂），且当多个项目都引用了同一个第三方库，那么我每个项目的<code>CMakeLists.txt</code>都得写一遍，重复劳动很多。<br>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-py" data-lang="py"><span style="display:flex;"><span>set(CMAKE_MODULE_PATH <span style="color:#e6db74">&#34;$</span><span style="color:#e6db74">{CMAKE_SOURCE_PATH}</span><span style="color:#e6db74">:$</span><span style="color:#e6db74">{CMAKE_MODULE_PATH}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>LIST(APPEND CMAKE_MODULE_PATH <span style="color:#e6db74">&#34;$</span><span style="color:#e6db74">{CMAKE_SOURCE_PREFIX}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>set(CMAKE_MODULE_PATH <span style="color:#960050;background-color:#1e0010">$</span>{CMAKE_MODULE_PATH} <span style="color:#960050;background-color:#1e0010">$</span>{CMAKE_CURRENT_SOURCE_DIR}<span style="color:#f92672">/</span>cmake)
+</span></span></code></pre></div><h5 id="find_package用法">find_package用法</h5>
+<p>通常情况下，包含第三方库需要写以下内容：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-py" data-lang="py"><span style="display:flex;"><span>include_directories(<span style="color:#e6db74">&#34;$</span><span style="color:#e6db74">{project_root_path}</span><span style="color:#e6db74">/include/&#34;</span>)  
+</span></span><span style="display:flex;"><span>link_directories(<span style="color:#f92672">./</span>lib)
+</span></span><span style="display:flex;"><span>add_executable(myapp myapp<span style="color:#f92672">.</span>cpp)
+</span></span><span style="display:flex;"><span>target_link_libraries(myapp mylib)  
+</span></span></code></pre></div><p>如果引用的很多个第三方库，那么类似上面的内容会写很多（实际项目的第三方库结构比上述更复杂），且当多个项目都引用了同一个第三方库，那么我每个项目的<code>CMakeLists.txt</code>都得写一遍，重复劳动很多。<br>
 那么有没办法为每个第三方库只定义一次它的头文件和库文件信息，然后在自己的工程中只指定名称即可？（类似编译Java的Maven仓库）答案是可以，<code>find_package</code>帮你解决。</p>
 <p><code>find_package</code>定义在自己工程的CMakeLists.txt中：<br>
 两种方式，一种叫Module模式：</p>
@@ -517,10 +513,9 @@ target_link_libraries(myapp mylib)
 </code></pre><p>两者等价。</p>
 <h5 id="使用通配符批量指定头文件或源文件-include-source-files-batch-using-wildcard">使用通配符批量指定头文件或源文件 (include source files batch using wildcard)</h5>
 <p>GLOB:</p>
-<pre><code>FILE(GLOB cpp_files ../src/*.cc)
-add_executable(helloworld ${cpp_files})
-</code></pre>
-<div class="alert success ">
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-py" data-lang="py"><span style="display:flex;"><span>FILE(GLOB cpp_files <span style="color:#f92672">../</span>src<span style="color:#f92672">/*.</span>cc)
+</span></span><span style="display:flex;"><span>add_executable(helloworld <span style="color:#960050;background-color:#1e0010">$</span>{cpp_files})
+</span></span></code></pre></div><div class="alert success ">
   <p>There&rsquo;s also <code>GLOB_RECURSE</code> if you want to find the files recursively.</p>
 </div>
 <p>How to use all *.c files in a directory with the Cmake build system?<br>
@@ -533,12 +528,11 @@ add_executable(helloworld ${cpp_files})
 </code></pre>
 <p><strong>Configuration for xcode schema</strong><br>
 in CMake:</p>
-<pre><code>cmake_minimum_required(VERSION 3.13)
-set(CMAKE_XCODE_GENERATE_SCHEME ON)
-set(CMAKE_XCODE_SCHEME_ADDRESS_SANITIZER ON)
-set(CMAKE_XCODE_SCHEME_ADDRESS_SANITIZER_USE_AFTER_RETURN ON)
-</code></pre>
-<p>When Build:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-py" data-lang="py"><span style="display:flex;"><span>cmake_minimum_required(VERSION <span style="color:#ae81ff">3.13</span>)
+</span></span><span style="display:flex;"><span>set(CMAKE_XCODE_GENERATE_SCHEME ON)
+</span></span><span style="display:flex;"><span>set(CMAKE_XCODE_SCHEME_ADDRESS_SANITIZER ON)
+</span></span><span style="display:flex;"><span>set(CMAKE_XCODE_SCHEME_ADDRESS_SANITIZER_USE_AFTER_RETURN ON)
+</span></span></code></pre></div><p>When Build:</p>
 <pre><code>xcodebuild -enableAddressSanitizer YES
 </code></pre>
 <p>Reference:<br>
@@ -556,12 +550,12 @@ INCLUDE(&quot;meaningfulFilename.cmake&quot;)
 <p>A CMakeLists.txt dependents other CMakeLists.txt:</p>
 <ol>
 <li>add sub-project A and sub-project B in main project using <code>add_subdirectory</code>, <a href="https://github.com/dawnarc/rendering_examples/blob/8a9cf2f31effd97cf256a1484b68a2665af146f5/CMakeLists.txt#L23">example code</a>;
-<pre tabindex="0"><code>add_subdirectory( ProjA )
-add_subdirectory( ProjB )
-</code></pre></li>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-py" data-lang="py"><span style="display:flex;"><span>add_subdirectory( ProjA )
+</span></span><span style="display:flex;"><span>add_subdirectory( ProjB )
+</span></span></code></pre></div></li>
 <li>then you can link project A in project B, <a href="https://github.com/dawnarc/rendering_examples/blob/8a9cf2f31effd97cf256a1484b68a2665af146f5/01.lighting/01.ads_reflection/CMakeLists.txt#L12">example code</a>;
-<pre tabindex="0"><code>target_link_libraries(ProjB ProjA)
-</code></pre></li>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-py" data-lang="py"><span style="display:flex;"><span>target_link_libraries(ProjB ProjA)
+</span></span></code></pre></div></li>
 </ol>
 <h5 id="add_subdirectory-relative-patch-of-subdirectory">add_subdirectory: relative patch of subdirectory</h5>
 <p>Add subdirectory in current directory:</p>
@@ -570,29 +564,28 @@ add_subdirectory( ProjB )
 <pre tabindex="0"><code>add_subdirectory(./../Lua build_lua)
 </code></pre><p><code>build_lua</code> is a directory under <code>./../Lua/</code></p>
 <h5 id="how-to-check-specified-platform">How to check specified platform</h5>
-<pre tabindex="0"><code>if(WIN32)
-    set(LIBS glfw3 opengl32 assimp freetype irrKlang)
-elseif(UNIX AND NOT APPLE)
-    set(LIBS ${GLFW3_LIBRARY} X11 Xrandr Xinerama Xi Xxf86vm Xcursor GL dl pthread freetype ${ASSIMP_LIBRARY})
-elseif(APPLE)
-    SET(APPLE_LIBS ${COCOA_LIBRARY} ${IOKit_LIBRARY} ${OpenGL_LIBRARY} ${CoreVideo_LIBRARY})
-    SET(APPLE_LIBS ${APPLE_LIBS} ${GLFW3_LIBRARY} ${ASSIMP_LIBRARY} ${FREETYPE_LIBRARIES})
-    set(LIBS ${LIBS} ${APPLE_LIBS})
-else()
-    set(LIBS )
-endif(WIN32)
-</code></pre><p>Example: <a href="https://github.com/JoeyDeVries/LearnOpenGL/blob/master/CMakeLists.txt">LearnOpenGL</a></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-py" data-lang="py"><span style="display:flex;"><span><span style="color:#66d9ef">if</span>(WIN32)
+</span></span><span style="display:flex;"><span>    set(LIBS glfw3 opengl32 assimp freetype irrKlang)
+</span></span><span style="display:flex;"><span>elseif(UNIX AND NOT APPLE)
+</span></span><span style="display:flex;"><span>    set(LIBS <span style="color:#960050;background-color:#1e0010">$</span>{GLFW3_LIBRARY} X11 Xrandr Xinerama Xi Xxf86vm Xcursor GL dl pthread freetype <span style="color:#960050;background-color:#1e0010">$</span>{ASSIMP_LIBRARY})
+</span></span><span style="display:flex;"><span>elseif(APPLE)
+</span></span><span style="display:flex;"><span>    SET(APPLE_LIBS <span style="color:#960050;background-color:#1e0010">$</span>{COCOA_LIBRARY} <span style="color:#960050;background-color:#1e0010">$</span>{IOKit_LIBRARY} <span style="color:#960050;background-color:#1e0010">$</span>{OpenGL_LIBRARY} <span style="color:#960050;background-color:#1e0010">$</span>{CoreVideo_LIBRARY})
+</span></span><span style="display:flex;"><span>    SET(APPLE_LIBS <span style="color:#960050;background-color:#1e0010">$</span>{APPLE_LIBS} <span style="color:#960050;background-color:#1e0010">$</span>{GLFW3_LIBRARY} <span style="color:#960050;background-color:#1e0010">$</span>{ASSIMP_LIBRARY} <span style="color:#960050;background-color:#1e0010">$</span>{FREETYPE_LIBRARIES})
+</span></span><span style="display:flex;"><span>    set(LIBS <span style="color:#960050;background-color:#1e0010">$</span>{LIBS} <span style="color:#960050;background-color:#1e0010">$</span>{APPLE_LIBS})
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">else</span>()
+</span></span><span style="display:flex;"><span>    set(LIBS )
+</span></span><span style="display:flex;"><span>endif(WIN32)
+</span></span></code></pre></div><p>Example: <a href="https://github.com/JoeyDeVries/LearnOpenGL/blob/master/CMakeLists.txt">LearnOpenGL</a></p>
 <h5 id="how-to-link-win32-library-which-likes-subsystemwindows">How to link win32 library which likes /subsystem:windows</h5>
 <p>For example, if want to link subsystem:windows: <code>#pragma comment(linker, &quot;/subsystem:windows&quot;)</code>,<br>
 you can do this an cmake:</p>
-<pre tabindex="0"><code>add_executable(${PROJECT_NAME} WIN32 main.cpp)
-</code></pre><p>Origin: Correctly set Visual Studio linker flag /SUBSYSTEM in CMAKE<br>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-py" data-lang="py"><span style="display:flex;"><span>add_executable(<span style="color:#960050;background-color:#1e0010">$</span>{PROJECT_NAME} WIN32 main<span style="color:#f92672">.</span>cpp)
+</span></span></code></pre></div><p>Origin: Correctly set Visual Studio linker flag /SUBSYSTEM in CMAKE<br>
 <a href="https://stackoverflow.com/a/57645234/1645289">https://stackoverflow.com/a/57645234/1645289</a></p>
 <h3 id="visual-studio">Visual Studio</h3>
 <h5 id="set-startup-project">Set startup project</h5>
-<pre><code>set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT MyExeTarget)
-</code></pre>
-<p>Origin:<br>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-py" data-lang="py"><span style="display:flex;"><span>set_property(DIRECTORY <span style="color:#960050;background-color:#1e0010">$</span>{CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT MyExeTarget)
+</span></span></code></pre></div><p>Origin:<br>
 <a href="https://stackoverflow.com/a/59789571/1645289">https://stackoverflow.com/a/59789571/1645289</a></p>
 <h5 id="compile-with-mt-or-md">Compile with <code>/MT</code> or <code>/MD</code></h5>
 <p>How to set <code>Runtime Library</code> for Visual Studio:<br>
@@ -606,20 +599,20 @@ set(CMAKE_CXX_FLAGS_DEBUG &#34;${CMAKE_CXX_FLAGS_DEBUG} /MDd&#34;)
 Compile with /MT instead of /MD using CMake<br>
 <a href="https://stackoverflow.com/a/14172871/1645289">https://stackoverflow.com/a/14172871/1645289</a></p>
 <h5 id="warning-lnk4098-defaultlib-msvcrt-conflicts-with-use-of-other-libs">Warning: LNK4098, defaultlib &lsquo;MSVCRT&rsquo; conflicts with use of other libs</h5>
-<pre tabindex="0"><code>if(MSVC)
-  # suppress warning on debug config - LNK4098: defaultlib &#39;MSVCRT&#39; conflicts with use of other libs
-  set_property(TARGET ${MyProj} APPEND PROPERTY LINK_FLAGS &#34;/NODEFAULTLIB:MSVCRT&#34;)
-endif()
-</code></pre><p>Origin:<br>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-py" data-lang="py"><span style="display:flex;"><span><span style="color:#66d9ef">if</span>(MSVC)
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e"># suppress warning on debug config - LNK4098: defaultlib &#39;MSVCRT&#39; conflicts with use of other libs</span>
+</span></span><span style="display:flex;"><span>  set_property(TARGET <span style="color:#960050;background-color:#1e0010">$</span>{MyProj} APPEND PROPERTY LINK_FLAGS <span style="color:#e6db74">&#34;/NODEFAULTLIB:MSVCRT&#34;</span>)
+</span></span><span style="display:flex;"><span>endif()
+</span></span></code></pre></div><p>Origin:<br>
 <a href="https://blog.csdn.net/Ellan_BM/article/details/105688991">https://blog.csdn.net/Ellan_BM/article/details/105688991</a></p>
 <h3 id="compiler">Compiler</h3>
 <h5 id="how-to-enable-c17-features-for-compiler">How to enable C++17 features for compiler</h5>
 <p>Global:</p>
-<pre tabindex="0"><code>set (CMAKE_CXX_STANDARD 17)
-</code></pre><p>Target only:</p>
-<pre tabindex="0"><code># enable C++17 features
-target_compile_features(${MY_PROJECT_NAME} PRIVATE cxx_std_17)
-</code></pre><p>Origin:<br>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-py" data-lang="py"><span style="display:flex;"><span>set (CMAKE_CXX_STANDARD <span style="color:#ae81ff">17</span>)
+</span></span></code></pre></div><p>Target only:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-py" data-lang="py"><span style="display:flex;"><span><span style="color:#75715e"># enable C++17 features</span>
+</span></span><span style="display:flex;"><span>target_compile_features(<span style="color:#960050;background-color:#1e0010">$</span>{MY_PROJECT_NAME} PRIVATE cxx_std_17)
+</span></span></code></pre></div><p>Origin:<br>
 <a href="https://stackoverflow.com/a/53830867/1645289">https://stackoverflow.com/a/53830867/1645289</a></p>
 <h5 id="add_compile_definitions">add_compile_definitions</h5>
 <p><code>add_compile_definitions</code> is a new feature added in version 3.12, example:</p>
@@ -630,17 +623,23 @@ target_compile_features(${MY_PROJECT_NAME} PRIVATE cxx_std_17)
 </code></pre><p>Then you can use the define: <code>std::string dir = std::string(WORK_DIR) + &quot;/src/glsl/&quot;;</code></p>
 <h5 id="target_compile_definitions">target_compile_definitions</h5>
 <p>Similar with <code>add_compile_definitions</code>, but for specified target only:</p>
-<pre tabindex="0"><code>target_compile_definitions(MyApp PRIVATE
-    ADD_DEBUG_PRINTS=1
-    ABCDE
-)
-</code></pre><h5 id="target_compile_options">target_compile_options</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-py" data-lang="py"><span style="display:flex;"><span>target_compile_definitions(MyApp PRIVATE
+</span></span><span style="display:flex;"><span>    ADD_DEBUG_PRINTS<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>    ABCDE
+</span></span><span style="display:flex;"><span>)
+</span></span></code></pre></div><h5 id="target_compile_options">target_compile_options</h5>
 <p>Choose the appropriate compiler flags based on the compiler used. Furthermore you save yourself the <code>-D</code>:</p>
-<pre tabindex="0"><code>if (CMAKE_CXX_COMPILER_ID STREQUAL &#34;GNU&#34;)
-    target_compile_options(MyTarget PRIVATE -Wall)
-endif()
-</code></pre><p>Origin:<br>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-py" data-lang="py"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> (CMAKE_CXX_COMPILER_ID STREQUAL <span style="color:#e6db74">&#34;GNU&#34;</span>)
+</span></span><span style="display:flex;"><span>    target_compile_options(MyTarget PRIVATE <span style="color:#f92672">-</span>Wall)
+</span></span><span style="display:flex;"><span>endif()
+</span></span></code></pre></div><p>Origin:<br>
 <a href="https://stackoverflow.com/a/71861489/1645289">https://stackoverflow.com/a/71861489/1645289</a></p>
+<h5 id="how-to-disable-deprecated-warnings">How to disable deprecated warnings</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-py" data-lang="py"><span style="display:flex;"><span>set(CMAKE_WARN_DEPRECATED YES)
+</span></span></code></pre></div><p>Or</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-py" data-lang="py"><span style="display:flex;"><span>target_compile_options(<span style="color:#f92672">&lt;</span>target<span style="color:#f92672">&gt;</span> [PRIVATE<span style="color:#f92672">|</span>PUBLIC] <span style="color:#e6db74">&#34;-Wno-deprecated&#34;</span>)
+</span></span></code></pre></div><p>Origin:<br>
+<a href="https://stackoverflow.com/a/77008909/1645289">https://stackoverflow.com/a/77008909/1645289</a></p>
 <h3 id="cmake-examples">CMake Examples</h3>
 <h5 id="comprehensive">Comprehensive</h5>
 <p>Command line C++ barcode reader for Windows, Linux, and macOS.<br>
