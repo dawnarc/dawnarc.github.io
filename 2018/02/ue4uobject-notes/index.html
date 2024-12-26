@@ -490,7 +490,7 @@ but if change value and save it using C++ code: <code>LoadConfig()</code> then <
 </span></span></code></pre></div><p>其中<code>DefaultConfig</code>表示ini文件的读取和存储方式，另外一种方式是<code>ConfigDoNotCheckDefaults</code>。</p>
 <p>读取方式区别：</p>
 <ul>
-<li><code>DefaultConfig</code>: 使用<code>LoadConfig()</code>接口获取的配置，或者编辑器首次启动时，都是从<code>FPaths::SourceConfigDir()</code>目录下的ini读取，比如：<code>[Project]/Saved/Config/WindowsNoEditor/MySettings.ini</code>，而不是DefaultMySettings.ini（即使其内部有修改过的值）。但通过编辑器（Project Settings面板）修改后，会清掉<code>[Project]/Saved/Config/WindowsNoEditor/MySettings.ini</code>中所有内容，即使只修改了一项。同时，将修改过的值保存在<code>[Project]/Config/MySettings.ini</code></li>
+<li><code>DefaultConfig</code>: 使用<code>LoadConfig()</code>接口获取的配置且参数都为null（默认都是null），或者编辑器首次启动时，都是从<code>[Project]/Config/DefaultMySettings.ini</code>读取。如果传递参数，比如<code>FPaths::SourceConfigDir()</code>，则读取ini为：<code>[Project]/Saved/Config/WindowsNoEditor/MySettings.ini</code>。</li>
 <li><code>ConfigDoNotCheckDefaults</code>: 都是从<code>[Project]/Saved/Config/WindowsNoEditor/MySettings.ini</code>读取。</li>
 </ul>
 <p>存储方式区别（两种情况）：</p>
@@ -498,8 +498,8 @@ but if change value and save it using C++ code: <code>LoadConfig()</code> then <
 <li>使用C++接口<code>SaveConfig()</code>触发的存储都存在<code>FPaths::SourceConfigDir()</code>目录下，比如：<code>[Project]/Saved/Config/WindowsNoEditor/MySettings.ini</code>。</li>
 <li>通过编辑器（Project Settings面板）修改触发的存储：
 <ul>
-<li><code>DefaultConfig</code>: ini文件存放在<code>[Project]/Config/DefaultMySettings.ini</code>中。<code>[Project]/Saved/Config/WindowsNoEditor/MySettings.ini</code>文件仍然存在，但是内容为空。</li>
-<li><code>ConfigDoNotCheckDefaults</code>: <code>[Project]/Config/DefaultMySettings.ini</code>文件不存在，且内容保存在<code>[Project]/Saved/Config/WindowsNoEditor/MySettings.ini</code></li>
+<li><code>DefaultConfig</code>: ini文件存放在<code>[Project]/Config/DefaultMySettings.ini</code>中，且只存储了被修改过的属性，与C++属性一致的值不存储。</li>
+<li><code>ConfigDoNotCheckDefaults</code>: <code>[Project]/Config/DefaultMySettings.ini</code>文件不存在，且内容保存在<code>[Project]/Saved/Config/WindowsNoEditor/MySettings.ini</code>，内部存储了所有属性值，及时未修改过的属性。</li>
 </ul>
 </li>
 </ul>

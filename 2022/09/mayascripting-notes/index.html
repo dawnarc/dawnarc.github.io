@@ -425,12 +425,12 @@ On task beginning:</p>
 </span></span></code></pre></div><h5 id="how-to-get-object-list">How to get object list</h5>
 <p>Get all selected objects:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Python" data-lang="Python"><span style="display:flex;"><span><span style="color:#f92672">from</span> maya <span style="color:#f92672">import</span> cmds
-</span></span><span style="display:flex;"><span>selList <span style="color:#f92672">=</span> cmds<span style="color:#f92672">.</span>ls(selection<span style="color:#f92672">=</span> <span style="color:#66d9ef">True</span>, long<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>) <span style="color:#f92672">or</span> []
+</span></span><span style="display:flex;"><span>selList <span style="color:#f92672">=</span> cmds<span style="color:#f92672">.</span>ls(selection<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>, long<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>) <span style="color:#f92672">or</span> []
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> obj <span style="color:#f92672">in</span> selList:
 </span></span><span style="display:flex;"><span>    print(obj)
 </span></span></code></pre></div><p>Get all geometry objects:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Python" data-lang="Python"><span style="display:flex;"><span><span style="color:#f92672">from</span> maya <span style="color:#f92672">import</span> cmds
-</span></span><span style="display:flex;"><span>geometryList <span style="color:#f92672">=</span> cmds<span style="color:#f92672">.</span>ls(geometry <span style="color:#f92672">=</span> <span style="color:#66d9ef">True</span>, long<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)
+</span></span><span style="display:flex;"><span>geometryList <span style="color:#f92672">=</span> cmds<span style="color:#f92672">.</span>ls(geometry<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>, long<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> geo <span style="color:#f92672">in</span> geometryList:
 </span></span><span style="display:flex;"><span>    print(geo)
 </span></span></code></pre></div><p>Get all objects and check object type:</p>
@@ -441,6 +441,20 @@ On task beginning:</p>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> geo <span style="color:#f92672">in</span> objList:
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> cmds<span style="color:#f92672">.</span>objectType(geo) <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;mesh&#34;</span>:
 </span></span><span style="display:flex;"><span>        print(geo)
+</span></span></code></pre></div><p>Select all child nodes (MEL: <code>select -hi</code>):</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>string $target <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;root&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">select</span> -hi $target;
+</span></span><span style="display:flex;"><span>string $joints<span style="color:#f92672">[]</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">`</span>ls -sl<span style="color:#e6db74">`</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span><span style="color:#f92672">(</span>$joint in $joints<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    print<span style="color:#f92672">(</span>$joint + <span style="color:#e6db74">&#34;\n&#34;</span><span style="color:#f92672">)</span>;
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>Select nodes by type (MEL):</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>string $joints<span style="color:#f92672">[]</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">`</span>ls -type joint<span style="color:#e6db74">`</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span><span style="color:#f92672">(</span>$joint in $joints<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    print<span style="color:#f92672">(</span>$joint + <span style="color:#e6db74">&#34;\n&#34;</span><span style="color:#f92672">)</span>;
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
 </span></span></code></pre></div><h5 id="how-to-rename-all-mesh-objects-listed-in-outliner">How to rename all mesh objects listed in Outliner</h5>
 <p>Example:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Python" data-lang="Python"><span style="display:flex;"><span><span style="color:#f92672">from</span> maya <span style="color:#f92672">import</span> cmds
