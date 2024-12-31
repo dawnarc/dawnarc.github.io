@@ -389,7 +389,8 @@
 <li>If we add other nodes(Group, Curve, Locator, etc.) directly into skeleton, these nodes alter the hierarchy of the scene, and it will cause issues when it comes to export to the other engine (Unreal Engine, Unity ect.).</li>
 </ul>
 <p>So we need a top layer to drive joints, that&rsquo;s Layered Controls!</p>
-<h5 id="create-controller-method-1st-parent-constraints-recommended">Create Controller Method 1st: Parent Constraints (Recommended)</h5>
+<p>There&rsquo;re 3 ways to create controller.</p>
+<h5 id="1st-way-parent-constraints-for-game-animattion">1st way: Parent Constraints (for Game Animattion)</h5>
 <p>Take shoulder joint as example.</p>
 <p>1, Create Curve: Create -&gt; NURBS Primitives -&gt; Circle
 <figure><img src="https://dawnarc.com/img/2024/20241027-%5BMaya%5DRigging%2004%20-%20Controller/%5BMaya%5DRigging%2004%20-%20Controller%20-%2001.gif">
@@ -440,7 +441,7 @@ and the Translate and Rotate attributes have been flagged with blue brick, which
 <figure><img src="https://dawnarc.com/img/2024/20241027-%5BMaya%5DRigging%2004%20-%20Controller/%5BMaya%5DRigging%2004%20-%20Controller%20-%2007-B.gif">
 </figure>
 </p>
-<h5 id="create-controller-method-2nd-merge-curves-transform-node">Create Controller Method 2nd: Merge Curve&rsquo;s Transform Node</h5>
+<h5 id="2nd-way-parent-and-merge-node">2nd way: Parent and Merge Node</h5>
 <p>1, Create a curve and tweak the transform.
 <figure><img src="https://dawnarc.com/img/2024/20241027-%5BMaya%5DRigging%2004%20-%20Controller/%5BMaya%5DRigging%2004%20-%20Controller%20-%2010.gif">
 </figure>
@@ -465,6 +466,66 @@ Which axis is modified depends on the target joint coordinate axis.
 
 <p>5, Delete curve&rsquo;s transform node, and hide the Shapes, now you can drive the joint using curve which likes Handle.
 <figure><img src="https://dawnarc.com/img/2024/20241027-%5BMaya%5DRigging%2004%20-%20Controller/%5BMaya%5DRigging%2004%20-%20Controller%20-%2014.gif">
+</figure>
+</p>
+<h5 id="3rd-way-offset-parent-matrix-for-film-animation">3rd way: Offset Parent Matrix (for Film Animation)</h5>
+<p>1, Create a Control named <code>ctrl_arm_l</code>.
+<figure><img src="https://dawnarc.com/img/2024/20241027-%5BMaya%5DRigging%2004%20-%20Controller/%5BMaya%5DRigging-04---Controller---33.gif">
+</figure>
+</p>
+<p>2, Move the Control to the target joint.
+<figure><img src="https://dawnarc.com/img/2024/20241027-%5BMaya%5DRigging%2004%20-%20Controller/%5BMaya%5DRigging-04---Controller---34.gif">
+</figure>
+</p>
+<p>3, Offset parent matrix using the script that mentioned in follows content (see: <strong>Transform Offset Method 2nd: Offset Parent Matrix</strong>).
+<figure><img src="https://dawnarc.com/img/2024/20241027-%5BMaya%5DRigging%2004%20-%20Controller/%5BMaya%5DRigging-04---Controller---35.gif">
+</figure>
+
+Result:
+<figure><img src="https://dawnarc.com/img/2024/20241027-%5BMaya%5DRigging%2004%20-%20Controller/%5BMaya%5DRigging-04---Controller---36.gif">
+</figure>
+</p>
+<p>4, Create an empty Group named <code>arm_grp_l</code>.
+<figure><img src="https://dawnarc.com/img/2024/20241027-%5BMaya%5DRigging%2004%20-%20Controller/%5BMaya%5DRigging-04---Controller---37.gif">
+</figure>
+</p>
+<p>5, Select Group first, then select Control, Modify -&gt; Match Transformations -&gt; Match All Transforms.
+<figure><img src="https://dawnarc.com/img/2024/20241027-%5BMaya%5DRigging%2004%20-%20Controller/%5BMaya%5DRigging-04---Controller---38.gif">
+</figure>
+
+Result:
+<figure><img src="https://dawnarc.com/img/2024/20241027-%5BMaya%5DRigging%2004%20-%20Controller/%5BMaya%5DRigging-04---Controller---39.gif">
+</figure>
+</p>
+<p>6, Offset parent matrix to the Group.
+<figure><img src="https://dawnarc.com/img/2024/20241027-%5BMaya%5DRigging%2004%20-%20Controller/%5BMaya%5DRigging-04---Controller---40.gif">
+</figure>
+</p>
+<p>7, Open Node Editor.
+<figure><img src="https://dawnarc.com/img/2024/20241027-%5BMaya%5DRigging%2004%20-%20Controller/%5BMaya%5DRigging-04---Controller---41.gif">
+</figure>
+</p>
+<p>8, Select the Control and Group, then click <strong>Add Selected Node</strong>.
+<figure><img src="https://dawnarc.com/img/2024/20241027-%5BMaya%5DRigging%2004%20-%20Controller/%5BMaya%5DRigging-04---Controller---42.gif">
+</figure>
+</p>
+<p>Then connect the OffsetParentMatrix between Control and Group.
+<figure><img src="https://dawnarc.com/img/2024/20241027-%5BMaya%5DRigging%2004%20-%20Controller/%5BMaya%5DRigging-04---Controller---43.gif">
+</figure>
+</p>
+<p>9, Move the joint into the group.
+<figure><img src="https://dawnarc.com/img/2024/20241027-%5BMaya%5DRigging%2004%20-%20Controller/%5BMaya%5DRigging-04---Controller---44.gif">
+</figure>
+</p>
+<p>Now the joint can be driven by Control.
+<figure><img src="https://dawnarc.com/img/2024/20241027-%5BMaya%5DRigging%2004%20-%20Controller/%5BMaya%5DRigging-04---Controller---45.gif">
+</figure>
+</p>
+<p><div class="alert warning ">
+  <p>Difference between Parent Constraints and Offset Parent Matrix:<br>
+Animation that driven by Offset Parent Matrix will not bake out transform curve of joints, so if want to import animation into Unreal or Unity, you should create controller using Constraints.</p>
+</div>
+<figure><img src="https://dawnarc.com/img/2024/20241027-%5BMaya%5DRigging%2004%20-%20Controller/%5BMaya%5DRigging-04---Controller---46.gif">
 </figure>
 </p>
 <h5 id="controller-tweaking">Controller Tweaking</h5>
@@ -706,7 +767,7 @@ A: Freeze Transformations will change the axis direction of pivot.</p>
         </article>
         <footer id="footer" class="main-content-wrap">
   <span class="copyrights">
-    &copy; 2024 Wang Aiguo. All Rights Reserved. Powered by <A href="https://gohugo.io/"> Hugo</A> | Theme <A href="https://github.com/kakawait/hugo-tranquilpeak-theme/">Tranquilpeak</A>.
+    &copy; 2025 Wang Aiguo. All Rights Reserved. Powered by <A href="https://gohugo.io/"> Hugo</A> | Theme <A href="https://github.com/kakawait/hugo-tranquilpeak-theme/">Tranquilpeak</A>.
   </span>
 </footer>
 
