@@ -383,7 +383,7 @@
 <li>[Maya]Rigging 11 - Common Tricks (WIP)</li>
 </ul>
 <h5 id="stage-1-spine-fk-system">Stage 1: Spine FK system</h5>
-<p>1, Duplicate skeleton and cull the unused joints to create IK FK joints.
+<p>1, Duplicate skeleton and cull the unused joints to create IK FK joints. <span class="highlight-text red">Make sure the distance between original skeleton and replicas are equal.</span>
 <figure><img src="https://dawnarc.com/img/2025/20250111-%5BMaya%5DRigging%2009%20-%20Spine%20IK%20FK/%5BMaya%5DRigging-09---Spine-IK-FK-01.gif">
 </figure>
 </p>
@@ -404,15 +404,19 @@
 <figure><img src="https://dawnarc.com/img/2025/20250111-%5BMaya%5DRigging%2009%20-%20Spine%20IK%20FK/%5BMaya%5DRigging-09---Spine-IK-FK-06.gif">
 </figure>
 </p>
-<p>4, Create a control (Curve) at the origin of coordinate axes.
+<p>4, Create controllers (Curve) at the origin of coordinate axes.
 <figure><img src="https://dawnarc.com/img/2025/20250111-%5BMaya%5DRigging%2009%20-%20Spine%20IK%20FK/%5BMaya%5DRigging-09---Spine-IK-FK-07.gif">
 </figure>
 </p>
-<p>5, Normalize the scale of controller (<strong>Freeze Transformations</strong>) before moving to the target joint.<br>
+<div class="alert info ">
+  <p>Caution:<br>
+<em>ctrl_torso</em> is just a handle for spine IK joints and FK joints, it will be used to drive the transformation of entire upper body, not only to drive spine joint or pelvis joint. (For more details, see: <a href="https://dawnarc.com/2025/01/mayarigging-09-spine-ik-fk/#caution-to-ctrl_torso-and-ctrl_pelvis_fk">Caution to ctrl_torso and ctrl_pelvis_fk</a>)</p>
+</div>
+<p>5, Normalize the scale of <strong>all</strong> controllers (<strong>Freeze Transformations</strong>) before moving to the target joint.<br>
 <figure><img src="https://dawnarc.com/img/2025/20250111-%5BMaya%5DRigging%2009%20-%20Spine%20IK%20FK/%5BMaya%5DRigging-09---Spine-IK-FK-07-A.gif">
 </figure>
 </p>
-<p>6, <strong>Delete History</strong> (Alt + Shift + D) of controller (because history may contains transformation data which will lead to offset issue).
+<p>6, <strong>Delete History</strong> (Alt + Shift + D) of <strong>all</strong> controllers (because history may contains transformation data which will lead to offset issue).
 <figure><img src="https://dawnarc.com/img/2025/20250111-%5BMaya%5DRigging%2009%20-%20Spine%20IK%20FK/%5BMaya%5DRigging-09---Spine-IK-FK-07-B.gif">
 </figure>
 
@@ -443,7 +447,7 @@
 </figure>
 </p>
 <div class="alert warning ">
-  <p>In the current example, it works right even we just Offset Parent Matrix only for <em>pelvis_fk</em>,  (because we will use <em>World Matrix</em> to drive <em>pelvis_fk</em> joint intead of <em>translate</em> and <em>rotate</em>, other joints don&rsquo;t need to <strong>Offset Parent Matrix</strong>),  but this requires that the corresponding controllers of other joints(from <em>spine_fk_01</em> to <em>spine_fk_05</em>) don&rsquo;t <strong>Offset Parent Matrix</strong> too, otherwise it will lead to translation and rotation issue. But if controller&rsquo;s transformation hasn&rsquo;t been <strong>Offset Parent Matrix</strong>, this can make things very tricky for animators.<br>
+  <p>In the current example, it works right even we just Offset Parent Matrix only for <em>pelvis_fk</em>, (because we will use <em>World Matrix</em> to drive <em>pelvis_fk</em> joint intead of <em>translate</em> and <em>rotate</em>, other joints don&rsquo;t need to <strong>Offset Parent Matrix</strong>),  but this requires that the corresponding controllers of other joints(from <em>spine_fk_01</em> to <em>spine_fk_05</em>) don&rsquo;t <strong>Offset Parent Matrix</strong> too, otherwise it will lead to translation and rotation issue. But if controller&rsquo;s transformation hasn&rsquo;t been <strong>Offset Parent Matrix</strong>, this can make things very tricky for animators.<br>
 So we recommend that <strong>Offset Parent Matrix</strong> to all the controller and all FK joints.</p>
 </div>
 <p>11, Create IK FK switch for spine joints, and turn on the FK on all spine constraints, turn off IK on them.<br>
@@ -454,24 +458,46 @@ We will setup IK system in the subsequent process, so we don&rsquo;t care IK at 
 <figure><img src="https://dawnarc.com/img/2025/20250111-%5BMaya%5DRigging%2009%20-%20Spine%20IK%20FK/%5BMaya%5DRigging-09---Spine-IK-FK-16.gif">
 </figure>
 </p>
-<p><div class="alert info ">
-  <p>We delete the <em>scale</em> for all FK joints because we will use another way to drive joint&rsquo;s scale afterward.</p>
-</div>
+<p>12, Delete the <em>scale</em> for all spine FK joints in Node Editor.
 <figure><img src="https://dawnarc.com/img/2025/20250111-%5BMaya%5DRigging%2009%20-%20Spine%20IK%20FK/%5BMaya%5DRigging-09---Spine-IK-FK-17.gif">
 </figure>
-</p>
-<p>12, Connect pelvis FK controller&rsquo;s *World Matrix to the <em>Offset Parent Matrix</em> of <em>pelvis_fk</em> joint in Node Edtior.
+
+<div class="alert info ">
+  <p>We delete the <em>scale</em> for all FK joints because we will use another way to drive joint&rsquo;s scale afterward.</p>
+</div></p>
+<p>13, Connect pelvis FK controller&rsquo;s <em>World Matrix</em> to the <em>Offset Parent Matrix</em> of <em>pelvis_fk</em> joint in Node Edtior.
 <figure><img src="https://dawnarc.com/img/2025/20250111-%5BMaya%5DRigging%2009%20-%20Spine%20IK%20FK/%5BMaya%5DRigging-09---Spine-IK-FK-18.gif">
 </figure>
 
+Then we can drive <em>pelvis_fk</em> joint using pelvis FK controller.
 <figure><img src="https://dawnarc.com/img/2025/20250111-%5BMaya%5DRigging%2009%20-%20Spine%20IK%20FK/%5BMaya%5DRigging-09---Spine-IK-FK-19.gif">
 </figure>
 </p>
-<p>13, Connect <em>translate</em> and <em>rotate</em> between spine FK controllers and spine FK joints in Node Editor.
+<p>14, Connect <em>translate</em> and <em>rotate</em> between spine FK controllers and spine FK joints in Node Editor.
 <figure><img src="https://dawnarc.com/img/2025/20250111-%5BMaya%5DRigging%2009%20-%20Spine%20IK%20FK/%5BMaya%5DRigging-09---Spine-IK-FK-20.gif">
 </figure>
-
+</p>
+<div class="alert info ">
+  <p>Because <em>ctrl_torso</em> is the handle for entire upper body, so we don&rsquo;t need to connect it to any joints in Node Editor.</p>
+</div>
+<p>Finally we can drive spine using spine FK controllers.
 <figure><img src="https://dawnarc.com/img/2025/20250111-%5BMaya%5DRigging%2009%20-%20Spine%20IK%20FK/%5BMaya%5DRigging-09---Spine-IK-FK-21.gif">
+</figure>
+</p>
+<h5 id="caution-to-ctrl_torso-and-ctrl_pelvis_fk">Caution to ctrl_torso and ctrl_pelvis_fk</h5>
+<p>You might wonder why don&rsquo;t drive <em>pelvis_fk</em> joint using <em>translate</em> and <em>rotate</em> attributes.<br>
+If drive <em>pelvis_fk</em> joint using <em>translate</em> and <em>rotate</em>, the <em>pelvis_fk</em> joint will not follow <em>ctrl_pelvis_fk</em> controller  when move <em>ctrl_torso</em>:
+<figure><img src="https://dawnarc.com/img/2025/20250111-%5BMaya%5DRigging%2009%20-%20Spine%20IK%20FK/%5BMaya%5DRigging-09---Spine-IK-FK-22.gif">
+</figure>
+
+But it works right if using <em>Offset Parent Matrix</em>:
+<figure><img src="https://dawnarc.com/img/2025/20250111-%5BMaya%5DRigging%2009%20-%20Spine%20IK%20FK/%5BMaya%5DRigging-09---Spine-IK-FK-23.gif">
+</figure>
+</p>
+<p>Another question you might want to ask:<br>
+Why the spine joints (<em>spine_fk_01</em> to <em>spine_fk_05</em>) don&rsquo;t need to be drive using <em>Offset Parent Matrix</em> attribute.<br>
+Because spine joints inherit from pelvis joint, <em>Offset Parent Matrix</em> will lead to deforming issue.
+<figure><img src="https://dawnarc.com/img/2025/20250111-%5BMaya%5DRigging%2009%20-%20Spine%20IK%20FK/%5BMaya%5DRigging-09---Spine-IK-FK-24.gif">
 </figure>
 </p>
 <h5 id="references">References</h5>
