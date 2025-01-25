@@ -381,7 +381,7 @@
 </figure>
 </p>
 <p><div class="alert warning ">
-  <p>修改坐标轴位置或者朝向，需要启用<strong>Bake Pivot Orientation</strong>（Modify -&gt; Transformation Tools -&gt; Move Tool），表示对坐标轴的修改是否继承到子节点（transform也是子节点的一种）。否则每当修改物体的位置或者朝向后，坐标轴又会被重置。</p>
+  <p>修改坐标轴位置或者朝向，需要启用<strong>Bake Pivot Orientation</strong>（Modify -&gt; Transformation Tools -&gt; Move Tool，或者Modify -&gt; Bake Pivot -&gt; Orientation），表示对坐标轴的修改是否继承到子节点（transform也是子节点的一种）。否则每当修改物体的位置或者朝向后，坐标轴又会被重置。</p>
 </div>
 <figure><img src="https://dawnarc.com/img/2017/20170829-%5BMaya%5D%E4%BF%AE%E6%94%B9%E5%9D%90%E6%A0%87%E8%BD%B4%E5%BF%83%E7%82%B9/%5BMaya%5D%E4%BF%AE%E6%94%B9%E5%9D%90%E6%A0%87%E8%BD%B4%E5%BF%83%E7%82%B9-04-A.gif">
 </figure>
@@ -412,11 +412,24 @@
 </p>
 <p>其中：</p>
 <ul>
-<li>Freeze Transformations: 用于将translation和rotation归零，将scale归一。</li>
-<li>Reset Transformations: 将坐标轴设置到父级对象的坐标原点，没有父级对象就设置到世界坐标系原点。</li>
+<li>Freeze Transformations: 用于将translation和rotation归零，将scale归一。同时将坐标轴轴向设置成父节点相同的轴向，若没有父节点就将轴向设置成世界坐标系的轴向。</li>
+<li>Reset Transformations: 将坐标轴设置到父节点的坐标原点，若没有父节点就设置到世界坐标系原点。</li>
 </ul>
+<h5 id="reset-transformation注意事项">Reset Transformation注意事项</h5>
 <p>Reset Transformations之所以能让坐标轴原点归零，是因为重置了物体Pivots下的Local Space和World Space。
 <figure><img src="https://dawnarc.com/img/2017/20170829-%5BMaya%5D%E4%BF%AE%E6%94%B9%E5%9D%90%E6%A0%87%E8%BD%B4%E5%BF%83%E7%82%B9/%5BMaya%5D%E4%BF%AE%E6%94%B9%E5%9D%90%E6%A0%87%E8%BD%B4%E5%BF%83%E7%82%B9-07-A.gif">
+</figure>
+
+<div class="alert danger ">
+  <p>在模型绑定（Rigging）时，常见的错误是：控制器和关节的坐标和转向我明明归零了，为什么当用控制器的<strong>OffsetParentMatrix</strong>驱动关节时，关节还是会形变扭曲？<br>
+要么是轴心没有Match Pivots外，要么是之前修改过控制器轴心，导致Pivots的Local Space和World Space没有归零。</p>
+</div></p>
+<p>如果物体有父节点，则<strong>Reset Transformation</strong>会将轴心设置到父节点轴心位置，且轴向也改成相同。
+<figure><img src="https://dawnarc.com/img/2017/20170829-%5BMaya%5D%E4%BF%AE%E6%94%B9%E5%9D%90%E6%A0%87%E8%BD%B4%E5%BF%83%E7%82%B9/%5BMaya%5D%E4%BF%AE%E6%94%B9%E5%9D%90%E6%A0%87%E8%BD%B4%E5%BF%83%E7%82%B9-07-B.gif">
+</figure>
+
+<strong>Freeze Transformations</strong>只改轴向，不改轴心位置。
+<figure><img src="https://dawnarc.com/img/2017/20170829-%5BMaya%5D%E4%BF%AE%E6%94%B9%E5%9D%90%E6%A0%87%E8%BD%B4%E5%BF%83%E7%82%B9/%5BMaya%5D%E4%BF%AE%E6%94%B9%E5%9D%90%E6%A0%87%E8%BD%B4%E5%BF%83%E7%82%B9-07-C.gif">
 </figure>
 </p>
 <h5 id="方式三match-pivots">方式三：Match Pivots</h5>
