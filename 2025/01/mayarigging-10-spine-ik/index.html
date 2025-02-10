@@ -380,7 +380,10 @@
 <li><a href="https://dawnarc.com/2025/01/mayarigging-08-ik-fk-switch/">[Maya]Rigging 08 - IK FK Switch</a></li>
 <li><a href="https://dawnarc.com/2025/01/mayarigging-09-spine-fk/">[Maya]Rigging 09 - Spine FK</a></li>
 <li><a href="https://dawnarc.com/2025/01/mayarigging-10-spine-ik/">[Maya]Rigging 10 - Spine IK</a></li>
-<li>[Maya]Rigging 11 - Common Tricks (WIP)</li>
+<li>[Maya]Rigging 11 - Neck and Head (WIP)</li>
+<li>[Maya]Rigging 12 - Limbs FK (WIP)</li>
+<li>[Maya]Rigging 13 - Limbs IK (WIP)</li>
+<li>[Maya]Rigging 14 - Common Tricks (WIP)</li>
 </ul>
 <h5 id="stage-1-spine-fk-system">Stage 1: Spine FK system</h5>
 <p>See: <a href="https://dawnarc.com/2025/01/mayarigging-09-spine-fk/">[Maya]Rigging 09 - Spine FK</a></p>
@@ -397,7 +400,7 @@
 <figure><img src="https://dawnarc.com/img/2025/20250118-%5BMaya%5DRigging%2010%20-%20Spine%20IK/%5BMaya%5DRigging-10---Spine-IK-03.gif">
 </figure>
 </p>
-<p>4, We will <strong>Reset Transformations</strong> later, but make sure that the <strong>Offset Parent Matrix</strong> has been cleaned before do that.
+<p>4, We will <strong>Reset Transformations</strong> later, but make sure that the <strong>Offset Parent Matrix</strong> has been reset before do that.
 <figure><img src="https://dawnarc.com/img/2025/20250118-%5BMaya%5DRigging%2010%20-%20Spine%20IK/%5BMaya%5DRigging-10---Spine-IK-04.gif">
 </figure>
 
@@ -550,8 +553,145 @@ Now we can manipulate the shoulder transformation using <em>ctrl_shoulder_ik</em
 <p>22, Setup the controller in same way for other joints: chest and pelvis.
 <figure><img src="https://dawnarc.com/img/2025/20250118-%5BMaya%5DRigging%2010%20-%20Spine%20IK/%5BMaya%5DRigging-10---Spine-IK-40.gif">
 </figure>
+
+<figure><img src="https://dawnarc.com/img/2025/20250118-%5BMaya%5DRigging%2010%20-%20Spine%20IK/%5BMaya%5DRigging-10---Spine-IK-41.gif">
+</figure>
 </p>
-<p>WIP</p>
+<p>23, But when you rotate the IK controllers, <em>ctrl_shoulder_ik</em> works right, but <em>ctrl_chest_ik</em> and <em>ctrl_pelvis_ik</em> can&rsquo;t drive the the upper body.
+<figure><img src="https://dawnarc.com/img/2025/20250118-%5BMaya%5DRigging%2010%20-%20Spine%20IK/%5BMaya%5DRigging-10---Spine-IK-42.gif">
+</figure>
+
+That&rsquo;s because we haven&rsquo;t set up hierarchy for IK controllers yet.
+<figure><img src="https://dawnarc.com/img/2025/20250118-%5BMaya%5DRigging%2010%20-%20Spine%20IK/%5BMaya%5DRigging-10---Spine-IK-43.gif">
+</figure>
+
+After the hierarchy setup finished, now the rotation on IK controller works fine.
+<figure><img src="https://dawnarc.com/img/2025/20250118-%5BMaya%5DRigging%2010%20-%20Spine%20IK/%5BMaya%5DRigging-10---Spine-IK-44.gif">
+</figure>
+</p>
+<p>24, Don&rsquo;t forget to optimize the <strong>Offset Parent Matrix</strong> for IK controllers after hierarchy setup.
+<figure><img src="https://dawnarc.com/img/2025/20250118-%5BMaya%5DRigging%2010%20-%20Spine%20IK/%5BMaya%5DRigging-10---Spine-IK-45.gif">
+</figure>
+</p>
+<p>25, Sometimes the transformation weight for points of spine IK curve may be low, we can adjust the weight for the target curve points in Component Editor.
+<figure><img src="https://dawnarc.com/img/2025/20250118-%5BMaya%5DRigging%2010%20-%20Spine%20IK/%5BMaya%5DRigging-10---Spine-IK-46.gif">
+</figure>
+
+<figure><img src="https://dawnarc.com/img/2025/20250118-%5BMaya%5DRigging%2010%20-%20Spine%20IK/%5BMaya%5DRigging-10---Spine-IK-47.gif">
+</figure>
+</p>
+<p>26, As shown in the following image, there&rsquo;re two attributes named <em>Roll</em> and <em>Twist</em>.
+<figure><img src="https://dawnarc.com/img/2025/20250118-%5BMaya%5DRigging%2010%20-%20Spine%20IK/%5BMaya%5DRigging-10---Spine-IK-48.gif">
+</figure>
+
+<em>Roll</em> rotates the whole upper body, and <em>Twist</em> twists the spine joints.
+<figure><img src="https://dawnarc.com/img/2025/20250118-%5BMaya%5DRigging%2010%20-%20Spine%20IK/%5BMaya%5DRigging-10---Spine-IK-49.gif">
+</figure>
+
+But <em>ctrl_shoulder_ik</em>, <em>ctrl_chest_ik</em> and <em>ctrl_pelvis_ik</em> can&rsquo;t roll or twist the upper body normally.<br>
+We expect to the IK controllers roll and twist the upper body as attributes <em>Roll</em> and <em>Twist</em> do.
+<figure><img src="https://dawnarc.com/img/2025/20250118-%5BMaya%5DRigging%2010%20-%20Spine%20IK/%5BMaya%5DRigging-10---Spine-IK-50.gif">
+</figure>
+
+To achieve this, we need to set up the driven process for Spine IK Handle in Node Editor.
+<figure><img src="https://dawnarc.com/img/2025/20250118-%5BMaya%5DRigging%2010%20-%20Spine%20IK/%5BMaya%5DRigging-10---Spine-IK-51.gif">
+</figure>
+
+Now we can roll and twist upper body using <em>ctrl_shoulder_ik</em> and <em>ctrl_pelvis_ik</em>.
+<figure><img src="https://dawnarc.com/img/2025/20250118-%5BMaya%5DRigging%2010%20-%20Spine%20IK/%5BMaya%5DRigging-10---Spine-IK-52.gif">
+</figure>
+</p>
+<p>But if we rotate axis Y for <em>ctrl_chest_ik</em>, rotation of upper body doesn&rsquo;t execute as expected.
+<figure><img src="https://dawnarc.com/img/2025/20250118-%5BMaya%5DRigging%2010%20-%20Spine%20IK/%5BMaya%5DRigging-10---Spine-IK-53.gif">
+</figure>
+
+To address this issue, we need to add a new node named <em>plusMinusAverage</em> to blend  the rotation of <em>ctrl_shoulder_ik</em>, <em>ctrl_chest_ik</em>.
+<figure><img src="https://dawnarc.com/img/2025/20250118-%5BMaya%5DRigging%2010%20-%20Spine%20IK/%5BMaya%5DRigging-10---Spine-IK-54.gif">
+</figure>
+
+Now <em>ctrl_chest_ik</em> works right.
+<figure><img src="https://dawnarc.com/img/2025/20250118-%5BMaya%5DRigging%2010%20-%20Spine%20IK/%5BMaya%5DRigging-10---Spine-IK-55.gif">
+</figure>
+</p>
+<p>27, A new problem is that <em>ctrl_hip_ik</em> doesn&rsquo;t work as expected, because we haven&rsquo;t setup the driven process for <em>ctrl_hip_ik</em>.<br>
+We want to drive the pelvis joint using <em>ctrl_hip_ik</em> in the next step.
+<figure><img src="https://dawnarc.com/img/2025/20250118-%5BMaya%5DRigging%2010%20-%20Spine%20IK/%5BMaya%5DRigging-10---Spine-IK-56.gif">
+</figure>
+
+Here&rsquo;s the whole graph nodes: we added two new nodes named <em>multiplyDivide</em> and <em>plusMinusAverage</em>.
+<figure><img src="https://dawnarc.com/img/2025/20250118-%5BMaya%5DRigging%2010%20-%20Spine%20IK/%5BMaya%5DRigging-10---Spine-IK-57.gif">
+</figure>
+
+And we set the <em>Input 2X</em> to <em>-1</em> for <em>multiplyDivide</em>.
+<figure><img src="https://dawnarc.com/img/2025/20250118-%5BMaya%5DRigging%2010%20-%20Spine%20IK/%5BMaya%5DRigging-10---Spine-IK-58.gif">
+</figure>
+
+Now we can drive the pelvis joint normally.
+<figure><img src="https://dawnarc.com/img/2025/20250118-%5BMaya%5DRigging%2010%20-%20Spine%20IK/%5BMaya%5DRigging-10---Spine-IK-59.gif">
+</figure>
+</p>
+<p>28, In next step we move the all controllers into root controller, because we want to blend the rotation of root controllers into spline IK.
+<figure><img src="https://dawnarc.com/img/2025/20250118-%5BMaya%5DRigging%2010%20-%20Spine%20IK/%5BMaya%5DRigging-10---Spine-IK-60.gif">
+</figure>
+</p>
+<p>29, But there&rsquo;s a deformation issue when move the IK controllers into <em>ctrl_torso</em>.
+<figure><img src="https://dawnarc.com/img/2025/20250118-%5BMaya%5DRigging%2010%20-%20Spine%20IK/%5BMaya%5DRigging-10---Spine-IK-61.gif">
+</figure>
+
+That&rsquo;s because we had modified pivot of <em>ctrl_torso</em> which will lead to transformation issue in current step.
+<figure><img src="https://dawnarc.com/img/2025/20250118-%5BMaya%5DRigging%2010%20-%20Spine%20IK/%5BMaya%5DRigging-10---Spine-IK-62.gif">
+</figure>
+</p>
+<p>30, To address this issue, we need to unparent all the child nodes under the <em>ctrl_torso</em> temporarily, and unparent the <em>ctrl_torso</em> from root controller temporarily.
+<figure><img src="https://dawnarc.com/img/2025/20250118-%5BMaya%5DRigging%2010%20-%20Spine%20IK/%5BMaya%5DRigging-10---Spine-IK-63.gif">
+</figure>
+
+<figure><img src="https://dawnarc.com/img/2025/20250118-%5BMaya%5DRigging%2010%20-%20Spine%20IK/%5BMaya%5DRigging-10---Spine-IK-64.gif">
+</figure>
+
+Then reset the <strong>Offset Parent Matrix</strong> for <em>ctrl_torso</em>.
+<figure><img src="https://dawnarc.com/img/2025/20250118-%5BMaya%5DRigging%2010%20-%20Spine%20IK/%5BMaya%5DRigging-10---Spine-IK-65.gif">
+</figure>
+
+Then tweak the pivot of <em>ctrl_torso</em> as we needed, <span class="highlight-text yellow">don't forget to Freeze Transformations at last.</span>
+<figure><img src="https://dawnarc.com/img/2025/20250118-%5BMaya%5DRigging%2010%20-%20Spine%20IK/%5BMaya%5DRigging-10---Spine-IK-66.gif">
+</figure>
+
+Then Match All Transformation from <em>ctrl_torso</em> to <em>pelvis</em> joint.
+<figure><img src="https://dawnarc.com/img/2025/20250118-%5BMaya%5DRigging%2010%20-%20Spine%20IK/%5BMaya%5DRigging-10---Spine-IK-67.gif">
+</figure>
+
+At last, restore the hierarchy.
+<figure><img src="https://dawnarc.com/img/2025/20250118-%5BMaya%5DRigging%2010%20-%20Spine%20IK/%5BMaya%5DRigging-10---Spine-IK-68.gif">
+</figure>
+</p>
+<p>31, Now we can move the IK controllers into <em>ctrl_torso</em> safely.
+<figure><img src="https://dawnarc.com/img/2025/20250118-%5BMaya%5DRigging%2010%20-%20Spine%20IK/%5BMaya%5DRigging-10---Spine-IK-69.gif">
+</figure>
+
+We can check if IK controllers work fine.
+<figure><img src="https://dawnarc.com/img/2025/20250118-%5BMaya%5DRigging%2010%20-%20Spine%20IK/%5BMaya%5DRigging-10---Spine-IK-70.gif">
+</figure>
+
+<span class="highlight-text yellow">Don't forget to optimize the OffsetParentMatrix at last.</span>
+<figure><img src="https://dawnarc.com/img/2025/20250118-%5BMaya%5DRigging%2010%20-%20Spine%20IK/%5BMaya%5DRigging-10---Spine-IK-71.gif">
+</figure>
+</p>
+<p>32, An new issue: when we rotate the root controller, the upper body doesn&rsquo;t rotate as expected.
+<figure><img src="https://dawnarc.com/img/2025/20250118-%5BMaya%5DRigging%2010%20-%20Spine%20IK/%5BMaya%5DRigging-10---Spine-IK-72.gif">
+</figure>
+
+To address this issue, we need to add <em>Rotate Y</em> of <em>ctrl_torso</em> and <em>Rotate Y</em> of <em>ctrl_root</em> into the blending workflow.
+<figure><img src="https://dawnarc.com/img/2025/20250118-%5BMaya%5DRigging%2010%20-%20Spine%20IK/%5BMaya%5DRigging-10---Spine-IK-73.gif">
+</figure>
+
+Finally, root controller and upper body were rotated as expected.
+<figure><img src="https://dawnarc.com/img/2025/20250118-%5BMaya%5DRigging%2010%20-%20Spine%20IK/%5BMaya%5DRigging-10---Spine-IK-74.gif">
+</figure>
+
+<div class="alert warning ">
+  <p>Because we haven&rsquo;t setup the IK FK control for legs, so there&rsquo;s a issue that lower body doesn&rsquo;t rotate following root controller, but no worries, we will set leg IK FK afterward.</p>
+</div></p>
 <h5 id="references">References</h5>
 <p>Realtime Creature Rigging Workshop (10 / 19) : Spine FK &amp; IK systems<br>
 <a href="https://www.youtube.com/watch?v=5AHmfuYkcMY">https://www.youtube.com/watch?v=5AHmfuYkcMY</a></p>
