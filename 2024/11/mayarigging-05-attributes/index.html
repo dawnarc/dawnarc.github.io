@@ -376,11 +376,11 @@
 <li><a href="https://dawnarc.com/2024/10/mayarigging-04-controller/">[Maya]Rigging 04 - Controller</a></li>
 <li><a href="https://dawnarc.com/2024/11/mayarigging-05-attributes/">[Maya]Rigging 05 - Attributes</a></li>
 <li><a href="https://dawnarc.com/2024/12/mayarigging-06-foundations-of-ik/">[Maya]Rigging 06 - Foundations of IK</a></li>
-<li><a href="https://dawnarc.com/2024/12/mayarigging-07-ik-for-leg/">[Maya]Rigging 07 - IK for Leg</a></li>
+<li><a href="https://dawnarc.com/2024/12/mayarigging-07-advanced-ik/">[Maya]Rigging 07 - Advanced IK</a></li>
 <li><a href="https://dawnarc.com/2025/01/mayarigging-08-ik-fk-switch/">[Maya]Rigging 08 - IK FK Switch</a></li>
 <li><a href="https://dawnarc.com/2025/01/mayarigging-09-spine-fk/">[Maya]Rigging 09 - Spine FK</a></li>
 <li><a href="https://dawnarc.com/2025/01/mayarigging-10-spine-ik/">[Maya]Rigging 10 - Spine IK</a></li>
-<li>[Maya]Rigging 11 - Neck and Head (WIP)</li>
+<li><a href="https://dawnarc.com/2025/02/mayarigging-11-neck-and-head/">[Maya]Rigging 11 - Neck and Head</a></li>
 <li>[Maya]Rigging 12 - Limbs FK (WIP)</li>
 <li>[Maya]Rigging 13 - Limbs IK (WIP)</li>
 <li>[Maya]Rigging 14 - Common Tricks (WIP)</li>
@@ -451,7 +451,8 @@
 <li><code>lock=True</code> : The Attribute&rsquo;s value was not editable, can the Attribute can&rsquo;t be deleted;</li>
 </ul>
 <h5 id="attribute-proxy">Attribute Proxy</h5>
-<p>If want to create an attribute that driven by another attribute, you can create a proxy attribute.
+<p>If want to create an attribute that driven by another attribute, you can create a proxy attribute.<br>
+Select all target child nodes, then execute following script. <span class="highlight-text yellow">Make sure that there's no attributes with same name in child nodes.</span> (<code>rig_ctrls.IK_FK_Switch</code> is the parent node name and attribute name.)
 <figure><img src="https://dawnarc.com/img/2024/20241116-%5BMaya%5DRigging%2005%20-%20Attributes/%5BMaya%5DRigging-05---Attributes---13.gif">
 </figure>
 </p>
@@ -463,10 +464,17 @@
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-py" data-lang="py"><span style="display:flex;"><span><span style="color:#f92672">import</span> maya.cmds <span style="color:#66d9ef">as</span> cmds
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> elem <span style="color:#f92672">in</span> cmds<span style="color:#f92672">.</span>ls(sl<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>, dag<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>, leaf<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>):
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># default is float type if there is no explicit type define.</span>
 </span></span><span style="display:flex;"><span>    cmds<span style="color:#f92672">.</span>addAttr(elem, ln<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;IK_FK_Switch&#39;</span>, proxy<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;rig_ctrls.IK_FK_Switch&#34;</span>)
 </span></span></code></pre></div><p>MEL:</p>
 <pre tabindex="0"><code>addAttr -ln &#34;IK_FK_Switch&#34; -proxy &#34;rig_ctrls.IK_FK_Switch&#34;
-</code></pre><h5 id="attribute-connection">Attribute Connection</h5>
+</code></pre><p><div class="alert info ">
+  <p>Another issue that needs to be noted is: Once the attributes of the child node are modified, the Proxy attribute (from father node) will also be automatically modified.</p>
+</div>
+<figure><img src="https://dawnarc.com/img/2024/20241116-%5BMaya%5DRigging%2005%20-%20Attributes/%5BMaya%5DRigging-05---Attributes---14-A.gif">
+</figure>
+</p>
+<h5 id="attribute-connection">Attribute Connection</h5>
 <p>Usually there are many controls in a character and they are grouped in a hierarchy. As shown in the following image.<br>
 <figure><img src="https://dawnarc.com/img/2024/20241116-%5BMaya%5DRigging%2005%20-%20Attributes/%5BMaya%5DRigging-05---Attributes---15.gif">
 </figure>
@@ -488,11 +496,17 @@ Windows -&gt; General Editors -&gt; Connection Editor.
 </figure>
 </p>
 <p>Then click the parent attribute (left side) first, then click the child attributes (right side) to make the connection.
-<figure><img src="https://dawnarc.com/img/2024/20241116-%5BMaya%5DRigging%2005%20-%20Attributes/%5BMaya%5DRigging-05---Attributes---21.gif">
+<figure><img src="https://dawnarc.com/img/2024/20241116-%5BMaya%5DRigging%2005%20-%20Attributes/%5BMaya%5DRigging-05---Attributes---20.gif">
 </figure>
 </p>
 <p>You can also filter the attributes using display options.
-<figure><img src="https://dawnarc.com/img/2024/20241116-%5BMaya%5DRigging%2005%20-%20Attributes/%5BMaya%5DRigging-05---Attributes---20.gif">
+<figure><img src="https://dawnarc.com/img/2024/20241116-%5BMaya%5DRigging%2005%20-%20Attributes/%5BMaya%5DRigging-05---Attributes---21.gif">
+</figure>
+</p>
+<p><div class="alert success ">
+  <p>When the connection was built, the font of attributes name will change to italics.</p>
+</div>
+<figure><img src="https://dawnarc.com/img/2024/20241116-%5BMaya%5DRigging%2005%20-%20Attributes/%5BMaya%5DRigging-05---Attributes---21-A.gif">
 </figure>
 </p>
 <p>Now you can change the attribute value in batch.
