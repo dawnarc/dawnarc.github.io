@@ -381,7 +381,7 @@
 <li><a href="https://dawnarc.com/2025/01/mayarigging-09-spine-fk/">[Maya]Rigging 09 - Spine FK</a></li>
 <li><a href="https://dawnarc.com/2025/01/mayarigging-10-spine-ik/">[Maya]Rigging 10 - Spine IK</a></li>
 <li><a href="https://dawnarc.com/2025/02/mayarigging-11-neck-and-head/">[Maya]Rigging 11 - Neck and Head</a></li>
-<li>[Maya]Rigging 12 - Limbs FK (WIP)</li>
+<li><a href="https://dawnarc.com/2025/02/mayarigging-12-limbs-fk/">[Maya]Rigging 12 - Limbs FK</a></li>
 <li>[Maya]Rigging 13 - Limbs IK (WIP)</li>
 <li>[Maya]Rigging 14 - Common Tricks (WIP)</li>
 </ul>
@@ -485,7 +485,31 @@ Alt + 2 : Toggle visibility of polygons.<br>
 <figure><img src="https://dawnarc.com/img/2024/20240727-%5BMaya%5DRigging%2003%20-%20Visualization/%5BMaya%5DRigging%2003%20-%20Visualization%20-%2020.gif">
 </figure>
 </p>
-<h5 id="shading-mode">Shading Mode</h5>
+<h5 id="change-curve-width">Change Curve Width</h5>
+<p><figure><img src="https://dawnarc.com/img/2024/20240727-%5BMaya%5DRigging%2003%20-%20Visualization/%5BMaya%5DRigging%2003%20-%20Visualization%20-%2025.gif">
+</figure>
+
+<figure><img src="https://dawnarc.com/img/2024/20240727-%5BMaya%5DRigging%2003%20-%20Visualization/%5BMaya%5DRigging%2003%20-%20Visualization%20-%2026.gif">
+</figure>
+</p>
+<p>For more details of controller will be explained in next article: <a href="https://dawnarc.com/2024/10/mayarigging-04-controller/">[Maya]Rigging 04 - Controller</a>.</p>
+<p>Script to change curve line width in batch:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-py" data-lang="py"><span style="display:flex;"><span><span style="color:#f92672">from</span> maya <span style="color:#f92672">import</span> cmds
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>result <span style="color:#f92672">=</span> set()
+</span></span><span style="display:flex;"><span>selList <span style="color:#f92672">=</span> cmds<span style="color:#f92672">.</span>ls(selection<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>, long<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>) <span style="color:#f92672">or</span> []
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> obj <span style="color:#f92672">in</span> selList:
+</span></span><span style="display:flex;"><span>        children <span style="color:#f92672">=</span> set(cmds<span style="color:#f92672">.</span>listRelatives(obj, fullPath<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>) <span style="color:#f92672">or</span> [])
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">while</span> children:
+</span></span><span style="display:flex;"><span>            result<span style="color:#f92672">.</span>update(children)
+</span></span><span style="display:flex;"><span>            children <span style="color:#f92672">=</span> set(cmds<span style="color:#f92672">.</span>listRelatives(children, fullPath<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>) <span style="color:#f92672">or</span> []) <span style="color:#f92672">-</span> result
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> node <span style="color:#f92672">in</span> result:
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">#print(node)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> cmds<span style="color:#f92672">.</span>objectType(node) <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;nurbsCurve&#34;</span>:
+</span></span><span style="display:flex;"><span>        print(node)
+</span></span><span style="display:flex;"><span>        cmds<span style="color:#f92672">.</span>setAttr(node  <span style="color:#f92672">+</span> <span style="color:#e6db74">&#39;.lineWidth&#39;</span>, <span style="color:#ae81ff">2</span>)
+</span></span></code></pre></div><h5 id="shading-mode">Shading Mode</h5>
 <p>Enable X-Ray Joints mode to display skeleton overlayed the mesh.
 <figure><img src="https://dawnarc.com/img/2024/20240727-%5BMaya%5DRigging%2003%20-%20Visualization/%5BMaya%5DRigging%2003%20-%20Visualization%20-%2018.gif">
 </figure>

@@ -422,17 +422,24 @@ On task beginning:</p>
 </span></span><span style="display:flex;"><span>mel<span style="color:#f92672">.</span>eval(<span style="color:#e6db74">&#39;FBXExportUpAxis y&#39;</span>)
 </span></span><span style="display:flex;"><span>mel<span style="color:#f92672">.</span>eval(<span style="color:#e6db74">&#39;FBXExportCameras -v false&#39;</span>)
 </span></span><span style="display:flex;"><span>mel<span style="color:#f92672">.</span>eval(<span style="color:#e6db74">&#39;FBXExportLights -v false&#39;</span>)
-</span></span></code></pre></div><h5 id="how-to-get-object-list">How to get object list</h5>
+</span></span></code></pre></div><h5 id="how-to-get-node-list">How to get node list</h5>
 <p>Get all selected objects:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Python" data-lang="Python"><span style="display:flex;"><span><span style="color:#f92672">from</span> maya <span style="color:#f92672">import</span> cmds
 </span></span><span style="display:flex;"><span>selList <span style="color:#f92672">=</span> cmds<span style="color:#f92672">.</span>ls(selection<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>, long<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>) <span style="color:#f92672">or</span> []
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> obj <span style="color:#f92672">in</span> selList:
 </span></span><span style="display:flex;"><span>    print(obj)
-</span></span></code></pre></div><p>Get all geometry objects:</p>
+</span></span></code></pre></div><p>Get all geometry objects in scene:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Python" data-lang="Python"><span style="display:flex;"><span><span style="color:#f92672">from</span> maya <span style="color:#f92672">import</span> cmds
 </span></span><span style="display:flex;"><span>geometryList <span style="color:#f92672">=</span> cmds<span style="color:#f92672">.</span>ls(geometry<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>, long<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> geo <span style="color:#f92672">in</span> geometryList:
 </span></span><span style="display:flex;"><span>    print(geo)
+</span></span></code></pre></div><p>Select all transform nodes in scene:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-py" data-lang="py"><span style="display:flex;"><span><span style="color:#f92672">import</span> maya.cmds <span style="color:#66d9ef">as</span> cmds
+</span></span><span style="display:flex;"><span>nodes <span style="color:#f92672">=</span> cmds<span style="color:#f92672">.</span>ls(type <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#39;transform&#39;</span>])
+</span></span><span style="display:flex;"><span>nodesLen <span style="color:#f92672">=</span> len(nodes)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> i <span style="color:#f92672">in</span> range(<span style="color:#ae81ff">0</span>, nodesLen):
+</span></span><span style="display:flex;"><span>    print(nodes[i])
+</span></span><span style="display:flex;"><span>    cmds<span style="color:#f92672">.</span>select(nodes[i], add<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)
 </span></span></code></pre></div><p>Get all objects and check object type:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Python" data-lang="Python"><span style="display:flex;"><span><span style="color:#f92672">from</span> maya <span style="color:#f92672">import</span> cmds
 </span></span><span style="display:flex;"><span>
@@ -441,6 +448,42 @@ On task beginning:</p>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> geo <span style="color:#f92672">in</span> objList:
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> cmds<span style="color:#f92672">.</span>objectType(geo) <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;mesh&#34;</span>:
 </span></span><span style="display:flex;"><span>        print(geo)
+</span></span></code></pre></div><p>Get all child nodes (take curve as an example, modify the line width in batch):</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-py" data-lang="py"><span style="display:flex;"><span><span style="color:#f92672">from</span> maya <span style="color:#f92672">import</span> cmds
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>result <span style="color:#f92672">=</span> set()
+</span></span><span style="display:flex;"><span>selList <span style="color:#f92672">=</span> cmds<span style="color:#f92672">.</span>ls(selection<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>, long<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>) <span style="color:#f92672">or</span> []
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> obj <span style="color:#f92672">in</span> selList:
+</span></span><span style="display:flex;"><span>        children <span style="color:#f92672">=</span> set(cmds<span style="color:#f92672">.</span>listRelatives(obj, fullPath<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>) <span style="color:#f92672">or</span> [])
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">while</span> children:
+</span></span><span style="display:flex;"><span>            result<span style="color:#f92672">.</span>update(children)
+</span></span><span style="display:flex;"><span>            children <span style="color:#f92672">=</span> set(cmds<span style="color:#f92672">.</span>listRelatives(children, fullPath<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>) <span style="color:#f92672">or</span> []) <span style="color:#f92672">-</span> result
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> node <span style="color:#f92672">in</span> result:
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">#print(node)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> cmds<span style="color:#f92672">.</span>objectType(node) <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;nurbsCurve&#34;</span>:
+</span></span><span style="display:flex;"><span>        print(node)
+</span></span><span style="display:flex;"><span>        cmds<span style="color:#f92672">.</span>setAttr(node  <span style="color:#f92672">+</span> <span style="color:#e6db74">&#39;.lineWidth&#39;</span>, <span style="color:#ae81ff">2</span>)
+</span></span></code></pre></div><p>Select all child node (take joint as an example, select all child joint under the selected nodes):</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-py" data-lang="py"><span style="display:flex;"><span><span style="color:#f92672">from</span> maya <span style="color:#f92672">import</span> cmds
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>result <span style="color:#f92672">=</span> set()
+</span></span><span style="display:flex;"><span>selList <span style="color:#f92672">=</span> cmds<span style="color:#f92672">.</span>ls(selection<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>, long<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>) <span style="color:#f92672">or</span> []
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> obj <span style="color:#f92672">in</span> selList:
+</span></span><span style="display:flex;"><span>        children <span style="color:#f92672">=</span> set(cmds<span style="color:#f92672">.</span>listRelatives(obj, fullPath<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>) <span style="color:#f92672">or</span> [])
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">while</span> children:
+</span></span><span style="display:flex;"><span>            result<span style="color:#f92672">.</span>update(children)
+</span></span><span style="display:flex;"><span>            children <span style="color:#f92672">=</span> set(cmds<span style="color:#f92672">.</span>listRelatives(children, fullPath<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>) <span style="color:#f92672">or</span> []) <span style="color:#f92672">-</span> result
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>firstSelect <span style="color:#f92672">=</span> <span style="color:#66d9ef">False</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> node <span style="color:#f92672">in</span> result:
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> cmds<span style="color:#f92672">.</span>objectType(node) <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;joint&#34;</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> firstSelect:
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e"># add=True means to select multiple nodes at a time</span>
+</span></span><span style="display:flex;"><span>            cmds<span style="color:#f92672">.</span>select(node, add<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">else</span>:
+</span></span><span style="display:flex;"><span>            cmds<span style="color:#f92672">.</span>select(node)
+</span></span><span style="display:flex;"><span>            firstSelect <span style="color:#f92672">=</span> <span style="color:#66d9ef">True</span>
 </span></span></code></pre></div><p>Select all child nodes (MEL: <code>select -hi</code>):</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>string $target <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;root&#34;</span>;
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">select</span> -hi $target;
@@ -564,7 +607,180 @@ On task beginning:</p>
 </span></span><span style="display:flex;"><span>sorted(set(cmds<span style="color:#f92672">.</span>ls([mat <span style="color:#66d9ef">for</span> item <span style="color:#f92672">in</span> cmds<span style="color:#f92672">.</span>ls(type<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;shadingEngine&#39;</span>) <span style="color:#66d9ef">for</span> mat <span style="color:#f92672">in</span> cmds<span style="color:#f92672">.</span>listConnections(item) <span style="color:#66d9ef">if</span> cmds<span style="color:#f92672">.</span>sets(item, q<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)], materials<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)))
 </span></span></code></pre></div><p>Origin:<br>
 <a href="https://discourse.techart.online/t/list-all-materials-used-in-scene/10185/4">https://discourse.techart.online/t/list-all-materials-used-in-scene/10185/4</a></p>
-<h3 id="maya-rigging-script">Maya Rigging Script</h3>
+<h3 id="advanced-cases">Advanced Cases</h3>
+<h5 id="list-all-children-with-instances">List all children with instances</h5>
+<p>Origin: <a href="https://gist.github.com/BigRoy/eddac6a93ad4ff233e2757c6bbccf3da">BigRoy - gist.github.com</a></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-py" data-lang="py"><span style="display:flex;"><span><span style="color:#e6db74">&#34;&#34;&#34;When using maya.cmds.listRelatives with allDescendents=True it will only return the first instanced child.
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">Below are some example functions that correctly return all instanced children where they are &#34;somewhat&#34; optimized to rapidly return a result as opposed to slow recursive queries.
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">&#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> maya.api.OpenMaya <span style="color:#66d9ef">as</span> om
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> maya <span style="color:#f92672">import</span> cmds
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> time
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> re
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">iter_parents</span>(node):
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;&#34;&#34;Iter parents of node from its long name.
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    Note: The `node` *must* be the long node name.
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    Args:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        node (str): Node long name.
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    Yields:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        str: All parent node names (long names)
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    &#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">while</span> <span style="color:#66d9ef">True</span>:
+</span></span><span style="display:flex;"><span>        split <span style="color:#f92672">=</span> node<span style="color:#f92672">.</span>rsplit(<span style="color:#e6db74">&#34;|&#34;</span>, <span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> len(split) <span style="color:#f92672">==</span> <span style="color:#ae81ff">1</span> <span style="color:#f92672">or</span> <span style="color:#f92672">not</span> split[<span style="color:#ae81ff">0</span>]:
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span>
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        node <span style="color:#f92672">=</span> split[<span style="color:#ae81ff">0</span>]
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">yield</span> node
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">get_highest_in_hierarchy</span>(nodes):
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;&#34;&#34;Return highest nodes in the hierarchy that are in the `nodes` list.
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    The &#34;highest in hierarchy&#34; are the nodes closest to world: top-most level.
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    Args:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        nodes (list): The nodes in which find the highest in hierarchies.
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    Returns:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        list: The highest nodes from the input nodes.
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    &#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Ensure we use long names</span>
+</span></span><span style="display:flex;"><span>    nodes <span style="color:#f92672">=</span> cmds<span style="color:#f92672">.</span>ls(nodes, long<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> len(nodes) <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">2</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> nodes
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    lookup <span style="color:#f92672">=</span> set(nodes)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    highest <span style="color:#f92672">=</span> []
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> node <span style="color:#f92672">in</span> nodes:
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># If no parents are within the nodes input list</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># then this is a highest node</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> any(n <span style="color:#f92672">in</span> lookup <span style="color:#66d9ef">for</span> n <span style="color:#f92672">in</span> iter_parents(node)):
+</span></span><span style="display:flex;"><span>            highest<span style="color:#f92672">.</span>append(node)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> highest
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">list_all_children</span>(nodes):
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;&#34;&#34;Fast, but slow when nesting is very deep.&#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    result <span style="color:#f92672">=</span> set()
+</span></span><span style="display:flex;"><span>    children <span style="color:#f92672">=</span> set(cmds<span style="color:#f92672">.</span>listRelatives(nodes, fullPath<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>) <span style="color:#f92672">or</span> [])
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">while</span> children:
+</span></span><span style="display:flex;"><span>        result<span style="color:#f92672">.</span>update(children)
+</span></span><span style="display:flex;"><span>        children <span style="color:#f92672">=</span> set(cmds<span style="color:#f92672">.</span>listRelatives(children, fullPath<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>) <span style="color:#f92672">or</span> []) <span style="color:#f92672">-</span> result
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> list(result)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">list_all_children2</span>(nodes):
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;&#34;&#34;Invalid because it will ignore a child if it&#39;s in &#39;nodes&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    whilst it was a child of another node in the list.&#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    nodes <span style="color:#f92672">=</span> cmds<span style="color:#f92672">.</span>ls(nodes, long<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    lookup <span style="color:#f92672">=</span> set(nodes) <span style="color:#75715e"># parent lookup   </span>
+</span></span><span style="display:flex;"><span>    hierarchy <span style="color:#f92672">=</span> cmds<span style="color:#f92672">.</span>ls(nodes, dag<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>, long<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>, allPaths<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)
+</span></span><span style="display:flex;"><span>    children <span style="color:#f92672">=</span> []
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> node <span style="color:#f92672">in</span> hierarchy:
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> node <span style="color:#f92672">in</span> lookup:
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e"># Ignore self</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">continue</span>
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> any(node<span style="color:#f92672">.</span>startswith(x) <span style="color:#66d9ef">for</span> x <span style="color:#f92672">in</span> lookup):
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e"># Only include if it has a parent in the original nodes</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">continue</span>
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        children<span style="color:#f92672">.</span>append(node)
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> children
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">list_all_children4</span>(nodes):
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;&#34;&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    Fastest with few input `nodes` (&lt;1000)
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    &#34;&#34;&#34;</span> 
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    roots <span style="color:#f92672">=</span> get_highest_in_hierarchy(nodes)
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Escape the | in the node paths, this is faster than re.escape()</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># And also join an extra &#34;\|&#34; to make sure it will only capture</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># its children.</span>
+</span></span><span style="display:flex;"><span>    src <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;|&#34;</span>
+</span></span><span style="display:flex;"><span>    to <span style="color:#f92672">=</span> <span style="color:#e6db74">r</span><span style="color:#e6db74">&#34;\|&#34;</span>
+</span></span><span style="display:flex;"><span>    prefixes <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">.</span>join([n<span style="color:#f92672">.</span>replace(src, to), to]) <span style="color:#66d9ef">for</span> n <span style="color:#f92672">in</span> roots]
+</span></span><span style="display:flex;"><span>    rx <span style="color:#f92672">=</span> re<span style="color:#f92672">.</span>compile(<span style="color:#e6db74">&#39;&#39;</span><span style="color:#f92672">.</span>join([<span style="color:#e6db74">&#39;^(?:&#39;</span>, <span style="color:#e6db74">&#39;|&#39;</span><span style="color:#f92672">.</span>join(prefixes), <span style="color:#e6db74">&#39;)&#39;</span>]))
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    hierarchy <span style="color:#f92672">=</span> cmds<span style="color:#f92672">.</span>ls(roots, dag<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>, long<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>, allPaths<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> [child <span style="color:#66d9ef">for</span> child <span style="color:#f92672">in</span> children <span style="color:#66d9ef">if</span> rx<span style="color:#f92672">.</span><span style="color:#66d9ef">match</span>(child)]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">list_all_children5</span>(nodes):
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;&#34;&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    Fastest with many input `nodes` (1000+)
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    &#34;&#34;&#34;</span> 
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    sel <span style="color:#f92672">=</span> om<span style="color:#f92672">.</span>MSelectionList()
+</span></span><span style="display:flex;"><span>    traversed <span style="color:#f92672">=</span> set()
+</span></span><span style="display:flex;"><span>    iterator <span style="color:#f92672">=</span> om<span style="color:#f92672">.</span>MItDag(om<span style="color:#f92672">.</span>MItDag<span style="color:#f92672">.</span>kDepthFirst)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> node <span style="color:#f92672">in</span> nodes:
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> node <span style="color:#f92672">in</span> traversed:
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e"># Ignore if already processed as a child</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e"># before</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">continue</span>
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        sel<span style="color:#f92672">.</span>clear()    
+</span></span><span style="display:flex;"><span>        sel<span style="color:#f92672">.</span>add(node)
+</span></span><span style="display:flex;"><span>        dag <span style="color:#f92672">=</span> sel<span style="color:#f92672">.</span>getDagPath(<span style="color:#ae81ff">0</span>)
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        iterator<span style="color:#f92672">.</span>reset(dag)
+</span></span><span style="display:flex;"><span>        iterator<span style="color:#f92672">.</span>next() <span style="color:#75715e"># ignore self</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">while</span> <span style="color:#f92672">not</span> iterator<span style="color:#f92672">.</span>isDone():
+</span></span><span style="display:flex;"><span>            
+</span></span><span style="display:flex;"><span>            path <span style="color:#f92672">=</span> iterator<span style="color:#f92672">.</span>fullPathName()
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> path <span style="color:#f92672">in</span> traversed:
+</span></span><span style="display:flex;"><span>                iterator<span style="color:#f92672">.</span>prune()
+</span></span><span style="display:flex;"><span>                iterator<span style="color:#f92672">.</span>next()
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">continue</span>
+</span></span><span style="display:flex;"><span>            
+</span></span><span style="display:flex;"><span>            traversed<span style="color:#f92672">.</span>add(path)
+</span></span><span style="display:flex;"><span>            iterator<span style="color:#f92672">.</span>next()
+</span></span><span style="display:flex;"><span>            
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> list(traversed)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">list_all_children6</span>(nodes):
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;&#34;&#34;Quite slow but accurate - just use Select &gt; Select Hierarchy as trick..&#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    sel <span style="color:#f92672">=</span> cmds<span style="color:#f92672">.</span>ls(sl<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>    cmds<span style="color:#f92672">.</span>select(nodes, hierarchy<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>, replace<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)
+</span></span><span style="display:flex;"><span>    hierarchy <span style="color:#f92672">=</span> cmds<span style="color:#f92672">.</span>ls(selection<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>, long<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)
+</span></span><span style="display:flex;"><span>    cmds<span style="color:#f92672">.</span>select(sel, replace<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> hierarchy
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>members <span style="color:#f92672">=</span> cmds<span style="color:#f92672">.</span>ls(sl<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>, long<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>s <span style="color:#f92672">=</span> time<span style="color:#f92672">.</span>time()
+</span></span><span style="display:flex;"><span>print(<span style="color:#e6db74">&#34;list_all_children&#34;</span>)
+</span></span><span style="display:flex;"><span>children <span style="color:#f92672">=</span> list_all_children(members)
+</span></span><span style="display:flex;"><span>e <span style="color:#f92672">=</span> time<span style="color:#f92672">.</span>time()
+</span></span><span style="display:flex;"><span>num <span style="color:#f92672">=</span> len(children)
+</span></span><span style="display:flex;"><span>print num
+</span></span><span style="display:flex;"><span>print e<span style="color:#f92672">-</span>s
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>s <span style="color:#f92672">=</span> time<span style="color:#f92672">.</span>time()
+</span></span><span style="display:flex;"><span>print(<span style="color:#e6db74">&#34;list_all_children4&#34;</span>)
+</span></span><span style="display:flex;"><span>children <span style="color:#f92672">=</span> list_all_children4(members)
+</span></span><span style="display:flex;"><span>e <span style="color:#f92672">=</span> time<span style="color:#f92672">.</span>time()
+</span></span><span style="display:flex;"><span>num <span style="color:#f92672">=</span> len(children)
+</span></span><span style="display:flex;"><span>print num
+</span></span><span style="display:flex;"><span>print e<span style="color:#f92672">-</span>s
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>s <span style="color:#f92672">=</span> time<span style="color:#f92672">.</span>time()
+</span></span><span style="display:flex;"><span>print(<span style="color:#e6db74">&#34;list_all_children5&#34;</span>)
+</span></span><span style="display:flex;"><span>children <span style="color:#f92672">=</span> list_all_children5(members)
+</span></span><span style="display:flex;"><span>e <span style="color:#f92672">=</span> time<span style="color:#f92672">.</span>time()
+</span></span><span style="display:flex;"><span>num <span style="color:#f92672">=</span> len(children)
+</span></span><span style="display:flex;"><span>print num
+</span></span><span style="display:flex;"><span>print e<span style="color:#f92672">-</span>s
+</span></span></code></pre></div><h3 id="maya-rigging-script">Maya Rigging Script</h3>
 <h5 id="create-control">Create Control</h5>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-py" data-lang="py"><span style="display:flex;"><span><span style="color:#f92672">import</span> maya.cmds <span style="color:#66d9ef">as</span> cmds
 </span></span><span style="display:flex;"><span>

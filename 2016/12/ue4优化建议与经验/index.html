@@ -378,7 +378,7 @@
 <li>
 <p>C++比蓝图快100到1000倍： <a href="https://www.reddit.com/r/unrealengine/comments/6qtxy3/test_blueprint_vs_c_performance_vs_nativized_bp/">[Test] Blueprint vs C++ Performance vs Nativized BP</a>.<br>
 感谢知乎网友<code>金木研</code>指正：以上结果是在编辑器模式下的测试结果（没有native蓝图），如果打包并将蓝图转换为native code，那么蓝图和C++的性能差距不超过两倍。<br>
-大概在4.18（具体版本号忘了）之前，蓝图转native code的算法不够优化，比如一个加法操作，会被翻译成一个单独函数，这样导致执行堆栈特别长，后来Epic对蓝图转native的算法在不断改进，目前的版本已足够优化。</p>
+大概在4.18（具体版本号忘了）之前，蓝图转native code的算法不够优化，比如一个加法操作，会被翻译成一个单独函数，这样导致执行堆栈特别长，后来Epic对蓝图转native的算法在不断改进，目前的版本已足够优化。（<span class="highlight-text red">此功能在后续版本中已被官方移除，可能是技术复杂度太高难以维护。</span>）</p>
 </li>
 <li>
 <p>使用C++进行向量变换时，尽量使用<code>FTransform::TransformXXX()</code>和<code>FTransform::InverseTransformXXX</code>，而不是<code>FQuat::RotateVector</code>和<code>FQuat::UnrotateVector</code>，因为前者使用了更多的当前硬件支持的矢量汇编指令（AVX），榨干了硬件性能，而后者是为了跨平台，老老实实使用C++代码来执行计算公式，虽然也调用了硬件汇编指令，但数量相对较少。<br>

@@ -417,13 +417,21 @@
 </ul>
 <h5 id="reset-transformation注意事项">Reset Transformation注意事项</h5>
 <p>Reset Transformations之所以能让坐标轴原点归零，是因为重置了物体Pivots下的Local Space和World Space。
+<div class="alert warning ">
+  <p>只有当节点没有父级节点（或者父级节点的transformation为0）时，Reset Transformations才能将Pivots下的Local Space和World Space清零，否则Local Space和World Space值零将失效。</p>
+</div></p>
 <figure><img src="https://dawnarc.com/img/2017/20170829-%5BMaya%5D%E4%BF%AE%E6%94%B9%E5%9D%90%E6%A0%87%E8%BD%B4%E5%BF%83%E7%82%B9/%5BMaya%5D%E4%BF%AE%E6%94%B9%E5%9D%90%E6%A0%87%E8%BD%B4%E5%BF%83%E7%82%B9-07-A.gif">
 </figure>
 
 <div class="alert danger ">
-  <p>在模型绑定（Rigging）时，有个常见错误：控制器和关节的坐标和转向我明明归零了，为什么当用控制器的<strong>OffsetParentMatrix</strong>驱动关节时，关节还是会形变扭曲？<br>
-原因要么是轴心没有Match Pivots，要么是之前修改过控制器轴心，导致Pivots的Local Space和World Space没有归零。</p>
-</div></p>
+  <p><p>在模型绑定（Rigging）时，有个常见错误：控制器和关节的坐标和转向我明明归零了，为什么当用控制器的<strong>OffsetParentMatrix</strong>驱动关节时，关节还是会形变扭曲？<br>
+原因可能有三：</p>
+<ol>
+<li>轴心没有Match Pivots；</li>
+<li>之前修改过控制器轴心，导致Pivots的Local Space和World Space没有归零；</li>
+<li>执行Match Pivots或修改轴心时，当前节点有父级节点，没有提前unparent到世界空间坐标轴原点；</li>
+</ol></p>
+</div>
 <p>如果物体有父节点，则<strong>Reset Transformation</strong>会将轴心设置到父节点轴心位置，且轴向也改成相同。
 <figure><img src="https://dawnarc.com/img/2017/20170829-%5BMaya%5D%E4%BF%AE%E6%94%B9%E5%9D%90%E6%A0%87%E8%BD%B4%E5%BF%83%E7%82%B9/%5BMaya%5D%E4%BF%AE%E6%94%B9%E5%9D%90%E6%A0%87%E8%BD%B4%E5%BF%83%E7%82%B9-07-B.gif">
 </figure>
