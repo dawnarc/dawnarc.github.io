@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en-us">
+<html lang="en">
   <head>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4843403245883139"
      crossorigin="anonymous"></script>
@@ -10,7 +10,7 @@
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="generator" content="Hugo 0.132.2 with theme Tranquilpeak 0.4.7-BETA">
+<meta name="generator" content="Hugo 0.145.0 with theme Tranquilpeak 0.4.7-BETA">
 <meta name="author" content="Wang Aiguo">
 <meta name="keywords" content="UE4, 性能优化, Performance, Optimization">
 <meta name="description" content="keywords：UE4性能优化、Unreal Engine Performance Optimization">
@@ -25,7 +25,7 @@
 <meta property="og:site_name" content="玄冬Wong">
 <meta property="og:description" content="keywords：UE4性能优化、Unreal Engine Performance Optimization">
 <meta name="twitter:description" content="keywords：UE4性能优化、Unreal Engine Performance Optimization">
-<meta property="og:locale" content="en-us">
+<meta property="og:locale" content="en">
 
   
     <meta property="article:published_time" content="2016-12-09T19:18:02">
@@ -52,10 +52,6 @@
 
 <meta name="twitter:card" content="summary">
 
-  <meta name="twitter:site" content="@dawn_arc">
-
-
-  <meta name="twitter:creator" content="@dawn_arc">
 
 
 
@@ -69,15 +65,10 @@
 
 
 
-  <meta property="og:image" content="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=640">
-  <meta property="twitter:image" content="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=640">
-
 
     <title>[UE4]优化建议与经验</title>
 
     <link rel="icon" href="https://dawnarc.com/favicon.png">
-    
-
     
 
     <link rel="canonical" href="https://dawnarc.com/2016/12/ue4%E4%BC%98%E5%8C%96%E5%BB%BA%E8%AE%AE%E4%B8%8E%E7%BB%8F%E9%AA%8C/">
@@ -125,8 +116,6 @@
     
     
       
-        <img class="header-picture" src="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=90" alt="Author&#39;s picture" />
-      
     
     </a>
     
@@ -134,19 +123,25 @@
 
       <nav id="sidebar" data-behavior="4">
   <div class="sidebar-container">
-    
-      <div class="sidebar-profile">
+    <div class="sidebar-profile">
         <a href="https://dawnarc.com/#about">
-          <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=110" alt="Author&#39;s picture" />
+          <img class="sidebar-profile-picture" src="https://dawnarc.com/avatar.jpg" alt="" />
         </a>
         <h4 class="sidebar-profile-name">Wang Aiguo</h4>
-        
-          <h5 class="sidebar-profile-bio">白金翰大堂经理</h5>
-        
+        <h5 class="sidebar-profile-bio">山河固，九边殊，万里川原，龙旗指处。</h5>
       </div>
-    
     <ul class="sidebar-buttons">
       
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://dawnarc.com/">
+    
+      <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+      
+      <span class="sidebar-button-desc">Home</span>
+    </a>
+  </li>
+
   <li class="sidebar-button">
     
       <a class="sidebar-button-link " href="https://dawnarc.com/categories">
@@ -154,16 +149,6 @@
       <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
       
       <span class="sidebar-button-desc">Categories</span>
-    </a>
-  </li>
-
-  <li class="sidebar-button">
-    
-      <a class="sidebar-button-link " href="https://dawnarc.com/tags">
-    
-      <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
-      
-      <span class="sidebar-button-desc">Tags</span>
     </a>
   </li>
 
@@ -179,21 +164,21 @@
 
   <li class="sidebar-button">
     
-      <a class="sidebar-button-link " href="https://dawnarc.com/#about">
+      <a class="sidebar-button-link " href="https://dawnarc.com/tags">
     
-      <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+      <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
       
-      <span class="sidebar-button-desc">About</span>
+      <span class="sidebar-button-desc">Tags</span>
     </a>
   </li>
 
   <li class="sidebar-button">
     
-      <a class="sidebar-button-link " href="https://dawnarc.com/">
+      <a class="sidebar-button-link " href="https://dawnarc.com/#about">
     
-      <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+      <i class="sidebar-button-icon fa fa-lg fa-question"></i>
       
-      <span class="sidebar-button-desc">Home</span>
+      <span class="sidebar-button-desc">About</span>
     </a>
   </li>
 
@@ -342,7 +327,7 @@
     
   
   
-    <span>in</span>
+    <span></span>
     
       <a class="category-link" href="https://dawnarc.com/categories/unrealengine4">UnrealEngine4</a>
     
@@ -741,6 +726,9 @@ members of a nested structure;</p>
 <li>
 <p>开启<a href="https://dev.epicgames.com/documentation/en-us/unreal-engine/skeletal-mesh-rendering-paths-in-unreal-engine">GPU Skin Cache</a>。Skin Cache的最大优点是避免了vertex在各个pass中来回传递（depth pass, bass pass, shadow pass, velocity pass），将position和normal计算从vertex shader转嫁到compute shader中异步计算（UE4由于D3D12是软适配，没有异步计算，所以性能提升没有UE5明显），避免了因vertex数量过多而阻塞3D图形管线的问题。缺点也很明显，显存开销较大。参考：<a href="https://forums.unrealengine.com/t/what-is-the-purpose-of-the-gpu-skin-cache/370993">What is the purpose of the GPU Skin Cache?</a></p>
 </li>
+<li>
+<p>为Skeletal Mesh创建LOD。编辑器提供了调整LOD参数的工具，可调整大量参数（例如可精确到单根骨骼的剔除策略），在最大减少面数和骨骼数的情况下，保证动画效果无畸变。详情见：<a href="https://dev.epicgames.com/documentation/en-us/unreal-engine/skeletal-mesh-reduction-tool?application_version=4.27">Skeletal Mesh Reduction Tool</a></p>
+</li>
 </ol>
 <p>Animation Optimization<br>
 <a href="https://dev.epicgames.com/documentation/en-us/unreal-engine/animation-optimization-in-unreal-engine">https://dev.epicgames.com/documentation/en-us/unreal-engine/animation-optimization-in-unreal-engine</a></p>
@@ -967,7 +955,7 @@ GPU Crash Debugging in Unreal Engine: Tools, Techniques, and Best Practices | Un
                 
                 
                   <div class="post-footer-tags">
-                    <span class="text-color-light text-small">TAGGED IN</span><br/>
+                    <span class="text-color-light text-small"></span><br/>
                     
   <a class="tag tag--primary tag--small" href="https://dawnarc.com/tags/ue4/">UE4</a>
 
@@ -989,14 +977,16 @@ GPU Crash Debugging in Unreal Engine: Tools, Techniques, and Best Practices | Un
                 <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2016/12/mayamaterial3s%E8%B4%B4%E5%9B%BE%E5%88%B6%E4%BD%9C%E7%9A%AE%E8%82%A4/" data-tooltip="[Maya][Material]3S贴图制作皮肤">
               
                   <i class="fa fa-angle-left"></i>
-                  <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+                  NEXT
+                  <span class="hide-xs hide-sm text-small icon-ml"></span>
                 </a>
             </li>
             <li class="post-action">
               
                 <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2016/11/zbursh%E5%BF%AB%E6%8D%B7%E9%94%AE%E4%B8%8E%E6%95%B0%E4%BD%8D%E6%9D%BF%E5%8E%8B%E6%84%9F%E7%AC%94%E7%9A%84%E5%9F%BA%E7%A1%80%E6%93%8D%E4%BD%9C/" data-tooltip="[ZBursh]快捷键与数位板(压感笔)的基础操作">
               
-                  <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+                  <span class="hide-xs hide-sm text-small icon-mr"></span>
+                  PREVIOUS
                   <i class="fa fa-angle-right"></i>
                 </a>
             </li>
@@ -1035,7 +1025,7 @@ GPU Crash Debugging in Unreal Engine: Tools, Techniques, and Best Practices | Un
         </article>
         <footer id="footer" class="main-content-wrap">
   <span class="copyrights">
-    &copy; 2025 Wang Aiguo. All Rights Reserved. Powered by <A href="https://gohugo.io/"> Hugo</A> | Theme <A href="https://github.com/kakawait/hugo-tranquilpeak-theme/">Tranquilpeak</A>.
+    &copy; 2025 Wang Aiguo. Powered by <A href="https://gohugo.io/"> Hugo</A> | Theme <A href="https://github.com/kakawait/hugo-tranquilpeak-theme/">Tranquilpeak</A>.
   </span>
 </footer>
 
@@ -1051,14 +1041,16 @@ GPU Crash Debugging in Unreal Engine: Tools, Techniques, and Best Practices | Un
                 <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2016/12/mayamaterial3s%E8%B4%B4%E5%9B%BE%E5%88%B6%E4%BD%9C%E7%9A%AE%E8%82%A4/" data-tooltip="[Maya][Material]3S贴图制作皮肤">
               
                   <i class="fa fa-angle-left"></i>
-                  <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+                  NEXT
+                  <span class="hide-xs hide-sm text-small icon-ml"></span>
                 </a>
             </li>
             <li class="post-action">
               
                 <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2016/11/zbursh%E5%BF%AB%E6%8D%B7%E9%94%AE%E4%B8%8E%E6%95%B0%E4%BD%8D%E6%9D%BF%E5%8E%8B%E6%84%9F%E7%AC%94%E7%9A%84%E5%9F%BA%E7%A1%80%E6%93%8D%E4%BD%9C/" data-tooltip="[ZBursh]快捷键与数位板(压感笔)的基础操作">
               
-                  <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+                  <span class="hide-xs hide-sm text-small icon-mr"></span>
+                  PREVIOUS
                   <i class="fa fa-angle-right"></i>
                 </a>
             </li>
@@ -1101,11 +1093,13 @@ GPU Crash Debugging in Unreal Engine: Tools, Techniques, and Best Practices | Un
       <i class="fa fa-remove"></i>
     </div>
     
-      <img id="about-card-picture" src="https://www.gravatar.com/avatar/0df91cdac5811a56ca485b0449d91b5e?s=110" alt="Author&#39;s picture" />
+    
+      <img id="about-card-picture" src=https://dawnarc.com/avatar.jpg alt="" />
+    
     
     <h4 id="about-card-name">Wang Aiguo</h4>
     
-      <div id="about-card-bio">白金翰大堂经理</div>
+      <div id="about-card-bio">山河固，九边殊，万里川原，龙旗指处。</div>
     
     
       <div id="about-card-job">
