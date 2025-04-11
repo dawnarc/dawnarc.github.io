@@ -31,7 +31,7 @@
     <meta property="article:published_time" content="2016-04-06T18:05:02">
   
   
-    <meta property="article:modified_time" content="2022-11-19T16:22:12">
+    <meta property="article:modified_time" content="2025-04-06T19:10:26">
   
   
   
@@ -354,241 +354,234 @@
 <p>Origin: UnrealEngine official wiki<br>
 Example<br>
 Header:</p>
-<pre><code>//~~~~~ Multi Threading ~~~
-class FPrimeNumberWorker : public FRunnable
-{    
-    /** Singleton instance, can access the thread any time via static accessor, if it is active! */
-    static  FPrimeNumberWorker* Runnable;
- 
-    /** Thread to run the worker FRunnable on */
-    FRunnableThread* Thread;
- 
-    /** The Data Ptr */
-    TArray&lt;uint32&gt;* PrimeNumbers;
- 
-    /** The PC */
-    AVictoryGamePlayerController* ThePC;
- 
-    /** Stop this thread? Uses Thread Safe Counter */
-    FThreadSafeCounter StopTaskCounter;
- 
-    //The actual finding of prime numbers
-    int32 FindNextPrimeNumber();
- 
-private:
-    int32                PrimesFoundCount;
-public:
- 
-    int32                TotalPrimesToFind;
- 
-    //Done?
-    bool IsFinished() const
-    {
-        return PrimesFoundCount &gt;= TotalPrimesToFind;
-    }
- 
-    //~~~ Thread Core Functions ~~~
- 
-    //Constructor / Destructor
-    FPrimeNumberWorker(TArray&lt;uint32&gt;&amp; TheArray, const int32 IN_PrimesToFindPerTick, AVictoryGamePlayerController* IN_PC);
-    virtual ~FPrimeNumberWorker();
- 
-    // Begin FRunnable interface.
-    virtual bool Init();
-    virtual uint32 Run();
-    virtual void Stop();
-    // End FRunnable interface
- 
-    /** Makes sure this thread has stopped properly */
-    void EnsureCompletion();
- 
- 
- 
-    //~~~ Starting and Stopping Thread ~~~
- 
- 
- 
-    /* 
-        Start the thread and the worker from static (easy access)! 
-        This code ensures only 1 Prime Number thread will be able to run at a time. 
-        This function returns a handle to the newly started instance.
-    */
-    static FPrimeNumberWorker* JoyInit(TArray&lt;uint32&gt;&amp; TheArray, const int32 IN_TotalPrimesToFind, AVictoryGamePlayerController* IN_PC);
- 
-    /** Shuts down the thread. Static so it can easily be called from outside the thread context */
-    static void Shutdown();
- 
-    static bool IsThreadFinished();
-};
-</code></pre>
-<p>CPP:</p>
-<pre><code>//***********************************************************
-//Thread Worker Starts as NULL, prior to being instanced
-//        This line is essential! Compiler error without it
-FPrimeNumberWorker* FPrimeNumberWorker::Runnable = NULL;
-//***********************************************************
- 
-FPrimeNumberWorker::FPrimeNumberWorker(TArray&lt;uint32&gt;&amp; TheArray, const int32 IN_TotalPrimesToFind, AVictoryGamePlayerController* IN_PC)
-    : ThePC(IN_PC)
-    , TotalPrimesToFind(IN_TotalPrimesToFind)
-    , StopTaskCounter(0)
-    , PrimesFoundCount(0)
-{
-    //Link to where data should be stored
-    PrimeNumbers = &amp;TheArray;
- 
-    Thread = FRunnableThread::Create(this, TEXT(&quot;FPrimeNumberWorker&quot;), 0, TPri_BelowNormal); //windows default = 8mb for thread, could specify more
-}
- 
-FPrimeNumberWorker::~FPrimeNumberWorker()
-{
-    delete Thread;
-    Thread = NULL;
-}
- 
-//Init
-bool FPrimeNumberWorker::Init()
-{
-    //Init the Data 
-    PrimeNumbers-&gt;Empty();
-    PrimeNumbers-&gt;Add(2);
-    PrimeNumbers-&gt;Add(3);
- 
-    if(ThePC) 
-    {
-        ThePC-&gt;ClientMessage(&quot;**********************************&quot;);
-        ThePC-&gt;ClientMessage(&quot;Prime Number Thread Started!&quot;);
-        ThePC-&gt;ClientMessage(&quot;**********************************&quot;);
-    }
-    return true;
-}
- 
-//Run
-uint32 FPrimeNumberWorker::Run()
-{
-    //Initial wait before starting
-    FPlatformProcess::Sleep(0.03);
- 
-    //While not told to stop this thread 
-    //        and not yet finished finding Prime Numbers
-    while (StopTaskCounter.GetValue() == 0 &amp;&amp; ! IsFinished())
-    {
-        PrimeNumbers-&gt;Add(FindNextPrimeNumber());
-        PrimesFoundCount++;
- 
-        //***************************************
-        //Show Incremental Results in Main Game Thread!
- 
-        //    Please note you should not create, destroy, or modify UObjects here.
-        //      Do those sort of things after all thread are completed.
- 
-        //      All calcs for making stuff can be done in the threads
-        //         But the actual making/modifying of the UObjects should be done in main game thread.
-        ThePC-&gt;ClientMessage(FString::FromInt(PrimeNumbers-&gt;Last()));
-        //***************************************
- 
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        //prevent thread from using too many resources
-        //FPlatformProcess::Sleep(0.01);
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    }
- 
-    //Run FPrimeNumberWorker::Shutdown() from the timer in Game Thread that is watching
-        //to see when FPrimeNumberWorker::IsThreadFinished()
- 
-    return 0;
-}
- 
-//stop
-void FPrimeNumberWorker::Stop()
-{
-    StopTaskCounter.Increment();
-}
- 
-FPrimeNumberWorker* FPrimeNumberWorker::JoyInit(TArray&lt;uint32&gt;&amp; TheArray, const int32 IN_TotalPrimesToFind, AVictoryGamePlayerController* IN_PC)
-{
-    //Create new instance of thread if it does not exist
-    //        and the platform supports multi threading!
-    if (!Runnable &amp;&amp; FPlatformProcess::SupportsMultithreading())
-    {
-        Runnable = new FPrimeNumberWorker(TheArray,IN_TotalPrimesToFind,IN_PC);            
-    }
-    return Runnable;
-}
- 
-void FPrimeNumberWorker::EnsureCompletion()
-{
-    Stop();
-    Thread-&gt;WaitForCompletion();
-}
- 
-void FPrimeNumberWorker::Shutdown()
-{
-    if (Runnable)
-    {
-        Runnable-&gt;EnsureCompletion();
-        delete Runnable;
-        Runnable = NULL;
-    }
-}
- 
-bool FPrimeNumberWorker::IsThreadFinished()
-{
-    if(Runnable) return Runnable-&gt;IsFinished();
-    return true;
-}
-int32 FPrimeNumberWorker::FindNextPrimeNumber()
-{
-    //Last known prime number  + 1
-    int32 TestPrime = PrimeNumbers-&gt;Last();
- 
-    bool NumIsPrime = false;
-    while( ! NumIsPrime)
-    {
-        NumIsPrime = true;
- 
-        //Try Next Number
-        TestPrime++;
- 
-        //Modulus from 2 to current number - 1 
-        for(int32 b = 2; b &lt; TestPrime; b++)
-        {
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            //prevent thread from using too many resources
-            //FPlatformProcess::Sleep(0.01);
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- 
-            if(TestPrime % b == 0) 
-            {
-                NumIsPrime = false;
-                break;
-                //~~~
-            }
-        }
-    }
- 
-    //Success!
-    return TestPrime;
-}
-</code></pre>
-<p>Start thread:</p>
-<pre><code>//player controller .cpp
-//Multi-threading, returns handle that could be cached.
-//        use static function FPrimeNumberWorker::Shutdown() if necessary
-FPrimeNumberWorker::JoyInit(PrimeNumbers, 50000, this);
-</code></pre>
-<p>Stop thread:</p>
-<pre><code>void FPrimeNumberWorker::EnsureCompletion()  
-{  
-    Stop();  
-    Thread-&gt;WaitForCompletion();  
-}
-</code></pre>
-<h5 id="how-to-get-current-thread-name">How to get current thread name</h5>
-<pre><code>uint32 ThreadId = FPlatformTLS::GetCurrentThreadId();
-FString ThreadName = FThreadManager::Get().GetThreadName(ThreadId);
-</code></pre>
-<hr>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">//~~~~~ Multi Threading ~~~
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">FPrimeNumberWorker</span> <span style="color:#f92672">:</span> <span style="color:#66d9ef">public</span> FRunnable
+</span></span><span style="display:flex;"><span>{    
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/** Singleton instance, can access the thread any time via static accessor, if it is active! */</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">static</span>  FPrimeNumberWorker<span style="color:#f92672">*</span> Runnable;
+</span></span><span style="display:flex;"><span> 
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/** Thread to run the worker FRunnable on */</span>
+</span></span><span style="display:flex;"><span>    FRunnableThread<span style="color:#f92672">*</span> Thread;
+</span></span><span style="display:flex;"><span> 
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/** The Data Ptr */</span>
+</span></span><span style="display:flex;"><span>    TArray<span style="color:#f92672">&lt;</span>uint32<span style="color:#f92672">&gt;*</span> PrimeNumbers;
+</span></span><span style="display:flex;"><span> 
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/** The PC */</span>
+</span></span><span style="display:flex;"><span>    AVictoryGamePlayerController<span style="color:#f92672">*</span> ThePC;
+</span></span><span style="display:flex;"><span> 
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/** Stop this thread? Uses Thread Safe Counter */</span>
+</span></span><span style="display:flex;"><span>    FThreadSafeCounter StopTaskCounter;
+</span></span><span style="display:flex;"><span> 
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//The actual finding of prime numbers
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    int32 <span style="color:#a6e22e">FindNextPrimeNumber</span>();
+</span></span><span style="display:flex;"><span> 
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">private</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    int32                PrimesFoundCount;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span> 
+</span></span><span style="display:flex;"><span>    int32                TotalPrimesToFind;
+</span></span><span style="display:flex;"><span> 
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//Done?
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">bool</span> <span style="color:#a6e22e">IsFinished</span>() <span style="color:#66d9ef">const</span>
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> PrimesFoundCount <span style="color:#f92672">&gt;=</span> TotalPrimesToFind;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span> 
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//~~~ Thread Core Functions ~~~
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span> 
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//Constructor / Destructor
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    FPrimeNumberWorker(TArray<span style="color:#f92672">&lt;</span>uint32<span style="color:#f92672">&gt;&amp;</span> TheArray, <span style="color:#66d9ef">const</span> int32 IN_PrimesToFindPerTick, AVictoryGamePlayerController<span style="color:#f92672">*</span> IN_PC);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">virtual</span> <span style="color:#f92672">~</span>FPrimeNumberWorker();
+</span></span><span style="display:flex;"><span> 
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Begin FRunnable interface.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">virtual</span> <span style="color:#66d9ef">bool</span> <span style="color:#a6e22e">Init</span>();
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">virtual</span> uint32 <span style="color:#a6e22e">Run</span>();
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">virtual</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">Stop</span>();
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// End FRunnable interface
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span> 
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/** Makes sure this thread has stopped properly */</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">EnsureCompletion</span>();
+</span></span><span style="display:flex;"><span> 
+</span></span><span style="display:flex;"><span> 
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//~~~ Starting and Stopping Thread ~~~
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span> 
+</span></span><span style="display:flex;"><span> 
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/* 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">        Start the thread and the worker from static (easy access)! 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">        This code ensures only 1 Prime Number thread will be able to run at a time. 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">        This function returns a handle to the newly started instance.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    */</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">static</span> FPrimeNumberWorker<span style="color:#f92672">*</span> <span style="color:#a6e22e">JoyInit</span>(TArray<span style="color:#f92672">&lt;</span>uint32<span style="color:#f92672">&gt;&amp;</span> TheArray, <span style="color:#66d9ef">const</span> int32 IN_TotalPrimesToFind, AVictoryGamePlayerController<span style="color:#f92672">*</span> IN_PC);
+</span></span><span style="display:flex;"><span> 
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/** Shuts down the thread. Static so it can easily be called from outside the thread context */</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">Shutdown</span>();
+</span></span><span style="display:flex;"><span> 
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">bool</span> <span style="color:#a6e22e">IsThreadFinished</span>();
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p>CPP:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">//***********************************************************
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//Thread Worker Starts as NULL, prior to being instanced
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//        This line is essential! Compiler error without it
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>FPrimeNumberWorker<span style="color:#f92672">*</span> FPrimeNumberWorker<span style="color:#f92672">::</span>Runnable <span style="color:#f92672">=</span> NULL;
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//***********************************************************
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span> 
+</span></span><span style="display:flex;"><span>FPrimeNumberWorker<span style="color:#f92672">::</span>FPrimeNumberWorker(TArray<span style="color:#f92672">&lt;</span>uint32<span style="color:#f92672">&gt;&amp;</span> TheArray, <span style="color:#66d9ef">const</span> int32 IN_TotalPrimesToFind, AVictoryGamePlayerController<span style="color:#f92672">*</span> IN_PC)
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">:</span> ThePC(IN_PC)
+</span></span><span style="display:flex;"><span>    , TotalPrimesToFind(IN_TotalPrimesToFind)
+</span></span><span style="display:flex;"><span>    , StopTaskCounter(<span style="color:#ae81ff">0</span>)
+</span></span><span style="display:flex;"><span>    , PrimesFoundCount(<span style="color:#ae81ff">0</span>)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//Link to where data should be stored
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    PrimeNumbers <span style="color:#f92672">=</span> <span style="color:#f92672">&amp;</span>TheArray;
+</span></span><span style="display:flex;"><span> 
+</span></span><span style="display:flex;"><span>    Thread <span style="color:#f92672">=</span> FRunnableThread<span style="color:#f92672">::</span>Create(<span style="color:#66d9ef">this</span>, TEXT(<span style="color:#e6db74">&#34;FPrimeNumberWorker&#34;</span>), <span style="color:#ae81ff">0</span>, TPri_BelowNormal); <span style="color:#75715e">//windows default = 8mb for thread, could specify more
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span><span style="display:flex;"><span> 
+</span></span><span style="display:flex;"><span>FPrimeNumberWorker<span style="color:#f92672">::~</span>FPrimeNumberWorker()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">delete</span> Thread;
+</span></span><span style="display:flex;"><span>    Thread <span style="color:#f92672">=</span> NULL;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span> 
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//Init
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">bool</span> FPrimeNumberWorker<span style="color:#f92672">::</span>Init()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//Init the Data 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    PrimeNumbers<span style="color:#f92672">-&gt;</span>Empty();
+</span></span><span style="display:flex;"><span>    PrimeNumbers<span style="color:#f92672">-&gt;</span>Add(<span style="color:#ae81ff">2</span>);
+</span></span><span style="display:flex;"><span>    PrimeNumbers<span style="color:#f92672">-&gt;</span>Add(<span style="color:#ae81ff">3</span>);
+</span></span><span style="display:flex;"><span> 
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span>(ThePC) 
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        ThePC<span style="color:#f92672">-&gt;</span>ClientMessage(<span style="color:#e6db74">&#34;**********************************&#34;</span>);
+</span></span><span style="display:flex;"><span>        ThePC<span style="color:#f92672">-&gt;</span>ClientMessage(<span style="color:#e6db74">&#34;Prime Number Thread Started!&#34;</span>);
+</span></span><span style="display:flex;"><span>        ThePC<span style="color:#f92672">-&gt;</span>ClientMessage(<span style="color:#e6db74">&#34;**********************************&#34;</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> true;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span> 
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//Run
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>uint32 FPrimeNumberWorker<span style="color:#f92672">::</span>Run()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//Initial wait before starting
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    FPlatformProcess<span style="color:#f92672">::</span>Sleep(<span style="color:#ae81ff">0.03</span>);
+</span></span><span style="display:flex;"><span> 
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//While not told to stop this thread 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">//        and not yet finished finding Prime Numbers
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">while</span> (StopTaskCounter.GetValue() <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span> <span style="color:#f92672">&amp;&amp;</span> <span style="color:#f92672">!</span> IsFinished())
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        PrimeNumbers<span style="color:#f92672">-&gt;</span>Add(FindNextPrimeNumber());
+</span></span><span style="display:flex;"><span>        PrimesFoundCount<span style="color:#f92672">++</span>;
+</span></span><span style="display:flex;"><span> 
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//***************************************
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#75715e">//Show Incremental Results in Main Game Thread!
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span> 
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//    Please note you should not create, destroy, or modify UObjects here.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#75715e">//      Do those sort of things after all thread are completed.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span> 
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//      All calcs for making stuff can be done in the threads
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#75715e">//         But the actual making/modifying of the UObjects should be done in main game thread.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        ThePC<span style="color:#f92672">-&gt;</span>ClientMessage(FString<span style="color:#f92672">::</span>FromInt(PrimeNumbers<span style="color:#f92672">-&gt;</span>Last()));
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//***************************************
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span> 
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#75715e">//prevent thread from using too many resources
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#75715e">//FPlatformProcess::Sleep(0.01);
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#75715e">//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    }
+</span></span><span style="display:flex;"><span> 
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//Run FPrimeNumberWorker::Shutdown() from the timer in Game Thread that is watching
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#75715e">//to see when FPrimeNumberWorker::IsThreadFinished()
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span> 
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span> 
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//stop
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">void</span> FPrimeNumberWorker<span style="color:#f92672">::</span>Stop()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    StopTaskCounter.Increment();
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span> 
+</span></span><span style="display:flex;"><span>FPrimeNumberWorker<span style="color:#f92672">*</span> FPrimeNumberWorker<span style="color:#f92672">::</span>JoyInit(TArray<span style="color:#f92672">&lt;</span>uint32<span style="color:#f92672">&gt;&amp;</span> TheArray, <span style="color:#66d9ef">const</span> int32 IN_TotalPrimesToFind, AVictoryGamePlayerController<span style="color:#f92672">*</span> IN_PC)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//Create new instance of thread if it does not exist
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">//        and the platform supports multi threading!
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span>Runnable <span style="color:#f92672">&amp;&amp;</span> FPlatformProcess<span style="color:#f92672">::</span>SupportsMultithreading())
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        Runnable <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> FPrimeNumberWorker(TheArray,IN_TotalPrimesToFind,IN_PC);            
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> Runnable;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span> 
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> FPrimeNumberWorker<span style="color:#f92672">::</span>EnsureCompletion()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    Stop();
+</span></span><span style="display:flex;"><span>    Thread<span style="color:#f92672">-&gt;</span>WaitForCompletion();
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span> 
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> FPrimeNumberWorker<span style="color:#f92672">::</span>Shutdown()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (Runnable)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        Runnable<span style="color:#f92672">-&gt;</span>EnsureCompletion();
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">delete</span> Runnable;
+</span></span><span style="display:flex;"><span>        Runnable <span style="color:#f92672">=</span> NULL;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span> 
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">bool</span> FPrimeNumberWorker<span style="color:#f92672">::</span>IsThreadFinished()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span>(Runnable) <span style="color:#66d9ef">return</span> Runnable<span style="color:#f92672">-&gt;</span>IsFinished();
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> true;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>int32 FPrimeNumberWorker<span style="color:#f92672">::</span>FindNextPrimeNumber()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//Last known prime number  + 1
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    int32 TestPrime <span style="color:#f92672">=</span> PrimeNumbers<span style="color:#f92672">-&gt;</span>Last();
+</span></span><span style="display:flex;"><span> 
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">bool</span> NumIsPrime <span style="color:#f92672">=</span> false;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">while</span>( <span style="color:#f92672">!</span> NumIsPrime)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        NumIsPrime <span style="color:#f92672">=</span> true;
+</span></span><span style="display:flex;"><span> 
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//Try Next Number
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        TestPrime<span style="color:#f92672">++</span>;
+</span></span><span style="display:flex;"><span> 
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//Modulus from 2 to current number - 1 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">for</span>(int32 b <span style="color:#f92672">=</span> <span style="color:#ae81ff">2</span>; b <span style="color:#f92672">&lt;</span> TestPrime; b<span style="color:#f92672">++</span>)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            <span style="color:#75715e">//prevent thread from using too many resources
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            <span style="color:#75715e">//FPlatformProcess::Sleep(0.01);
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            <span style="color:#75715e">//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span> 
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span>(TestPrime <span style="color:#f92672">%</span> b <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>) 
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                NumIsPrime <span style="color:#f92672">=</span> false;
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">break</span>;
+</span></span><span style="display:flex;"><span>                <span style="color:#75715e">//~~~
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span> 
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//Success!
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">return</span> TestPrime;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Start thread:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">//player controller .cpp
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//Multi-threading, returns handle that could be cached.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//        use static function FPrimeNumberWorker::Shutdown() if necessary
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>FPrimeNumberWorker<span style="color:#f92672">::</span>JoyInit(PrimeNumbers, <span style="color:#ae81ff">50000</span>, <span style="color:#66d9ef">this</span>);
+</span></span></code></pre></div><p>Stop thread:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> FPrimeNumberWorker<span style="color:#f92672">::</span>EnsureCompletion()  
+</span></span><span style="display:flex;"><span>{  
+</span></span><span style="display:flex;"><span>    Stop();  
+</span></span><span style="display:flex;"><span>    Thread<span style="color:#f92672">-&gt;</span>WaitForCompletion();  
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h5 id="how-to-get-current-thread-name">How to get current thread name</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>uint32 ThreadId <span style="color:#f92672">=</span> FPlatformTLS<span style="color:#f92672">::</span>GetCurrentThreadId();
+</span></span><span style="display:flex;"><span>FString ThreadName <span style="color:#f92672">=</span> FThreadManager<span style="color:#f92672">::</span>Get().GetThreadName(ThreadId);
+</span></span></code></pre></div><hr>
 <p><code>“The most serious mistakes are not being made as a result of wrong answers. The true dangerous thing is asking the wrong question.” ― Peter Drucker</code></p>
               
             </div>

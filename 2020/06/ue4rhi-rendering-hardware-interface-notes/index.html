@@ -31,7 +31,7 @@
     <meta property="article:published_time" content="2020-06-26T15:52:02">
   
   
-    <meta property="article:modified_time" content="2025-03-13T23:56:42">
+    <meta property="article:modified_time" content="2025-03-25T20:51:39">
   
   
   
@@ -373,7 +373,7 @@
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">// helper to check if preferred EPixelFormat is supported, return one if it is not
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>RHI_API EPixelFormat <span style="color:#a6e22e">RHIPreferredPixelFormatHint</span>(EPixelFormat PreferredPixelFormat);
 </span></span></code></pre></div><h5 id="how-to-convert-texture2d-asset-to-pixel-of-image-in-raw-data-format">How to convert Texture2D asset to pixel of image in raw data format</h5>
-<p>Example (quoted from <a href="https://github.com/EpicGames/UnrealEngine/blob/release/Engine/Source/Runtime/ImageWriteQueue/Private/ImageWriteBlueprintLibrary.cpp#L59">ImageWriteBlueprintLibrary.cpp</a>):</p>
+<p>Example (quoted from <a href="https://github.com/EpicGames/UnrealEngine/blob/00e940236b335a2deec1877c446393d30ef56e0f/Engine/Source/Runtime/ImageWriteQueue/Private/ImageWriteBlueprintLibrary.cpp#L58">UImageWriteBlueprintLibrary::ResolvePixelData(UTexture* InTexture, const FOnPixelsReady&amp; OnPixelsReady)</a>):</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>FTextureResource<span style="color:#f92672">*</span> TextureResource <span style="color:#f92672">=</span> InTexture<span style="color:#f92672">-&gt;</span>Resource;
 </span></span><span style="display:flex;"><span>ENQUEUE_RENDER_COMMAND(ResolvePixelData)(
 </span></span><span style="display:flex;"><span>    [TextureResource, OnPixelsReady](FRHICommandListImmediate<span style="color:#f92672">&amp;</span> RHICmdList)
@@ -441,6 +441,47 @@
 </span></span><span style="display:flex;"><span>        OnPixelsReady(<span style="color:#66d9ef">nullptr</span>);
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>);
+</span></span></code></pre></div><p>Library function in UE5:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * Returns data containing the pixmap of the passed in rendertarget.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * @param TexRT - The 2D rendertarget from which to read pixmap data.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * @param RawData - an array to be filled with pixel data.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * @return true if RawData has been successfully filled.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> */</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">bool</span> FImageUtils<span style="color:#f92672">::</span>GetRawData(UTextureRenderTarget2D<span style="color:#f92672">*</span> TexRT, TArray64<span style="color:#f92672">&lt;</span>uint8<span style="color:#f92672">&gt;&amp;</span> RawData)
+</span></span></code></pre></div><p>Exports Texture2D to PNG file:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * Caution: Only works for PIE!!!
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * Exports a Texture2D as a HDR image onto the disk.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> */</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> UKismetRenderingLibrary<span style="color:#f92672">::</span>ExportTexture2D(UObject<span style="color:#f92672">*</span> WorldContextObject, UTexture2D<span style="color:#f92672">*</span> Texture, <span style="color:#66d9ef">const</span> FString<span style="color:#f92672">&amp;</span> FilePath, <span style="color:#66d9ef">const</span> FString<span style="color:#f92672">&amp;</span> FileName)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    FString TotalFileName <span style="color:#f92672">=</span> FPaths<span style="color:#f92672">::</span>Combine(<span style="color:#f92672">*</span>FilePath, <span style="color:#f92672">*</span>FileName);
+</span></span><span style="display:flex;"><span>    FText PathError;
+</span></span><span style="display:flex;"><span>    FPaths<span style="color:#f92672">::</span>ValidatePath(TotalFileName, <span style="color:#f92672">&amp;</span>PathError);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (Texture <span style="color:#f92672">&amp;&amp;</span> <span style="color:#f92672">!</span>FileName.IsEmpty() <span style="color:#f92672">&amp;&amp;</span> PathError.IsEmpty())
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        FArchive<span style="color:#f92672">*</span> Ar <span style="color:#f92672">=</span> IFileManager<span style="color:#f92672">::</span>Get().CreateFileWriter(<span style="color:#f92672">*</span>TotalFileName);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (Ar)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            FBufferArchive Buffer;
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">bool</span> bSuccess <span style="color:#f92672">=</span> FImageUtils<span style="color:#f92672">::</span>ExportTexture2DAsHDR(Texture, Buffer);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (bSuccess)
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                Ar<span style="color:#f92672">-&gt;</span>Serialize(<span style="color:#66d9ef">const_cast</span><span style="color:#f92672">&lt;</span>uint8<span style="color:#f92672">*&gt;</span>(Buffer.GetData()), Buffer.Num());
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">delete</span> Ar;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">else</span>
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            FMessageLog(<span style="color:#e6db74">&#34;Blueprint&#34;</span>).Warning(LOCTEXT(<span style="color:#e6db74">&#34;ExportTexture2D_FileWriterFailedToCreate&#34;</span>, <span style="color:#e6db74">&#34;ExportTexture2D: FileWrite failed to create.&#34;</span>));
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h5 id="how-to-convert-image-raw-data-to-texture2d-asset">How to convert image raw data to Texture2D asset</h5>
 <p>Example (quoted from <a href="https://github.com/emilioC33/ITUFast/blob/529ee2e13857e95d3f1e2808dcafc84cd1097978/UnrealRacing/Plugins/socketio-client-ue4/Source/CoreUtility/Private/CoreUtilityBPLibrary.cpp#L71">CoreUtilityBPLibrary.cpp</a>):</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">//testing image path
@@ -494,6 +535,11 @@
 </span></span><span style="display:flex;"><span>{
 </span></span><span style="display:flex;"><span>    UE_LOG(LogTemp, Warning, TEXT(<span style="color:#e6db74">&#34;Invalid image format cannot decode %d&#34;</span>), (int32)DetectedFormat);
 </span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Library function in UE5:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * Imports a texture file from disk and creates Texture2D from it
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> */</span>
+</span></span><span style="display:flex;"><span>UTexture2D<span style="color:#f92672">*</span> FImageUtils<span style="color:#f92672">::</span>ImportFileAsTexture2D(<span style="color:#66d9ef">const</span> FString<span style="color:#f92672">&amp;</span> Filename)
 </span></span></code></pre></div><h5 id="how-to-dispatch-async-task-lambda-into-render-thread-from-game-thread">How to dispatch async task (lambda) into render thread from game thread</h5>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">namespace</span>
 </span></span><span style="display:flex;"><span>{
@@ -574,10 +620,49 @@ Engine\Plugins\Runtime\Oculus\OculusVR\Source\OculusHMD\Private\OculusHMD_Layer.
 </ol>
 <h5 id="screenshot-at-runtime">Screenshot at runtime</h5>
 <p>Interface:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>FScreenshotRequest<span style="color:#f92672">::</span>RequestScreenshot()
-</span></span></code></pre></div><p>quick code tutorial, how to get a screenshot and write the texture data to a file<br>
-<a href="https://forums.unrealengine.com/t/quick-code-tutorial-how-to-get-a-screenshot-and-write-the-texture-data-to-a-file/">https://forums.unrealengine.com/t/quick-code-tutorial-how-to-get-a-screenshot-and-write-the-texture-data-to-a-file/</a></p>
-<h5 id="how-to-get-framebuffer">How to get framebuffer</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;UnrealClient.h&#34;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>FString ScreenShotPath <span style="color:#f92672">=</span> FPaths<span style="color:#f92672">::</span>Combine(GetDefault<span style="color:#f92672">&lt;</span>UEngine<span style="color:#f92672">&gt;</span>()<span style="color:#f92672">-&gt;</span>GameScreenshotSaveDirectory.Path, TEXT(<span style="color:#e6db74">&#34;screenshot.png&#34;</span>));
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//async task
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>FScreenshotRequest<span style="color:#f92672">::</span>RequestScreenshot(ScreenShotPath, false, false);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//screen shot finished delegate
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>FScreenshotRequest<span style="color:#f92672">::</span>OnScreenshotRequestProcessed().AddLambda([ScreenShotPath]()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        UE_LOG(LogTemp, Log, TEXT(<span style="color:#e6db74">&#34;screen shot finished. path: %s&#34;</span>), <span style="color:#f92672">*</span>ScreenShotPathAbs);
+</span></span><span style="display:flex;"><span>    });
+</span></span></code></pre></div><p>UE5 (image compressed, quality slight loss):</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;ImageUtils.h&#34;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>TArray<span style="color:#f92672">&lt;</span>FColor<span style="color:#f92672">&gt;</span> Bitmap;
+</span></span><span style="display:flex;"><span>FViewport<span style="color:#f92672">*</span> Viewport <span style="color:#f92672">=</span> GEngine<span style="color:#f92672">-&gt;</span>GameViewport<span style="color:#f92672">-&gt;</span>Viewport;
+</span></span><span style="display:flex;"><span>FIntRect <span style="color:#a6e22e">ViewRect</span>(<span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0</span>, Viewport<span style="color:#f92672">-&gt;</span>GetSizeXY().X, Viewport<span style="color:#f92672">-&gt;</span>GetSizeXY().Y);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> (Viewport<span style="color:#f92672">-&gt;</span>ReadPixels(Bitmap, FReadSurfaceDataFlags(), ViewRect))
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    check(Bitmap.Num() <span style="color:#f92672">==</span> ViewRect.Area() <span style="color:#f92672">||</span> (Bitmap.Num() <span style="color:#f92672">==</span> Viewport<span style="color:#f92672">-&gt;</span>GetSizeXY().X <span style="color:#f92672">*</span> Viewport<span style="color:#f92672">-&gt;</span>GetSizeXY().Y));
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    TArray<span style="color:#f92672">&lt;</span>uint8<span style="color:#f92672">&gt;</span> DestData;
+</span></span><span style="display:flex;"><span>    FString ScreenShotPath <span style="color:#f92672">=</span> FPaths<span style="color:#f92672">::</span>Combine(GetDefault<span style="color:#f92672">&lt;</span>UEngine<span style="color:#f92672">&gt;</span>()<span style="color:#f92672">-&gt;</span>GameScreenshotSaveDirectory.Path, TEXT(<span style="color:#e6db74">&#34;screenshot.jpg&#34;</span>));
+</span></span><span style="display:flex;"><span>    FImageUtils<span style="color:#f92672">::</span>CompressImageArray(Viewport<span style="color:#f92672">-&gt;</span>GetSizeXY().X, Viewport<span style="color:#f92672">-&gt;</span>GetSizeXY().Y, Bitmap, DestData);
+</span></span><span style="display:flex;"><span>    FFileHelper<span style="color:#f92672">::</span>SaveArrayToFile(DestData, <span style="color:#f92672">*</span>ScreenShotPath);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>UE5 (image uncompressed, quality lossless):</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>FString SavedFolder <span style="color:#f92672">=</span> GetDefault<span style="color:#f92672">&lt;</span>UEngine<span style="color:#f92672">&gt;</span>()<span style="color:#f92672">-&gt;</span>GameScreenshotSaveDirectory.Path;
+</span></span><span style="display:flex;"><span>FString ScreenShotPath <span style="color:#f92672">=</span> FPaths<span style="color:#f92672">::</span>Combine(SavedFolder, TEXT(<span style="color:#e6db74">&#34;screenshot.png&#34;</span>));
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>UGameViewportClient<span style="color:#f92672">*</span> ViewportClient <span style="color:#f92672">=</span> GEngine<span style="color:#f92672">-&gt;</span>GameViewport;
+</span></span><span style="display:flex;"><span>ViewportClient<span style="color:#f92672">-&gt;</span>OnScreenshotCaptured().Clear();
+</span></span><span style="display:flex;"><span>ViewportClient<span style="color:#f92672">-&gt;</span>OnScreenshotCaptured().AddLambda([ScreenShotPath](int32 InWidth, int32 InHeight, <span style="color:#66d9ef">const</span> TArray<span style="color:#f92672">&lt;</span>FColor<span style="color:#f92672">&gt;&amp;</span> inColors)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// Compress and write compressed bitmap to the disk
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        TArray64<span style="color:#f92672">&lt;</span>uint8<span style="color:#f92672">&gt;</span> CompressedBitmap;
+</span></span><span style="display:flex;"><span>        FImageUtils<span style="color:#f92672">::</span>PNGCompressImageArray(InWidth, InHeight, TArrayView64<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">const</span> FColor<span style="color:#f92672">&gt;</span>(inColors.GetData(), inColors.Num()), CompressedBitmap);
+</span></span><span style="display:flex;"><span>        FFileHelper<span style="color:#f92672">::</span>SaveArrayToFile(CompressedBitmap, <span style="color:#f92672">*</span>ScreenShotPath);
+</span></span><span style="display:flex;"><span>    });
+</span></span><span style="display:flex;"><span>FScreenshotRequest<span style="color:#f92672">::</span>RequestScreenshot(ScreenShotPath, false, false);
+</span></span></code></pre></div><h5 id="how-to-get-framebuffer">How to get framebuffer</h5>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>FSlateApplication<span style="color:#f92672">::</span>Get().GetRenderer()<span style="color:#f92672">-&gt;</span>OnBackBufferReadyToPresent()
 </span></span></code></pre></div><p>You can also use <code>FFrameGrabber</code> for the virtual camera.</p>
 <p>Origin:<a href="https://stackoverflow.com/a/61461725/1645289">How to get framebuffer in Unreal Engine 4?</a></p>

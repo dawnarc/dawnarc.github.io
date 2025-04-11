@@ -350,59 +350,64 @@
                      (adsbygoogle = window.adsbygoogle || []).push({});
                 </script>
               <p>keywords：UE4, Memory Persist, GC, 垃圾回收, 内存管理</p>
-<h5 id="防止gc的办法">防止GC的办法</h5>
+<h3 id="防止gc的办法">防止GC的办法</h3>
 <div class="alert danger ">
   <p>一个UObject类型的变量，即使是static，默认也会被GC掉。</p>
 </div>
-<p>要防止该对象被GC，有5种方式：</p>
+<p>要防止该对象被GC，有6种方式：</p>
 <ul>
 <li>作为成员变量并标记为<code>UPROPERTY()</code>；</li>
 <li>创建对象后 <code>AddToRoot()</code> ；（退出游戏时需要<code>RemoveFromRoot()</code>）</li>
 <li>对目标设置一个有效的Owner：<code>SetOwner()</code>；</li>
+<li><code>UGameInstance::RegisterReferencedObject()</code>；</li>
 <li>FStreamableManager Load资源时，<code>bManageActiveHandle</code> 设置为true；</li>
 <li><code>FGCObjectScopeGuard</code> 在指定代码区域内保持对象；</li>
 </ul>
 <div class="alert warning ">
   <p>Uobject不能使用TSharedPtr进行引用计数，非UObject才可以；如果一个非UObject的类想加入GC，那么必须继承FGCObject类。</p>
 </div>
-<h6 id="uproperty用法">UPROPERTY()用法</h6>
-<pre><code>URPOPERTY()
-    UObject* MyObj;
-</code></pre>
-<h6 id="addtoroot用法">AddToRoot()用法</h6>
-<pre><code>UMyObject* MyObj = NewObject&lt;UMyObject&gt;();
-MyObj.AddToRoot();
-</code></pre>
-<h5 id="setowner用法">SetOwner()用法</h5>
-<pre><code>void AMyCharacter::BeginPlay()
-{
-    Super::BeginPlay();
-
-    ActorTest = NewObject&lt;AActor&gt;();
-    ActorTest-&gt;SetOwner(this);
-}
-</code></pre>
-<p>只要<code>AMyCharacter</code>没有销毁，那么<code>ActorTest</code>不会被垃圾回收。</p>
-<h6 id="fstreamablemanager-用法">FStreamableManager 用法</h6>
-<pre><code>FSoftObjectPath AssetPath(TEXT(&quot;/Game/Mannequin/Animations/ThirdPersonWalk.ThirdPersonWalk&quot;));
-FStreamableManager&amp; AssetLoader = UAssetManager::GetStreamableManager();
-
-//hold object in memory.
-TSharedPtr&lt;FStreamableHandle&gt; Handle = AssetLoader.RequestSyncLoad(AssetPath, true);
-UObject* Obj = Handle-&gt;GetLoadedAsset();
-
-//free memory of object.
-Handle-&gt;ReleaseHandle();
-</code></pre>
-<h6 id="fgcobjectscopeguard-用法">FGCObjectScopeGuard 用法</h6>
-<pre><code>{
-    FGCObjectScopeGuard(UObject* GladOS = NewObject&lt;...&gt;(...));
-    GladOS-&gt;SpawnCell();
-    RunGC();
-    GladOS-&gt;IsStillAlive();   // Object will not be removed by GC
-}
-</code></pre>
-<h5 id="gc-常见问题">GC 常见问题</h5>
+<h5 id="uproperty用法">UPROPERTY()用法</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>URPOPERTY()
+</span></span><span style="display:flex;"><span>    UObject<span style="color:#f92672">*</span> MyObj;
+</span></span></code></pre></div><h5 id="addtoroot用法">AddToRoot()用法</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>UMyObject<span style="color:#f92672">*</span> MyObj <span style="color:#f92672">=</span> NewObject<span style="color:#f92672">&lt;</span>UMyObject<span style="color:#f92672">&gt;</span>();
+</span></span><span style="display:flex;"><span>MyObj.AddToRoot();
+</span></span></code></pre></div><h4 id="setowner用法">SetOwner()用法</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> AMyCharacter<span style="color:#f92672">::</span>BeginPlay()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    Super<span style="color:#f92672">::</span>BeginPlay();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    ActorTest <span style="color:#f92672">=</span> NewObject<span style="color:#f92672">&lt;</span>AActor<span style="color:#f92672">&gt;</span>();
+</span></span><span style="display:flex;"><span>    ActorTest<span style="color:#f92672">-&gt;</span>SetOwner(<span style="color:#66d9ef">this</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>只要<code>AMyCharacter</code>没有销毁，那么<code>ActorTest</code>不会被垃圾回收。</p>
+<h4 id="ugameinstanceregisterreferencedobject用法">UGameInstance::RegisterReferencedObject()用法</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>UMyObject<span style="color:#f92672">*</span> MyObj <span style="color:#f92672">=</span> NewObject<span style="color:#f92672">&lt;</span>UMyObject<span style="color:#f92672">&gt;</span>();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//添加引用，防止GC
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>UGameInstance<span style="color:#f92672">*</span> GameInstance <span style="color:#f92672">=</span> UGameplayStatics<span style="color:#f92672">::</span>GetGameInstance(<span style="color:#66d9ef">this</span>);
+</span></span><span style="display:flex;"><span>GameInstance<span style="color:#f92672">-&gt;</span>RegisterReferencedObject(MyObj);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//移除引用，等待GC
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>GameInstance<span style="color:#f92672">-&gt;</span>UnregisterReferencedObject(MyObj);
+</span></span></code></pre></div><h5 id="fstreamablemanager-用法">FStreamableManager 用法</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>FSoftObjectPath <span style="color:#a6e22e">AssetPath</span>(TEXT(<span style="color:#e6db74">&#34;/Game/Mannequin/Animations/ThirdPersonWalk.ThirdPersonWalk&#34;</span>));
+</span></span><span style="display:flex;"><span>FStreamableManager<span style="color:#f92672">&amp;</span> AssetLoader <span style="color:#f92672">=</span> UAssetManager<span style="color:#f92672">::</span>GetStreamableManager();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//hold object in memory.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>TSharedPtr<span style="color:#f92672">&lt;</span>FStreamableHandle<span style="color:#f92672">&gt;</span> Handle <span style="color:#f92672">=</span> AssetLoader.RequestSyncLoad(AssetPath, true);
+</span></span><span style="display:flex;"><span>UObject<span style="color:#f92672">*</span> Obj <span style="color:#f92672">=</span> Handle<span style="color:#f92672">-&gt;</span>GetLoadedAsset();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//free memory of object.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>Handle<span style="color:#f92672">-&gt;</span>ReleaseHandle();
+</span></span></code></pre></div><h5 id="fgcobjectscopeguard-用法">FGCObjectScopeGuard 用法</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    FGCObjectScopeGuard(UObject<span style="color:#f92672">*</span> GladOS <span style="color:#f92672">=</span> NewObject<span style="color:#f92672">&lt;</span>...<span style="color:#f92672">&gt;</span>(...));
+</span></span><span style="display:flex;"><span>    GladOS<span style="color:#f92672">-&gt;</span>SpawnCell();
+</span></span><span style="display:flex;"><span>    RunGC();
+</span></span><span style="display:flex;"><span>    GladOS<span style="color:#f92672">-&gt;</span>IsStillAlive();   <span style="color:#75715e">// Object will not be removed by GC
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span></code></pre></div><h3 id="gc-常见问题">GC 常见问题</h3>
 <ol>
 <li>
 <p>官方论坛上有人说 NewObject() 或者 LoadObject() 创建的对象才会自动被 GC ， SpawnActor 创建的对象会被自动 AddToRoot ，不会被 GC。不知早期的版本是否确实如此，但是目前版本不是这样，<span class="highlight-text red">即使是 SpawnActor ，默认也会被 GC。</span></p>
@@ -410,25 +415,23 @@ Handle-&gt;ReleaseHandle();
 <li>
 <p><code>URPOPERTY()</code>前后不能添加其他宏，如果将其他宏加<code>URPOPERTY()</code>前面，会有编译错误，<span class="highlight-text red">如果加后面，则会导致对象可被垃圾回收</span>。<br>
 例如，<code>UPROPERTY()</code>后面添加<code>__V1__</code>和<code>__V2__</code>两个宏，编译运行都正常，但会导致<code>UPROPERTY()</code>失效，<code>MyActor</code>将被回收。</p>
-<pre><code> UPROPERTY()
- #ifdef __V1__
-     class AMyActorV1* MyActor = nullptr;
- #endif
- #ifdef __V2__
-     class AMyActorV2* MyActor = nullptr;
- #endif
-</code></pre>
-<p>如果宏放在<code>URPOPERTY()</code>前面，会导致编译错误：</p>
-<pre><code> error : UPROPERTY must not be inside preprocessor blocks, except for WITH_EDITORONLY_DATA
-</code></pre>
-<p>要解决这种问题，貌似只能用<code>AddToRoot()</code>和<code>RemoveFromRoot()</code>。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>UPROPERTY()
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#ifdef __V1__
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">AMyActorV1</span><span style="color:#f92672">*</span> MyActor <span style="color:#f92672">=</span> <span style="color:#66d9ef">nullptr</span>;
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#endif
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#ifdef __V2__
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">AMyActorV2</span><span style="color:#f92672">*</span> MyActor <span style="color:#f92672">=</span> <span style="color:#66d9ef">nullptr</span>;
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#endif
+</span></span></span></code></pre></div><p>如果宏放在<code>URPOPERTY()</code>前面，会导致编译错误：</p>
+<pre tabindex="0"><code class="language-Log" data-lang="Log">error : UPROPERTY must not be inside preprocessor blocks, except for WITH_EDITORONLY_DATA
+</code></pre><p>要解决这种问题，貌似只能用<code>AddToRoot()</code>和<code>RemoveFromRoot()</code>。</p>
 </li>
 <li>
 <p>很多初学者会用<code>UObject::ConditionalBeginDestroy()</code>销毁对象，不知是早期资料少被别人带偏，还是远古版本确实可以，至少目前版本并不能销毁对象：如果actor仍然被其他地方引用，<code>ConditionalBeginDestroy()</code>执行后，下次GC并不能将其销毁。参考：<a href="https://dawnarc.com/2016/05/ue4uobject-conditionalbegindestroy%E7%9B%B8%E5%85%B3/#conditionalbegindestroy-and-markpendingkill">ConditionalBeginDestroy与MarkPendingKill</a><br>
 <code>AActor::Destroy()</code>是同步销毁对象内存且是在当前帧结束时立即执行。这里说的销毁不是用指针<code>delete</code>内存，而是从内存池中抹掉数据。</p>
 </li>
 </ol>
-<h5 id="参考资料">参考资料</h5>
+<h3 id="参考资料">参考资料</h3>
 <p>UE4 Garbage Collection<br>
 <a href="https://gist.github.com/LordNed/650de717daca23aaf8fc2932bf3f9123">https://gist.github.com/LordNed/650de717daca23aaf8fc2932bf3f9123</a></p>
 <p>虚幻4垃圾回收剖析<br>
@@ -441,60 +444,54 @@ Handle-&gt;ReleaseHandle();
 <ul>
 <li>
 <p>通过 UPROPERTY() 去保持引用</p>
-<pre><code>  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = &quot;MyChar&quot;)
-  class UBehavData* mBehavData;
-
-  mBehavData = NewObject&lt;UBehavData&gt;(this, UBehavData::StaticClass());
-  bh-&gt;mId = 111;
-</code></pre>
-</li>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>UPROPERTY(EditAnywhere, BlueprintReadWrite, Category <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;MyChar&#34;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">UBehavData</span><span style="color:#f92672">*</span> mBehavData;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>mBehavData <span style="color:#f92672">=</span> NewObject<span style="color:#f92672">&lt;</span>UBehavData<span style="color:#f92672">&gt;</span>(<span style="color:#66d9ef">this</span>, UBehavData<span style="color:#f92672">::</span>StaticClass());
+</span></span><span style="display:flex;"><span>bh<span style="color:#f92672">-&gt;</span>mId <span style="color:#f92672">=</span> <span style="color:#ae81ff">111</span>;
+</span></span></code></pre></div></li>
 <li>
 <p>TArray保持引用如果有个 TArray 容器，则这个TArray需要用一个<code>UPROPERTY()</code> 去保持容器的引用，然后里面的UObject就不需要再去AddToRoot去阻止被gc了。</p>
-<pre><code>  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = &quot;UCoolDownComponent&quot;)
-  TArray&lt;UCoolDown*&gt;      mCDArr;
-
-  UCoolDown* cd = NewObject&lt;UCoolDown&gt;(_class);
-  cd-&gt;SetSkillId(_skillId);
-  mCDArr.Add(cd);
-</code></pre>
-<p>容器clear后，元素会自动被gc</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>UPROPERTY(EditAnywhere, BlueprintReadWrite, Category <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;UCoolDownComponent&#34;</span>)
+</span></span><span style="display:flex;"><span>TArray<span style="color:#f92672">&lt;</span>UCoolDown<span style="color:#f92672">*&gt;</span>      mCDArr;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>UCoolDown<span style="color:#f92672">*</span> cd <span style="color:#f92672">=</span> NewObject<span style="color:#f92672">&lt;</span>UCoolDown<span style="color:#f92672">&gt;</span>(_class);
+</span></span><span style="display:flex;"><span>cd<span style="color:#f92672">-&gt;</span>SetSkillId(_skillId);
+</span></span><span style="display:flex;"><span>mCDArr.Add(cd);
+</span></span></code></pre></div><p>容器clear后，元素会自动被GC。</p>
 </li>
 <li>
 <p>4.15版本支持了蓝图 TMap 容器，也是可以通过 UPROPERTY()去保持容器的引用，容器内的UObject就不需要再去AddToRoot去阻止被gc了</p>
-<pre><code>  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = &quot;MyChar&quot;)
-      TMap&lt;int32, UBehavData*&gt; mTestMap2;
-
-  UBehavData* bh = NewObject&lt;UBehavData&gt;(this, UBehavData::StaticClass());
-  bh-&gt;mId = 111;
-  mTestMap2.Add(111, bh);
-  bh = NewObject&lt;UBehavData&gt;(this, UBehavData::StaticClass());
-  bh-&gt;mId = 222;
-  mTestMap2.Add(222, bh);
-</code></pre>
-</li>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>UPROPERTY(EditAnywhere, BlueprintReadWrite, Category <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;MyChar&#34;</span>)
+</span></span><span style="display:flex;"><span>    TMap<span style="color:#f92672">&lt;</span>int32, UBehavData<span style="color:#f92672">*&gt;</span> mTestMap2;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>UBehavData<span style="color:#f92672">*</span> bh <span style="color:#f92672">=</span> NewObject<span style="color:#f92672">&lt;</span>UBehavData<span style="color:#f92672">&gt;</span>(<span style="color:#66d9ef">this</span>, UBehavData<span style="color:#f92672">::</span>StaticClass());
+</span></span><span style="display:flex;"><span>bh<span style="color:#f92672">-&gt;</span>mId <span style="color:#f92672">=</span> <span style="color:#ae81ff">111</span>;
+</span></span><span style="display:flex;"><span>mTestMap2.Add(<span style="color:#ae81ff">111</span>, bh);
+</span></span><span style="display:flex;"><span>bh <span style="color:#f92672">=</span> NewObject<span style="color:#f92672">&lt;</span>UBehavData<span style="color:#f92672">&gt;</span>(<span style="color:#66d9ef">this</span>, UBehavData<span style="color:#f92672">::</span>StaticClass());
+</span></span><span style="display:flex;"><span>bh<span style="color:#f92672">-&gt;</span>mId <span style="color:#f92672">=</span> <span style="color:#ae81ff">222</span>;
+</span></span><span style="display:flex;"><span>mTestMap2.Add(<span style="color:#ae81ff">222</span>, bh);
+</span></span></code></pre></div></li>
 <li>
 <p>没有任何容器保持引用需要AddToRoot添加标记去阻止被gc</p>
-<pre><code>  m_sInstance = NewObject&lt;T&gt;();
-  m_sInstance-&gt;AddToRoot();
-</code></pre>
-<p>让对象重新被gc回收，需要移除标记（不是立即释放对象，是在某个时间gc时才释放对象）</p>
-<pre><code>  m_sInstance-&gt;RemoveFromRoot();
-  m_sInstance = nullptr;
-</code></pre>
-</li>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>m_sInstance <span style="color:#f92672">=</span> NewObject<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span>();
+</span></span><span style="display:flex;"><span>m_sInstance<span style="color:#f92672">-&gt;</span>AddToRoot();
+</span></span></code></pre></div><p>让对象重新被gc回收，需要移除标记（不是立即释放对象，是在某个时间gc时才释放对象）</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>m_sInstance<span style="color:#f92672">-&gt;</span>RemoveFromRoot();
+</span></span><span style="display:flex;"><span>m_sInstance <span style="color:#f92672">=</span> <span style="color:#66d9ef">nullptr</span>;
+</span></span></code></pre></div></li>
 <li>
 <p>c++ new对象丢个蓝图引用住防止gc</p>
 <p>c++ new对象</p>
-<pre><code>  UFUNCTION(BlueprintPure, Category = &quot;UBehavData&quot;)
-  static UBehavData* CreateBehavData();
-
-  UBehavData * UBehavData::CreateBehavData()
-  {
-      UBehavData* behavData = (UBehavData*)NewObject&lt;UBehavData&gt;(UBehavData::StaticClass());
-      return behavData;
-  }
-</code></pre>
-<p>蓝图 第一时间 用一个变量 mBehavData 引用住，就可以防止这个对象被gc掉。切记第一时间。
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>UFUNCTION(BlueprintPure, Category <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;UBehavData&#34;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">static</span> UBehavData<span style="color:#f92672">*</span> CreateBehavData();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>UBehavData <span style="color:#f92672">*</span> UBehavData<span style="color:#f92672">::</span>CreateBehavData()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    UBehavData<span style="color:#f92672">*</span> behavData <span style="color:#f92672">=</span> (UBehavData<span style="color:#f92672">*</span>)NewObject<span style="color:#f92672">&lt;</span>UBehavData<span style="color:#f92672">&gt;</span>(UBehavData<span style="color:#f92672">::</span>StaticClass());
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> behavData;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>蓝图 第一时间 用一个变量 mBehavData 引用住，就可以防止这个对象被gc掉。切记第一时间。
 <figure><img src="https://dawnarc.com/img/20170426-%5BUE4%5D%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%20%E2%80%93%20%E5%AE%9E%E8%B7%B5/%5BUE4%5D%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%20%E2%80%93%20%E5%AE%9E%E8%B7%B5-01.jpg">
     </figure>
 </p>
@@ -505,71 +502,62 @@ Handle-&gt;ReleaseHandle();
 </li>
 <li>
 <p>强制gc</p>
-<pre><code>  GEngine-&gt;ForceGarbageCollection(true);
-</code></pre>
-</li>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>GEngine<span style="color:#f92672">-&gt;</span>ForceGarbageCollection(true);
+</span></span></code></pre></div></li>
 </ul>
 <h4 id="aactor-gc机制">AActor gc机制</h4>
 <p>一般重写这两个函数，来做一些初始化和清理工作</p>
-<pre><code>virtual void PostActorCreated() override; //做初始化工作
-virtual void BeginPlay() override; //做初始化工作
-virtual void BeginDestroy() override; //引擎在gc的时候调用，并不是立即调用，一般不用
-virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override; //做清理工作
-virtual void Destroyed() override; //用于释放成员，调用Destroy();会立即调用
-</code></pre>
-<p>调用SpawnActor或DestroyActor会调用到这两个函数，析构函数则要在gc的时候才会调用，可以调用gc函数测试一下</p>
-<pre><code>GEngine-&gt;ForceGarbageCollection(true);
-</code></pre>
-<h4 id="uactorcomponent-gc机制">UActorComponent gc机制</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">virtual</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">PostActorCreated</span>() <span style="color:#66d9ef">override</span>; <span style="color:#75715e">//做初始化工作
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">virtual</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">BeginPlay</span>() <span style="color:#66d9ef">override</span>; <span style="color:#75715e">//做初始化工作
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">virtual</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">BeginDestroy</span>() <span style="color:#66d9ef">override</span>; <span style="color:#75715e">//引擎在gc的时候调用，并不是立即调用，一般不用
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">virtual</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">EndPlay</span>(<span style="color:#66d9ef">const</span> EEndPlayReason<span style="color:#f92672">::</span>Type EndPlayReason) <span style="color:#66d9ef">override</span>; <span style="color:#75715e">//做清理工作
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">virtual</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">Destroyed</span>() <span style="color:#66d9ef">override</span>; <span style="color:#75715e">//用于释放成员，调用Destroy();会立即调用
+</span></span></span></code></pre></div><p>调用SpawnActor或DestroyActor会调用到这两个函数，析构函数则要在gc的时候才会调用，可以调用gc函数测试一下</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>GEngine<span style="color:#f92672">-&gt;</span>ForceGarbageCollection(true);
+</span></span></code></pre></div><h4 id="uactorcomponent-gc机制">UActorComponent gc机制</h4>
 <ul>
 <li>
 <p>作为Actor的组件存在于Actor的组件列表中，销毁Actor时会把组件列表遍历一边destroy掉并标记为待gc的对象，在一个不定时的时间被gc掉</p>
-<pre><code>  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = &quot;MyChar&quot;)
-  UCoolDownComponent*     mCDComp;    //注册cd组件
-</code></pre>
-</li>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>UPROPERTY(EditAnywhere, BlueprintReadWrite, Category <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;MyChar&#34;</span>)
+</span></span><span style="display:flex;"><span>    UCoolDownComponent<span style="color:#f92672">*</span>     mCDComp;    <span style="color:#75715e">//注册cd组件
+</span></span></span></code></pre></div></li>
 <li>
 <p>任意时刻销毁，即使宿主Actor未被销毁C++销毁则直接调用接口</p>
-<pre><code>  void UActorComponent::DestroyComponent(bool bPromoteChildren/*= false*/)
-</code></pre>
-<p>蓝图销毁，需要设置一个UActorComponent的属性</p>
-<pre><code>  bAllowAnyoneToDestroyMe = true;
-</code></pre>
-<p>因为提供给蓝图的接口需要判断这个字段，默认是false</p>
-<pre><code>  UFUNCTION(BlueprintCallable, Category=&quot;Components&quot;, meta=(Keywords = &quot;Delete&quot;, HidePin=&quot;Object&quot;, DefaultToSelf=&quot;Object&quot;, DisplayName = &quot;DestroyComponent&quot;))
-  void K2_DestroyComponent(UObject* Object);
-
-  void UActorComponent::K2_DestroyComponent(UObject* Object)
-  {
-      AActor* MyOwner = GetOwner();
-      if (bAllowAnyoneToDestroyMe || Object == this || MyOwner == NULL || MyOwner == Object)
-      {
-          DestroyComponent();
-      }
-      else
-      {
-          // TODO: Put in Message Log
-          UE_LOG(LogActorComponent, Error, TEXT(&quot;May not destroy component %s owned by %s.&quot;), *GetFullName(), *MyOwner-&gt;GetFullName());
-      }
-  }
-</code></pre>
-</li>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> UActorComponent<span style="color:#f92672">::</span>DestroyComponent(<span style="color:#66d9ef">bool</span> bPromoteChildren<span style="color:#75715e">/*= false*/</span>)
+</span></span></code></pre></div><p>蓝图销毁，需要设置一个UActorComponent的属性</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>bAllowAnyoneToDestroyMe <span style="color:#f92672">=</span> true;
+</span></span></code></pre></div><p>因为提供给蓝图的接口需要判断这个字段，默认是false</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>UFUNCTION(BlueprintCallable, Category<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Components&#34;</span>, meta<span style="color:#f92672">=</span>(Keywords <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Delete&#34;</span>, HidePin<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Object&#34;</span>, DefaultToSelf<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Object&#34;</span>, DisplayName <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;DestroyComponent&#34;</span>))
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> K2_DestroyComponent(UObject<span style="color:#f92672">*</span> Object);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> UActorComponent<span style="color:#f92672">::</span>K2_DestroyComponent(UObject<span style="color:#f92672">*</span> Object)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    AActor<span style="color:#f92672">*</span> MyOwner <span style="color:#f92672">=</span> GetOwner();
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (bAllowAnyoneToDestroyMe <span style="color:#f92672">||</span> Object <span style="color:#f92672">==</span> <span style="color:#66d9ef">this</span> <span style="color:#f92672">||</span> MyOwner <span style="color:#f92672">==</span> NULL <span style="color:#f92672">||</span> MyOwner <span style="color:#f92672">==</span> Object)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        DestroyComponent();
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">else</span>
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// TODO: Put in Message Log
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        UE_LOG(LogActorComponent, Error, TEXT(<span style="color:#e6db74">&#34;May not destroy component %s owned by %s.&#34;</span>), <span style="color:#f92672">*</span>GetFullName(), <span style="color:#f92672">*</span>MyOwner<span style="color:#f92672">-&gt;</span>GetFullName());
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div></li>
 <li>
 <p>一般重写这两个函数，来做一些初始化和清理工作</p>
-<pre><code>  // Begin UActorComponent Interface.
-  virtual void BeginPlay() override; //组件RegisterComponent注册的时候，且有OwnerActor才会立即调用，一般不用
-  virtual void BeginDestroy() override; //引擎在gc的时候调用，并不是立即调用，一般不用
-  virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override; //立即调用，一般这里做清理工作（注册过才会调用），且gc时还会再调用一次，一般不用
-  virtual void OnComponentCreated() override; //组件RegisterComponent注册的时候立即调用，一般这里做初始化工作
-  virtual void OnComponentDestroyed(bool bDestroyingHierarchy) override;//立即调用，一般这里做清理工作（只要DestroyComponent就会调用）
-
-  // End UActorComponent Interface.
-</code></pre>
-<p>默认的gc是时间测试得到为1min
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">// Begin UActorComponent Interface.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">virtual</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">BeginPlay</span>() <span style="color:#66d9ef">override</span>; <span style="color:#75715e">//组件RegisterComponent注册的时候，且有OwnerActor才会立即调用，一般不用
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">virtual</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">BeginDestroy</span>() <span style="color:#66d9ef">override</span>; <span style="color:#75715e">//引擎在gc的时候调用，并不是立即调用，一般不用
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">virtual</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">EndPlay</span>(<span style="color:#66d9ef">const</span> EEndPlayReason<span style="color:#f92672">::</span>Type EndPlayReason) <span style="color:#66d9ef">override</span>; <span style="color:#75715e">//立即调用，一般这里做清理工作（注册过才会调用），且gc时还会再调用一次，一般不用
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">virtual</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">OnComponentCreated</span>() <span style="color:#66d9ef">override</span>; <span style="color:#75715e">//组件RegisterComponent注册的时候立即调用，一般这里做初始化工作
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">virtual</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">OnComponentDestroyed</span>(<span style="color:#66d9ef">bool</span> bDestroyingHierarchy) <span style="color:#66d9ef">override</span>;<span style="color:#75715e">//立即调用，一般这里做清理工作（只要DestroyComponent就会调用）
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// End UActorComponent Interface.
+</span></span></span></code></pre></div><p>默认的gc是时间测试得到为1min
 如果需要立即销毁，使用这个接口</p>
-<pre><code>  mCDComp-&gt;DestroyComponent(); //会立即调用到 OnComponentDestroyed，并标记为准备被gc回收
-</code></pre>
-</li>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>mCDComp<span style="color:#f92672">-&gt;</span>DestroyComponent(); <span style="color:#75715e">//会立即调用到 OnComponentDestroyed，并标记为准备被gc回收
+</span></span></span></code></pre></div></li>
 </ul>
 <h4 id="参考资料-1">参考资料</h4>
 <p>官网地址： <a href="https://wiki.unrealengine.com/Garbage_Collection_%26_Dynamic_Memory_Allocation">https://wiki.unrealengine.com/Garbage_Collection_%26_Dynamic_Memory_Allocation</a></p>

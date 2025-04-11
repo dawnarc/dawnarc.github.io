@@ -31,7 +31,7 @@
     <meta property="article:published_time" content="2020-02-21T14:15:02">
   
   
-    <meta property="article:modified_time" content="2024-04-09T12:42:21">
+    <meta property="article:modified_time" content="2025-03-28T19:18:10">
   
   
   
@@ -352,17 +352,25 @@
               <p>Keywords: UE4, VS 2019 building from source failed</p>
 <h3 id="common">Common</h3>
 <h5 id="error-c4668-_win32_winnt_win10_th2-is-not-defined-as-a-preprocessor-macro">error C4668: &lsquo;_WIN32_WINNT_WIN10_TH2&rsquo; is not defined as a preprocessor macro</h5>
-<p>Error:</p>
+<p>Error (UE4):</p>
 <pre tabindex="0"><code class="language-Log" data-lang="Log">error C4668: &#39;_WIN32_WINNT_WIN10_TH2&#39; is not defined as a preprocessor macro, replacing with &#39;0&#39; for &#39;#if/#elif&#39;
 </code></pre><p>Solution:<br>
 Wrap <code>windows.h</code> with <code>AllowWindowsPlatformTypes.h</code> and <code>HideWindowsPlatformTypes.h</code></p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;Windows/AllowWindowsPlatformTypes.h&#34;</span><span style="color:#75715e">
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;windows.h&gt;</span><span style="color:#75715e">
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;Windows/HideWindowsPlatformTypes.h&#34;</span><span style="color:#75715e">
-</span></span></span></code></pre></div><h5 id="error-c4430-missing-type-specifier---int-assumed-note-c-does-not-support-default-int">error C4430: missing type specifier - int assumed. Note: C++ does not support default-int</h5>
+</span></span></span></code></pre></div><p>Error (UE5):</p>
+<pre tabindex="0"><code class="language-Log" data-lang="Log">WARNING: do not include Microsoft/PreWindowsApi.h directly. Use Microsoft/WindowsHWrapper.h or Microsoft/AllowMicrosoftPlatformTypes.h instead
+</code></pre><p>Solution:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;Microsoft/PreWindowsApi.h&#34;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;windows.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;Microsoft/PostWindowsApi.h&#34;</span><span style="color:#75715e">
+</span></span></span></code></pre></div><p>Build.cs (UE5, UE4 don&rsquo;t needed)</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C#" data-lang="C#"><span style="display:flex;"><span>PublicDefinitions.Add(<span style="color:#e6db74">&#34;WINDOWS_H_WRAPPER_GUARD&#34;</span>);
+</span></span></code></pre></div><h5 id="error-c4430-missing-type-specifier---int-assumed-note-c-does-not-support-default-int">error C4430: missing type specifier - int assumed. Note: C++ does not support default-int</h5>
 <p>Error:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Text" data-lang="Text"><span style="display:flex;"><span>error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
-</span></span></code></pre></div><p>Caused by:<br>
+<pre tabindex="0"><code class="language-Log" data-lang="Log">error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+</code></pre><p>Caused by:<br>
 Header contains macros defined in other headers, but current header doesn&rsquo;t include these headers.<br>
 e.g. *.generated.h.</p>
 <p>Solution:<br>
@@ -404,18 +412,18 @@ Modify engine source:<br>
 <a href="https://forums.unrealengine.com/development-discussion/engine-source-github/1602477-c4800-implicit-conversion-from-t-to-bool-compile-error-when-using-vs2019">https://forums.unrealengine.com/development-discussion/engine-source-github/1602477-c4800-implicit-conversion-from-t-to-bool-compile-error-when-using-vs2019</a></p>
 <h5 id="logcompile--error--failed-to-initialize-the-engine-preinit-failed">LogCompile : error : Failed to initialize the engine (PreInit failed).</h5>
 <p>Error on building source:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Text" data-lang="Text"><span style="display:flex;"><span>2&gt;C:\MyProj\Intermediate\ProjectFiles\LogCompile(0,0): Error  : Failed to initialize the engine (PreInit failed).
-</span></span><span style="display:flex;"><span>2&gt;C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Microsoft\VC\v160\Microsoft.MakeFile.Targets(46,5): Error MSB3073 : The command &#34;C:\Windows\System32\chcp.com 65001 &gt;NUL 
-</span></span><span style="display:flex;"><span> E:\UnrealEngine\Engine\Build\BatchFiles\Build.bat -Target=&#34;StarsEditor Win64 DebugGame -Project=\&#34;C:\MyProj\MyProj.uproject\&#34;&#34; -Target=&#34;ShaderCompileWorker Win64 Development -Quiet&#34; -WaitMutex -FromMsBuild&#34; exited with code 3.
-</span></span></code></pre></div><p>Solution:<br>
+<pre tabindex="0"><code class="language-Log" data-lang="Log">2&gt;C:\MyProj\Intermediate\ProjectFiles\LogCompile(0,0): Error  : Failed to initialize the engine (PreInit failed).
+2&gt;C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Microsoft\VC\v160\Microsoft.MakeFile.Targets(46,5): Error MSB3073 : The command &#34;C:\Windows\System32\chcp.com 65001 &gt;NUL 
+ E:\UnrealEngine\Engine\Build\BatchFiles\Build.bat -Target=&#34;StarsEditor Win64 DebugGame -Project=\&#34;C:\MyProj\MyProj.uproject\&#34;&#34; -Target=&#34;ShaderCompileWorker Win64 Development -Quiet&#34; -WaitMutex -FromMsBuild&#34; exited with code 3.
+</code></pre><p>Solution:<br>
 Delete all intermediate files in <code>Plugins</code> directory.</p>
 <h3 id="vs-2022">VS 2022</h3>
 <h5 id="error-cs0234-the-type-or-namespace-name-management-does-not-exist">Error CS0234: The type or namespace name &lsquo;Management&rsquo; does not exist</h5>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Text" data-lang="Text"><span style="display:flex;"><span>Error   CS0234  The type or namespace name &#39;Management&#39; does not exist in the namespace &#39;Windows&#39; (are you missing an assembly reference?)  HoloLens.Automation C:\ue4\Engine\Source\Programs\AutomationTool\HoloLens\HoloLensPlatform.Automation.cs   17  Active
-</span></span><span style="display:flex;"><span>Error   CS0246  The type or namespace name &#39;IAsyncOperationWithProgress&lt;,&gt;&#39; could not be found (are you missing a using directive or an assembly reference?)    HoloLens.Automation C:\ue4\Engine\Source\Programs\AutomationTool\HoloLens\HoloLensPlatform.Automation.cs   1235    Active
-</span></span><span style="display:flex;"><span>Error   CS0246  The type or namespace name &#39;DeploymentResult&#39; could not be found (are you missing a using directive or an assembly reference?)  HoloLens.Automation C:\ue4\Engine\Source\Programs\AutomationTool\HoloLens\HoloLensPlatform.Automation.cs   1235    Active
-</span></span><span style="display:flex;"><span>Error   CS0246  The type or namespace name &#39;DeploymentProgress&#39; could not be found (are you missing a using directive or an assembly reference?)    HoloLens.Automation C:\ue4\Engine\Source\Programs\AutomationTool\HoloLens\HoloLensPlatform.Automation.cs   1235    Active
-</span></span></code></pre></div><p>Solution:<br>
+<pre tabindex="0"><code class="language-Log" data-lang="Log">Error   CS0234  The type or namespace name &#39;Management&#39; does not exist in the namespace &#39;Windows&#39; (are you missing an assembly reference?)  HoloLens.Automation C:\ue4\Engine\Source\Programs\AutomationTool\HoloLens\HoloLensPlatform.Automation.cs   17  Active
+Error   CS0246  The type or namespace name &#39;IAsyncOperationWithProgress&lt;,&gt;&#39; could not be found (are you missing a using directive or an assembly reference?)    HoloLens.Automation C:\ue4\Engine\Source\Programs\AutomationTool\HoloLens\HoloLensPlatform.Automation.cs   1235    Active
+Error   CS0246  The type or namespace name &#39;DeploymentResult&#39; could not be found (are you missing a using directive or an assembly reference?)  HoloLens.Automation C:\ue4\Engine\Source\Programs\AutomationTool\HoloLens\HoloLensPlatform.Automation.cs   1235    Active
+Error   CS0246  The type or namespace name &#39;DeploymentProgress&#39; could not be found (are you missing a using directive or an assembly reference?)    HoloLens.Automation C:\ue4\Engine\Source\Programs\AutomationTool\HoloLens\HoloLensPlatform.Automation.cs   1235    Active
+</code></pre><p>Solution:<br>
 Install UWP component for Visual Studio.</p>
 <h5 id="error-while-enumerating-visual-studio-toolchains">Error while enumerating Visual Studio toolchains</h5>
 <p>Create project from UE4Editor failed:</p>

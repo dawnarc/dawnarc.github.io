@@ -31,7 +31,7 @@
     <meta property="article:published_time" content="2019-01-14T14:27:02">
   
   
-    <meta property="article:modified_time" content="2023-10-12T18:31:06">
+    <meta property="article:modified_time" content="2025-03-29T16:37:00">
   
   
   
@@ -503,22 +503,26 @@
 </span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;libwebsockets.h&#34;</span><span style="color:#75715e">
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>THIRD_PARTY_INCLUDES_END
 </span></span></code></pre></div><h5 id="how-to-shadow-macros-on-windows-that-are-the-same-name-as-unreal">How to shadow macros on Windows that are the same name as Unreal?</h5>
-<p>Example:</p>
-<pre><code>#include &quot;Windows/AllowWindowsPlatformTypes.h&quot;
-#include &lt;windows.h&gt;
-#include &quot;Windows/HideWindowsPlatformTypes.h&quot;
-</code></pre>
-<h5 id="how-to-get-visual-studio-compiler-version">How to get Visual Studio Compiler Version</h5>
-<pre><code>public class WebRTC : ModuleRules
-{
-    public WebRTC(ReadOnlyTargetRules Target) : base(Target)
-    {
-        //2019 or 2015, and so on.
-        string VS_Version = Target.WindowsPlatform.GetVisualStudioCompilerVersionName();
-    }
-}
-</code></pre>
-<h5 id="macros-on-building-mode">Macros on building mode</h5>
+<p>UE4:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;Windows/AllowWindowsPlatformTypes.h&#34;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;windows.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;Windows/HideWindowsPlatformTypes.h&#34;</span><span style="color:#75715e">
+</span></span></span></code></pre></div><p>UE5:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;Microsoft/PreWindowsApi.h&#34;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;windows.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;Microsoft/PostWindowsApi.h&#34;</span><span style="color:#75715e">
+</span></span></span></code></pre></div><p>Build.cs (UE5, UE4 don&rsquo;t needed)</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C#" data-lang="C#"><span style="display:flex;"><span>PublicDefinitions.Add(<span style="color:#e6db74">&#34;WINDOWS_H_WRAPPER_GUARD&#34;</span>);
+</span></span></code></pre></div><h5 id="how-to-get-visual-studio-compiler-version">How to get Visual Studio Compiler Version</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C#" data-lang="C#"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">WebRTC</span> : ModuleRules
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> WebRTC(ReadOnlyTargetRules Target) : <span style="color:#66d9ef">base</span>(Target)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//2019 or 2015, and so on.</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">string</span> VS_Version = Target.WindowsPlatform.GetVisualStudioCompilerVersionName();
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h5 id="macros-on-building-mode">Macros on building mode</h5>
 <p>Engine\Source\Runtime\Core\Public\Misc\Build.h</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">/*--------------------------------------------------------------------------------
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e">Build configuration coming from UBT, do not modify
@@ -550,47 +554,39 @@
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">#define UE_BUILD_DOCS                0
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e">#endif
 </span></span></span></code></pre></div><h5 id="how-to-add-macro-in-buildcs">How to add macro in build.cs</h5>
-<p>1st way<br>
-Build.cs:</p>
-<pre><code>PublicDefinitions.Add(&quot;TEST&quot;);
-</code></pre>
-<p>C++:</p>
-<pre><code>#ifdef TEST
-    //other code
-#endif
-</code></pre>
-<p>2nd way<br>
-Build.cs:</p>
-<pre><code>PublicDefinitions.Add(&quot;TEST=1&quot;);
-</code></pre>
-<p>C++:</p>
-<pre><code>#if TEST
-    //other code
-#endif
-</code></pre>
-<p>using <code>GlobalDefinitions.Add(&quot;TEST=1&quot;);</code> in Target.cs if want to give a global macro.</p>
+<p>1st way (Build.cs):</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C#" data-lang="C#"><span style="display:flex;"><span>PublicDefinitions.Add(<span style="color:#e6db74">&#34;TEST&#34;</span>);
+</span></span></code></pre></div><p>C++:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">#ifdef TEST
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">//other code
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#75715e">#endif
+</span></span></span></code></pre></div><p>2nd way (Build.cs):</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C#" data-lang="C#"><span style="display:flex;"><span>PublicDefinitions.Add(<span style="color:#e6db74">&#34;TEST=1&#34;</span>);
+</span></span></code></pre></div><p>C++:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">#if TEST
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">//other code
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#75715e">#endif
+</span></span></span></code></pre></div><p>using <code>GlobalDefinitions.Add(&quot;TEST=1&quot;);</code> in Target.cs if want to give a global macro.</p>
 <h5 id="how-to-disable-code-optimization">How to disable code optimization</h5>
-<pre><code>public class MyProj : ModuleRules
-{
-    public MyProj(ReadOnlyTargetRules Target) : base(Target)
-    {
-        OptimizeCode = CodeOptimization.InNonDebugBuilds;
-    }
-}
-</code></pre>
-<h5 id="how-to-disable-function-inline-in-certain-modules">How to disable function inline in certain modules</h5>
-<pre><code>public class MyProjTarget : TargetRules
-{
-    public MyProjTarget(TargetInfo Target) : base(Target)
-    {
-        if (Configuration == UnrealTargetConfiguration.Debug || Configuration == UnrealTargetConfiguration.DebugGame)
-        {
-            bUseInlining = false;
-        }
-    }
-}
-</code></pre>
-<h5 id="how-to-disable-function-inline-and-code-optimization-for-whole-project">How to disable function inline and code optimization for whole project</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C#" data-lang="C#"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyProj</span> : ModuleRules
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> MyProj(ReadOnlyTargetRules Target) : <span style="color:#66d9ef">base</span>(Target)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        OptimizeCode = CodeOptimization.InNonDebugBuilds;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h5 id="how-to-disable-function-inline-in-certain-modules">How to disable function inline in certain modules</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C#" data-lang="C#"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyProjTarget</span> : TargetRules
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> MyProjTarget(TargetInfo Target) : <span style="color:#66d9ef">base</span>(Target)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (Configuration == UnrealTargetConfiguration.Debug || Configuration == UnrealTargetConfiguration.DebugGame)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            bUseInlining = <span style="color:#66d9ef">false</span>;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h5 id="how-to-disable-function-inline-and-code-optimization-for-whole-project">How to disable function inline and code optimization for whole project</h5>
 <p>Add follows in function <code>AppendCLArguments_Global</code> in VCToolChain.cs (Engine\Source\Programs\UnrealBuildTool\Platform\Windows\VCToolChain.cs):</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C#" data-lang="C#"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> (Target.Configuration != UnrealTargetConfiguration.Shipping)
 </span></span><span style="display:flex;"><span>{
@@ -598,26 +594,24 @@ Build.cs:</p>
 </span></span><span style="display:flex;"><span>    CompileEnvironment.bOptimizeCode = <span style="color:#66d9ef">false</span>;
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h5 id="check-if-target-type-is-editor-or-client-or-server">Check if target type is editor, or client, or server</h5>
-<pre><code>if (Target.Type != TargetType.Server)
-{
-    PrivateDependencyModuleNames.AddRange(new string[]
-    {
-        &quot;Imgui&quot;
-    });
-}
-</code></pre>
-<p>Other ways:</p>
-<pre><code>if (Target.Type == TargetType.Editor)
-{
-    PrivateDependencyModuleNames.AddRange(new string[] { &quot;UnrealEd&quot; });
-}
-
-if (Target.bBuildEditor)
-{
-    PrivateDependencyModuleNames.AddRange(new string[] { &quot;UnrealEd&quot; });
-}
-</code></pre>
-<h5 id="how-to-copy-files-dll-on-building">How to copy files (dll) on building</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C#" data-lang="C#"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> (Target.Type != TargetType.Server)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    PrivateDependencyModuleNames.AddRange(<span style="color:#66d9ef">new</span> <span style="color:#66d9ef">string</span>[]
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;Imgui&#34;</span>
+</span></span><span style="display:flex;"><span>    });
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Other ways:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C#" data-lang="C#"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> (Target.Type == TargetType.Editor)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    PrivateDependencyModuleNames.AddRange(<span style="color:#66d9ef">new</span> <span style="color:#66d9ef">string</span>[] { <span style="color:#e6db74">&#34;UnrealEd&#34;</span> });
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> (Target.bBuildEditor)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    PrivateDependencyModuleNames.AddRange(<span style="color:#66d9ef">new</span> <span style="color:#66d9ef">string</span>[] { <span style="color:#e6db74">&#34;UnrealEd&#34;</span> });
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h5 id="how-to-copy-files-dll-on-building">How to copy files (dll) on building</h5>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C#" data-lang="C#"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> (!Directory.Exists(binariesDir))
 </span></span><span style="display:flex;"><span>    Directory.CreateDirectory(binariesDir);
 </span></span><span style="display:flex;"><span>
@@ -632,7 +626,7 @@ if (Target.bBuildEditor)
 <p>MyProj.Build.cs:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C#" data-lang="C#"><span style="display:flex;"><span>CppStandard = CppStandardVersion.Cpp17;
 </span></span></code></pre></div><p>Or modify <code>\Engine\Source\Programs\UnrealBuildTool\Platform\Windows\VCToolChain.cs</code>:<br>
-Add follows in function <code>void AppendCLArguments_CPP(CppCompileEnvironment CompileEnvironment, List&lt;string&gt; Arguments)</code>,</p>
+Add follows in function <code>void AppendCLArguments_CPP(CppCompileEnvironment CompileEnvironment, List&lt;string&gt; Arguments)</code>:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>Arguments.Add(<span style="color:#e6db74">&#34;/std:c++17&#34;</span>);
 </span></span></code></pre></div><p>Origin:<br>
 <a href="https://gamedev.stackexchange.com/a/184027/117871">https://gamedev.stackexchange.com/a/184027/117871</a>
