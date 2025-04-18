@@ -352,14 +352,13 @@
               <p>keywords: UE4, Collision, Simulate Physics, RigidBody</p>
 <h5 id="uprojectilemovementcomponent相关">UProjectileMovementComponent相关</h5>
 <p>官方第一人称射击模版项目中，是在构造函数中就设置好了速度：</p>
-<pre><code>ProjectileMovement = CreateDefaultSubobject&lt;UProjectileMovementComponent&gt;(TEXT(&quot;ProjectileComp&quot;));
-ProjectileMovement-&gt;UpdatedComponent = CollisionComp;
-ProjectileMovement-&gt;InitialSpeed = 3000.f;
-ProjectileMovement-&gt;MaxSpeed = 3000.f;
-ProjectileMovement-&gt;bRotationFollowsVelocity = true;
-ProjectileMovement-&gt;bShouldBounce = true;
-</code></pre>
-<p>两个问题：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>ProjectileMovement <span style="color:#f92672">=</span> CreateDefaultSubobject<span style="color:#f92672">&lt;</span>UProjectileMovementComponent<span style="color:#f92672">&gt;</span>(TEXT(<span style="color:#e6db74">&#34;ProjectileComp&#34;</span>));
+</span></span><span style="display:flex;"><span>ProjectileMovement<span style="color:#f92672">-&gt;</span>UpdatedComponent <span style="color:#f92672">=</span> CollisionComp;
+</span></span><span style="display:flex;"><span>ProjectileMovement<span style="color:#f92672">-&gt;</span>InitialSpeed <span style="color:#f92672">=</span> <span style="color:#ae81ff">3000.f</span>;
+</span></span><span style="display:flex;"><span>ProjectileMovement<span style="color:#f92672">-&gt;</span>MaxSpeed <span style="color:#f92672">=</span> <span style="color:#ae81ff">3000.f</span>;
+</span></span><span style="display:flex;"><span>ProjectileMovement<span style="color:#f92672">-&gt;</span>bRotationFollowsVelocity <span style="color:#f92672">=</span> true;
+</span></span><span style="display:flex;"><span>ProjectileMovement<span style="color:#f92672">-&gt;</span>bShouldBounce <span style="color:#f92672">=</span> true;
+</span></span></code></pre></div><p>两个问题：</p>
 <ol>
 <li>如何停止移动；</li>
 <li>如何在运行时期间修改速度；</li>
@@ -410,24 +409,21 @@ Simulate Physics and Projectile Movement Component<br>
 <h5 id="不使用-movementcomponent-情况下设置-gravity-大小">不使用 MovementComponent 情况下设置 Gravity 大小</h5>
 <p>MovementComponent 有个属性<code>Gravity Scale</code>来设置重力大小。<br>
 假设一个 Actor 如果没有添加 MovementComponent ，只有一个 StaticMeshComponent ，此时 StaticMeshComponent 模拟物理时，其重力加速度较小，这种情况下有没办法设置重力加速度大小？方式如下：</p>
-<pre><code>StaticMeshComp-&gt;SetSimulatePhysics(true);
-StaticMeshComp-&gt;AddImpulse(SpeedInWorld);
-</code></pre>
-<p>然后在 Tick 函数中每帧设置：</p>
-<pre><code>FVector Velocity = StaticMeshComp-&gt;GetPhysicsLinearVelocity();
-Velocity.Z -= 100.f;
-StaticMeshComp-&gt;SetPhysicsLinearVelocity(Velocity);
-</code></pre>
-<p>说明：<code>GetPhysicsLinearVelocity</code> 默认为0，这里修改成 -100.f 的重力下降速率，</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>StaticMeshComp<span style="color:#f92672">-&gt;</span>SetSimulatePhysics(true);
+</span></span><span style="display:flex;"><span>StaticMeshComp<span style="color:#f92672">-&gt;</span>AddImpulse(SpeedInWorld);
+</span></span></code></pre></div><p>然后在 Tick 函数中每帧设置：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>FVector Velocity <span style="color:#f92672">=</span> StaticMeshComp<span style="color:#f92672">-&gt;</span>GetPhysicsLinearVelocity();
+</span></span><span style="display:flex;"><span>Velocity.Z <span style="color:#f92672">-=</span> <span style="color:#ae81ff">100.f</span>;
+</span></span><span style="display:flex;"><span>StaticMeshComp<span style="color:#f92672">-&gt;</span>SetPhysicsLinearVelocity(Velocity);
+</span></span></code></pre></div><p>说明：<code>GetPhysicsLinearVelocity</code> 默认为0，这里修改成 -100.f 的重力下降速率，</p>
 <h5 id="禁用开启物理">禁用、开启物理</h5>
-<pre><code>//禁用所有子组件的物理模拟（但是没有对应的开启物理的API）
-AActor::DisableComponentsSimulatePhysics();
-
-//禁用指定组件的物理模拟
-GetCapsuleComponent()-&gt;SetSimulatePhysics(false);
-GetMesh()-&gt;SetSimulatePhysics(false);
-</code></pre>
-<h5 id="ingore-special-actors-collision-when-it-moving">Ingore special Actor&rsquo;s Collision when it moving</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">//禁用所有子组件的物理模拟（但是没有对应的开启物理的API）
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>AActor<span style="color:#f92672">::</span>DisableComponentsSimulatePhysics();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//禁用指定组件的物理模拟
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>GetCapsuleComponent()<span style="color:#f92672">-&gt;</span>SetSimulatePhysics(false);
+</span></span><span style="display:flex;"><span>GetMesh()<span style="color:#f92672">-&gt;</span>SetSimulatePhysics(false);
+</span></span></code></pre></div><h5 id="ingore-special-actors-collision-when-it-moving">Ingore special Actor&rsquo;s Collision when it moving</h5>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">/**
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * Tells this component whether to ignore collision with all components of a specific Actor when this component is moved.
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * Components on the other Actor may also need to be told to do the same when they move.
@@ -446,6 +442,12 @@ GetMesh()-&gt;SetSimulatePhysics(false);
 <a href="https://www.youtube.com/watch?v=uHV6VHzPqxM">https://www.youtube.com/watch?v=uHV6VHzPqxM</a></p>
 <p>The Art of PhysX<br>
 <a href="https://pdfs.semanticscholar.org/presentation/faec/14b559373222fa1f2150e3aaaaf6f20b3b2e.pdf">https://pdfs.semanticscholar.org/presentation/faec/14b559373222fa1f2150e3aaaaf6f20b3b2e.pdf</a></p>
+<h5 id="ue5-chaos">UE5 Chaos</h5>
+<p>Turn CHAOS destructibles (Geometry Collection assets) into very performant GPU simulated destructible static meshes driven by Niagara particles.<br>
+<a href="https://github.com/eanticev/niagara-destruction-driver">https://github.com/eanticev/niagara-destruction-driver</a></p>
+<p>Using Chaos Physics for Large-Scale and High-Fidelity Scenes | Unreal Fest 2024<br>
+<a href="https://www.youtube.com/watch?v=uCYGFdEWyZw">https://www.youtube.com/watch?v=uCYGFdEWyZw</a></p>
+<p><a href="https://dev.epicgames.com/community/learning/tutorials/EpnO/unreal-engine-chaos-visual-debugger-user-guide-for-ue-5-4">Chaos Visual Debugger - User Guide for UE 5.4 - dev.epicgames.com</a></p>
               
             </div>
           </div>
