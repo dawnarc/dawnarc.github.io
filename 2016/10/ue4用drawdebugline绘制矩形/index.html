@@ -352,25 +352,28 @@
               <p>keywords: [UE4]用DrawDebugLine绘制矩形</p>
 <p><img src="https://dawnarc.com/recruit_info.png" alt="slogan_image"></p>
 <p>自己实现的用DrawDebugLine绘制矩形的函数：</p>
-<pre><code>/* Draw rectangle use line
-    @CenterLoc, location of rectangle center
-    @Rot, rotation of rectangle
-    @Angle, angle of diagonal
-    @DiagonalHalve, half of diagonal lenght.
-*/
-void DrawDebugTrangle(const FVector&amp; CenterLoc, const FRotator&amp; Rot, float Angle, float DiagonalHalve)
-{
-    FVector Point1 = CenterLoc + (Rot + FRotator(0.f, Angle, 0.f)).Vector() * DiagonalHalve;
-    FVector Point2 = CenterLoc + (Rot + FRotator(0.f, 90.f + (90.f - Angle), 0.f)).Vector() * DiagonalHalve;
-    FVector Point3 = CenterLoc + (Rot + FRotator(0.f, -90.f - (90.f - Angle), 0.f)).Vector() * DiagonalHalve;
-    FVector Point4 = CenterLoc + (Rot + FRotator(0.f, -Angle, 0.f)).Vector() * DiagonalHalve;
-
-    DrawDebugLine(MyGameMode-&gt;GetWorld(), Point1, Point2, FColor::Green);
-    DrawDebugLine(MyGameMode-&gt;GetWorld(), Point2, Point3, FColor::Green);
-    DrawDebugLine(MyGameMode-&gt;GetWorld(), Point3, Point4, FColor::Green);
-    DrawDebugLine(MyGameMode-&gt;GetWorld(), Point4, Point1, FColor::Green);
-}
-</code></pre>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> AMyDebugActor<span style="color:#f92672">::</span>DrawDebugRectangle(<span style="color:#66d9ef">const</span> FVector<span style="color:#f92672">&amp;</span> Position, <span style="color:#66d9ef">const</span> FRotator<span style="color:#f92672">&amp;</span> Rot, <span style="color:#66d9ef">const</span> FVector2D<span style="color:#f92672">&amp;</span> Size)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    FVector Center <span style="color:#f92672">=</span> GetActorLocation() <span style="color:#f92672">+</span> Position;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    FVector OrientFwd <span style="color:#f92672">=</span> (FRotationMatrix(FRotator(<span style="color:#ae81ff">0.f</span>, <span style="color:#ae81ff">90.f</span>, <span style="color:#ae81ff">0.f</span>)) <span style="color:#f92672">*</span> FRotationMatrix(Rot)).Rotator().Vector();
+</span></span><span style="display:flex;"><span>    FVector OrientBack <span style="color:#f92672">=</span> (FRotationMatrix(FRotator(<span style="color:#ae81ff">0.f</span>, <span style="color:#f92672">-</span><span style="color:#ae81ff">90.f</span>, <span style="color:#ae81ff">0.f</span>)) <span style="color:#f92672">*</span> FRotationMatrix(Rot)).Rotator().Vector();
+</span></span><span style="display:flex;"><span>    FVector PointR <span style="color:#f92672">=</span> (Center <span style="color:#f92672">+</span> OrientBack <span style="color:#f92672">*</span> Size.Y <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>) <span style="color:#f92672">+</span> Rot.Vector() <span style="color:#f92672">*</span> (Size.X <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>);
+</span></span><span style="display:flex;"><span>    FVector PointG <span style="color:#f92672">=</span> (Center <span style="color:#f92672">+</span> OrientBack <span style="color:#f92672">*</span> Size.Y <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>) <span style="color:#f92672">+</span> <span style="color:#f92672">-</span>Rot.Vector() <span style="color:#f92672">*</span> (Size.X <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>);
+</span></span><span style="display:flex;"><span>    FVector PointB <span style="color:#f92672">=</span> (Center <span style="color:#f92672">+</span> OrientFwd <span style="color:#f92672">*</span> Size.Y <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>) <span style="color:#f92672">+</span> Rot.Vector() <span style="color:#f92672">*</span> (Size.X <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>);
+</span></span><span style="display:flex;"><span>    FVector PointYellow <span style="color:#f92672">=</span> (Center <span style="color:#f92672">+</span> OrientFwd <span style="color:#f92672">*</span> Size.Y <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>) <span style="color:#f92672">+</span> <span style="color:#f92672">-</span>Rot.Vector() <span style="color:#f92672">*</span> (Size.X <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    DrawDebugSphere(GetWorld(), PointR, <span style="color:#ae81ff">14.0f</span>, <span style="color:#ae81ff">12</span>, FColor(<span style="color:#ae81ff">255</span>, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0</span>));      <span style="color:#75715e">//R
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    DrawDebugSphere(GetWorld(), PointG, <span style="color:#ae81ff">12.0f</span>, <span style="color:#ae81ff">12</span>, FColor(<span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">255</span>, <span style="color:#ae81ff">0</span>));      <span style="color:#75715e">//G
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    DrawDebugSphere(GetWorld(), PointB, <span style="color:#ae81ff">10.0f</span>, <span style="color:#ae81ff">12</span>, FColor(<span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">255</span>));      <span style="color:#75715e">//B
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    DrawDebugSphere(GetWorld(), PointYellow, <span style="color:#ae81ff">8.0f</span>, <span style="color:#ae81ff">12</span>, FColor(<span style="color:#ae81ff">255</span>, <span style="color:#ae81ff">255</span>, <span style="color:#ae81ff">0</span>));    <span style="color:#75715e">//Yellow
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>    DrawDebugLine(GetWorld(), PointR, PointG, FColor<span style="color:#f92672">::</span>Green);
+</span></span><span style="display:flex;"><span>    DrawDebugLine(GetWorld(), PointR, PointB, FColor<span style="color:#f92672">::</span>Green);
+</span></span><span style="display:flex;"><span>    DrawDebugLine(GetWorld(), PointYellow, PointB, FColor<span style="color:#f92672">::</span>Green);
+</span></span><span style="display:flex;"><span>    DrawDebugLine(GetWorld(), PointYellow, PointG, FColor<span style="color:#f92672">::</span>Green);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div>
               
             </div>
           </div>

@@ -352,24 +352,31 @@
               <p>keywords: [UE4]Generate Visual Studio工程时如何指定VS版本</p>
 <p><img src="https://dawnarc.com/recruit_info.png" alt="slogan_image"></p>
 <p>keywords：UE4 generate visual studio project file、VS2017</p>
+<h5 id="ue4">UE4</h5>
 <p>UE4 generate visual studio project file cmd</p>
-<pre><code>&quot;%UE4PATH%\Engine\Build\BatchFiles\GenerateProjectFiles.bat&quot; %~dp0\MyProject.uproject -2017
-</code></pre>
-<span class="highlight-text red">注意：GenerateProjectFiles.bat在源码编译的UE4中，Launcher安装版本的UE4没有GenerateProjectFiles.bat。</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cmd" data-lang="cmd"><span style="display:flex;"><span><span style="color:#e6db74">&#34;</span>%UE4PATH%<span style="color:#e6db74">\Engine\Build\BatchFiles\GenerateProjectFiles.bat&#34;</span> %~dp0\MyProject.uproject -2017
+</span></span></code></pre></div><span class="highlight-text red">注意：GenerateProjectFiles.bat在源码编译的UE4中，Launcher安装版本的UE4没有GenerateProjectFiles.bat。</span>
 <p>【2017-08-31记】<br>
 今天发现4.17版本用上述方法貌似有问题，会打印一个警告，且最终没有生成任何文件：</p>
-<pre><code> warning MSB3884: Could not find rule set file &quot;ManagedMinimumRules.ruleset&quot;
-</code></pre>
-<p>解决办法：<br>
+<pre tabindex="0"><code class="language-log" data-lang="log">warning MSB3884: Could not find rule set file &#34;ManagedMinimumRules.ruleset&#34;
+</code></pre><p>解决办法：<br>
 执行以下命令，末尾参数2017即表示指定VS2017：</p>
-<pre><code>D:/UnrealEngine-4.17.1-release/Engine/Binaries/DotNET/UnrealBuildTool.exe  -projectfiles -project=&quot;D:/MyProject/MyProject.uproject&quot; -game -engine -progress -2017
-</code></pre>
-<p>另外UnrealBuildTool.exe在Launcher安装版本也存在，不需要源码编译的版本。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cmd" data-lang="cmd"><span style="display:flex;"><span>D:/UE4/Engine/Binaries/DotNET/UnrealBuildTool.exe<span style="color:#75715e"> -projectfiles -project=&#34;D:/MyGame/MyGame.uproject&#34; -game -engine -progress -2017</span>
+</span></span></code></pre></div><p>另外UnrealBuildTool.exe在Launcher安装版本也存在，不需要源码编译的版本。</p>
 <p>参考：<br>
 <a href="https://answers.unrealengine.com/questions/579186/what-about-visual-studio-2017-in-ue4.html">https://answers.unrealengine.com/questions/579186/what-about-visual-studio-2017-in-ue4.html</a></p>
 <p>官方文档：<br>
 <a href="https://docs.unrealengine.com/latest/INT/Programming/UnrealBuildSystem/ProjectFileGenerator/index.html">https://docs.unrealengine.com/latest/INT/Programming/UnrealBuildSystem/ProjectFileGenerator/index.html</a></p>
-<h5 id="visual-studio-所需的最低-windows-sdk-版本">Visual Studio 所需的最低 Windows SDK 版本</h5>
+<h5 id="ue5">UE5</h5>
+<p>Genarate Visual Studio project files for engine only:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cmd" data-lang="cmd"><span style="display:flex;"><span>D:\UE5<span style="color:#75715e">&gt;dotnet Engine\Binaries\DotNET\UnrealBuildTool\UnrealBuildTool.dll -ProjectFiles</span>
+</span></span></code></pre></div><p>If pop error on executing command:</p>
+<pre tabindex="0"><code class="language-log" data-lang="log">A game project path was not specified, which is required when generating project files using an installed build or passing -game on the command line
+</code></pre><p>Solution:<br>
+Delete file: <strong>Engine\Build\InstalledBuild.txt</strong>.</p>
+<p>Genarate Visual Studio project files for game:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cmd" data-lang="cmd"><span style="display:flex;"><span>dotnet <span style="color:#e6db74">&#34;D:\UE5\Engine\Binaries\DotNET\UnrealBuildTool\UnrealBuildTool.dll&#34;</span> -projectfiles -project=<span style="color:#e6db74">&#34;D:/TestTP/TestTP.uproject&#34;</span> -game -rocket -progress -log=<span style="color:#e6db74">&#34;D:\TestTP/Saved/Logs/UnrealVersionSelector-2025.06.09-11.17.06.log&#34;</span>
+</span></span></code></pre></div><h5 id="visual-studio-所需的最低-windows-sdk-版本">Visual Studio 所需的最低 Windows SDK 版本</h5>
 <p>【2018-11-25】<br>
 4.18需要安装 Windows SDK 8.1，否则无法 Generate VS project file；<br>
 4.20不需要安装 Windows SDK 8.1，只需点选最新版本的 Windows SDK 即可。</p>
