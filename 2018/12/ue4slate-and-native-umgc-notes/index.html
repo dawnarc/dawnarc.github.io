@@ -31,7 +31,7 @@
     <meta property="article:published_time" content="2018-12-01T02:09:02">
   
   
-    <meta property="article:modified_time" content="2025-01-03T20:16:54">
+    <meta property="article:modified_time" content="2025-09-28T11:52:22">
   
   
   
@@ -126,7 +126,7 @@
           
         </a>
         <h4 class="sidebar-profile-name">Wang Aiguo</h4>
-        <h5 class="sidebar-profile-bio">雕弓犹指北斗，金戈沉沙谁收？</h5>
+        <h5 class="sidebar-profile-bio">霜岭弓鸣箭裂，青城骨铸边月。</h5>
       </div>
     <ul class="sidebar-buttons">
       
@@ -350,7 +350,7 @@
                      (adsbygoogle = window.adsbygoogle || []).push({});
                 </script>
               <p>Keywords: UE4, Native UMG, Slate, Common API, Usage, Case</p>
-<p><img src="https://dawnarc.com/recruit_info.png" alt="slogan_image"></p>
+<p><img src="https://dawnarc.com/GSZM-TW.png" alt="slogan_image"></p>
 <h3 id="native-umg-apis-in-common">Native UMG APIs In Common</h3>
 <h5 id="how-to-set-ubuttons-image-texture-for-normal-hovered-and-pressed-state">How to set UButton&rsquo;s Image Texture for Normal, Hovered and Pressed state</h5>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>MyButton<span style="color:#f92672">-&gt;</span>WidgetStyle.Normal.SetResourceObject(TextureRes);
@@ -362,12 +362,12 @@
 </span></span><span style="display:flex;"><span>{
 </span></span><span style="display:flex;"><span>    Super<span style="color:#f92672">::</span>AddToScreen(LocalPlayer, ZOrder);
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    Super<span style="color:#f92672">::</span>ForceLayoutPrepass();
+</span></span><span style="display:flex;"><span>    ForceLayoutPrepass();
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>    FVector2D Size <span style="color:#f92672">=</span> GetDesiredSize();
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><div class="alert danger ">
-  <p><code>GetDesiredSize()</code> isn&rsquo;t usable before <code>NativeTick()</code> triggered, if you want to get the widget size when widget initilized, you need to call function <code> Super::ForceLayoutPrepass()</code>. If you add a child in widget and want to show it on viewport at this frame, you also need to call this function too.</p>
+  <p><code>GetDesiredSize()</code> isn&rsquo;t usable before <code>NativeTick()</code> triggered, if you want to get the widget size when widget initilized, you need to call function <code>ForceLayoutPrepass()</code>. If you add a child in widget and want to show it on viewport at this frame, you also need to call this function too.</p>
 </div>
 <p>Get size using slot:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">//ImgIcon is a UImage widget.
@@ -425,7 +425,16 @@
 </span></span><span style="display:flex;"><span>    
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> FReply<span style="color:#f92672">::</span>Handled();
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><h5 id="nativeconstructs-trigger-timing">NativeConstruct&rsquo;s trigger timing</h5>
+</span></span></code></pre></div><h5 id="nativeoninitialized-vs-nativeconstruct">NativeOnInitialized vs NativeConstruct</h5>
+<p>NativeOnInitialized vs NativeConstruct:</p>
+<ul>
+<li><strong>NativeOnInitialized</strong> is called when you create the widget.</li>
+<li><strong>NativePreConstruct</strong> is called when the widget is added to a viewport and when viewing the widget in the editor.</li>
+<li><strong>NativeConstruct</strong> is called when the widget is added to a viewport, after NativePreConstruct.</li>
+<li><strong>NativeDestruct</strong> is called when the widget is removed from a viewport.</li>
+</ul>
+<p>Origin: <a href="https://forums.unrealengine.com/t/uuserwidget-initialize-vs-nativeconstruct/228294/5?u=dawnarc">NativeOnInitialized vs NativeConstruct</a></p>
+<p>NativeConstruct&rsquo;s trigger timing</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">if</span>(UMyUserWidget<span style="color:#f92672">*</span> Widget <span style="color:#f92672">=</span> WidgetTree<span style="color:#f92672">-&gt;</span>ConstructWidget<span style="color:#f92672">&lt;</span>UMyUserWidget<span style="color:#f92672">&gt;</span>(UMyUserWidget<span style="color:#f92672">::</span>StaticClass()))
 </span></span><span style="display:flex;"><span>{
 </span></span><span style="display:flex;"><span>    <span style="color:#75715e">//UMyUserWidget::NativeConstruct() would trigger after be AddChild
@@ -620,7 +629,7 @@ Set <code>Is Focusable</code> enable, and execute <code>SetKeyboardFocus()</code
 </span></span><span style="display:flex;"><span>    WidgetComp<span style="color:#f92672">-&gt;</span>SetVisibility(true);
 </span></span><span style="display:flex;"><span>    WidgetComp<span style="color:#f92672">-&gt;</span>SetWidgetSpace(EWidgetSpace<span style="color:#f92672">::</span>Screen);
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><h3 id="uwidgetlayoutlibrary">UWidgetLayoutLibrary</h3>
+</span></span></code></pre></div><h3 id="widget-layout-library">Widget Layout Library</h3>
 <h5 id="how-to-get-the-scale-of-viewport">How to get the scale of viewport</h5>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>FVector2D UWidgetLayoutLibrary<span style="color:#f92672">::</span>GetViewportScale(UObject<span style="color:#f92672">*</span> WorldContextObject);
 </span></span></code></pre></div><h5 id="how-to-get-the-viewport-size">How to get the viewport size</h5>
@@ -637,8 +646,9 @@ Set <code>Is Focusable</code> enable, and execute <code>SetKeyboardFocus()</code
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>FVector2D UWidgetLayoutLibrary<span style="color:#f92672">::</span>GetMousePositionOnViewport(UObject<span style="color:#f92672">*</span> WorldContextObject);
 </span></span></code></pre></div><h5 id="how-to-removes-all-widgets-from-the-viewport">How to removes all widgets from the viewport</h5>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> UWidgetLayoutLibrary<span style="color:#f92672">::</span>RemoveAllWidgets(UObject<span style="color:#f92672">*</span> WorldContextObject);
-</span></span></code></pre></div><h3 id="uwidgetblueprintlibrary">UWidgetBlueprintLibrary</h3>
+</span></span></code></pre></div><h3 id="widget-blueprint-library">Widget Blueprint Library</h3>
 <h5 id="how-to-disable-input-for-gameplay-while-widget-was-opened">How to disable input for gameplay while widget was opened</h5>
+<p>WidgetBlueprintLibrary.h</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">/**
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * Setup an input mode that allows only the UI to respond to user input.
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * 
@@ -841,7 +851,7 @@ Pass parameter <code>WidgetName</code> with default value:</p>
     
     <h4 id="about-card-name">Wang Aiguo</h4>
     
-      <div id="about-card-bio">雕弓犹指北斗，金戈沉沙谁收？</div>
+      <div id="about-card-bio">霜岭弓鸣箭裂，青城骨铸边月。</div>
     
     
       <div id="about-card-job">

@@ -31,7 +31,7 @@
     <meta property="article:published_time" content="2019-02-14T12:32:02">
   
   
-    <meta property="article:modified_time" content="2023-03-29T18:02:56">
+    <meta property="article:modified_time" content="2025-08-05T21:14:23">
   
   
   
@@ -126,7 +126,7 @@
           
         </a>
         <h4 class="sidebar-profile-name">Wang Aiguo</h4>
-        <h5 class="sidebar-profile-bio">雕弓犹指北斗，金戈沉沙谁收？</h5>
+        <h5 class="sidebar-profile-bio">霜岭弓鸣箭裂，青城骨铸边月。</h5>
       </div>
     <ul class="sidebar-buttons">
       
@@ -350,7 +350,7 @@
                      (adsbygoogle = window.adsbygoogle || []).push({});
                 </script>
               <p>Keywords: UE4, Release Version Features Notes</p>
-<p><img src="https://dawnarc.com/recruit_info.png" alt="slogan_image"></p>
+<p><img src="https://dawnarc.com/GSZM-TW.png" alt="slogan_image"></p>
 <h5 id="421">4.21</h5>
 <p>Pause Clothing Simulation<br>
 <a href="https://docs.unrealengine.com/en-us/Engine/Animation/Sequences/Notifies">https://docs.unrealengine.com/en-us/Engine/Animation/Sequences/Notifies</a></p>
@@ -423,6 +423,53 @@
 </ul>
 <p>Mobile rendering improvements<br>
 <a href="https://portal.productboard.com/epicgames/1-unreal-engine-public-roadmap/c/453-mobile-rendering-improvements">https://portal.productboard.com/epicgames/1-unreal-engine-public-roadmap/c/453-mobile-rendering-improvements</a></p>
+<h5 id="52">5.2</h5>
+<p><strong>Async Compute</strong>:</p>
+<ul>
+<li>SWRT mode uses Async Compute on console by default.</li>
+<li>Support async compute for inline ray-tracing passes.</li>
+<li>Added the <em>r.SceneDepthHZBAsyncCompute</em> console variable to run HZB generation on async compute. This prevents GPU under-utilization in scenes where a very large number of individual occlusion queries are issued. The <em>r.SceneDepthHZBAsyncCompute</em> console variable has the following possible values:
+<ul>
+<li>0: Don&rsquo;t use async compute (default)</li>
+<li>1: Use async compute, start as soon as possible</li>
+<li>2: Use async compute, start after ComputeLightGrid.CompactLinks pass</li>
+</ul>
+</li>
+</ul>
+<p>Origin:<br>
+<a href="https://dev.epicgames.com/documentation/en-us/unreal-engine/unreal-engine-5.2-release-notes?application_version=5.2">https://dev.epicgames.com/documentation/en-us/unreal-engine/unreal-engine-5.2-release-notes?application_version=5.2</a></p>
+<h5 id="53">5.3</h5>
+<p><strong>Async Compute</strong>:</p>
+<ul>
+<li>RHI: enabled async compute by default in D3D12 on NVIDIA Ampere and newer cards.</li>
+<li>Lumen: significant Lumen HWRT optimizations, including enabling async compute for HWRT by default on consoles.</li>
+</ul>
+<p>Origin:<br>
+<a href="https://dev.epicgames.com/documentation/en-us/unreal-engine/unreal-engine-5.3-release-notes?application_version=5.3">https://dev.epicgames.com/documentation/en-us/unreal-engine/unreal-engine-5.3-release-notes?application_version=5.3</a></p>
+<h5 id="56">5.6</h5>
+<p><strong>Renderer Parallelization</strong><br>
+Render Thread performance is very often the limiting factor for UE titles. This is because previously some operations were restricted to this particular thread, even though current platforms and graphics API provide methods for them to be done in parallel. We improved performance by refactoring the Renderer Hardware Interface (RHI) API to remove these constraints and fully utilize the multithreading capabilities of the target hardware.</p>
+<p><strong>RHI – Bindless Resources</strong><br>
+Bindless resources are a low-level feature related to the management of textures and other types of data buffers in modern Renderer Hardware Interfaces (RHIs) such as DX12, Vulkan, and Metal. We added support for bindless resources to provide the means for more flexible GPU programming paradigms and additional features within the renderer, and as a requirement for full ray tracing support on Vulkan.</p>
+<p>While not a direct user-facing feature, support for bindless might be of interest to some users writing C++ plugins and custom engine modifications relevant to rendering.</p>
+<p><strong>Lumen Hardware Ray Tracing Optimizations</strong><br>
+In Unreal Engine 5.6, Lumen Hardware Ray Tracing (HWRT) mode delivers even greater performance on current-generation hardware. These low-level optimizations ensure faster, more efficient rendering, bringing high-end visual fidelity and scalability that now matches the frame budget of the software ray tracing mode. This frees up valuable CPU resources on your target platform and overall helps achieve a more consistent 60hz frame rate.</p>
+<p><strong>Virtual Shadow Maps Optimizations</strong><br>
+Virtual Shadow Maps in Unreal Engine 5.6 further improves on shadow performance and memory usage with optimized scene culling while increasing fidelity and artistic control.</p>
+<p><strong>GPU Profiler 2.0</strong><br>
+Unreal Engine 5.6 introduces a re-architected Insights GPU profiler.<br>
+The goal is to unify existing profiling systems within the engine (Stats, ProfileGPU, Insights) to use the same data stream increasing its reported accuracy and consistency when profiling a scene.<br>
+We overhauled the way timestamps are collected for the GPU timeline and have all the RHI’s produce this information in a common format. The new event stream and Insights API improvements surface more information in the new GPU profiling tools:</p>
+<ul>
+<li>async queue, multi GPU, pipeline bubbles (GPU idle/busy states), cross-queue dependencies (fence waits)</li>
+</ul>
+<div class="alert info ">
+  <p><p>This overhaul does remove the convenient in-editor ProfileGPU UI pop-up unfortunately. Thankfully, Epic massively improved the detail of the log dump during profileGPU command to compensate.</p>
+<p>Within Unreal Insights you’ll find the biggest improvements as you now see <strong>two GPU tracks one for Graphics and another for Compute</strong> which is HUGE for understanding your GPU performance. In pre-5.6 you couldn’t properly reason about the GPU stats as things such as Async Compute were not displayed properly. Additionally, <em>stat GPU</em> would not clearly differentiate what runs as async compute either, making the stats somewhat misleading and difficult to reason about.</p>
+</p>
+</div>
+<p>Origin:<br>
+<a href="https://www.tomlooman.com/unreal-engine-5-6-performance-highlights/">https://www.tomlooman.com/unreal-engine-5-6-performance-highlights/</a></p>
 <hr>
 <p><code>不降志，不屈身，不追赶时髦，也不回避危险。──胡适</code></p>
               
@@ -578,7 +625,7 @@
     
     <h4 id="about-card-name">Wang Aiguo</h4>
     
-      <div id="about-card-bio">雕弓犹指北斗，金戈沉沙谁收？</div>
+      <div id="about-card-bio">霜岭弓鸣箭裂，青城骨铸边月。</div>
     
     
       <div id="about-card-job">

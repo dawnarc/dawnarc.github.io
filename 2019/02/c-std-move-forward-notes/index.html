@@ -31,7 +31,7 @@
     <meta property="article:published_time" content="2019-02-01T14:05:02">
   
   
-    <meta property="article:modified_time" content="2022-11-19T16:22:12">
+    <meta property="article:modified_time" content="2025-07-17T16:00:14">
   
   
   
@@ -126,7 +126,7 @@
           
         </a>
         <h4 class="sidebar-profile-name">Wang Aiguo</h4>
-        <h5 class="sidebar-profile-bio">雕弓犹指北斗，金戈沉沙谁收？</h5>
+        <h5 class="sidebar-profile-bio">霜岭弓鸣箭裂，青城骨铸边月。</h5>
       </div>
     <ul class="sidebar-buttons">
       
@@ -350,7 +350,7 @@
                      (adsbygoogle = window.adsbygoogle || []).push({});
                 </script>
               <p>keywords: VS2019, Code Analysis, Code Checking, std::move</p>
-<p><img src="https://dawnarc.com/recruit_info.png" alt="slogan_image"></p>
+<p><img src="https://dawnarc.com/GSZM-TW.png" alt="slogan_image"></p>
 <h5 id="docs">Docs</h5>
 <p>std::move<br>
 <a href="https://en.cppreference.com/w/cpp/utility/move">https://en.cppreference.com/w/cpp/utility/move</a></p>
@@ -360,6 +360,10 @@
 <a href="https://en.cppreference.com/w/cpp/language/move_assignment">https://en.cppreference.com/w/cpp/language/move_assignment</a></p>
 <p>Move with vector::push_back<br>
 <a href="https://stackoverflow.com/a/11572684/1645289">https://stackoverflow.com/a/11572684/1645289</a></p>
+<p>Move to move constructor (C++) (<span class="highlight-text green">Recommended</span>)<br>
+<a href="https://medium.com/@sylvain.tiset/move-to-move-constructor-c-dd03f94005e0">https://medium.com/@sylvain.tiset/move-to-move-constructor-c-dd03f94005e0</a></p>
+<p>Moves demystified (<span class="highlight-text green">Recommended</span>)<br>
+<a href="https://kholdstare.github.io/technical/2013/11/23/moves-demystified.html">https://kholdstare.github.io/technical/2013/11/23/moves-demystified.html</a></p>
 <h5 id="tools">Tools</h5>
 <p>New Code Analysis Checks in Visual Studio 2019: use-after-move and coroutine<br>
 <a href="https://blogs.msdn.microsoft.com/vcblog/2019/01/28/new-code-analysis-checks-in-visual-studio-2019-use-after-move-and-coroutine">https://blogs.msdn.microsoft.com/vcblog/2019/01/28/new-code-analysis-checks-in-visual-studio-2019-use-after-move-and-coroutine</a></p>
@@ -367,44 +371,43 @@
 <a href="https://en.cppreference.com/w/cpp/language/move_constructor">https://en.cppreference.com/w/cpp/language/move_constructor</a></p>
 <h3 id="examples">Examples</h3>
 <h5 id="stdmove-with-reference">std::move with reference</h5>
-<pre><code>#include &lt;vector&gt;
-#include &lt;iostream&gt;
-
-struct A {
-    int a[100];
-    A() {}
-    A(const A&amp; other) {
-        std::cout &lt;&lt; &quot;copy&quot; &lt;&lt; std::endl;
-    }
-    A(A&amp;&amp; other) {
-        std::cout &lt;&lt; &quot;move&quot; &lt;&lt; std::endl;
-    }
-};
-
-void foo(const A&amp; a) {
-    std::vector&lt;A&gt; vA;
-    vA.push_back(std::move(a));
-}
-
-void bar(A&amp;&amp; a) {
-    std::vector&lt;A&gt; vA;
-    vA.push_back(std::move(a));
-}
-
-void baz(A&amp; a) {
-    std::vector&lt;A&gt; vA;
-    vA.push_back(std::move(a));
-}
-
-int main() {
-    A a;
-    foo(a);            // &quot;copy&quot;
-    foo(std::move(a)); // &quot;copy&quot;
-    bar(std::move(a)); // &quot;move&quot;
-    //baz(std::move(a)); // compilation error!!
-}
-</code></pre>
-<p>origin: Does <code>std::move</code> work with lvalue references?<br>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;vector&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;iostream&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">A</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> a[<span style="color:#ae81ff">100</span>];
+</span></span><span style="display:flex;"><span>    A() {}
+</span></span><span style="display:flex;"><span>    A(<span style="color:#66d9ef">const</span> A<span style="color:#f92672">&amp;</span> other) {
+</span></span><span style="display:flex;"><span>        std<span style="color:#f92672">::</span>cout <span style="color:#f92672">&lt;&lt;</span> <span style="color:#e6db74">&#34;copy&#34;</span> <span style="color:#f92672">&lt;&lt;</span> std<span style="color:#f92672">::</span>endl;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    A(A<span style="color:#f92672">&amp;&amp;</span> other) {
+</span></span><span style="display:flex;"><span>        std<span style="color:#f92672">::</span>cout <span style="color:#f92672">&lt;&lt;</span> <span style="color:#e6db74">&#34;move&#34;</span> <span style="color:#f92672">&lt;&lt;</span> std<span style="color:#f92672">::</span>endl;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">foo</span>(<span style="color:#66d9ef">const</span> A<span style="color:#f92672">&amp;</span> a) {
+</span></span><span style="display:flex;"><span>    std<span style="color:#f92672">::</span>vector<span style="color:#f92672">&lt;</span>A<span style="color:#f92672">&gt;</span> vA;
+</span></span><span style="display:flex;"><span>    vA.push_back(std<span style="color:#f92672">::</span>move(a));
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">bar</span>(A<span style="color:#f92672">&amp;&amp;</span> a) {
+</span></span><span style="display:flex;"><span>    std<span style="color:#f92672">::</span>vector<span style="color:#f92672">&lt;</span>A<span style="color:#f92672">&gt;</span> vA;
+</span></span><span style="display:flex;"><span>    vA.push_back(std<span style="color:#f92672">::</span>move(a));
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">baz</span>(A<span style="color:#f92672">&amp;</span> a) {
+</span></span><span style="display:flex;"><span>    std<span style="color:#f92672">::</span>vector<span style="color:#f92672">&lt;</span>A<span style="color:#f92672">&gt;</span> vA;
+</span></span><span style="display:flex;"><span>    vA.push_back(std<span style="color:#f92672">::</span>move(a));
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">main</span>() {
+</span></span><span style="display:flex;"><span>    A a;
+</span></span><span style="display:flex;"><span>    foo(a);            <span style="color:#75715e">// &#34;copy&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    foo(std<span style="color:#f92672">::</span>move(a)); <span style="color:#75715e">// &#34;copy&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    bar(std<span style="color:#f92672">::</span>move(a)); <span style="color:#75715e">// &#34;move&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">//baz(std::move(a)); // compilation error!!
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span></code></pre></div><p>origin: Does <code>std::move</code> work with lvalue references?<br>
 <a href="https://stackoverflow.com/a/49305927/1645289">https://stackoverflow.com/a/49305927/1645289</a></p>
 <hr>
 <p><code>当我们表达的时候，我们应当像文学一样说话，而不让文学像我们的生活一样。</code></p>
@@ -561,7 +564,7 @@ int main() {
     
     <h4 id="about-card-name">Wang Aiguo</h4>
     
-      <div id="about-card-bio">雕弓犹指北斗，金戈沉沙谁收？</div>
+      <div id="about-card-bio">霜岭弓鸣箭裂，青城骨铸边月。</div>
     
     
       <div id="about-card-job">

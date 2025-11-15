@@ -31,7 +31,7 @@
     <meta property="article:published_time" content="2025-06-22T22:52:40">
   
   
-    <meta property="article:modified_time" content="2025-06-29T15:11:58">
+    <meta property="article:modified_time" content="2025-09-02T10:44:27">
   
   
   
@@ -54,8 +54,8 @@
 
 
 
-  <meta property="og:image" content="https://dawnarc.com/thumbnail/cover-beijing.jpg">
-  <meta property="twitter:image" content="https://dawnarc.com/thumbnail/cover-beijing.jpg">
+  <meta property="og:image" content="https://dawnarc.com/thumbnail/beijing/thumbnail-beijing-015.jpg">
+  <meta property="twitter:image" content="https://dawnarc.com/thumbnail/beijing/thumbnail-beijing-015.jpg">
 
 
 
@@ -126,7 +126,7 @@
           
         </a>
         <h4 class="sidebar-profile-name">Wang Aiguo</h4>
-        <h5 class="sidebar-profile-bio">雕弓犹指北斗，金戈沉沙谁收？</h5>
+        <h5 class="sidebar-profile-bio">霜岭弓鸣箭裂，青城骨铸边月。</h5>
       </div>
     <ul class="sidebar-buttons">
       
@@ -350,8 +350,23 @@
                      (adsbygoogle = window.adsbygoogle || []).push({});
                 </script>
               <p>keywords: Docker, Common Issues Collection</p>
-<p><img src="https://dawnarc.com/recruit_info.png" alt="slogan_image"></p>
-<h3 id="issues">Issues</h3>
+<p><img src="https://dawnarc.com/GSZM-TW.png" alt="slogan_image"></p>
+<h3 id="command">Command</h3>
+<h5 id="common-commands">Common Commands</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>docker run  <span style="color:#75715e"># Run a command in a **new** container</span>
+</span></span><span style="display:flex;"><span>docker start  <span style="color:#75715e"># Start one or more stopped containers</span>
+</span></span></code></pre></div><h3 id="issues">Issues</h3>
+<h5 id="docker-data-directory-mapping-to-data-driven-disk">Docker data directory mapping to data driven disk</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>systemctl stop docker <span style="color:#75715e">#停止docker服务</span>
+</span></span><span style="display:flex;"><span>mv /var/lib/docker /data/ <span style="color:#75715e">#将docker数据目录移动到/data目录下</span>
+</span></span><span style="display:flex;"><span>ln -s /data/docker /var/lib/docker <span style="color:#75715e">#制作软连接映射，将数据盘下的docker目录映射为原docker目录</span>
+</span></span></code></pre></div><p>重新启动docker，并查看docker版本</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>systemctl start docker <span style="color:#75715e">#启动docker服务</span>
+</span></span><span style="display:flex;"><span>docker --version <span style="color:#75715e">#查看docker服务版本</span>
+</span></span></code></pre></div><pre tabindex="0"><code class="language-log" data-lang="log">Docker version 1.13.1, build 092cba3
+</code></pre><p>References:<br>
+<a href="https://developer.aliyun.com/article/474899">一机玩docker之一：数据盘安装docker</a><br>
+<a href="https://www.icorgi.cn/2025/03/08/602.html">Centos7将Docker 安装到数据盘</a></p>
 <h5 id="unable-to-find-image-latest-locally">Unable to find image latest locally</h5>
 <p>Error:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#f92672">[</span>root ~<span style="color:#f92672">]</span><span style="color:#75715e"># docker run -itd --name mysql-dev -p 3306:3306 -e MYSQL_ROOT_PASSWORD=123456 mysql</span>
@@ -368,8 +383,27 @@ Use a host that has ability (for example, a virtual network card that can access
 <p>Local PC (e.g. Windows 11):</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>docker pull mariadb:latest
 </span></span><span style="display:flex;"><span>docker save -o E:/mariadb.tar.gz mariadb:latest
-</span></span></code></pre></div><p>Linux:</p>
+</span></span></code></pre></div><p>Server (e.g. Linux):</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>docker load -i mariadb.tar.gz
+</span></span></code></pre></div><h5 id="修改容器内的配置文件redismysql等">修改容器内的配置文件（redis、mysql等）</h5>
+<p>原文：Docker修改容器内部文件的三种方法<br>
+<a href="https://blog.csdn.net/km_bandits/article/details/135568339">https://blog.csdn.net/km_bandits/article/details/135568339</a></p>
+<p><strong>1、进入容器内部修改</strong><br>
+使用下面的命令以命令行的形式可以进入容器的内部对文件进行修改。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>docker exec -it 容器ID /bin/bash
+</span></span></code></pre></div><p>不过里面没有vim，需要自行安装，安装代码如下所示。不过不推荐这种形式，因为里边的文件是临时的，容器被删除之后，配置就失效了，需要从新配置。</p>
+<p><strong>2、通过docker cp拷贝进行修改</strong><br>
+可以通过下面的代码将需要修改的文件拷贝出来，修改完成之后再拷贝回去。这种方式其实和第一种差不多，只是不用安装vim，但是容器被删除之后，修改过的内容也会失效。而且需要重启容器才能生效（好像）</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e">#将容器中的文件拷贝出来</span>
+</span></span><span style="display:flex;"><span>sudo docker cp 容器ID:/etc/mysql/my.cnf /home/tom/
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#将容器中的文件拷贝回去</span>
+</span></span><span style="display:flex;"><span>sudo docker cp /home/tom/my.cnf  容器ID:/etc/mysql/
+</span></span></code></pre></div><p><strong>3、使用-v挂载文件夹(推荐)</strong><br>
+最后一种方法是在启动的时候使用-v将容器内部的文件夹挂载（映射）到本地的某个路径下，以后以后可以直接在本地修改，不需要进入容器内部.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e">#冒号前是本地路径（需要绝对路径），冒号后是容器中的路径</span>
+</span></span><span style="display:flex;"><span>$ docker run --name mytomcat -v /home/www/webapps:/usr/local/tomcat/webapps -d tomcat
+</span></span></code></pre></div><p><strong>最后重启容器（必须要重启，才能生效）</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>docker restart 容器id
 </span></span></code></pre></div><hr>
 <p><code>战国战争史：济西之战（五国伐齐）</code><br>
 <code>五国伐齐是指公元前284年，燕国将领乐毅统率燕、秦、赵、韩、魏五国联军及被其策反的楚军共同攻打齐国的一场战争。五国在短时间内攻下齐国70余城，直入齐国都城临淄（今山东省淄博市临淄区）。</code><br>
@@ -398,7 +432,7 @@ Use a host that has ability (for example, a virtual network card that can access
           
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--disabled">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2025/11/gamedesignsurrealism-video-games-collectoin/" data-tooltip="[GameDesign]Surrealism Video Games Collectoin">
               
                   <i class="fa fa-angle-left"></i>
                   
@@ -464,7 +498,7 @@ Use a host that has ability (for example, a virtual network card that can access
           
             <li class="post-action">
               
-                <a class="post-action-btn btn btn--disabled">
+                <a class="post-action-btn btn btn--default tooltip--top" href="https://dawnarc.com/2025/11/gamedesignsurrealism-video-games-collectoin/" data-tooltip="[GameDesign]Surrealism Video Games Collectoin">
               
                   <i class="fa fa-angle-left"></i>
                   
@@ -527,7 +561,7 @@ Use a host that has ability (for example, a virtual network card that can access
     
     <h4 id="about-card-name">Wang Aiguo</h4>
     
-      <div id="about-card-bio">雕弓犹指北斗，金戈沉沙谁收？</div>
+      <div id="about-card-bio">霜岭弓鸣箭裂，青城骨铸边月。</div>
     
     
       <div id="about-card-job">

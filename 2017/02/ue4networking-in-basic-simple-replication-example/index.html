@@ -31,7 +31,7 @@
     <meta property="article:published_time" content="2017-02-25T20:33:40">
   
   
-    <meta property="article:modified_time" content="2025-05-09T11:01:09">
+    <meta property="article:modified_time" content="2025-09-05T17:09:30">
   
   
   
@@ -126,7 +126,7 @@
           
         </a>
         <h4 class="sidebar-profile-name">Wang Aiguo</h4>
-        <h5 class="sidebar-profile-bio">雕弓犹指北斗，金戈沉沙谁收？</h5>
+        <h5 class="sidebar-profile-bio">霜岭弓鸣箭裂，青城骨铸边月。</h5>
       </div>
     <ul class="sidebar-buttons">
       
@@ -350,7 +350,7 @@
                      (adsbygoogle = window.adsbygoogle || []).push({});
                 </script>
               <p>keywords：UE4, Replication, Relicate, Reliable, RPC, RTS Movement, Dedicated Server, 专用服务器</p>
-<p><img src="https://dawnarc.com/recruit_info.png" alt="slogan_image"></p>
+<p><img src="https://dawnarc.com/GSZM-TW.png" alt="slogan_image"></p>
 <div class="alert success ">
   <p>实例的完整工程下载地址见文章底部。</p>
 </div>
@@ -358,32 +358,28 @@
 <h5 id="属性同步基本用法">属性同步基本用法</h5>
 <p>步骤：<br>
 1，对属性添加<code>UPROPERTY(Replicated)</code>宏：</p>
-<pre><code>//Player display name
-UPROPERTY(Replicated)
-    FString Alias_;
-</code></pre>
-<p>2，属性所在的class中重写函数<code>GetLifetimeReplicatedProps</code>：<br>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">//Player display name
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>UPROPERTY(Replicated)
+</span></span><span style="display:flex;"><span>    FString Alias_;
+</span></span></code></pre></div><p>2，属性所在的class中重写函数<code>GetLifetimeReplicatedProps</code>：<br>
 需要头文件：</p>
-<pre><code>#include &quot;Net/UnrealNetwork.h&quot;
-</code></pre>
-<p>重写函数：</p>
-<pre><code>void AReplTestCharacter::GetLifetimeReplicatedProps(TArray&lt; FLifetimeProperty &gt; &amp; OutLifetimeProps) const
-{
-    Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-    DOREPLIFETIME(AReplTestCharacter, Alias_);
-}
-</code></pre>
-<h5 id="属性同步扩展用法">属性同步扩展用法</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;Net/UnrealNetwork.h&#34;</span><span style="color:#75715e">
+</span></span></span></code></pre></div><p>重写函数：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> AReplTestCharacter<span style="color:#f92672">::</span>GetLifetimeReplicatedProps(TArray<span style="color:#f92672">&lt;</span> FLifetimeProperty <span style="color:#f92672">&gt;</span> <span style="color:#f92672">&amp;</span> OutLifetimeProps) <span style="color:#66d9ef">const</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    Super<span style="color:#f92672">::</span>GetLifetimeReplicatedProps(OutLifetimeProps);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    DOREPLIFETIME(AReplTestCharacter, Alias_);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h5 id="属性同步扩展用法">属性同步扩展用法</h5>
 <p>如何为同步属性添加回调函数？</p>
 <p>用法：</p>
-<pre><code>UPROPERTY(ReplicatedUsing = OnHPChanged)
-    float HealthPoint;
-    
-UFUNCTION()
-    void OnHPChanged();
-</code></pre>
-<div class="alert info ">
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>UPROPERTY(ReplicatedUsing <span style="color:#f92672">=</span> OnHPChanged)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">float</span> HealthPoint;
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>UFUNCTION()
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">void</span> OnHPChanged();
+</span></span></code></pre></div><div class="alert info ">
   <p><code>ReplicatedUsing</code>只在客户端执行，服务端不执行。客户端相关表现逻辑可以放在<code>ReplicatedUsing</code>回调函数。另外函数需要添加<code>UFUNCTION</code>。</p>
 </div>
 <p>蓝图对应的标记叫<code>RepNotify</code><br>
@@ -392,24 +388,22 @@ UFUNCTION()
 <p>步骤：<br>
 1，对需要远程执行的函数添加宏UFUNCTION(Server, Reliable, WithValidation)或者UFUNCTION(Client, Reliable)。其中Server表示在客户端调用，在服务端执行；WithValidation表示是否需要验证函数，加上的画需要添加函数：bool MyFun_Validate()，函数体内容写在MyFun_Implementation函数内。cpp中不需要与函数名同名的函数体，只需要实现_Validate和_Implementation两个函数即可。
 头文件：</p>
-<pre><code>//移动角色(只在服务端执行的函数)
-UFUNCTION(Server, Reliable, WithValidation)
-    void ServerMoveToDest(APawn* Panw, const FVector DestLocation);
-bool ServerMoveToDest_Validate(APawn* Panw, const FVector DestLocation);
-void ServerMoveToDest_Implementation(APawn* Panw, const FVector DestLocation);
-</code></pre>
-<p>CPP：</p>
-<pre><code>bool AReplTestPlayerController::ServerMoveToDest_Validate(APawn* Panw, const FVector DestLocation)
-{
-    return true;
-}
-
-void AReplTestPlayerController::ServerMoveToDest_Implementation(APawn* Pawn, const FVector DestLocation)
-{
-    //logic...
-}
-</code></pre>
-<h5 id="三种-rpc-函数区别">三种 RPC 函数区别</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">//移动角色(只在服务端执行的函数)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>UFUNCTION(Server, Reliable, WithValidation)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">void</span> ServerMoveToDest(APawn<span style="color:#f92672">*</span> Panw, <span style="color:#66d9ef">const</span> FVector DestLocation);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">bool</span> <span style="color:#a6e22e">ServerMoveToDest_Validate</span>(APawn<span style="color:#f92672">*</span> Panw, <span style="color:#66d9ef">const</span> FVector DestLocation);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">ServerMoveToDest_Implementation</span>(APawn<span style="color:#f92672">*</span> Panw, <span style="color:#66d9ef">const</span> FVector DestLocation);
+</span></span></code></pre></div><p>CPP：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">bool</span> AReplTestPlayerController<span style="color:#f92672">::</span>ServerMoveToDest_Validate(APawn<span style="color:#f92672">*</span> Panw, <span style="color:#66d9ef">const</span> FVector DestLocation)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> true;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> AReplTestPlayerController<span style="color:#f92672">::</span>ServerMoveToDest_Implementation(APawn<span style="color:#f92672">*</span> Pawn, <span style="color:#66d9ef">const</span> FVector DestLocation)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//logic...
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span></code></pre></div><h5 id="三种-rpc-函数区别">三种 RPC 函数区别</h5>
 <ul>
 <li>UFUNCTION(Server, Reliable, WithValidation) 客户端请求，服务端执行。<br>
 使用场景：涉及到数据安全的行为，比如：砍一刀扣血，扣血条件判定以及血量修改，都应该放在服务端执行。</li>
@@ -450,18 +444,16 @@ Since the server can own actors itself, a &ldquo;Run on Owning Client&rdquo; eve
 </ul>
 <p>判断当前网络模式是否为Dedicated Server或者Client的API：<br>
 蓝图接口：</p>
-<pre><code>bool UKismetSystemLibrary::IsServer(const UObject* WorldContextObject)
-
-bool UKismetSystemLibrary::IsDedicatedServer(const UObject* WorldContextObject)
-
-bool UKismetSystemLibrary::IsStandalone(const UObject* WorldContextObject)
-</code></pre>
-<p>C++接口：</p>
-<pre><code>//CoreMisc.h下的全局函数
-bool IsRunningDedicatedServer()
-bool IsRunningClientOnly()
-</code></pre>
-<p>如果通过editor启动游戏：
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">bool</span> UKismetSystemLibrary<span style="color:#f92672">::</span>IsServer(<span style="color:#66d9ef">const</span> UObject<span style="color:#f92672">*</span> WorldContextObject)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">bool</span> UKismetSystemLibrary<span style="color:#f92672">::</span>IsDedicatedServer(<span style="color:#66d9ef">const</span> UObject<span style="color:#f92672">*</span> WorldContextObject)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">bool</span> UKismetSystemLibrary<span style="color:#f92672">::</span>IsStandalone(<span style="color:#66d9ef">const</span> UObject<span style="color:#f92672">*</span> WorldContextObject)
+</span></span></code></pre></div><p>C++接口：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">//CoreMisc.h下的全局函数
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">bool</span> IsRunningDedicatedServer()
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">bool</span> IsRunningClientOnly()
+</span></span></code></pre></div><p>如果通过editor启动游戏：
 <div class="alert warning ">
   <p><ul>
 <li><code>IsRunningDedicatedServer()</code>返回<code>true</code>的前提是命令行包含参数<code>-server</code>；</li>
@@ -482,13 +474,12 @@ bool IsRunningClientOnly()
   <p>服务端<code>SpawnActor</code>创建的Character，若开启了Replication，则其在客户端会生成一个<code>ROLE_SimulatedProxy</code>的Character，此时在服务端用其对应的PlayerController对其Possess，则该客户端Character的Role会变成<code>ROLE_AutonomousProxy</code>。</p>
 </div>
 <p>从执行<code>Possess</code>到<code>Role</code>被修改为<code>ROLE_AutonomousProxy</code>的堆栈：</p>
-<pre><code>UE4Editor-Engine.dll!AActor::SetAutonomousProxy(const bool bInAutonomousProxy, const bool bAllowForcePropertyCompare) Line 3268    C++
+<pre tabindex="0"><code class="language-Log" data-lang="Log">UE4Editor-Engine.dll!AActor::SetAutonomousProxy(const bool bInAutonomousProxy, const bool bAllowForcePropertyCompare) Line 3268    C++
 UE4Editor-Engine.dll!APawn::PossessedBy(AController * NewController) Line 511    C++
 UE4Editor-Engine.dll!ACharacter::PossessedBy(AController * NewController) Line 822    C++
 UE4Editor-Engine.dll!APlayerController::OnPossess(APawn * PawnToPossess) Line 770    C++
 UE4Editor-Engine.dll!AController::Possess(APawn * InPawn) Line 293    C++
-</code></pre>
-<h3 id="同步相关的常见问题">同步相关的常见问题</h3>
+</code></pre><h3 id="同步相关的常见问题">同步相关的常见问题</h3>
 <h5 id="如何让一个role_simulatedproxy对象变成role_autonomousproxy">如何让一个ROLE_SimulatedProxy对象变成ROLE_AutonomousProxy</h5>
 <div class="alert info ">
   <p>先补充一个概念：服务端连接（非官方文档，自己通过实践后的理解），比如，<code>AGameModeBase::PostLogin(APlayerController* NewPlayer)</code>中的<code>PlayerController</code>就是拥有服务端连接的对象，在服务端，其可以调用Client function且能保证该Client function在客户端执行；在客户端，其也有权限调用 Server function且能保证该Server function在服务端执行。</p>
@@ -552,150 +543,143 @@ UE4Editor-Engine.dll!AController::Possess(APawn * InPawn) Line 293    C++
 </ul>
 <h5 id="关键函数">关键函数</h5>
 <p>1，客户端登陆</p>
-<pre><code>void UMyUserWidget::OnBtnLoginClick()
-{
-    if (APlayerController* PC = GetWorld()-&gt;GetFirstPlayerController())
-    {
-        FString URL = FString::Printf(TEXT(&quot;%s:%s?Alias=%s&quot;), *(TxtServerIP-&gt;GetText().ToString()), *(TxtServerPort-&gt;GetText().ToString()), *(TxtUsername-&gt;GetText().ToString()));
-        PC-&gt;ClientTravel(*URL, TRAVEL_Absolute);
-    }
-}
-</code></pre>
-<p>拒绝非法登陆请求：</p>
-<pre><code>void AFPSGameMode::PreLogin(const FString&amp; Options, const FString&amp; Address, const FUniqueNetIdRepl&amp; UniqueId, FString&amp; ErrorMessage)
-{
-    Super::PreLogin(Options, Address, UniqueId, ErrorMessage);
-
-    FString UserName = UGameplayStatics::ParseOption(Options, TEXT(&quot;UserName&quot;)).TrimStart().TrimEnd();
-    if (UserName.Len() == 0 || UserMap.Find(UserName))
-    {
-        //deny client's login request.
-        ErrorMessage = TEXT(&quot;User login repeatly!&quot;);
-    }
-}
-</code></pre>
-<p>将<code>ErrorMessage</code>设置为非空字符串，就表示拒绝客户端的链接。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> UMyUserWidget<span style="color:#f92672">::</span>OnBtnLoginClick()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (APlayerController<span style="color:#f92672">*</span> PC <span style="color:#f92672">=</span> GetWorld()<span style="color:#f92672">-&gt;</span>GetFirstPlayerController())
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        FString URL <span style="color:#f92672">=</span> FString<span style="color:#f92672">::</span>Printf(TEXT(<span style="color:#e6db74">&#34;%s:%s?Alias=%s&#34;</span>), <span style="color:#f92672">*</span>(TxtServerIP<span style="color:#f92672">-&gt;</span>GetText().ToString()), <span style="color:#f92672">*</span>(TxtServerPort<span style="color:#f92672">-&gt;</span>GetText().ToString()), <span style="color:#f92672">*</span>(TxtUsername<span style="color:#f92672">-&gt;</span>GetText().ToString()));
+</span></span><span style="display:flex;"><span>        PC<span style="color:#f92672">-&gt;</span>ClientTravel(<span style="color:#f92672">*</span>URL, TRAVEL_Absolute);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>拒绝非法登陆请求：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> AFPSGameMode<span style="color:#f92672">::</span>PreLogin(<span style="color:#66d9ef">const</span> FString<span style="color:#f92672">&amp;</span> Options, <span style="color:#66d9ef">const</span> FString<span style="color:#f92672">&amp;</span> Address, <span style="color:#66d9ef">const</span> FUniqueNetIdRepl<span style="color:#f92672">&amp;</span> UniqueId, FString<span style="color:#f92672">&amp;</span> ErrorMessage)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    Super<span style="color:#f92672">::</span>PreLogin(Options, Address, UniqueId, ErrorMessage);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    FString UserName <span style="color:#f92672">=</span> UGameplayStatics<span style="color:#f92672">::</span>ParseOption(Options, TEXT(<span style="color:#e6db74">&#34;UserName&#34;</span>)).TrimStart().TrimEnd();
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (UserName.Len() <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span> <span style="color:#f92672">||</span> UserMap.Find(UserName))
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//deny client&#39;s login request.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        ErrorMessage <span style="color:#f92672">=</span> TEXT(<span style="color:#e6db74">&#34;User login repeatly!&#34;</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>将<code>ErrorMessage</code>设置为非空字符串，就表示拒绝客户端的链接。</p>
 <p>2，GameMode::InitNewPlayer()，处理登陆请求时的自定义参数，比如账号名和密码。</p>
-<pre><code>FString AReplTestGameMode::InitNewPlayer(APlayerController* NewPlayerController, const FUniqueNetIdRepl&amp; UniqueId, const FString&amp; Options, const FString&amp; Portal)
-{
-    FString Rs = Super::InitNewPlayer(NewPlayerController, UniqueId, Options, Portal);
-    if (AReplTestPlayerController* RTPC = Cast&lt;AReplTestPlayerController&gt;(NewPlayerController))
-    {
-        FString Alias = UGameplayStatics::ParseOption(Options, TEXT(&quot;Alias&quot;)).Trim();
-        if (Alias.Len() == 0 || AliasMap.Find(Alias))
-        {
-            return Rs;
-        }
-
-        RTPC-&gt;SetPlayerAlias(Alias);
-        
-        PlayerData Data;
-        Data.Alias = Alias;
-        AliasMap.Add(Alias, Data);
-    }
-
-    return Rs;
-}
-</code></pre>
-<p>3，GameMode::PostLogin()，登陆完成后的回调函数，创建角色可以放在这个函数中处理。</p>
-<pre><code>void AReplTestGameMode::PostLogin(APlayerController* NewPlayer)
-{
-    Super::PostLogin(NewPlayer);
-
-    if (GetNetMode() == NM_DedicatedServer)
-    {
-        PlayerCount++;
-        if (CharClass)
-        {
-            if (AReplTestCharacter* Player = GetWorld()-&gt;SpawnActor&lt;AReplTestCharacter&gt;(CharClass, SpawnLoc, SpawnRot))
-            {
-                PlayerList.Add(Player);
-
-                /*if (AMyAIController* AIC = GetWorld()-&gt;SpawnActor&lt;AMyAIController&gt;(SpawnLoc, SpawnRot))
-                {
-                    AIC-&gt;Possess(Player);
-                }*/
-
-                Player-&gt;SpawnDefaultController();
-
-                //设置角色的显示名称
-                if (AReplTestPlayerController* RTPC = Cast&lt;AReplTestPlayerController&gt;(NewPlayer))
-                {
-                    if (PlayerData* Data = AliasMap.Find(RTPC-&gt;PlayerAlias()))
-                    {
-                        Player-&gt;SetAlias(*(Data-&gt;Alias));
-                        Data-&gt;RTC = Player;
-
-                        if (AMyAIController* AIC = Cast&lt;AMyAIController&gt;(Player-&gt;GetController()))
-                        {
-                            AIC-&gt;SetPlayerAlias(Data-&gt;Alias);
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-</code></pre>
-<p>4，Character::BeginPlay()，当创建的Character进入场景时的回调函数，绑定摄像机的逻辑可以放在这个函数中</p>
-<pre><code>void AReplTestCharacter::BeginPlay()
-{
-    Super::BeginPlay();
-    if (ROLE_SimulatedProxy == Role &amp;&amp; NM_Client == GetNetMode())
-    {
-        if (APlayerController* PC = GetWorld()-&gt;GetFirstPlayerController())
-        {
-            if (AReplTestPlayerController* RTPC = Cast&lt;AReplTestPlayerController&gt;(PC))
-            {
-                //因为一个客户端首次加载时会有多个玩家的角色进入场景，这里判断哪个角色才是当前客户端的
-                if (Alias_ == RTPC-&gt;PlayerAlias())
-                {
-                    PC-&gt;SetViewTarget(this);
-                    RTPC-&gt;SetSimulatedCharacter(this);
-                }
-            }
-        }
-    }
-}
-</code></pre>
-<p>5，客户端判断鼠标点击事件，这里加了一个保护，如果鼠标前后两次点击的坐标距离相差小于120，则不向服务端发送位移请求，防止频繁点击时发送消息太频繁。</p>
-<pre><code>void AReplTestPlayerController::MoveToMouseCursor()
-{
-    // Trace to see what is under the mouse cursor
-    FHitResult Hit;
-    GetHitResultUnderCursor(ECC_Visibility, false, Hit);
-
-    if (Hit.bBlockingHit)
-    {
-        if (FVector::Dist(LastDestLoc, Hit.ImpactPoint) &gt; 120)
-        {
-            LastDestLoc = Hit.ImpactPoint;
-            SetNewMoveDestination(Hit.ImpactPoint);
-        }
-    }
-}
-</code></pre>
-<p>6，服务端处理Move请求的函数，ServerMoveToDest_Validate判断请求的逻辑是否合法：Pawn是不是当前客户端操控的角色，防止操控其他玩家的角色。</p>
-<pre><code>bool AReplTestPlayerController::ServerMoveToDest_Validate(APawn* Pawn, const FVector DestLocation)
-{
-    //判断请求是否非法，不允许当前客户端操控其他客户端的角色
-    bool Rs = false;
-    if (AReplTestCharacter* RTC = Cast&lt;AReplTestCharacter&gt;(Pawn))
-    {
-        Rs = RTC-&gt;Alias() == PlayerAlias();
-    }
-    return Rs;
-}
-
-void AReplTestPlayerController::ServerMoveToDest_Implementation(APawn* Pawn, const FVector DestLocation)
-{
-    if (AMyAIController* AIC = Cast&lt;AMyAIController&gt;(Pawn-&gt;GetController()))
-    {
-        AIC-&gt;MoveToLocation(DestLocation);
-    }
-}
-</code></pre>
-<h3 id="注意事项">注意事项：</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>FString AReplTestGameMode<span style="color:#f92672">::</span>InitNewPlayer(APlayerController<span style="color:#f92672">*</span> NewPlayerController, <span style="color:#66d9ef">const</span> FUniqueNetIdRepl<span style="color:#f92672">&amp;</span> UniqueId, <span style="color:#66d9ef">const</span> FString<span style="color:#f92672">&amp;</span> Options, <span style="color:#66d9ef">const</span> FString<span style="color:#f92672">&amp;</span> Portal)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    FString Rs <span style="color:#f92672">=</span> Super<span style="color:#f92672">::</span>InitNewPlayer(NewPlayerController, UniqueId, Options, Portal);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (AReplTestPlayerController<span style="color:#f92672">*</span> RTPC <span style="color:#f92672">=</span> Cast<span style="color:#f92672">&lt;</span>AReplTestPlayerController<span style="color:#f92672">&gt;</span>(NewPlayerController))
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        FString Alias <span style="color:#f92672">=</span> UGameplayStatics<span style="color:#f92672">::</span>ParseOption(Options, TEXT(<span style="color:#e6db74">&#34;Alias&#34;</span>)).Trim();
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (Alias.Len() <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span> <span style="color:#f92672">||</span> AliasMap.Find(Alias))
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> Rs;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        RTPC<span style="color:#f92672">-&gt;</span>SetPlayerAlias(Alias);
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        PlayerData Data;
+</span></span><span style="display:flex;"><span>        Data.Alias <span style="color:#f92672">=</span> Alias;
+</span></span><span style="display:flex;"><span>        AliasMap.Add(Alias, Data);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> Rs;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>3，GameMode::PostLogin()，登陆完成后的回调函数，创建角色可以放在这个函数中处理。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> AReplTestGameMode<span style="color:#f92672">::</span>PostLogin(APlayerController<span style="color:#f92672">*</span> NewPlayer)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    Super<span style="color:#f92672">::</span>PostLogin(NewPlayer);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (GetNetMode() <span style="color:#f92672">==</span> NM_DedicatedServer)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        PlayerCount<span style="color:#f92672">++</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (CharClass)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (AReplTestCharacter<span style="color:#f92672">*</span> Player <span style="color:#f92672">=</span> GetWorld()<span style="color:#f92672">-&gt;</span>SpawnActor<span style="color:#f92672">&lt;</span>AReplTestCharacter<span style="color:#f92672">&gt;</span>(CharClass, SpawnLoc, SpawnRot))
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                PlayerList.Add(Player);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>                <span style="color:#75715e">/*if (AMyAIController* AIC = GetWorld()-&gt;SpawnActor&lt;AMyAIController&gt;(SpawnLoc, SpawnRot))
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">                {
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">                    AIC-&gt;Possess(Player);
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">                }*/</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>                Player<span style="color:#f92672">-&gt;</span>SpawnDefaultController();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>                <span style="color:#75715e">//设置角色的显示名称
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>                <span style="color:#66d9ef">if</span> (AReplTestPlayerController<span style="color:#f92672">*</span> RTPC <span style="color:#f92672">=</span> Cast<span style="color:#f92672">&lt;</span>AReplTestPlayerController<span style="color:#f92672">&gt;</span>(NewPlayer))
+</span></span><span style="display:flex;"><span>                {
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">if</span> (PlayerData<span style="color:#f92672">*</span> Data <span style="color:#f92672">=</span> AliasMap.Find(RTPC<span style="color:#f92672">-&gt;</span>PlayerAlias()))
+</span></span><span style="display:flex;"><span>                    {
+</span></span><span style="display:flex;"><span>                        Player<span style="color:#f92672">-&gt;</span>SetAlias(<span style="color:#f92672">*</span>(Data<span style="color:#f92672">-&gt;</span>Alias));
+</span></span><span style="display:flex;"><span>                        Data<span style="color:#f92672">-&gt;</span>RTC <span style="color:#f92672">=</span> Player;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>                        <span style="color:#66d9ef">if</span> (AMyAIController<span style="color:#f92672">*</span> AIC <span style="color:#f92672">=</span> Cast<span style="color:#f92672">&lt;</span>AMyAIController<span style="color:#f92672">&gt;</span>(Player<span style="color:#f92672">-&gt;</span>GetController()))
+</span></span><span style="display:flex;"><span>                        {
+</span></span><span style="display:flex;"><span>                            AIC<span style="color:#f92672">-&gt;</span>SetPlayerAlias(Data<span style="color:#f92672">-&gt;</span>Alias);
+</span></span><span style="display:flex;"><span>                        }
+</span></span><span style="display:flex;"><span>                    }
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>4，Character::BeginPlay()，当创建的Character进入场景时的回调函数，绑定摄像机的逻辑可以放在这个函数中</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> AReplTestCharacter<span style="color:#f92672">::</span>BeginPlay()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    Super<span style="color:#f92672">::</span>BeginPlay();
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (ROLE_SimulatedProxy <span style="color:#f92672">==</span> Role <span style="color:#f92672">&amp;&amp;</span> NM_Client <span style="color:#f92672">==</span> GetNetMode())
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (APlayerController<span style="color:#f92672">*</span> PC <span style="color:#f92672">=</span> GetWorld()<span style="color:#f92672">-&gt;</span>GetFirstPlayerController())
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (AReplTestPlayerController<span style="color:#f92672">*</span> RTPC <span style="color:#f92672">=</span> Cast<span style="color:#f92672">&lt;</span>AReplTestPlayerController<span style="color:#f92672">&gt;</span>(PC))
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                <span style="color:#75715e">//因为一个客户端首次加载时会有多个玩家的角色进入场景，这里判断哪个角色才是当前客户端的
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>                <span style="color:#66d9ef">if</span> (Alias_ <span style="color:#f92672">==</span> RTPC<span style="color:#f92672">-&gt;</span>PlayerAlias())
+</span></span><span style="display:flex;"><span>                {
+</span></span><span style="display:flex;"><span>                    PC<span style="color:#f92672">-&gt;</span>SetViewTarget(<span style="color:#66d9ef">this</span>);
+</span></span><span style="display:flex;"><span>                    RTPC<span style="color:#f92672">-&gt;</span>SetSimulatedCharacter(<span style="color:#66d9ef">this</span>);
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>5，客户端判断鼠标点击事件，这里加了一个保护，如果鼠标前后两次点击的坐标距离相差小于120，则不向服务端发送位移请求，防止频繁点击时发送消息太频繁。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> AReplTestPlayerController<span style="color:#f92672">::</span>MoveToMouseCursor()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Trace to see what is under the mouse cursor
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    FHitResult Hit;
+</span></span><span style="display:flex;"><span>    GetHitResultUnderCursor(ECC_Visibility, false, Hit);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (Hit.bBlockingHit)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (FVector<span style="color:#f92672">::</span>Dist(LastDestLoc, Hit.ImpactPoint) <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">120</span>)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            LastDestLoc <span style="color:#f92672">=</span> Hit.ImpactPoint;
+</span></span><span style="display:flex;"><span>            SetNewMoveDestination(Hit.ImpactPoint);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>6，服务端处理Move请求的函数，ServerMoveToDest_Validate判断请求的逻辑是否合法：Pawn是不是当前客户端操控的角色，防止操控其他玩家的角色。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">bool</span> AReplTestPlayerController<span style="color:#f92672">::</span>ServerMoveToDest_Validate(APawn<span style="color:#f92672">*</span> Pawn, <span style="color:#66d9ef">const</span> FVector DestLocation)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//判断请求是否非法，不允许当前客户端操控其他客户端的角色
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">bool</span> Rs <span style="color:#f92672">=</span> false;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (AReplTestCharacter<span style="color:#f92672">*</span> RTC <span style="color:#f92672">=</span> Cast<span style="color:#f92672">&lt;</span>AReplTestCharacter<span style="color:#f92672">&gt;</span>(Pawn))
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        Rs <span style="color:#f92672">=</span> RTC<span style="color:#f92672">-&gt;</span>Alias() <span style="color:#f92672">==</span> PlayerAlias();
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> Rs;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> AReplTestPlayerController<span style="color:#f92672">::</span>ServerMoveToDest_Implementation(APawn<span style="color:#f92672">*</span> Pawn, <span style="color:#66d9ef">const</span> FVector DestLocation)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (AMyAIController<span style="color:#f92672">*</span> AIC <span style="color:#f92672">=</span> Cast<span style="color:#f92672">&lt;</span>AMyAIController<span style="color:#f92672">&gt;</span>(Pawn<span style="color:#f92672">-&gt;</span>GetController()))
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        AIC<span style="color:#f92672">-&gt;</span>MoveToLocation(DestLocation);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="注意事项">注意事项：</h3>
 <p>1，Replicated属性只能在服务端修改<br>
 Replicated属性只允许服务端修改后通知客户端，而不允许客户端修改Replicated属性后通知到服务端。
 参考：Only the server can replicate variables or multicast events to all clients<br>
@@ -771,6 +755,7 @@ LogNet: Error: UActorChannel::ProcessBunch: Replicator.ReceivedBunch failed.  Cl
   <p>Owner发生变化时，<code>AActor::OnRep_Owner()</code>会被触发。<code>AActor::OnRep_Owner()</code>只在客户端触发。</p>
 </div></p>
 <p>16，<code>NM_Client</code>模式下，<code>UGameplayStatics::GetGameMode()</code>返回为null，即使参数WorldContext有效；<code>UGameplayStatics::GetGameInstance()</code>表现正常，可以获取到有效的GameInstance对象。</p>
+<p>17，客户端PlayerState准备的就绪的回调事件：<code>virtual void AController::OnRep_PlayerState() override;</code></p>
 <h3 id="常见问题">常见问题：</h3>
 <ol>
 <li>
@@ -874,10 +859,13 @@ ntdll
 <div class="alert success ">
   <p><code>bOnlyRelevantToOwner</code>的另一个用途：服务端启动时（比如：GameMode的BeginPlay函数中）创建的对象，即使<code>bReplicates = true;</code>，客户端连上来之后，这些对象不会同步到客户端，如何让客户端登陆成功后自动获取到服务端中已经存在的对象？答案：将这些服务端对象的<code>bOnlyRelevantToOwner</code>设置为false。</p>
 </div>
-<div class="alert info ">
-  <p><code>bAlwaysRelevant</code>与<code>bOnlyRelevantToOwner</code>关系：<br>
+<p><div class="alert info ">
+  <p>bAlwaysRelevant与bOnlyRelevantToOwner关系：<br>
 当<code>bOnlyRelevantToOwner = false;</code>时，Replication的距离裁剪仍然会执行，但<code>bAlwaysRelevant = true;</code>时，则Actor将全场景同步，所以需要严格限制<code>bAlwaysRelevant = true;</code>的Actor数量。</p>
 </div>
+<div class="alert warning ">
+  <p><strong>AIController</strong>不会在客户端执行，如果要在客户端执行，<strong>bReplicates</strong>和<strong>bAlwaysRelevant</strong>设为true，否则，client模式下的**PlayerController::Tick()**函数不会执行。</p>
+</div></p>
 <ol start="13">
 <li>
 <p><code>Replicated</code>属性如何选择性的同步给指定客户端？<br>
@@ -888,18 +876,17 @@ ntdll
 <li>
 <p><span class="highlight-text red">如果一个Actor没有SetRootComponent，且没有继承蓝图（蓝图会默认创建一个DefaultComponent作为RootComponent），即使开启同步，也不会同步到客户端。</span><br>
 如果Actor不需要任何Component，建议在给其创建一个空白Component作为RootComponent。</p>
-<pre><code>AMyActor::AMyActor()
-{
-    bReplicates = true;
-
-    EmptyRootComp = CreateDefaultSubobject&lt;USceneComponent&gt;(TEXT(&quot;EmptyRootComp&quot;));
-    if (EmptyRootComp)
-    {
-        SetRootComponent(EmptyRootComp);
-    }
-}
-</code></pre>
-<p>建议为没有Component的纯C++ Actor创建一个RootComponent，否则<code>AActor::IsNetRelevantFor()</code>始终返回false，会跳过Replication的距离裁剪，增加同步开销。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>AMyActor<span style="color:#f92672">::</span>AMyActor()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    bReplicates <span style="color:#f92672">=</span> true;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    EmptyRootComp <span style="color:#f92672">=</span> CreateDefaultSubobject<span style="color:#f92672">&lt;</span>USceneComponent<span style="color:#f92672">&gt;</span>(TEXT(<span style="color:#e6db74">&#34;EmptyRootComp&#34;</span>));
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (EmptyRootComp)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        SetRootComponent(EmptyRootComp);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>建议为没有Component的纯C++ Actor创建一个RootComponent，否则<code>AActor::IsNetRelevantFor()</code>始终返回false，会跳过Replication的距离裁剪，增加同步开销。</p>
 </li>
 <li>
 <p>如果一个Actor开启了同步，但又期望Actor的Component只在DedicatedServer中创建，这种需求无法实现，因为Actor开启同步后，如果只在Server端创建Component，此时Component会被自动置空。</p>
@@ -1103,7 +1090,7 @@ ntdll
     
     <h4 id="about-card-name">Wang Aiguo</h4>
     
-      <div id="about-card-bio">雕弓犹指北斗，金戈沉沙谁收？</div>
+      <div id="about-card-bio">霜岭弓鸣箭裂，青城骨铸边月。</div>
     
     
       <div id="about-card-job">
