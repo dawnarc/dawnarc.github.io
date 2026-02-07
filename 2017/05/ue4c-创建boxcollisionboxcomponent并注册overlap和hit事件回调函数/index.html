@@ -128,7 +128,7 @@
           
         </a>
         <h4 class="sidebar-profile-name">Wang Aiguo</h4>
-        <h5 class="sidebar-profile-bio">霜岭弓鸣箭裂，青城骨铸边月。</h5>
+        <h5 class="sidebar-profile-bio">天琴殷荡紫穹，万神血染兵锋。</h5>
       </div>
     <ul class="sidebar-buttons">
       
@@ -342,7 +342,6 @@
                      (adsbygoogle = window.adsbygoogle || []).push({});
                 </script>
               <p>keywords: UE4, Overlap, Hit, Event, Callback, C++, Box Collision, BoxComponent、SphereComponent, Trace Channel, 碰撞</p>
-<p><img src="https://dawnarc.com/GSZM-TW.png" alt="slogan_image"></p>
 <p>蓝图方式：<br>
 <a href="https://dawnarc.com/2017/12/ue4box-collision%E7%9A%84overlap%E4%BA%8B%E4%BB%B6%E6%B3%A8%E5%86%8C%E5%92%8C%E8%A7%A6%E5%8F%91%E8%93%9D%E5%9B%BE%E6%96%B9%E5%BC%8F/">[UE4]Box Collision的Overlap事件注册和触发(蓝图方式)</a></p>
 <h3 id="boxcomponent的overlap事件">BoxComponent的Overlap事件</h3>
@@ -389,16 +388,14 @@ MyCharacter.h头文件中定义：</p>
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>FScriptDelegate DelegateBegin;
 </span></span><span style="display:flex;"><span>DelegateBegin.BindUFunction(<span style="color:#66d9ef">this</span>, <span style="color:#e6db74">&#34;OnTestOverlapBegin&#34;</span>);
 </span></span><span style="display:flex;"><span>CollisionMesh<span style="color:#f92672">-&gt;</span>OnComponentBeginOverlap.Add(DelegateBegin);
-</span></span><span style="display:flex;"><span>FScriptDelegate DelegateEnd;
-</span></span><span style="display:flex;"><span>DelegateEnd.BindUFunction(<span style="color:#66d9ef">this</span>, <span style="color:#e6db74">&#34;OnTestOverlapEnd&#34;</span>);
-</span></span><span style="display:flex;"><span>CollisionMesh<span style="color:#f92672">-&gt;</span>OnComponentEndOverlap.Add(DelegateEnd);
+</span></span><span style="display:flex;"><span>CollisionMesh<span style="color:#f92672">-&gt;</span>OnComponentEndOverlap.AddDynamic(<span style="color:#66d9ef">this</span>, <span style="color:#f92672">&amp;</span>AMyCharacter<span style="color:#f92672">::</span>OnTestOverlapEnd);
 </span></span></code></pre></div><p>回调函数的函数体：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> AMyCharacter<span style="color:#f92672">::</span>OnTestOverlapBegin(<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">AActor</span><span style="color:#f92672">*</span> OtherActor, <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">UPrimitiveComponent</span><span style="color:#f92672">*</span> OtherComp, int32 OtherBodyIndex, <span style="color:#66d9ef">bool</span> bFromSweep, <span style="color:#66d9ef">const</span> FHitResult <span style="color:#f92672">&amp;</span> SweepResult)
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> AMyCharacter<span style="color:#f92672">::</span>OnTestOverlapBegin(UPrimitiveComponent<span style="color:#f92672">*</span> OverlappedComponent, AActor<span style="color:#f92672">*</span> OtherActor, UPrimitiveComponent<span style="color:#f92672">*</span> OtherComp, int32 OtherBodyIndex, <span style="color:#66d9ef">bool</span> bFromSweep, <span style="color:#66d9ef">const</span> FHitResult<span style="color:#f92672">&amp;</span> SweepResult)
 </span></span><span style="display:flex;"><span>{
 </span></span><span style="display:flex;"><span>    GEngine<span style="color:#f92672">-&gt;</span>AddOnScreenDebugMessage(<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2.f</span>, FColor<span style="color:#f92672">::</span>Red, FString(<span style="color:#e6db74">&#34;Begin++++++++++++ &#34;</span>) <span style="color:#f92672">+</span> SweepResult.Location.ToString());
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> AMyCharacter<span style="color:#f92672">::</span>OnTestOverlapEnd(<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">AActor</span><span style="color:#f92672">*</span> OtherActor, <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">UPrimitiveComponent</span><span style="color:#f92672">*</span> OtherComp, int32 OtherBodyIndex)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> AMyCharacter<span style="color:#f92672">::</span>OnTestOverlapEnd(UPrimitiveComponent<span style="color:#f92672">*</span>, OverlappedComponent, AActor<span style="color:#f92672">*</span> OtherActor, UPrimitiveComponent<span style="color:#f92672">*</span> OtherComp, int32 OtherBodyIndex)
 </span></span><span style="display:flex;"><span>{
 </span></span><span style="display:flex;"><span>    GEngine<span style="color:#f92672">-&gt;</span>AddOnScreenDebugMessage(<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2.f</span>, FColor<span style="color:#f92672">::</span>Red, FString(<span style="color:#e6db74">&#34;End--------------- &#34;</span>) <span style="color:#f92672">+</span> OtherActor<span style="color:#f92672">-&gt;</span>GetName());
 </span></span><span style="display:flex;"><span>}
@@ -554,80 +551,69 @@ Actor的Hit事件不需要BoxComponent，只需要注册回调即可，回调函
 <p>如果是用BoxComponent去碰撞其他物体，且想触发BoxComponent的Hit事件（通过BoxComponent.OnComponentHit.Add()注册），那么<span class="highlight-text red">其他物体的Simulate Physics属性必须设置为true，且Collision Presets属性不要设置为NoCollision</span>；
 如果是用Actor去碰撞其他物体，且想触发Actor的Hit事件（通过Actor.OnActorHit.Add()注册），那么<span class="highlight-text red">其他物体的Simulate Physics属性设置为true或false均可，且Collision Presets属性不要设置为NoCollision</span>。</p>
 <h5 id="方式2重写-notifyhit-函数">方式2：重写 NotifyHit 函数</h5>
-<pre><code>/** 
- * Event when this actor bumps into a blocking object, or blocks another actor that bumps into it.
- * This could happen due to things like Character movement, using Set Location with 'sweep' enabled, or physics simulation.
- * For events when objects overlap (e.g. walking into a trigger) see the 'Overlap' event.
- *
- * @note For collisions during physics simulation to generate hit events, 'Simulation Generates Hit Events' must be enabled.
- * @note When receiving a hit from another object's movement (bSelfMoved is false), the directions of 'Hit.Normal' and 'Hit.ImpactNormal'
- * will be adjusted to indicate force from the other object against this object.
- */
-virtual void AActor::NotifyHit(class UPrimitiveComponent* MyComp, AActor* Other, class UPrimitiveComponent* OtherComp, bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult&amp; Hit);
-</code></pre>
-<div class="alert danger ">
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">/** 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * Event when this actor bumps into a blocking object, or blocks another actor that bumps into it.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * This could happen due to things like Character movement, using Set Location with &#39;sweep&#39; enabled, or physics simulation.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * For events when objects overlap (e.g. walking into a trigger) see the &#39;Overlap&#39; event.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * @note For collisions during physics simulation to generate hit events, &#39;Simulation Generates Hit Events&#39; must be enabled.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * @note When receiving a hit from another object&#39;s movement (bSelfMoved is false), the directions of &#39;Hit.Normal&#39; and &#39;Hit.ImpactNormal&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * will be adjusted to indicate force from the other object against this object.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> */</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">virtual</span> <span style="color:#66d9ef">void</span> AActor<span style="color:#f92672">::</span>NotifyHit(<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">UPrimitiveComponent</span><span style="color:#f92672">*</span> MyComp, AActor<span style="color:#f92672">*</span> Other, <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">UPrimitiveComponent</span><span style="color:#f92672">*</span> OtherComp, <span style="color:#66d9ef">bool</span> bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, <span style="color:#66d9ef">const</span> FHitResult<span style="color:#f92672">&amp;</span> Hit);
+</span></span></code></pre></div><div class="alert danger ">
   <p>提醒：4.12的碰撞有bug，会导致Hit事件不触发，建议用最新版本</p>
 </div>
 <h3 id="actor的overlap事件两种方式">Actor的Overlap事件（两种方式）</h3>
 <h5 id="方式1onactorbeginoverlap-注册回调">方式1：OnActorBeginOverlap 注册回调</h5>
 <ol>
-<li>
-<p>注册回调</p>
-<pre><code> void AMyCharacter::BeginPlay()
- {
-     Super::BeginPlay();
-
-     FScriptDelegate Del;
-     Del.BindUFunction(this, TEXT(&quot;OnOverlap&quot;));
-     OnActorBeginOverlap.Add(Del);
- }
-</code></pre>
-</li>
-<li>
-<p>编写回调函数</p>
-<p>header</p>
-<pre><code> UFUNCTION()
- void OnOverlap(AActor* OverlappedActor, AActor* OtherActor);
-</code></pre>
-<p>cpp</p>
-<pre><code> void ATestTD2Character::OnOverlap(AActor* OverlappedActor, AActor* OtherActor)
- {
-     GEngine-&gt;AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT(&quot;%s  %s  %s&quot;), *GetName(), *OverlappedActor-&gt;GetName(), *OtherActor-&gt;GetName()));
- }
-</code></pre>
-</li>
+<li>注册回调
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> AMyCharacter<span style="color:#f92672">::</span>BeginPlay()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    Super<span style="color:#f92672">::</span>BeginPlay();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    FScriptDelegate Del;
+</span></span><span style="display:flex;"><span>    Del.BindUFunction(<span style="color:#66d9ef">this</span>, TEXT(<span style="color:#e6db74">&#34;OnOverlap&#34;</span>));
+</span></span><span style="display:flex;"><span>    OnActorBeginOverlap.Add(Del);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div></li>
+<li>编写回调函数
+header
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>UFUNCTION()
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> OnOverlap(AActor<span style="color:#f92672">*</span> OverlappedActor, AActor<span style="color:#f92672">*</span> OtherActor);
+</span></span></code></pre></div>cpp
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> ATestTD2Character<span style="color:#f92672">::</span>OnOverlap(AActor<span style="color:#f92672">*</span> OverlappedActor, AActor<span style="color:#f92672">*</span> OtherActor)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    GEngine<span style="color:#f92672">-&gt;</span>AddOnScreenDebugMessage(<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">5.f</span>, FColor<span style="color:#f92672">::</span>Red, FString<span style="color:#f92672">::</span>Printf(TEXT(<span style="color:#e6db74">&#34;%s  %s  %s&#34;</span>), <span style="color:#f92672">*</span>GetName(), <span style="color:#f92672">*</span>OverlappedActor<span style="color:#f92672">-&gt;</span>GetName(), <span style="color:#f92672">*</span>OtherActor<span style="color:#f92672">-&gt;</span>GetName()));
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div></li>
 </ol>
 <h5 id="方式2重写-notifyactorbeginoverlap-函数">方式2：重写 NotifyActorBeginOverlap 函数</h5>
-<pre><code>/** 
- *    Event when this actor overlaps another actor, for example a player walking into a trigger.
- *    For events when objects have a blocking collision, for example a player hitting a wall, see 'Hit' events.
- *    @note Components on both this and the other Actor must have bGenerateOverlapEvents set to true to generate overlap events.
- */
-virtual void AActor::NotifyActorBeginOverlap(AActor* OtherActor);
-</code></pre>
-<p><div class="alert warning ">
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">/** 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *    Event when this actor overlaps another actor, for example a player walking into a trigger.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *    For events when objects have a blocking collision, for example a player hitting a wall, see &#39;Hit&#39; events.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *    @note Components on both this and the other Actor must have bGenerateOverlapEvents set to true to generate overlap events.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> */</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">virtual</span> <span style="color:#66d9ef">void</span> AActor<span style="color:#f92672">::</span>NotifyActorBeginOverlap(AActor<span style="color:#f92672">*</span> OtherActor);
+</span></span></code></pre></div><p><div class="alert warning ">
   <p>注意：要启用Overlap事件，必须将目标对象的相应<code>Object Responses</code>类型设置为<code>Overlap</code></p>
 </div>
 <figure><img src="https://dawnarc.com/img/20170515-%5BUE4%5DC&#43;&#43;%E5%88%9B%E5%BB%BABoxCollision%28BoxComponent%29%E5%B9%B6%E6%B3%A8%E5%86%8COverlap%E5%92%8CHit%E4%BA%8B%E4%BB%B6%E5%9B%9E%E8%B0%83%E5%87%BD%E6%95%B0/%5BUE4%5DC&#43;&#43;%E5%88%9B%E5%BB%BABoxCollision%28BoxComponent%29%E5%B9%B6%E6%B3%A8%E5%86%8COverlap%E5%92%8CHit%E4%BA%8B%E4%BB%B6%E5%9B%9E%E8%B0%83%E5%87%BD%E6%95%B0-13.jpg">
 </figure>
 </p>
 <h5 id="overlap事件开关">Overlap事件开关</h5>
-<pre><code>void UPrimitiveComponent::SetGenerateOverlapEvents(bool bInGenerateOverlapEvents)
-</code></pre>
-<h3 id="其他与碰撞相关">其他与碰撞相关</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> UPrimitiveComponent<span style="color:#f92672">::</span>SetGenerateOverlapEvents(<span style="color:#66d9ef">bool</span> bInGenerateOverlapEvents)
+</span></span></code></pre></div><h3 id="其他与碰撞相关">其他与碰撞相关</h3>
 <h5 id="component自身提供的检测函数">Component自身提供的检测函数</h5>
-<pre><code>UPrimitiveComponent::LineTraceComponent();
-UPrimitiveComponent::SweepComponent();
-UPrimitiveComponent::ComponentOverlapComponent();
-UPrimitiveComponent::OverlapComponent(); 
-</code></pre>
-<p>C++ AActor::OnActorBeginOverlap 对应的蓝图节点为：</p>
-<pre><code>EventActorBeginOverlap
-</code></pre>
-<p>C++ AActor::NotifyHit() 对应的蓝图节点为：</p>
-<pre><code>EventHit
-</code></pre>
-<h5 id="using-pure-c-process-overlap-event-of-skeletalmeshcomponent">Using pure C++ process Overlap Event of SkeletalMeshComponent</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>UPrimitiveComponent<span style="color:#f92672">::</span>LineTraceComponent();
+</span></span><span style="display:flex;"><span>UPrimitiveComponent<span style="color:#f92672">::</span>SweepComponent();
+</span></span><span style="display:flex;"><span>UPrimitiveComponent<span style="color:#f92672">::</span>ComponentOverlapComponent();
+</span></span><span style="display:flex;"><span>UPrimitiveComponent<span style="color:#f92672">::</span>OverlapComponent(); 
+</span></span></code></pre></div><p>C++ AActor::OnActorBeginOverlap 对应的蓝图节点为：</p>
+<pre tabindex="0"><code>EventActorBeginOverlap
+</code></pre><p>C++ AActor::NotifyHit() 对应的蓝图节点为：</p>
+<pre tabindex="0"><code>EventHit
+</code></pre><h5 id="using-pure-c-process-overlap-event-of-skeletalmeshcomponent">Using pure C++ process Overlap Event of SkeletalMeshComponent</h5>
 <p>Header：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">protected</span><span style="color:#f92672">:</span>
 </span></span><span style="display:flex;"><span>
@@ -756,7 +742,7 @@ Events<br>
         </article>
         <footer id="footer" class="main-content-wrap">
   <span class="copyrights">
-    &copy; 2025 Wang Aiguo. Powered by <A href="https://gohugo.io/"> Hugo</A> | Theme <A href="https://github.com/kakawait/hugo-tranquilpeak-theme/">Tranquilpeak</A>.
+    &copy; 2026 Wang Aiguo. Powered by <A href="https://gohugo.io/"> Hugo</A> | Theme <A href="https://github.com/kakawait/hugo-tranquilpeak-theme/">Tranquilpeak</A>.
   </span>
 </footer>
 
@@ -832,7 +818,7 @@ Events<br>
     
     <h4 id="about-card-name">Wang Aiguo</h4>
     
-      <div id="about-card-bio">霜岭弓鸣箭裂，青城骨铸边月。</div>
+      <div id="about-card-bio">天琴殷荡紫穹，万神血染兵锋。</div>
     
     
       <div id="about-card-job">

@@ -31,7 +31,7 @@
     <meta property="article:published_time" content="2020-04-14T17:28:26">
   
   
-    <meta property="article:modified_time" content="2024-06-04T16:47:58">
+    <meta property="article:modified_time" content="2025-12-19T14:46:33">
   
   
   
@@ -126,7 +126,7 @@
           
         </a>
         <h4 class="sidebar-profile-name">Wang Aiguo</h4>
-        <h5 class="sidebar-profile-bio">霜岭弓鸣箭裂，青城骨铸边月。</h5>
+        <h5 class="sidebar-profile-bio">天琴殷荡紫穹，万神血染兵锋。</h5>
       </div>
     <ul class="sidebar-buttons">
       
@@ -340,7 +340,6 @@
                      (adsbygoogle = window.adsbygoogle || []).push({});
                 </script>
               <p>Keywords: UE4, Animation, Runtime Procedural Programming</p>
-<p><img src="https://dawnarc.com/GSZM-TW.png" alt="slogan_image"></p>
 <h3 id="common">Common</h3>
 <h5 id="whats-the-difference-between-component-space-and-local-space">What&rsquo;s the difference between Component Space and Local space</h5>
 <ul>
@@ -400,21 +399,18 @@
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h5 id="how-to-get-user-data-which-animation-asset-was-stored">How to get user data which animation asset was stored</h5>
 <p>Engine\Source\Runtime\Engine\Classes\Engine\SkeletalMesh.h</p>
-<pre><code>UPROPERTY(EditAnywhere, AdvancedDisplay, Instanced, Category=SkeletalMesh)
-TArray&lt;UAssetUserData*&gt; AssetUserData;
-</code></pre>
-<h5 id="how-to-get-bone-index-from-bone-name">How to get bone index from bone name</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>UPROPERTY(EditAnywhere, AdvancedDisplay, Instanced, Category<span style="color:#f92672">=</span>SkeletalMesh)
+</span></span><span style="display:flex;"><span>TArray<span style="color:#f92672">&lt;</span>UAssetUserData<span style="color:#f92672">*&gt;</span> AssetUserData;
+</span></span></code></pre></div><h5 id="how-to-get-bone-index-from-bone-name">How to get bone index from bone name</h5>
 <p>Engine\Source\Runtime\Engine\Classes\Engine\SkeletalMesh.h</p>
-<pre><code>RefSkeleton.FindBoneIndex(BoneName);
-</code></pre>
-<p>Engine\Source\Runtime\Engine\Classes\Components\SkinnedMeshComponent.h</p>
-<pre><code>int32 USkinnedMeshComponent::GetNumBones()const;
-
-int32 USkinnedMeshComponent::GetBoneIndex( FName BoneName) const;
-
-FName USkinnedMeshComponent::GetBoneName(int32 BoneIndex) const;
-</code></pre>
-<h5 id="get-animation-compactpose-transform-from-animsequence-by-current-time">Get Animation CompactPose (Transform) from AnimSequence by Current Time</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>RefSkeleton.FindBoneIndex(BoneName);
+</span></span></code></pre></div><p>Engine\Source\Runtime\Engine\Classes\Components\SkinnedMeshComponent.h</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>int32 USkinnedMeshComponent<span style="color:#f92672">::</span>GetNumBones()<span style="color:#66d9ef">const</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>int32 USkinnedMeshComponent<span style="color:#f92672">::</span>GetBoneIndex( FName BoneName) <span style="color:#66d9ef">const</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>FName USkinnedMeshComponent<span style="color:#f92672">::</span>GetBoneName(int32 BoneIndex) <span style="color:#66d9ef">const</span>;
+</span></span></code></pre></div><h5 id="get-animation-compactpose-transform-from-animsequence-by-current-time">Get Animation CompactPose (Transform) from AnimSequence by Current Time</h5>
 <p>Engine inner (Quoted from <code>void FAnimInstanceProxy::SlotEvaluatePose()</code>):</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>FSlotEvaluationPose <span style="color:#a6e22e">NewPose</span>(EvalState.MontageWeight, AdditiveAnimType);
 </span></span><span style="display:flex;"><span>
@@ -441,116 +437,108 @@ FName USkinnedMeshComponent::GetBoneName(int32 BoneIndex) const;
 <h5 id="common-api-in-animationblueprintlibrary">Common API in AnimationBlueprintLibrary</h5>
 <p>Engine\Source\Editor\AnimationModifiers\Public\AnimationBlueprintLibrary.h</p>
 <p>How to get bone pose:</p>
-<pre><code>/** Retrieves Bone Pose data for the given Bone Names at the specified Time from the given Animation Sequence */
-UFUNCTION(BlueprintPure, Category = &quot;AnimationBlueprintLibrary|Pose&quot;)
-static void GetBonePosesForTime(const UAnimSequence* AnimationSequence, TArray&lt;FName&gt; BoneNames, float Time, bool bExtractRootMotion, TArray&lt;FTransform&gt;&amp; Poses, const USkeletalMesh* PreviewMesh = nullptr);
-
-/** Retrieves Bone Pose data for the given Bone Names at the specified Frame from the given Animation Sequence */
-UFUNCTION(BlueprintPure, Category = &quot;AnimationBlueprintLibrary|Pose&quot;)
-static void GetBonePosesForFrame(const UAnimSequence* AnimationSequence, TArray&lt;FName&gt; BoneNames, int32 Frame, bool bExtractRootMotion, TArray&lt;FTransform&gt;&amp; Poses, const USkeletalMesh* PreviewMesh = nullptr);
-</code></pre>
-<p>How to add or remove notify to animation at run-time:</p>
-<pre><code>/** Adds an Animation Notify Event to Notify track in the given Animation with the given Notify creation data */
-UFUNCTION(BlueprintCallable, Category = &quot;AnimationBlueprintLibrary|NotifyEvents&quot;)
-static UAnimNotify* AddAnimationNotifyEvent(UAnimSequence* AnimationSequence, FName NotifyTrackName, float StartTime, TSubclassOf&lt;UAnimNotify&gt; NotifyClass);
-
-/** Adds an Animation Notify State Event to Notify track in the given Animation with the given Notify State creation data */
-UFUNCTION(BlueprintCallable, Category = &quot;AnimationBlueprintLibrary|NotifyEvents&quot;)
-static UAnimNotifyState* AddAnimationNotifyStateEvent(UAnimSequence* AnimationSequence, FName NotifyTrackName, float StartTime, float Duration, TSubclassOf&lt;UAnimNotifyState&gt; NotifyStateClass);
-
-/** Adds an the specific Animation Notify to the Animation Sequence (requires Notify's outer to be the Animation Sequence) */
-UFUNCTION(BlueprintCallable, Category = &quot;AnimationBlueprintLibrary|NotifyEvents&quot;)
-static void AddAnimationNotifyEventObject(UAnimSequence* AnimationSequence, float StartTime, UAnimNotify* Notify, FName NotifyTrackName);
-
-/** Adds an the specific Animation Notify State to the Animation Sequence (requires Notify State's outer to be the Animation Sequence) */
-UFUNCTION(BlueprintCallable, Category = &quot;AnimationBlueprintLibrary|NotifyEvents&quot;)
-static void AddAnimationNotifyStateEventObject(UAnimSequence* AnimationSequence, float StartTime, float Duration, UAnimNotifyState* NotifyState, FName NotifyTrackName);
-
-/** Removes Animation Notify Events found by Name within the Animation Sequence, and returns the number of removed name instances */
-UFUNCTION(BlueprintCallable, Category = &quot;AnimationBlueprintLibrary|NotifyEvents&quot;)
-static int32 RemoveAnimationNotifyEventsByName(UAnimSequence* AnimationSequence, FName NotifyName);
-
-/** Removes Animation Notify Events found by Track within the Animation Sequence, and returns the number of removed name instances */
-UFUNCTION(BlueprintCallable, Category = &quot;AnimationBlueprintLibrary|NotifyEvents&quot;)
-static int32 RemoveAnimationNotifyEventsByTrack(UAnimSequence* AnimationSequence, FName NotifyTrackName);    
-</code></pre>
-<h5 id="common-api-in-bonepose">Common API in BonePose</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">/** Retrieves Bone Pose data for the given Bone Names at the specified Time from the given Animation Sequence */</span>
+</span></span><span style="display:flex;"><span>UFUNCTION(BlueprintPure, Category <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;AnimationBlueprintLibrary|Pose&#34;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> GetBonePosesForTime(<span style="color:#66d9ef">const</span> UAnimSequence<span style="color:#f92672">*</span> AnimationSequence, TArray<span style="color:#f92672">&lt;</span>FName<span style="color:#f92672">&gt;</span> BoneNames, <span style="color:#66d9ef">float</span> Time, <span style="color:#66d9ef">bool</span> bExtractRootMotion, TArray<span style="color:#f92672">&lt;</span>FTransform<span style="color:#f92672">&gt;&amp;</span> Poses, <span style="color:#66d9ef">const</span> USkeletalMesh<span style="color:#f92672">*</span> PreviewMesh <span style="color:#f92672">=</span> <span style="color:#66d9ef">nullptr</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">/** Retrieves Bone Pose data for the given Bone Names at the specified Frame from the given Animation Sequence */</span>
+</span></span><span style="display:flex;"><span>UFUNCTION(BlueprintPure, Category <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;AnimationBlueprintLibrary|Pose&#34;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> GetBonePosesForFrame(<span style="color:#66d9ef">const</span> UAnimSequence<span style="color:#f92672">*</span> AnimationSequence, TArray<span style="color:#f92672">&lt;</span>FName<span style="color:#f92672">&gt;</span> BoneNames, int32 Frame, <span style="color:#66d9ef">bool</span> bExtractRootMotion, TArray<span style="color:#f92672">&lt;</span>FTransform<span style="color:#f92672">&gt;&amp;</span> Poses, <span style="color:#66d9ef">const</span> USkeletalMesh<span style="color:#f92672">*</span> PreviewMesh <span style="color:#f92672">=</span> <span style="color:#66d9ef">nullptr</span>);
+</span></span></code></pre></div><p>How to add or remove notify to animation at run-time:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">/** Adds an Animation Notify Event to Notify track in the given Animation with the given Notify creation data */</span>
+</span></span><span style="display:flex;"><span>UFUNCTION(BlueprintCallable, Category <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;AnimationBlueprintLibrary|NotifyEvents&#34;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">static</span> UAnimNotify<span style="color:#f92672">*</span> AddAnimationNotifyEvent(UAnimSequence<span style="color:#f92672">*</span> AnimationSequence, FName NotifyTrackName, <span style="color:#66d9ef">float</span> StartTime, TSubclassOf<span style="color:#f92672">&lt;</span>UAnimNotify<span style="color:#f92672">&gt;</span> NotifyClass);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">/** Adds an Animation Notify State Event to Notify track in the given Animation with the given Notify State creation data */</span>
+</span></span><span style="display:flex;"><span>UFUNCTION(BlueprintCallable, Category <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;AnimationBlueprintLibrary|NotifyEvents&#34;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">static</span> UAnimNotifyState<span style="color:#f92672">*</span> AddAnimationNotifyStateEvent(UAnimSequence<span style="color:#f92672">*</span> AnimationSequence, FName NotifyTrackName, <span style="color:#66d9ef">float</span> StartTime, <span style="color:#66d9ef">float</span> Duration, TSubclassOf<span style="color:#f92672">&lt;</span>UAnimNotifyState<span style="color:#f92672">&gt;</span> NotifyStateClass);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">/** Adds an the specific Animation Notify to the Animation Sequence (requires Notify&#39;s outer to be the Animation Sequence) */</span>
+</span></span><span style="display:flex;"><span>UFUNCTION(BlueprintCallable, Category <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;AnimationBlueprintLibrary|NotifyEvents&#34;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> AddAnimationNotifyEventObject(UAnimSequence<span style="color:#f92672">*</span> AnimationSequence, <span style="color:#66d9ef">float</span> StartTime, UAnimNotify<span style="color:#f92672">*</span> Notify, FName NotifyTrackName);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">/** Adds an the specific Animation Notify State to the Animation Sequence (requires Notify State&#39;s outer to be the Animation Sequence) */</span>
+</span></span><span style="display:flex;"><span>UFUNCTION(BlueprintCallable, Category <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;AnimationBlueprintLibrary|NotifyEvents&#34;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> AddAnimationNotifyStateEventObject(UAnimSequence<span style="color:#f92672">*</span> AnimationSequence, <span style="color:#66d9ef">float</span> StartTime, <span style="color:#66d9ef">float</span> Duration, UAnimNotifyState<span style="color:#f92672">*</span> NotifyState, FName NotifyTrackName);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">/** Removes Animation Notify Events found by Name within the Animation Sequence, and returns the number of removed name instances */</span>
+</span></span><span style="display:flex;"><span>UFUNCTION(BlueprintCallable, Category <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;AnimationBlueprintLibrary|NotifyEvents&#34;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">static</span> int32 RemoveAnimationNotifyEventsByName(UAnimSequence<span style="color:#f92672">*</span> AnimationSequence, FName NotifyName);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">/** Removes Animation Notify Events found by Track within the Animation Sequence, and returns the number of removed name instances */</span>
+</span></span><span style="display:flex;"><span>UFUNCTION(BlueprintCallable, Category <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;AnimationBlueprintLibrary|NotifyEvents&#34;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">static</span> int32 RemoveAnimationNotifyEventsByTrack(UAnimSequence<span style="color:#f92672">*</span> AnimationSequence, FName NotifyTrackName);    
+</span></span></code></pre></div><h5 id="common-api-in-bonepose">Common API in BonePose</h5>
 <p>Engine\Source\Runtime\Engine\Public\BonePose.h</p>
-<pre><code>// Populate InOutPose based on raw animation data. 
-extern void BuildPoseFromRawData(const TArray&lt;FRawAnimSequenceTrack&gt;&amp; InAnimationData, const TArray&lt;struct FTrackToSkeletonMap&gt;&amp; TrackToSkeletonMapTable, FCompactPose&amp; InOutPose, float InTime, EAnimInterpolationType Interpolation, int32 NumFrames, float SequenceLength, FName RetargetSource);
-</code></pre>
-<h5 id="common-api-in-animinstance">Common API in AnimInstance</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">// Populate InOutPose based on raw animation data. 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">extern</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">BuildPoseFromRawData</span>(<span style="color:#66d9ef">const</span> TArray<span style="color:#f92672">&lt;</span>FRawAnimSequenceTrack<span style="color:#f92672">&gt;&amp;</span> InAnimationData, <span style="color:#66d9ef">const</span> TArray<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">FTrackToSkeletonMap</span><span style="color:#f92672">&gt;&amp;</span> TrackToSkeletonMapTable, FCompactPose<span style="color:#f92672">&amp;</span> InOutPose, <span style="color:#66d9ef">float</span> InTime, EAnimInterpolationType Interpolation, int32 NumFrames, <span style="color:#66d9ef">float</span> SequenceLength, FName RetargetSource);
+</span></span></code></pre></div><h5 id="common-api-in-animinstance">Common API in AnimInstance</h5>
 <p>Engine\Source\Runtime\Engine\Classes\Animation\AnimInstance.h</p>
-<pre><code>// the below functions are the native overrides for each phase
-// Native initialization override point
-virtual void NativeInitializeAnimation();
-
-// Native update override point. It is usually a good idea to simply gather data in this step and 
-// for the bulk of the work to be done in NativeUpdateAnimation.
-virtual void NativeUpdateAnimation(float DeltaSeconds);
-
-// Native Post Evaluate override point
-virtual void NativePostEvaluateAnimation();
-
-// Native Uninitialize override point
-virtual void NativeUninitializeAnimation();
-
-// Executed when begin play is called on the owning component
-virtual void NativeBeginPlay();
-</code></pre>
-<h5 id="common-api-in-animmontage">Common API in AnimMontage</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">// the below functions are the native overrides for each phase
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Native initialization override point
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">virtual</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">NativeInitializeAnimation</span>();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Native update override point. It is usually a good idea to simply gather data in this step and 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// for the bulk of the work to be done in NativeUpdateAnimation.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">virtual</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">NativeUpdateAnimation</span>(<span style="color:#66d9ef">float</span> DeltaSeconds);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Native Post Evaluate override point
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">virtual</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">NativePostEvaluateAnimation</span>();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Native Uninitialize override point
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">virtual</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">NativeUninitializeAnimation</span>();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Executed when begin play is called on the owning component
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">virtual</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">NativeBeginPlay</span>();
+</span></span></code></pre></div><h5 id="common-api-in-animmontage">Common API in AnimMontage</h5>
 <p>Tick function on animation simulatiing:</p>
-<pre><code>/** Simulate is same as Advance, but without calling any events or touching any of the instance data. So it performs a simulation of advancing the timeline. */
-bool SimulateAdvance(float DeltaTime, float&amp; InOutPosition, struct FRootMotionMovementParams &amp; OutRootMotionParams) const;
-void Advance(float DeltaTime, struct FRootMotionMovementParams * OutRootMotionParams, bool bBlendRootMotion);
-</code></pre>
-<h5 id="animationeditorpreviewactor">AnimationEditorPreviewActor</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">/** Simulate is same as Advance, but without calling any events or touching any of the instance data. So it performs a simulation of advancing the timeline. */</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">bool</span> <span style="color:#a6e22e">SimulateAdvance</span>(<span style="color:#66d9ef">float</span> DeltaTime, <span style="color:#66d9ef">float</span><span style="color:#f92672">&amp;</span> InOutPosition, <span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">FRootMotionMovementParams</span> <span style="color:#f92672">&amp;</span> OutRootMotionParams) <span style="color:#66d9ef">const</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">Advance</span>(<span style="color:#66d9ef">float</span> DeltaTime, <span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">FRootMotionMovementParams</span> <span style="color:#f92672">*</span> OutRootMotionParams, <span style="color:#66d9ef">bool</span> bBlendRootMotion);
+</span></span></code></pre></div><h5 id="animationeditorpreviewactor">AnimationEditorPreviewActor</h5>
 <p>Path:<br>
 Engine\Source\Editor\Persona\Public\AnimationEditorPreviewActor.h</p>
 <p><code>AnimationEditorPreviewActor</code> is an Actor used to preview <code>AnimSequence</code>.<br>
 Example:</p>
-<pre><code>void UMyAnimNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation)
-{
-    if(AActor* Actor = MeshComp-&gt;GetOwner())
-    {
-        if(GIsEditor)
-        {
-            AAnimationEditorPreviewActor* PrevActor = Cast&lt;AAnimationEditorPreviewActor&gt;(Actor);
-        }
-        else
-        {
-            AMyCharacter* Character = Cast&lt;AMyCharacter&gt;(Actor);
-        }
-    }
-}
-</code></pre>
-<p>Build.cs:</p>
-<pre><code>PublicDependencyModuleNames.Add(&quot;Persona&quot;);
-</code></pre>
-<h3 id="engine-source-analytics">Engine Source Analytics</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> UMyAnimNotify<span style="color:#f92672">::</span>Notify(USkeletalMeshComponent<span style="color:#f92672">*</span> MeshComp, UAnimSequenceBase<span style="color:#f92672">*</span> Animation)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span>(AActor<span style="color:#f92672">*</span> Actor <span style="color:#f92672">=</span> MeshComp<span style="color:#f92672">-&gt;</span>GetOwner())
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span>(GIsEditor)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            AAnimationEditorPreviewActor<span style="color:#f92672">*</span> PrevActor <span style="color:#f92672">=</span> Cast<span style="color:#f92672">&lt;</span>AAnimationEditorPreviewActor<span style="color:#f92672">&gt;</span>(Actor);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">else</span>
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            AMyCharacter<span style="color:#f92672">*</span> Character <span style="color:#f92672">=</span> Cast<span style="color:#f92672">&lt;</span>AMyCharacter<span style="color:#f92672">&gt;</span>(Actor);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Build.cs:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>PublicDependencyModuleNames.Add(<span style="color:#e6db74">&#34;Persona&#34;</span>);
+</span></span></code></pre></div><h3 id="engine-source-analytics">Engine Source Analytics</h3>
 <h5 id="callstack-on-fanimnode_skeletalcontrolbaseevaluateskeletalcontrol_anythread">Callstack on <code>FAnimNode_SkeletalControlBase::EvaluateSkeletalControl_AnyThread()</code></h5>
-<pre><code>UE4Editor-CustomAnimNode-Win64-DebugGame.dll!FAnimNode_SpeedWarping::EvaluateSkeletalControl_AnyThread(FComponentSpacePoseContext &amp; Output, TArray&lt;FBoneTransform,TSizedDefaultAllocator&lt;32&gt;&gt; &amp; OutBoneTransforms) Line 32    C++
-UE4Editor-AnimGraphRuntime.dll!FAnimNode_SkeletalControlBase::EvaluateComponentSpace_AnyThread(FComponentSpacePoseContext &amp; Output) Line 165    C++
-UE4Editor-Engine.dll!FComponentSpacePoseLink::EvaluateComponentSpace(FComponentSpacePoseContext &amp; Output) Line 443    C++
-UE4Editor-Engine.dll!FAnimNode_ConvertComponentToLocalSpace::Evaluate_AnyThread(FPoseContext &amp; Output) Line 34    C++
-UE4Editor-Engine.dll!FPoseLink::Evaluate(FPoseContext &amp; Output) Line 381    C++
-UE4Editor-Engine.dll!FAnimInstanceProxy::EvaluateAnimationNode_WithRoot(FPoseContext &amp; Output, FAnimNode_Base * InRootNode) Line 1365    C++
-UE4Editor-Engine.dll!FAnimInstanceProxy::EvaluateAnimation_WithRoot(FPoseContext &amp; Output, FAnimNode_Base * InRootNode) Line 1298    C++
-UE4Editor-Engine.dll!UAnimInstance::ParallelEvaluateAnimation(bool bForceRefPose, const USkeletalMesh * InSkeletalMesh, FBlendedHeapCurve &amp; OutCurve, FCompactPose &amp; OutPose) Line 658    C++
-UE4Editor-Engine.dll!USkeletalMeshComponent::EvaluateAnimation(const USkeletalMesh * InSkeletalMesh, UAnimInstance * InAnimInstance, FVector &amp; OutRootBoneTranslation, FBlendedHeapCurve &amp; OutCurve, FCompactPose &amp; OutPose) Line 1755    C++
-UE4Editor-Engine.dll!USkeletalMeshComponent::PerformAnimationProcessing(const USkeletalMesh * InSkeletalMesh, UAnimInstance * InAnimInstance, bool bInDoEvaluation, TArray&lt;FTransform,TSizedDefaultAllocator&lt;32&gt;&gt; &amp; OutSpaceBases, TArray&lt;FTransform,TSizedDefaultAllocator&lt;32&gt;&gt; &amp; OutBoneSpaceTransforms, FVector &amp; OutRootBoneTranslation, FBlendedHeapCurve &amp; OutCurve) Line 1838    C++
-UE4Editor-Engine.dll!USkeletalMeshComponent::ParallelAnimationEvaluation() Line 3528    C++
-UE4Editor-Engine.dll!FParallelAnimationEvaluationTask::DoTask(ENamedThreads::Type CurrentThread, const TRefCountPtr&lt;FGraphEvent&gt; &amp; MyCompletionGraphEvent) Line 110    C++
-UE4Editor-Engine.dll!TGraphTask&lt;FParallelAnimationEvaluationTask&gt;::ExecuteTask(TArray&lt;FBaseGraphTask *,TSizedDefaultAllocator&lt;32&gt;&gt; &amp; NewTasks, ENamedThreads::Type CurrentThread) Line 847    C++
-[Inline Frame] UE4Editor-Core.dll!FBaseGraphTask::Execute(TArray&lt;FBaseGraphTask *,TSizedDefaultAllocator&lt;32&gt;&gt; &amp; CurrentThread, ENamedThreads::Type) Line 514    C++
-UE4Editor-Core.dll!FTaskThreadAnyThread::ProcessTasks() Line 1029    C++
-UE4Editor-Core.dll!FTaskThreadAnyThread::ProcessTasksUntilQuit(int QueueIndex) Line 855    C++
-[Inline Frame] UE4Editor-Core.dll!FTaskThreadBase::Run() Line 524    C++
-UE4Editor-Core.dll!FTaskThreadAnyThread::Run() Line 931    C++
-UE4Editor-Core.dll!FRunnableThreadWin::Run() Line 96    C++
-UE4Editor-Core.dll!FRunnableThreadWin::GuardedRun() Line 45    C++
-</code></pre>
-<h3 id="issues">Issues</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Text" data-lang="Text"><span style="display:flex;"><span>UE4Editor-CustomAnimNode-Win64-DebugGame.dll!FAnimNode_SpeedWarping::EvaluateSkeletalControl_AnyThread(FComponentSpacePoseContext &amp; Output, TArray&lt;FBoneTransform,TSizedDefaultAllocator&lt;32&gt;&gt; &amp; OutBoneTransforms) Line 32    C++
+</span></span><span style="display:flex;"><span>UE4Editor-AnimGraphRuntime.dll!FAnimNode_SkeletalControlBase::EvaluateComponentSpace_AnyThread(FComponentSpacePoseContext &amp; Output) Line 165    C++
+</span></span><span style="display:flex;"><span>UE4Editor-Engine.dll!FComponentSpacePoseLink::EvaluateComponentSpace(FComponentSpacePoseContext &amp; Output) Line 443    C++
+</span></span><span style="display:flex;"><span>UE4Editor-Engine.dll!FAnimNode_ConvertComponentToLocalSpace::Evaluate_AnyThread(FPoseContext &amp; Output) Line 34    C++
+</span></span><span style="display:flex;"><span>UE4Editor-Engine.dll!FPoseLink::Evaluate(FPoseContext &amp; Output) Line 381    C++
+</span></span><span style="display:flex;"><span>UE4Editor-Engine.dll!FAnimInstanceProxy::EvaluateAnimationNode_WithRoot(FPoseContext &amp; Output, FAnimNode_Base * InRootNode) Line 1365    C++
+</span></span><span style="display:flex;"><span>UE4Editor-Engine.dll!FAnimInstanceProxy::EvaluateAnimation_WithRoot(FPoseContext &amp; Output, FAnimNode_Base * InRootNode) Line 1298    C++
+</span></span><span style="display:flex;"><span>UE4Editor-Engine.dll!UAnimInstance::ParallelEvaluateAnimation(bool bForceRefPose, const USkeletalMesh * InSkeletalMesh, FBlendedHeapCurve &amp; OutCurve, FCompactPose &amp; OutPose) Line 658    C++
+</span></span><span style="display:flex;"><span>UE4Editor-Engine.dll!USkeletalMeshComponent::EvaluateAnimation(const USkeletalMesh * InSkeletalMesh, UAnimInstance * InAnimInstance, FVector &amp; OutRootBoneTranslation, FBlendedHeapCurve &amp; OutCurve, FCompactPose &amp; OutPose) Line 1755    C++
+</span></span><span style="display:flex;"><span>UE4Editor-Engine.dll!USkeletalMeshComponent::PerformAnimationProcessing(const USkeletalMesh * InSkeletalMesh, UAnimInstance * InAnimInstance, bool bInDoEvaluation, TArray&lt;FTransform,TSizedDefaultAllocator&lt;32&gt;&gt; &amp; OutSpaceBases, TArray&lt;FTransform,TSizedDefaultAllocator&lt;32&gt;&gt; &amp; OutBoneSpaceTransforms, FVector &amp; OutRootBoneTranslation, FBlendedHeapCurve &amp; OutCurve) Line 1838    C++
+</span></span><span style="display:flex;"><span>UE4Editor-Engine.dll!USkeletalMeshComponent::ParallelAnimationEvaluation() Line 3528    C++
+</span></span><span style="display:flex;"><span>UE4Editor-Engine.dll!FParallelAnimationEvaluationTask::DoTask(ENamedThreads::Type CurrentThread, const TRefCountPtr&lt;FGraphEvent&gt; &amp; MyCompletionGraphEvent) Line 110    C++
+</span></span><span style="display:flex;"><span>UE4Editor-Engine.dll!TGraphTask&lt;FParallelAnimationEvaluationTask&gt;::ExecuteTask(TArray&lt;FBaseGraphTask *,TSizedDefaultAllocator&lt;32&gt;&gt; &amp; NewTasks, ENamedThreads::Type CurrentThread) Line 847    C++
+</span></span><span style="display:flex;"><span>[Inline Frame] UE4Editor-Core.dll!FBaseGraphTask::Execute(TArray&lt;FBaseGraphTask *,TSizedDefaultAllocator&lt;32&gt;&gt; &amp; CurrentThread, ENamedThreads::Type) Line 514    C++
+</span></span><span style="display:flex;"><span>UE4Editor-Core.dll!FTaskThreadAnyThread::ProcessTasks() Line 1029    C++
+</span></span><span style="display:flex;"><span>UE4Editor-Core.dll!FTaskThreadAnyThread::ProcessTasksUntilQuit(int QueueIndex) Line 855    C++
+</span></span><span style="display:flex;"><span>[Inline Frame] UE4Editor-Core.dll!FTaskThreadBase::Run() Line 524    C++
+</span></span><span style="display:flex;"><span>UE4Editor-Core.dll!FTaskThreadAnyThread::Run() Line 931    C++
+</span></span><span style="display:flex;"><span>UE4Editor-Core.dll!FRunnableThreadWin::Run() Line 96    C++
+</span></span><span style="display:flex;"><span>UE4Editor-Core.dll!FRunnableThreadWin::GuardedRun() Line 45    C++
+</span></span></code></pre></div><h3 id="issues">Issues</h3>
 <h5 id="animation-parallel-simulation-poses-of-character-could-not-match-if-play-two-animation-separately">Animation parallel simulation: poses of character could not match if play two animation separately</h5>
 <p>Case:<br>
 If character was composed by multiple skeletal mesh (e.g. one skeletal mesh is head, another skeletal mesh is arm), and thess skeletal meshes have dedicated AnimSequence asset, and these AnimSequence are in synchronized pose transform, when you play these apart animation at the same time, arm&rsquo;s pose and head&rsquo;s pose don&rsquo;t match seamlessly.</p>
@@ -558,27 +546,24 @@ If character was composed by multiple skeletal mesh (e.g. one skeletal mesh is h
 Multi-thread animation simulating is on by default, and if there&rsquo;re some overhead under other work threads, then animations would not match with each other seamlessly.</p>
 <p>Solution:<br>
 Override <code>CanRunParallelWork</code> of <code>UAnimInstance</code>, and return <code>false</code>;</p>
-<pre><code>// Can this animation instance run Update or Evaluation work in parallel
-virtual bool CanRunParallelWork() const override { return false; }
-</code></pre>
-<p>Or set <code>bUseMultiThreadedAnimationUpdate</code> as <code>false</code>, and uncheck <code>Allow Multi Threaded Animation Update</code> in project settings.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">// Can this animation instance run Update or Evaluation work in parallel
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">virtual</span> <span style="color:#66d9ef">bool</span> <span style="color:#a6e22e">CanRunParallelWork</span>() <span style="color:#66d9ef">const</span> <span style="color:#66d9ef">override</span> { <span style="color:#66d9ef">return</span> false; }
+</span></span></code></pre></div><p>Or set <code>bUseMultiThreadedAnimationUpdate</code> as <code>false</code>, and uncheck <code>Allow Multi Threaded Animation Update</code> in project settings.</p>
 <h5 id="refresh-bone-transform-for-a-certain-frame-on-dedicated-server">Refresh bone transform for a certain frame on dedicated server</h5>
 <p>If set <code>VisibilityBasedAnimTickOption</code> as <code>OnlyTickPoseWhenRendered</code> on dedicated server:</p>
-<pre><code>if(GetMesh())
-{
-    GetMesh()-&gt;VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::OnlyTickPoseWhenRendered;
-}
-</code></pre>
-<p>bone transform can&rsquo;t be update, so we can&rsquo;t get correct socket transform.<br>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">if</span>(GetMesh())
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    GetMesh()<span style="color:#f92672">-&gt;</span>VisibilityBasedAnimTickOption <span style="color:#f92672">=</span> EVisibilityBasedAnimTickOption<span style="color:#f92672">::</span>OnlyTickPoseWhenRendered;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>bone transform can&rsquo;t be update, so we can&rsquo;t get correct socket transform.<br>
 Solution:</p>
-<pre><code>if (SkelMeshComponent-&gt;AnimScriptInstance)
-{
-    // Tick the animation
-    SkelMeshComponent-&gt;AnimScriptInstance-&gt;UpdateAnimation(0.f, false);
-}
-SkelMeshComponent-&gt;RefreshBoneTransforms();
-</code></pre>
-<p>Origin: 【UE4】在 Dedicate Server 上刷新一帧骨骼 Mesh Pose<br>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> (SkelMeshComponent<span style="color:#f92672">-&gt;</span>AnimScriptInstance)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Tick the animation
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    SkelMeshComponent<span style="color:#f92672">-&gt;</span>AnimScriptInstance<span style="color:#f92672">-&gt;</span>UpdateAnimation(<span style="color:#ae81ff">0.f</span>, false);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>SkelMeshComponent<span style="color:#f92672">-&gt;</span>RefreshBoneTransforms();
+</span></span></code></pre></div><p>Origin: 【UE4】在 Dedicate Server 上刷新一帧骨骼 Mesh Pose<br>
 <a href="https://zhuanlan.zhihu.com/p/352407350">https://zhuanlan.zhihu.com/p/352407350</a></p>
 <h3 id="docs">Docs</h3>
 <h5 id="offical-docs">Offical Docs</h5>
@@ -615,6 +600,8 @@ SkelMeshComponent-&gt;RefreshBoneTransforms();
 <p><a href="https://dev.epicgames.com/community/learning/courses/5vL/unreal-engine-creating-and-modifying-control-rig/vyWZ/unreal-engine-introduction-to-creating-and-modifying-control-rig">Introduction To Creating And Modifying Control Rig - Official Docs</a></p>
 <p>Control Rig Editor<br>
 <a href="https://docs.unrealengine.com/5.3/en-US/control-rig-editor-in-unreal-engine/">https://docs.unrealengine.com/5.3/en-US/control-rig-editor-in-unreal-engine/</a></p>
+<p>How to Make Control Rigs Smart | Unreal Fest Stockholm 2025<br>
+<a href="https://www.youtube.com/watch?v=7nbVJzjiPfw">https://www.youtube.com/watch?v=7nbVJzjiPfw</a></p>
 <h5 id="how-to-keep-the-pose-from-the-current-frame-of-animation">How to keep the pose from the current frame of animation</h5>
 <p>Check <code>Set Initial Transform From Mesh</code> in Control Rig details.
 <figure><img src="https://dawnarc.com/img/2020/20200414-%5BUE4%5D%5BAnimation%5DRuntime%20Procedural%20Programming/%5BUE4%5D%5BAnimation%5DRuntime%20Procedural%20Programming%20-%2001.png">
@@ -702,7 +689,7 @@ SkelMeshComponent-&gt;RefreshBoneTransforms();
         </article>
         <footer id="footer" class="main-content-wrap">
   <span class="copyrights">
-    &copy; 2025 Wang Aiguo. Powered by <A href="https://gohugo.io/"> Hugo</A> | Theme <A href="https://github.com/kakawait/hugo-tranquilpeak-theme/">Tranquilpeak</A>.
+    &copy; 2026 Wang Aiguo. Powered by <A href="https://gohugo.io/"> Hugo</A> | Theme <A href="https://github.com/kakawait/hugo-tranquilpeak-theme/">Tranquilpeak</A>.
   </span>
 </footer>
 
@@ -778,7 +765,7 @@ SkelMeshComponent-&gt;RefreshBoneTransforms();
     
     <h4 id="about-card-name">Wang Aiguo</h4>
     
-      <div id="about-card-bio">霜岭弓鸣箭裂，青城骨铸边月。</div>
+      <div id="about-card-bio">天琴殷荡紫穹，万神血染兵锋。</div>
     
     
       <div id="about-card-job">

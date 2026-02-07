@@ -31,7 +31,7 @@
     <meta property="article:published_time" content="2018-12-06T17:39:02">
   
   
-    <meta property="article:modified_time" content="2025-08-29T19:00:14">
+    <meta property="article:modified_time" content="2025-12-19T10:49:25">
   
   
   
@@ -126,7 +126,7 @@
           
         </a>
         <h4 class="sidebar-profile-name">Wang Aiguo</h4>
-        <h5 class="sidebar-profile-bio">霜岭弓鸣箭裂，青城骨铸边月。</h5>
+        <h5 class="sidebar-profile-bio">天琴殷荡紫穹，万神血染兵锋。</h5>
       </div>
     <ul class="sidebar-buttons">
       
@@ -340,7 +340,6 @@
                      (adsbygoogle = window.adsbygoogle || []).push({});
                 </script>
               <p>Keywords: UE4, Editor Extention and Programming</p>
-<p><img src="https://dawnarc.com/GSZM-TW.png" alt="slogan_image"></p>
 <p>Related article:<br>
 <a href="https://dawnarc.com/2018/01/ue4construct-component-using-native-properties-that-value-be-set-in-editor/">[UE4]Construct component using native properties that value be set in editor</a></p>
 <h3 id="documents">Documents</h3>
@@ -367,8 +366,39 @@
 </span></span><span style="display:flex;"><span>UPROPERTY(EditAnywhere, BlueprintReadWrite, meta <span style="color:#f92672">=</span> (DisplayPriority <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;2&#34;</span>))
 </span></span><span style="display:flex;"><span>    int32 Value1 <span style="color:#f92672">=</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>;
 </span></span></code></pre></div><p>Reference:<br>
-Metadata Specifiers<br>
-<a href="https://docs.unrealengine.com/en-US/Programming/UnrealArchitecture/Reference/Metadata/index.html">https://docs.unrealengine.com/en-US/Programming/UnrealArchitecture/Reference/Metadata/index.html</a></p>
+<a href="https://docs.unrealengine.com/en-US/Programming/UnrealArchitecture/Reference/Metadata/index.html">Metadata Specifiers - dev.epicgames.com</a><br>
+<a href="https://unreal-garden.com/docs/uproperty/">Unreal&rsquo;s Property Specifiers - unreal-garden.com</a></p>
+<h5 id="editable-by-condition">Editable by condition</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>UPROPERTY(EditAnywhere, BlueprintReadWrite)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">bool</span> bCanIUse;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>UPROPERTY(EditAnywhere, meta <span style="color:#f92672">=</span> (EditCondition <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;bCanIUse&#34;</span>))
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">float</span> SpellcastRadius;
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>UPROPERTY(EditAnywhere, BlueprintReadWrite)
+</span></span><span style="display:flex;"><span>TEnumAsByte<span style="color:#f92672">&lt;</span>ERuneType<span style="color:#f92672">&gt;</span> RuneType;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta <span style="color:#f92672">=</span> (EditCondition <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;RuneType == 0&#34;</span>))
+</span></span><span style="display:flex;"><span>TArray<span style="color:#f92672">&lt;</span>FRecoverRuneInfo<span style="color:#f92672">&gt;</span> FireRuneList;
+</span></span></code></pre></div><h5 id="uproperty-min--max-value">UProperty min &amp; max value</h5>
+<p>Limit the range of numberic:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>UPROPERTY(EditAnywhere, Category <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Camera&#34;</span>, meta <span style="color:#f92672">=</span> (ClampMin <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;-89.0&#34;</span>, ClampMax <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;0.0&#34;</span>, UIMin <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;-89.0&#34;</span>, UIMax <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;0.0&#34;</span>))
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">float</span> CameraMinPitch;
+</span></span></code></pre></div><h5 id="unit">Unit</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>UPROPERTY(EditAnywhere, meta<span style="color:#f92672">=</span>(Units<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Celsius&#34;</span>))
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">float</span> CookingTemperature;
+</span></span><span style="display:flex;"><span>UPROPERTY(EditAnywhere, meta<span style="color:#f92672">=</span>(Units<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Kilograms&#34;</span>))
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">float</span> TigerWeight;
+</span></span><span style="display:flex;"><span>UPROPERTY(EditAnywhere, meta<span style="color:#f92672">=</span>(Units<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;GB&#34;</span>))
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">float</span> DiskSpace;
+</span></span><span style="display:flex;"><span>UPROPERTY(EditAnywhere, meta<span style="color:#f92672">=</span>(Units<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Percent&#34;</span>))
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">float</span> Happiness;
+</span></span><span style="display:flex;"><span>UPROPERTY(EditAnywhere, meta<span style="color:#f92672">=</span>(Units<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;times&#34;</span>))
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">float</span> Deliciousness;
+</span></span><span style="display:flex;"><span>UPROPERTY(EditAnywhere, meta<span style="color:#f92672">=</span>(Units<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;s&#34;</span>))
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">float</span> DelayTime;
+</span></span></code></pre></div><figure><img src="https://dawnarc.com/img/2018/20181206-%5BUE4%5DEditor%20Extention%20and%20Programming/%5BUE4%5DEditor%20Extention%20and%20Programming-07.png">
+</figure>
+
 <h5 id="editor-event">Editor Event</h5>
 <p>Properties changed event</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">#if WITH_EDITOR
@@ -488,11 +518,7 @@ Origin:</p>
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>DesktopPlatform<span style="color:#f92672">-&gt;</span>OpenFileDialog(ParentWindowHandle, DialogTitle, DefaultPath, FString(<span style="color:#e6db74">&#34;&#34;</span>), FileTypes, SelectionFlag, OutFileNames);
 </span></span></code></pre></div><p>Reference<br>
 <a href="https://www.orfeasel.com/creating-a-file-picker/">https://www.orfeasel.com/creating-a-file-picker/</a></p>
-<h6 id="uproperty-min--max-value">UProperty min &amp; max value</h6>
-<p>Limit the range of numberic:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>UPROPERTY(EditAnywhere, Category <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Camera&#34;</span>, meta <span style="color:#f92672">=</span> (ClampMin <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;-89.0&#34;</span>, ClampMax <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;0.0&#34;</span>, UIMin <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;-89.0&#34;</span>, UIMax <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;0.0&#34;</span>))
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">float</span> CameraMinPitch;
-</span></span></code></pre></div><h5 id="how-to-add-customized-tips-bar-in-editor">How to add customized tips bar in editor</h5>
+<h5 id="how-to-add-customized-tips-bar-in-editor">How to add customized tips bar in editor</h5>
 <p>Quoted from <code>Engine\Source\Runtime\Engine\Private\ShaderCompiler\ShaderCompiler.cpp</code></p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span>FText StatusUpdate;
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> ( MaterialName <span style="color:#f92672">!=</span> NULL )
@@ -923,7 +949,7 @@ because the function <code>UUserWidget::IsAsset()</code> which overrided from UO
         </article>
         <footer id="footer" class="main-content-wrap">
   <span class="copyrights">
-    &copy; 2025 Wang Aiguo. Powered by <A href="https://gohugo.io/"> Hugo</A> | Theme <A href="https://github.com/kakawait/hugo-tranquilpeak-theme/">Tranquilpeak</A>.
+    &copy; 2026 Wang Aiguo. Powered by <A href="https://gohugo.io/"> Hugo</A> | Theme <A href="https://github.com/kakawait/hugo-tranquilpeak-theme/">Tranquilpeak</A>.
   </span>
 </footer>
 
@@ -999,7 +1025,7 @@ because the function <code>UUserWidget::IsAsset()</code> which overrided from UO
     
     <h4 id="about-card-name">Wang Aiguo</h4>
     
-      <div id="about-card-bio">霜岭弓鸣箭裂，青城骨铸边月。</div>
+      <div id="about-card-bio">天琴殷荡紫穹，万神血染兵锋。</div>
     
     
       <div id="about-card-job">
